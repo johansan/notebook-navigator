@@ -575,6 +575,50 @@ class NotebookNavigatorView extends ItemView {
             }
         }
         
+        // Count attachments and web links in the entire document first
+        let attachmentCount = 0;
+        let webLinkCount = 0;
+        
+        for (let i = startIndex; i < lines.length; i++) {
+            const line = lines[i];
+            
+            // Check for markdown images with URLs (these are web links, not attachments)
+            const markdownImages = line.match(/!\[.*?\]\((.*?)\)/g);
+            if (markdownImages) {
+                markdownImages.forEach(match => {
+                    const urlMatch = match.match(/!\[.*?\]\((.*?)\)/);
+                    if (urlMatch && urlMatch[1]) {
+                        const url = urlMatch[1];
+                        // If it's a web URL, count as web link
+                        if (url.match(/^https?:\/\/|^www\./)) {
+                            webLinkCount++;
+                        } else {
+                            // Local image, count as attachment
+                            attachmentCount++;
+                        }
+                    }
+                });
+            }
+            
+            // Count Obsidian wiki-style embeds: ![[...]] (always attachments)
+            const wikiEmbeds = line.match(/!\[\[.*?\]\]/g);
+            if (wikiEmbeds) {
+                attachmentCount += wikiEmbeds.length;
+            }
+            
+            // Count web links but exclude those that are part of markdown images
+            // First remove markdown images and embeds from the line
+            const cleanLine = line
+                .replace(/!\[.*?\]\(.*?\)/g, '') // Remove markdown images
+                .replace(/!\[\[.*?\]\]/g, ''); // Remove wiki embeds
+            
+            // Now count web links in the cleaned line
+            const webLinks = cleanLine.match(/(?:https?:\/\/|www\.)[^\s\)]+/g);
+            if (webLinks) {
+                webLinkCount += webLinks.length;
+            }
+        }
+        
         // Find content lines based on settings
         let previewLines = [];
         let charCount = 0;
@@ -591,10 +635,10 @@ class NotebookNavigatorView extends ItemView {
                 if (line.match(/^#+\s/)) continue;
                 
                 // Skip markdown images and embeds
-                if (line.match(/^!\[.*\]\(.*\)/)) continue;
+                if (line.match(/^!\[.*?\]\(.*?\)/)) continue;
                 
                 // Skip Obsidian wiki-style embeds (images, files, etc)
-                if (line.match(/^!\[\[.*\]\]/)) continue;
+                if (line.match(/^!\[\[.*?\]\]/)) continue;
                 
                 // Skip standalone links that look like embeds
                 if (line.match(/^\[.*\]\(.*\)$/)) continue;
@@ -615,6 +659,13 @@ class NotebookNavigatorView extends ItemView {
         
         // If no content found, return Apple Notes style message
         if (previewLines.length === 0) {
+            if (attachmentCount > 0) {
+                // If there are attachments, count both attachments and web links together
+                const totalCount = attachmentCount + webLinkCount;
+                return totalCount === 1 ? '1 attachment' : `${totalCount} attachments`;
+            } else if (webLinkCount > 0) {
+                return webLinkCount === 1 ? '1 web link' : `${webLinkCount} web links`;
+            }
             return 'No additional text';
         }
         
