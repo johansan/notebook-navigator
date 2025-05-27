@@ -318,18 +318,66 @@
     /* No outline for cleaner Apple Notes style */
 }
 
+/* Add position relative to file content for pseudo-element */
+.nn-file-content {
+    position: relative;
+}
+
+/* Create pseudo-element for background */
+.nn-file-item.nn-selected .nn-file-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--nn-selection-color, #B3D9FF);
+    border-radius: 8px;
+    z-index: 0;
+}
+
+/* Dark mode adjustment for pseudo-element */
+.theme-dark .nn-file-item.nn-selected .nn-file-content::before {
+    filter: brightness(0.5);
+}
+
+/* Ensure content stays above the background */
+.nn-file-item.nn-selected .nn-file-content > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* When folders have focus, make selected file background 50% transparent */
+.notebook-navigator[data-focus-pane="folders"] .nn-file-item.nn-selected .nn-file-content::before {
+    opacity: 0.5;
+}
+
+/* Override the original background color rules to transparent since we're using pseudo-element */
+.nn-file-item.nn-selected .nn-file-content {
+    background-color: transparent !important;
+}
+
+.theme-dark .nn-file-item.nn-selected .nn-file-content {
+    background-color: transparent !important;
+    filter: none;
+}
+
+/* When files have focus, make selected folder 50% transparent (entire element is fine for folders) */
+.notebook-navigator[data-focus-pane="files"] .nn-folder-item.nn-selected > .nn-folder-content {
+    opacity: 0.5;
+}
+
 /* Remove any remaining hover transitions */
 .nn-file-item:hover .nn-file-content {
     background-color: transparent;
 }
 
 .nn-file-item.nn-selected:hover .nn-file-content {
-    background-color: var(--nn-selection-color, #B3D9FF) !important;
+    background-color: transparent !important;
 }
 
 .theme-dark .nn-file-item.nn-selected:hover .nn-file-content {
-    background-color: var(--nn-selection-color, #B3D9FF) !important;
-    filter: brightness(0.5);
+    background-color: transparent !important;
 }
 
 /* Already defined above with proper styling */

@@ -217,6 +217,9 @@ class NotebookNavigatorView extends ItemView {
         // Set initial focus to container to enable keyboard navigation
         (container as HTMLElement).tabIndex = 0;
         
+        // Set initial focus pane
+        container.setAttribute('data-focus-pane', this.focusedPane);
+        
         this.refresh();
         
         // Focus the container after a short delay to ensure it's ready
@@ -1126,6 +1129,12 @@ class NotebookNavigatorView extends ItemView {
         this.containerEl.querySelectorAll('.nn-focused').forEach(el => {
             el.removeClass('nn-focused');
         });
+
+        // Update the data attribute for CSS styling
+        const container = this.containerEl.querySelector('.notebook-navigator') as HTMLElement;
+        if (container) {
+            container.setAttribute('data-focus-pane', this.focusedPane);
+        }
 
         if (this.focusedPane === 'folders') {
             const folders = this.folderTree.querySelectorAll('.nn-folder-item');
