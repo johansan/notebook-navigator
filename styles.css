@@ -4,8 +4,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: var(--background-primary);
+    background-color: white;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.theme-dark .notebook-navigator {
+    background-color: black;
 }
 
 .notebook-navigator:focus {
@@ -32,25 +36,33 @@
 /* Right Pane - File List */
 .nn-right-pane {
     flex: 1;
-    background-color: var(--background-primary);
+    background-color: white;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
+.theme-dark .nn-right-pane {
+    background-color: black;
+}
+
 /* Pane Headers */
 .nn-pane-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--background-modifier-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--background-primary);
+    background-color: white;
+}
+
+.theme-dark .nn-pane-header {
+    background-color: black;
 }
 
 .nn-pane-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-normal);
 }
@@ -80,10 +92,10 @@
     background: none;
     border: 1px solid var(--background-modifier-border);
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 2px 10px;
     cursor: pointer;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     transition: all 0.2s ease;
     margin-right: 8px;
@@ -110,15 +122,17 @@
 .nn-folder-content {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 4px 10px;
     cursor: pointer;
     transition: background-color 0.15s ease;
-    border-radius: 6px;
-    margin: 0 8px;
+    border-radius: 4px;
+    margin: 0 6px;
 }
 
+/* Subtle hover for folders only */
 .nn-folder-content:hover {
     background-color: var(--background-modifier-hover);
+    opacity: 0.8;
 }
 
 .nn-folder-item.nn-selected > .nn-folder-content {
@@ -156,8 +170,8 @@
 }
 
 .nn-folder-name {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -182,77 +196,175 @@
 .nn-file-list {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
+    padding: 8px 0;
+    background-color: white;
+}
+
+.theme-dark .nn-file-list {
+    background-color: black;
 }
 
 .nn-file-item {
-    background-color: var(--background-secondary);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    padding: 16px;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     user-select: none;
+    position: relative;
 }
 
-.nn-file-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Inner content wrapper for proper selection styling */
+.nn-file-content {
+    padding: 12px;
+    margin: 4px 8px;
+    border-radius: 8px;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
 }
 
-.nn-file-item.nn-selected {
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
+/* Add separator line after each item except last */
+.nn-file-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background-color: var(--background-modifier-border);
+}
+
+.nn-file-item.nn-selected .nn-file-content {
+    background-color: var(--nn-selection-color, #B3D9FF) !important;
+}
+
+/* Ensure proper background in dark mode */
+.theme-dark .nn-file-item.nn-selected .nn-file-content {
+    background-color: var(--nn-selection-color, #B3D9FF) !important;
+    opacity: 0.9;
+}
+
+/* Keep consistent text colors - no changes on selection */
+.nn-file-item.nn-selected .nn-file-name {
+    color: black;
+}
+
+.theme-dark .nn-file-item.nn-selected .nn-file-name {
+    color: white;
 }
 
 .nn-file-item.nn-selected .nn-file-date,
 .nn-file-item.nn-selected .nn-file-preview {
-    color: var(--text-on-accent);
-    opacity: 0.8;
+    color: #666;
+}
+
+.theme-dark .nn-file-item.nn-selected .nn-file-date,
+.theme-dark .nn-file-item.nn-selected .nn-file-preview {
+    color: #999;
 }
 
 .nn-file-item.nn-focused {
-    outline: 2px solid var(--interactive-accent);
-    outline-offset: -2px;
+    /* No outline for cleaner Apple Notes style */
 }
 
-.nn-file-content {
+/* Remove any remaining hover transitions */
+.nn-file-item:hover .nn-file-content {
+    background-color: transparent;
+}
+
+.nn-file-item.nn-selected:hover .nn-file-content {
+    background-color: var(--nn-selection-color, #B3D9FF) !important;
+}
+
+.theme-dark .nn-file-item.nn-selected:hover .nn-file-content {
+    background-color: var(--nn-selection-color, #B3D9FF) !important;
+    opacity: 0.9;
+}
+
+/* Already defined above with proper styling */
+
+.nn-file-text-content {
+    flex: 1;
+    min-width: 0; /* Enable text truncation */
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
+    order: 1; /* Ensure it appears on the left */
+}
+
+/* Feature Image */
+.nn-feature-image {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--background-secondary-alt);
+    position: relative;
+    order: 2; /* Ensure it appears on the right */
+}
+
+.nn-feature-image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+/* Adjust selected state for feature images */
+.nn-file-item.nn-selected .nn-feature-image {
+    opacity: 0.9;
 }
 
 .nn-file-info {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 8px;
 }
 
 .nn-file-name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-normal);
+    color: black;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.theme-dark .nn-file-name {
+    color: white;
 }
 
 .nn-file-date {
-    font-size: 12px;
-    color: var(--text-muted);
+    font-size: 11px;
+    color: #666;
     flex-shrink: 0;
-    margin-left: 12px;
+    white-space: nowrap;
+}
+
+.theme-dark .nn-file-date {
+    color: #999;
 }
 
 .nn-file-preview {
-    font-size: 14px;
-    color: var(--text-muted);
+    font-size: 12px;
+    color: #666;
     line-height: 1.4;
     overflow: hidden;
+    text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.theme-dark .nn-file-preview {
+    color: #999;
 }
 
 /* Empty State */

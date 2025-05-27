@@ -11,7 +11,8 @@ import {
     setIcon,
     Modal,
     Setting,
-    PluginSettingTab
+    PluginSettingTab,
+    CachedMetadata
 } from 'obsidian';
 
 const VIEW_TYPE_NOTEBOOK = 'notebook-navigator-view';
@@ -21,6 +22,10 @@ type SortOption = 'modified' | 'created' | 'title';
 interface NotebookNavigatorSettings {
     replaceDefaultExplorer: boolean;
     showFilePreview: boolean;
+    skipNonTextInPreview: boolean;
+    showFeatureImage: boolean;
+    featureImageProperty: string;
+    selectionColor: string;
     animationSpeed: number;
     sortOption: SortOption;
 }
@@ -28,6 +33,10 @@ interface NotebookNavigatorSettings {
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     replaceDefaultExplorer: true,
     showFilePreview: true,
+    skipNonTextInPreview: true,
+    showFeatureImage: false,
+    featureImageProperty: 'feature',
+    selectionColor: '#B3D9FF',
     animationSpeed: 200,
     sortOption: 'modified'
 }
@@ -57,6 +66,9 @@ export default class NotebookNavigatorPlugin extends Plugin {
         });
 
         this.addSettingTab(new NotebookNavigatorSettingTab(this.app, this));
+
+        // Set initial selection color
+        this.updateSelectionColor();
 
         if (this.settings.replaceDefaultExplorer) {
             this.app.workspace.onLayoutReady(() => {
@@ -102,6 +114,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         if (fileExplorerLeaf) {
             fileExplorerLeaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
         }
+    }
+
+    updateSelectionColor() {
+        // Update CSS variable for selection color
+        document.documentElement.style.setProperty('--nn-selection-color', this.settings.selectionColor);
     }
 }
 
@@ -378,17 +395,21 @@ class NotebookNavigatorView extends ItemView {
             return;
         }
 
-        files.forEach((file, index) => {
-            this.renderFileItem(file, index);
-        });
-
+        // Check if folder changed before setting previousFolder
+        const folderChanged = this.selectedFolder !== this.previousFolder;
+        this.previousFolder = this.selectedFolder;
+        
         // Auto-select and preview the first file when folder changes
-        if (files.length > 0 && this.selectedFolder !== this.previousFolder) {
+        if (files.length > 0 && folderChanged) {
             this.selectedFile = files[0];
             this.focusedFileIndex = 0;
             this.previewFile(files[0]);
         }
-        this.previousFolder = this.selectedFolder;
+
+        // Now render all items with proper selection
+        files.forEach((file, index) => {
+            this.renderFileItem(file, index);
+        });
     }
 
     private renderFileItem(file: TFile, index: number) {
@@ -406,7 +427,10 @@ class NotebookNavigatorView extends ItemView {
 
         const fileContent = fileEl.createDiv('nn-file-content');
         
-        const fileInfo = fileContent.createDiv('nn-file-info');
+        // Create text content container
+        const textContent = fileContent.createDiv('nn-file-text-content');
+        
+        const fileInfo = textContent.createDiv('nn-file-info');
         const fileName = fileInfo.createDiv('nn-file-name');
         fileName.textContent = file.basename;
 
@@ -415,10 +439,19 @@ class NotebookNavigatorView extends ItemView {
 
         if (this.plugin.settings.showFilePreview) {
             this.app.vault.cachedRead(file).then(content => {
-                const preview = fileContent.createDiv('nn-file-preview');
-                const previewText = content.substring(0, 100).replace(/^#+\s+/, '');
-                preview.textContent = previewText + (content.length > 100 ? '...' : '');
+                const preview = textContent.createDiv('nn-file-preview');
+                const previewText = this.extractPreviewText(content);
+                preview.textContent = previewText;
             });
+        }
+
+        // Add feature image if enabled
+        if (this.plugin.settings.showFeatureImage) {
+            const metadata = this.app.metadataCache.getFileCache(file);
+            if (metadata?.frontmatter?.[this.plugin.settings.featureImageProperty]) {
+                const imagePath = metadata.frontmatter[this.plugin.settings.featureImageProperty];
+                this.renderFeatureImage(fileContent, imagePath, file);
+            }
         }
 
         if (this.selectedFile === file) {
@@ -486,6 +519,89 @@ class NotebookNavigatorView extends ItemView {
                 container.focus();
             }
         }, 50);
+    }
+
+    private extractPreviewText(content: string): string {
+        let lines = content.split('\n');
+        let startIndex = 0;
+        
+        // Skip frontmatter
+        if (lines[0] === '---') {
+            let endIndex = lines.findIndex((line, idx) => idx > 0 && line === '---');
+            if (endIndex > 0) {
+                startIndex = endIndex + 1;
+            }
+        }
+        
+        // Find content lines based on settings
+        let previewLines = [];
+        let charCount = 0;
+        
+        for (let i = startIndex; i < lines.length && charCount < 100; i++) {
+            const line = lines[i].trim();
+            
+            // Skip empty lines
+            if (!line) continue;
+            
+            // Skip non-text content if enabled
+            if (this.plugin.settings.skipNonTextInPreview) {
+                // Skip headings
+                if (line.match(/^#+\s/)) continue;
+                
+                // Skip markdown images and embeds
+                if (line.match(/^!\[.*\]\(.*\)/)) continue;
+                
+                // Skip Obsidian wiki-style embeds (images, files, etc)
+                if (line.match(/^!\[\[.*\]\]/)) continue;
+                
+                // Skip standalone links that look like embeds
+                if (line.match(/^\[.*\]\(.*\)$/)) continue;
+                
+                // Skip code blocks
+                if (line.startsWith('```')) continue;
+                
+                // Skip horizontal rules
+                if (line.match(/^(-{3,}|\*{3,}|_{3,})$/)) continue;
+                
+                // Skip block quotes that might contain non-text
+                if (line.startsWith('>') && line.match(/!\[.*\]\(.*\)/)) continue;
+            }
+            
+            previewLines.push(lines[i]);
+            charCount += lines[i].length;
+        }
+        
+        // If no content found, return Apple Notes style message
+        if (previewLines.length === 0) {
+            return 'No additional text';
+        }
+        
+        let preview = previewLines.join(' ').substring(0, 100);
+        return preview + (preview.length >= 100 ? '...' : '');
+    }
+
+    private renderFeatureImage(container: HTMLElement, imagePath: string, file: TFile) {
+        const imageContainer = container.createDiv('nn-feature-image');
+        const img = imageContainer.createEl('img');
+        
+        // Resolve the image path relative to the file
+        let resolvedPath = imagePath;
+        
+        // Handle wiki-style links
+        if (imagePath.startsWith('[[') && imagePath.endsWith(']]')) {
+            resolvedPath = imagePath.slice(2, -2);
+        }
+        
+        // Get the absolute path
+        const linkPath = this.app.metadataCache.getFirstLinkpathDest(resolvedPath, file.path);
+        if (linkPath) {
+            const resourcePath = this.app.vault.getResourcePath(linkPath);
+            if (resourcePath) {
+                img.src = resourcePath;
+                img.alt = 'Feature image';
+                img.addClass('nn-feature-image-img');
+            }
+        }
     }
 
     private showFolderContextMenu(folder: TFolder, e: MouseEvent) {
@@ -1087,6 +1203,37 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
+            .setName('Skip non-text in preview')
+            .setDesc('Skip headings, images, embeds, and other non-text content in file previews')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.skipNonTextInPreview)
+                .onChange(async (value) => {
+                    this.plugin.settings.skipNonTextInPreview = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Show feature image')
+            .setDesc('Display a thumbnail image for notes with a feature image property')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showFeatureImage)
+                .onChange(async (value) => {
+                    this.plugin.settings.showFeatureImage = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Feature image property')
+            .setDesc('The frontmatter property name used for feature images')
+            .addText(text => text
+                .setPlaceholder('feature')
+                .setValue(this.plugin.settings.featureImageProperty)
+                .onChange(async (value) => {
+                    this.plugin.settings.featureImageProperty = value || 'feature';
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
             .setName('Sort files by')
             .setDesc('Choose how files are sorted in the file list')
             .addDropdown(dropdown => dropdown
@@ -1097,6 +1244,18 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value: SortOption) => {
                     this.plugin.settings.sortOption = value;
                     await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Selection color')
+            .setDesc('Background color for selected files (hex format)')
+            .addText(text => text
+                .setPlaceholder('#B3D9FF')
+                .setValue(this.plugin.settings.selectionColor)
+                .onChange(async (value) => {
+                    this.plugin.settings.selectionColor = value || '#B3D9FF';
+                    await this.plugin.saveSettings();
+                    this.plugin.updateSelectionColor();
                 }));
 
         new Setting(containerEl)
