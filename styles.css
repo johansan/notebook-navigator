@@ -23,17 +23,24 @@
 }
 
 /* Left Pane - Folder Tree */
+.notebook-navigator .nn-left-pane,
 .nn-left-pane {
     width: 300px;
     min-width: 200px;
-    background-color: var(--background-secondary);
+    background-color: white;
     border-right: 1px solid var(--background-modifier-border);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
+.theme-dark .notebook-navigator .nn-left-pane,
+.theme-dark .nn-left-pane {
+    background-color: black;
+}
+
 /* Right Pane - File List */
+.notebook-navigator .nn-right-pane,
 .nn-right-pane {
     flex: 1;
     background-color: white;
@@ -42,6 +49,7 @@
     overflow: hidden;
 }
 
+.theme-dark .notebook-navigator .nn-right-pane,
 .theme-dark .nn-right-pane {
     background-color: black;
 }
@@ -108,17 +116,28 @@
 }
 
 /* Folder Tree */
+.notebook-navigator .nn-folder-tree,
 .nn-folder-tree {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 8px 0;
+    background-color: white;
 }
 
+.theme-dark .notebook-navigator .nn-folder-tree,
+.theme-dark .nn-folder-tree {
+    background-color: black;
+}
+
+.notebook-navigator .nn-folder-item,
 .nn-folder-item {
     user-select: none;
+    background-color: transparent !important;
+    background: transparent !important;
 }
 
+.notebook-navigator .nn-folder-content,
 .nn-folder-content {
     display: flex;
     align-items: center;
@@ -127,12 +146,12 @@
     transition: background-color 0.15s ease;
     border-radius: 4px;
     margin: 0 6px;
+    background-color: transparent !important;
 }
 
-/* Subtle hover for folders only */
+/* Remove hover effect for cleaner look */
 .nn-folder-content:hover {
-    background-color: var(--background-modifier-hover);
-    opacity: 0.8;
+    background-color: transparent !important;
 }
 
 .nn-folder-item.nn-selected > .nn-folder-content {
@@ -193,6 +212,7 @@
 }
 
 /* File List */
+.notebook-navigator .nn-file-list,
 .nn-file-list {
     flex: 1;
     overflow-y: auto;
@@ -200,12 +220,15 @@
     background-color: white;
 }
 
+.theme-dark .notebook-navigator .nn-file-list,
 .theme-dark .nn-file-list {
     background-color: black;
 }
 
+.notebook-navigator .nn-file-item,
 .nn-file-item {
-    background-color: transparent;
+    background-color: transparent !important;
+    background: transparent !important;
     border-radius: 0;
     padding: 0;
     cursor: pointer;
@@ -218,11 +241,18 @@
     padding: 12px;
     margin: 4px 8px;
     border-radius: 8px;
-    background-color: transparent;
+    background-color: transparent !important;
+    background: transparent !important;
     display: flex;
     flex-direction: row;
     gap: 10px;
     align-items: center;
+}
+
+/* Force non-selected items to be transparent */
+.nn-file-item:not(.nn-selected) .nn-file-content {
+    background-color: transparent !important;
+    background: transparent !important;
 }
 
 /* Add separator line after each item except last */
@@ -455,22 +485,13 @@
     }
 }
 
-/* Dark Theme Adjustments */
-.theme-dark .nn-file-item {
-    background-color: var(--background-secondary);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.theme-dark .nn-file-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Light Theme Adjustments */
+/* Remove all shadows for clean Apple Notes style */
+.theme-dark .nn-file-item,
 .theme-light .nn-file-item {
-    background-color: var(--background-secondary);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: none !important;
 }
 
+.theme-dark .nn-file-item:hover,
 .theme-light .nn-file-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: none !important;
 }
