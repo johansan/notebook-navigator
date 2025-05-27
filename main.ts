@@ -69,6 +69,12 @@ export default class NotebookNavigatorPlugin extends Plugin {
             }
         });
 
+        // Remove any existing ribbon icons before adding a new one
+        const existingIcon = (this.app as any).workspace.ribbonIconElsByPlugin?.[this.manifest.id];
+        if (existingIcon) {
+            existingIcon.remove();
+        }
+        
         this.ribbonIcon = this.addRibbonIcon('folder-tree', 'Notebook Navigator', () => {
             this.activateView();
         });
@@ -86,7 +92,7 @@ export default class NotebookNavigatorPlugin extends Plugin {
     }
 
     onunload() {
-        // Remove the ribbon icon if it exists
+        // Clean up the ribbon icon
         if (this.ribbonIcon) {
             this.ribbonIcon.remove();
         }
@@ -95,11 +101,14 @@ export default class NotebookNavigatorPlugin extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const data = await this.loadData();
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, data?.settings || data || {});
     }
 
     async saveSettings() {
-        await this.saveData(this.settings);
+        const data = await this.loadData() || {};
+        data.settings = this.settings;
+        await this.saveData(data);
     }
 
     async activateView() {
@@ -187,9 +196,6 @@ class NotebookNavigatorView extends ItemView {
         container.empty();
         container.addClass('notebook-navigator');
 
-        // Load saved state
-        await this.loadState();
-
         this.splitContainer = container.createDiv('nn-split-container');
         
         this.leftPane = this.splitContainer.createDiv('nn-left-pane');
@@ -257,7 +263,20 @@ class NotebookNavigatorView extends ItemView {
         // Set initial focus pane
         container.setAttribute('data-focus-pane', this.focusedPane);
         
+        // Load saved state before refresh
+        await this.loadState();
+        
         this.refresh();
+        
+        // After refresh, restore the selected folder and ensure it's visible
+        if (this.selectedFolder) {
+            // Make sure parent folders are expanded
+            this.ensureFolderVisible(this.selectedFolder);
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(() => {
+                this.selectFolder(this.selectedFolder!);
+            }, 50);
+        }
         
         // Focus the container after a short delay to ensure it's ready
         setTimeout(() => {
@@ -271,15 +290,15 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private async loadState() {
-        const state = await this.plugin.loadData();
-        if (state?.viewState) {
+        const data = await this.plugin.loadData();
+        if (data?.viewState) {
             // Restore expanded folders
-            if (state.viewState.expandedFolders) {
-                this.expandedFolders = new Set(state.viewState.expandedFolders);
+            if (data.viewState.expandedFolders) {
+                this.expandedFolders = new Set(data.viewState.expandedFolders);
             }
             // Restore selected folder
-            if (state.viewState.selectedFolderPath) {
-                const folder = this.app.vault.getAbstractFileByPath(state.viewState.selectedFolderPath);
+            if (data.viewState.selectedFolderPath) {
+                const folder = this.app.vault.getAbstractFileByPath(data.viewState.selectedFolderPath);
                 if (folder instanceof TFolder) {
                     this.selectedFolder = folder;
                 }
@@ -288,12 +307,12 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private async saveState() {
-        const currentState = await this.plugin.loadData() || {};
-        currentState.viewState = {
+        const data = await this.plugin.loadData() || {};
+        data.viewState = {
             expandedFolders: Array.from(this.expandedFolders),
             selectedFolderPath: this.selectedFolder?.path
         };
-        await this.plugin.saveData(currentState);
+        await this.plugin.saveData(data);
     }
 
     private setupResizeHandle(handle: HTMLElement) {
@@ -499,6 +518,22 @@ class NotebookNavigatorView extends ItemView {
 
         this.selectedFolder = folder;
         this.refreshFileList();
+    }
+
+    private ensureFolderVisible(folder: TFolder) {
+        // Expand all parent folders to make this folder visible
+        let parent = folder.parent;
+        const foldersToExpand: TFolder[] = [];
+        
+        while (parent && parent.path !== '') {
+            foldersToExpand.unshift(parent);
+            parent = parent.parent;
+        }
+        
+        // Expand folders from root to target
+        foldersToExpand.forEach(f => {
+            this.expandedFolders.add(f.path);
+        });
     }
 
     private refreshFileList() {
