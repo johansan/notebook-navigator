@@ -29,6 +29,9 @@ interface NotebookNavigatorSettings {
     dateFormat: string;
     animationSpeed: number;
     sortOption: SortOption;
+    leftPaneWidth: number;
+    showRootFolder: boolean;
+    ignoreFolders: string;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -40,7 +43,10 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     selectionColor: '#B3D9FF',
     dateFormat: 'MMM d, yyyy',
     animationSpeed: 200,
-    sortOption: 'modified'
+    sortOption: 'modified',
+    leftPaneWidth: 300,
+    showRootFolder: true,
+    ignoreFolders: ''
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -80,6 +86,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
     }
 
     onunload() {
+        // Remove the ribbon icon if it exists
+        if (this.ribbonIcon) {
+            this.ribbonIcon.remove();
+        }
+        
         this.app.workspace.detachLeavesOfType(VIEW_TYPE_NOTEBOOK);
     }
 
@@ -122,6 +133,20 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Update CSS variable for selection color
         document.documentElement.style.setProperty('--nn-selection-color', this.settings.selectionColor);
     }
+
+    onSettingsChange() {
+        // Update all active views when settings change
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        leaves.forEach(leaf => {
+            const view = leaf.view;
+            if (view instanceof NotebookNavigatorView) {
+                view.refresh();
+            }
+        });
+        
+        // Update selection color
+        this.updateSelectionColor();
+    }
 }
 
 class NotebookNavigatorView extends ItemView {
@@ -135,6 +160,10 @@ class NotebookNavigatorView extends ItemView {
     private focusedPane: 'folders' | 'files' = 'folders';
     private focusedFolderIndex: number = 0;
     private focusedFileIndex: number = 0;
+    private leftPane: HTMLElement;
+    private splitContainer: HTMLElement;
+    private resizing: boolean = false;
+    private sortButton: HTMLElement | null = null;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -158,10 +187,14 @@ class NotebookNavigatorView extends ItemView {
         container.empty();
         container.addClass('notebook-navigator');
 
-        const splitContainer = container.createDiv('nn-split-container');
+        // Load saved state
+        await this.loadState();
+
+        this.splitContainer = container.createDiv('nn-split-container');
         
-        const leftPane = splitContainer.createDiv('nn-left-pane');
-        const folderHeader = leftPane.createDiv('nn-pane-header');
+        this.leftPane = this.splitContainer.createDiv('nn-left-pane');
+        this.leftPane.style.width = `${this.plugin.settings.leftPaneWidth}px`;
+        const folderHeader = this.leftPane.createDiv('nn-pane-header');
         folderHeader.createEl('h3', { text: 'Folders' });
         
         const folderActions = folderHeader.createDiv('nn-header-actions');
@@ -172,21 +205,25 @@ class NotebookNavigatorView extends ItemView {
         setIcon(newFolderBtn, 'folder-plus');
         newFolderBtn.addEventListener('click', () => this.createNewFolder());
 
-        this.folderTree = leftPane.createDiv('nn-folder-tree');
+        this.folderTree = this.leftPane.createDiv('nn-folder-tree');
         
-        const rightPane = splitContainer.createDiv('nn-right-pane');
+        // Add resize handle
+        const resizeHandle = this.splitContainer.createDiv('nn-resize-handle');
+        this.setupResizeHandle(resizeHandle);
+        
+        const rightPane = this.splitContainer.createDiv('nn-right-pane');
         const fileHeader = rightPane.createDiv('nn-pane-header');
         const fileHeaderTitle = fileHeader.createEl('h3', { text: 'Files' });
         
         const fileActions = fileHeader.createDiv('nn-header-actions');
         
         // Sort button
-        const sortBtn = fileActions.createEl('button', { 
+        this.sortButton = fileActions.createEl('button', { 
             cls: 'nn-sort-button',
             attr: { 'aria-label': 'Sort files' }
         });
-        this.updateSortButtonText(sortBtn);
-        sortBtn.addEventListener('click', (e) => this.showSortMenu(e));
+        this.updateSortButtonText(this.sortButton);
+        this.sortButton.addEventListener('click', (e) => this.showSortMenu(e));
         
         const newFileBtn = fileActions.createEl('button', { 
             cls: 'nn-icon-button',
@@ -229,24 +266,111 @@ class NotebookNavigatorView extends ItemView {
     }
 
     async onClose() {
-        // Cleanup
+        // Save state before closing
+        await this.saveState();
+    }
+
+    private async loadState() {
+        const state = await this.plugin.loadData();
+        if (state?.viewState) {
+            // Restore expanded folders
+            if (state.viewState.expandedFolders) {
+                this.expandedFolders = new Set(state.viewState.expandedFolders);
+            }
+            // Restore selected folder
+            if (state.viewState.selectedFolderPath) {
+                const folder = this.app.vault.getAbstractFileByPath(state.viewState.selectedFolderPath);
+                if (folder instanceof TFolder) {
+                    this.selectedFolder = folder;
+                }
+            }
+        }
+    }
+
+    private async saveState() {
+        const currentState = await this.plugin.loadData() || {};
+        currentState.viewState = {
+            expandedFolders: Array.from(this.expandedFolders),
+            selectedFolderPath: this.selectedFolder?.path
+        };
+        await this.plugin.saveData(currentState);
+    }
+
+    private setupResizeHandle(handle: HTMLElement) {
+        let startX: number;
+        let startWidth: number;
+
+        const onMouseMove = (e: MouseEvent) => {
+            if (!this.resizing) return;
+            
+            const deltaX = e.clientX - startX;
+            const newWidth = Math.max(150, Math.min(600, startWidth + deltaX));
+            this.leftPane.style.width = `${newWidth}px`;
+        };
+
+        const onMouseUp = async (e: MouseEvent) => {
+            if (!this.resizing) return;
+            
+            this.resizing = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            
+            // Save the new width
+            const newWidth = parseInt(this.leftPane.style.width);
+            this.plugin.settings.leftPaneWidth = newWidth;
+            await this.plugin.saveSettings();
+        };
+
+        handle.addEventListener('mousedown', (e: MouseEvent) => {
+            this.resizing = true;
+            startX = e.clientX;
+            startWidth = this.leftPane.offsetWidth;
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            
+            e.preventDefault();
+        });
     }
 
     private refresh() {
         this.renderFolderTree();
         this.refreshFileList();
+        // Update sort button text
+        if (this.sortButton) {
+            this.updateSortButtonText(this.sortButton);
+        }
     }
 
     private renderFolderTree() {
         this.folderTree.empty();
         const rootFolder = this.app.vault.getRoot();
         this.globalFolderIndex = 0;
-        this.renderFolderItem(rootFolder, this.folderTree, 0);
+        
+        // Get ignored folders
+        const ignoredFolders = this.plugin.settings.ignoreFolders
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f);
+        
+        if (this.plugin.settings.showRootFolder) {
+            this.renderFolderItem(rootFolder, this.folderTree, 0, ignoredFolders);
+        } else {
+            // Render root's children directly
+            const children = rootFolder.children
+                .filter(child => child instanceof TFolder)
+                .filter(child => !ignoredFolders.includes(child.name))
+                .sort((a, b) => a.name.localeCompare(b.name));
+            
+            children.forEach(child => {
+                this.renderFolderItem(child as TFolder, this.folderTree, 0, ignoredFolders);
+            });
+        }
     }
 
     private globalFolderIndex: number = 0;
 
-    private renderFolderItem(folder: TFolder, container: HTMLElement, level: number) {
+    private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
         const index = this.globalFolderIndex++;
         const folderEl = container.createDiv({
             cls: 'nn-folder-item',
@@ -308,10 +432,11 @@ class NotebookNavigatorView extends ItemView {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
             const subfolders = folder.children
                 .filter(child => child instanceof TFolder)
+                .filter(child => !ignoredFolders.includes(child.name))
                 .sort((a, b) => a.name.localeCompare(b.name));
             
             subfolders.forEach((subfolder) => {
-                this.renderFolderItem(subfolder as TFolder, childrenContainer, level + 1);
+                this.renderFolderItem(subfolder as TFolder, childrenContainer, level + 1, ignoredFolders);
             });
         }
     }
@@ -319,6 +444,12 @@ class NotebookNavigatorView extends ItemView {
     private toggleFolder(folder: TFolder) {
         const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
         if (!folderEl) return;
+
+        // Get ignored folders
+        const ignoredFolders = this.plugin.settings.ignoreFolders
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f);
 
         if (this.expandedFolders.has(folder.path)) {
             this.expandedFolders.delete(folder.path);
@@ -338,11 +469,12 @@ class NotebookNavigatorView extends ItemView {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
             const subfolders = folder.children
                 .filter(child => child instanceof TFolder)
+                .filter(child => !ignoredFolders.includes(child.name))
                 .sort((a, b) => a.name.localeCompare(b.name));
             
             subfolders.forEach((subfolder) => {
                 this.renderFolderItem(subfolder as TFolder, childrenContainer, 
-                    parseInt(folderEl.getAttribute('data-level') || '0') + 1);
+                    parseInt(folderEl.getAttribute('data-level') || '0') + 1, ignoredFolders);
             });
             // Update arrow icon
             const arrow = folderEl.querySelector('.nn-folder-arrow svg');
@@ -1302,6 +1434,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.showFilePreview = value;
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
 
         new Setting(containerEl)
@@ -1312,6 +1445,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.skipNonTextInPreview = value;
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
 
         new Setting(containerEl)
@@ -1322,6 +1456,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.showFeatureImage = value;
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
 
         new Setting(containerEl)
@@ -1333,6 +1468,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.featureImageProperty = value || 'feature';
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
 
         new Setting(containerEl)
@@ -1346,6 +1482,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value: SortOption) => {
                     this.plugin.settings.sortOption = value;
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
 
         new Setting(containerEl)
@@ -1369,6 +1506,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.dateFormat = value || 'MMM d, yyyy';
                     await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }))
             .addExtraButton(button => button
                 .setIcon('help')
@@ -1389,6 +1527,29 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                         this.plugin.settings.animationSpeed = speed;
                         await this.plugin.saveSettings();
                     }
+                }));
+
+        new Setting(containerEl)
+            .setName('Show root folder')
+            .setDesc('Show "Vault" as the root folder in the tree')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showRootFolder)
+                .onChange(async (value) => {
+                    this.plugin.settings.showRootFolder = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        new Setting(containerEl)
+            .setName('Ignore folders')
+            .setDesc('Comma-separated list of root folders to hide (e.g., ".obsidian, templates, archive")')
+            .addText(text => text
+                .setPlaceholder('folder1, folder2')
+                .setValue(this.plugin.settings.ignoreFolders)
+                .onChange(async (value) => {
+                    this.plugin.settings.ignoreFolders = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
                 }));
     }
 }

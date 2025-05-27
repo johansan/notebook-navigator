@@ -26,17 +26,37 @@
 .notebook-navigator .nn-left-pane,
 .nn-left-pane {
     width: 300px;
-    min-width: 200px;
+    min-width: 150px;
+    max-width: 600px;
     background-color: white;
-    border-right: 1px solid var(--background-modifier-border);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .theme-dark .notebook-navigator .nn-left-pane,
 .theme-dark .nn-left-pane {
     background-color: black;
+}
+
+/* Resize Handle */
+.nn-resize-handle {
+    width: 5px;
+    background-color: transparent;
+    cursor: col-resize;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.nn-resize-handle:hover {
+    background-color: var(--interactive-accent);
+    opacity: 0.5;
+}
+
+.nn-resize-handle:active {
+    background-color: var(--interactive-accent);
+    opacity: 0.8;
 }
 
 /* Right Pane - File List */
