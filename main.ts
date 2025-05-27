@@ -26,6 +26,7 @@ interface NotebookNavigatorSettings {
     showFeatureImage: boolean;
     featureImageProperty: string;
     selectionColor: string;
+    dateFormat: string;
     animationSpeed: number;
     sortOption: SortOption;
 }
@@ -37,6 +38,7 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showFeatureImage: false,
     featureImageProperty: 'feature',
     selectionColor: '#B3D9FF',
+    dateFormat: 'MMM d, yyyy',
     animationSpeed: 200,
     sortOption: 'modified'
 }
@@ -430,19 +432,38 @@ class NotebookNavigatorView extends ItemView {
         // Create text content container
         const textContent = fileContent.createDiv('nn-file-text-content');
         
-        const fileInfo = textContent.createDiv('nn-file-info');
-        const fileName = fileInfo.createDiv('nn-file-name');
+        // File name only
+        const fileName = textContent.createDiv('nn-file-name');
         fileName.textContent = file.basename;
-
-        const fileDate = fileInfo.createDiv('nn-file-date');
-        fileDate.textContent = this.formatDate(file.stat.mtime);
 
         if (this.plugin.settings.showFilePreview) {
             this.app.vault.cachedRead(file).then(content => {
-                const preview = textContent.createDiv('nn-file-preview');
+                // Create preview line with date and text
+                const previewLine = textContent.createDiv('nn-file-preview-line');
+                
+                // Show date based on sort option
+                const fileDate = previewLine.createDiv('nn-file-date');
+                const sortOption = this.plugin.settings.sortOption;
+                if (sortOption === 'created') {
+                    fileDate.textContent = this.formatDate(file.stat.ctime);
+                } else {
+                    fileDate.textContent = this.formatDate(file.stat.mtime);
+                }
+                
+                const preview = previewLine.createDiv('nn-file-preview');
                 const previewText = this.extractPreviewText(content);
                 preview.textContent = previewText;
             });
+        } else {
+            // If no preview, still show date
+            const previewLine = textContent.createDiv('nn-file-preview-line');
+            const fileDate = previewLine.createDiv('nn-file-date');
+            const sortOption = this.plugin.settings.sortOption;
+            if (sortOption === 'created') {
+                fileDate.textContent = this.formatDate(file.stat.ctime);
+            } else {
+                fileDate.textContent = this.formatDate(file.stat.mtime);
+            }
         }
 
         // Add feature image if enabled
@@ -488,19 +509,40 @@ class NotebookNavigatorView extends ItemView {
 
     private formatDate(timestamp: number): string {
         const date = new Date(timestamp);
-        const now = new Date();
-        const diff = now.getTime() - date.getTime();
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const format = this.plugin.settings.dateFormat;
 
-        if (days === 0) {
-            return 'Today';
-        } else if (days === 1) {
-            return 'Yesterday';
-        } else if (days < 7) {
-            return `${days} days ago`;
-        } else {
-            return date.toLocaleDateString();
+        // Format the date using the format string
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        
+        const replacements: Record<string, string> = {
+            'yyyy': date.getFullYear().toString(),
+            'yy': date.getFullYear().toString().slice(-2),
+            'MMMM': date.toLocaleDateString('en-US', { month: 'long' }),
+            'MMM': date.toLocaleDateString('en-US', { month: 'short' }),
+            'MM': pad(date.getMonth() + 1),
+            'M': (date.getMonth() + 1).toString(),
+            'dd': pad(date.getDate()),
+            'd': date.getDate().toString(),
+            'HH': pad(date.getHours()),
+            'H': date.getHours().toString(),
+            'hh': pad(date.getHours() % 12 || 12),
+            'h': (date.getHours() % 12 || 12).toString(),
+            'mm': pad(date.getMinutes()),
+            'm': date.getMinutes().toString(),
+            'ss': pad(date.getSeconds()),
+            's': date.getSeconds().toString(),
+            'a': date.getHours() < 12 ? 'AM' : 'PM'
+        };
+
+        // Sort by length descending to replace longer patterns first
+        const patterns = Object.keys(replacements).sort((a, b) => b.length - a.length);
+        
+        let result = format;
+        for (const pattern of patterns) {
+            result = result.replace(new RegExp(pattern, 'g'), replacements[pattern]);
         }
+        
+        return result;
     }
 
     private openFile(file: TFile) {
@@ -1256,6 +1298,23 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.settings.selectionColor = value || '#B3D9FF';
                     await this.plugin.saveSettings();
                     this.plugin.updateSelectionColor();
+                }));
+
+        new Setting(containerEl)
+            .setName('Date format')
+            .setDesc('Format string for dates (e.g., yyyy-MM-dd for Swedish format, MMM d, yyyy for US format)')
+            .addText(text => text
+                .setPlaceholder('MMM d, yyyy')
+                .setValue(this.plugin.settings.dateFormat)
+                .onChange(async (value) => {
+                    this.plugin.settings.dateFormat = value || 'MMM d, yyyy';
+                    await this.plugin.saveSettings();
+                }))
+            .addExtraButton(button => button
+                .setIcon('help')
+                .setTooltip('yyyy=year, MM=month(01-12), MMM=month(Jan), d=day, HH=hour(24h), hh=hour(12h), mm=minute, a=AM/PM')
+                .onClick(() => {
+                    new Notice('Format tokens:\nyyyy = 4-digit year\nMM = 2-digit month\nMMM = Short month name\nd = Day\nHH = 24-hour\nhh = 12-hour\nmm = Minutes\na = AM/PM', 8000);
                 }));
 
         new Setting(containerEl)
