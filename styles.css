@@ -1,8 +1,340 @@
-/*
+/* Notebook Navigator - Apple Notes Style */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.notebook-navigator {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
 
-If your plugin does not need CSS, delete this file.
+.nn-split-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
 
-*/
+/* Left Pane - Folder Tree */
+.nn-left-pane {
+    width: 300px;
+    min-width: 200px;
+    background-color: var(--background-secondary);
+    border-right: 1px solid var(--background-modifier-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Right Pane - File List */
+.nn-right-pane {
+    flex: 1;
+    background-color: var(--background-primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Pane Headers */
+.nn-pane-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-primary);
+}
+
+.nn-pane-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.nn-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.nn-icon-button {
+    background: none;
+    border: none;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.nn-icon-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+/* Folder Tree */
+.nn-folder-tree {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 0;
+}
+
+.nn-folder-item {
+    user-select: none;
+}
+
+.nn-folder-content {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    border-radius: 6px;
+    margin: 0 8px;
+}
+
+.nn-folder-content:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.nn-folder-item.nn-selected > .nn-folder-content {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.nn-folder-item.nn-focused > .nn-folder-content {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: -2px;
+}
+
+.nn-folder-arrow {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+}
+
+.nn-folder-arrow.nn-no-children {
+    visibility: hidden;
+}
+
+.nn-folder-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+}
+
+.nn-folder-name {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nn-folder-children {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* File List */
+.nn-file-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.nn-file-item {
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    user-select: none;
+}
+
+.nn-file-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nn-file-item.nn-selected {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.nn-file-item.nn-selected .nn-file-date,
+.nn-file-item.nn-selected .nn-file-preview {
+    color: var(--text-on-accent);
+    opacity: 0.8;
+}
+
+.nn-file-item.nn-focused {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: -2px;
+}
+
+.nn-file-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nn-file-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.nn-file-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-normal);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nn-file-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.nn-file-preview {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Empty State */
+.nn-empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Drag and Drop */
+.nn-dragging {
+    opacity: 0.5;
+}
+
+.nn-drag-over {
+    background-color: var(--interactive-accent) !important;
+    opacity: 0.3;
+}
+
+/* Modals */
+.nn-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 14px;
+    margin: 16px 0;
+}
+
+.nn-input:focus {
+    outline: none;
+    border-color: var(--interactive-accent);
+}
+
+.nn-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* Scrollbar Styling */
+.nn-folder-tree::-webkit-scrollbar,
+.nn-file-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.nn-folder-tree::-webkit-scrollbar-track,
+.nn-file-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nn-folder-tree::-webkit-scrollbar-thumb,
+.nn-file-list::-webkit-scrollbar-thumb {
+    background-color: var(--background-modifier-border);
+    border-radius: 4px;
+}
+
+.nn-folder-tree::-webkit-scrollbar-thumb:hover,
+.nn-file-list::-webkit-scrollbar-thumb:hover {
+    background-color: var(--background-modifier-border-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nn-left-pane {
+        width: 200px;
+        min-width: 150px;
+    }
+    
+    .nn-pane-header {
+        padding: 12px 16px;
+    }
+    
+    .nn-file-item {
+        padding: 12px;
+    }
+    
+    .nn-file-name {
+        font-size: 14px;
+    }
+    
+    .nn-file-preview {
+        font-size: 13px;
+    }
+}
+
+/* Dark Theme Adjustments */
+.theme-dark .nn-file-item {
+    background-color: var(--background-secondary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark .nn-file-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Light Theme Adjustments */
+.theme-light .nn-file-item {
+    background-color: var(--background-secondary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.theme-light .nn-file-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
