@@ -16,16 +16,20 @@ import {
 
 const VIEW_TYPE_NOTEBOOK = 'notebook-navigator-view';
 
+type SortOption = 'modified' | 'created' | 'title';
+
 interface NotebookNavigatorSettings {
     replaceDefaultExplorer: boolean;
     showFilePreview: boolean;
     animationSpeed: number;
+    sortOption: SortOption;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     replaceDefaultExplorer: true,
     showFilePreview: true,
-    animationSpeed: 200
+    animationSpeed: 200,
+    sortOption: 'modified'
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -106,6 +110,7 @@ class NotebookNavigatorView extends ItemView {
     private folderTree: HTMLElement;
     private fileList: HTMLElement;
     private selectedFolder: TFolder | null = null;
+    private previousFolder: TFolder | null = null;
     private selectedFile: TFile | null = null;
     private expandedFolders: Set<string> = new Set();
     private focusedPane: 'folders' | 'files' = 'folders';
@@ -155,6 +160,15 @@ class NotebookNavigatorView extends ItemView {
         const fileHeaderTitle = fileHeader.createEl('h3', { text: 'Files' });
         
         const fileActions = fileHeader.createDiv('nn-header-actions');
+        
+        // Sort button
+        const sortBtn = fileActions.createEl('button', { 
+            cls: 'nn-sort-button',
+            attr: { 'aria-label': 'Sort files' }
+        });
+        this.updateSortButtonText(sortBtn);
+        sortBtn.addEventListener('click', (e) => this.showSortMenu(e));
+        
         const newFileBtn = fileActions.createEl('button', { 
             cls: 'nn-icon-button',
             attr: { 'aria-label': 'New File' }
@@ -181,7 +195,15 @@ class NotebookNavigatorView extends ItemView {
             this.handleKeyboardNavigation(e);
         });
 
+        // Set initial focus to container to enable keyboard navigation
+        (container as HTMLElement).tabIndex = 0;
+        
         this.refresh();
+        
+        // Focus the container after a short delay to ensure it's ready
+        setTimeout(() => {
+            (container as HTMLElement).focus();
+        }, 100);
     }
 
     async onClose() {
@@ -196,10 +218,14 @@ class NotebookNavigatorView extends ItemView {
     private renderFolderTree() {
         this.folderTree.empty();
         const rootFolder = this.app.vault.getRoot();
+        this.globalFolderIndex = 0;
         this.renderFolderItem(rootFolder, this.folderTree, 0);
     }
 
-    private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, index: number = 0) {
+    private globalFolderIndex: number = 0;
+
+    private renderFolderItem(folder: TFolder, container: HTMLElement, level: number) {
+        const index = this.globalFolderIndex++;
         const folderEl = container.createDiv({
             cls: 'nn-folder-item',
             attr: { 
@@ -239,7 +265,12 @@ class NotebookNavigatorView extends ItemView {
 
         folderContent.addEventListener('click', () => {
             this.selectFolder(folder);
-            this.focusedFolderIndex = index;
+            // Find the actual index of this folder in the current tree
+            const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
+            const clickedIndex = allFolders.findIndex(el => el.getAttribute('data-path') === folder.path);
+            if (clickedIndex >= 0) {
+                this.focusedFolderIndex = clickedIndex;
+            }
             this.focusedPane = 'folders';
             this.updateFocus();
         });
@@ -257,24 +288,62 @@ class NotebookNavigatorView extends ItemView {
                 .filter(child => child instanceof TFolder)
                 .sort((a, b) => a.name.localeCompare(b.name));
             
-            subfolders.forEach((subfolder, subIndex) => {
-                this.renderFolderItem(subfolder as TFolder, childrenContainer, level + 1, index + subIndex + 1);
+            subfolders.forEach((subfolder) => {
+                this.renderFolderItem(subfolder as TFolder, childrenContainer, level + 1);
             });
         }
     }
 
     private toggleFolder(folder: TFolder) {
+        const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
+        if (!folderEl) return;
+
         if (this.expandedFolders.has(folder.path)) {
             this.expandedFolders.delete(folder.path);
+            // Remove children container
+            const childrenContainer = folderEl.querySelector('.nn-folder-children');
+            if (childrenContainer) {
+                childrenContainer.remove();
+            }
+            // Update arrow icon
+            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
+            if (arrow) {
+                setIcon(arrow.parentElement as HTMLElement, 'chevron-right');
+            }
         } else {
             this.expandedFolders.add(folder.path);
+            // Add children container
+            const childrenContainer = folderEl.createDiv('nn-folder-children');
+            const subfolders = folder.children
+                .filter(child => child instanceof TFolder)
+                .sort((a, b) => a.name.localeCompare(b.name));
+            
+            subfolders.forEach((subfolder) => {
+                this.renderFolderItem(subfolder as TFolder, childrenContainer, 
+                    parseInt(folderEl.getAttribute('data-level') || '0') + 1);
+            });
+            // Update arrow icon
+            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
+            if (arrow) {
+                setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
+            }
         }
-        this.renderFolderTree();
     }
 
     private selectFolder(folder: TFolder) {
+        // Remove previous selection
+        const previousSelected = this.folderTree.querySelector('.nn-selected');
+        if (previousSelected) {
+            previousSelected.removeClass('nn-selected');
+        }
+
+        // Add new selection
+        const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
+        if (folderEl) {
+            folderEl.addClass('nn-selected');
+        }
+
         this.selectedFolder = folder;
-        this.renderFolderTree();
         this.refreshFileList();
     }
 
@@ -286,9 +355,23 @@ class NotebookNavigatorView extends ItemView {
             return;
         }
 
-        const files = this.selectedFolder.children
-            .filter(child => child instanceof TFile)
-            .sort((a, b) => (b as TFile).stat.mtime - (a as TFile).stat.mtime) as TFile[];
+        let files = this.selectedFolder.children
+            .filter(child => child instanceof TFile) as TFile[];
+
+        // Sort files based on current sort option
+        const sortOption = this.plugin.settings.sortOption;
+        files = files.sort((a, b) => {
+            switch (sortOption) {
+                case 'modified':
+                    return b.stat.mtime - a.stat.mtime;
+                case 'created':
+                    return b.stat.ctime - a.stat.ctime;
+                case 'title':
+                    return a.basename.localeCompare(b.basename);
+                default:
+                    return b.stat.mtime - a.stat.mtime;
+            }
+        });
 
         if (files.length === 0) {
             this.fileList.createDiv('nn-empty-state').setText('No files in this folder');
@@ -298,6 +381,14 @@ class NotebookNavigatorView extends ItemView {
         files.forEach((file, index) => {
             this.renderFileItem(file, index);
         });
+
+        // Auto-select and preview the first file when folder changes
+        if (files.length > 0 && this.selectedFolder !== this.previousFolder) {
+            this.selectedFile = files[0];
+            this.focusedFileIndex = 0;
+            this.previewFile(files[0]);
+        }
+        this.previousFolder = this.selectedFolder;
     }
 
     private renderFileItem(file: TFile, index: number) {
@@ -334,12 +425,24 @@ class NotebookNavigatorView extends ItemView {
             fileEl.addClass('nn-selected');
         }
 
-        fileEl.addEventListener('click', () => {
+        fileEl.addEventListener('click', (e) => {
+            e.preventDefault();
             this.selectedFile = file;
             this.focusedFileIndex = index;
             this.focusedPane = 'files';
             this.updateFocus();
-            this.openFile(file);
+            
+            // Preview the file when clicked
+            this.previewFile(file);
+            
+            // Refresh to show selection
+            this.refreshFileList();
+            
+            // Keep focus on the navigator
+            setTimeout(() => {
+                const container = this.containerEl.querySelector('.notebook-navigator') as HTMLElement;
+                if (container) container.focus();
+            }, 10);
         });
 
         fileEl.addEventListener('contextmenu', (e) => {
@@ -369,6 +472,20 @@ class NotebookNavigatorView extends ItemView {
 
     private openFile(file: TFile) {
         this.app.workspace.getLeaf(false).openFile(file);
+    }
+
+    private previewFile(file: TFile) {
+        // Open file in preview mode without stealing focus
+        const leaf = this.app.workspace.getLeaf(false);
+        leaf.openFile(file, { active: false });
+        
+        // Restore focus to navigator after a tiny delay
+        setTimeout(() => {
+            const container = this.containerEl.querySelector('.notebook-navigator') as HTMLElement;
+            if (container) {
+                container.focus();
+            }
+        }, 50);
     }
 
     private showFolderContextMenu(folder: TFolder, e: MouseEvent) {
@@ -618,30 +735,143 @@ class NotebookNavigatorView extends ItemView {
         switch (e.key) {
             case 'ArrowUp':
                 e.preventDefault();
+                e.stopPropagation();
                 if (this.focusedPane === 'folders') {
                     this.focusedFolderIndex = Math.max(0, this.focusedFolderIndex - 1);
+                    // Auto-select folder on navigation
+                    const folderEl = folders[this.focusedFolderIndex];
+                    if (folderEl) {
+                        const path = folderEl.getAttribute('data-path');
+                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
+                        if (folder) {
+                            this.selectFolder(folder);
+                        }
+                    }
                 } else {
                     this.focusedFileIndex = Math.max(0, this.focusedFileIndex - 1);
+                    // Update selection in file list
+                    if (files[this.focusedFileIndex]) {
+                        const path = files[this.focusedFileIndex].getAttribute('data-path');
+                        const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
+                        if (file) {
+                            this.selectedFile = file;
+                            this.refreshFileList();
+                            this.previewFile(file);
+                        }
+                    }
                 }
                 this.updateFocus();
                 break;
 
             case 'ArrowDown':
                 e.preventDefault();
+                e.stopPropagation();
                 if (this.focusedPane === 'folders') {
                     this.focusedFolderIndex = Math.min(folders.length - 1, this.focusedFolderIndex + 1);
+                    // Auto-select folder on navigation
+                    const folderEl = folders[this.focusedFolderIndex];
+                    if (folderEl) {
+                        const path = folderEl.getAttribute('data-path');
+                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
+                        if (folder) {
+                            this.selectFolder(folder);
+                        }
+                    }
                 } else {
                     this.focusedFileIndex = Math.min(files.length - 1, this.focusedFileIndex + 1);
+                    // Update selection in file list
+                    if (files[this.focusedFileIndex]) {
+                        const path = files[this.focusedFileIndex].getAttribute('data-path');
+                        const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
+                        if (file) {
+                            this.selectedFile = file;
+                            this.refreshFileList();
+                            this.previewFile(file);
+                        }
+                    }
                 }
                 this.updateFocus();
                 break;
 
+            case 'ArrowLeft':
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.focusedPane === 'folders') {
+                    const folderEl = folders[this.focusedFolderIndex];
+                    if (folderEl) {
+                        const path = folderEl.getAttribute('data-path');
+                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
+                        if (folder && this.expandedFolders.has(folder.path)) {
+                            // Collapse folder if expanded
+                            this.toggleFolder(folder);
+                        } else if (folder && folder.parent) {
+                            // Navigate to parent folder
+                            const parentIndex = folders.findIndex(el => 
+                                el.getAttribute('data-path') === folder.parent!.path
+                            );
+                            if (parentIndex >= 0) {
+                                this.focusedFolderIndex = parentIndex;
+                                // Auto-select parent folder
+                                const parentEl = folders[parentIndex];
+                                if (parentEl) {
+                                    const parentPath = parentEl.getAttribute('data-path');
+                                    const parentFolder = this.app.vault.getAbstractFileByPath(parentPath || '') as TFolder;
+                                    if (parentFolder) {
+                                        this.selectFolder(parentFolder);
+                                    }
+                                }
+                                this.updateFocus();
+                            }
+                        }
+                    }
+                } else if (this.focusedPane === 'files' && folders.length > 0) {
+                    // Move focus to folder pane
+                    this.focusedPane = 'folders';
+                    this.updateFocus();
+                }
+                break;
+
+            case 'ArrowRight':
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.focusedPane === 'folders') {
+                    const folderEl = folders[this.focusedFolderIndex];
+                    if (folderEl) {
+                        const path = folderEl.getAttribute('data-path');
+                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
+                        if (folder) {
+                            if (!this.expandedFolders.has(folder.path) && 
+                                folder.children.some(child => child instanceof TFolder)) {
+                                // Expand folder if it has subfolders
+                                this.toggleFolder(folder);
+                            } else if (files.length > 0) {
+                                // Move focus to file pane
+                                this.focusedPane = 'files';
+                                this.focusedFileIndex = 0;
+                                this.updateFocus();
+                            }
+                        }
+                    }
+                }
+                break;
+
             case 'Tab':
                 e.preventDefault();
+                e.stopPropagation();
                 if (!e.shiftKey) {
                     if (this.focusedPane === 'folders' && files.length > 0) {
                         this.focusedPane = 'files';
                         this.focusedFileIndex = 0;
+                    } else if (this.focusedPane === 'files') {
+                        // Tab from file list opens the selected file
+                        const fileEl = files[this.focusedFileIndex];
+                        if (fileEl) {
+                            const path = fileEl.getAttribute('data-path');
+                            const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
+                            if (file) {
+                                this.openFile(file);
+                            }
+                        }
                     }
                 } else {
                     if (this.focusedPane === 'files' && folders.length > 0) {
@@ -653,22 +883,29 @@ class NotebookNavigatorView extends ItemView {
 
             case 'Enter':
                 e.preventDefault();
+                e.stopPropagation();
                 if (this.focusedPane === 'folders') {
                     const folderEl = folders[this.focusedFolderIndex];
                     if (folderEl) {
                         const path = folderEl.getAttribute('data-path');
                         const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
                         if (folder) {
+                            // Toggle expand/collapse on Enter
+                            if (folder.children.some(child => child instanceof TFolder)) {
+                                this.toggleFolder(folder);
+                            }
                             this.selectFolder(folder);
                         }
                     }
                 } else {
+                    // Enter in file list just selects the file, Tab opens it
                     const fileEl = files[this.focusedFileIndex];
                     if (fileEl) {
                         const path = fileEl.getAttribute('data-path');
                         const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
                         if (file) {
-                            this.openFile(file);
+                            this.selectedFile = file;
+                            this.refreshFileList();
                         }
                     }
                 }
@@ -696,6 +933,47 @@ class NotebookNavigatorView extends ItemView {
                 focusedFile.scrollIntoView({ block: 'nearest' });
             }
         }
+    }
+
+    private updateSortButtonText(button: HTMLElement) {
+        const sortLabels = {
+            'modified': 'Date Edited',
+            'created': 'Date Created',
+            'title': 'Title'
+        };
+        button.textContent = sortLabels[this.plugin.settings.sortOption];
+    }
+
+    private showSortMenu(e: MouseEvent) {
+        const menu = new Menu();
+
+        const sortOptions: Array<{value: SortOption, label: string}> = [
+            { value: 'modified', label: 'Date Edited' },
+            { value: 'created', label: 'Date Created' },
+            { value: 'title', label: 'Title' }
+        ];
+
+        sortOptions.forEach(option => {
+            menu.addItem((item) => {
+                item.setTitle(option.label)
+                    .setChecked(this.plugin.settings.sortOption === option.value)
+                    .onClick(async () => {
+                        this.plugin.settings.sortOption = option.value;
+                        await this.plugin.saveSettings();
+                        
+                        // Update button text
+                        const sortBtn = this.containerEl.querySelector('.nn-sort-button') as HTMLElement;
+                        if (sortBtn) {
+                            this.updateSortButtonText(sortBtn);
+                        }
+                        
+                        // Refresh file list with new sort
+                        this.refreshFileList();
+                    });
+            });
+        });
+
+        menu.showAtMouseEvent(e);
     }
 }
 
@@ -805,6 +1083,19 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.showFilePreview)
                 .onChange(async (value) => {
                     this.plugin.settings.showFilePreview = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Sort files by')
+            .setDesc('Choose how files are sorted in the file list')
+            .addDropdown(dropdown => dropdown
+                .addOption('modified', 'Date Edited')
+                .addOption('created', 'Date Created')
+                .addOption('title', 'Title')
+                .setValue(this.plugin.settings.sortOption)
+                .onChange(async (value: SortOption) => {
+                    this.plugin.settings.sortOption = value;
                     await this.plugin.saveSettings();
                 }));
 

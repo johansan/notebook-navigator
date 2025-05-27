@@ -8,6 +8,10 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+.notebook-navigator:focus {
+    outline: none;
+}
+
 .nn-split-container {
     display: flex;
     height: 100%;
@@ -69,6 +73,26 @@
 .nn-icon-button:hover {
     background-color: var(--background-modifier-hover);
     color: var(--text-normal);
+}
+
+/* Sort Button */
+.nn-sort-button {
+    background: none;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+}
+
+.nn-sort-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+    border-color: var(--background-modifier-border-hover);
 }
 
 /* Folder Tree */
