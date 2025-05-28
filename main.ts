@@ -52,6 +52,7 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
+    view: NotebookNavigatorView | null = null;
 
     async onload() {
         await this.loadSettings();
@@ -59,13 +60,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.registerView(
             VIEW_TYPE_NOTEBOOK,
             (leaf) => {
-                try {
-                    return new NotebookNavigatorView(leaf, this);
-                } catch (error) {
-                    console.error('Failed to create NotebookNavigatorView:', error);
-                    new Notice('Failed to create Notebook Navigator view');
-                    throw error;
+                // Create view only if it doesn't exist
+                if (!this.view) {
+                    this.view = new NotebookNavigatorView(leaf, this);
                 }
+                return this.view;
             }
         );
 
@@ -108,7 +107,7 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.updateSelectionColor();
 
         // Handle replacing default explorer on startup
-        this.app.workspace.onLayoutReady(async () => {
+        this.app.workspace.onLayoutReady(() => {
             if (this.settings.replaceDefaultExplorer) {
                 this.replaceFileExplorer();
             }
@@ -122,8 +121,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Clean up the ribbon icon
         this.ribbonIconEl?.remove();
         
-        // Properly detach all leaves
-        this.detachNavigatorLeaves();
+        // Clear the view reference
+        this.view = null;
+        
+        // Detach all leaves
+        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NOTEBOOK);
     }
 
     async loadSettings() {
@@ -144,13 +146,13 @@ export default class NotebookNavigatorPlugin extends Plugin {
         const leaves = workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
 
         if (leaves.length > 0) {
-            // Already mounted - show if requested
+            // View already exists
             leaf = leaves[0];
             if (showAfterAttach) {
-                leaves.forEach((l) => workspace.revealLeaf(l));
+                workspace.revealLeaf(leaf);
             }
         } else {
-            // Needs to be mounted
+            // Create new leaf
             leaf = workspace.getLeftLeaf(false);
             if (leaf) {
                 await leaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
@@ -167,6 +169,9 @@ export default class NotebookNavigatorPlugin extends Plugin {
         const fileExplorerLeaf = this.app.workspace.getLeavesOfType('file-explorer')[0];
         if (fileExplorerLeaf) {
             fileExplorerLeaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
+        } else {
+            // If no file explorer, just activate the view
+            this.activateView(true);
         }
     }
 
@@ -196,10 +201,6 @@ export default class NotebookNavigatorPlugin extends Plugin {
         });
     }
 
-    private detachNavigatorLeaves(): void {
-        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
-        leaves.forEach(leaf => leaf.detach());
-    }
 }
 
 class NotebookNavigatorView extends ItemView {
@@ -356,6 +357,11 @@ class NotebookNavigatorView extends ItemView {
         
         // Save state before closing
         await this.saveState();
+        
+        // Clear the plugin's reference to this view
+        if (this.plugin.view === this) {
+            this.plugin.view = null;
+        }
     }
 
     private async loadState() {
@@ -429,7 +435,7 @@ class NotebookNavigatorView extends ItemView {
         this.eventRefs.push(() => handle.removeEventListener('mousedown', mouseDownHandler));
     }
 
-    private refresh() {
+    refresh() {
         this.renderFolderTree();
         this.refreshFileList();
         // Update sort button text
