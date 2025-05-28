@@ -14,6 +14,7 @@ import {
     PluginSettingTab,
     CachedMetadata
 } from 'obsidian';
+import { format } from 'date-fns';
 
 const VIEW_TYPE_NOTEBOOK = 'notebook-navigator-view';
 
@@ -780,51 +781,12 @@ class NotebookNavigatorView extends ItemView {
 
     private formatDate(timestamp: number): string {
         const date = new Date(timestamp);
-        const format = this.plugin.settings.dateFormat;
-
-        // Format the date using the format string
-        const pad = (n: number) => n.toString().padStart(2, '0');
-        
-        const replacements: Record<string, string> = {
-            'yyyy': date.getFullYear().toString(),
-            'yy': date.getFullYear().toString().slice(-2),
-            'MMMM': date.toLocaleDateString('en-US', { month: 'long' }),
-            'MMM': date.toLocaleDateString('en-US', { month: 'short' }),
-            'MM': pad(date.getMonth() + 1),
-            'M': (date.getMonth() + 1).toString(),
-            'dd': pad(date.getDate()),
-            'd': date.getDate().toString(),
-            'HH': pad(date.getHours()),
-            'H': date.getHours().toString(),
-            'hh': pad(date.getHours() % 12 || 12),
-            'h': (date.getHours() % 12 || 12).toString(),
-            'mm': pad(date.getMinutes()),
-            'm': date.getMinutes().toString(),
-            'ss': pad(date.getSeconds()),
-            's': date.getSeconds().toString(),
-            'a': date.getHours() < 12 ? 'AM' : 'PM'
-        };
-
-        // Use a single pass replacement with placeholders to avoid re-replacing
-        let result = format;
-        const placeholders: Map<string, string> = new Map();
-        
-        // Sort by length descending to replace longer patterns first
-        const patterns = Object.keys(replacements).sort((a, b) => b.length - a.length);
-        
-        // First pass: replace patterns with unique placeholders
-        patterns.forEach((pattern, index) => {
-            const placeholder = `__PLACEHOLDER_${index}__`;
-            placeholders.set(placeholder, replacements[pattern]);
-            result = result.replace(new RegExp(pattern, 'g'), placeholder);
-        });
-        
-        // Second pass: replace placeholders with actual values
-        placeholders.forEach((value, placeholder) => {
-            result = result.replace(new RegExp(placeholder, 'g'), value);
-        });
-        
-        return result;
+        try {
+            return format(date, this.plugin.settings.dateFormat);
+        } catch (e) {
+            // If invalid format string, fall back to default
+            return format(date, 'MMM d, yyyy');
+        }
     }
 
     private openFile(file: TFile) {
@@ -1712,15 +1674,15 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.createDebouncedTextSetting(
             containerEl,
             'Date format',
-            'Format string for dates (e.g., yyyy-MM-dd for Swedish format, MMM d, yyyy for US format)',
+            'Format string for dates (uses date-fns format)',
             'MMM d, yyyy',
             () => this.plugin.settings.dateFormat,
             (value) => { this.plugin.settings.dateFormat = value || 'MMM d, yyyy'; }
         ).addExtraButton(button => button
             .setIcon('help')
-            .setTooltip('yyyy=year, MM=month(01-12), MMM=month(Jan), d=day, HH=hour(24h), hh=hour(12h), mm=minute, a=AM/PM')
+            .setTooltip('Click for format reference')
             .onClick(() => {
-                new Notice('Format tokens:\nyyyy = 4-digit year\nMM = 2-digit month\nMMM = Short month name\nd = Day\nHH = 24-hour\nhh = 12-hour\nmm = Minutes\na = AM/PM', 8000);
+                new Notice('Common formats:\nMMM d, yyyy = May 25, 2022\ndd/MM/yyyy = 25/05/2022\nyyyy-MM-dd = 2022-05-25\nEEEE, MMMM do, yyyy = Thursday, May 25th, 2022\n\nTokens:\nyyyy/yy = year\nMMMM/MMM/MM = month\ndd/d = day\nEEEE/EEE = weekday\nHH/hh = hour\nmm = minute\nss = second\na = AM/PM', 10000);
             }));
 
         this.createDebouncedTextSetting(
