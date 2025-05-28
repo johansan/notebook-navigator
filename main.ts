@@ -51,32 +51,55 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
 
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
-    private ribbonIcon: HTMLElement;
+    ribbonIconEl: HTMLElement | undefined = undefined;
 
     async onload() {
         await this.loadSettings();
 
         this.registerView(
             VIEW_TYPE_NOTEBOOK,
-            (leaf) => new NotebookNavigatorView(leaf, this)
+            (leaf) => {
+                try {
+                    return new NotebookNavigatorView(leaf, this);
+                } catch (error) {
+                    console.error('Failed to create NotebookNavigatorView:', error);
+                    new Notice('Failed to create Notebook Navigator view');
+                    throw error;
+                }
+            }
         );
 
         this.addCommand({
             id: 'open-notebook-navigator',
             name: 'Open Notebook Navigator',
-            callback: () => {
-                this.activateView();
+            callback: async () => {
+                await this.activateView(true);
             }
         });
 
-        // Remove any existing ribbon icons before adding a new one
-        const existingIcon = (this.app as any).workspace.ribbonIconElsByPlugin?.[this.manifest.id];
-        if (existingIcon) {
-            existingIcon.remove();
-        }
-        
-        this.ribbonIcon = this.addRibbonIcon('folder-tree', 'Notebook Navigator', () => {
-            this.activateView();
+        this.addCommand({
+            id: 'reveal-active-file',
+            name: 'Reveal Active File in Navigator',
+            callback: async () => {
+                // Ensure navigator is open
+                const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+                if (leaves.length === 0) {
+                    await this.activateView(true);
+                }
+                
+                // Get the active file
+                const activeFile = this.app.workspace.getActiveFile();
+                if (activeFile && activeFile.parent) {
+                    // Find and update the navigator view
+                    const navigatorLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+                    navigatorLeaves.forEach(leaf => {
+                        const view = leaf.view;
+                        if (view instanceof NotebookNavigatorView) {
+                            view.revealFile(activeFile);
+                        }
+                    });
+                }
+            }
         });
 
         this.addSettingTab(new NotebookNavigatorSettingTab(this.app, this));
@@ -84,20 +107,23 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Set initial selection color
         this.updateSelectionColor();
 
-        if (this.settings.replaceDefaultExplorer) {
-            this.app.workspace.onLayoutReady(() => {
+        // Handle replacing default explorer on startup
+        this.app.workspace.onLayoutReady(async () => {
+            if (this.settings.replaceDefaultExplorer) {
                 this.replaceFileExplorer();
-            });
-        }
+            }
+        });
+
+        // Ribbon Icon For Opening
+        this.refreshIconRibbon();
     }
 
     onunload() {
         // Clean up the ribbon icon
-        if (this.ribbonIcon) {
-            this.ribbonIcon.remove();
-        }
+        this.ribbonIconEl?.remove();
         
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        // Properly detach all leaves
+        this.detachNavigatorLeaves();
     }
 
     async loadSettings() {
@@ -111,24 +137,30 @@ export default class NotebookNavigatorPlugin extends Plugin {
         await this.saveData(data);
     }
 
-    async activateView() {
+    async activateView(showAfterAttach = true) {
         const { workspace } = this.app;
 
         let leaf: WorkspaceLeaf | null = null;
         const leaves = workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
 
         if (leaves.length > 0) {
+            // Already mounted - show if requested
             leaf = leaves[0];
+            if (showAfterAttach) {
+                leaves.forEach((l) => workspace.revealLeaf(l));
+            }
         } else {
+            // Needs to be mounted
             leaf = workspace.getLeftLeaf(false);
             if (leaf) {
                 await leaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
+                if (showAfterAttach) {
+                    workspace.revealLeaf(leaf);
+                }
             }
         }
 
-        if (leaf) {
-            workspace.revealLeaf(leaf);
-        }
+        return leaf;
     }
 
     private replaceFileExplorer() {
@@ -156,6 +188,18 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Update selection color
         this.updateSelectionColor();
     }
+
+    refreshIconRibbon() {
+        this.ribbonIconEl?.remove();
+        this.ribbonIconEl = this.addRibbonIcon('folder-tree', 'Notebook Navigator', async () => {
+            await this.activateView(true);
+        });
+    }
+
+    private detachNavigatorLeaves(): void {
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        leaves.forEach(leaf => leaf.detach());
+    }
 }
 
 class NotebookNavigatorView extends ItemView {
@@ -173,6 +217,9 @@ class NotebookNavigatorView extends ItemView {
     private splitContainer: HTMLElement;
     private resizing: boolean = false;
     private sortButton: HTMLElement | null = null;
+    private eventRefs: Array<() => void> = [];
+    private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
+    private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -209,7 +256,9 @@ class NotebookNavigatorView extends ItemView {
             attr: { 'aria-label': 'New Folder' }
         });
         setIcon(newFolderBtn, 'folder-plus');
-        newFolderBtn.addEventListener('click', () => this.createNewFolder());
+        const newFolderClickHandler = () => this.createNewFolder();
+        newFolderBtn.addEventListener('click', newFolderClickHandler);
+        this.eventRefs.push(() => newFolderBtn.removeEventListener('click', newFolderClickHandler));
 
         this.folderTree = this.leftPane.createDiv('nn-folder-tree');
         
@@ -229,14 +278,18 @@ class NotebookNavigatorView extends ItemView {
             attr: { 'aria-label': 'Sort files' }
         });
         this.updateSortButtonText(this.sortButton);
-        this.sortButton.addEventListener('click', (e) => this.showSortMenu(e));
+        const sortClickHandler = (e: MouseEvent) => this.showSortMenu(e);
+        this.sortButton.addEventListener('click', sortClickHandler);
+        this.eventRefs.push(() => this.sortButton?.removeEventListener('click', sortClickHandler));
         
         const newFileBtn = fileActions.createEl('button', { 
             cls: 'nn-icon-button',
             attr: { 'aria-label': 'New File' }
         });
         setIcon(newFileBtn, 'file-plus');
-        newFileBtn.addEventListener('click', () => this.createNewFile());
+        const newFileClickHandler = () => this.createNewFile();
+        newFileBtn.addEventListener('click', newFileClickHandler);
+        this.eventRefs.push(() => newFileBtn.removeEventListener('click', newFileClickHandler));
 
         this.fileList = rightPane.createDiv('nn-file-list');
 
@@ -253,9 +306,11 @@ class NotebookNavigatorView extends ItemView {
             this.app.vault.on('modify', () => this.refreshFileList())
         );
 
-        this.registerDomEvent(container as HTMLElement, 'keydown', (e: KeyboardEvent) => {
+        const keydownHandler = (e: KeyboardEvent) => {
             this.handleKeyboardNavigation(e);
-        });
+        };
+        (container as HTMLElement).addEventListener('keydown', keydownHandler);
+        this.eventRefs.push(() => (container as HTMLElement).removeEventListener('keydown', keydownHandler));
 
         // Set initial focus to container to enable keyboard navigation
         (container as HTMLElement).tabIndex = 0;
@@ -285,6 +340,20 @@ class NotebookNavigatorView extends ItemView {
     }
 
     async onClose() {
+        // Clean up stored event listeners
+        this.eventRefs.forEach(cleanup => cleanup());
+        this.eventRefs = [];
+        
+        // Clean up resize handlers if active
+        if (this.resizeMouseMoveHandler) {
+            document.removeEventListener('mousemove', this.resizeMouseMoveHandler);
+            this.resizeMouseMoveHandler = null;
+        }
+        if (this.resizeMouseUpHandler) {
+            document.removeEventListener('mouseup', this.resizeMouseUpHandler);
+            this.resizeMouseUpHandler = null;
+        }
+        
         // Save state before closing
         await this.saveState();
     }
@@ -319,7 +388,7 @@ class NotebookNavigatorView extends ItemView {
         let startX: number;
         let startWidth: number;
 
-        const onMouseMove = (e: MouseEvent) => {
+        this.resizeMouseMoveHandler = (e: MouseEvent) => {
             if (!this.resizing) return;
             
             const deltaX = e.clientX - startX;
@@ -327,12 +396,17 @@ class NotebookNavigatorView extends ItemView {
             this.leftPane.style.width = `${newWidth}px`;
         };
 
-        const onMouseUp = async (e: MouseEvent) => {
+        this.resizeMouseUpHandler = async (e: MouseEvent) => {
             if (!this.resizing) return;
             
             this.resizing = false;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+            
+            if (this.resizeMouseMoveHandler) {
+                document.removeEventListener('mousemove', this.resizeMouseMoveHandler);
+            }
+            if (this.resizeMouseUpHandler) {
+                document.removeEventListener('mouseup', this.resizeMouseUpHandler);
+            }
             
             // Save the new width
             const newWidth = parseInt(this.leftPane.style.width);
@@ -340,16 +414,19 @@ class NotebookNavigatorView extends ItemView {
             await this.plugin.saveSettings();
         };
 
-        handle.addEventListener('mousedown', (e: MouseEvent) => {
+        const mouseDownHandler = (e: MouseEvent) => {
             this.resizing = true;
             startX = e.clientX;
             startWidth = this.leftPane.offsetWidth;
             
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener('mousemove', this.resizeMouseMoveHandler!);
+            document.addEventListener('mouseup', this.resizeMouseUpHandler!);
             
             e.preventDefault();
-        });
+        };
+
+        handle.addEventListener('mousedown', mouseDownHandler);
+        this.eventRefs.push(() => handle.removeEventListener('mousedown', mouseDownHandler));
     }
 
     private refresh() {
@@ -1359,6 +1436,30 @@ class NotebookNavigatorView extends ItemView {
         });
 
         menu.showAtMouseEvent(e);
+    }
+
+    revealFile(file: TFile) {
+        // Ensure parent folders are expanded
+        if (file.parent) {
+            this.ensureFolderVisible(file.parent);
+            this.selectedFolder = file.parent;
+            this.selectedFile = file;
+            
+            // Refresh the view
+            this.refresh();
+            
+            // Find and focus the file in the list
+            setTimeout(() => {
+                const fileEls = this.fileList.querySelectorAll('.nn-file-item');
+                fileEls.forEach((el, index) => {
+                    if (el.getAttribute('data-path') === file.path) {
+                        this.focusedFileIndex = index;
+                        this.focusedPane = 'files';
+                        this.updateFocus();
+                    }
+                });
+            }, 100);
+        }
     }
 }
 
