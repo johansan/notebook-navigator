@@ -52,20 +52,13 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
-    view: NotebookNavigatorView | null = null;
 
     async onload() {
         await this.loadSettings();
 
         this.registerView(
             VIEW_TYPE_NOTEBOOK,
-            (leaf) => {
-                // Create view only if it doesn't exist
-                if (!this.view) {
-                    this.view = new NotebookNavigatorView(leaf, this);
-                }
-                return this.view;
-            }
+            (leaf) => new NotebookNavigatorView(leaf, this)
         );
 
         this.addCommand({
@@ -107,9 +100,16 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.updateSelectionColor();
 
         // Handle replacing default explorer on startup
-        this.app.workspace.onLayoutReady(() => {
+        this.app.workspace.onLayoutReady(async () => {
             if (this.settings.replaceDefaultExplorer) {
-                this.replaceFileExplorer();
+                // Check if view already exists before replacing
+                const existingLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+                if (existingLeaves.length === 0) {
+                    this.replaceFileExplorer();
+                } else {
+                    // Just reveal the existing view
+                    this.app.workspace.revealLeaf(existingLeaves[0]);
+                }
             }
         });
 
@@ -121,11 +121,8 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Clean up the ribbon icon
         this.ribbonIconEl?.remove();
         
-        // Clear the view reference
-        this.view = null;
-        
-        // Detach all leaves
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        // Properly detach all notebook navigator leaves
+        this.detachNotebookNavigatorLeaves();
     }
 
     async loadSettings() {
@@ -146,13 +143,13 @@ export default class NotebookNavigatorPlugin extends Plugin {
         const leaves = workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
 
         if (leaves.length > 0) {
-            // View already exists
+            // View already exists - just reveal it
             leaf = leaves[0];
             if (showAfterAttach) {
                 workspace.revealLeaf(leaf);
             }
         } else {
-            // Create new leaf
+            // Create new leaf only if none exists
             leaf = workspace.getLeftLeaf(false);
             if (leaf) {
                 await leaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
@@ -162,10 +159,28 @@ export default class NotebookNavigatorPlugin extends Plugin {
             }
         }
 
+        // No need to store reference anymore
+
         return leaf;
     }
 
+    private async detachNotebookNavigatorLeaves() {
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        for (const leaf of leaves) {
+            leaf.detach();
+        }
+    }
+
     private replaceFileExplorer() {
+        // First check if notebook navigator already exists
+        const existingLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        if (existingLeaves.length > 0) {
+            // Already exists, just reveal it
+            this.app.workspace.revealLeaf(existingLeaves[0]);
+            return;
+        }
+
+        // Otherwise, replace the file explorer
         const fileExplorerLeaf = this.app.workspace.getLeavesOfType('file-explorer')[0];
         if (fileExplorerLeaf) {
             fileExplorerLeaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
@@ -199,6 +214,12 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.ribbonIconEl = this.addRibbonIcon('folder-tree', 'Notebook Navigator', async () => {
             await this.activateView(true);
         });
+    }
+
+    async refreshView() {
+        // Detach existing views and create a new one
+        await this.detachNotebookNavigatorLeaves();
+        await this.activateView(true);
     }
 
 }
@@ -358,10 +379,7 @@ class NotebookNavigatorView extends ItemView {
         // Save state before closing
         await this.saveState();
         
-        // Clear the plugin's reference to this view
-        if (this.plugin.view === this) {
-            this.plugin.view = null;
-        }
+        // No plugin reference to clear anymore
     }
 
     private async loadState() {
