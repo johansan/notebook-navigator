@@ -805,13 +805,24 @@ class NotebookNavigatorView extends ItemView {
             'a': date.getHours() < 12 ? 'AM' : 'PM'
         };
 
+        // Use a single pass replacement with placeholders to avoid re-replacing
+        let result = format;
+        const placeholders: Map<string, string> = new Map();
+        
         // Sort by length descending to replace longer patterns first
         const patterns = Object.keys(replacements).sort((a, b) => b.length - a.length);
         
-        let result = format;
-        for (const pattern of patterns) {
-            result = result.replace(new RegExp(pattern, 'g'), replacements[pattern]);
-        }
+        // First pass: replace patterns with unique placeholders
+        patterns.forEach((pattern, index) => {
+            const placeholder = `__PLACEHOLDER_${index}__`;
+            placeholders.set(placeholder, replacements[pattern]);
+            result = result.replace(new RegExp(pattern, 'g'), placeholder);
+        });
+        
+        // Second pass: replace placeholders with actual values
+        placeholders.forEach((value, placeholder) => {
+            result = result.replace(new RegExp(placeholder, 'g'), value);
+        });
         
         return result;
     }
@@ -1563,10 +1574,56 @@ class ConfirmModal extends Modal {
 
 class NotebookNavigatorSettingTab extends PluginSettingTab {
     plugin: NotebookNavigatorPlugin;
+    private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
 
     constructor(app: App, plugin: NotebookNavigatorPlugin) {
         super(app, plugin);
         this.plugin = plugin;
+    }
+
+    private createDebouncedTextSetting(
+        container: HTMLElement,
+        name: string,
+        desc: string,
+        placeholder: string,
+        getValue: () => string,
+        setValue: (value: string) => void,
+        refreshView: boolean = true,
+        validator?: (value: string) => boolean
+    ): Setting {
+        return new Setting(container)
+            .setName(name)
+            .setDesc(desc)
+            .addText(text => text
+                .setPlaceholder(placeholder)
+                .setValue(getValue())
+                .onChange(async (value) => {
+                    // Clear existing timer for this setting
+                    const timerId = `setting-${name}`;
+                    if (this.debounceTimers.has(timerId)) {
+                        clearTimeout(this.debounceTimers.get(timerId)!);
+                    }
+                    
+                    // Set new timer
+                    const timer = setTimeout(async () => {
+                        // Validate if validator provided
+                        if (!validator || validator(value)) {
+                            setValue(value);
+                            await this.plugin.saveSettings();
+                            
+                            if (refreshView) {
+                                this.plugin.onSettingsChange();
+                            } else {
+                                // For color setting that only updates CSS
+                                this.plugin.updateSelectionColor();
+                            }
+                        }
+                        
+                        this.debounceTimers.delete(timerId);
+                    }, 500);
+                    
+                    this.debounceTimers.set(timerId, timer);
+                }));
     }
 
     display(): void {
@@ -1619,17 +1676,14 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        new Setting(containerEl)
-            .setName('Feature image property')
-            .setDesc('The frontmatter property name used for feature images')
-            .addText(text => text
-                .setPlaceholder('feature')
-                .setValue(this.plugin.settings.featureImageProperty)
-                .onChange(async (value) => {
-                    this.plugin.settings.featureImageProperty = value || 'feature';
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Feature image property',
+            'The frontmatter property name used for feature images',
+            'feature',
+            () => this.plugin.settings.featureImageProperty,
+            (value) => { this.plugin.settings.featureImageProperty = value || 'feature'; }
+        );
 
         new Setting(containerEl)
             .setName('Sort files by')
@@ -1645,49 +1699,48 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        new Setting(containerEl)
-            .setName('Selection color')
-            .setDesc('Background color for selected files (hex format)')
-            .addText(text => text
-                .setPlaceholder('#B3D9FF')
-                .setValue(this.plugin.settings.selectionColor)
-                .onChange(async (value) => {
-                    this.plugin.settings.selectionColor = value || '#B3D9FF';
-                    await this.plugin.saveSettings();
-                    this.plugin.updateSelectionColor();
-                }));
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Selection color',
+            'Background color for selected files (hex format)',
+            '#B3D9FF',
+            () => this.plugin.settings.selectionColor,
+            (value) => { this.plugin.settings.selectionColor = value || '#B3D9FF'; },
+            false  // Don't refresh view, just update CSS
+        );
 
-        new Setting(containerEl)
-            .setName('Date format')
-            .setDesc('Format string for dates (e.g., yyyy-MM-dd for Swedish format, MMM d, yyyy for US format)')
-            .addText(text => text
-                .setPlaceholder('MMM d, yyyy')
-                .setValue(this.plugin.settings.dateFormat)
-                .onChange(async (value) => {
-                    this.plugin.settings.dateFormat = value || 'MMM d, yyyy';
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }))
-            .addExtraButton(button => button
-                .setIcon('help')
-                .setTooltip('yyyy=year, MM=month(01-12), MMM=month(Jan), d=day, HH=hour(24h), hh=hour(12h), mm=minute, a=AM/PM')
-                .onClick(() => {
-                    new Notice('Format tokens:\nyyyy = 4-digit year\nMM = 2-digit month\nMMM = Short month name\nd = Day\nHH = 24-hour\nhh = 12-hour\nmm = Minutes\na = AM/PM', 8000);
-                }));
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Date format',
+            'Format string for dates (e.g., yyyy-MM-dd for Swedish format, MMM d, yyyy for US format)',
+            'MMM d, yyyy',
+            () => this.plugin.settings.dateFormat,
+            (value) => { this.plugin.settings.dateFormat = value || 'MMM d, yyyy'; }
+        ).addExtraButton(button => button
+            .setIcon('help')
+            .setTooltip('yyyy=year, MM=month(01-12), MMM=month(Jan), d=day, HH=hour(24h), hh=hour(12h), mm=minute, a=AM/PM')
+            .onClick(() => {
+                new Notice('Format tokens:\nyyyy = 4-digit year\nMM = 2-digit month\nMMM = Short month name\nd = Day\nHH = 24-hour\nhh = 12-hour\nmm = Minutes\na = AM/PM', 8000);
+            }));
 
-        new Setting(containerEl)
-            .setName('Animation speed')
-            .setDesc('Speed of UI animations in milliseconds')
-            .addText(text => text
-                .setPlaceholder('200')
-                .setValue(this.plugin.settings.animationSpeed.toString())
-                .onChange(async (value) => {
-                    const speed = parseInt(value);
-                    if (!isNaN(speed) && speed >= 0) {
-                        this.plugin.settings.animationSpeed = speed;
-                        await this.plugin.saveSettings();
-                    }
-                }));
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Animation speed',
+            'Speed of UI animations in milliseconds',
+            '200',
+            () => this.plugin.settings.animationSpeed.toString(),
+            (value) => {
+                const speed = parseInt(value);
+                if (!isNaN(speed) && speed >= 0) {
+                    this.plugin.settings.animationSpeed = speed;
+                }
+            },
+            false,  // Don't refresh view for animation speed
+            (value) => {
+                const speed = parseInt(value);
+                return !isNaN(speed) && speed >= 0;
+            }
+        );
 
         new Setting(containerEl)
             .setName('Show root folder')
@@ -1700,16 +1753,19 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        new Setting(containerEl)
-            .setName('Ignore folders')
-            .setDesc('Comma-separated list of root folders to hide (e.g., ".obsidian, templates, archive")')
-            .addText(text => text
-                .setPlaceholder('folder1, folder2')
-                .setValue(this.plugin.settings.ignoreFolders)
-                .onChange(async (value) => {
-                    this.plugin.settings.ignoreFolders = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Ignore folders',
+            'Comma-separated list of root folders to hide (e.g., ".obsidian, templates, archive")',
+            'folder1, folder2',
+            () => this.plugin.settings.ignoreFolders,
+            (value) => { this.plugin.settings.ignoreFolders = value; }
+        );
+    }
+
+    hide(): void {
+        // Clean up all pending debounce timers when settings tab is closed
+        this.debounceTimers.forEach(timer => clearTimeout(timer));
+        this.debounceTimers.clear();
     }
 }
