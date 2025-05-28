@@ -54,6 +54,14 @@ export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
 
+    // LocalStorage keys for state persistence
+    keys = {
+        expandedFoldersKey: 'notebook-navigator-expanded-folders',
+        selectedFolderKey: 'notebook-navigator-selected-folder',
+        selectedFileKey: 'notebook-navigator-selected-file',
+        leftPaneWidthKey: 'notebook-navigator-left-pane-width'
+    };
+
     async onload() {
         await this.loadSettings();
 
@@ -243,6 +251,7 @@ class NotebookNavigatorView extends ItemView {
     private eventRefs: Array<() => void> = [];
     private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
     private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;
+    private isLoading: boolean = true;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -346,14 +355,21 @@ class NotebookNavigatorView extends ItemView {
         
         this.refresh();
         
-        // After refresh, restore the selected folder and ensure it's visible
+        // After refresh, restore the selected folder and file
         if (this.selectedFolder) {
             // Make sure parent folders are expanded
             this.ensureFolderVisible(this.selectedFolder);
             // Use setTimeout to ensure DOM is ready
             setTimeout(() => {
                 this.selectFolder(this.selectedFolder!);
+                // If we have a selected file, ensure it's selected too
+                if (this.selectedFile) {
+                    this.refreshFileList();
+                }
+                this.isLoading = false;
             }, 50);
+        } else {
+            this.isLoading = false;
         }
         
         // Focus the container after a short delay to ensure it's ready
@@ -384,29 +400,71 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private async loadState() {
-        const data = await this.plugin.loadData();
-        if (data?.viewState) {
-            // Restore expanded folders
-            if (data.viewState.expandedFolders) {
-                this.expandedFolders = new Set(data.viewState.expandedFolders);
+        // Load expanded folders from localStorage
+        const expandedFoldersJson = localStorage.getItem(this.plugin.keys.expandedFoldersKey);
+        if (expandedFoldersJson) {
+            try {
+                const expandedFolderPaths = JSON.parse(expandedFoldersJson) as string[];
+                // Validate that folders still exist
+                expandedFolderPaths.forEach(path => {
+                    const folder = this.app.vault.getAbstractFileByPath(path);
+                    if (folder instanceof TFolder) {
+                        this.expandedFolders.add(path);
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to load expanded folders:', e);
             }
-            // Restore selected folder
-            if (data.viewState.selectedFolderPath) {
-                const folder = this.app.vault.getAbstractFileByPath(data.viewState.selectedFolderPath);
-                if (folder instanceof TFolder) {
-                    this.selectedFolder = folder;
-                }
+        }
+        
+        // Load selected folder from localStorage
+        const selectedFolderPath = localStorage.getItem(this.plugin.keys.selectedFolderKey);
+        if (selectedFolderPath) {
+            const folder = this.app.vault.getAbstractFileByPath(selectedFolderPath);
+            if (folder instanceof TFolder) {
+                this.selectedFolder = folder;
+            }
+        }
+        
+        // Load selected file from localStorage
+        const selectedFilePath = localStorage.getItem(this.plugin.keys.selectedFileKey);
+        if (selectedFilePath) {
+            const file = this.app.vault.getAbstractFileByPath(selectedFilePath);
+            if (file instanceof TFile) {
+                this.selectedFile = file;
+            }
+        }
+        
+        // Load left pane width from localStorage
+        const leftPaneWidth = localStorage.getItem(this.plugin.keys.leftPaneWidthKey);
+        if (leftPaneWidth) {
+            const width = parseInt(leftPaneWidth);
+            if (!isNaN(width) && width >= 150 && width <= 600) {
+                this.plugin.settings.leftPaneWidth = width;
             }
         }
     }
 
     private async saveState() {
-        const data = await this.plugin.loadData() || {};
-        data.viewState = {
-            expandedFolders: Array.from(this.expandedFolders),
-            selectedFolderPath: this.selectedFolder?.path
-        };
-        await this.plugin.saveData(data);
+        // Save expanded folders to localStorage
+        localStorage.setItem(
+            this.plugin.keys.expandedFoldersKey, 
+            JSON.stringify(Array.from(this.expandedFolders))
+        );
+        
+        // Save selected folder to localStorage
+        if (this.selectedFolder) {
+            localStorage.setItem(this.plugin.keys.selectedFolderKey, this.selectedFolder.path);
+        } else {
+            localStorage.removeItem(this.plugin.keys.selectedFolderKey);
+        }
+        
+        // Save selected file to localStorage
+        if (this.selectedFile) {
+            localStorage.setItem(this.plugin.keys.selectedFileKey, this.selectedFile.path);
+        } else {
+            localStorage.removeItem(this.plugin.keys.selectedFileKey);
+        }
     }
 
     private setupResizeHandle(handle: HTMLElement) {
@@ -437,6 +495,9 @@ class NotebookNavigatorView extends ItemView {
             const newWidth = parseInt(this.leftPane.style.width);
             this.plugin.settings.leftPaneWidth = newWidth;
             await this.plugin.saveSettings();
+            
+            // Also save to localStorage for immediate persistence
+            localStorage.setItem(this.plugin.keys.leftPaneWidthKey, newWidth.toString());
         };
 
         const mouseDownHandler = (e: MouseEvent) => {
@@ -603,6 +664,9 @@ class NotebookNavigatorView extends ItemView {
                 setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
             }
         }
+        
+        // Save state after toggling folder
+        this.saveState();
     }
 
     private selectFolder(folder: TFolder) {
@@ -620,6 +684,11 @@ class NotebookNavigatorView extends ItemView {
 
         this.selectedFolder = folder;
         this.refreshFileList();
+        
+        // Save state after selecting folder
+        if (!this.isLoading) {
+            this.saveState();
+        }
     }
 
     private ensureFolderVisible(folder: TFolder) {
@@ -673,11 +742,21 @@ class NotebookNavigatorView extends ItemView {
         const folderChanged = this.selectedFolder !== this.previousFolder;
         this.previousFolder = this.selectedFolder;
         
-        // Auto-select and preview the first file when folder changes
-        if (files.length > 0 && folderChanged) {
+        // If loading and we have a selected file, restore it
+        if (this.isLoading && this.selectedFile && files.some(f => f.path === this.selectedFile!.path)) {
+            // Find the index of the selected file
+            const selectedIndex = files.findIndex(f => f.path === this.selectedFile!.path);
+            if (selectedIndex >= 0) {
+                this.focusedFileIndex = selectedIndex;
+            }
+            this.previewFile(this.selectedFile);
+        }
+        // Otherwise, auto-select and preview the first file when folder changes
+        else if (files.length > 0 && folderChanged && !this.isLoading) {
             this.selectedFile = files[0];
             this.focusedFileIndex = 0;
             this.previewFile(files[0]);
+            this.saveState();
         }
 
         // Now render all items with proper selection
@@ -763,6 +842,11 @@ class NotebookNavigatorView extends ItemView {
             
             // Refresh to show selection
             this.refreshFileList();
+            
+            // Save state after selecting file
+            if (!this.isLoading) {
+                this.saveState();
+            }
             
             // Keep focus on the navigator
             setTimeout(() => {
@@ -1210,6 +1294,7 @@ class NotebookNavigatorView extends ItemView {
                             this.selectedFile = file;
                             this.refreshFileList();
                             this.previewFile(file);
+                            this.saveState();
                         }
                     }
                 }
@@ -1240,6 +1325,7 @@ class NotebookNavigatorView extends ItemView {
                             this.selectedFile = file;
                             this.refreshFileList();
                             this.previewFile(file);
+                            this.saveState();
                         }
                     }
                 }
@@ -1359,6 +1445,7 @@ class NotebookNavigatorView extends ItemView {
                         if (file) {
                             this.selectedFile = file;
                             this.refreshFileList();
+                            this.saveState();
                         }
                     }
                 }
@@ -1723,6 +1810,28 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
             () => this.plugin.settings.ignoreFolders,
             (value) => { this.plugin.settings.ignoreFolders = value; }
         );
+
+        // State Management section
+        containerEl.createEl('h3', { text: 'State Management' });
+
+        new Setting(containerEl)
+            .setName('Clear saved state')
+            .setDesc('Clear the saved expanded folders, selected folder, and selected file. This will reset the navigator to its default state.')
+            .addButton(button => button
+                .setButtonText('Clear State')
+                .onClick(async () => {
+                    // Clear all localStorage keys
+                    localStorage.removeItem(this.plugin.keys.expandedFoldersKey);
+                    localStorage.removeItem(this.plugin.keys.selectedFolderKey);
+                    localStorage.removeItem(this.plugin.keys.selectedFileKey);
+                    localStorage.removeItem(this.plugin.keys.leftPaneWidthKey);
+                    
+                    // Reset the plugin settings for left pane width
+                    this.plugin.settings.leftPaneWidth = 300;
+                    await this.plugin.saveSettings();
+                    
+                    new Notice('Navigator state cleared. Restart or refresh the view to see changes.');
+                }));
     }
 
     hide(): void {
