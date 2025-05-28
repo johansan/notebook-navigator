@@ -167,6 +167,7 @@
     border-radius: 4px;
     margin: 0 6px;
     background-color: transparent !important;
+    position: relative;
 }
 
 /* Remove hover effect for cleaner look */
@@ -175,12 +176,31 @@
 }
 
 .nn-folder-item.nn-selected > .nn-folder-content {
-    background-color: var(--nn-selection-color, #B3D9FF) !important;
+    position: relative;
+    background-color: transparent !important;
 }
 
-.theme-dark .nn-folder-item.nn-selected > .nn-folder-content {
-    background-color: var(--nn-selection-color, #B3D9FF) !important;
+/* Create pseudo-element for folder selection background */
+.nn-folder-item.nn-selected > .nn-folder-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--nn-selection-color, #B3D9FF);
+    border-radius: 4px;
+    z-index: 0;
+}
+
+.theme-dark .nn-folder-item.nn-selected > .nn-folder-content::before {
     filter: brightness(0.5);
+}
+
+/* Ensure folder content stays above the background */
+.nn-folder-item.nn-selected > .nn-folder-content > * {
+    position: relative;
+    z-index: 1;
 }
 
 .nn-folder-item.nn-focused > .nn-folder-content {
@@ -382,9 +402,28 @@
     filter: none;
 }
 
-/* When files have focus, make selected folder 50% transparent (entire element is fine for folders) */
+/* When files have focus, make selected folder background 50% transparent */
 .notebook-navigator[data-focus-pane="files"] .nn-folder-item.nn-selected > .nn-folder-content {
+    position: relative;
+}
+
+.notebook-navigator[data-focus-pane="files"] .nn-folder-item.nn-selected > .nn-folder-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--nn-selection-color, #B3D9FF);
     opacity: 0.5;
+    border-radius: 4px;
+    z-index: 0;
+}
+
+/* Ensure folder content stays above the background */
+.notebook-navigator[data-focus-pane="files"] .nn-folder-item.nn-selected > .nn-folder-content > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* Remove any remaining hover transitions */
