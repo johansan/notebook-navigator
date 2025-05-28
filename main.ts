@@ -33,6 +33,7 @@ interface NotebookNavigatorSettings {
     leftPaneWidth: number;
     showRootFolder: boolean;
     ignoreFolders: string;
+    showFolderFileCount: boolean;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -47,7 +48,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     sortOption: 'modified',
     leftPaneWidth: 300,
     showRootFolder: true,
-    ignoreFolders: ''
+    ignoreFolders: '',
+    showFolderFileCount: true
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -552,6 +554,10 @@ class NotebookNavigatorView extends ItemView {
 
     private globalFolderIndex: number = 0;
 
+    private getFileCount(folder: TFolder): number {
+        return folder.children.filter(child => child instanceof TFile).length;
+    }
+
     private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
         const index = this.globalFolderIndex++;
         const folderEl = container.createDiv({
@@ -586,6 +592,15 @@ class NotebookNavigatorView extends ItemView {
 
         const folderName = folderContent.createDiv('nn-folder-name');
         folderName.textContent = folder.name || 'Vault';
+
+        // Add file count
+        if (this.plugin.settings.showFolderFileCount) {
+            const fileCount = this.getFileCount(folder);
+            if (fileCount > 0) {
+                const countEl = folderContent.createDiv('nn-folder-count');
+                countEl.textContent = fileCount.toString();
+            }
+        }
 
         if (this.selectedFolder === folder) {
             folderEl.addClass('nn-selected');
@@ -1798,6 +1813,17 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.showRootFolder)
                 .onChange(async (value) => {
                     this.plugin.settings.showRootFolder = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        new Setting(containerEl)
+            .setName('Show folder file count')
+            .setDesc('Display the number of files in each folder')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showFolderFileCount)
+                .onChange(async (value) => {
+                    this.plugin.settings.showFolderFileCount = value;
                     await this.plugin.saveSettings();
                     this.plugin.onSettingsChange();
                 }));

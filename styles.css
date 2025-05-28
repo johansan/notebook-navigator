@@ -238,6 +238,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-normal);
+    flex: 1;
+}
+
+.nn-folder-count {
+    font-size: 11px;
+    color: #666;
+    margin-left: auto;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.theme-dark .nn-folder-count {
+    color: #999;
 }
 
 /* Keep consistent text color for selected folders */
@@ -247,6 +260,14 @@
 
 .nn-folder-item.nn-selected .nn-folder-icon {
     color: var(--text-muted);
+}
+
+.nn-folder-item.nn-selected .nn-folder-count {
+    color: #666;
+}
+
+.theme-dark .nn-folder-item.nn-selected .nn-folder-count {
+    color: #999;
 }
 
 .nn-folder-children {
@@ -291,15 +312,20 @@
 
 /* Inner content wrapper for proper selection styling */
 .nn-file-content {
-    padding: 8px 12px;
+    padding: 11px 12px;
     margin: 2px 8px;
     border-radius: 8px;
     background-color: transparent !important;
     background: transparent !important;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
+}
+
+/* Reduce padding when there's a feature image to maintain consistent height */
+.nn-file-content:has(.nn-feature-image) {
+    padding: 8px 12px;
 }
 
 /* Force non-selected items to be transparent */
@@ -452,8 +478,8 @@
 
 /* Feature Image */
 .nn-feature-image {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
     border-radius: 6px;
     overflow: hidden;
