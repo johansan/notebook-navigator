@@ -249,7 +249,7 @@
 .nn-file-list {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 0;
+    padding: 4px 0;
     background-color: white;
 }
 
@@ -271,8 +271,8 @@
 
 /* Inner content wrapper for proper selection styling */
 .nn-file-content {
-    padding: 12px;
-    margin: 4px 8px;
+    padding: 8px 12px;
+    margin: 2px 8px;
     border-radius: 8px;
     background-color: transparent !important;
     background: transparent !important;
@@ -407,7 +407,7 @@
     min-width: 0; /* Enable text truncation */
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     order: 1; /* Ensure it appears on the left */
 }
 
@@ -439,8 +439,8 @@
 .nn-file-preview-line {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    margin-top: 0;
+    gap: 6px;
+    margin-top: -2px;
 }
 
 .nn-file-name {
