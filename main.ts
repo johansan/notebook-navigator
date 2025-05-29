@@ -1253,9 +1253,9 @@ class NotebookNavigatorView extends ItemView {
             return 'No additional text';
         }
         
-        let preview = previewLines.join(' ').substring(0, 150); // Get a bit more text before stripping
+        let preview = previewLines.join(' ');
         
-        // Strip markdown syntax
+        // Strip markdown syntax first before truncating
         preview = this.stripMarkdownSyntax(preview);
         
         // Now trim to 100 chars after stripping
