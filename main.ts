@@ -1896,7 +1896,7 @@ class NotebookNavigatorView extends ItemView {
                 
                 // Check if element is outside visible area
                 if (fileRect.top < listRect.top) {
-                    // Scroll up - put item at top with some padding
+                    // Scroll up - the CSS scroll-padding-top will handle the offset
                     (focusedFile as HTMLElement).scrollIntoView({ block: 'start', behavior: 'smooth' });
                 } else if (fileRect.bottom > listRect.bottom) {
                     // Scroll down - put item at bottom with some padding

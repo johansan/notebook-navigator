@@ -292,6 +292,7 @@
     overflow-y: auto;
     padding: 4px 0;
     background-color: white;
+    scroll-padding-top: 40px; /* Account for sticky headers */
 }
 
 .theme-dark .notebook-navigator .nn-file-list,
