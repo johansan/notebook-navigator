@@ -850,13 +850,11 @@ class NotebookNavigatorView extends ItemView {
             this.selectedFile = file;
             this.focusedFileIndex = index;
             this.focusedPane = 'files';
+            this.updateFileSelection();
             this.updateFocus();
             
             // Preview the file when clicked
             this.previewFile(file);
-            
-            // Refresh to show selection
-            this.refreshFileList();
             
             // Save state after selecting file
             if (!this.isLoading) {
@@ -1307,7 +1305,7 @@ class NotebookNavigatorView extends ItemView {
                         const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
                         if (file) {
                             this.selectedFile = file;
-                            this.refreshFileList();
+                            this.updateFileSelection();
                             this.previewFile(file);
                             this.saveState();
                         }
@@ -1338,7 +1336,7 @@ class NotebookNavigatorView extends ItemView {
                         const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
                         if (file) {
                             this.selectedFile = file;
-                            this.refreshFileList();
+                            this.updateFileSelection();
                             this.previewFile(file);
                             this.saveState();
                         }
@@ -1468,6 +1466,21 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    private updateFileSelection() {
+        // Remove previous selection
+        this.fileList.querySelectorAll('.nn-selected').forEach(el => {
+            el.removeClass('nn-selected');
+        });
+
+        // Add selection to the current file
+        if (this.selectedFile) {
+            const fileEl = this.fileList.querySelector(`[data-path="${CSS.escape(this.selectedFile.path)}"]`);
+            if (fileEl) {
+                fileEl.addClass('nn-selected');
+            }
+        }
+    }
+
     private updateFocus() {
         this.containerEl.querySelectorAll('.nn-focused').forEach(el => {
             el.removeClass('nn-focused');
@@ -1484,14 +1497,27 @@ class NotebookNavigatorView extends ItemView {
             const focusedFolder = folders[this.focusedFolderIndex];
             if (focusedFolder) {
                 focusedFolder.addClass('nn-focused');
-                focusedFolder.scrollIntoView({ block: 'nearest' });
+                focusedFolder.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             }
         } else {
             const files = this.fileList.querySelectorAll('.nn-file-item');
             const focusedFile = files[this.focusedFileIndex];
             if (focusedFile) {
                 focusedFile.addClass('nn-focused');
-                focusedFile.scrollIntoView({ block: 'nearest' });
+                // For file list, use a more controlled scrolling approach
+                const fileList = this.fileList;
+                const fileRect = (focusedFile as HTMLElement).getBoundingClientRect();
+                const listRect = fileList.getBoundingClientRect();
+                
+                // Check if element is outside visible area
+                if (fileRect.top < listRect.top) {
+                    // Scroll up - put item at top with some padding
+                    (focusedFile as HTMLElement).scrollIntoView({ block: 'start', behavior: 'smooth' });
+                } else if (fileRect.bottom > listRect.bottom) {
+                    // Scroll down - put item at bottom with some padding
+                    (focusedFile as HTMLElement).scrollIntoView({ block: 'end', behavior: 'smooth' });
+                }
+                // If already visible, don't scroll
             }
         }
     }
