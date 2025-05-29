@@ -35,6 +35,7 @@ interface NotebookNavigatorSettings {
     ignoreFolders: string;
     showFolderFileCount: boolean;
     groupByDate: boolean;
+    pinnedNotes: Record<string, string[]>;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -51,7 +52,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showRootFolder: true,
     ignoreFolders: '',
     showFolderFileCount: true,
-    groupByDate: true
+    groupByDate: true,
+    pinnedNotes: {}
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -68,6 +70,9 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
     async onload() {
         await this.loadSettings();
+        
+        // Clean up pinned notes for files that no longer exist
+        this.cleanupPinnedNotes();
 
         this.registerView(
             VIEW_TYPE_NOTEBOOK,
@@ -206,6 +211,35 @@ export default class NotebookNavigatorPlugin extends Plugin {
     updateSelectionColor() {
         // Update CSS variable for selection color
         document.documentElement.style.setProperty('--nn-selection-color', this.settings.selectionColor);
+    }
+    
+    cleanupPinnedNotes() {
+        let changed = false;
+        const pinnedNotes = this.settings.pinnedNotes;
+        
+        // Iterate through all folders
+        for (const folderPath in pinnedNotes) {
+            const filePaths = pinnedNotes[folderPath];
+            const validFiles = filePaths.filter(filePath => {
+                const file = this.app.vault.getAbstractFileByPath(filePath);
+                return file instanceof TFile;
+            });
+            
+            if (validFiles.length !== filePaths.length) {
+                pinnedNotes[folderPath] = validFiles;
+                changed = true;
+            }
+            
+            // Remove empty entries
+            if (validFiles.length === 0) {
+                delete pinnedNotes[folderPath];
+                changed = true;
+            }
+        }
+        
+        if (changed) {
+            this.saveSettings();
+        }
     }
 
     onSettingsChange() {
@@ -742,6 +776,10 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private renderFilesWithDateGroups(files: TFile[]) {
+        this.renderUnpinnedFilesWithDateGroups(files, 0);
+    }
+    
+    private renderUnpinnedFilesWithDateGroups(files: TFile[], startIndex: number) {
         const groups = new Map<string, TFile[]>();
         const groupOrder: string[] = [];
         
@@ -760,7 +798,7 @@ class NotebookNavigatorView extends ItemView {
         });
         
         // Render each group
-        let globalIndex = 0;
+        let globalIndex = startIndex;
         groupOrder.forEach((groupName) => {
             // Create group header
             const groupHeader = this.fileList.createDiv('nn-date-group-header');
@@ -806,33 +844,64 @@ class NotebookNavigatorView extends ItemView {
             return;
         }
 
+        // Separate pinned and unpinned files
+        const pinnedPaths = this.getPinnedNotesForFolder(this.selectedFolder);
+        const pinnedFiles: TFile[] = [];
+        const unpinnedFiles: TFile[] = [];
+        
+        files.forEach(file => {
+            if (pinnedPaths.includes(file.path)) {
+                pinnedFiles.push(file);
+            } else {
+                unpinnedFiles.push(file);
+            }
+        });
+
         // Check if folder changed before setting previousFolder
         const folderChanged = this.selectedFolder !== this.previousFolder;
         this.previousFolder = this.selectedFolder;
         
+        // Combine pinned and unpinned files for selection logic
+        const allFiles = [...pinnedFiles, ...unpinnedFiles];
+        
         // If loading and we have a selected file, restore it
-        if (this.isLoading && this.selectedFile && files.some(f => f.path === this.selectedFile!.path)) {
+        if (this.isLoading && this.selectedFile && allFiles.some(f => f.path === this.selectedFile!.path)) {
             // Find the index of the selected file
-            const selectedIndex = files.findIndex(f => f.path === this.selectedFile!.path);
+            const selectedIndex = allFiles.findIndex(f => f.path === this.selectedFile!.path);
             if (selectedIndex >= 0) {
                 this.focusedFileIndex = selectedIndex;
             }
             this.previewFile(this.selectedFile);
         }
         // Otherwise, auto-select and preview the first file when folder changes
-        else if (files.length > 0 && folderChanged && !this.isLoading) {
-            this.selectedFile = files[0];
+        else if (allFiles.length > 0 && folderChanged && !this.isLoading) {
+            this.selectedFile = allFiles[0];
             this.focusedFileIndex = 0;
-            this.previewFile(files[0]);
+            this.previewFile(allFiles[0]);
             this.saveState();
         }
 
-        // Now render all items with proper selection
+        // Render pinned files first if any exist
+        let globalIndex = 0;
+        if (pinnedFiles.length > 0) {
+            // Create pinned group header
+            const pinnedHeader = this.fileList.createDiv('nn-date-group-header');
+            pinnedHeader.setText('📌 Pinned');
+            
+            // Render pinned files
+            pinnedFiles.forEach(file => {
+                this.renderFileItem(file, globalIndex);
+                globalIndex++;
+            });
+        }
+
+        // Now render unpinned files with proper selection
         if (this.plugin.settings.groupByDate && this.plugin.settings.sortOption !== 'title') {
-            this.renderFilesWithDateGroups(files);
+            this.renderUnpinnedFilesWithDateGroups(unpinnedFiles, globalIndex);
         } else {
-            files.forEach((file, index) => {
-                this.renderFileItem(file, index);
+            unpinnedFiles.forEach((file) => {
+                this.renderFileItem(file, globalIndex);
+                globalIndex++;
             });
         }
     }
@@ -1149,6 +1218,25 @@ class NotebookNavigatorView extends ItemView {
                 .setIcon('file-plus')
                 .onClick(() => this.app.workspace.getLeaf('split').openFile(file))
         );
+
+        menu.addSeparator();
+        
+        // Add pin/unpin option
+        if (this.selectedFolder) {
+            const isPinned = this.isFilePinned(file, this.selectedFolder);
+            menu.addItem((item) =>
+                item
+                    .setTitle(isPinned ? 'Unpin Note' : 'Pin Note')
+                    .setIcon(isPinned ? 'pin-off' : 'pin')
+                    .onClick(() => {
+                        if (isPinned) {
+                            this.unpinFile(file, this.selectedFolder!);
+                        } else {
+                            this.pinFile(file, this.selectedFolder!);
+                        }
+                    })
+            );
+        }
 
         menu.addSeparator();
 
@@ -1520,6 +1608,40 @@ class NotebookNavigatorView extends ItemView {
                     }
                 }
                 break;
+        }
+    }
+
+    private getPinnedNotesForFolder(folder: TFolder): string[] {
+        return this.plugin.settings.pinnedNotes[folder.path] || [];
+    }
+    
+    private isFilePinned(file: TFile, folder: TFolder): boolean {
+        const pinnedFiles = this.getPinnedNotesForFolder(folder);
+        return pinnedFiles.includes(file.path);
+    }
+    
+    private async pinFile(file: TFile, folder: TFolder) {
+        const pinnedNotes = this.plugin.settings.pinnedNotes;
+        if (!pinnedNotes[folder.path]) {
+            pinnedNotes[folder.path] = [];
+        }
+        
+        if (!pinnedNotes[folder.path].includes(file.path)) {
+            pinnedNotes[folder.path].push(file.path);
+            await this.plugin.saveSettings();
+            this.refreshFileList();
+        }
+    }
+    
+    private async unpinFile(file: TFile, folder: TFolder) {
+        const pinnedNotes = this.plugin.settings.pinnedNotes;
+        if (pinnedNotes[folder.path]) {
+            pinnedNotes[folder.path] = pinnedNotes[folder.path].filter(path => path !== file.path);
+            if (pinnedNotes[folder.path].length === 0) {
+                delete pinnedNotes[folder.path];
+            }
+            await this.plugin.saveSettings();
+            this.refreshFileList();
         }
     }
 
