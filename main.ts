@@ -1027,16 +1027,16 @@ class NotebookNavigatorView extends ItemView {
                 parentFolder.textContent = relativePath;
             } else if (this.plugin.settings.showFilePreview) {
                 // File is in current folder - show preview
+                const preview = secondLine.createDiv('nn-file-preview');
                 this.app.vault.cachedRead(file).then(content => {
-                    const preview = secondLine.createDiv('nn-file-preview');
                     const previewText = this.extractPreviewText(content);
                     preview.textContent = previewText;
                 });
             }
         } else if (this.plugin.settings.showFilePreview) {
             // Normal mode - show preview text
+            const preview = secondLine.createDiv('nn-file-preview');
             this.app.vault.cachedRead(file).then(content => {
-                const preview = secondLine.createDiv('nn-file-preview');
                 const previewText = this.extractPreviewText(content);
                 preview.textContent = previewText;
             });
