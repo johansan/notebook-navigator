@@ -699,3 +699,19 @@
 .theme-light .nn-file-item:hover {
     box-shadow: none !important;
 }
+
+/* Settings styles */
+.date-grouping-settings,
+.preview-settings,
+.feature-image-settings {
+    margin-left: 20px;
+}
+
+/* Add some spacing between section headers */
+.setting-item-heading {
+    margin-top: 30px !important;
+}
+
+.setting-item-heading:first-child {
+    margin-top: 0 !important;
+}

@@ -2066,11 +2066,14 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Notebook Navigator Settings' });
+        // Section 1: General
+        new Setting(containerEl)
+            .setName('General')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Replace default file explorer')
-            .setDesc('Automatically replace Obsidian\'s file explorer with Notebook Navigator')
+            .setDesc('Automatically replace Obsidian\'s file explorer with Notebook Navigator. Requires restart.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.replaceDefaultExplorer)
                 .onChange(async (value) => {
@@ -2079,51 +2082,14 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     new Notice('Restart Obsidian for this change to take effect');
                 }));
 
+        // Section 2: File Organization
         new Setting(containerEl)
-            .setName('Show file preview')
-            .setDesc('Display a preview of file contents in the file list')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showFilePreview)
-                .onChange(async (value) => {
-                    this.plugin.settings.showFilePreview = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
+            .setName('File Organization')
+            .setHeading();
 
-        new Setting(containerEl)
-            .setName('Skip non-text in preview')
-            .setDesc('Skip headings, images, embeds, and other non-text content in file previews')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.skipNonTextInPreview)
-                .onChange(async (value) => {
-                    this.plugin.settings.skipNonTextInPreview = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
-
-        new Setting(containerEl)
-            .setName('Show feature image')
-            .setDesc('Display a thumbnail image for notes with a feature image property')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showFeatureImage)
-                .onChange(async (value) => {
-                    this.plugin.settings.showFeatureImage = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
-
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Feature image property',
-            'The frontmatter property name used for feature images',
-            'feature',
-            () => this.plugin.settings.featureImageProperty,
-            (value) => { this.plugin.settings.featureImageProperty = value || 'feature'; }
-        );
-
-        new Setting(containerEl)
+        const sortSetting = new Setting(containerEl)
             .setName('Sort files by')
-            .setDesc('Choose how files are sorted in the file list')
+            .setDesc('Choose how files are sorted in the file list.')
             .addDropdown(dropdown => dropdown
                 .addOption('modified', 'Date Edited')
                 .addOption('created', 'Date Created')
@@ -2133,11 +2099,16 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.settings.sortOption = value;
                     await this.plugin.saveSettings();
                     this.plugin.onSettingsChange();
+                    // Update group by date visibility
+                    updateGroupByDateVisibility(value !== 'title');
                 }));
 
-        new Setting(containerEl)
+        // Container for conditional group by date setting
+        const dateGroupingEl = containerEl.createDiv('date-grouping-settings');
+
+        new Setting(dateGroupingEl)
             .setName('Group notes by date')
-            .setDesc('When sorted by Date Edited or Date Created, group notes by date')
+            .setDesc('When sorted by date, group notes under date headers.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.groupByDate)
                 .onChange(async (value) => {
@@ -2146,74 +2117,9 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Selection color',
-            'Background color for selected files (hex format)',
-            '#B3D9FF',
-            () => this.plugin.settings.selectionColor,
-            (value) => { this.plugin.settings.selectionColor = value || '#B3D9FF'; },
-            false  // Don't refresh view, just update CSS
-        );
-
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Date format',
-            'Format string for dates (uses date-fns format)',
-            'MMM d, yyyy',
-            () => this.plugin.settings.dateFormat,
-            (value) => { this.plugin.settings.dateFormat = value || 'MMM d, yyyy'; }
-        ).addExtraButton(button => button
-            .setIcon('help')
-            .setTooltip('Click for format reference')
-            .onClick(() => {
-                new Notice('Common formats:\nMMM d, yyyy = May 25, 2022\ndd/MM/yyyy = 25/05/2022\nyyyy-MM-dd = 2022-05-25\nEEEE, MMMM do, yyyy = Thursday, May 25th, 2022\n\nTokens:\nyyyy/yy = year\nMMMM/MMM/MM = month\ndd/d = day\nEEEE/EEE = weekday\nHH/hh = hour\nmm = minute\nss = second\na = AM/PM', 10000);
-            }));
-
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Animation speed',
-            'Speed of UI animations in milliseconds',
-            '200',
-            () => this.plugin.settings.animationSpeed.toString(),
-            (value) => {
-                const speed = parseInt(value);
-                if (!isNaN(speed) && speed >= 0) {
-                    this.plugin.settings.animationSpeed = speed;
-                }
-            },
-            false,  // Don't refresh view for animation speed
-            (value) => {
-                const speed = parseInt(value);
-                return !isNaN(speed) && speed >= 0;
-            }
-        );
-
-        new Setting(containerEl)
-            .setName('Show root folder')
-            .setDesc('Show "Vault" as the root folder in the tree')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showRootFolder)
-                .onChange(async (value) => {
-                    this.plugin.settings.showRootFolder = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
-
-        new Setting(containerEl)
-            .setName('Show folder file count')
-            .setDesc('Display the number of files in each folder')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showFolderFileCount)
-                .onChange(async (value) => {
-                    this.plugin.settings.showFolderFileCount = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.onSettingsChange();
-                }));
-
         new Setting(containerEl)
             .setName('Show notes from subfolders')
-            .setDesc('Display all notes from subfolders in the current folder view')
+            .setDesc('Display all notes from subfolders in the current folder view.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.showNotesFromSubfolders)
                 .onChange(async (value) => {
@@ -2224,21 +2130,154 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
 
         this.createDebouncedTextSetting(
             containerEl,
-            'Ignore folders',
-            'Comma-separated list of root folders to hide (e.g., ".obsidian, templates, archive")',
+            'Excluded folders',
+            'Comma-separated list of folders to hide (e.g., .obsidian, templates).',
             'folder1, folder2',
             () => this.plugin.settings.ignoreFolders,
             (value) => { this.plugin.settings.ignoreFolders = value; }
         );
 
-        // State Management section
-        containerEl.createEl('h3', { text: 'State Management' });
+        // Section 3: File Display
+        new Setting(containerEl)
+            .setName('File Display')
+            .setHeading();
+
+        const showPreviewSetting = new Setting(containerEl)
+            .setName('Show file preview')
+            .setDesc('Display preview text beneath file names.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showFilePreview)
+                .onChange(async (value) => {
+                    this.plugin.settings.showFilePreview = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                    updatePreviewSettingsVisibility(value);
+                }));
+
+        // Container for preview-related settings
+        const previewSettingsEl = containerEl.createDiv('preview-settings');
+
+        new Setting(previewSettingsEl)
+            .setName('Skip non-text in preview')
+            .setDesc('Exclude headings, images, and embeds from preview text.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.skipNonTextInPreview)
+                .onChange(async (value) => {
+                    this.plugin.settings.skipNonTextInPreview = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        const showFeatureImageSetting = new Setting(containerEl)
+            .setName('Show feature image')
+            .setDesc('Display thumbnail images from frontmatter.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showFeatureImage)
+                .onChange(async (value) => {
+                    this.plugin.settings.showFeatureImage = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                    updateFeatureImageSettingsVisibility(value);
+                }));
+
+        // Container for feature image settings
+        const featureImageSettingsEl = containerEl.createDiv('feature-image-settings');
+
+        this.createDebouncedTextSetting(
+            featureImageSettingsEl,
+            'Feature image property',
+            'The frontmatter property name for thumbnail images.',
+            'feature',
+            () => this.plugin.settings.featureImageProperty,
+            (value) => { this.plugin.settings.featureImageProperty = value || 'feature'; }
+        );
+
+        // Section 4: Folder Display
+        new Setting(containerEl)
+            .setName('Folder Display')
+            .setHeading();
+
+        new Setting(containerEl)
+            .setName('Show root folder')
+            .setDesc('Display "Vault" as the root folder in the tree.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showRootFolder)
+                .onChange(async (value) => {
+                    this.plugin.settings.showRootFolder = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        new Setting(containerEl)
+            .setName('Show folder file count')
+            .setDesc('Display the number of files in each folder.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showFolderFileCount)
+                .onChange(async (value) => {
+                    this.plugin.settings.showFolderFileCount = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        // Section 5: Appearance
+        new Setting(containerEl)
+            .setName('Appearance')
+            .setHeading();
+
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Selection color',
+            'Background color for selected items (hex format).',
+            '#B3D9FF',
+            () => this.plugin.settings.selectionColor,
+            (value) => { this.plugin.settings.selectionColor = value || '#B3D9FF'; },
+            false  // Don't refresh view, just update CSS
+        );
+
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Date format',
+            'Format for displaying dates (uses date-fns format).',
+            'MMM d, yyyy',
+            () => this.plugin.settings.dateFormat,
+            (value) => { this.plugin.settings.dateFormat = value || 'MMM d, yyyy'; }
+        ).addExtraButton(button => button
+            .setIcon('help')
+            .setTooltip('Click for format reference')
+            .onClick(() => {
+                new Notice('Common formats:\nMMM d, yyyy = May 25, 2022\ndd/MM/yyyy = 25/05/2022\nyyyy-MM-dd = 2022-05-25\n\nTokens:\nyyyy/yy = year\nMMMM/MMM/MM = month\ndd/d = day\nEEEE/EEE = weekday', 10000);
+            }));
+
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Animation speed',
+            'UI animation duration in milliseconds.',
+            '200',
+            () => this.plugin.settings.animationSpeed.toString(),
+            (value) => {
+                const speed = parseInt(value);
+                if (!isNaN(speed) && speed >= 0) {
+                    this.plugin.settings.animationSpeed = speed;
+                }
+            },
+            false,
+            (value) => {
+                const speed = parseInt(value);
+                return !isNaN(speed) && speed >= 0;
+            }
+        );
+
+        // Section 6: Advanced
+        new Setting(containerEl)
+            .setName('Advanced')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Clear saved state')
-            .setDesc('Clear the saved expanded folders, selected folder, and selected file. This will reset the navigator to its default state.')
+            .setDesc('Reset expanded folders, selections, and pane width to defaults.')
             .addButton(button => button
                 .setButtonText('Clear State')
+                .setCta()  // Makes it a primary button
                 .onClick(async () => {
                     // Clear all localStorage keys
                     localStorage.removeItem(this.plugin.keys.expandedFoldersKey);
@@ -2250,8 +2289,26 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.settings.leftPaneWidth = 300;
                     await this.plugin.saveSettings();
                     
-                    new Notice('Navigator state cleared. Restart or refresh the view to see changes.');
+                    new Notice('Navigator state cleared. Refresh the view to see changes.');
                 }));
+
+        // Visibility update functions
+        const updateGroupByDateVisibility = (show: boolean) => {
+            dateGroupingEl.style.display = show ? 'block' : 'none';
+        };
+
+        const updatePreviewSettingsVisibility = (show: boolean) => {
+            previewSettingsEl.style.display = show ? 'block' : 'none';
+        };
+
+        const updateFeatureImageSettingsVisibility = (show: boolean) => {
+            featureImageSettingsEl.style.display = show ? 'block' : 'none';
+        };
+
+        // Set initial visibility
+        updateGroupByDateVisibility(this.plugin.settings.sortOption !== 'title');
+        updatePreviewSettingsVisibility(this.plugin.settings.showFilePreview);
+        updateFeatureImageSettingsVisibility(this.plugin.settings.showFeatureImage);
     }
 
     hide(): void {
