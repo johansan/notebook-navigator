@@ -249,7 +249,6 @@ class NotebookNavigatorView extends ItemView {
     private leftPane: HTMLElement;
     private splitContainer: HTMLElement;
     private resizing: boolean = false;
-    private sortButton: HTMLElement | null = null;
     private eventRefs: Array<() => void> = [];
     private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
     private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;
@@ -305,16 +304,6 @@ class NotebookNavigatorView extends ItemView {
         const fileHeaderTitle = fileHeader.createEl('h3', { text: 'Files' });
         
         const fileActions = fileHeader.createDiv('nn-header-actions');
-        
-        // Sort button
-        this.sortButton = fileActions.createEl('button', { 
-            cls: 'nn-sort-button',
-            attr: { 'aria-label': 'Sort files' }
-        });
-        this.updateSortButtonText(this.sortButton);
-        const sortClickHandler = (e: MouseEvent) => this.showSortMenu(e);
-        this.sortButton.addEventListener('click', sortClickHandler);
-        this.eventRefs.push(() => this.sortButton?.removeEventListener('click', sortClickHandler));
         
         const newFileBtn = fileActions.createEl('button', { 
             cls: 'nn-icon-button',
@@ -520,10 +509,6 @@ class NotebookNavigatorView extends ItemView {
     refresh() {
         this.renderFolderTree();
         this.refreshFileList();
-        // Update sort button text
-        if (this.sortButton) {
-            this.updateSortButtonText(this.sortButton);
-        }
     }
 
     private renderFolderTree() {
@@ -1522,46 +1507,7 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
-    private updateSortButtonText(button: HTMLElement) {
-        const sortLabels = {
-            'modified': 'Date Edited',
-            'created': 'Date Created',
-            'title': 'Title'
-        };
-        button.textContent = sortLabels[this.plugin.settings.sortOption];
-    }
 
-    private showSortMenu(e: MouseEvent) {
-        const menu = new Menu();
-
-        const sortOptions: Array<{value: SortOption, label: string}> = [
-            { value: 'modified', label: 'Date Edited' },
-            { value: 'created', label: 'Date Created' },
-            { value: 'title', label: 'Title' }
-        ];
-
-        sortOptions.forEach(option => {
-            menu.addItem((item) => {
-                item.setTitle(option.label)
-                    .setChecked(this.plugin.settings.sortOption === option.value)
-                    .onClick(async () => {
-                        this.plugin.settings.sortOption = option.value;
-                        await this.plugin.saveSettings();
-                        
-                        // Update button text
-                        const sortBtn = this.containerEl.querySelector('.nn-sort-button') as HTMLElement;
-                        if (sortBtn) {
-                            this.updateSortButtonText(sortBtn);
-                        }
-                        
-                        // Refresh file list with new sort
-                        this.refreshFileList();
-                    });
-            });
-        });
-
-        menu.showAtMouseEvent(e);
-    }
 
     revealFile(file: TFile) {
         // Ensure parent folders are expanded
