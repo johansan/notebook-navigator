@@ -1019,14 +1019,22 @@ class NotebookNavigatorView extends ItemView {
         }
         
         if (this.plugin.settings.showNotesFromSubfolders) {
-            // Show parent folder instead of preview
+            // Show parent folder for files in subfolders, preview for files in current folder
             const relativePath = this.getRelativePath(file, this.selectedFolder!);
             if (relativePath) {
+                // File is in a subfolder - show parent folder
                 const parentFolder = secondLine.createDiv('nn-file-parent-folder');
                 parentFolder.textContent = relativePath;
+            } else if (this.plugin.settings.showFilePreview) {
+                // File is in current folder - show preview
+                this.app.vault.cachedRead(file).then(content => {
+                    const preview = secondLine.createDiv('nn-file-preview');
+                    const previewText = this.extractPreviewText(content);
+                    preview.textContent = previewText;
+                });
             }
         } else if (this.plugin.settings.showFilePreview) {
-            // Show preview text
+            // Normal mode - show preview text
             this.app.vault.cachedRead(file).then(content => {
                 const preview = secondLine.createDiv('nn-file-preview');
                 const previewText = this.extractPreviewText(content);
