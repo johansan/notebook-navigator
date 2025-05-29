@@ -380,24 +380,36 @@ class NotebookNavigatorView extends ItemView {
         // Load saved state before refresh
         await this.loadState();
         
-        this.refresh();
-        
-        // After refresh, restore the selected folder and file
+        // First render the folder tree
         if (this.selectedFolder) {
-            // Make sure parent folders are expanded
+            // Make sure parent folders are expanded before rendering
             this.ensureFolderVisible(this.selectedFolder);
-            // Use setTimeout to ensure DOM is ready
-            setTimeout(() => {
-                this.selectFolder(this.selectedFolder!);
-                // If we have a selected file, ensure it's selected too
-                if (this.selectedFile) {
-                    this.refreshFileList();
-                }
-                this.isLoading = false;
-            }, 50);
-        } else {
-            this.isLoading = false;
         }
+        this.renderFolderTree();
+        
+        // After folder tree is rendered, restore folder navigation state
+        if (this.selectedFolder) {
+            // Calculate the focused folder index
+            this.calculateFocusedFolderIndex();
+            // Scroll selected folder into view after a small delay for DOM to settle
+            setTimeout(() => {
+                this.scrollSelectedFolderIntoView();
+            }, 50);
+        }
+        
+        // Then render the file list
+        this.refreshFileList();
+        
+        // After file list is rendered, restore file navigation state and scroll
+        if (this.selectedFile) {
+            setTimeout(() => {
+                this.calculateFocusedFileIndex();
+                this.scrollSelectedFileIntoView();
+            }, 150); // Increased delay to ensure async content is loaded
+        }
+        
+        // Mark loading as complete
+        this.isLoading = false;
         
         // Focus the container after a short delay to ensure it's ready
         setTimeout(() => {
@@ -1642,6 +1654,88 @@ class NotebookNavigatorView extends ItemView {
             }
             await this.plugin.saveSettings();
             this.refreshFileList();
+        }
+    }
+
+    private calculateFocusedFolderIndex() {
+        if (this.selectedFolder) {
+            const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
+            const selectedIndex = allFolders.findIndex(el => 
+                el.getAttribute('data-path') === this.selectedFolder!.path
+            );
+            if (selectedIndex >= 0) {
+                this.focusedFolderIndex = selectedIndex;
+            }
+        }
+    }
+    
+    private calculateFocusedFileIndex() {
+        if (this.selectedFile) {
+            const allFiles = Array.from(this.fileList.querySelectorAll('.nn-file-item'));
+            const selectedIndex = allFiles.findIndex(el => 
+                el.getAttribute('data-path') === this.selectedFile!.path
+            );
+            if (selectedIndex >= 0) {
+                this.focusedFileIndex = selectedIndex;
+            }
+        }
+    }
+    
+    private scrollSelectedFolderIntoView() {
+        if (this.selectedFolder) {
+            const folderEl = this.folderTree.querySelector(
+                `[data-path="${CSS.escape(this.selectedFolder.path)}"]`
+            );
+            if (folderEl) {
+                // Use 'center' to ensure it's well visible
+                (folderEl as HTMLElement).scrollIntoView({ block: 'center', behavior: 'auto' });
+            }
+        }
+    }
+    
+    private scrollSelectedFileIntoView() {
+        if (this.selectedFile) {
+            const fileEl = this.fileList.querySelector(
+                `[data-path="${CSS.escape(this.selectedFile.path)}"]`
+            );
+            if (fileEl) {
+                const container = this.fileList;
+                const fileElement = fileEl as HTMLElement;
+                
+                // Get container and file positions
+                const containerRect = container.getBoundingClientRect();
+                const fileRect = fileElement.getBoundingClientRect();
+                
+                // Calculate if we need to scroll
+                const isAboveView = fileRect.top < containerRect.top;
+                const isBelowView = fileRect.bottom > containerRect.bottom;
+                
+                if (isAboveView || isBelowView) {
+                    // Calculate the file's position relative to the scrollable container
+                    const fileOffsetTop = fileElement.offsetTop;
+                    
+                    // Find all sticky headers above this file
+                    let stickyOffset = 0;
+                    const allHeaders = container.querySelectorAll('.nn-date-group-header');
+                    allHeaders.forEach(header => {
+                        const headerEl = header as HTMLElement;
+                        if (headerEl.offsetTop < fileOffsetTop) {
+                            stickyOffset = headerEl.offsetHeight;
+                        }
+                    });
+                    
+                    // Calculate ideal scroll position (center the file in view)
+                    const containerHeight = container.clientHeight;
+                    const fileHeight = fileElement.offsetHeight;
+                    const idealScrollTop = fileOffsetTop - (containerHeight / 2) + (fileHeight / 2) - stickyOffset;
+                    
+                    // Smooth scroll to position
+                    container.scrollTo({
+                        top: Math.max(0, idealScrollTop),
+                        behavior: 'auto' // Use 'auto' for immediate scroll on load
+                    });
+                }
+            }
         }
     }
 
