@@ -570,6 +570,12 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    margin-top: 16px;
+}
+
+/* Remove margin for the first header (which would be Pinned) */
+.nn-date-group-header:first-child {
+    margin-top: 0;
 }
 
 .theme-dark .nn-date-group-header {
