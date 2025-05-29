@@ -1042,6 +1042,39 @@ class NotebookNavigatorView extends ItemView {
         }, 50);
     }
 
+    private stripMarkdownSyntax(text: string): string {
+        // Order matters - process from inside out
+        return text
+            // Inline code (must be before bold/italic to avoid conflicts)
+            .replace(/`([^`]+)`/g, '$1')
+            // Bold italic combined
+            .replace(/\*\*\*([^\*]+)\*\*\*/g, '$1')
+            .replace(/___([^_]+)___/g, '$1')
+            // Bold
+            .replace(/\*\*([^\*]+)\*\*/g, '$1')
+            .replace(/__([^_]+)__/g, '$1')
+            // Italic (be careful not to match multiplication)
+            .replace(/(?<!\d)\*([^\*\n]+)\*(?!\d)/g, '$1')
+            .replace(/(?<![a-zA-Z0-9])_([^_\n]+)_(?![a-zA-Z0-9])/g, '$1')
+            // Strikethrough
+            .replace(/~~([^~]+)~~/g, '$1')
+            // Highlight
+            .replace(/==([^=]+)==/g, '$1')
+            // Links
+            .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+            // Wiki links with display text
+            .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
+            // Wiki links without display text
+            .replace(/\[\[([^\]]+)\]\]/g, '$1')
+            // List markers at start of line
+            .replace(/^[-*+]\s+/gm, '')
+            .replace(/^\d+\.\s+/gm, '')
+            // Blockquotes
+            .replace(/^>\s+/gm, '')
+            // Escape characters
+            .replace(/\\([*_~`])/g, '$1');
+    }
+
     private extractPreviewText(content: string): string {
         let lines = content.split('\n');
         let startIndex = 0;
@@ -1148,7 +1181,14 @@ class NotebookNavigatorView extends ItemView {
             return 'No additional text';
         }
         
-        let preview = previewLines.join(' ').substring(0, 100);
+        let preview = previewLines.join(' ').substring(0, 150); // Get a bit more text before stripping
+        
+        // Strip markdown syntax
+        preview = this.stripMarkdownSyntax(preview);
+        
+        // Now trim to 100 chars after stripping
+        preview = preview.substring(0, 100);
+        
         return preview + (preview.length >= 100 ? '...' : '');
     }
 
