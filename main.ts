@@ -21,7 +21,6 @@ const VIEW_TYPE_NOTEBOOK = 'notebook-navigator-view';
 type SortOption = 'modified' | 'created' | 'title';
 
 interface NotebookNavigatorSettings {
-    replaceDefaultExplorer: boolean;
     showFilePreview: boolean;
     skipNonTextInPreview: boolean;
     showFeatureImage: boolean;
@@ -40,7 +39,6 @@ interface NotebookNavigatorSettings {
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
-    replaceDefaultExplorer: true,
     showFilePreview: true,
     skipNonTextInPreview: true,
     showFeatureImage: false,
@@ -50,7 +48,7 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     animationSpeed: 200,
     sortOption: 'modified',
     leftPaneWidth: 300,
-    showRootFolder: true,
+    showRootFolder: false,
     ignoreFolders: '',
     showFolderFileCount: true,
     groupByDate: true,
@@ -123,20 +121,6 @@ export default class NotebookNavigatorPlugin extends Plugin {
         // Set initial selection color
         this.updateSelectionColor();
 
-        // Handle replacing default explorer on startup
-        this.app.workspace.onLayoutReady(async () => {
-            if (this.settings.replaceDefaultExplorer) {
-                // Check if view already exists before replacing
-                const existingLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
-                if (existingLeaves.length === 0) {
-                    this.replaceFileExplorer();
-                } else {
-                    // Just reveal the existing view
-                    this.app.workspace.revealLeaf(existingLeaves[0]);
-                }
-            }
-        });
-
         // Ribbon Icon For Opening
         this.refreshIconRibbon();
     }
@@ -192,25 +176,6 @@ export default class NotebookNavigatorPlugin extends Plugin {
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
         for (const leaf of leaves) {
             leaf.detach();
-        }
-    }
-
-    private replaceFileExplorer() {
-        // First check if notebook navigator already exists
-        const existingLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
-        if (existingLeaves.length > 0) {
-            // Already exists, just reveal it
-            this.app.workspace.revealLeaf(existingLeaves[0]);
-            return;
-        }
-
-        // Otherwise, replace the file explorer
-        const fileExplorerLeaf = this.app.workspace.getLeavesOfType('file-explorer')[0];
-        if (fileExplorerLeaf) {
-            fileExplorerLeaf.setViewState({ type: VIEW_TYPE_NOTEBOOK, active: true });
-        } else {
-            // If no file explorer, just activate the view
-            this.activateView(true);
         }
     }
 
@@ -2087,25 +2052,9 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        // Section 1: General
+        // Section 1: File organization
         new Setting(containerEl)
-            .setName('General')
-            .setHeading();
-
-        new Setting(containerEl)
-            .setName('Replace default file explorer')
-            .setDesc('Automatically replace Obsidian\'s file explorer with Notebook Navigator. Requires restart.')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.replaceDefaultExplorer)
-                .onChange(async (value) => {
-                    this.plugin.settings.replaceDefaultExplorer = value;
-                    await this.plugin.saveSettings();
-                    new Notice('Restart Obsidian for this change to take effect');
-                }));
-
-        // Section 2: File Organization
-        new Setting(containerEl)
-            .setName('File Organization')
+            .setName('File organization')
             .setHeading();
 
         const sortSetting = new Setting(containerEl)
@@ -2158,9 +2107,9 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
             (value) => { this.plugin.settings.ignoreFolders = value; }
         );
 
-        // Section 3: File Display
+        // Section 2: File display
         new Setting(containerEl)
-            .setName('File Display')
+            .setName('File display')
             .setHeading();
 
         const showPreviewSetting = new Setting(containerEl)
@@ -2191,7 +2140,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
 
         const showFeatureImageSetting = new Setting(containerEl)
             .setName('Show feature image')
-            .setDesc('Display thumbnail images from frontmatter.')
+            .setDesc('Display thumbnail images from frontmatter. Tip: Use the "Featured Image" plugin to automatically set feature images for all your documents.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.showFeatureImage)
                 .onChange(async (value) => {
@@ -2213,9 +2162,9 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
             (value) => { this.plugin.settings.featureImageProperty = value || 'feature'; }
         );
 
-        // Section 4: Folder Display
+        // Section 3: Folder display
         new Setting(containerEl)
-            .setName('Folder Display')
+            .setName('Folder display')
             .setHeading();
 
         new Setting(containerEl)
@@ -2240,7 +2189,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        // Section 5: Appearance
+        // Section 4: Appearance
         new Setting(containerEl)
             .setName('Appearance')
             .setHeading();
@@ -2288,7 +2237,7 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
             }
         );
 
-        // Section 6: Advanced
+        // Section 5: Advanced
         new Setting(containerEl)
             .setName('Advanced')
             .setHeading();
