@@ -93,28 +93,32 @@ export default class NotebookNavigatorPlugin extends Plugin {
             id: 'reveal-active-file',
             name: 'Reveal Active File in Navigator',
             callback: async () => {
-                // Ensure navigator is open
-                const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
-                if (leaves.length === 0) {
-                    await this.activateView(true);
-                }
-                
-                // Get the active file
                 const activeFile = this.app.workspace.getActiveFile();
                 if (activeFile && activeFile.parent) {
-                    // Find and update the navigator view
-                    const navigatorLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
-                    navigatorLeaves.forEach(leaf => {
-                        const view = leaf.view;
-                        if (view instanceof NotebookNavigatorView) {
-                            view.revealFile(activeFile);
-                        }
-                    });
+                    await this.revealFileInNavigator(activeFile);
                 }
             }
         });
 
         this.addSettingTab(new NotebookNavigatorSettingTab(this.app, this));
+
+        // Register editor context menu
+        this.registerEvent(
+            this.app.workspace.on('editor-menu', (menu, editor, view) => {
+                const file = view.file;
+                if (file) {
+                    menu.addSeparator();
+                    menu.addItem((item) => {
+                        item
+                            .setTitle('Reveal in Notebook Navigator')
+                            .setIcon('folder-open')
+                            .onClick(async () => {
+                                await this.revealFileInNavigator(file);
+                            });
+                    });
+                }
+            })
+        );
 
         // Set initial selection color
         this.updateSelectionColor();
@@ -242,6 +246,23 @@ export default class NotebookNavigatorPlugin extends Plugin {
         if (changed) {
             this.saveSettings();
         }
+    }
+
+    private async revealFileInNavigator(file: TFile) {
+        // Ensure navigator is open
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        if (leaves.length === 0) {
+            await this.activateView(true);
+        }
+        
+        // Find and update the navigator view
+        const navigatorLeaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
+        navigatorLeaves.forEach(leaf => {
+            const view = leaf.view;
+            if (view instanceof NotebookNavigatorView) {
+                view.revealFile(file);
+            }
+        });
     }
 
     onSettingsChange() {
