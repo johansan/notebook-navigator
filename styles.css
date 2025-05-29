@@ -559,6 +559,23 @@
     font-size: 14px;
 }
 
+/* Date Group Headers */
+.nn-date-group-header {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background-color: white;
+    border-bottom: 1px solid var(--background-modifier-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.theme-dark .nn-date-group-header {
+    background-color: black;
+}
+
 /* Drag and Drop */
 .nn-dragging {
     opacity: 0.5;

@@ -34,6 +34,7 @@ interface NotebookNavigatorSettings {
     showRootFolder: boolean;
     ignoreFolders: string;
     showFolderFileCount: boolean;
+    groupByDate: boolean;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -49,7 +50,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     leftPaneWidth: 300,
     showRootFolder: true,
     ignoreFolders: '',
-    showFolderFileCount: true
+    showFolderFileCount: true,
+    groupByDate: true
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -707,6 +709,72 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    private getDateGroup(timestamp: number): string {
+        const now = new Date();
+        const date = new Date(timestamp);
+        
+        // Reset times to start of day for comparison
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const weekAgo = new Date(today);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const monthAgo = new Date(today);
+        monthAgo.setDate(monthAgo.getDate() - 30);
+        
+        const fileDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        if (fileDate.getTime() === today.getTime()) {
+            return 'Today';
+        } else if (fileDate.getTime() === yesterday.getTime()) {
+            return 'Yesterday';
+        } else if (fileDate > weekAgo) {
+            return 'Previous 7 Days';
+        } else if (fileDate > monthAgo) {
+            return 'Previous 30 Days';
+        } else if (date.getFullYear() === now.getFullYear()) {
+            // Same year - show month name
+            return format(date, 'MMMM');
+        } else {
+            // Different year - show year
+            return date.getFullYear().toString();
+        }
+    }
+
+    private renderFilesWithDateGroups(files: TFile[]) {
+        const groups = new Map<string, TFile[]>();
+        const groupOrder: string[] = [];
+        
+        // Group files by date
+        files.forEach((file) => {
+            const timestamp = this.plugin.settings.sortOption === 'modified' 
+                ? file.stat.mtime 
+                : file.stat.ctime;
+            const group = this.getDateGroup(timestamp);
+            
+            if (!groups.has(group)) {
+                groups.set(group, []);
+                groupOrder.push(group);
+            }
+            groups.get(group)!.push(file);
+        });
+        
+        // Render each group
+        let globalIndex = 0;
+        groupOrder.forEach((groupName) => {
+            // Create group header
+            const groupHeader = this.fileList.createDiv('nn-date-group-header');
+            groupHeader.setText(groupName);
+            
+            // Render files in this group
+            const groupFiles = groups.get(groupName)!;
+            groupFiles.forEach((file) => {
+                this.renderFileItem(file, globalIndex);
+                globalIndex++;
+            });
+        });
+    }
+
     private refreshFileList() {
         this.fileList.empty();
         
@@ -760,9 +828,13 @@ class NotebookNavigatorView extends ItemView {
         }
 
         // Now render all items with proper selection
-        files.forEach((file, index) => {
-            this.renderFileItem(file, index);
-        });
+        if (this.plugin.settings.groupByDate && this.plugin.settings.sortOption !== 'title') {
+            this.renderFilesWithDateGroups(files);
+        } else {
+            files.forEach((file, index) => {
+                this.renderFileItem(file, index);
+            });
+        }
     }
 
     private renderFileItem(file: TFile, index: number) {
@@ -1731,6 +1803,17 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.sortOption)
                 .onChange(async (value: SortOption) => {
                     this.plugin.settings.sortOption = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        new Setting(containerEl)
+            .setName('Group notes by date')
+            .setDesc('When sorted by Date Edited or Date Created, group notes by date')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.groupByDate)
+                .onChange(async (value) => {
+                    this.plugin.settings.groupByDate = value;
                     await this.plugin.saveSettings();
                     this.plugin.onSettingsChange();
                 }));
