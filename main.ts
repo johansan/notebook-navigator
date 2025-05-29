@@ -36,6 +36,7 @@ interface NotebookNavigatorSettings {
     showFolderFileCount: boolean;
     groupByDate: boolean;
     pinnedNotes: Record<string, string[]>;
+    showNotesFromSubfolders: boolean;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -53,7 +54,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     ignoreFolders: '',
     showFolderFileCount: true,
     groupByDate: true,
-    pinnedNotes: {}
+    pinnedNotes: {},
+    showNotesFromSubfolders: false
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -825,6 +827,57 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    private collectFilesRecursively(folder: TFolder, ignoredFolders: string[]): TFile[] {
+        let files: TFile[] = [];
+        
+        folder.children.forEach(child => {
+            if (child instanceof TFile) {
+                files.push(child);
+            } else if (child instanceof TFolder && !ignoredFolders.includes(child.name)) {
+                // Recursively collect from subfolders
+                files = files.concat(this.collectFilesRecursively(child, ignoredFolders));
+            }
+        });
+        
+        return files;
+    }
+    
+    private getPinnedNotesRecursively(folder: TFolder, ignoredFolders: string[]): string[] {
+        let pinnedPaths: string[] = [];
+        
+        // Get pinned notes from current folder
+        const currentPinned = this.plugin.settings.pinnedNotes[folder.path] || [];
+        pinnedPaths = pinnedPaths.concat(currentPinned);
+        
+        // Recursively get from subfolders
+        folder.children.forEach(child => {
+            if (child instanceof TFolder && !ignoredFolders.includes(child.name)) {
+                pinnedPaths = pinnedPaths.concat(
+                    this.getPinnedNotesRecursively(child, ignoredFolders)
+                );
+            }
+        });
+        
+        return pinnedPaths;
+    }
+    
+    private getRelativePath(file: TFile, baseFolder: TFolder): string {
+        if (file.parent === baseFolder) {
+            return '';
+        }
+        
+        // Build path from file's parent up to base folder
+        let path = '';
+        let current = file.parent;
+        
+        while (current && current !== baseFolder && current.path !== '/') {
+            path = current.name + (path ? '/' + path : '');
+            current = current.parent;
+        }
+        
+        return path;
+    }
+
     private refreshFileList() {
         this.fileList.empty();
         
@@ -833,8 +886,19 @@ class NotebookNavigatorView extends ItemView {
             return;
         }
 
-        let files = this.selectedFolder.children
-            .filter(child => child instanceof TFile) as TFile[];
+        // Get ignored folders
+        const ignoredFolders = this.plugin.settings.ignoreFolders
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f);
+        
+        let files: TFile[];
+        if (this.plugin.settings.showNotesFromSubfolders) {
+            files = this.collectFilesRecursively(this.selectedFolder, ignoredFolders);
+        } else {
+            files = this.selectedFolder.children
+                .filter(child => child instanceof TFile) as TFile[];
+        }
 
         // Sort files based on current sort option
         const sortOption = this.plugin.settings.sortOption;
@@ -857,7 +921,9 @@ class NotebookNavigatorView extends ItemView {
         }
 
         // Separate pinned and unpinned files
-        const pinnedPaths = this.getPinnedNotesForFolder(this.selectedFolder);
+        const pinnedPaths = this.plugin.settings.showNotesFromSubfolders
+            ? this.getPinnedNotesRecursively(this.selectedFolder, ignoredFolders)
+            : this.getPinnedNotesForFolder(this.selectedFolder);
         const pinnedFiles: TFile[] = [];
         const unpinnedFiles: TFile[] = [];
         
@@ -940,34 +1006,32 @@ class NotebookNavigatorView extends ItemView {
         const fileName = textContent.createDiv('nn-file-name');
         fileName.textContent = file.basename;
 
-        if (this.plugin.settings.showFilePreview) {
+        // Create second line with date and either preview or parent folder
+        const secondLine = textContent.createDiv('nn-file-second-line');
+        
+        // Show date based on sort option
+        const fileDate = secondLine.createDiv('nn-file-date');
+        const sortOption = this.plugin.settings.sortOption;
+        if (sortOption === 'created') {
+            fileDate.textContent = this.formatDate(file.stat.ctime);
+        } else {
+            fileDate.textContent = this.formatDate(file.stat.mtime);
+        }
+        
+        if (this.plugin.settings.showNotesFromSubfolders) {
+            // Show parent folder instead of preview
+            const relativePath = this.getRelativePath(file, this.selectedFolder!);
+            if (relativePath) {
+                const parentFolder = secondLine.createDiv('nn-file-parent-folder');
+                parentFolder.textContent = relativePath;
+            }
+        } else if (this.plugin.settings.showFilePreview) {
+            // Show preview text
             this.app.vault.cachedRead(file).then(content => {
-                // Create preview line with date and text
-                const previewLine = textContent.createDiv('nn-file-preview-line');
-                
-                // Show date based on sort option
-                const fileDate = previewLine.createDiv('nn-file-date');
-                const sortOption = this.plugin.settings.sortOption;
-                if (sortOption === 'created') {
-                    fileDate.textContent = this.formatDate(file.stat.ctime);
-                } else {
-                    fileDate.textContent = this.formatDate(file.stat.mtime);
-                }
-                
-                const preview = previewLine.createDiv('nn-file-preview');
+                const preview = secondLine.createDiv('nn-file-preview');
                 const previewText = this.extractPreviewText(content);
                 preview.textContent = previewText;
             });
-        } else {
-            // If no preview, still show date
-            const previewLine = textContent.createDiv('nn-file-preview-line');
-            const fileDate = previewLine.createDiv('nn-file-date');
-            const sortOption = this.plugin.settings.sortOption;
-            if (sortOption === 'created') {
-                fileDate.textContent = this.formatDate(file.stat.ctime);
-            } else {
-                fileDate.textContent = this.formatDate(file.stat.mtime);
-            }
         }
 
         // Add feature image if enabled
@@ -2135,6 +2199,17 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.showFolderFileCount)
                 .onChange(async (value) => {
                     this.plugin.settings.showFolderFileCount = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.onSettingsChange();
+                }));
+
+        new Setting(containerEl)
+            .setName('Show notes from subfolders')
+            .setDesc('Display all notes from subfolders in the current folder view')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showNotesFromSubfolders)
+                .onChange(async (value) => {
+                    this.plugin.settings.showNotesFromSubfolders = value;
                     await this.plugin.saveSettings();
                     this.plugin.onSettingsChange();
                 }));

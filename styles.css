@@ -551,6 +551,32 @@
     color: #999;
 }
 
+/* Second line layout for subfolder mode */
+.nn-file-second-line {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: -2px;
+}
+
+/* Parent folder - same styling as preview */
+.nn-file-parent-folder {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    flex: 1;
+}
+
+.theme-dark .nn-file-parent-folder {
+    color: #999;
+}
+
 /* Empty State */
 .nn-empty-state {
     padding: 40px 20px;
