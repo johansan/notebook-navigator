@@ -9,7 +9,8 @@ import {
     Menu,
     setIcon,
     Setting,
-    CachedMetadata
+    CachedMetadata,
+    Notice
 } from 'obsidian';
 import { SortOption, NotebookNavigatorSettings, DEFAULT_SETTINGS, NotebookNavigatorSettingTab } from './settings';
 import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
@@ -727,6 +728,13 @@ class NotebookNavigatorView extends ItemView {
             }
             this.focusedPane = 'folders';
             this.updateFocus();
+        });
+
+        folderContent.addEventListener('dblclick', () => {
+            // Only toggle if folder has children
+            if (folder.children.some(child => child instanceof TFolder)) {
+                this.toggleFolder(folder);
+            }
         });
 
         folderContent.addEventListener('contextmenu', (e) => {
