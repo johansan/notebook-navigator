@@ -35,9 +35,6 @@ export default class NotebookNavigatorPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
         
-        // Clean up pinned notes for files that no longer exist
-        this.cleanupPinnedNotes();
-
         this.registerView(
             VIEW_TYPE_NOTEBOOK,
             (leaf) => new NotebookNavigatorView(leaf, this)
@@ -87,6 +84,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
         // Ribbon Icon For Opening
         this.refreshIconRibbon();
+        
+        // Clean up pinned notes after workspace is ready
+        this.app.workspace.onLayoutReady(() => {
+            this.cleanupPinnedNotes();
+        });
     }
 
     onunload() {
@@ -99,13 +101,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
     async loadSettings() {
         const data = await this.loadData();
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, data?.settings || data || {});
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, data || {});
     }
 
     async saveSettings() {
-        const data = await this.loadData() || {};
-        data.settings = this.settings;
-        await this.saveData(data);
+        await this.saveData(this.settings);
     }
 
     async activateView(showAfterAttach = true) {
@@ -151,6 +151,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
     cleanupPinnedNotes() {
         let changed = false;
         const pinnedNotes = this.settings.pinnedNotes;
+        
+        // Ensure pinnedNotes exists
+        if (!pinnedNotes || typeof pinnedNotes !== 'object') {
+            return;
+        }
         
         // Iterate through all folders
         for (const folderPath in pinnedNotes) {
@@ -1527,6 +1532,14 @@ class NotebookNavigatorView extends ItemView {
             }
             await this.plugin.saveSettings();
             this.refreshFileList();
+            
+            // If the unpinned file is the selected file, scroll to it
+            if (this.selectedFile?.path === file.path) {
+                this.updateFileSelection();
+                setTimeout(() => {
+                    this.scrollSelectedFileIntoView();
+                }, 100);
+            }
         }
     }
 
