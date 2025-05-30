@@ -244,6 +244,16 @@ export class KeyboardHandler {
                     }
                 }
             }
+        } else if (this.context.focusedPane === 'files') {
+            // Right arrow in files pane opens the file (same as Tab behavior)
+            const fileEl = fileItems[this.context.focusedFileIndex];
+            if (fileEl) {
+                const path = fileEl.getAttribute('data-path');
+                const file = this.context.app.vault.getAbstractFileByPath(path || '');
+                if (file instanceof TFile) {
+                    this.context.openFile(file);
+                }
+            }
         }
     }
 
