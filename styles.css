@@ -249,6 +249,11 @@
     flex-shrink: 0;
 }
 
+/* Hide folder count when it's 0 */
+.nn-folder-count[data-count="0"] {
+    display: none;
+}
+
 .theme-dark .nn-folder-count {
     color: #999;
 }

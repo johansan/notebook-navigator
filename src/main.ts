@@ -600,22 +600,12 @@ class NotebookNavigatorView extends ItemView {
             if (!folder || !(folder instanceof TFolder)) return;
             
             const countEl = folderEl.querySelector('.nn-folder-count') as HTMLElement;
-            const folderContent = folderEl.querySelector('.nn-folder-content');
             const newCount = this.getFileCount(folder);
             
-            if (newCount > 0) {
-                if (countEl) {
-                    // Update existing count
-                    countEl.textContent = newCount.toString();
-                } else if (folderContent) {
-                    // Add count element if it doesn't exist
-                    const newCountEl = createDiv('nn-folder-count');
-                    newCountEl.textContent = newCount.toString();
-                    folderContent.appendChild(newCountEl);
-                }
-            } else if (countEl) {
-                // Remove count element if count is 0
-                countEl.remove();
+            if (countEl) {
+                // Update existing count element
+                countEl.textContent = newCount.toString();
+                countEl.setAttribute('data-count', newCount.toString());
             }
         });
     }
@@ -690,10 +680,9 @@ class NotebookNavigatorView extends ItemView {
         // Add file count
         if (this.plugin.settings.showFolderFileCount) {
             const fileCount = this.getFileCount(folder);
-            if (fileCount > 0) {
-                const countEl = folderContent.createDiv('nn-folder-count');
-                countEl.textContent = fileCount.toString();
-            }
+            const countEl = folderContent.createDiv('nn-folder-count');
+            countEl.textContent = fileCount.toString();
+            countEl.setAttribute('data-count', fileCount.toString());
         }
 
         if (this.selectedFolder === folder) {
