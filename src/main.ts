@@ -18,6 +18,7 @@ import { ConfirmModal } from './modals/ConfirmModal';
 import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
 import { DateUtils } from './utils/DateUtils';
 import { PreviewTextUtils } from './utils/PreviewTextUtils';
+import { KeyboardHandler } from './handlers/KeyboardHandler';
 
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
@@ -242,6 +243,7 @@ class NotebookNavigatorView extends ItemView {
     private isLoading: boolean = true;
     private fileListRefreshTimer?: NodeJS.Timeout;
     private pendingCountUpdate: boolean = false;
+    private keyboardHandler: KeyboardHandler;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -339,8 +341,37 @@ class NotebookNavigatorView extends ItemView {
             this.app.workspace.on('active-leaf-change', () => this.handleActiveFileChange())
         );
 
+        // Create the keyboard handler with a context that provides access to current state
+        const self = this;
+        const keyboardContext = {
+            get folderTree() { return self.folderTree; },
+            get fileList() { return self.fileList; },
+            get focusedPane() { return self.focusedPane; },
+            set focusedPane(value: 'folders' | 'files') { self.focusedPane = value; },
+            get focusedFolderIndex() { return self.focusedFolderIndex; },
+            set focusedFolderIndex(value: number) { self.focusedFolderIndex = value; },
+            get focusedFileIndex() { return self.focusedFileIndex; },
+            set focusedFileIndex(value: number) { self.focusedFileIndex = value; },
+            get expandedFolders() { return self.expandedFolders; },
+            get selectedFile() { return self.selectedFile; },
+            set selectedFile(value: TFile | null) { self.selectedFile = value; },
+            selectFolder: (folder: TFolder) => self.selectFolder(folder),
+            toggleFolder: (folder: TFolder) => self.toggleFolder(folder),
+            updateFocus: () => self.updateFocus(),
+            updateFileSelection: () => self.updateFileSelection(),
+            previewFile: (file: TFile) => self.previewFile(file),
+            saveState: () => self.saveState(),
+            openFile: (file: TFile) => self.openFile(file),
+            refreshFileList: () => self.refreshFileList(),
+            deleteFolder: (folder: TFolder) => self.deleteFolder(folder),
+            deleteFile: (file: TFile) => self.deleteFile(file),
+            app: self.app
+        };
+
+        this.keyboardHandler = new KeyboardHandler(keyboardContext);
+
         const keydownHandler = (e: KeyboardEvent) => {
-            this.handleKeyboardNavigation(e);
+            this.keyboardHandler.handleKeyboardNavigation(e);
         };
         (container as HTMLElement).addEventListener('keydown', keydownHandler);
         this.eventRefs.push(() => (container as HTMLElement).removeEventListener('keydown', keydownHandler));
@@ -1457,226 +1488,6 @@ class NotebookNavigatorView extends ItemView {
         return false;
     }
 
-    private handleKeyboardNavigation(e: KeyboardEvent) {
-        const folders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
-        const files = Array.from(this.fileList.querySelectorAll('.nn-file-item'));
-
-        switch (e.key) {
-            case 'ArrowUp':
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.focusedPane === 'folders') {
-                    this.focusedFolderIndex = Math.max(0, this.focusedFolderIndex - 1);
-                    // Auto-select folder on navigation
-                    const folderEl = folders[this.focusedFolderIndex];
-                    if (folderEl) {
-                        const path = folderEl.getAttribute('data-path');
-                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                        if (folder) {
-                            this.selectFolder(folder);
-                        }
-                    }
-                } else {
-                    this.focusedFileIndex = Math.max(0, this.focusedFileIndex - 1);
-                    // Update selection in file list
-                    if (files[this.focusedFileIndex]) {
-                        const path = files[this.focusedFileIndex].getAttribute('data-path');
-                        const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
-                        if (file) {
-                            this.selectedFile = file;
-                            this.updateFileSelection();
-                            this.previewFile(file);
-                            this.saveState();
-                        }
-                    }
-                }
-                this.updateFocus();
-                break;
-
-            case 'ArrowDown':
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.focusedPane === 'folders') {
-                    this.focusedFolderIndex = Math.min(folders.length - 1, this.focusedFolderIndex + 1);
-                    // Auto-select folder on navigation
-                    const folderEl = folders[this.focusedFolderIndex];
-                    if (folderEl) {
-                        const path = folderEl.getAttribute('data-path');
-                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                        if (folder) {
-                            this.selectFolder(folder);
-                        }
-                    }
-                } else {
-                    this.focusedFileIndex = Math.min(files.length - 1, this.focusedFileIndex + 1);
-                    // Update selection in file list
-                    if (files[this.focusedFileIndex]) {
-                        const path = files[this.focusedFileIndex].getAttribute('data-path');
-                        const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
-                        if (file) {
-                            this.selectedFile = file;
-                            this.updateFileSelection();
-                            this.previewFile(file);
-                            this.saveState();
-                        }
-                    }
-                }
-                this.updateFocus();
-                break;
-
-            case 'ArrowLeft':
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.focusedPane === 'folders') {
-                    const folderEl = folders[this.focusedFolderIndex];
-                    if (folderEl) {
-                        const path = folderEl.getAttribute('data-path');
-                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                        if (folder && this.expandedFolders.has(folder.path)) {
-                            // Collapse folder if expanded
-                            this.toggleFolder(folder);
-                        } else if (folder && folder.parent) {
-                            // Navigate to parent folder
-                            const parentIndex = folders.findIndex(el => 
-                                el.getAttribute('data-path') === folder.parent!.path
-                            );
-                            if (parentIndex >= 0) {
-                                this.focusedFolderIndex = parentIndex;
-                                // Auto-select parent folder
-                                const parentEl = folders[parentIndex];
-                                if (parentEl) {
-                                    const parentPath = parentEl.getAttribute('data-path');
-                                    const parentFolder = this.app.vault.getAbstractFileByPath(parentPath || '') as TFolder;
-                                    if (parentFolder) {
-                                        this.selectFolder(parentFolder);
-                                    }
-                                }
-                                this.updateFocus();
-                            }
-                        }
-                    }
-                } else if (this.focusedPane === 'files' && folders.length > 0) {
-                    // Move focus to folder pane
-                    this.focusedPane = 'folders';
-                    this.updateFocus();
-                }
-                break;
-
-            case 'ArrowRight':
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.focusedPane === 'folders') {
-                    const folderEl = folders[this.focusedFolderIndex];
-                    if (folderEl) {
-                        const path = folderEl.getAttribute('data-path');
-                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                        if (folder) {
-                            if (!this.expandedFolders.has(folder.path) && 
-                                folder.children.some(child => child instanceof TFolder)) {
-                                // Expand folder if it has subfolders
-                                this.toggleFolder(folder);
-                            } else if (files.length > 0) {
-                                // Move focus to file pane
-                                this.focusedPane = 'files';
-                                this.focusedFileIndex = 0;
-                                this.updateFocus();
-                            }
-                        }
-                    }
-                }
-                break;
-
-            case 'Tab':
-                e.preventDefault();
-                e.stopPropagation();
-                if (!e.shiftKey) {
-                    if (this.focusedPane === 'folders' && files.length > 0) {
-                        this.focusedPane = 'files';
-                        this.focusedFileIndex = 0;
-                    } else if (this.focusedPane === 'files') {
-                        // Tab from file list opens the selected file
-                        const fileEl = files[this.focusedFileIndex];
-                        if (fileEl) {
-                            const path = fileEl.getAttribute('data-path');
-                            const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
-                            if (file) {
-                                this.openFile(file);
-                            }
-                        }
-                    }
-                } else {
-                    if (this.focusedPane === 'files' && folders.length > 0) {
-                        this.focusedPane = 'folders';
-                    }
-                }
-                this.updateFocus();
-                break;
-
-            case 'Enter':
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.focusedPane === 'folders') {
-                    const folderEl = folders[this.focusedFolderIndex];
-                    if (folderEl) {
-                        const path = folderEl.getAttribute('data-path');
-                        const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                        if (folder) {
-                            // Toggle expand/collapse on Enter
-                            if (folder.children.some(child => child instanceof TFolder)) {
-                                this.toggleFolder(folder);
-                            }
-                            this.selectFolder(folder);
-                        }
-                    }
-                } else {
-                    // Enter in file list just selects the file, Tab opens it
-                    const fileEl = files[this.focusedFileIndex];
-                    if (fileEl) {
-                        const path = fileEl.getAttribute('data-path');
-                        const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
-                        if (file) {
-                            this.selectedFile = file;
-                            this.refreshFileList();
-                            this.saveState();
-                        }
-                    }
-                }
-                break;
-                
-            case 'Backspace':
-            case 'Delete':
-                // Handle file/folder deletion
-                // Mac uses Backspace, Windows uses Delete
-                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-                if ((isMac && e.key === 'Backspace') || (!isMac && e.key === 'Delete')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    if (this.focusedPane === 'folders') {
-                        // Delete focused folder
-                        const folderEl = folders[this.focusedFolderIndex];
-                        if (folderEl) {
-                            const path = folderEl.getAttribute('data-path');
-                            const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
-                            if (folder) {
-                                this.deleteFolder(folder);
-                            }
-                        }
-                    } else {
-                        // Delete focused file
-                        const fileEl = files[this.focusedFileIndex];
-                        if (fileEl) {
-                            const path = fileEl.getAttribute('data-path');
-                            const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
-                            if (file) {
-                                this.deleteFile(file);
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-    }
 
     private getPinnedNotesForFolder(folder: TFolder): string[] {
         return this.plugin.settings.pinnedNotes[folder.path] || [];
