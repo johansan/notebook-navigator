@@ -119,6 +119,21 @@ Combine Notebook Navigator with the [Featured Image plugin](https://github.com/j
 2. Enable "Show feature image" in Notebook Navigator settings
 3. Your notes will automatically display thumbnails from the first image
 
+#### Optimizing Thumbnail Performance
+
+For best performance with Notebook Navigator's 42px thumbnails, configure these Featured Image plugin settings:
+
+- **Create Resized Thumbnail:** `true`
+- **Resized Thumbnail Frontmatter Property:** `featureResized`
+- **Max Resized Width:** `42` (or `84` for retina displays)
+- **Max Resized Height:** `42` (or `84` for retina displays)
+- **Fill Resized Dimensions:** `true`
+
+Then in Notebook Navigator settings:
+- **Feature image property:** `featureResized`
+
+This creates optimized 42px thumbnails that load quickly and display perfectly in the file list, rather than loading full-size images.
+
 ### Organizing with Pins
 
 Pin frequently accessed notes to keep them at the top:
