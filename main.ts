@@ -651,7 +651,7 @@ class NotebookNavigatorView extends ItemView {
             this.showFolderContextMenu(folder, e);
         });
 
-        this.setupDragAndDrop(folderEl, folder);
+        this.setupDragAndDrop(folderEl, folder, folderContent);
 
         if (this.expandedFolders.has(folder.path)) {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
@@ -1512,17 +1512,22 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
-    private setupDragAndDrop(element: HTMLElement, file: TAbstractFile) {
-        element.draggable = true;
+    private setupDragAndDrop(element: HTMLElement, file: TAbstractFile, dragHandle?: HTMLElement) {
+        // If a drag handle is provided, make that draggable instead of the whole element
+        const draggableElement = dragHandle || element;
+        draggableElement.draggable = true;
 
-        element.addEventListener('dragstart', (e) => {
+        draggableElement.addEventListener('dragstart', (e) => {
+            // Stop propagation to prevent parent folders from also starting a drag
+            e.stopPropagation();
+            
             e.dataTransfer!.effectAllowed = 'move';
             e.dataTransfer!.setData('text/plain', file.path);
-            element.addClass('nn-dragging');
+            element.addClass('nn-dragging'); // Add class to main element, not drag handle
         });
 
-        element.addEventListener('dragend', () => {
-            element.removeClass('nn-dragging');
+        draggableElement.addEventListener('dragend', () => {
+            element.removeClass('nn-dragging'); // Remove class from main element
             
             // Clean up any remaining drag-over highlights
             this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
@@ -1531,6 +1536,9 @@ class NotebookNavigatorView extends ItemView {
         });
 
         if (file instanceof TFolder) {
+            // Always use the full element as drop zone for folders
+            // This allows dropping anywhere on the folder row, matching file behavior
+            
             element.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1543,7 +1551,7 @@ class NotebookNavigatorView extends ItemView {
                     }
                 });
                 
-                // Add highlight to current element
+                // Add highlight to current element (not the drop zone)
                 element.addClass('nn-drag-over');
             });
 
@@ -1564,12 +1572,29 @@ class NotebookNavigatorView extends ItemView {
                 const sourcePath = e.dataTransfer!.getData('text/plain');
                 const sourceFile = this.app.vault.getAbstractFileByPath(sourcePath);
 
-                if (sourceFile && sourceFile !== file && !this.isDescendant(file, sourceFile)) {
+                if (sourceFile && sourceFile !== file && !this.isDescendant(sourceFile, file)) {
                     try {
+                        // Check if we're moving a folder
+                        if (sourceFile instanceof TFolder && file instanceof TFolder) {
+                            // Don't allow moving a folder into its own descendant
+                            if (this.isDescendant(sourceFile, file)) {
+                                new Notice(`Cannot move a folder into its own subfolder`);
+                                return;
+                            }
+                        }
+                        
+                        // Check if source already exists in target
                         const newPath = `${file.path}/${sourceFile.name}`;
+                        const existingFile = this.app.vault.getAbstractFileByPath(newPath);
+                        
+                        if (existingFile) {
+                            new Notice(`A file or folder named "${sourceFile.name}" already exists in the target location`);
+                            return;
+                        }
+                        
                         await this.app.fileManager.renameFile(sourceFile, newPath);
                     } catch (error) {
-                        new Notice(`Failed to move file: ${error.message}`);
+                        new Notice(`Failed to move: ${error.message}`);
                     }
                 }
             });
