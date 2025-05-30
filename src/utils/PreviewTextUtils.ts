@@ -139,7 +139,7 @@ export class PreviewTextUtils {
             charCount += lines[i].length;
         }
         
-        // If no content found, return Apple Notes style message
+        // If no content found, return Notes style message
         if (previewLines.length === 0) {
             if (attachmentCount > 0) {
                 // If there are attachments, count both attachments and web links together

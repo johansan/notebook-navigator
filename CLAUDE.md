@@ -1,10 +1,10 @@
 # Notebook Navigator - Project Overview
 
 ## Project Summary
-Notebook Navigator is an Obsidian plugin that replaces the default file explorer with an Apple Notes-style interface. It provides a clean, two-pane layout with a folder tree on the left and a file list on the right, mimicking the UI/UX patterns found in Apple Notes.
+Notebook Navigator is an Obsidian plugin that replaces the default file explorer with a Notes-style interface. It provides a clean, two-pane layout with a folder tree on the left and a file list on the right, mimicking the UI/UX patterns found in Notes applications.
 
 ## Key Features
-- **Apple Notes-style interface**: Clean two-pane layout with folders and files
+- **Notes-style interface**: Clean two-pane layout with folders and files
 - **Smart file previews**: Shows file content preview with date and first lines of text
 - **Feature images**: Optional thumbnail images for notes (via frontmatter)
 - **Multiple sort options**: Sort by date modified, date created, or title
@@ -49,7 +49,7 @@ Notebook Navigator is an Obsidian plugin that replaces the default file explorer
 notebook-navigator/
 ├── src/
 │   └── main.ts      # Core plugin logic and UI components
-├── styles.css       # Apple Notes-inspired styling
+├── styles.css       # Notes-inspired styling
 ├── manifest.json    # Plugin metadata
 ├── package.json     # NPM dependencies
 └── esbuild.config.mjs # Build configuration
@@ -72,7 +72,7 @@ notebook-navigator/
 No explicit test framework detected. Testing likely done through manual verification in Obsidian.
 
 ### Styling Philosophy
-- Minimal, clean aesthetic inspired by Apple Notes
+- Minimal, clean aesthetic inspired by Notes applications
 - Extensive use of CSS variables for theme integration
 - No shadows or heavy borders for flat design
 - Smooth transitions for interactive elements

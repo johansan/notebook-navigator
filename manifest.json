@@ -3,7 +3,7 @@
 	"name": "Notebook Navigator",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Replace Obsidian's file explorer with an Apple Notes-style interface",
+	"description": "Replace Obsidian's file explorer with a Notes-style interface",
 	"author": "Notebook Navigator",
 	"authorUrl": "",
 	"fundingUrl": "",

@@ -1,4 +1,4 @@
-/* Notebook Navigator - Apple Notes Style */
+/* Notebook Navigator - Notes Style */
 
 .notebook-navigator {
     height: 100%;
@@ -387,7 +387,7 @@
 }
 
 .nn-file-item.nn-focused {
-    /* No outline for cleaner Apple Notes style */
+    /* No outline for cleaner Notes style */
 }
 
 /* Add position relative to file content for pseudo-element */
@@ -693,7 +693,7 @@
     }
 }
 
-/* Remove all shadows for clean Apple Notes style */
+/* Remove all shadows for clean Notes style */
 .theme-dark .nn-file-item,
 .theme-light .nn-file-item {
     box-shadow: none !important;

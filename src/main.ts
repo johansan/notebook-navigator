@@ -21,7 +21,7 @@ import { FileSystemOperations } from './operations/FileSystemOperations';
 
 /**
  * Main plugin class for Notebook Navigator
- * Provides an Apple Notes-style file explorer for Obsidian with two-pane layout
+ * Provides a Notes-style file explorer for Obsidian with two-pane layout
  * Manages plugin lifecycle, settings, and view registration
  */
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -298,7 +298,7 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
 /**
  * Main view class implementing the two-pane file navigator interface
- * Manages folder tree (left pane) and file list (right pane) with Apple Notes-style UI
+ * Manages folder tree (left pane) and file list (right pane) with Notes-style UI
  * Handles all user interactions, state management, and rendering
  */
 class NotebookNavigatorView extends ItemView {
