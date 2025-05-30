@@ -1,4 +1,4 @@
-import { TFile, TFolder, TAbstractFile } from 'obsidian';
+import { TFile, TFolder, TAbstractFile, Platform } from 'obsidian';
 
 export interface KeyboardNavigationContext {
     folderTree: HTMLElement;
@@ -259,9 +259,7 @@ export class KeyboardHandler {
     }
 
     private handleDelete(e: KeyboardEvent, folderItems: Element[], fileItems: Element[]): void {
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-        
-        if ((isMac && e.key === 'Backspace') || (!isMac && e.key === 'Delete')) {
+        if ((Platform.isMacOS && e.key === 'Backspace') || (!Platform.isMacOS && e.key === 'Delete')) {
             e.preventDefault();
             e.stopPropagation();
 
