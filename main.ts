@@ -57,7 +57,7 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     pinnedNotes: {},
     showNotesFromSubfolders: false,
     autoRevealActiveFile: true,
-    confirmBeforeDelete: false
+    confirmBeforeDelete: true
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -1745,6 +1745,39 @@ class NotebookNavigatorView extends ItemView {
                             this.selectedFile = file;
                             this.refreshFileList();
                             this.saveState();
+                        }
+                    }
+                }
+                break;
+                
+            case 'Backspace':
+            case 'Delete':
+                // Handle file/folder deletion
+                // Mac uses Backspace, Windows uses Delete
+                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                if ((isMac && e.key === 'Backspace') || (!isMac && e.key === 'Delete')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (this.focusedPane === 'folders') {
+                        // Delete focused folder
+                        const folderEl = folders[this.focusedFolderIndex];
+                        if (folderEl) {
+                            const path = folderEl.getAttribute('data-path');
+                            const folder = this.app.vault.getAbstractFileByPath(path || '') as TFolder;
+                            if (folder) {
+                                this.deleteFolder(folder);
+                            }
+                        }
+                    } else {
+                        // Delete focused file
+                        const fileEl = files[this.focusedFileIndex];
+                        if (fileEl) {
+                            const path = fileEl.getAttribute('data-path');
+                            const file = this.app.vault.getAbstractFileByPath(path || '') as TFile;
+                            if (file) {
+                                this.deleteFile(file);
+                            }
                         }
                     }
                 }
