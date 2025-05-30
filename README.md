@@ -8,7 +8,7 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
 - 🔍 **Smart file previews:** Shows content preview with date and first lines of text
 - 🖼️ **Feature images:** Display thumbnail images from frontmatter properties
 - 📌 **Pin important notes:** Keep frequently accessed notes at the top of any folder
-- ⌨️ **Full keyboard navigation:** Navigate entirely with arrow keys, Tab, and Enter
+- ⌨️ **Full keyboard navigation:** Navigate entirely with arrow keys and Tab
 - 🔄 **Multiple sort options:** Sort by date modified, date created, or title
 - 📅 **Date grouping:** Automatically group files by Today, Yesterday, Previous 7 Days, etc.
 - 🎯 **Drag and drop:** Move files and folders with intuitive drag and drop
@@ -31,7 +31,6 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
    - **Double-click** folders to expand/collapse
    - **Arrow keys** for navigation
    - **Tab** to switch between folder and file panes
-   - **Enter** to open files or toggle folders
    - **Delete/Backspace** to delete (with optional confirmation)
 4. Right-click for context menus:
    - Create new files and folders
@@ -51,7 +50,6 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
 | → | In folders: expand or switch to file pane<br>In files: no action |
 | Tab | Switch between folder and file panes<br>When in files: open selected file |
 | Shift+Tab | Switch from files to folders pane |
-| Enter | In folders: toggle expand/collapse<br>In files: select for preview |
 | Delete (Windows/Linux)<br>Backspace (macOS) | Delete selected item |
 
 ## Installation

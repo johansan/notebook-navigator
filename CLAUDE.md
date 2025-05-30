@@ -54,7 +54,7 @@ notebook-navigator/
 
 #### KeyboardHandler
 - Centralized keyboard navigation
-- Arrow keys, Tab, Enter, Delete handling
+- Arrow keys, Tab, Delete handling
 - Focus management between panes
 - Platform-specific key mappings
 
@@ -191,7 +191,7 @@ interface NotebookNavigatorSettings {
 
 ## Testing Checklist
 When making changes, test:
-- [ ] Keyboard navigation (all arrow keys, Tab, Enter, Delete)
+- [ ] Keyboard navigation (all arrow keys, Tab, Delete)
 - [ ] Drag and drop (files and folders)
 - [ ] File operations (create, rename, delete)
 - [ ] Settings changes and persistence

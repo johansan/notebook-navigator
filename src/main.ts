@@ -1383,7 +1383,7 @@ class NotebookNavigatorView extends ItemView {
 
     /**
      * Opens a file in the main editor pane
-     * Used when user double-clicks or presses Enter on a file
+     * Used when user double-clicks on a file or presses Tab in file list
      * @param file - The file to open
      */
     private openFile(file: TFile) {

@@ -70,9 +70,6 @@ export class KeyboardHandler {
             case 'Tab':
                 this.handleTab(e, folderItems, fileItems);
                 break;
-            case 'Enter':
-                this.handleEnter(e, folderItems, fileItems);
-                break;
             case 'Backspace':
             case 'Delete':
                 this.handleDelete(e, folderItems, fileItems);
@@ -296,47 +293,6 @@ export class KeyboardHandler {
         this.context.updateFocus();
     }
 
-    /**
-     * Handles Enter key activation
-     * In folders: Toggles folder expansion if it has subfolders
-     * In files: Selects and refreshes the file list
-     * Always updates the selection state
-     * @param e - The keyboard event
-     * @param folderItems - Array of folder DOM elements
-     * @param fileItems - Array of file DOM elements
-     */
-    private handleEnter(e: KeyboardEvent, folderItems: Element[], fileItems: Element[]): void {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (this.context.focusedPane === 'folders') {
-            const folderEl = folderItems[this.context.focusedFolderIndex];
-            if (folderEl) {
-                const path = folderEl.getAttribute('data-path');
-                const folder = this.context.app.vault.getAbstractFileByPath(path || '');
-                if (folder instanceof TFolder) {
-                    // Toggle expansion if folder has subfolders
-                    if (folder.children.some(child => child instanceof TFolder)) {
-                        this.context.toggleFolder(folder);
-                    }
-                    // Always select the folder
-                    this.context.selectFolder(folder);
-                }
-            }
-        } else {
-            // Enter on file selects it and refreshes the list
-            const fileEl = fileItems[this.context.focusedFileIndex];
-            if (fileEl) {
-                const path = fileEl.getAttribute('data-path');
-                const file = this.context.app.vault.getAbstractFileByPath(path || '');
-                if (file instanceof TFile) {
-                    this.context.selectedFile = file;
-                    this.context.refreshFileList();
-                    this.context.saveState();
-                }
-            }
-        }
-    }
 
     /**
      * Handles Delete/Backspace key for item deletion
