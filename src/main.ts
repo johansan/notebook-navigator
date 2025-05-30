@@ -1383,7 +1383,8 @@ class NotebookNavigatorView extends ItemView {
 
     /**
      * Opens a file in the main editor pane
-     * Used when user double-clicks on a file or presses Tab in file list
+     * Used when user presses Tab on a file in the file list
+     * Single click on file uses previewFile() instead
      * @param file - The file to open
      */
     private openFile(file: TFile) {
@@ -1497,13 +1498,6 @@ class NotebookNavigatorView extends ItemView {
      */
     private showFileContextMenu(file: TFile, e: MouseEvent) {
         const menu = new Menu();
-
-        menu.addItem((item) =>
-            item
-                .setTitle('Open')
-                .setIcon('file')
-                .onClick(() => this.openFile(file))
-        );
 
         menu.addItem((item) =>
             item
