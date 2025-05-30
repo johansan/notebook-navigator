@@ -81,7 +81,7 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
 - **Group notes by date:** When sorted by date, group files under headers like "Today", "Yesterday", etc.
 - **Show notes from subfolders:** Display all notes from subfolders in the current folder view
 - **Auto-reveal active file:** Automatically show and select files when opened from search or links
-- **Excluded folders:** Comma-separated list of folders to hide (e.g., `.obsidian, templates`)
+- **Excluded folders:** Comma-separated list of folders to hide (e.g., `resources, templates`)
 
 ### File Display
 
@@ -89,6 +89,7 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
 - **Skip non-text in preview:** Exclude headings, images, and embeds from preview text
 - **Show feature image:** Display thumbnail images from frontmatter properties
 - **Feature image property:** The frontmatter property name for thumbnails (default: `feature`)
+  - **Tip:** Use the [Featured Image plugin](https://github.com/johansan/obsidian-featured-image) (also available in Community Plugins) to automatically set feature images for all your notes based on the first image in each document!
 
 ### Folder Display
 
