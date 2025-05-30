@@ -805,10 +805,11 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
-    private ensureFolderVisible(folder: TFolder) {
+    private ensureFolderVisible(folder: TFolder): boolean {
         // Expand all parent folders to make this folder visible
         let parent = folder.parent;
         const foldersToExpand: TFolder[] = [];
+        let expandedAny = false;
         
         while (parent && parent.path !== '') {
             foldersToExpand.unshift(parent);
@@ -817,8 +818,13 @@ class NotebookNavigatorView extends ItemView {
         
         // Expand folders from root to target
         foldersToExpand.forEach(f => {
-            this.expandedFolders.add(f.path);
+            if (!this.expandedFolders.has(f.path)) {
+                this.expandedFolders.add(f.path);
+                expandedAny = true;
+            }
         });
+        
+        return expandedAny;
     }
 
     private getDateGroup(timestamp: number): string {
@@ -2165,7 +2171,13 @@ class NotebookNavigatorView extends ItemView {
     revealFile(file: TFile) {
         // Ensure parent folders are expanded
         if (file.parent) {
-            this.ensureFolderVisible(file.parent);
+            const needsTreeRefresh = this.ensureFolderVisible(file.parent);
+            
+            // If we expanded any folders, we need to refresh the tree to show them
+            if (needsTreeRefresh) {
+                this.renderFolderTree();
+            }
+            
             this.selectFolder(file.parent);
             this.selectedFile = file;
             
