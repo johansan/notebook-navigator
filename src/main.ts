@@ -1508,6 +1508,13 @@ class NotebookNavigatorView extends ItemView {
             pinnedNotes[folder.path].push(file.path);
             await this.plugin.saveSettings();
             this.refreshFileList();
+            
+            // Auto-scroll to the newly pinned file
+            this.selectedFile = file;
+            this.updateFileSelection();
+            setTimeout(() => {
+                this.scrollSelectedFileIntoView();
+            }, 100);
         }
     }
     
@@ -1628,7 +1635,7 @@ class NotebookNavigatorView extends ItemView {
         }
         
         const activeFile = this.app.workspace.getActiveFile();
-        if (!activeFile || !this.selectedFolder) return;
+        if (!activeFile) return;
         
         // Skip if already selected
         if (this.selectedFile?.path === activeFile.path) return;
@@ -1645,6 +1652,12 @@ class NotebookNavigatorView extends ItemView {
         });
         
         if (isIgnored) return;
+        
+        // If no folder is selected, always reveal the file
+        if (!this.selectedFolder) {
+            this.revealFile(activeFile);
+            return;
+        }
         
         // Check if auto-reveal is enabled
         if (this.plugin.settings.autoRevealActiveFile) {
