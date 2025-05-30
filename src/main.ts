@@ -444,7 +444,21 @@ class NotebookNavigatorView extends ItemView {
             this.app.vault.on('modify', () => this.debouncedFileListRefresh())
         );
         this.registerEvent(
-            this.app.workspace.on('active-leaf-change', () => this.handleActiveFileChange())
+            this.app.workspace.on('active-leaf-change', (leaf) => {
+                this.handleActiveFileChange();
+                
+                // If this view just became active, ensure selected items are visible
+                if (leaf === this.leaf && (this.selectedFile || this.selectedFolder)) {
+                    setTimeout(() => {
+                        if (this.selectedFolder) {
+                            this.scrollSelectedFolderIntoView();
+                        }
+                        if (this.selectedFile) {
+                            this.scrollSelectedFileIntoView();
+                        }
+                    }, 100);
+                }
+            })
         );
 
         // Create the keyboard handler with a context that provides access to current state
