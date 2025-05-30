@@ -37,6 +37,7 @@ interface NotebookNavigatorSettings {
     pinnedNotes: Record<string, string[]>;
     showNotesFromSubfolders: boolean;
     autoRevealActiveFile: boolean;
+    confirmBeforeDelete: boolean;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -55,7 +56,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     groupByDate: true,
     pinnedNotes: {},
     showNotesFromSubfolders: false,
-    autoRevealActiveFile: true
+    autoRevealActiveFile: true,
+    confirmBeforeDelete: false
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -1380,7 +1382,6 @@ class NotebookNavigatorView extends ItemView {
                 try {
                     const path = targetFolder.path ? `${targetFolder.path}/${name}` : name;
                     await this.app.vault.createFolder(path);
-                    new Notice(`Folder "${name}" created`);
                 } catch (error) {
                     new Notice(`Failed to create folder: ${error.message}`);
                 }
@@ -1426,7 +1427,6 @@ class NotebookNavigatorView extends ItemView {
                         ? `${folder.parent.path}/${newName}` 
                         : newName;
                     await this.app.fileManager.renameFile(folder, newPath);
-                    new Notice(`Folder renamed to "${newName}"`);
                 } catch (error) {
                     new Notice(`Failed to rename folder: ${error.message}`);
                 }
@@ -1446,7 +1446,6 @@ class NotebookNavigatorView extends ItemView {
                         ? `${file.parent.path}/${newName}` 
                         : newName;
                     await this.app.fileManager.renameFile(file, newPath);
-                    new Notice(`File renamed to "${newName}"`);
                 } catch (error) {
                     new Notice(`Failed to rename file: ${error.message}`);
                 }
@@ -1456,41 +1455,61 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private async deleteFolder(folder: TFolder) {
-        const confirmModal = new ConfirmModal(
-            this.app,
-            `Delete "${folder.name}"?`,
-            `Are you sure you want to delete this folder and all its contents?`,
-            async () => {
-                try {
-                    await this.app.vault.delete(folder, true);
-                    new Notice(`Folder "${folder.name}" deleted`);
-                    if (this.selectedFolder === folder) {
-                        this.selectedFolder = null;
-                        this.refreshFileList();
+        if (this.plugin.settings.confirmBeforeDelete) {
+            const confirmModal = new ConfirmModal(
+                this.app,
+                `Delete "${folder.name}"?`,
+                `Are you sure you want to delete this folder and all its contents?`,
+                async () => {
+                    try {
+                        await this.app.vault.delete(folder, true);
+                        if (this.selectedFolder === folder) {
+                            this.selectedFolder = null;
+                            this.refreshFileList();
+                        }
+                    } catch (error) {
+                        new Notice(`Failed to delete folder: ${error.message}`);
                     }
-                } catch (error) {
-                    new Notice(`Failed to delete folder: ${error.message}`);
                 }
+            );
+            confirmModal.open();
+        } else {
+            // Direct deletion without confirmation
+            try {
+                await this.app.vault.delete(folder, true);
+                if (this.selectedFolder === folder) {
+                    this.selectedFolder = null;
+                    this.refreshFileList();
+                }
+            } catch (error) {
+                new Notice(`Failed to delete folder: ${error.message}`);
             }
-        );
-        confirmModal.open();
+        }
     }
 
     private async deleteFile(file: TFile) {
-        const confirmModal = new ConfirmModal(
-            this.app,
-            `Delete "${file.basename}"?`,
-            `Are you sure you want to delete this file?`,
-            async () => {
-                try {
-                    await this.app.vault.delete(file);
-                    new Notice(`File "${file.basename}" deleted`);
-                } catch (error) {
-                    new Notice(`Failed to delete file: ${error.message}`);
+        if (this.plugin.settings.confirmBeforeDelete) {
+            const confirmModal = new ConfirmModal(
+                this.app,
+                `Delete "${file.basename}"?`,
+                `Are you sure you want to delete this file?`,
+                async () => {
+                    try {
+                        await this.app.vault.delete(file);
+                    } catch (error) {
+                        new Notice(`Failed to delete file: ${error.message}`);
+                    }
                 }
+            );
+            confirmModal.open();
+        } else {
+            // Direct deletion without confirmation
+            try {
+                await this.app.vault.delete(file);
+            } catch (error) {
+                new Notice(`Failed to delete file: ${error.message}`);
             }
-        );
-        confirmModal.open();
+        }
     }
 
     private setupDragAndDrop(element: HTMLElement, file: TAbstractFile) {
@@ -1528,7 +1547,6 @@ class NotebookNavigatorView extends ItemView {
                     try {
                         const newPath = `${file.path}/${sourceFile.name}`;
                         await this.app.fileManager.renameFile(sourceFile, newPath);
-                        new Notice(`Moved "${sourceFile.name}" to "${file.name}"`);
                     } catch (error) {
                         new Notice(`Failed to move file: ${error.message}`);
                     }
@@ -2357,6 +2375,16 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Advanced')
             .setHeading();
+
+        new Setting(containerEl)
+            .setName('Confirm before deleting files')
+            .setDesc('Show confirmation dialog when deleting files or folders')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.confirmBeforeDelete)
+                .onChange(async (value) => {
+                    this.plugin.settings.confirmBeforeDelete = value;
+                    await this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName('Clear saved state')
