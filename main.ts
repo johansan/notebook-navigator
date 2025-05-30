@@ -36,6 +36,7 @@ interface NotebookNavigatorSettings {
     groupByDate: boolean;
     pinnedNotes: Record<string, string[]>;
     showNotesFromSubfolders: boolean;
+    autoRevealActiveFile: boolean;
 }
 
 const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
@@ -53,7 +54,8 @@ const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showFolderFileCount: true,
     groupByDate: true,
     pinnedNotes: {},
-    showNotesFromSubfolders: false
+    showNotesFromSubfolders: false,
+    autoRevealActiveFile: true
 }
 
 export default class NotebookNavigatorPlugin extends Plugin {
@@ -1875,19 +1877,25 @@ class NotebookNavigatorView extends ItemView {
         
         if (isIgnored) return;
         
-        // Check if file is visible in current view
-        if (this.isFileInCurrentView(activeFile)) {
-            // For newly created files, the DOM might not be updated yet
-            const fileEl = this.fileList.querySelector(`[data-path="${CSS.escape(activeFile.path)}"]`);
-            if (!fileEl) {
-                // File list needs refresh first
-                this.refreshFileList();
-                // Defer selection after DOM update
-                setTimeout(() => {
+        // Check if auto-reveal is enabled
+        if (this.plugin.settings.autoRevealActiveFile) {
+            // Always reveal the file, switching folders if needed
+            this.revealFile(activeFile);
+        } else {
+            // Original behavior - only select if visible in current view
+            if (this.isFileInCurrentView(activeFile)) {
+                // For newly created files, the DOM might not be updated yet
+                const fileEl = this.fileList.querySelector(`[data-path="${CSS.escape(activeFile.path)}"]`);
+                if (!fileEl) {
+                    // File list needs refresh first
+                    this.refreshFileList();
+                    // Defer selection after DOM update
+                    setTimeout(() => {
+                        this.selectFileWithoutOpening(activeFile);
+                    }, 50);
+                } else {
                     this.selectFileWithoutOpening(activeFile);
-                }, 50);
-            } else {
-                this.selectFileWithoutOpening(activeFile);
+                }
             }
         }
     }
@@ -2183,6 +2191,16 @@ class NotebookNavigatorSettingTab extends PluginSettingTab {
             () => this.plugin.settings.ignoreFolders,
             (value) => { this.plugin.settings.ignoreFolders = value; }
         );
+
+        new Setting(containerEl)
+            .setName('Auto-reveal active file')
+            .setDesc('Automatically reveal and select files when opened from Quick Switcher, links, or search.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.autoRevealActiveFile)
+                .onChange(async (value) => {
+                    this.plugin.settings.autoRevealActiveFile = value;
+                    await this.plugin.saveSettings();
+                }));
 
         // Section 2: File display
         new Setting(containerEl)
