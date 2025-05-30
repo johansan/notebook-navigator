@@ -9,21 +9,22 @@ import {
     Menu,
     Notice,
     setIcon,
-    Modal,
     Setting,
     CachedMetadata
 } from 'obsidian';
-import { format } from 'date-fns';
 import { SortOption, NotebookNavigatorSettings, DEFAULT_SETTINGS, NotebookNavigatorSettingTab } from './settings';
-
-const VIEW_TYPE_NOTEBOOK = 'notebook-navigator-view';
+import { InputModal } from './modals/InputModal';
+import { ConfirmModal } from './modals/ConfirmModal';
+import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
+import { DateUtils } from './utils/DateUtils';
+import { PreviewTextUtils } from './utils/PreviewTextUtils';
 
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
 
     // LocalStorage keys for state persistence
-    keys = {
+    keys: LocalStorageKeys = {
         expandedFoldersKey: 'notebook-navigator-expanded-folders',
         selectedFolderKey: 'notebook-navigator-selected-folder',
         selectedFileKey: 'notebook-navigator-selected-file',
@@ -785,37 +786,6 @@ class NotebookNavigatorView extends ItemView {
         return expandedAny;
     }
 
-    private getDateGroup(timestamp: number): string {
-        const now = new Date();
-        const date = new Date(timestamp);
-        
-        // Reset times to start of day for comparison
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const weekAgo = new Date(today);
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        const monthAgo = new Date(today);
-        monthAgo.setDate(monthAgo.getDate() - 30);
-        
-        const fileDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
-        if (fileDate.getTime() === today.getTime()) {
-            return 'Today';
-        } else if (fileDate.getTime() === yesterday.getTime()) {
-            return 'Yesterday';
-        } else if (fileDate > weekAgo) {
-            return 'Previous 7 Days';
-        } else if (fileDate > monthAgo) {
-            return 'Previous 30 Days';
-        } else if (date.getFullYear() === now.getFullYear()) {
-            // Same year - show month name
-            return format(date, 'MMMM');
-        } else {
-            // Different year - show year
-            return date.getFullYear().toString();
-        }
-    }
 
     private renderFilesWithDateGroups(files: TFile[]) {
         this.renderUnpinnedFilesWithDateGroups(files, 0);
@@ -830,7 +800,7 @@ class NotebookNavigatorView extends ItemView {
             const timestamp = this.plugin.settings.sortOption === 'modified' 
                 ? file.stat.mtime 
                 : file.stat.ctime;
-            const group = this.getDateGroup(timestamp);
+            const group = DateUtils.getDateGroup(timestamp);
             
             if (!groups.has(group)) {
                 groups.set(group, []);
@@ -1041,9 +1011,9 @@ class NotebookNavigatorView extends ItemView {
         const fileDate = secondLine.createDiv('nn-file-date');
         const sortOption = this.plugin.settings.sortOption;
         if (sortOption === 'created') {
-            fileDate.textContent = this.formatDate(file.stat.ctime);
+            fileDate.textContent = DateUtils.formatDate(file.stat.ctime, this.plugin.settings.dateFormat);
         } else {
-            fileDate.textContent = this.formatDate(file.stat.mtime);
+            fileDate.textContent = DateUtils.formatDate(file.stat.mtime, this.plugin.settings.dateFormat);
         }
         
         if (this.plugin.settings.showNotesFromSubfolders) {
@@ -1057,7 +1027,7 @@ class NotebookNavigatorView extends ItemView {
                 // File is in current folder - show preview
                 const preview = secondLine.createDiv('nn-file-preview');
                 this.app.vault.cachedRead(file).then(content => {
-                    const previewText = this.extractPreviewText(content);
+                    const previewText = PreviewTextUtils.extractPreviewText(content, this.plugin.settings);
                     preview.textContent = previewText;
                 });
             }
@@ -1065,7 +1035,7 @@ class NotebookNavigatorView extends ItemView {
             // Normal mode - show preview text
             const preview = secondLine.createDiv('nn-file-preview');
             this.app.vault.cachedRead(file).then(content => {
-                const previewText = this.extractPreviewText(content);
+                const previewText = PreviewTextUtils.extractPreviewText(content, this.plugin.settings);
                 preview.textContent = previewText;
             });
         }
@@ -1114,15 +1084,6 @@ class NotebookNavigatorView extends ItemView {
         this.setupDragAndDrop(fileEl, file);
     }
 
-    private formatDate(timestamp: number): string {
-        const date = new Date(timestamp);
-        try {
-            return format(date, this.plugin.settings.dateFormat);
-        } catch (e) {
-            // If invalid format string, fall back to default
-            return format(date, 'MMM d, yyyy');
-        }
-    }
 
     private openFile(file: TFile) {
         this.app.workspace.getLeaf(false).openFile(file);
@@ -1142,155 +1103,6 @@ class NotebookNavigatorView extends ItemView {
         }, 50);
     }
 
-    private stripMarkdownSyntax(text: string): string {
-        // Order matters - process from inside out
-        return text
-            // Inline code (must be before bold/italic to avoid conflicts)
-            .replace(/`([^`]+)`/g, '$1')
-            // Bold italic combined
-            .replace(/\*\*\*([^\*]+)\*\*\*/g, '$1')
-            .replace(/___([^_]+)___/g, '$1')
-            // Bold
-            .replace(/\*\*([^\*]+)\*\*/g, '$1')
-            .replace(/__([^_]+)__/g, '$1')
-            // Italic (be careful not to match multiplication)
-            .replace(/(?<!\d)\*([^\*\n]+)\*(?!\d)/g, '$1')
-            .replace(/(?<![a-zA-Z0-9])_([^_\n]+)_(?![a-zA-Z0-9])/g, '$1')
-            // Strikethrough
-            .replace(/~~([^~]+)~~/g, '$1')
-            // Highlight
-            .replace(/==([^=]+)==/g, '$1')
-            // Links
-            .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-            // Wiki links with display text
-            .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
-            // Wiki links without display text
-            .replace(/\[\[([^\]]+)\]\]/g, '$1')
-            // List markers at start of line
-            .replace(/^[-*+]\s+/gm, '')
-            .replace(/^\d+\.\s+/gm, '')
-            // Blockquotes
-            .replace(/^>\s+/gm, '')
-            // Escape characters
-            .replace(/\\([*_~`])/g, '$1');
-    }
-
-    private extractPreviewText(content: string): string {
-        let lines = content.split('\n');
-        let startIndex = 0;
-        
-        // Skip frontmatter
-        if (lines[0] === '---') {
-            let endIndex = lines.findIndex((line, idx) => idx > 0 && line === '---');
-            if (endIndex > 0) {
-                startIndex = endIndex + 1;
-            }
-        }
-        
-        // Count attachments and web links in the entire document first
-        let attachmentCount = 0;
-        let webLinkCount = 0;
-        
-        for (let i = startIndex; i < lines.length; i++) {
-            const line = lines[i];
-            
-            // Check for markdown images with URLs (these are web links, not attachments)
-            const markdownImages = line.match(/!\[.*?\]\((.*?)\)/g);
-            if (markdownImages) {
-                markdownImages.forEach(match => {
-                    const urlMatch = match.match(/!\[.*?\]\((.*?)\)/);
-                    if (urlMatch && urlMatch[1]) {
-                        const url = urlMatch[1];
-                        // If it's a web URL, count as web link
-                        if (url.match(/^https?:\/\/|^www\./)) {
-                            webLinkCount++;
-                        } else {
-                            // Local image, count as attachment
-                            attachmentCount++;
-                        }
-                    }
-                });
-            }
-            
-            // Count Obsidian wiki-style embeds: ![[...]] (always attachments)
-            const wikiEmbeds = line.match(/!\[\[.*?\]\]/g);
-            if (wikiEmbeds) {
-                attachmentCount += wikiEmbeds.length;
-            }
-            
-            // Count web links but exclude those that are part of markdown images
-            // First remove markdown images and embeds from the line
-            const cleanLine = line
-                .replace(/!\[.*?\]\(.*?\)/g, '') // Remove markdown images
-                .replace(/!\[\[.*?\]\]/g, ''); // Remove wiki embeds
-            
-            // Now count web links in the cleaned line
-            const webLinks = cleanLine.match(/(?:https?:\/\/|www\.)[^\s\)]+/g);
-            if (webLinks) {
-                webLinkCount += webLinks.length;
-            }
-        }
-        
-        // Find content lines based on settings
-        let previewLines = [];
-        let charCount = 0;
-        
-        for (let i = startIndex; i < lines.length && charCount < 100; i++) {
-            const line = lines[i].trim();
-            
-            // Skip empty lines
-            if (!line) continue;
-            
-            // Skip non-text content if enabled
-            if (this.plugin.settings.skipNonTextInPreview) {
-                // Skip headings
-                if (line.match(/^#+\s/)) continue;
-                
-                // Skip markdown images and embeds
-                if (line.match(/^!\[.*?\]\(.*?\)/)) continue;
-                
-                // Skip Obsidian wiki-style embeds (images, files, etc)
-                if (line.match(/^!\[\[.*?\]\]/)) continue;
-                
-                // Skip standalone links that look like embeds
-                if (line.match(/^\[.*\]\(.*\)$/)) continue;
-                
-                // Skip code blocks
-                if (line.startsWith('```')) continue;
-                
-                // Skip horizontal rules
-                if (line.match(/^(-{3,}|\*{3,}|_{3,})$/)) continue;
-                
-                // Skip block quotes that might contain non-text
-                if (line.startsWith('>') && line.match(/!\[.*\]\(.*\)/)) continue;
-            }
-            
-            previewLines.push(lines[i]);
-            charCount += lines[i].length;
-        }
-        
-        // If no content found, return Apple Notes style message
-        if (previewLines.length === 0) {
-            if (attachmentCount > 0) {
-                // If there are attachments, count both attachments and web links together
-                const totalCount = attachmentCount + webLinkCount;
-                return totalCount === 1 ? '1 attachment' : `${totalCount} attachments`;
-            } else if (webLinkCount > 0) {
-                return webLinkCount === 1 ? '1 web link' : `${webLinkCount} web links`;
-            }
-            return 'No additional text';
-        }
-        
-        let preview = previewLines.join(' ');
-        
-        // Strip markdown syntax first before truncating
-        preview = this.stripMarkdownSyntax(preview);
-        
-        // Now trim to 100 chars after stripping
-        preview = preview.substring(0, 100);
-        
-        return preview + (preview.length >= 100 ? '...' : '');
-    }
 
     private renderFeatureImage(container: HTMLElement, imagePath: string, file: TFile) {
         const imageContainer = container.createDiv('nn-feature-image');
@@ -2161,79 +1973,5 @@ class NotebookNavigatorView extends ItemView {
                 this.scrollSelectedFileIntoView();
             }, 100);
         }
-    }
-}
-
-class InputModal extends Modal {
-    constructor(
-        app: App,
-        title: string,
-        placeholder: string,
-        private onSubmit: (value: string) => void,
-        private defaultValue: string = ''
-    ) {
-        super(app);
-        this.titleEl.setText(title);
-        
-        const inputEl = this.contentEl.createEl('input', {
-            type: 'text',
-            placeholder: placeholder,
-            value: defaultValue
-        });
-        inputEl.addClass('nn-input');
-        
-        inputEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.close();
-                this.onSubmit(inputEl.value);
-            }
-        });
-        
-        const buttonContainer = this.contentEl.createDiv('nn-button-container');
-        
-        const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
-        cancelBtn.addEventListener('click', () => this.close());
-        
-        const submitBtn = buttonContainer.createEl('button', { 
-            text: 'Submit',
-            cls: 'mod-cta'
-        });
-        submitBtn.addEventListener('click', () => {
-            this.close();
-            this.onSubmit(inputEl.value);
-        });
-        
-        inputEl.focus();
-        if (defaultValue) {
-            inputEl.select();
-        }
-    }
-}
-
-class ConfirmModal extends Modal {
-    constructor(
-        app: App,
-        title: string,
-        message: string,
-        private onConfirm: () => void
-    ) {
-        super(app);
-        this.titleEl.setText(title);
-        this.contentEl.createEl('p', { text: message });
-        
-        const buttonContainer = this.contentEl.createDiv('nn-button-container');
-        
-        const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
-        cancelBtn.addEventListener('click', () => this.close());
-        
-        const confirmBtn = buttonContainer.createEl('button', { 
-            text: 'Delete',
-            cls: 'mod-warning'
-        });
-        confirmBtn.addEventListener('click', () => {
-            this.close();
-            this.onConfirm();
-        });
     }
 }
