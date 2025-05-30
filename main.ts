@@ -1523,22 +1523,43 @@ class NotebookNavigatorView extends ItemView {
 
         element.addEventListener('dragend', () => {
             element.removeClass('nn-dragging');
+            
+            // Clean up any remaining drag-over highlights
+            this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
+                el.removeClass('nn-drag-over');
+            });
         });
 
         if (file instanceof TFolder) {
             element.addEventListener('dragover', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 e.dataTransfer!.dropEffect = 'move';
+                
+                // Clear all existing highlights except for this element
+                this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
+                    if (el !== element) {
+                        el.removeClass('nn-drag-over');
+                    }
+                });
+                
+                // Add highlight to current element
                 element.addClass('nn-drag-over');
             });
 
-            element.addEventListener('dragleave', () => {
-                element.removeClass('nn-drag-over');
+            element.addEventListener('dragleave', (e) => {
+                // Simple dragleave - the dragover handler will manage highlights
+                e.stopPropagation();
             });
 
             element.addEventListener('drop', async (e) => {
                 e.preventDefault();
-                element.removeClass('nn-drag-over');
+                e.stopPropagation();
+                
+                // Remove all drag-over highlights
+                this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
+                    el.removeClass('nn-drag-over');
+                });
 
                 const sourcePath = e.dataTransfer!.getData('text/plain');
                 const sourceFile = this.app.vault.getAbstractFileByPath(sourcePath);

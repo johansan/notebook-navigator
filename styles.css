@@ -161,11 +161,11 @@
 .nn-folder-content {
     display: flex;
     align-items: center;
-    padding: 4px 10px;
+    padding: 4px 16px;
     cursor: pointer;
     transition: background-color 0.15s ease;
     border-radius: 4px;
-    margin: 0 6px;
+    margin: 0;
     background-color: transparent !important;
     position: relative;
 }
@@ -614,9 +614,8 @@
     opacity: 0.5;
 }
 
-.nn-drag-over {
-    background-color: var(--interactive-accent) !important;
-    opacity: 0.3;
+.nn-folder-item.nn-drag-over > .nn-folder-content {
+    background-color: var(--interactive-accent-hover) !important;
 }
 
 /* Modals */
