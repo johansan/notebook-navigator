@@ -1990,14 +1990,18 @@ class NotebookNavigatorView extends ItemView {
         // Ensure parent folders are expanded
         if (file.parent) {
             this.ensureFolderVisible(file.parent);
-            this.selectedFolder = file.parent;
+            this.selectFolder(file.parent);
             this.selectedFile = file;
             
-            // Refresh the view
-            this.refresh();
+            // Only refresh file list, not the entire folder tree
+            this.refreshFileList();
             
-            // Find and focus the file in the list
+            // Scroll to the selected folder and file
             setTimeout(() => {
+                // First scroll to the folder in the tree
+                this.scrollSelectedFolderIntoView();
+                
+                // Then find and focus the file in the list
                 const fileEls = this.fileList.querySelectorAll('.nn-file-item');
                 fileEls.forEach((el, index) => {
                     if (el.getAttribute('data-path') === file.path) {
@@ -2006,6 +2010,9 @@ class NotebookNavigatorView extends ItemView {
                         this.updateFocus();
                     }
                 });
+                
+                // Scroll to the file as well
+                this.scrollSelectedFileIntoView();
             }, 100);
         }
     }
