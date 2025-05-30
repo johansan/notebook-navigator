@@ -352,6 +352,9 @@ class NotebookNavigatorView extends ItemView {
         this.registerEvent(
             this.app.vault.on('modify', () => this.refreshFileList())
         );
+        this.registerEvent(
+            this.app.workspace.on('active-leaf-change', () => this.handleActiveFileChange())
+        );
 
         const keydownHandler = (e: KeyboardEvent) => {
             this.handleKeyboardNavigation(e);
@@ -1850,6 +1853,80 @@ class NotebookNavigatorView extends ItemView {
                 fileEl.addClass('nn-selected');
             }
         }
+    }
+
+    private handleActiveFileChange() {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile || !this.selectedFolder) return;
+        
+        // Skip if already selected
+        if (this.selectedFile?.path === activeFile.path) return;
+        
+        // Check if file should be ignored
+        const ignoredFolders = this.plugin.settings.ignoreFolders
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f.length > 0);
+        
+        const isIgnored = ignoredFolders.some(folder => {
+            const folderPath = folder.endsWith('/') ? folder : folder + '/';
+            return activeFile.path.startsWith(folderPath);
+        });
+        
+        if (isIgnored) return;
+        
+        // Check if file is visible in current view
+        if (this.isFileInCurrentView(activeFile)) {
+            // For newly created files, the DOM might not be updated yet
+            const fileEl = this.fileList.querySelector(`[data-path="${CSS.escape(activeFile.path)}"]`);
+            if (!fileEl) {
+                // File list needs refresh first
+                this.refreshFileList();
+                // Defer selection after DOM update
+                setTimeout(() => {
+                    this.selectFileWithoutOpening(activeFile);
+                }, 50);
+            } else {
+                this.selectFileWithoutOpening(activeFile);
+            }
+        }
+    }
+
+    private isFileInCurrentView(file: TFile): boolean {
+        if (!this.selectedFolder) return false;
+        
+        if (this.plugin.settings.showNotesFromSubfolders) {
+            // Check if file is within the folder tree
+            let current = file.parent;
+            while (current) {
+                if (current.path === this.selectedFolder.path) return true;
+                current = current.parent;
+            }
+            return false;
+        } else {
+            // Check if file is direct child
+            return file.parent?.path === this.selectedFolder.path;
+        }
+    }
+
+    private selectFileWithoutOpening(file: TFile) {
+        this.selectedFile = file;
+        this.updateFileSelection();
+        
+        // Ensure file is visible in viewport
+        const fileEl = this.fileList.querySelector(`[data-path="${CSS.escape(file.path)}"]`) as HTMLElement;
+        if (fileEl) {
+            const container = this.fileList;
+            const containerRect = container.getBoundingClientRect();
+            const fileRect = fileEl.getBoundingClientRect();
+            
+            if (fileRect.top < containerRect.top || fileRect.bottom > containerRect.bottom) {
+                fileEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        
+        // Save state
+        localStorage.setItem(this.plugin.keys.selectedFileKey, file.path);
     }
 
     private updateFocus() {
