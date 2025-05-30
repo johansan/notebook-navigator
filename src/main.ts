@@ -249,6 +249,7 @@ class NotebookNavigatorView extends ItemView {
     private fileListRefreshTimer?: NodeJS.Timeout;
     private pendingCountUpdate: boolean = false;
     private keyboardHandler: KeyboardHandler;
+    private pendingFolderSelection: string | null = null;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -567,6 +568,33 @@ class NotebookNavigatorView extends ItemView {
     refresh() {
         this.renderFolderTree();
         this.refreshFileList();
+        
+        // Handle pending folder selection after refresh
+        if (this.pendingFolderSelection) {
+            const folder = this.app.vault.getAbstractFileByPath(this.pendingFolderSelection);
+            if (folder instanceof TFolder) {
+                // Select the newly created folder
+                this.selectFolder(folder);
+                
+                // Calculate and update the focused folder index
+                const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
+                const folderIndex = allFolders.findIndex(el => 
+                    el.getAttribute('data-path') === folder.path
+                );
+                if (folderIndex >= 0) {
+                    this.focusedFolderIndex = folderIndex;
+                    this.focusedPane = 'folders';
+                    this.updateFocus();
+                }
+                
+                // Scroll the folder into view
+                setTimeout(() => {
+                    this.scrollSelectedFolderIntoView();
+                }, 50);
+            }
+            // Clear the pending selection
+            this.pendingFolderSelection = null;
+        }
     }
 
     private debouncedFileListRefresh() {
@@ -1253,9 +1281,16 @@ class NotebookNavigatorView extends ItemView {
             if (name) {
                 try {
                     const path = targetFolder.path ? `${targetFolder.path}/${name}` : name;
+                    // Set pending selection before creation
+                    this.pendingFolderSelection = path;
+                    // Ensure parent folder will be expanded
+                    if (targetFolder.path) {
+                        this.expandedFolders.add(targetFolder.path);
+                    }
                     await this.app.vault.createFolder(path);
                 } catch (error) {
                     new Notice(`Failed to create folder: ${error.message}`);
+                    this.pendingFolderSelection = null;
                 }
             }
         });
