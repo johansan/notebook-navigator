@@ -1858,6 +1858,12 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private handleActiveFileChange() {
+        // Only process changes from the main editor area
+        const activeLeaf = this.app.workspace.activeLeaf;
+        if (!activeLeaf || activeLeaf.getRoot() !== this.app.workspace.rootSplit) {
+            return;
+        }
+        
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile || !this.selectedFolder) return;
         
