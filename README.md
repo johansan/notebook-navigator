@@ -139,7 +139,7 @@ Pin frequently accessed notes to keep them at the top:
 
 - Works with all Obsidian themes
 - Compatible with other file management plugins
-- Supports both desktop and mobile versions of Obsidian
+- **Desktop only** - This plugin is only available for desktop versions of Obsidian
 - Respects Obsidian's safe mode
 
 ## Known Limitations
@@ -186,7 +186,7 @@ Please ensure your code:
 - Maintains the existing code style
 - Includes comprehensive function documentation
 - Preserves keyboard navigation functionality
-- Has been tested on both desktop and mobile
+- Has been thoroughly tested on desktop
 
 ## License
 
