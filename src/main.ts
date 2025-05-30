@@ -7,18 +7,16 @@ import {
     TFolder, 
     TAbstractFile,
     Menu,
-    Notice,
     setIcon,
     Setting,
     CachedMetadata
 } from 'obsidian';
 import { SortOption, NotebookNavigatorSettings, DEFAULT_SETTINGS, NotebookNavigatorSettingTab } from './settings';
-import { InputModal } from './modals/InputModal';
-import { ConfirmModal } from './modals/ConfirmModal';
 import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
 import { DateUtils } from './utils/DateUtils';
 import { PreviewTextUtils } from './utils/PreviewTextUtils';
 import { KeyboardHandler } from './handlers/KeyboardHandler';
+import { FileSystemOperations } from './operations/FileSystemOperations';
 
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
@@ -250,10 +248,12 @@ class NotebookNavigatorView extends ItemView {
     private pendingCountUpdate: boolean = false;
     private keyboardHandler: KeyboardHandler;
     private pendingFolderSelection: string | null = null;
+    private fileSystemOps: FileSystemOperations;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
         this.plugin = plugin;
+        this.fileSystemOps = new FileSystemOperations(this.app);
     }
 
     getViewType() {
@@ -1277,146 +1277,40 @@ class NotebookNavigatorView extends ItemView {
     private async createNewFolder(parent?: TFolder) {
         const targetFolder = parent || this.selectedFolder || this.app.vault.getRoot();
         
-        const modal = new InputModal(this.app, 'New Folder', 'Enter folder name:', async (name) => {
-            if (name) {
-                try {
-                    const path = targetFolder.path ? `${targetFolder.path}/${name}` : name;
-                    // Set pending selection before creation
-                    this.pendingFolderSelection = path;
-                    // Ensure parent folder will be expanded
-                    if (targetFolder.path) {
-                        this.expandedFolders.add(targetFolder.path);
-                    }
-                    await this.app.vault.createFolder(path);
-                } catch (error) {
-                    new Notice(`Failed to create folder: ${error.message}`);
-                    this.pendingFolderSelection = null;
-                }
+        await this.fileSystemOps.createNewFolder(targetFolder, (path) => {
+            // Set pending selection before creation
+            this.pendingFolderSelection = path;
+            // Ensure parent folder will be expanded
+            if (targetFolder.path) {
+                this.expandedFolders.add(targetFolder.path);
             }
         });
-        modal.open();
     }
 
     private async createNewFile(parent?: TFolder) {
         const targetFolder = parent || this.selectedFolder || this.app.vault.getRoot();
-        
-        try {
-            // Generate unique "Untitled" name
-            let fileName = "Untitled";
-            let counter = 1;
-            let path = targetFolder.path ? `${targetFolder.path}/${fileName}.md` : `${fileName}.md`;
-            
-            // Check if file exists and increment counter
-            while (this.app.vault.getAbstractFileByPath(path)) {
-                fileName = `Untitled ${counter}`;
-                path = targetFolder.path ? `${targetFolder.path}/${fileName}.md` : `${fileName}.md`;
-                counter++;
-            }
-            
-            // Create the file
-            const file = await this.app.vault.create(path, '');
-            this.openFile(file);
-            
-            // Put the file in rename mode immediately (similar to Obsidian's default behavior)
-            setTimeout(() => {
-                this.app.vault.rename(file, path);
-            }, 100);
-        } catch (error) {
-            new Notice(`Failed to create file: ${error.message}`);
-        }
+        await this.fileSystemOps.createNewFile(targetFolder);
     }
 
     private async renameFolder(folder: TFolder) {
-        const modal = new InputModal(this.app, 'Rename Folder', 'Enter new name:', async (newName) => {
-            if (newName && newName !== folder.name) {
-                try {
-                    const newPath = folder.parent?.path 
-                        ? `${folder.parent.path}/${newName}` 
-                        : newName;
-                    await this.app.fileManager.renameFile(folder, newPath);
-                } catch (error) {
-                    new Notice(`Failed to rename folder: ${error.message}`);
-                }
-            }
-        }, folder.name);
-        modal.open();
+        await this.fileSystemOps.renameFolder(folder);
     }
 
     private async renameFile(file: TFile) {
-        const modal = new InputModal(this.app, 'Rename File', 'Enter new name:', async (newName) => {
-            if (newName && newName !== file.basename) {
-                try {
-                    if (!newName.endsWith('.md')) {
-                        newName += '.md';
-                    }
-                    const newPath = file.parent?.path 
-                        ? `${file.parent.path}/${newName}` 
-                        : newName;
-                    await this.app.fileManager.renameFile(file, newPath);
-                } catch (error) {
-                    new Notice(`Failed to rename file: ${error.message}`);
-                }
-            }
-        }, file.basename);
-        modal.open();
+        await this.fileSystemOps.renameFile(file);
     }
 
     private async deleteFolder(folder: TFolder) {
-        if (this.plugin.settings.confirmBeforeDelete) {
-            const confirmModal = new ConfirmModal(
-                this.app,
-                `Delete "${folder.name}"?`,
-                `Are you sure you want to delete this folder and all its contents?`,
-                async () => {
-                    try {
-                        await this.app.vault.delete(folder, true);
-                        if (this.selectedFolder === folder) {
-                            this.selectedFolder = null;
-                            this.refreshFileList();
-                        }
-                    } catch (error) {
-                        new Notice(`Failed to delete folder: ${error.message}`);
-                    }
-                }
-            );
-            confirmModal.open();
-        } else {
-            // Direct deletion without confirmation
-            try {
-                await this.app.vault.delete(folder, true);
-                if (this.selectedFolder === folder) {
-                    this.selectedFolder = null;
-                    this.refreshFileList();
-                }
-            } catch (error) {
-                new Notice(`Failed to delete folder: ${error.message}`);
+        await this.fileSystemOps.deleteFolder(folder, this.plugin.settings.confirmBeforeDelete, () => {
+            if (this.selectedFolder === folder) {
+                this.selectedFolder = null;
+                this.refreshFileList();
             }
-        }
+        });
     }
 
     private async deleteFile(file: TFile) {
-        if (this.plugin.settings.confirmBeforeDelete) {
-            const confirmModal = new ConfirmModal(
-                this.app,
-                `Delete "${file.basename}"?`,
-                `Are you sure you want to delete this file?`,
-                async () => {
-                    try {
-                        await this.app.vault.delete(file);
-                    } catch (error) {
-                        new Notice(`Failed to delete file: ${error.message}`);
-                    }
-                }
-            );
-            confirmModal.open();
-        } else {
-            // Direct deletion without confirmation
-            try {
-                await this.app.vault.delete(file);
-            } catch (error) {
-                new Notice(`Failed to delete file: ${error.message}`);
-            }
-        }
+        await this.fileSystemOps.deleteFile(file, this.plugin.settings.confirmBeforeDelete);
     }
 
     private setupDragAndDrop(element: HTMLElement, file: TAbstractFile, dragHandle?: HTMLElement) {
@@ -1479,12 +1373,12 @@ class NotebookNavigatorView extends ItemView {
                 const sourcePath = e.dataTransfer!.getData('text/plain');
                 const sourceFile = this.app.vault.getAbstractFileByPath(sourcePath);
 
-                if (sourceFile && sourceFile !== file && !this.isDescendant(sourceFile, file)) {
+                if (sourceFile && sourceFile !== file && !this.fileSystemOps.isDescendant(sourceFile, file)) {
                     try {
                         // Check if we're moving a folder
                         if (sourceFile instanceof TFolder && file instanceof TFolder) {
                             // Don't allow moving a folder into its own descendant
-                            if (this.isDescendant(sourceFile, file)) {
+                            if (this.fileSystemOps.isDescendant(sourceFile, file)) {
                                 new Notice(`Cannot move a folder into its own subfolder`);
                                 return;
                             }
@@ -1508,14 +1402,6 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
-    private isDescendant(parent: TAbstractFile, child: TAbstractFile): boolean {
-        let current = child.parent;
-        while (current) {
-            if (current === parent) return true;
-            current = current.parent;
-        }
-        return false;
-    }
 
 
     private getPinnedNotesForFolder(folder: TFolder): string[] {
