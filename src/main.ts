@@ -341,7 +341,7 @@ class NotebookNavigatorView extends ItemView {
             })
         );
         this.registerEvent(
-            this.app.vault.on('modify', () => this.refreshFileList())
+            this.app.vault.on('modify', () => this.debouncedFileListRefresh())
         );
         this.registerEvent(
             this.app.workspace.on('active-leaf-change', () => this.handleActiveFileChange())
