@@ -1,99 +1,231 @@
-# Notebook Navigator - Project Overview
+# Notebook Navigator - AI Assistant Guide
 
 ## Project Summary
-Notebook Navigator is an Obsidian plugin that replaces the default file explorer with a Notes-style interface. It provides a clean, two-pane layout with a folder tree on the left and a file list on the right, mimicking the UI/UX patterns found in Notes applications.
+Notebook Navigator is an Obsidian plugin that replaces the default file explorer with a Notes-style interface. It provides a clean, two-pane layout with a folder tree on the left and a file list on the right, mimicking the UI/UX patterns found in modern note-taking applications.
 
-## Key Features
-- **Notes-style interface**: Clean two-pane layout with folders and files
-- **Smart file previews**: Shows file content preview with date and first lines of text
-- **Feature images**: Optional thumbnail images for notes (via frontmatter)
-- **Multiple sort options**: Sort by date modified, date created, or title
-- **Keyboard navigation**: Full keyboard support with arrow keys and Tab
-- **Drag and drop**: Move files and folders with drag and drop
-- **Customizable appearance**: Adjustable selection colors, date formats, animation speeds
-- **Dark mode support**: Fully integrated with Obsidian's theme system
-- **Resizable panes**: Draggable divider between folder and file panes
+## Quick Start for AI Assistants
+- **Main entry point**: `src/main.ts` - Contains both the plugin class and the view implementation
+- **Build command**: `npm run dev` for development with watch mode
+- **Key patterns**: Event-driven architecture, TypeScript strict mode, Obsidian API integration
+- **Testing**: Manual testing in Obsidian vault (no automated tests)
 
-## Technical Architecture
+## Architecture Overview
 
-### Core Components
-- **NotebookNavigatorPlugin**: Main plugin class handling initialization, settings, and lifecycle
-- **NotebookNavigatorView**: Custom ItemView implementing the two-pane interface
-- **NotebookNavigatorSettingTab**: Settings configuration interface
-
-### Key Settings
-- `replaceDefaultExplorer`: Automatically replace Obsidian's file explorer
-- `showFilePreview`: Display preview text for files
-- `skipNonTextInPreview`: Skip headings, images, embeds in previews
-- `showFeatureImage`: Show thumbnail images from frontmatter
-- `sortOption`: Sort by modified/created/title
-- `selectionColor`: Customizable selection highlight color
-- `dateFormat`: Flexible date formatting (supports various tokens)
-- `ignoreFolders`: Comma-separated list of folders to hide
-
-### UI/UX Patterns
-- **Clean selection style**: Uses background color overlays without borders/outlines
-- **Subtle animations**: Smooth folder expand/collapse transitions
-- **Focused pane management**: Visual distinction between active folder/file panes
-- **Separator lines**: Horizontal lines between file items for clarity
-- **Responsive design**: Adapts to smaller screens with adjusted dimensions
-
-### State Management
-- Persists expanded folders and selected folder between sessions
-- Maintains focus state for keyboard navigation
-- Auto-selects first file when changing folders
-- Preserves left pane width when resized
-
-## File Structure
+### Core Files Structure
 ```
 notebook-navigator/
 ├── src/
-│   └── main.ts      # Core plugin logic and UI components
-├── styles.css       # Notes-inspired styling
-├── manifest.json    # Plugin metadata
-├── package.json     # NPM dependencies
-└── esbuild.config.mjs # Build configuration
+│   ├── main.ts                    # Main plugin & view logic (2100+ lines)
+│   ├── settings.ts                # Settings interface and tab
+│   ├── types.ts                   # Shared type definitions
+│   ├── handlers/
+│   │   └── KeyboardHandler.ts     # Keyboard navigation logic
+│   ├── operations/
+│   │   └── FileSystemOperations.ts # File/folder CRUD operations
+│   ├── modals/
+│   │   ├── ConfirmModal.ts        # Delete confirmation dialog
+│   │   └── InputModal.ts          # Text input dialog
+│   └── utils/
+│       ├── DateUtils.ts           # Date formatting and grouping
+│       └── PreviewTextUtils.ts    # File preview text extraction
+├── styles.css                     # Notes-inspired styling
+├── manifest.json                  # Plugin metadata
+├── package.json                   # Dependencies
+├── esbuild.config.mjs            # Build configuration
+└── CLAUDE.md                     # This file
 ```
 
-## Development Notes
+### Key Classes and Their Responsibilities
 
-### Build Process
-- Uses esbuild for TypeScript compilation
-- Development mode: `npm run dev` (watch mode)
-- Production build: `npm run build`
-- Version bumping: `npm version patch/minor/major`
+#### NotebookNavigatorPlugin (main.ts)
+- Plugin lifecycle management
+- Settings persistence
+- View registration
+- Commands and ribbon icon
+- State cleanup
 
-### Key Dependencies
-- Obsidian API (latest)
-- TypeScript 4.7.4
-- ESLint for code quality
+#### NotebookNavigatorView (main.ts)
+- Two-pane UI rendering
+- Folder tree management
+- File list display
+- Event handling (clicks, drag-drop, keyboard)
+- State persistence (localStorage)
+- File operations coordination
 
-### Testing Approach
-No explicit test framework detected. Testing likely done through manual verification in Obsidian.
+#### KeyboardHandler
+- Centralized keyboard navigation
+- Arrow keys, Tab, Enter, Delete handling
+- Focus management between panes
+- Platform-specific key mappings
 
-### Styling Philosophy
-- Minimal, clean aesthetic inspired by Notes applications
-- Extensive use of CSS variables for theme integration
-- No shadows or heavy borders for flat design
-- Smooth transitions for interactive elements
+#### FileSystemOperations
+- Folder/file creation with modals
+- Rename operations
+- Delete with optional confirmation
+- Drag-drop validation
 
-## Recent Changes (from git log)
-- "Improvements" - General enhancements
-- "Fixed so focus works better" - Keyboard navigation improvements
-- Multiple rounds of refinements to the UI and functionality
+### Important Implementation Details
 
-## Potential Areas for Enhancement
-1. **Search functionality**: Add file/folder search within the navigator
-2. **File actions**: Quick actions (rename, delete) without context menu
-3. **Tags support**: Display and filter by Obsidian tags
-4. **Preview customization**: More options for preview content
-5. **Performance optimization**: Virtual scrolling for large vaults
-6. **Accessibility**: ARIA labels and screen reader support
+#### State Persistence
+The plugin uses localStorage for immediate persistence of:
+- Expanded folders (`notebook-navigator-expanded-folders`)
+- Selected folder (`notebook-navigator-selected-folder`)
+- Selected file (`notebook-navigator-selected-file`)
+- Left pane width (`notebook-navigator-left-pane-width`)
 
-## Code Quality Observations
-- Well-structured with clear separation of concerns
-- Comprehensive keyboard navigation implementation
-- Proper event cleanup on unmount
-- Good use of TypeScript for type safety
-- Consistent naming conventions
-- Extensive CSS organization with clear comments
+#### File Filtering
+- Only `.md` files are shown in the file list
+- Images and other file types are excluded
+- Implemented in `collectFilesRecursively()` and direct folder child filtering
+
+#### Keyboard Navigation Context
+The `KeyboardHandler` receives a context object with getters/setters to avoid circular dependencies while maintaining access to view state.
+
+#### Drag and Drop
+- Validates moves to prevent folder being moved into its own descendant
+- Uses `isDescendant()` helper for validation
+- Supports both file and folder dragging
+
+### Settings System
+
+#### Key Settings
+```typescript
+interface NotebookNavigatorSettings {
+    showFilePreview: boolean;          // Show preview text under filenames
+    skipNonTextInPreview: boolean;     // Skip headings/images in preview
+    showFeatureImage: boolean;         // Show thumbnail from frontmatter
+    featureImageProperty: string;      // Frontmatter property name
+    selectionColor: string;           // Hex color for selection
+    dateFormat: string;               // date-fns format string
+    sortOption: 'modified'|'created'|'title';
+    ignoreFolders: string;            // Comma-separated folder names
+    showFolderFileCount: boolean;     // Show count next to folder names
+    groupByDate: boolean;             // Group files by date
+    pinnedNotes: Record<string, string[]>; // Pinned files per folder
+    showNotesFromSubfolders: boolean; // Recursive file display
+    autoRevealActiveFile: boolean;    // Auto-reveal on file open
+    confirmBeforeDelete: boolean;     // Show delete confirmation
+}
+```
+
+#### Settings Tab Features
+- Debounced text inputs (500ms delay)
+- Conditional setting visibility
+- Organized into sections
+- State reset functionality
+
+### CSS Architecture
+
+#### Key CSS Classes
+- `.notebook-navigator` - Main container
+- `.nn-folder-tree` - Left pane folder hierarchy
+- `.nn-file-list` - Right pane file listing
+- `.nn-selected` - Selected item highlight
+- `.nn-focused` - Keyboard focus indicator
+- `.nn-dragging` - Active drag state
+- `.nn-drag-over` - Drop target highlight
+
+#### CSS Variables
+- `--nn-selection-color` - Dynamic selection color from settings
+- Extensive use of Obsidian's theme variables for integration
+
+### Event Flow
+
+1. **File Selection**:
+   - Click/keyboard → `selectFile()` → Update selection → Preview file → Save state
+
+2. **Folder Navigation**:
+   - Click/keyboard → `selectFolder()` → Refresh file list → Save state
+
+3. **File Changes**:
+   - Vault event → Debounced refresh (100ms) → Update file list/counts
+
+4. **Keyboard Navigation**:
+   - Keydown → KeyboardHandler → Update focus → Scroll into view
+
+### Common Development Tasks
+
+#### Adding a New Setting
+1. Add to `NotebookNavigatorSettings` interface
+2. Add to `DEFAULT_SETTINGS`
+3. Add UI in `NotebookNavigatorSettingTab.display()`
+4. Handle in relevant view methods
+
+#### Adding a New Keyboard Shortcut
+1. Add case in `KeyboardHandler.handleKeyboardNavigation()`
+2. Implement handler method
+3. Update context interface if needed
+
+#### Modifying File Display
+1. Update `renderFileItem()` for individual file rendering
+2. Update `refreshFileList()` for list logic
+3. Update CSS for styling changes
+
+### Performance Considerations
+- File list refreshes are debounced (100ms)
+- Folder counts update separately from tree rendering
+- Preview text loaded asynchronously
+- No virtual scrolling (potential enhancement for large vaults)
+
+### Known Limitations
+1. No search functionality within navigator
+2. No bulk operations support
+3. Limited accessibility features
+4. No undo/redo for file operations
+5. No custom sort orders beyond the three options
+
+### Debugging Tips
+- Check localStorage for persisted state issues
+- Use `console.log` in event handlers for flow tracking
+- Verify `this.isLoading` flag for initialization issues
+- Check `expandedFolders` Set for tree state problems
+- Monitor debounce timers for refresh issues
+
+### Code Style Guidelines
+- TypeScript strict mode
+- Comprehensive JSDoc comments on all functions
+- Descriptive variable names
+- Early returns for validation
+- Consistent error handling with Notice API
+- Clean up event listeners and timers
+
+## Testing Checklist
+When making changes, test:
+- [ ] Keyboard navigation (all arrow keys, Tab, Enter, Delete)
+- [ ] Drag and drop (files and folders)
+- [ ] File operations (create, rename, delete)
+- [ ] Settings changes and persistence
+- [ ] State restoration after reload
+- [ ] Dark/light theme compatibility
+- [ ] Large vault performance
+- [ ] Edge cases (empty folders, special characters)
+
+## Common Issues and Solutions
+
+### State Not Persisting
+- Check localStorage keys are being set
+- Verify `saveState()` is called
+- Ensure `isLoading` flag isn't blocking saves
+
+### Keyboard Navigation Broken
+- Verify focus is on container element
+- Check `focusedPane` state
+- Ensure event handlers are attached
+
+### Files Not Showing
+- Check file extension filter (`.md` only)
+- Verify folder isn't in `ignoreFolders`
+- Check `showNotesFromSubfolders` setting
+
+### Drag and Drop Not Working
+- Verify `draggable` attribute is set
+- Check event propagation isn't stopped
+- Ensure drop validation logic
+
+## Contributing Guidelines
+1. Maintain comprehensive function documentation
+2. Test all changes manually in Obsidian
+3. Preserve keyboard navigation functionality
+4. Follow existing code patterns
+5. Update CLAUDE.md for significant changes
+6. Avoid copyright/trademark issues in naming
