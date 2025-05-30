@@ -281,6 +281,8 @@ class NotebookNavigatorView extends ItemView {
     private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
     private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;
     private isLoading: boolean = true;
+    private fileListRefreshTimer?: NodeJS.Timeout;
+    private pendingCountUpdate: boolean = false;
 
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
@@ -345,13 +347,31 @@ class NotebookNavigatorView extends ItemView {
         this.fileList = rightPane.createDiv('nn-file-list');
 
         this.registerEvent(
-            this.app.vault.on('create', () => this.refresh())
+            this.app.vault.on('create', (file) => {
+                if (file instanceof TFolder) {
+                    this.refresh(); // Full refresh for folder changes
+                } else {
+                    this.debouncedFileListRefresh(); // Only refresh file list for files
+                }
+            })
         );
         this.registerEvent(
-            this.app.vault.on('delete', () => this.refresh())
+            this.app.vault.on('delete', (file) => {
+                if (file instanceof TFolder) {
+                    this.refresh(); // Full refresh for folder changes
+                } else {
+                    this.debouncedFileListRefresh(); // Only refresh file list for files
+                }
+            })
         );
         this.registerEvent(
-            this.app.vault.on('rename', () => this.refresh())
+            this.app.vault.on('rename', (file, oldPath) => {
+                if (file instanceof TFolder) {
+                    this.refresh(); // Full refresh for folder changes
+                } else {
+                    this.debouncedFileListRefresh(); // Only refresh file list for files
+                }
+            })
         );
         this.registerEvent(
             this.app.vault.on('modify', () => this.refreshFileList())
@@ -552,6 +572,57 @@ class NotebookNavigatorView extends ItemView {
     refresh() {
         this.renderFolderTree();
         this.refreshFileList();
+    }
+
+    private debouncedFileListRefresh() {
+        // Clear any existing timer
+        if (this.fileListRefreshTimer) {
+            clearTimeout(this.fileListRefreshTimer);
+        }
+        
+        // Mark that we need to update counts
+        this.pendingCountUpdate = true;
+        
+        // Set a new timer
+        this.fileListRefreshTimer = setTimeout(() => {
+            this.refreshFileList();
+            if (this.pendingCountUpdate) {
+                this.updateFolderCounts();
+                this.pendingCountUpdate = false;
+            }
+        }, 100); // 100ms debounce
+    }
+
+    private updateFolderCounts() {
+        if (!this.plugin.settings.showFolderFileCount) return;
+        
+        // Update counts without rebuilding the tree
+        this.folderTree.querySelectorAll('.nn-folder-item').forEach(folderEl => {
+            const path = folderEl.getAttribute('data-path');
+            if (!path) return;
+            
+            const folder = this.app.vault.getAbstractFileByPath(path) as TFolder;
+            if (!folder || !(folder instanceof TFolder)) return;
+            
+            const countEl = folderEl.querySelector('.nn-folder-count') as HTMLElement;
+            const folderContent = folderEl.querySelector('.nn-folder-content');
+            const newCount = this.getFileCount(folder);
+            
+            if (newCount > 0) {
+                if (countEl) {
+                    // Update existing count
+                    countEl.textContent = newCount.toString();
+                } else if (folderContent) {
+                    // Add count element if it doesn't exist
+                    const newCountEl = createDiv('nn-folder-count');
+                    newCountEl.textContent = newCount.toString();
+                    folderContent.appendChild(newCountEl);
+                }
+            } else if (countEl) {
+                // Remove count element if count is 0
+                countEl.remove();
+            }
+        });
     }
 
     private renderFolderTree() {
