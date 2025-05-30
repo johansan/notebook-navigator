@@ -177,7 +177,17 @@ export class KeyboardHandler {
                     } else if (fileItems.length > 0) {
                         // Switch to files pane
                         this.context.focusedPane = 'files';
-                        this.context.focusedFileIndex = 0;
+                        
+                        // If there's a selected file, find its index
+                        if (this.context.selectedFile) {
+                            const selectedIndex = fileItems.findIndex(item => 
+                                item.getAttribute('data-path') === this.context.selectedFile!.path
+                            );
+                            this.context.focusedFileIndex = selectedIndex >= 0 ? selectedIndex : 0;
+                        } else {
+                            this.context.focusedFileIndex = 0;
+                        }
+                        
                         this.context.updateFocus();
                     }
                 }
@@ -196,7 +206,16 @@ export class KeyboardHandler {
         } else {
             if (this.context.focusedPane === 'folders' && fileItems.length > 0) {
                 this.context.focusedPane = 'files';
-                this.context.focusedFileIndex = 0;
+                
+                // If there's a selected file, find its index
+                if (this.context.selectedFile) {
+                    const selectedIndex = fileItems.findIndex(item => 
+                        item.getAttribute('data-path') === this.context.selectedFile!.path
+                    );
+                    this.context.focusedFileIndex = selectedIndex >= 0 ? selectedIndex : 0;
+                } else {
+                    this.context.focusedFileIndex = 0;
+                }
             } else if (this.context.focusedPane === 'files') {
                 const fileEl = fileItems[this.context.focusedFileIndex];
                 if (fileEl) {
