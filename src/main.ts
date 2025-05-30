@@ -19,6 +19,7 @@ import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
 import { DateUtils } from './utils/DateUtils';
 import { PreviewTextUtils } from './utils/PreviewTextUtils';
 import { KeyboardHandler } from './handlers/KeyboardHandler';
+import { FolderTree, FolderTreeCallbacks, FolderTreeState, FolderTreeSettings } from './components/FolderTree';
 
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
@@ -225,7 +226,8 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
 class NotebookNavigatorView extends ItemView {
     plugin: NotebookNavigatorPlugin;
-    private folderTree: HTMLElement;
+    private folderTreeContainer: HTMLElement;
+    private folderTree: FolderTree;
     private fileList: HTMLElement;
     private selectedFolder: TFolder | null = null;
     private previousFolder: TFolder | null = null;
@@ -284,7 +286,7 @@ class NotebookNavigatorView extends ItemView {
         newFolderBtn.addEventListener('click', newFolderClickHandler);
         this.eventRefs.push(() => newFolderBtn.removeEventListener('click', newFolderClickHandler));
 
-        this.folderTree = this.leftPane.createDiv('nn-folder-tree');
+        this.folderTreeContainer = this.leftPane.createDiv('nn-folder-tree');
         
         // Add resize handle
         const resizeHandle = this.splitContainer.createDiv('nn-resize-handle');
@@ -344,7 +346,7 @@ class NotebookNavigatorView extends ItemView {
         // Create the keyboard handler with a context that provides access to current state
         const self = this;
         const keyboardContext = {
-            get folderTree() { return self.folderTree; },
+            get folderTree() { return self.folderTreeContainer; },
             get fileList() { return self.fileList; },
             get focusedPane() { return self.focusedPane; },
             set focusedPane(value: 'folders' | 'files') { self.focusedPane = value; },
@@ -385,12 +387,15 @@ class NotebookNavigatorView extends ItemView {
         // Load saved state before refresh
         await this.loadState();
         
+        // Create the folder tree after state is loaded
+        this.createFolderTree();
+        
         // First render the folder tree
         if (this.selectedFolder) {
             // Make sure parent folders are expanded before rendering
             this.ensureFolderVisible(this.selectedFolder);
         }
-        this.renderFolderTree();
+        this.folderTree.render();
         
         // After folder tree is rendered, restore folder navigation state
         if (this.selectedFolder) {
@@ -422,6 +427,44 @@ class NotebookNavigatorView extends ItemView {
         }, 100);
     }
 
+    private createFolderTree() {
+        // Create FolderTree instance with callbacks
+        const folderTreeCallbacks: FolderTreeCallbacks = {
+            onFolderSelect: (folder) => this.selectFolder(folder),
+            onFolderToggle: (folder) => this.toggleFolder(folder),
+            onFolderFocusChange: (folderIndex) => {
+                this.focusedFolderIndex = folderIndex;
+                this.focusedPane = 'folders';
+                this.updateFocus();
+            },
+            onCreateFolder: (parent) => this.createNewFolder(parent),
+            onRenameFolder: (folder) => this.renameFolder(folder),
+            onDeleteFolder: (folder) => this.deleteFolder(folder),
+            onFolderDrop: (draggedItem, targetFolder) => this.handleFolderDrop(draggedItem, targetFolder),
+            onShowFolderContextMenu: (folder, event) => this.showFolderContextMenu(folder, event)
+        };
+        
+        const folderTreeState: FolderTreeState = {
+            expandedFolders: this.expandedFolders,
+            selectedFolder: this.selectedFolder,
+            focusedFolderIndex: this.focusedFolderIndex
+        };
+        
+        const folderTreeSettings: FolderTreeSettings = {
+            ignoreFolders: this.plugin.settings.ignoreFolders,
+            showRootFolder: this.plugin.settings.showRootFolder,
+            showFolderFileCount: this.plugin.settings.showFolderFileCount
+        };
+        
+        this.folderTree = new FolderTree({
+            container: this.folderTreeContainer,
+            app: this.app,
+            callbacks: folderTreeCallbacks,
+            state: folderTreeState,
+            settings: folderTreeSettings
+        });
+    }
+
     async onClose() {
         // Clean up stored event listeners
         this.eventRefs.forEach(cleanup => cleanup());
@@ -435,6 +478,11 @@ class NotebookNavigatorView extends ItemView {
         if (this.resizeMouseUpHandler) {
             document.removeEventListener('mouseup', this.resizeMouseUpHandler);
             this.resizeMouseUpHandler = null;
+        }
+        
+        // Clean up folder tree
+        if (this.folderTree) {
+            this.folderTree.destroy();
         }
         
         // Save state before closing
@@ -560,7 +608,9 @@ class NotebookNavigatorView extends ItemView {
     }
 
     refresh() {
-        this.renderFolderTree();
+        // Recreate the FolderTree instance with updated state
+        this.createFolderTree();
+        this.folderTree.render();
         this.refreshFileList();
     }
 
@@ -577,197 +627,23 @@ class NotebookNavigatorView extends ItemView {
         this.fileListRefreshTimer = setTimeout(() => {
             this.refreshFileList();
             if (this.pendingCountUpdate) {
-                this.updateFolderCounts();
+                this.folderTree.updateFolderCounts();
                 this.pendingCountUpdate = false;
             }
         }, 100); // 100ms debounce
     }
 
-    private updateFolderCounts() {
-        if (!this.plugin.settings.showFolderFileCount) return;
-        
-        // Update counts without rebuilding the tree
-        this.folderTree.querySelectorAll('.nn-folder-item').forEach(folderEl => {
-            const path = folderEl.getAttribute('data-path');
-            if (!path) return;
-            
-            const folder = this.app.vault.getAbstractFileByPath(path) as TFolder;
-            if (!folder || !(folder instanceof TFolder)) return;
-            
-            const countEl = folderEl.querySelector('.nn-folder-count') as HTMLElement;
-            const folderContent = folderEl.querySelector('.nn-folder-content');
-            const newCount = this.getFileCount(folder);
-            
-            if (newCount > 0) {
-                if (countEl) {
-                    // Update existing count
-                    countEl.textContent = newCount.toString();
-                } else if (folderContent) {
-                    // Add count element if it doesn't exist
-                    const newCountEl = createDiv('nn-folder-count');
-                    newCountEl.textContent = newCount.toString();
-                    folderContent.appendChild(newCountEl);
-                }
-            } else if (countEl) {
-                // Remove count element if count is 0
-                countEl.remove();
-            }
-        });
-    }
 
-    private renderFolderTree() {
-        this.folderTree.empty();
-        const rootFolder = this.app.vault.getRoot();
-        this.globalFolderIndex = 0;
-        
-        // Get ignored folders
-        const ignoredFolders = this.plugin.settings.ignoreFolders
-            .split(',')
-            .map(f => f.trim())
-            .filter(f => f);
-        
-        if (this.plugin.settings.showRootFolder) {
-            this.renderFolderItem(rootFolder, this.folderTree, 0, ignoredFolders);
-        } else {
-            // Render root's children directly
-            const children = rootFolder.children
-                .filter(child => child instanceof TFolder)
-                .filter(child => !ignoredFolders.includes(child.name))
-                .sort((a, b) => a.name.localeCompare(b.name));
-            
-            children.forEach(child => {
-                this.renderFolderItem(child as TFolder, this.folderTree, 0, ignoredFolders);
-            });
-        }
-    }
-
-    private globalFolderIndex: number = 0;
-
-    private getFileCount(folder: TFolder): number {
-        return folder.children.filter(child => child instanceof TFile).length;
-    }
-
-    private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
-        const index = this.globalFolderIndex++;
-        const folderEl = container.createDiv({
-            cls: 'nn-folder-item',
-            attr: { 
-                'data-path': folder.path,
-                'data-level': level.toString(),
-                'data-index': index.toString()
-            }
-        });
-
-        if (this.focusedPane === 'folders' && index === this.focusedFolderIndex) {
-            folderEl.addClass('nn-focused');
-        }
-
-        const folderContent = folderEl.createDiv('nn-folder-content');
-        folderContent.style.paddingLeft = `${level * 20}px`;
-
-        if (folder.children.some(child => child instanceof TFolder)) {
-            const arrow = folderContent.createDiv('nn-folder-arrow');
-            setIcon(arrow, this.expandedFolders.has(folder.path) ? 'chevron-down' : 'chevron-right');
-            arrow.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleFolder(folder);
-            });
-        } else {
-            folderContent.createDiv('nn-folder-arrow nn-no-children');
-        }
-
-        const folderIcon = folderContent.createDiv('nn-folder-icon');
-        setIcon(folderIcon, 'folder');
-
-        const folderName = folderContent.createDiv('nn-folder-name');
-        folderName.textContent = folder.name || 'Vault';
-
-        // Add file count
-        if (this.plugin.settings.showFolderFileCount) {
-            const fileCount = this.getFileCount(folder);
-            if (fileCount > 0) {
-                const countEl = folderContent.createDiv('nn-folder-count');
-                countEl.textContent = fileCount.toString();
-            }
-        }
-
-        if (this.selectedFolder === folder) {
-            folderEl.addClass('nn-selected');
-        }
-
-        folderContent.addEventListener('click', () => {
-            this.selectFolder(folder);
-            // Find the actual index of this folder in the current tree
-            const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
-            const clickedIndex = allFolders.findIndex(el => el.getAttribute('data-path') === folder.path);
-            if (clickedIndex >= 0) {
-                this.focusedFolderIndex = clickedIndex;
-            }
-            this.focusedPane = 'folders';
-            this.updateFocus();
-        });
-
-        folderContent.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.showFolderContextMenu(folder, e);
-        });
-
-        this.setupDragAndDrop(folderEl, folder, folderContent);
-
-        if (this.expandedFolders.has(folder.path)) {
-            const childrenContainer = folderEl.createDiv('nn-folder-children');
-            const subfolders = folder.children
-                .filter(child => child instanceof TFolder)
-                .filter(child => !ignoredFolders.includes(child.name))
-                .sort((a, b) => a.name.localeCompare(b.name));
-            
-            subfolders.forEach((subfolder) => {
-                this.renderFolderItem(subfolder as TFolder, childrenContainer, level + 1, ignoredFolders);
-            });
-        }
-    }
 
     private toggleFolder(folder: TFolder) {
-        const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
-        if (!folderEl) return;
-
-        // Get ignored folders
-        const ignoredFolders = this.plugin.settings.ignoreFolders
-            .split(',')
-            .map(f => f.trim())
-            .filter(f => f);
-
         if (this.expandedFolders.has(folder.path)) {
             this.expandedFolders.delete(folder.path);
-            // Remove children container
-            const childrenContainer = folderEl.querySelector('.nn-folder-children');
-            if (childrenContainer) {
-                childrenContainer.remove();
-            }
-            // Update arrow icon
-            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
-            if (arrow) {
-                setIcon(arrow.parentElement as HTMLElement, 'chevron-right');
-            }
         } else {
             this.expandedFolders.add(folder.path);
-            // Add children container
-            const childrenContainer = folderEl.createDiv('nn-folder-children');
-            const subfolders = folder.children
-                .filter(child => child instanceof TFolder)
-                .filter(child => !ignoredFolders.includes(child.name))
-                .sort((a, b) => a.name.localeCompare(b.name));
-            
-            subfolders.forEach((subfolder) => {
-                this.renderFolderItem(subfolder as TFolder, childrenContainer, 
-                    parseInt(folderEl.getAttribute('data-level') || '0') + 1, ignoredFolders);
-            });
-            // Update arrow icon
-            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
-            if (arrow) {
-                setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
-            }
         }
+        
+        // Re-render the folder tree
+        this.folderTree.render();
         
         // Save state after toggling folder
         this.saveState();
@@ -775,13 +651,13 @@ class NotebookNavigatorView extends ItemView {
 
     private selectFolder(folder: TFolder) {
         // Remove previous selection
-        const previousSelected = this.folderTree.querySelector('.nn-selected');
+        const previousSelected = this.folderTreeContainer.querySelector('.nn-selected');
         if (previousSelected) {
             previousSelected.removeClass('nn-selected');
         }
 
         // Add new selection
-        const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
+        const folderEl = this.folderTreeContainer.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
         if (folderEl) {
             folderEl.addClass('nn-selected');
         }
@@ -1390,6 +1266,29 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    private async handleFolderDrop(draggedItem: TAbstractFile, targetFolder: TFolder) {
+        try {
+            // Check if we're moving a folder into its own descendant
+            if (draggedItem instanceof TFolder && this.isDescendant(draggedItem, targetFolder)) {
+                new Notice(`Cannot move a folder into its own subfolder`);
+                return;
+            }
+            
+            // Check if source already exists in target
+            const newPath = `${targetFolder.path}/${draggedItem.name}`;
+            const existingFile = this.app.vault.getAbstractFileByPath(newPath);
+            
+            if (existingFile) {
+                new Notice(`A file or folder named "${draggedItem.name}" already exists in the target location`);
+                return;
+            }
+            
+            await this.app.fileManager.renameFile(draggedItem, newPath);
+        } catch (error) {
+            new Notice(`Failed to move: ${error.message}`);
+        }
+    }
+
     private setupDragAndDrop(element: HTMLElement, file: TAbstractFile, dragHandle?: HTMLElement) {
         // If a drag handle is provided, make that draggable instead of the whole element
         const draggableElement = dragHandle || element;
@@ -1524,15 +1423,7 @@ class NotebookNavigatorView extends ItemView {
     }
 
     private calculateFocusedFolderIndex() {
-        if (this.selectedFolder) {
-            const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
-            const selectedIndex = allFolders.findIndex(el => 
-                el.getAttribute('data-path') === this.selectedFolder!.path
-            );
-            if (selectedIndex >= 0) {
-                this.focusedFolderIndex = selectedIndex;
-            }
-        }
+        this.folderTree.calculateFocusedIndex();
     }
     
     private calculateFocusedFileIndex() {
@@ -1548,15 +1439,7 @@ class NotebookNavigatorView extends ItemView {
     }
     
     private scrollSelectedFolderIntoView() {
-        if (this.selectedFolder) {
-            const folderEl = this.folderTree.querySelector(
-                `[data-path="${CSS.escape(this.selectedFolder.path)}"]`
-            );
-            if (folderEl) {
-                // Use 'center' to ensure it's well visible
-                (folderEl as HTMLElement).scrollIntoView({ block: 'center', behavior: 'auto' });
-            }
-        }
+        this.folderTree.scrollToSelected();
     }
     
     private scrollSelectedFileIntoView() {
@@ -1718,10 +1601,9 @@ class NotebookNavigatorView extends ItemView {
         }
 
         if (this.focusedPane === 'folders') {
-            const folders = this.folderTree.querySelectorAll('.nn-folder-item');
-            const focusedFolder = folders[this.focusedFolderIndex];
+            this.folderTree.updateFocusedState(this.focusedPane);
+            const focusedFolder = this.folderTree.getFocusedFolderElement();
             if (focusedFolder) {
-                focusedFolder.addClass('nn-focused');
                 focusedFolder.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             }
         } else {
@@ -1756,7 +1638,7 @@ class NotebookNavigatorView extends ItemView {
             
             // If we expanded any folders, we need to refresh the tree to show them
             if (needsTreeRefresh) {
-                this.renderFolderTree();
+                this.folderTree.render();
             }
             
             this.selectFolder(file.parent);
