@@ -17,9 +17,9 @@ Notebook Navigator is an Obsidian plugin that replaces the default file explorer
 ## Technical Architecture
 
 ### Core Components
-- **NotebookNavigatorPlugin** (main.ts:52-159): Main plugin class handling initialization, settings, and lifecycle
-- **NotebookNavigatorView** (main.ts:161-1363): Custom ItemView implementing the two-pane interface
-- **NotebookNavigatorSettingTab** (main.ts:1439-1590): Settings configuration interface
+- **NotebookNavigatorPlugin**: Main plugin class handling initialization, settings, and lifecycle
+- **NotebookNavigatorView**: Custom ItemView implementing the two-pane interface
+- **NotebookNavigatorSettingTab**: Settings configuration interface
 
 ### Key Settings
 - `replaceDefaultExplorer`: Automatically replace Obsidian's file explorer
@@ -47,7 +47,8 @@ Notebook Navigator is an Obsidian plugin that replaces the default file explorer
 ## File Structure
 ```
 notebook-navigator/
-├── main.ts          # Core plugin logic and UI components
+├── src/
+│   └── main.ts      # Core plugin logic and UI components
 ├── styles.css       # Apple Notes-inspired styling
 ├── manifest.json    # Plugin metadata
 ├── package.json     # NPM dependencies
