@@ -2,9 +2,24 @@ import { App, TFile, TFolder, TAbstractFile, Notice } from 'obsidian';
 import { InputModal } from '../modals/InputModal';
 import { ConfirmModal } from '../modals/ConfirmModal';
 
+/**
+ * Handles all file system operations for the Notebook Navigator
+ * Provides centralized methods for creating, renaming, and deleting files/folders
+ * Manages user input modals and confirmation dialogs
+ */
 export class FileSystemOperations {
+    /**
+     * Creates a new FileSystemOperations instance
+     * @param app - The Obsidian app instance for vault operations
+     */
     constructor(private app: App) {}
 
+    /**
+     * Creates a new folder with user-provided name
+     * Shows input modal for folder name and handles creation
+     * @param parent - The parent folder to create the new folder in
+     * @param onSuccess - Optional callback with the new folder path on successful creation
+     */
     async createNewFolder(parent: TFolder, onSuccess?: (path: string) => void): Promise<void> {
         const modal = new InputModal(this.app, 'New Folder', 'Enter folder name:', async (name) => {
             if (name) {
@@ -22,6 +37,13 @@ export class FileSystemOperations {
         modal.open();
     }
 
+    /**
+     * Creates a new markdown file with auto-generated "Untitled" name
+     * Automatically increments name if "Untitled" already exists
+     * Opens the file and triggers rename mode for immediate naming
+     * @param parent - The parent folder to create the file in
+     * @returns The created file or null if creation failed
+     */
     async createNewFile(parent: TFolder): Promise<TFile | null> {
         try {
             // Generate unique "Untitled" name
@@ -54,6 +76,12 @@ export class FileSystemOperations {
         }
     }
 
+    /**
+     * Renames a folder with user-provided name
+     * Shows input modal pre-filled with current name
+     * Validates that new name is different from current
+     * @param folder - The folder to rename
+     */
     async renameFolder(folder: TFolder): Promise<void> {
         const modal = new InputModal(this.app, 'Rename Folder', 'Enter new name:', async (newName) => {
             if (newName && newName !== folder.name) {
@@ -70,10 +98,17 @@ export class FileSystemOperations {
         modal.open();
     }
 
+    /**
+     * Renames a file with user-provided name
+     * Shows input modal pre-filled with current basename
+     * Automatically adds .md extension if not provided
+     * @param file - The file to rename
+     */
     async renameFile(file: TFile): Promise<void> {
         const modal = new InputModal(this.app, 'Rename File', 'Enter new name:', async (newName) => {
             if (newName && newName !== file.basename) {
                 try {
+                    // Ensure .md extension
                     if (!newName.endsWith('.md')) {
                         newName += '.md';
                     }
@@ -89,6 +124,14 @@ export class FileSystemOperations {
         modal.open();
     }
 
+    /**
+     * Deletes a folder and all its contents
+     * Shows confirmation dialog if confirmBeforeDelete is true
+     * Recursively deletes all files and subfolders
+     * @param folder - The folder to delete
+     * @param confirmBeforeDelete - Whether to show confirmation dialog
+     * @param onSuccess - Optional callback on successful deletion
+     */
     async deleteFolder(folder: TFolder, confirmBeforeDelete: boolean, onSuccess?: () => void): Promise<void> {
         if (confirmBeforeDelete) {
             const confirmModal = new ConfirmModal(
@@ -120,6 +163,12 @@ export class FileSystemOperations {
         }
     }
 
+    /**
+     * Deletes a file from the vault
+     * Shows confirmation dialog if confirmBeforeDelete is true
+     * @param file - The file to delete
+     * @param confirmBeforeDelete - Whether to show confirmation dialog
+     */
     async deleteFile(file: TFile, confirmBeforeDelete: boolean): Promise<void> {
         if (confirmBeforeDelete) {
             const confirmModal = new ConfirmModal(
@@ -145,6 +194,14 @@ export class FileSystemOperations {
         }
     }
 
+    /**
+     * Checks if one file/folder is a descendant of another
+     * Used to prevent invalid drag-and-drop operations
+     * Prevents moving a folder into its own subfolder
+     * @param parent - The potential parent file/folder
+     * @param child - The potential descendant file/folder
+     * @returns True if child is a descendant of parent
+     */
     isDescendant(parent: TAbstractFile, child: TAbstractFile): boolean {
         let current = child.parent;
         while (current) {

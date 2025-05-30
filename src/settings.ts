@@ -1,8 +1,15 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import NotebookNavigatorPlugin from './main';
 
+/**
+ * Available sort options for file listing
+ */
 export type SortOption = 'modified' | 'created' | 'title';
 
+/**
+ * Plugin settings interface defining all configurable options
+ * These settings control the appearance and behavior of the navigator
+ */
 export interface NotebookNavigatorSettings {
     showFilePreview: boolean;
     skipNonTextInPreview: boolean;
@@ -23,6 +30,10 @@ export interface NotebookNavigatorSettings {
     confirmBeforeDelete: boolean;
 }
 
+/**
+ * Default settings for the plugin
+ * Used when plugin is first installed or settings are reset
+ */
 export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showFilePreview: true,
     skipNonTextInPreview: true,
@@ -43,15 +54,40 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     confirmBeforeDelete: true
 }
 
+/**
+ * Settings tab for configuring the Notebook Navigator plugin
+ * Provides organized sections for different aspects of the plugin
+ * Implements debounced text inputs to prevent excessive updates
+ */
 export class NotebookNavigatorSettingTab extends PluginSettingTab {
     plugin: NotebookNavigatorPlugin;
+    // Map of active debounce timers for text inputs
     private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
 
+    /**
+     * Creates a new settings tab
+     * @param app - The Obsidian app instance
+     * @param plugin - The plugin instance to configure
+     */
     constructor(app: App, plugin: NotebookNavigatorPlugin) {
         super(app, plugin);
         this.plugin = plugin;
     }
 
+    /**
+     * Creates a text setting with debounced onChange handler
+     * Prevents excessive updates while user is typing
+     * Supports optional validation before applying changes
+     * @param container - Container element for the setting
+     * @param name - Setting display name
+     * @param desc - Setting description
+     * @param placeholder - Placeholder text for the input
+     * @param getValue - Function to get current value
+     * @param setValue - Function to set new value
+     * @param refreshView - Whether to refresh the navigator view on change
+     * @param validator - Optional validation function
+     * @returns The created Setting instance
+     */
     private createDebouncedTextSetting(
         container: HTMLElement,
         name: string,
@@ -97,6 +133,15 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                 }));
     }
 
+    /**
+     * Renders the settings tab UI
+     * Organizes settings into logical sections:
+     * - File organization
+     * - File display
+     * - Folder display
+     * - Appearance
+     * - Advanced
+     */
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
@@ -147,15 +192,6 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.onSettingsChange();
                 }));
 
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Excluded folders',
-            'Comma-separated list of folders to hide (e.g., .obsidian, templates).',
-            'folder1, folder2',
-            () => this.plugin.settings.ignoreFolders,
-            (value) => { this.plugin.settings.ignoreFolders = value; }
-        );
-
         new Setting(containerEl)
             .setName('Auto-reveal active file')
             .setDesc('Automatically reveal and select files when opened from Quick Switcher, links, or search.')
@@ -165,6 +201,15 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                     this.plugin.settings.autoRevealActiveFile = value;
                     await this.plugin.saveSettings();
                 }));
+
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Excluded folders',
+            'Comma-separated list of folders to hide (e.g., .obsidian, templates).',
+            'folder1, folder2',
+            () => this.plugin.settings.ignoreFolders,
+            (value) => { this.plugin.settings.ignoreFolders = value; }
+        );
 
         // Section 2: File display
         new Setting(containerEl)
@@ -350,6 +395,10 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         updateFeatureImageSettingsVisibility(this.plugin.settings.showFeatureImage);
     }
 
+    /**
+     * Called when settings tab is closed
+     * Cleans up any pending debounce timers to prevent memory leaks
+     */
     hide(): void {
         // Clean up all pending debounce timers when settings tab is closed
         this.debounceTimers.forEach(timer => clearTimeout(timer));

@@ -1,6 +1,19 @@
 import { App, Modal } from 'obsidian';
 
+/**
+ * Modal dialog for accepting text input from the user
+ * Used for file/folder creation and renaming operations
+ * Supports Enter key submission and pre-filled default values
+ */
 export class InputModal extends Modal {
+    /**
+     * Creates an input modal with text field and submit/cancel buttons
+     * @param app - The Obsidian app instance
+     * @param title - Modal title (e.g., "New Folder")
+     * @param placeholder - Placeholder text for the input field
+     * @param onSubmit - Callback to execute with the entered value
+     * @param defaultValue - Optional pre-filled value for editing operations
+     */
     constructor(
         app: App,
         title: string,

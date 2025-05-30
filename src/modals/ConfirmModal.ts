@@ -1,6 +1,18 @@
 import { App, Modal } from 'obsidian';
 
+/**
+ * Modal dialog for confirming destructive actions
+ * Used primarily for delete confirmations with a warning-styled confirm button
+ * Provides Cancel and Delete buttons with appropriate styling
+ */
 export class ConfirmModal extends Modal {
+    /**
+     * Creates a confirmation modal with title, message, and callback
+     * @param app - The Obsidian app instance
+     * @param title - Modal title (e.g., "Delete 'filename'?")
+     * @param message - Confirmation message to display
+     * @param onConfirm - Callback to execute when user confirms the action
+     */
     constructor(
         app: App,
         title: string,

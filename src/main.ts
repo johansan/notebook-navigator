@@ -19,11 +19,17 @@ import { PreviewTextUtils } from './utils/PreviewTextUtils';
 import { KeyboardHandler } from './handlers/KeyboardHandler';
 import { FileSystemOperations } from './operations/FileSystemOperations';
 
+/**
+ * Main plugin class for Notebook Navigator
+ * Provides an Apple Notes-style file explorer for Obsidian with two-pane layout
+ * Manages plugin lifecycle, settings, and view registration
+ */
 export default class NotebookNavigatorPlugin extends Plugin {
     settings: NotebookNavigatorSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
 
     // LocalStorage keys for state persistence
+    // These keys are used to save and restore the plugin's state between sessions
     keys: LocalStorageKeys = {
         expandedFoldersKey: 'notebook-navigator-expanded-folders',
         selectedFolderKey: 'notebook-navigator-selected-folder',
@@ -31,6 +37,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         leftPaneWidthKey: 'notebook-navigator-left-pane-width'
     };
 
+    /**
+     * Plugin initialization - called when plugin is enabled
+     * Sets up views, commands, event handlers, and UI elements
+     * Ensures proper initialization order for all plugin components
+     */
     async onload() {
         await this.loadSettings();
         
@@ -90,6 +101,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         });
     }
 
+    /**
+     * Plugin cleanup - called when plugin is disabled
+     * Removes all UI elements and detaches views to prevent memory leaks
+     * Ensures clean shutdown of all plugin components
+     */
     onunload() {
         // Clean up the ribbon icon
         this.ribbonIconEl?.remove();
@@ -98,15 +114,31 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.detachNotebookNavigatorLeaves();
     }
 
+    /**
+     * Loads plugin settings from Obsidian's data storage
+     * Merges saved settings with default settings to ensure all required fields exist
+     * Called during plugin initialization
+     */
     async loadSettings() {
         const data = await this.loadData();
         this.settings = Object.assign({}, DEFAULT_SETTINGS, data || {});
     }
 
+    /**
+     * Saves current plugin settings to Obsidian's data storage
+     * Persists user preferences between sessions
+     * Called whenever settings are modified
+     */
     async saveSettings() {
         await this.saveData(this.settings);
     }
 
+    /**
+     * Activates or creates the Notebook Navigator view
+     * Reuses existing view if available, otherwise creates new one in left sidebar
+     * @param showAfterAttach - Whether to reveal/focus the view after activation
+     * @returns The workspace leaf containing the view, or null if creation failed
+     */
     async activateView(showAfterAttach = true) {
         const { workspace } = this.app;
 
@@ -135,6 +167,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         return leaf;
     }
 
+    /**
+     * Detaches all Notebook Navigator views from the workspace
+     * Used during plugin cleanup to ensure no orphaned views remain
+     * Iterates through all leaves of our view type and detaches them
+     */
     private async detachNotebookNavigatorLeaves() {
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
         for (const leaf of leaves) {
@@ -142,11 +179,22 @@ export default class NotebookNavigatorPlugin extends Plugin {
         }
     }
 
+    /**
+     * Updates the selection color CSS variable based on user settings
+     * Allows dynamic theming of selected items in the navigator
+     * Applied globally via CSS custom property
+     */
     updateSelectionColor() {
         // Update CSS variable for selection color
         document.documentElement.style.setProperty('--nn-selection-color', this.settings.selectionColor);
     }
     
+    /**
+     * Removes references to deleted pinned notes from settings
+     * Validates all pinned note paths and removes invalid entries
+     * Prevents accumulation of orphaned references over time
+     * Called after workspace is ready to ensure vault is fully loaded
+     */
     cleanupPinnedNotes() {
         let changed = false;
         const pinnedNotes = this.settings.pinnedNotes;
@@ -181,6 +229,12 @@ export default class NotebookNavigatorPlugin extends Plugin {
         }
     }
 
+    /**
+     * Reveals a specific file in the navigator, opening the view if needed
+     * Expands parent folders and scrolls to make the file visible
+     * Used by "Reveal in Navigator" commands and context menu actions
+     * @param file - The file to reveal in the navigator
+     */
     private async revealFileInNavigator(file: TFile) {
         // Ensure navigator is open
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
@@ -198,6 +252,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         });
     }
 
+    /**
+     * Handles settings changes by refreshing all active navigator views
+     * Ensures UI stays in sync with user preferences
+     * Called by settings tab when any setting is modified
+     */
     onSettingsChange() {
         // Update all active views when settings change
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_NOTEBOOK);
@@ -212,6 +271,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         this.updateSelectionColor();
     }
 
+    /**
+     * Creates or recreates the ribbon icon for quick access to the navigator
+     * Removes existing icon before creating new one to prevent duplicates
+     * Icon appears in Obsidian's left sidebar ribbon
+     */
     refreshIconRibbon() {
         this.ribbonIconEl?.remove();
         this.ribbonIconEl = this.addRibbonIcon('folder-tree', 'Notebook Navigator', async () => {
@@ -219,6 +283,11 @@ export default class NotebookNavigatorPlugin extends Plugin {
         });
     }
 
+    /**
+     * Completely refreshes the navigator by recreating all views
+     * Used when major changes require full view reconstruction
+     * More aggressive than view.refresh() which updates existing views
+     */
     async refreshView() {
         // Detach existing views and create a new one
         await this.detachNotebookNavigatorLeaves();
@@ -227,48 +296,78 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
 }
 
+/**
+ * Main view class implementing the two-pane file navigator interface
+ * Manages folder tree (left pane) and file list (right pane) with Apple Notes-style UI
+ * Handles all user interactions, state management, and rendering
+ */
 class NotebookNavigatorView extends ItemView {
     plugin: NotebookNavigatorPlugin;
-    private folderTree: HTMLElement;
-    private fileList: HTMLElement;
-    private selectedFolder: TFolder | null = null;
-    private previousFolder: TFolder | null = null;
-    private selectedFile: TFile | null = null;
-    private expandedFolders: Set<string> = new Set();
-    private focusedPane: 'folders' | 'files' = 'folders';
-    private focusedFolderIndex: number = 0;
-    private focusedFileIndex: number = 0;
-    private leftPane: HTMLElement;
-    private splitContainer: HTMLElement;
-    private resizing: boolean = false;
-    private eventRefs: Array<() => void> = [];
-    private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
-    private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;
-    private isLoading: boolean = true;
-    private fileListRefreshTimer?: NodeJS.Timeout;
-    private pendingCountUpdate: boolean = false;
-    private keyboardHandler: KeyboardHandler;
-    private pendingFolderSelection: string | null = null;
-    private fileSystemOps: FileSystemOperations;
+    private folderTree: HTMLElement;  // Left pane folder hierarchy
+    private fileList: HTMLElement;    // Right pane file listing
+    private selectedFolder: TFolder | null = null;  // Currently selected folder
+    private previousFolder: TFolder | null = null;  // Previously selected folder for change detection
+    private selectedFile: TFile | null = null;      // Currently selected file
+    private expandedFolders: Set<string> = new Set();  // Tracks which folders are expanded
+    private focusedPane: 'folders' | 'files' = 'folders';  // Which pane has keyboard focus
+    private focusedFolderIndex: number = 0;  // Index of focused folder for keyboard navigation
+    private focusedFileIndex: number = 0;    // Index of focused file for keyboard navigation
+    private leftPane: HTMLElement;           // Container for folder tree
+    private splitContainer: HTMLElement;     // Main container with both panes
+    private resizing: boolean = false;       // Flag for resize operation in progress
+    private eventRefs: Array<() => void> = [];  // Cleanup functions for event listeners
+    private resizeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;  // Handler for pane resizing
+    private resizeMouseUpHandler: ((e: MouseEvent) => void) | null = null;    // Handler for resize completion
+    private isLoading: boolean = true;       // Flag to track initial load state
+    private fileListRefreshTimer?: NodeJS.Timeout;  // Debounce timer for file list updates
+    private pendingCountUpdate: boolean = false;    // Flag for pending folder count updates
+    private keyboardHandler: KeyboardHandler;       // Handles keyboard navigation logic
+    private pendingFolderSelection: string | null = null;  // Path of folder to select after refresh
+    private fileSystemOps: FileSystemOperations;    // Handles file/folder operations
 
+    /**
+     * Initializes the view with plugin reference and file system operations
+     * @param leaf - The workspace leaf containing this view
+     * @param plugin - Reference to the main plugin instance
+     */
     constructor(leaf: WorkspaceLeaf, plugin: NotebookNavigatorPlugin) {
         super(leaf);
         this.plugin = plugin;
         this.fileSystemOps = new FileSystemOperations(this.app);
     }
 
+    /**
+     * Returns the unique identifier for this view type
+     * Used by Obsidian to register and manage view instances
+     * @returns The view type identifier constant
+     */
     getViewType() {
         return VIEW_TYPE_NOTEBOOK;
     }
 
+    /**
+     * Returns the display name shown in the view header
+     * @returns Human-readable name for the view
+     */
     getDisplayText() {
         return 'Notebook Navigator';
     }
 
+    /**
+     * Returns the icon identifier for the view
+     * Displayed in tabs and view headers
+     * @returns Icon identifier from Obsidian's icon set
+     */
     getIcon() {
         return 'folder-tree';
     }
 
+    /**
+     * View initialization - creates the UI structure and sets up event handlers
+     * Called when the view is opened or revealed
+     * Builds the two-pane layout with folder tree and file list
+     * Restores saved state and sets up keyboard navigation
+     */
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
@@ -429,6 +528,12 @@ class NotebookNavigatorView extends ItemView {
         }, 100);
     }
 
+    /**
+     * View cleanup - called when view is closed
+     * Removes all event listeners to prevent memory leaks
+     * Saves current state for restoration on next open
+     * Ensures proper cleanup of all view resources
+     */
     async onClose() {
         // Clean up stored event listeners
         this.eventRefs.forEach(cleanup => cleanup());
@@ -450,6 +555,12 @@ class NotebookNavigatorView extends ItemView {
         // No plugin reference to clear anymore
     }
 
+    /**
+     * Loads previously saved state from localStorage
+     * Restores expanded folders, selected items, and pane width
+     * Validates all paths to ensure referenced items still exist
+     * Called during view initialization to restore user's last state
+     */
     private async loadState() {
         // Load expanded folders from localStorage
         const expandedFoldersJson = localStorage.getItem(this.plugin.keys.expandedFoldersKey);
@@ -496,6 +607,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Saves current view state to localStorage for persistence
+     * Stores expanded folders, selected items for restoration on next open
+     * Called during view close and after significant state changes
+     * Uses localStorage for immediate persistence across sessions
+     */
     private async saveState() {
         // Save expanded folders to localStorage
         localStorage.setItem(
@@ -518,6 +635,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Sets up drag-to-resize functionality for the divider between panes
+     * Allows users to adjust the width of the folder tree pane
+     * Saves the new width to both settings and localStorage
+     * @param handle - The resize handle element between the two panes
+     */
     private setupResizeHandle(handle: HTMLElement) {
         let startX: number;
         let startWidth: number;
@@ -566,6 +689,12 @@ class NotebookNavigatorView extends ItemView {
         this.eventRefs.push(() => handle.removeEventListener('mousedown', mouseDownHandler));
     }
 
+    /**
+     * Refreshes both folder tree and file list displays
+     * Handles pending folder selections (e.g., after creating new folder)
+     * Updates focus and scrolls to newly selected items
+     * Called when settings change or file system is modified
+     */
     refresh() {
         this.renderFolderTree();
         this.refreshFileList();
@@ -598,6 +727,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Debounced file list refresh to prevent excessive updates
+     * Batches multiple rapid changes into a single refresh
+     * Updates folder file counts if enabled in settings
+     * Uses 100ms delay to balance responsiveness and performance
+     */
     private debouncedFileListRefresh() {
         // Clear any existing timer
         if (this.fileListRefreshTimer) {
@@ -617,6 +752,12 @@ class NotebookNavigatorView extends ItemView {
         }, 100); // 100ms debounce
     }
 
+    /**
+     * Updates file counts displayed next to folder names
+     * Efficiently updates existing DOM elements without full re-render
+     * Only runs if showFolderFileCount setting is enabled
+     * Called after file system changes that might affect counts
+     */
     private updateFolderCounts() {
         if (!this.plugin.settings.showFolderFileCount) return;
         
@@ -639,6 +780,12 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    /**
+     * Renders the complete folder tree structure in the left pane
+     * Respects showRootFolder and ignoreFolders settings
+     * Sorts folders alphabetically and maintains expansion state
+     * Resets the global folder index for keyboard navigation
+     */
     private renderFolderTree() {
         this.folderTree.empty();
         const rootFolder = this.app.vault.getRoot();
@@ -665,12 +812,31 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    // Global counter for assigning unique indices to folders during rendering
+    // Used for keyboard navigation to track folder positions
     private globalFolderIndex: number = 0;
 
+    /**
+     * Counts the number of markdown files in a folder
+     * Only counts direct children, not files in subfolders
+     * Filters for .md extension to exclude images and other files
+     * @param folder - The folder to count files in
+     * @returns Number of markdown files in the folder
+     */
     private getFileCount(folder: TFolder): number {
         return folder.children.filter(child => child instanceof TFile && child.extension === 'md').length;
     }
 
+    /**
+     * Renders a single folder item with its UI elements
+     * Creates expandable folder with arrow, icon, name, and optional file count
+     * Handles click events, context menus, and drag-and-drop
+     * Recursively renders child folders if expanded
+     * @param folder - The folder to render
+     * @param container - Parent container element
+     * @param level - Nesting level for indentation
+     * @param ignoredFolders - List of folder names to skip
+     */
     private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
         const index = this.globalFolderIndex++;
         const folderEl = container.createDiv({
@@ -757,6 +923,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Toggles folder expansion state (expand/collapse)
+     * Updates DOM to show/hide child folders with smooth animation
+     * Updates arrow icon direction and saves expansion state
+     * @param folder - The folder to toggle
+     */
     private toggleFolder(folder: TFolder) {
         const folderEl = this.folderTree.querySelector(`[data-path="${CSS.escape(folder.path)}"]`);
         if (!folderEl) return;
@@ -803,6 +975,12 @@ class NotebookNavigatorView extends ItemView {
         this.saveState();
     }
 
+    /**
+     * Selects a folder and updates the file list to show its contents
+     * Updates visual selection state and triggers file list refresh
+     * Saves state unless currently loading to preserve user's selection
+     * @param folder - The folder to select
+     */
     private selectFolder(folder: TFolder) {
         // Remove previous selection
         const previousSelected = this.folderTree.querySelector('.nn-selected');
@@ -825,6 +1003,13 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Ensures a folder is visible by expanding all its parent folders
+     * Used when revealing files or navigating to hidden folders
+     * Builds path from child to root then expands in correct order
+     * @param folder - The folder to make visible
+     * @returns True if any folders were expanded, false otherwise
+     */
     private ensureFolderVisible(folder: TFolder): boolean {
         // Expand all parent folders to make this folder visible
         let parent = folder.parent;
@@ -848,10 +1033,22 @@ class NotebookNavigatorView extends ItemView {
     }
 
 
+    /**
+     * Wrapper method to render files grouped by date
+     * Delegates to renderUnpinnedFilesWithDateGroups with starting index 0
+     * @param files - Array of files to render with date grouping
+     */
     private renderFilesWithDateGroups(files: TFile[]) {
         this.renderUnpinnedFilesWithDateGroups(files, 0);
     }
     
+    /**
+     * Renders files grouped by date categories (Today, Yesterday, This Week, etc.)
+     * Creates sticky headers for each date group with files listed below
+     * Groups are based on file modification or creation date per sort settings
+     * @param files - Array of files to render
+     * @param startIndex - Starting index for keyboard navigation
+     */
     private renderUnpinnedFilesWithDateGroups(files: TFile[], startIndex: number) {
         const groups = new Map<string, TFile[]>();
         const groupOrder: string[] = [];
@@ -886,6 +1083,14 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    /**
+     * Recursively collects all markdown files from a folder and its subfolders
+     * Respects ignored folders setting and only includes .md files
+     * Used when showNotesFromSubfolders setting is enabled
+     * @param folder - Root folder to start collection from
+     * @param ignoredFolders - List of folder names to skip
+     * @returns Array of all markdown files found
+     */
     private collectFilesRecursively(folder: TFolder, ignoredFolders: string[]): TFile[] {
         let files: TFile[] = [];
         
@@ -901,6 +1106,14 @@ class NotebookNavigatorView extends ItemView {
         return files;
     }
     
+    /**
+     * Recursively collects paths of all pinned notes in folder hierarchy
+     * Includes pinned notes from current folder and all subfolders
+     * Used when showNotesFromSubfolders is enabled to gather all pins
+     * @param folder - Root folder to start collection from
+     * @param ignoredFolders - List of folder names to skip
+     * @returns Array of file paths for all pinned notes
+     */
     private getPinnedNotesRecursively(folder: TFolder, ignoredFolders: string[]): string[] {
         let pinnedPaths: string[] = [];
         
@@ -920,6 +1133,14 @@ class NotebookNavigatorView extends ItemView {
         return pinnedPaths;
     }
     
+    /**
+     * Calculates the relative path from a base folder to a file's parent
+     * Used to display parent folder path for files in subfolders
+     * Returns empty string if file is directly in the base folder
+     * @param file - The file to get relative path for
+     * @param baseFolder - The base folder to calculate path from
+     * @returns Relative path string (e.g., "subfolder/nested")
+     */
     private getRelativePath(file: TFile, baseFolder: TFolder): string {
         if (file.parent === baseFolder) {
             return '';
@@ -937,6 +1158,12 @@ class NotebookNavigatorView extends ItemView {
         return path;
     }
 
+    /**
+     * Refreshes the file list display for the currently selected folder
+     * Handles file collection, sorting, pinning, and rendering
+     * Manages auto-selection of files when folder changes
+     * Renders files with date groups or flat list based on settings
+     */
     private refreshFileList() {
         this.fileList.empty();
         
@@ -1043,6 +1270,14 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Renders a single file item in the file list
+     * Creates file display with name, date, preview/path, and optional feature image
+     * Sets up click handlers for selection and preview
+     * Handles both normal and subfolder display modes
+     * @param file - The file to render
+     * @param index - Index for keyboard navigation
+     */
     private renderFileItem(file: TFile, index: number) {
         const fileEl = this.fileList.createDiv({
             cls: 'nn-file-item',
@@ -1146,10 +1381,21 @@ class NotebookNavigatorView extends ItemView {
     }
 
 
+    /**
+     * Opens a file in the main editor pane
+     * Used when user double-clicks or presses Enter on a file
+     * @param file - The file to open
+     */
     private openFile(file: TFile) {
         this.app.workspace.getLeaf(false).openFile(file);
     }
 
+    /**
+     * Opens a file for preview without stealing focus from navigator
+     * Allows users to browse files with keyboard while previewing content
+     * Maintains focus on navigator for continued navigation
+     * @param file - The file to preview
+     */
     private previewFile(file: TFile) {
         // Open file in preview mode without stealing focus
         const leaf = this.app.workspace.getLeaf(false);
@@ -1165,6 +1411,14 @@ class NotebookNavigatorView extends ItemView {
     }
 
 
+    /**
+     * Renders a feature image thumbnail for a file
+     * Supports both standard paths and wiki-style links [[image.png]]
+     * Resolves image paths relative to the file's location
+     * @param container - Container element to add the image to
+     * @param imagePath - Path to the image from frontmatter
+     * @param file - The file that contains the image reference
+     */
     private renderFeatureImage(container: HTMLElement, imagePath: string, file: TFile) {
         const imageContainer = container.createDiv('nn-feature-image');
         const img = imageContainer.createEl('img');
@@ -1189,6 +1443,13 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Shows context menu for folder operations
+     * Provides options to create, rename, and delete folders/files
+     * Root folder has limited options (no rename/delete)
+     * @param folder - The folder to show context menu for
+     * @param e - Mouse event for positioning the menu
+     */
     private showFolderContextMenu(folder: TFolder, e: MouseEvent) {
         const menu = new Menu();
 
@@ -1227,6 +1488,13 @@ class NotebookNavigatorView extends ItemView {
         menu.showAtMouseEvent(e);
     }
 
+    /**
+     * Shows context menu for file operations
+     * Provides options to open, pin/unpin, rename, and delete files
+     * Pin option changes based on current pin state
+     * @param file - The file to show context menu for
+     * @param e - Mouse event for positioning the menu
+     */
     private showFileContextMenu(file: TFile, e: MouseEvent) {
         const menu = new Menu();
 
@@ -1282,6 +1550,12 @@ class NotebookNavigatorView extends ItemView {
         menu.showAtMouseEvent(e);
     }
 
+    /**
+     * Creates a new folder with user input for name
+     * Expands parent folder and selects the new folder after creation
+     * Uses FileSystemOperations for the actual creation logic
+     * @param parent - Optional parent folder, defaults to selected folder or root
+     */
     private async createNewFolder(parent?: TFolder) {
         const targetFolder = parent || this.selectedFolder || this.app.vault.getRoot();
         
@@ -1295,19 +1569,40 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    /**
+     * Creates a new markdown file with user input for name
+     * Delegates to FileSystemOperations for creation and opening
+     * @param parent - Optional parent folder, defaults to selected folder or root
+     */
     private async createNewFile(parent?: TFolder) {
         const targetFolder = parent || this.selectedFolder || this.app.vault.getRoot();
         await this.fileSystemOps.createNewFile(targetFolder);
     }
 
+    /**
+     * Renames a folder with user input validation
+     * Delegates to FileSystemOperations for the rename operation
+     * @param folder - The folder to rename
+     */
     private async renameFolder(folder: TFolder) {
         await this.fileSystemOps.renameFolder(folder);
     }
 
+    /**
+     * Renames a file with user input validation
+     * Delegates to FileSystemOperations for the rename operation
+     * @param file - The file to rename
+     */
     private async renameFile(file: TFile) {
         await this.fileSystemOps.renameFile(file);
     }
 
+    /**
+     * Deletes a folder with optional confirmation dialog
+     * Clears selection if the deleted folder was selected
+     * Handles cleanup of UI state after deletion
+     * @param folder - The folder to delete
+     */
     private async deleteFolder(folder: TFolder) {
         await this.fileSystemOps.deleteFolder(folder, this.plugin.settings.confirmBeforeDelete, () => {
             if (this.selectedFolder === folder) {
@@ -1317,10 +1612,23 @@ class NotebookNavigatorView extends ItemView {
         });
     }
 
+    /**
+     * Deletes a file with optional confirmation dialog
+     * Respects user's confirmation preference from settings
+     * @param file - The file to delete
+     */
     private async deleteFile(file: TFile) {
         await this.fileSystemOps.deleteFile(file, this.plugin.settings.confirmBeforeDelete);
     }
 
+    /**
+     * Sets up drag and drop functionality for files and folders
+     * Supports moving items between folders with visual feedback
+     * Prevents invalid operations like moving folder into its descendant
+     * @param element - The element to make draggable
+     * @param file - The file or folder being dragged
+     * @param dragHandle - Optional specific element to use as drag handle
+     */
     private setupDragAndDrop(element: HTMLElement, file: TAbstractFile, dragHandle?: HTMLElement) {
         // If a drag handle is provided, make that draggable instead of the whole element
         const draggableElement = dragHandle || element;
@@ -1412,15 +1720,35 @@ class NotebookNavigatorView extends ItemView {
 
 
 
+    /**
+     * Gets the list of pinned note paths for a specific folder
+     * Returns empty array if no notes are pinned in the folder
+     * @param folder - The folder to get pinned notes for
+     * @returns Array of file paths that are pinned in this folder
+     */
     private getPinnedNotesForFolder(folder: TFolder): string[] {
         return this.plugin.settings.pinnedNotes[folder.path] || [];
     }
     
+    /**
+     * Checks if a file is pinned in a specific folder
+     * Used to determine pin/unpin menu option state
+     * @param file - The file to check
+     * @param folder - The folder context for pinning
+     * @returns True if the file is pinned in this folder
+     */
     private isFilePinned(file: TFile, folder: TFolder): boolean {
         const pinnedFiles = this.getPinnedNotesForFolder(folder);
         return pinnedFiles.includes(file.path);
     }
     
+    /**
+     * Pins a file to the top of its folder's file list
+     * Adds file path to pinned notes settings and refreshes display
+     * Auto-scrolls to show the newly pinned file at the top
+     * @param file - The file to pin
+     * @param folder - The folder to pin the file in
+     */
     private async pinFile(file: TFile, folder: TFolder) {
         const pinnedNotes = this.plugin.settings.pinnedNotes;
         if (!pinnedNotes[folder.path]) {
@@ -1441,6 +1769,13 @@ class NotebookNavigatorView extends ItemView {
         }
     }
     
+    /**
+     * Unpins a file from the top of its folder's file list
+     * Removes file path from pinned notes settings and refreshes display
+     * Maintains scroll position if the unpinned file was selected
+     * @param file - The file to unpin
+     * @param folder - The folder to unpin the file from
+     */
     private async unpinFile(file: TFile, folder: TFolder) {
         const pinnedNotes = this.plugin.settings.pinnedNotes;
         if (pinnedNotes[folder.path]) {
@@ -1461,6 +1796,11 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Calculates the index of the currently selected folder
+     * Used to restore keyboard navigation position after tree updates
+     * Updates focusedFolderIndex for keyboard navigation state
+     */
     private calculateFocusedFolderIndex() {
         if (this.selectedFolder) {
             const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
@@ -1473,6 +1813,11 @@ class NotebookNavigatorView extends ItemView {
         }
     }
     
+    /**
+     * Calculates the index of the currently selected file
+     * Used to restore keyboard navigation position after list updates
+     * Updates focusedFileIndex for keyboard navigation state
+     */
     private calculateFocusedFileIndex() {
         if (this.selectedFile) {
             const allFiles = Array.from(this.fileList.querySelectorAll('.nn-file-item'));
@@ -1485,6 +1830,11 @@ class NotebookNavigatorView extends ItemView {
         }
     }
     
+    /**
+     * Scrolls the selected folder into view in the folder tree
+     * Centers the folder in the viewport for better visibility
+     * Used after folder selection or tree expansion
+     */
     private scrollSelectedFolderIntoView() {
         if (this.selectedFolder) {
             const folderEl = this.folderTree.querySelector(
@@ -1497,6 +1847,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
     
+    /**
+     * Scrolls the selected file into view in the file list
+     * Handles sticky date headers and centers file in viewport
+     * Only scrolls if file is outside visible area
+     * Accounts for sticky headers when calculating scroll position
+     */
     private scrollSelectedFileIntoView() {
         if (this.selectedFile) {
             const fileEl = this.fileList.querySelector(
@@ -1543,6 +1899,11 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Updates visual selection state in the file list
+     * Removes previous selection and highlights current file
+     * Called when file selection changes via keyboard or mouse
+     */
     private updateFileSelection() {
         // Remove previous selection
         this.fileList.querySelectorAll('.nn-selected').forEach(el => {
@@ -1558,6 +1919,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Handles when the active file changes in the editor
+     * Syncs navigator selection with active editor file
+     * Respects autoRevealActiveFile setting for folder switching
+     * Ignores changes from non-editor panes and ignored folders
+     */
     private handleActiveFileChange() {
         // Only process changes from the main editor area
         const activeLeaf = this.app.workspace.activeLeaf;
@@ -1613,6 +1980,13 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Checks if a file is visible in the current folder view
+     * Accounts for showNotesFromSubfolders setting
+     * Used to determine if file selection should update
+     * @param file - The file to check visibility for
+     * @returns True if file is in current folder or subfolder view
+     */
     private isFileInCurrentView(file: TFile): boolean {
         if (!this.selectedFolder) return false;
         
@@ -1630,6 +2004,12 @@ class NotebookNavigatorView extends ItemView {
         }
     }
 
+    /**
+     * Selects a file in the navigator without opening it in editor
+     * Updates visual selection and scrolls file into view if needed
+     * Used when syncing with active editor to avoid circular updates
+     * @param file - The file to select
+     */
     private selectFileWithoutOpening(file: TFile) {
         this.selectedFile = file;
         this.updateFileSelection();
@@ -1650,6 +2030,12 @@ class NotebookNavigatorView extends ItemView {
         localStorage.setItem(this.plugin.keys.selectedFileKey, file.path);
     }
 
+    /**
+     * Updates keyboard focus indicator between folder and file panes
+     * Adds visual focus ring to current item and scrolls it into view
+     * Updates container attribute for CSS styling of active pane
+     * Handles smart scrolling to keep focused items visible
+     */
     private updateFocus() {
         this.containerEl.querySelectorAll('.nn-focused').forEach(el => {
             el.removeClass('nn-focused');
@@ -1693,6 +2079,13 @@ class NotebookNavigatorView extends ItemView {
 
 
 
+    /**
+     * Reveals a file in the navigator by expanding folders and selecting it
+     * Switches to the file's parent folder if needed
+     * Scrolls both folder tree and file list to show the revealed items
+     * Public method called by plugin commands and context menus
+     * @param file - The file to reveal in the navigator
+     */
     revealFile(file: TFile) {
         // Ensure parent folders are expanded
         if (file.parent) {
