@@ -668,7 +668,7 @@ class NotebookNavigatorView extends ItemView {
     private globalFolderIndex: number = 0;
 
     private getFileCount(folder: TFolder): number {
-        return folder.children.filter(child => child instanceof TFile).length;
+        return folder.children.filter(child => child instanceof TFile && child.extension === 'md').length;
     }
 
     private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
@@ -890,7 +890,7 @@ class NotebookNavigatorView extends ItemView {
         let files: TFile[] = [];
         
         folder.children.forEach(child => {
-            if (child instanceof TFile) {
+            if (child instanceof TFile && child.extension === 'md') {
                 files.push(child);
             } else if (child instanceof TFolder && !ignoredFolders.includes(child.name)) {
                 // Recursively collect from subfolders
@@ -956,7 +956,7 @@ class NotebookNavigatorView extends ItemView {
             files = this.collectFilesRecursively(this.selectedFolder, ignoredFolders);
         } else {
             files = this.selectedFolder.children
-                .filter(child => child instanceof TFile) as TFile[];
+                .filter(child => child instanceof TFile && child.extension === 'md') as TFile[];
         }
 
         // Sort files based on current sort option
