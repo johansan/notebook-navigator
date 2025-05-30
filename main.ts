@@ -1392,22 +1392,30 @@ class NotebookNavigatorView extends ItemView {
     private async createNewFile(parent?: TFolder) {
         const targetFolder = parent || this.selectedFolder || this.app.vault.getRoot();
         
-        const modal = new InputModal(this.app, 'New File', 'Enter file name:', async (name) => {
-            if (name) {
-                try {
-                    if (!name.endsWith('.md')) {
-                        name += '.md';
-                    }
-                    const path = targetFolder.path ? `${targetFolder.path}/${name}` : name;
-                    const file = await this.app.vault.create(path, '');
-                    this.openFile(file);
-                    new Notice(`File "${name}" created`);
-                } catch (error) {
-                    new Notice(`Failed to create file: ${error.message}`);
-                }
+        try {
+            // Generate unique "Untitled" name
+            let fileName = "Untitled";
+            let counter = 1;
+            let path = targetFolder.path ? `${targetFolder.path}/${fileName}.md` : `${fileName}.md`;
+            
+            // Check if file exists and increment counter
+            while (this.app.vault.getAbstractFileByPath(path)) {
+                fileName = `Untitled ${counter}`;
+                path = targetFolder.path ? `${targetFolder.path}/${fileName}.md` : `${fileName}.md`;
+                counter++;
             }
-        });
-        modal.open();
+            
+            // Create the file
+            const file = await this.app.vault.create(path, '');
+            this.openFile(file);
+            
+            // Put the file in rename mode immediately (similar to Obsidian's default behavior)
+            setTimeout(() => {
+                this.app.vault.rename(file, path);
+            }, 100);
+        } catch (error) {
+            new Notice(`Failed to create file: ${error.message}`);
+        }
     }
 
     private async renameFolder(folder: TFolder) {
