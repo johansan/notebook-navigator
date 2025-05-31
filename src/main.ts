@@ -60,7 +60,7 @@ export default class NotebookNavigatorPlugin extends Plugin {
 
         this.addCommand({
             id: 'reveal-active-file',
-            name: 'Reveal Active File in Navigator',
+            name: 'Reveal active file in Notebook Navigator',
             callback: async () => {
                 const activeFile = this.app.workspace.getActiveFile();
                 if (activeFile && activeFile.parent) {
@@ -1470,14 +1470,14 @@ class NotebookNavigatorView extends ItemView {
 
         menu.addItem((item) =>
             item
-                .setTitle('New Folder')
+                .setTitle('New folder')
                 .setIcon('folder-plus')
                 .onClick(() => this.createNewFolder(folder))
         );
 
         menu.addItem((item) =>
             item
-                .setTitle('New File')
+                .setTitle('New file')
                 .setIcon('file-plus')
                 .onClick(() => this.createNewFile(folder))
         );
@@ -1527,7 +1527,7 @@ class NotebookNavigatorView extends ItemView {
             const isPinned = this.isFilePinned(file, this.selectedFolder);
             menu.addItem((item) =>
                 item
-                    .setTitle(isPinned ? 'Unpin Note' : 'Pin Note')
+                    .setTitle(isPinned ? 'Unpin note' : 'Pin note')
                     .setIcon(isPinned ? 'pin-off' : 'pin')
                     .onClick(() => {
                         if (isPinned) {

@@ -21,7 +21,7 @@ export class FileSystemOperations {
      * @param onSuccess - Optional callback with the new folder path on successful creation
      */
     async createNewFolder(parent: TFolder, onSuccess?: (path: string) => void): Promise<void> {
-        const modal = new InputModal(this.app, 'New Folder', 'Enter folder name:', async (name) => {
+        const modal = new InputModal(this.app, 'New folder', 'Enter folder name:', async (name) => {
             if (name) {
                 try {
                     const path = parent.path ? `${parent.path}/${name}` : name;
@@ -83,7 +83,7 @@ export class FileSystemOperations {
      * @param folder - The folder to rename
      */
     async renameFolder(folder: TFolder): Promise<void> {
-        const modal = new InputModal(this.app, 'Rename Folder', 'Enter new name:', async (newName) => {
+        const modal = new InputModal(this.app, 'Rename folder', 'Enter new name:', async (newName) => {
             if (newName && newName !== folder.name) {
                 try {
                     const newPath = folder.parent?.path 
@@ -105,7 +105,7 @@ export class FileSystemOperations {
      * @param file - The file to rename
      */
     async renameFile(file: TFile): Promise<void> {
-        const modal = new InputModal(this.app, 'Rename File', 'Enter new name:', async (newName) => {
+        const modal = new InputModal(this.app, 'Rename file', 'Enter new name:', async (newName) => {
             if (newName && newName !== file.basename) {
                 try {
                     // Ensure .md extension

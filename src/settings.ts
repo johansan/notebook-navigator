@@ -155,8 +155,8 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
             .setName('Sort files by')
             .setDesc('Choose how files are sorted in the file list.')
             .addDropdown(dropdown => dropdown
-                .addOption('modified', 'Date Edited')
-                .addOption('created', 'Date Created')
+                .addOption('modified', 'Date edited')
+                .addOption('created', 'Date created')
                 .addOption('title', 'Title')
                 .setValue(this.plugin.settings.sortOption)
                 .onChange(async (value: SortOption) => {
@@ -360,7 +360,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
             .setName('Clear saved state')
             .setDesc('Reset expanded folders, selections, and pane width to defaults.')
             .addButton(button => button
-                .setButtonText('Clear State')
+                .setButtonText('Clear state')
                 .setCta()  // Makes it a primary button
                 .onClick(async () => {
                     // Clear all localStorage keys
