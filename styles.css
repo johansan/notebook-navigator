@@ -325,11 +325,6 @@ button.nn-icon-button {
     transition: max-height 0.18s ease-out;
 }
 
-/* During expansion - set a large max-height for smooth animation */
-.nn-folder-children.nn-animating.nn-expanding {
-    max-height: 1500px; /* Large enough for most folder contents */
-}
-
 /* File List */
 .notebook-navigator .nn-file-list,
 .nn-file-list {
