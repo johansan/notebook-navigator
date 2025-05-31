@@ -115,18 +115,38 @@
 }
 
 .nn-icon-button {
-    background: none;
-    border: none;
-    border-radius: 4px;
-    padding: 4px;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 3px;
+    padding: 2px 4px;
     cursor: pointer;
     color: var(--text-muted);
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Ensure button element itself has no default styles */
+button.nn-icon-button {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .nn-icon-button:hover {
-    background-color: var(--background-modifier-hover);
     color: var(--text-normal);
+    background-color: var(--background-modifier-hover) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.nn-icon-button:active {
+    opacity: 0.8;
 }
 
 /* Sort Button */

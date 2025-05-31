@@ -406,7 +406,7 @@ class NotebookNavigatorView extends ItemView {
             cls: 'nn-icon-button',
             attr: { 'aria-label': 'New File' }
         });
-        setIcon(newFileBtn, 'file-plus');
+        setIcon(newFileBtn, 'create-new');
         const newFileClickHandler = () => this.createNewFile();
         newFileBtn.addEventListener('click', newFileClickHandler);
         this.eventRefs.push(() => newFileBtn.removeEventListener('click', newFileClickHandler));
