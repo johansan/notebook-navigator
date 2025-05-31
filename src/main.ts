@@ -1600,15 +1600,6 @@ class NotebookNavigatorView extends ItemView {
                 .onClick(() => this.searchInFolder(folder))
         );
 
-        // Icon management
-        const hasCustomIcon = this.getFolderIcon(folder);
-        menu.addItem((item) =>
-            item
-                .setTitle(hasCustomIcon ? 'Remove icon' : 'Change icon')
-                .setIcon(hasCustomIcon ? 'x' : 'image')
-                .onClick(() => this.toggleFolderIcon(folder))
-        );
-
         if (folder.path) {
             menu.addSeparator();
 
@@ -2064,21 +2055,29 @@ class NotebookNavigatorView extends ItemView {
      * Only available when Sync plugin is enabled
      * @param file - The file to view version history for
      */
-    private openVersionHistory(file: TFile) {
+    private async openVersionHistory(file: TFile) {
         try {
-            // Use Sync plugin's command to open version history
-            (this.app as any).commands.executeCommandById('sync:view-version-history');
+            // Ensure the file is open and active first
+            const leaf = this.app.workspace.getLeaf(false);
+            await leaf.openFile(file);
             
-            // The sync plugin should automatically use the current file
-            // If not, we might need to set the active file first
-            const activeFile = this.app.workspace.getActiveFile();
-            if (activeFile !== file) {
-                // Open the file first, then show version history
-                this.app.workspace.getLeaf(false).openFile(file).then(() => {
-                    setTimeout(() => {
-                        (this.app as any).commands.executeCommandById('sync:view-version-history');
-                    }, 100);
-                });
+            // Wait a bit for the file to be fully loaded
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            // Try both possible command IDs
+            const commandIds = ['sync:show-sync-history', 'sync:view-version-history'];
+            let executed = false;
+            
+            for (const commandId of commandIds) {
+                if ((this.app as any).commands.commands[commandId]) {
+                    (this.app as any).commands.executeCommandById(commandId);
+                    executed = true;
+                    break;
+                }
+            }
+            
+            if (!executed) {
+                new Notice('Version history command not found. Ensure Obsidian Sync is enabled.');
             }
         } catch (error) {
             new Notice(`Failed to open version history: ${error.message}`);
