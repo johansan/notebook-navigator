@@ -6,6 +6,13 @@ import { App, Modal } from 'obsidian';
  * Supports Enter key submission and pre-filled default values
  */
 export class InputModal extends Modal {
+    private inputEl: HTMLInputElement;
+    private cancelBtn: HTMLButtonElement;
+    private submitBtn: HTMLButtonElement;
+    private keydownHandler: (e: KeyboardEvent) => void;
+    private cancelHandler: () => void;
+    private submitHandler: () => void;
+    
     /**
      * Creates an input modal with text field and submit/cancel buttons
      * @param app - The Obsidian app instance
@@ -24,38 +31,59 @@ export class InputModal extends Modal {
         super(app);
         this.titleEl.setText(title);
         
-        const inputEl = this.contentEl.createEl('input', {
+        this.inputEl = this.contentEl.createEl('input', {
             type: 'text',
             placeholder: placeholder,
             value: defaultValue
         });
-        inputEl.addClass('nn-input');
+        this.inputEl.addClass('nn-input');
         
-        inputEl.addEventListener('keydown', (e) => {
+        // Store handlers for cleanup
+        this.keydownHandler = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.close();
-                this.onSubmit(inputEl.value);
+                this.onSubmit(this.inputEl.value);
             }
-        });
+        };
+        this.cancelHandler = () => this.close();
+        this.submitHandler = () => {
+            this.close();
+            this.onSubmit(this.inputEl.value);
+        };
+        
+        this.inputEl.addEventListener('keydown', this.keydownHandler);
         
         const buttonContainer = this.contentEl.createDiv('nn-button-container');
         
-        const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
-        cancelBtn.addEventListener('click', () => this.close());
+        this.cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
+        this.cancelBtn.addEventListener('click', this.cancelHandler);
         
-        const submitBtn = buttonContainer.createEl('button', { 
+        this.submitBtn = buttonContainer.createEl('button', { 
             text: 'Submit',
             cls: 'mod-cta'
         });
-        submitBtn.addEventListener('click', () => {
-            this.close();
-            this.onSubmit(inputEl.value);
-        });
+        this.submitBtn.addEventListener('click', this.submitHandler);
         
-        inputEl.focus();
+        this.inputEl.focus();
         if (defaultValue) {
-            inputEl.select();
+            this.inputEl.select();
+        }
+    }
+    
+    /**
+     * Cleanup event listeners when modal is closed
+     * Prevents memory leaks by removing all event listeners
+     */
+    onClose() {
+        if (this.inputEl && this.keydownHandler) {
+            this.inputEl.removeEventListener('keydown', this.keydownHandler);
+        }
+        if (this.cancelBtn && this.cancelHandler) {
+            this.cancelBtn.removeEventListener('click', this.cancelHandler);
+        }
+        if (this.submitBtn && this.submitHandler) {
+            this.submitBtn.removeEventListener('click', this.submitHandler);
         }
     }
 }

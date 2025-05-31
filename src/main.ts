@@ -935,8 +935,6 @@ class NotebookNavigatorView extends ItemView {
             folderEl.addClass('nn-selected');
         }
 
-        // Event listeners removed - now handled by event delegation
-
         if (this.expandedFolders.has(folder.path)) {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
             // Mark as expanded without animation for initial render
@@ -1444,8 +1442,6 @@ class NotebookNavigatorView extends ItemView {
         if (this.selectedFile === file) {
             fileEl.addClass('nn-selected');
         }
-
-        // Event listeners removed - now handled by event delegation
     }
 
 
@@ -1682,8 +1678,6 @@ class NotebookNavigatorView extends ItemView {
     private async deleteFile(file: TFile) {
         await this.fileSystemOps.deleteFile(file, this.plugin.settings.confirmBeforeDelete);
     }
-
-    // setupDragAndDrop method removed - functionality now handled by setupEventDelegation
 
     /**
      * Sets up event delegation for all interactive elements in the navigator

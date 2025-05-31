@@ -6,6 +6,11 @@ import { App, Modal } from 'obsidian';
  * Provides Cancel and Delete buttons with appropriate styling
  */
 export class ConfirmModal extends Modal {
+    private cancelBtn: HTMLButtonElement;
+    private confirmBtn: HTMLButtonElement;
+    private cancelHandler: () => void;
+    private confirmHandler: () => void;
+    
     /**
      * Creates a confirmation modal with title, message, and callback
      * @param app - The Obsidian app instance
@@ -25,16 +30,33 @@ export class ConfirmModal extends Modal {
         
         const buttonContainer = this.contentEl.createDiv('nn-button-container');
         
-        const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
-        cancelBtn.addEventListener('click', () => this.close());
+        // Store references for cleanup
+        this.cancelHandler = () => this.close();
+        this.confirmHandler = () => {
+            this.close();
+            this.onConfirm();
+        };
         
-        const confirmBtn = buttonContainer.createEl('button', { 
+        this.cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
+        this.cancelBtn.addEventListener('click', this.cancelHandler);
+        
+        this.confirmBtn = buttonContainer.createEl('button', { 
             text: 'Delete',
             cls: 'mod-warning'
         });
-        confirmBtn.addEventListener('click', () => {
-            this.close();
-            this.onConfirm();
-        });
+        this.confirmBtn.addEventListener('click', this.confirmHandler);
+    }
+    
+    /**
+     * Cleanup event listeners when modal is closed
+     * Prevents memory leaks by removing all event listeners
+     */
+    onClose() {
+        if (this.cancelBtn && this.cancelHandler) {
+            this.cancelBtn.removeEventListener('click', this.cancelHandler);
+        }
+        if (this.confirmBtn && this.confirmHandler) {
+            this.confirmBtn.removeEventListener('click', this.confirmHandler);
+        }
     }
 }
