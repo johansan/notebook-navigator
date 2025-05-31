@@ -310,18 +310,24 @@ button.nn-icon-button {
 }
 
 .nn-folder-children {
-    animation: slideDown 0.2s ease-out;
+    overflow: hidden;
+    max-height: 0;
+    transition: none;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Expanded state - no animation by default */
+.nn-folder-children.nn-expanded {
+    max-height: none;
+}
+
+/* Animate only when manually toggling */
+.nn-folder-children.nn-animating {
+    transition: max-height 0.18s ease-out;
+}
+
+/* During expansion - set a large max-height for smooth animation */
+.nn-folder-children.nn-animating.nn-expanding {
+    max-height: 1500px; /* Large enough for most folder contents */
 }
 
 /* File List */

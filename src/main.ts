@@ -941,6 +941,9 @@ class NotebookNavigatorView extends ItemView {
 
         if (this.expandedFolders.has(folder.path)) {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
+            // Mark as expanded without animation for initial render
+            childrenContainer.addClass('nn-expanded');
+            
             const subfolders = folder.children
                 .filter(child => child instanceof TFolder)
                 .filter(child => !ignoredFolders.includes(child.name))
@@ -970,10 +973,25 @@ class NotebookNavigatorView extends ItemView {
 
         if (this.expandedFolders.has(folder.path)) {
             this.expandedFolders.delete(folder.path);
-            // Remove children container
-            const childrenContainer = folderEl.querySelector('.nn-folder-children');
+            // Collapse with animation
+            const childrenContainer = folderEl.querySelector('.nn-folder-children') as HTMLElement;
             if (childrenContainer) {
-                childrenContainer.remove();
+                // Get actual height before collapsing
+                const height = childrenContainer.scrollHeight;
+                childrenContainer.style.maxHeight = height + 'px';
+                
+                // Force reflow
+                childrenContainer.offsetHeight;
+                
+                // Start collapse animation
+                childrenContainer.addClass('nn-animating');
+                childrenContainer.removeClass('nn-expanded');
+                childrenContainer.style.maxHeight = '0px';
+                
+                // Remove after animation
+                setTimeout(() => {
+                    childrenContainer.remove();
+                }, 200);
             }
             // Update arrow icon
             const arrow = folderEl.querySelector('.nn-folder-arrow svg');
@@ -984,6 +1002,7 @@ class NotebookNavigatorView extends ItemView {
             this.expandedFolders.add(folder.path);
             // Add children container
             const childrenContainer = folderEl.createDiv('nn-folder-children');
+            
             const subfolders = folder.children
                 .filter(child => child instanceof TFolder)
                 .filter(child => !ignoredFolders.includes(child.name))
@@ -993,6 +1012,28 @@ class NotebookNavigatorView extends ItemView {
                 this.renderFolderItem(subfolder as TFolder, childrenContainer, 
                     parseInt(folderEl.getAttribute('data-level') || '0') + 1, ignoredFolders);
             });
+            
+            // Prepare for animation - temporarily show to measure height
+            childrenContainer.style.maxHeight = 'none';
+            childrenContainer.style.visibility = 'hidden';
+            const targetHeight = childrenContainer.scrollHeight;
+            childrenContainer.style.maxHeight = '0px';
+            childrenContainer.style.visibility = '';
+            
+            // Force reflow
+            childrenContainer.offsetHeight;
+            
+            // Animate expansion
+            childrenContainer.addClass('nn-animating');
+            childrenContainer.style.maxHeight = targetHeight + 'px';
+            
+            // After animation, set to expanded state
+            setTimeout(() => {
+                childrenContainer.removeClass('nn-animating');
+                childrenContainer.addClass('nn-expanded');
+                childrenContainer.style.maxHeight = '';
+            }, 180);
+            
             // Update arrow icon
             const arrow = folderEl.querySelector('.nn-folder-arrow svg');
             if (arrow) {
