@@ -844,7 +844,7 @@ class NotebookNavigatorView extends ItemView {
             .filter(p => p);
         
         return folder.children.filter(child => {
-            if (!(child instanceof TFile) || child.extension !== 'md') return false;
+            if (!(child instanceof TFile) || !this.isDisplayableFile(child)) return false;
             
             // Check if file should be excluded based on frontmatter
             if (excludedProperties.length > 0 && this.shouldExcludeFile(child, excludedProperties)) {
@@ -918,7 +918,14 @@ class NotebookNavigatorView extends ItemView {
         }
 
         const folderIcon = folderContent.createDiv('nn-folder-icon');
-        setIcon(folderIcon, this.expandedFolders.has(folder.path) ? 'folder-open' : 'folder-closed');
+        const customIcon = this.getFolderIcon(folder);
+        if (customIcon) {
+            // If custom icon is an emoji or text, display it directly
+            folderIcon.textContent = customIcon;
+        } else {
+            // Otherwise use default folder icon
+            setIcon(folderIcon, this.expandedFolders.has(folder.path) ? 'folder-open' : 'folder-closed');
+        }
 
         const folderName = folderContent.createDiv('nn-folder-name');
         folderName.textContent = folder.name || 'Vault';
@@ -1152,7 +1159,7 @@ class NotebookNavigatorView extends ItemView {
         let files: TFile[] = [];
         
         folder.children.forEach(child => {
-            if (child instanceof TFile && child.extension === 'md') {
+            if (child instanceof TFile && this.isDisplayableFile(child)) {
                 files.push(child);
             } else if (child instanceof TFolder && !ignoredFolders.includes(child.name)) {
                 // Recursively collect from subfolders
@@ -1161,6 +1168,17 @@ class NotebookNavigatorView extends ItemView {
         });
         
         return files;
+    }
+
+    /**
+     * Checks if a file should be displayed in the navigator
+     * Currently shows markdown, canvas, and base files
+     * @param file - The file to check
+     * @returns True if the file should be displayed
+     */
+    private isDisplayableFile(file: TFile): boolean {
+        const supportedExtensions = ['md', 'canvas', 'base'];
+        return supportedExtensions.includes(file.extension);
     }
 
     /**
@@ -1257,7 +1275,7 @@ class NotebookNavigatorView extends ItemView {
             files = this.collectFilesRecursively(this.selectedFolder, ignoredFolders);
         } else {
             files = this.selectedFolder.children
-                .filter(child => child instanceof TFile && child.extension === 'md') as TFile[];
+                .filter(child => child instanceof TFile && this.isDisplayableFile(child)) as TFile[];
         }
 
         // Filter out files based on frontmatter properties
@@ -1414,20 +1432,34 @@ class NotebookNavigatorView extends ItemView {
                 const parentFolder = secondLine.createDiv('nn-file-parent-folder');
                 parentFolder.textContent = relativePath;
             } else if (this.plugin.settings.showFilePreview) {
-                // File is in current folder - show preview
+                // File is in current folder - show preview or file type
                 const preview = secondLine.createDiv('nn-file-preview');
+                if (file.extension === 'canvas') {
+                    preview.textContent = 'CANVAS';
+                } else if (file.extension === 'base') {
+                    preview.textContent = 'BASE';
+                } else {
+                    // Show preview text for markdown files
+                    this.app.vault.cachedRead(file).then(content => {
+                        const previewText = PreviewTextUtils.extractPreviewText(content, this.plugin.settings);
+                        preview.textContent = previewText;
+                    });
+                }
+            }
+        } else if (this.plugin.settings.showFilePreview) {
+            // Normal mode - show preview text or file type
+            const preview = secondLine.createDiv('nn-file-preview');
+            if (file.extension === 'canvas') {
+                preview.textContent = 'CANVAS';
+            } else if (file.extension === 'base') {
+                preview.textContent = 'BASE';
+            } else {
+                // Show preview text for markdown files
                 this.app.vault.cachedRead(file).then(content => {
                     const previewText = PreviewTextUtils.extractPreviewText(content, this.plugin.settings);
                     preview.textContent = previewText;
                 });
             }
-        } else if (this.plugin.settings.showFilePreview) {
-            // Normal mode - show preview text
-            const preview = secondLine.createDiv('nn-file-preview');
-            this.app.vault.cachedRead(file).then(content => {
-                const previewText = PreviewTextUtils.extractPreviewText(content, this.plugin.settings);
-                preview.textContent = previewText;
-            });
         }
 
         // Add feature image if enabled
@@ -1518,6 +1550,14 @@ class NotebookNavigatorView extends ItemView {
     private showFolderContextMenu(folder: TFolder, e: MouseEvent) {
         const menu = new Menu();
 
+        // Creation items
+        menu.addItem((item) =>
+            item
+                .setTitle('New note')
+                .setIcon('create-new')
+                .onClick(() => this.createNewFile(folder))
+        );
+
         menu.addItem((item) =>
             item
                 .setTitle('New folder')
@@ -1527,9 +1567,46 @@ class NotebookNavigatorView extends ItemView {
 
         menu.addItem((item) =>
             item
-                .setTitle('New file')
-                .setIcon('file-plus')
-                .onClick(() => this.createNewFile(folder))
+                .setTitle('New canvas')
+                .setIcon('layout-grid')
+                .onClick(() => this.createNewCanvas(folder))
+        );
+
+        // Check if Bases plugin is enabled (core plugin in 1.9+)
+        const basesPlugin = (this.app as any).internalPlugins?.getPluginById?.('bases');
+        if (basesPlugin?.enabled) {
+            menu.addItem((item) =>
+                item
+                    .setTitle('New base')
+                    .setIcon('database')
+                    .onClick(() => this.createNewBase(folder))
+            );
+        }
+
+        menu.addSeparator();
+
+        // Folder operations
+        menu.addItem((item) =>
+            item
+                .setTitle('Duplicate folder')
+                .setIcon('copy')
+                .onClick(() => this.duplicateFolder(folder))
+        );
+
+        menu.addItem((item) =>
+            item
+                .setTitle('Search in folder')
+                .setIcon('search')
+                .onClick(() => this.searchInFolder(folder))
+        );
+
+        // Icon management
+        const hasCustomIcon = this.getFolderIcon(folder);
+        menu.addItem((item) =>
+            item
+                .setTitle(hasCustomIcon ? 'Remove icon' : 'Change icon')
+                .setIcon(hasCustomIcon ? 'x' : 'image')
+                .onClick(() => this.toggleFolderIcon(folder))
         );
 
         if (folder.path) {
@@ -1537,14 +1614,14 @@ class NotebookNavigatorView extends ItemView {
 
             menu.addItem((item) =>
                 item
-                    .setTitle('Rename')
+                    .setTitle('Rename folder')
                     .setIcon('pencil')
                     .onClick(() => this.renameFolder(folder))
             );
 
             menu.addItem((item) =>
                 item
-                    .setTitle('Delete')
+                    .setTitle('Delete folder')
                     .setIcon('trash')
                     .onClick(() => this.deleteFolder(folder))
             );
@@ -1563,11 +1640,26 @@ class NotebookNavigatorView extends ItemView {
     private showFileContextMenu(file: TFile, e: MouseEvent) {
         const menu = new Menu();
 
+        // Open options
         menu.addItem((item) =>
             item
-                .setTitle('Open in new pane')
-                .setIcon('file-plus')
+                .setTitle('Open in new tab')
+                .setIcon('plus')
+                .onClick(() => this.app.workspace.getLeaf('tab').openFile(file))
+        );
+
+        menu.addItem((item) =>
+            item
+                .setTitle('Open to the right')
+                .setIcon('separator-vertical')
                 .onClick(() => this.app.workspace.getLeaf('split').openFile(file))
+        );
+
+        menu.addItem((item) =>
+            item
+                .setTitle('Open in new window')
+                .setIcon('maximize')
+                .onClick(() => this.app.workspace.getLeaf('window').openFile(file))
         );
 
         menu.addSeparator();
@@ -1591,16 +1683,37 @@ class NotebookNavigatorView extends ItemView {
 
         menu.addSeparator();
 
+        // File operations
         menu.addItem((item) =>
             item
-                .setTitle('Rename')
+                .setTitle('Duplicate note')
+                .setIcon('copy')
+                .onClick(() => this.duplicateFile(file))
+        );
+
+        // Check if Sync is enabled
+        const syncPlugin = (this.app as any).internalPlugins?.getPluginById?.('sync');
+        if (syncPlugin?.enabled) {
+            menu.addItem((item) =>
+                item
+                    .setTitle('Open version history')
+                    .setIcon('history')
+                    .onClick(() => this.openVersionHistory(file))
+            );
+        }
+
+        menu.addSeparator();
+
+        menu.addItem((item) =>
+            item
+                .setTitle('Rename note')
                 .setIcon('pencil')
                 .onClick(() => this.renameFile(file))
         );
 
         menu.addItem((item) =>
             item
-                .setTitle('Delete')
+                .setTitle('Delete note')
                 .setIcon('trash')
                 .onClick(() => this.deleteFile(file))
         );
@@ -1677,6 +1790,299 @@ class NotebookNavigatorView extends ItemView {
      */
     private async deleteFile(file: TFile) {
         await this.fileSystemOps.deleteFile(file, this.plugin.settings.confirmBeforeDelete);
+    }
+
+    /**
+     * Creates a new canvas file in the specified folder
+     * Canvas files are JSON-based drawing/diagram files in Obsidian
+     * @param folder - The folder to create the canvas in
+     */
+    private async createNewCanvas(folder: TFolder) {
+        try {
+            // Generate unique canvas name
+            let canvasName = "Untitled Canvas";
+            let counter = 1;
+            let path = folder.path ? `${folder.path}/${canvasName}.canvas` : `${canvasName}.canvas`;
+            
+            // Check if canvas exists and increment counter
+            while (this.app.vault.getAbstractFileByPath(path)) {
+                canvasName = `Untitled Canvas ${counter}`;
+                path = folder.path ? `${folder.path}/${canvasName}.canvas` : `${canvasName}.canvas`;
+                counter++;
+            }
+            
+            // Create empty canvas content
+            const canvasContent = JSON.stringify({
+                nodes: [],
+                edges: []
+            }, null, 2);
+            
+            const file = await this.app.vault.create(path, canvasContent);
+            
+            // Open the canvas
+            this.app.workspace.getLeaf(false).openFile(file);
+            
+            // Select the parent folder and the new file
+            this.selectFolder(folder);
+            this.selectedFile = file;
+            this.refreshFileList();
+            
+        } catch (error) {
+            new Notice(`Failed to create canvas: ${error.message}`);
+        }
+    }
+
+    /**
+     * Creates a new base (database view) in the specified folder
+     * Bases are a new feature in Obsidian 1.9+ that provide database-like functionality
+     * @param folder - The folder to create the base in
+     */
+    private async createNewBase(folder: TFolder) {
+        try {
+            // Generate unique base name
+            let baseName = "Untitled Base";
+            let counter = 1;
+            let path = folder.path ? `${folder.path}/${baseName}.base` : `${baseName}.base`;
+            
+            // Check if base exists and increment counter
+            while (this.app.vault.getAbstractFileByPath(path)) {
+                baseName = `Untitled Base ${counter}`;
+                path = folder.path ? `${folder.path}/${baseName}.base` : `${baseName}.base`;
+                counter++;
+            }
+            
+            // Create the base file - Obsidian will handle the base file format
+            const file = await this.app.vault.create(path, '');
+            
+            // Open the base
+            this.app.workspace.getLeaf(false).openFile(file);
+            
+            // Select the parent folder and the new file
+            this.selectFolder(folder);
+            this.selectedFile = file;
+            this.refreshFileList();
+            
+        } catch (error) {
+            new Notice(`Failed to create base: ${error.message}`);
+        }
+    }
+
+    /**
+     * Duplicates a folder and all its contents recursively
+     * Uses Obsidian's naming convention: "foldername 1", "foldername 2", etc.
+     * @param folder - The folder to duplicate
+     */
+    private async duplicateFolder(folder: TFolder) {
+        try {
+            if (!folder.parent) {
+                new Notice("Cannot duplicate root folder");
+                return;
+            }
+            
+            // Generate unique folder name using Obsidian's naming convention
+            let counter = 1;
+            let newName = `${folder.name} ${counter}`;
+            let newPath = `${folder.parent.path}/${newName}`;
+            
+            // Check if folder exists and increment counter
+            while (this.app.vault.getAbstractFileByPath(newPath)) {
+                counter++;
+                newName = `${folder.name} ${counter}`;
+                newPath = `${folder.parent.path}/${newName}`;
+            }
+            
+            // Create the new folder
+            await this.app.vault.createFolder(newPath);
+            
+            // Recursively copy contents
+            await this.copyFolderContents(folder, newPath);
+            
+            // Select the new folder
+            const newFolder = this.app.vault.getAbstractFileByPath(newPath);
+            if (newFolder instanceof TFolder) {
+                this.selectFolder(newFolder);
+                this.pendingFolderSelection = newPath;
+                this.refresh();
+            }
+            
+            new Notice(`Folder duplicated as "${newName}"`);
+        } catch (error) {
+            new Notice(`Failed to duplicate folder: ${error.message}`);
+        }
+    }
+
+    /**
+     * Recursively copies folder contents to a new location
+     * Helper method for duplicateFolder
+     * @param sourceFolder - The source folder to copy from
+     * @param targetPath - The target folder path to copy to
+     */
+    private async copyFolderContents(sourceFolder: TFolder, targetPath: string) {
+        for (const child of sourceFolder.children) {
+            if (child instanceof TFile) {
+                const content = await this.app.vault.read(child);
+                await this.app.vault.create(`${targetPath}/${child.name}`, content);
+            } else if (child instanceof TFolder) {
+                const newSubfolderPath = `${targetPath}/${child.name}`;
+                await this.app.vault.createFolder(newSubfolderPath);
+                await this.copyFolderContents(child, newSubfolderPath);
+            }
+        }
+    }
+
+    /**
+     * Opens search with a query to search within a specific folder
+     * Uses Obsidian's global search with path filter
+     * @param folder - The folder to search within
+     */
+    private searchInFolder(folder: TFolder) {
+        // Build search query with path filter
+        const searchQuery = `path:"${folder.path}/"`;
+        
+        // Open search
+        (this.app as any).internalPlugins?.getPluginById?.('global-search')?.instance?.openGlobalSearch?.(searchQuery);
+        
+        // Alternative method if the above doesn't work
+        if (!(this.app as any).internalPlugins?.getPluginById?.('global-search')?.instance?.openGlobalSearch) {
+            // Use command palette
+            (this.app as any).commands.executeCommandById('global-search:open');
+            // Set search query after a small delay
+            setTimeout(() => {
+                const searchView = this.app.workspace.getLeavesOfType('search')[0];
+                if (searchView) {
+                    const searchComponent = (searchView.view as any).searchComponent;
+                    if (searchComponent) {
+                        searchComponent.setValue(searchQuery);
+                    }
+                }
+            }, 100);
+        }
+    }
+
+    /**
+     * Gets the custom icon for a folder
+     * Returns the icon name/emoji or null if no custom icon is set
+     * @param folder - The folder to check for custom icon
+     * @returns The icon string or null
+     */
+    private getFolderIcon(folder: TFolder): string | null {
+        // Check if folder has custom icon in plugin settings
+        const folderIcons = this.plugin.settings.folderIcons || {};
+        return folderIcons[folder.path] || null;
+    }
+
+    /**
+     * Toggles the custom icon for a folder
+     * If folder has icon, removes it; otherwise shows icon picker
+     * @param folder - The folder to toggle icon for
+     */
+    private async toggleFolderIcon(folder: TFolder) {
+        const currentIcon = this.getFolderIcon(folder);
+        
+        if (currentIcon) {
+            // Remove icon
+            if (!this.plugin.settings.folderIcons) {
+                this.plugin.settings.folderIcons = {};
+            }
+            delete this.plugin.settings.folderIcons[folder.path];
+            await this.plugin.saveSettings();
+            this.refresh();
+            new Notice("Folder icon removed");
+        } else {
+            // Show icon picker - for now, we'll use a simple prompt
+            // In a full implementation, you'd create a proper icon picker modal
+            const icon = await this.showIconPicker();
+            if (icon) {
+                if (!this.plugin.settings.folderIcons) {
+                    this.plugin.settings.folderIcons = {};
+                }
+                this.plugin.settings.folderIcons[folder.path] = icon;
+                await this.plugin.saveSettings();
+                this.refresh();
+                new Notice(`Folder icon set to ${icon}`);
+            }
+        }
+    }
+
+    /**
+     * Shows a simple icon picker (placeholder for full implementation)
+     * In production, this would show a proper modal with icon options
+     * @returns The selected icon or null
+     */
+    private async showIconPicker(): Promise<string | null> {
+        // For now, return a hardcoded emoji
+        // In a full implementation, create an IconPickerModal
+        const commonIcons = ['📁', '📂', '📚', '📝', '💼', '🎯', '⭐', '🔧', '📊', '🎨'];
+        const randomIcon = commonIcons[Math.floor(Math.random() * commonIcons.length)];
+        new Notice(`Icon set to ${randomIcon} (icon picker not fully implemented)`);
+        return randomIcon;
+    }
+
+    /**
+     * Duplicates a file with a new name in the same folder
+     * Uses Obsidian's naming convention: "filename 1", "filename 2", etc.
+     * @param file - The file to duplicate
+     */
+    private async duplicateFile(file: TFile) {
+        try {
+            // Generate unique file name using Obsidian's naming convention
+            const baseName = file.basename;
+            const extension = file.extension;
+            let counter = 1;
+            let newName = `${baseName} ${counter}`;
+            let newPath = file.parent ? `${file.parent.path}/${newName}.${extension}` : `${newName}.${extension}`;
+            
+            // Check if file exists and increment counter
+            while (this.app.vault.getAbstractFileByPath(newPath)) {
+                counter++;
+                newName = `${baseName} ${counter}`;
+                newPath = file.parent ? `${file.parent.path}/${newName}.${extension}` : `${newName}.${extension}`;
+            }
+            
+            // Read original file content
+            const content = await this.app.vault.read(file);
+            
+            // Create the duplicate
+            const newFile = await this.app.vault.create(newPath, content);
+            
+            // Open the duplicated file
+            await this.app.workspace.getLeaf(false).openFile(newFile);
+            
+            // Select the new file
+            this.selectedFile = newFile;
+            this.updateFileSelection();
+            this.saveState();
+            
+            new Notice(`Note duplicated as "${newName}"`);
+        } catch (error) {
+            new Notice(`Failed to duplicate note: ${error.message}`);
+        }
+    }
+
+    /**
+     * Opens version history for a file using Obsidian Sync
+     * Only available when Sync plugin is enabled
+     * @param file - The file to view version history for
+     */
+    private openVersionHistory(file: TFile) {
+        try {
+            // Use Sync plugin's command to open version history
+            (this.app as any).commands.executeCommandById('sync:view-version-history');
+            
+            // The sync plugin should automatically use the current file
+            // If not, we might need to set the active file first
+            const activeFile = this.app.workspace.getActiveFile();
+            if (activeFile !== file) {
+                // Open the file first, then show version history
+                this.app.workspace.getLeaf(false).openFile(file).then(() => {
+                    setTimeout(() => {
+                        (this.app as any).commands.executeCommandById('sync:view-version-history');
+                    }, 100);
+                });
+            }
+        } catch (error) {
+            new Notice(`Failed to open version history: ${error.message}`);
+        }
     }
 
     /**

@@ -74,9 +74,10 @@ The plugin uses localStorage for immediate persistence of:
 - Left pane width (`notebook-navigator-left-pane-width`)
 
 #### File Filtering
-- Only `.md` files are shown in the file list
+- Supported file types: `.md`, `.canvas`, `.base`
 - Images and other file types are excluded
-- Implemented in `collectFilesRecursively()` and direct folder child filtering
+- Implemented in `isDisplayableFile()` method
+- Uses `collectFilesRecursively()` and direct folder child filtering
 
 #### Keyboard Navigation Context
 The `KeyboardHandler` receives a context object with getters/setters to avoid circular dependencies while maintaining access to view state.
@@ -123,8 +124,32 @@ interface NotebookNavigatorSettings {
     showNotesFromSubfolders: boolean; // Recursive file display
     autoRevealActiveFile: boolean;    // Auto-reveal on file open
     confirmBeforeDelete: boolean;     // Show delete confirmation
+    folderIcons: Record<string, string>; // Custom folder icons
 }
 ```
+
+### Context Menu Features
+
+#### Folder Context Menu
+- **New note** - Create markdown file
+- **New folder** - Create subfolder
+- **New canvas** - Create canvas file (.canvas)
+- **New base** - Create database view (.base) - requires Obsidian 1.9+
+- **Duplicate folder** - Copy folder with all contents
+- **Search in folder** - Open search with path filter
+- **Change/Remove icon** - Set custom folder icon
+- **Rename folder** - Change folder name
+- **Delete folder** - Remove folder with confirmation
+
+#### File Context Menu
+- **Open in new tab** - Open file in new tab
+- **Open to the right** - Open in split pane
+- **Open in new window** - Open in separate window
+- **Pin/Unpin note** - Pin to top of folder
+- **Duplicate note** - Create copy of file
+- **Open version history** - View Sync history (requires Sync)
+- **Rename note** - Change file name
+- **Delete note** - Remove file with confirmation
 
 #### Settings Tab Features
 - Debounced text inputs (500ms delay)

@@ -34,6 +34,7 @@ export interface NotebookNavigatorSettings {
     // Internal
     leftPaneWidth: number;
     pinnedNotes: Record<string, string[]>;
+    folderIcons: Record<string, string>;
 }
 
 /**
@@ -63,7 +64,8 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     confirmBeforeDelete: true,
     // Internal
     leftPaneWidth: 300,
-    pinnedNotes: {}
+    pinnedNotes: {},
+    folderIcons: {}
 }
 
 /**

@@ -101,16 +101,16 @@ export class FileSystemOperations {
     /**
      * Renames a file with user-provided name
      * Shows input modal pre-filled with current basename
-     * Automatically adds .md extension if not provided
+     * Preserves original file extension if not provided in new name
      * @param file - The file to rename
      */
     async renameFile(file: TFile): Promise<void> {
         const modal = new InputModal(this.app, 'Rename file', 'Enter new name:', async (newName) => {
             if (newName && newName !== file.basename) {
                 try {
-                    // Ensure .md extension
-                    if (!newName.endsWith('.md')) {
-                        newName += '.md';
+                    // Preserve original extension if not provided
+                    if (!newName.includes('.')) {
+                        newName += `.${file.extension}`;
                     }
                     const newPath = file.parent?.path 
                         ? `${file.parent.path}/${newName}` 
