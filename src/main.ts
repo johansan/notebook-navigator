@@ -896,7 +896,7 @@ class NotebookNavigatorView extends ItemView {
         }
 
         const folderIcon = folderContent.createDiv('nn-folder-icon');
-        setIcon(folderIcon, 'folder');
+        setIcon(folderIcon, this.expandedFolders.has(folder.path) ? 'folder-open' : 'folder-closed');
 
         const folderName = folderContent.createDiv('nn-folder-name');
         folderName.textContent = folder.name || 'Vault';
@@ -992,6 +992,10 @@ class NotebookNavigatorView extends ItemView {
             }
             
             if (arrow) setIcon(arrow.parentElement as HTMLElement, 'chevron-right');
+            
+            // Update folder icon
+            const folderIcon = folderEl.querySelector('.nn-folder-icon');
+            if (folderIcon) setIcon(folderIcon as HTMLElement, 'folder-closed');
         } else {
             // Expand folder
             this.expandedFolders.add(folder.path);
@@ -1022,6 +1026,10 @@ class NotebookNavigatorView extends ItemView {
             }, 180);
             
             if (arrow) setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
+            
+            // Update folder icon
+            const folderIcon = folderEl.querySelector('.nn-folder-icon');
+            if (folderIcon) setIcon(folderIcon as HTMLElement, 'folder-open');
         }
         
         // Save state after toggling folder
