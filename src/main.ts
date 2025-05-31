@@ -8,12 +8,10 @@ import {
     TAbstractFile,
     Menu,
     setIcon,
-    Setting,
-    CachedMetadata,
     Notice
 } from 'obsidian';
 import { SortOption, NotebookNavigatorSettings, DEFAULT_SETTINGS, NotebookNavigatorSettingTab } from './settings';
-import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys } from './types';
+import { VIEW_TYPE_NOTEBOOK, LocalStorageKeys, NavigatorElementAttributes } from './types';
 import { DateUtils } from './utils/DateUtils';
 import { PreviewTextUtils } from './utils/PreviewTextUtils';
 import { KeyboardHandler } from './handlers/KeyboardHandler';
@@ -494,6 +492,9 @@ class NotebookNavigatorView extends ItemView {
         (container as HTMLElement).addEventListener('keydown', keydownHandler);
         this.eventRefs.push(() => (container as HTMLElement).removeEventListener('keydown', keydownHandler));
 
+        // Set up event delegation for drag-and-drop
+        this.setupEventDelegation();
+
         // Set initial focus to container to enable keyboard navigation
         (container as HTMLElement).tabIndex = 0;
         
@@ -866,20 +867,43 @@ class NotebookNavigatorView extends ItemView {
      */
     private renderFolderItem(folder: TFolder, container: HTMLElement, level: number, ignoredFolders: string[]) {
         const index = this.globalFolderIndex++;
+        
+        // Prepare folder element attributes
+        const folderAttrs: NavigatorElementAttributes = {
+            'data-path': folder.path,
+            'data-level': level.toString(),
+            'data-index': index.toString(),
+            'data-drop-zone': 'folder',
+            'data-drop-path': folder.path,
+            'data-expanded': this.expandedFolders.has(folder.path) ? 'true' : 'false'
+        };
+        
         const folderEl = container.createDiv({
             cls: 'nn-folder-item',
-            attr: { 
-                'data-path': folder.path,
-                'data-level': level.toString(),
-                'data-index': index.toString()
-            }
+            attr: folderAttrs as any
         });
 
         if (this.focusedPane === 'folders' && index === this.focusedFolderIndex) {
             folderEl.addClass('nn-focused');
         }
 
-        const folderContent = folderEl.createDiv('nn-folder-content');
+        // Prepare folder content attributes (drag handle)
+        const folderContentAttrs: NavigatorElementAttributes = {
+            'data-path': folder.path,
+            'data-draggable': 'true',
+            'data-drag-type': 'folder',
+            'data-drag-path': folder.path,
+            'data-drag-handle': 'true',
+            'data-clickable': 'folder',
+            'data-click-path': folder.path,
+            'data-context-menu': 'folder',
+            'draggable': 'true'
+        };
+        
+        const folderContent = folderEl.createDiv({
+            cls: 'nn-folder-content',
+            attr: folderContentAttrs as any
+        });
         folderContent.style.paddingLeft = `${level * 20}px`;
 
         if (folder.children.some(child => child instanceof TFolder)) {
@@ -911,31 +935,7 @@ class NotebookNavigatorView extends ItemView {
             folderEl.addClass('nn-selected');
         }
 
-        folderContent.addEventListener('click', () => {
-            this.selectFolder(folder);
-            // Find the actual index of this folder in the current tree
-            const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
-            const clickedIndex = allFolders.findIndex(el => el.getAttribute('data-path') === folder.path);
-            if (clickedIndex >= 0) {
-                this.focusedFolderIndex = clickedIndex;
-            }
-            this.focusedPane = 'folders';
-            this.updateFocus();
-        });
-
-        folderContent.addEventListener('dblclick', () => {
-            // Only toggle if folder has children
-            if (folder.children.some(child => child instanceof TFolder)) {
-                this.toggleFolder(folder);
-            }
-        });
-
-        folderContent.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.showFolderContextMenu(folder, e);
-        });
-
-        this.setupDragAndDrop(folderEl, folder, folderContent);
+        // Event listeners removed - now handled by event delegation
 
         if (this.expandedFolders.has(folder.path)) {
             const childrenContainer = folderEl.createDiv('nn-folder-children');
@@ -1179,7 +1179,7 @@ class NotebookNavigatorView extends ItemView {
         if (!metadata?.frontmatter) return false;
         
         // Check if any excluded property exists in the frontmatter
-        return excludedProperties.some(prop => prop in metadata.frontmatter);
+        return excludedProperties.some(prop => prop in metadata.frontmatter!);
     }
     
     /**
@@ -1365,12 +1365,22 @@ class NotebookNavigatorView extends ItemView {
      * @param index - Index for keyboard navigation
      */
     private renderFileItem(file: TFile, index: number) {
+        // Prepare file element attributes
+        const fileAttrs: NavigatorElementAttributes = {
+            'data-path': file.path,
+            'data-index': index.toString(),
+            'data-draggable': 'true',
+            'data-drag-type': 'file',
+            'data-drag-path': file.path,
+            'data-clickable': 'file',
+            'data-click-path': file.path,
+            'data-context-menu': 'file',
+            'draggable': 'true'
+        };
+        
         const fileEl = this.fileList.createDiv({
             cls: 'nn-file-item',
-            attr: { 
-                'data-path': file.path,
-                'data-index': index.toString()
-            }
+            attr: fileAttrs as any
         });
 
         if (this.focusedPane === 'files' && index === this.focusedFileIndex) {
@@ -1435,35 +1445,7 @@ class NotebookNavigatorView extends ItemView {
             fileEl.addClass('nn-selected');
         }
 
-        fileEl.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.selectedFile = file;
-            this.focusedFileIndex = index;
-            this.focusedPane = 'files';
-            this.updateFileSelection();
-            this.updateFocus();
-            
-            // Preview the file when clicked
-            this.previewFile(file);
-            
-            // Save state after selecting file
-            if (!this.isLoading) {
-                this.saveState();
-            }
-            
-            // Keep focus on the navigator
-            setTimeout(() => {
-                const container = this.containerEl.querySelector('.notebook-navigator') as HTMLElement;
-                if (container) container.focus();
-            }, 10);
-        });
-
-        fileEl.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.showFileContextMenu(file, e);
-        });
-
-        this.setupDragAndDrop(fileEl, file);
+        // Event listeners removed - now handled by event delegation
     }
 
 
@@ -1701,101 +1683,239 @@ class NotebookNavigatorView extends ItemView {
         await this.fileSystemOps.deleteFile(file, this.plugin.settings.confirmBeforeDelete);
     }
 
-    /**
-     * Sets up drag and drop functionality for files and folders
-     * Supports moving items between folders with visual feedback
-     * Prevents invalid operations like moving folder into its descendant
-     * @param element - The element to make draggable
-     * @param file - The file or folder being dragged
-     * @param dragHandle - Optional specific element to use as drag handle
-     */
-    private setupDragAndDrop(element: HTMLElement, file: TAbstractFile, dragHandle?: HTMLElement) {
-        // If a drag handle is provided, make that draggable instead of the whole element
-        const draggableElement = dragHandle || element;
-        draggableElement.draggable = true;
+    // setupDragAndDrop method removed - functionality now handled by setupEventDelegation
 
-        draggableElement.addEventListener('dragstart', (e) => {
-            // Stop propagation to prevent parent folders from also starting a drag
+    /**
+     * Sets up event delegation for drag-and-drop functionality
+     * Replaces individual event listeners with container-level delegation
+     * Handles all drag events through data attributes
+     * Dramatically reduces memory usage and improves performance
+     */
+    private setupEventDelegation() {
+        const container = this.containerEl;
+        
+        // Helper function to find draggable element
+        const findDraggableElement = (target: EventTarget | null): HTMLElement | null => {
+            if (!target || !(target instanceof HTMLElement)) return null;
+            return target.closest('[data-draggable="true"]') as HTMLElement | null;
+        };
+        
+        // Helper function to find drop zone
+        const findDropZone = (target: EventTarget | null): HTMLElement | null => {
+            if (!target || !(target instanceof HTMLElement)) return null;
+            return target.closest('[data-drop-zone="folder"]') as HTMLElement | null;
+        };
+        
+        // Dragstart handler
+        this.registerDomEvent(container, 'dragstart', (e: DragEvent) => {
+            const draggable = findDraggableElement(e.target);
+            if (!draggable) return;
+            
+            // Stop propagation to prevent parent folders from starting drag
             e.stopPropagation();
             
+            const path = draggable.getAttribute('data-drag-path');
+            const type = draggable.getAttribute('data-drag-type');
+            if (!path) return;
+            
             e.dataTransfer!.effectAllowed = 'move';
-            e.dataTransfer!.setData('text/plain', file.path);
-            element.addClass('nn-dragging'); // Add class to main element, not drag handle
+            e.dataTransfer!.setData('text/plain', path);
+            
+            // Add dragging class to the appropriate element
+            if (type === 'folder' && draggable.hasAttribute('data-drag-handle')) {
+                // For folders, add class to parent folder element
+                const folderEl = draggable.closest('.nn-folder-item') as HTMLElement;
+                if (folderEl) folderEl.addClass('nn-dragging');
+            } else {
+                // For files, add class to the element itself
+                draggable.addClass('nn-dragging');
+            }
         });
-
-        draggableElement.addEventListener('dragend', () => {
-            element.removeClass('nn-dragging'); // Remove class from main element
+        
+        // Dragend handler
+        this.registerDomEvent(container, 'dragend', (e: DragEvent) => {
+            const draggable = findDraggableElement(e.target);
+            if (!draggable) return;
+            
+            const type = draggable.getAttribute('data-drag-type');
+            
+            // Remove dragging class
+            if (type === 'folder' && draggable.hasAttribute('data-drag-handle')) {
+                const folderEl = draggable.closest('.nn-folder-item') as HTMLElement;
+                if (folderEl) folderEl.removeClass('nn-dragging');
+            } else {
+                draggable.removeClass('nn-dragging');
+            }
             
             // Clean up any remaining drag-over highlights
-            this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
+            container.querySelectorAll('.nn-drag-over').forEach(el => {
                 el.removeClass('nn-drag-over');
             });
         });
-
-        if (file instanceof TFolder) {
-            // Always use the full element as drop zone for folders
-            // This allows dropping anywhere on the folder row, matching file behavior
+        
+        // Dragover handler
+        this.registerDomEvent(container, 'dragover', (e: DragEvent) => {
+            const dropZone = findDropZone(e.target);
+            if (!dropZone) return;
             
-            element.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.dataTransfer!.dropEffect = 'move';
-                
-                // Clear all existing highlights except for this element
-                this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
-                    if (el !== element) {
-                        el.removeClass('nn-drag-over');
-                    }
-                });
-                
-                // Add highlight to current element (not the drop zone)
-                element.addClass('nn-drag-over');
-            });
-
-            element.addEventListener('dragleave', (e) => {
-                // Simple dragleave - the dragover handler will manage highlights
-                e.stopPropagation();
-            });
-
-            element.addEventListener('drop', async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Remove all drag-over highlights
-                this.containerEl.querySelectorAll('.nn-drag-over').forEach(el => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer!.dropEffect = 'move';
+            
+            // Clear all existing highlights except for this element
+            container.querySelectorAll('.nn-drag-over').forEach(el => {
+                if (el !== dropZone) {
                     el.removeClass('nn-drag-over');
-                });
-
-                const sourcePath = e.dataTransfer!.getData('text/plain');
-                const sourceFile = this.app.vault.getAbstractFileByPath(sourcePath);
-
-                if (sourceFile && sourceFile !== file && !this.fileSystemOps.isDescendant(sourceFile, file)) {
-                    try {
-                        // Check if we're moving a folder
-                        if (sourceFile instanceof TFolder && file instanceof TFolder) {
-                            // Don't allow moving a folder into its own descendant
-                            if (this.fileSystemOps.isDescendant(sourceFile, file)) {
-                                new Notice(`Cannot move a folder into its own subfolder`);
-                                return;
-                            }
-                        }
-                        
-                        // Check if source already exists in target
-                        const newPath = `${file.path}/${sourceFile.name}`;
-                        const existingFile = this.app.vault.getAbstractFileByPath(newPath);
-                        
-                        if (existingFile) {
-                            new Notice(`A file or folder named "${sourceFile.name}" already exists in the target location`);
-                            return;
-                        }
-                        
-                        await this.app.fileManager.renameFile(sourceFile, newPath);
-                    } catch (error) {
-                        new Notice(`Failed to move: ${error.message}`);
-                    }
                 }
             });
-        }
+            
+            // Add highlight to current drop zone
+            dropZone.addClass('nn-drag-over');
+        });
+        
+        // Dragleave handler
+        this.registerDomEvent(container, 'dragleave', (e: DragEvent) => {
+            // Simple dragleave - the dragover handler will manage highlights
+            e.stopPropagation();
+        });
+        
+        // Drop handler
+        this.registerDomEvent(container, 'drop', async (e: DragEvent) => {
+            const dropZone = findDropZone(e.target);
+            if (!dropZone) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Remove all drag-over highlights
+            container.querySelectorAll('.nn-drag-over').forEach(el => {
+                el.removeClass('nn-drag-over');
+            });
+            
+            const targetPath = dropZone.getAttribute('data-drop-path');
+            if (!targetPath) return;
+            
+            const sourcePath = e.dataTransfer!.getData('text/plain');
+            const sourceFile = this.app.vault.getAbstractFileByPath(sourcePath);
+            const targetFolder = this.app.vault.getAbstractFileByPath(targetPath);
+            
+            if (!sourceFile || !targetFolder || !(targetFolder instanceof TFolder)) return;
+            
+            // Validate the move
+            if (sourceFile === targetFolder || this.fileSystemOps.isDescendant(sourceFile, targetFolder)) {
+                if (sourceFile instanceof TFolder && this.fileSystemOps.isDescendant(sourceFile, targetFolder)) {
+                    new Notice(`Cannot move a folder into its own subfolder`);
+                }
+                return;
+            }
+            
+            try {
+                // Check if source already exists in target
+                const newPath = `${targetFolder.path}/${sourceFile.name}`;
+                const existingFile = this.app.vault.getAbstractFileByPath(newPath);
+                
+                if (existingFile) {
+                    new Notice(`A file or folder named "${sourceFile.name}" already exists in the target location`);
+                    return;
+                }
+                
+                await this.app.fileManager.renameFile(sourceFile, newPath);
+            } catch (error) {
+                new Notice(`Failed to move: ${error.message}`);
+            }
+        });
+        
+        // Click handler for files and folders
+        this.registerDomEvent(container, 'click', (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const clickable = target.closest('[data-clickable]') as HTMLElement | null;
+            if (!clickable) return;
+            
+            const type = clickable.getAttribute('data-clickable');
+            const path = clickable.getAttribute('data-click-path');
+            if (!path) return;
+            
+            const file = this.app.vault.getAbstractFileByPath(path);
+            if (!file) return;
+            
+            if (type === 'folder' && file instanceof TFolder) {
+                // Handle folder click
+                this.selectFolder(file);
+                // Find the actual index of this folder in the current tree
+                const allFolders = Array.from(this.folderTree.querySelectorAll('.nn-folder-item'));
+                const clickedIndex = allFolders.findIndex(el => el.getAttribute('data-path') === file.path);
+                if (clickedIndex >= 0) {
+                    this.focusedFolderIndex = clickedIndex;
+                }
+                this.focusedPane = 'folders';
+                this.updateFocus();
+            } else if (type === 'file' && file instanceof TFile) {
+                // Handle file click
+                e.preventDefault();
+                const fileEl = clickable.closest('.nn-file-item') as HTMLElement;
+                const index = parseInt(fileEl?.getAttribute('data-index') || '0');
+                
+                this.selectedFile = file;
+                this.focusedFileIndex = index;
+                this.focusedPane = 'files';
+                this.updateFileSelection();
+                this.updateFocus();
+                
+                // Preview the file when clicked
+                this.previewFile(file);
+                
+                // Save state after selecting file
+                if (!this.isLoading) {
+                    this.saveState();
+                }
+                
+                // Keep focus on the navigator
+                setTimeout(() => {
+                    const navContainer = this.containerEl.querySelector('.notebook-navigator') as HTMLElement;
+                    if (navContainer) navContainer.focus();
+                }, 10);
+            }
+        });
+        
+        // Double-click handler for folders
+        this.registerDomEvent(container, 'dblclick', (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const clickable = target.closest('[data-clickable="folder"]') as HTMLElement | null;
+            if (!clickable) return;
+            
+            const path = clickable.getAttribute('data-click-path');
+            if (!path) return;
+            
+            const folder = this.app.vault.getAbstractFileByPath(path);
+            if (folder instanceof TFolder) {
+                // Only toggle if folder has children
+                if (folder.children.some(child => child instanceof TFolder)) {
+                    this.toggleFolder(folder);
+                }
+            }
+        });
+        
+        // Context menu handler
+        this.registerDomEvent(container, 'contextmenu', (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const contextEl = target.closest('[data-context-menu]') as HTMLElement | null;
+            if (!contextEl) return;
+            
+            e.preventDefault();
+            
+            const type = contextEl.getAttribute('data-context-menu');
+            const path = contextEl.getAttribute('data-click-path') || contextEl.getAttribute('data-path');
+            if (!path) return;
+            
+            const file = this.app.vault.getAbstractFileByPath(path);
+            if (!file) return;
+            
+            if (type === 'folder' && file instanceof TFolder) {
+                this.showFolderContextMenu(file, e);
+            } else if (type === 'file' && file instanceof TFile) {
+                this.showFileContextMenu(file, e);
+            }
+        });
     }
 
 
