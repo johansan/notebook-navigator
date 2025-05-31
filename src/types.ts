@@ -25,3 +25,59 @@ export interface LocalStorageKeys {
     selectedFileKey: string;
     leftPaneWidthKey: string;
 }
+
+/**
+ * Data attributes for drag-and-drop functionality using event delegation
+ * These attributes are added to DOM elements to enable drag-drop without individual event listeners
+ */
+export interface DragDropAttributes {
+    // Draggable element attributes
+    'data-draggable'?: 'true';
+    'data-drag-type'?: 'file' | 'folder';
+    'data-drag-path'?: string;
+    'data-drag-handle'?: 'true';
+    
+    // Drop zone attributes
+    'data-drop-zone'?: 'folder';
+    'data-drop-path'?: string;
+    'data-drop-validator'?: 'folder';
+    
+    // Interaction attributes
+    'data-clickable'?: 'folder' | 'file';
+    'data-click-path'?: string;
+    'data-dblclick-action'?: 'expand' | 'preview';
+    'data-context-menu'?: 'folder' | 'file';
+    
+    // State attributes
+    'data-expanded'?: 'true' | 'false';
+    'data-selected'?: 'true' | 'false';
+    'data-focused'?: 'true' | 'false';
+    
+    // Index for keyboard navigation
+    'data-index'?: string;
+    
+    // Nesting level for folders
+    'data-level'?: string;
+}
+
+/**
+ * Combined attributes interface for DOM elements
+ * Extends standard HTML attributes with our custom data attributes
+ */
+export interface NavigatorElementAttributes extends DragDropAttributes {
+    'data-path': string;  // Required path attribute for all items
+    'class'?: string;
+    'draggable'?: 'true' | 'false';
+    'aria-label'?: string;
+    'aria-expanded'?: 'true' | 'false';
+    'aria-selected'?: 'true' | 'false';
+}
+
+/**
+ * Type guard to check if an element has drag-drop attributes
+ */
+export function hasDragDropAttributes(el: Element): el is HTMLElement {
+    return el instanceof HTMLElement && 
+           (el.hasAttribute('data-draggable') || 
+            el.hasAttribute('data-drop-zone'));
+}
