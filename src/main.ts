@@ -1686,10 +1686,32 @@ class NotebookNavigatorView extends ItemView {
     // setupDragAndDrop method removed - functionality now handled by setupEventDelegation
 
     /**
-     * Sets up event delegation for drag-and-drop functionality
-     * Replaces individual event listeners with container-level delegation
-     * Handles all drag events through data attributes
-     * Dramatically reduces memory usage and improves performance
+     * Sets up event delegation for all interactive elements in the navigator
+     * Uses container-level event listeners instead of individual element listeners
+     * This prevents memory leaks by eliminating the need to clean up listeners when elements are re-rendered
+     * 
+     * Handles the following events through delegation:
+     * - Drag and Drop: dragstart, dragend, dragover, dragleave, drop
+     * - User Interaction: click, dblclick, contextmenu
+     * 
+     * Benefits:
+     * - Memory efficient: Only 7 listeners total instead of thousands
+     * - Performance: No overhead of attaching/removing listeners during re-renders
+     * - Automatic cleanup: Uses Obsidian's registerDomEvent for proper lifecycle management
+     * 
+     * Implementation details:
+     * - Uses data attributes to identify elements and their roles
+     * - Maintains exact same behavior as individual listeners
+     * - Visual feedback via CSS classes (nn-dragging, nn-drag-over)
+     * - All validation logic preserved (no self-moves, no circular moves)
+     * 
+     * Data attributes used:
+     * - data-draggable="true": Marks draggable elements
+     * - data-drag-type="file|folder": Type of draggable item
+     * - data-drag-path: Path of item being dragged
+     * - data-drop-zone="folder": Marks valid drop targets
+     * - data-clickable="file|folder": Marks clickable elements
+     * - data-context-menu="file|folder": Elements with context menus
      */
     private setupEventDelegation() {
         const container = this.containerEl;

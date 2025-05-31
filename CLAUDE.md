@@ -81,10 +81,28 @@ The plugin uses localStorage for immediate persistence of:
 #### Keyboard Navigation Context
 The `KeyboardHandler` receives a context object with getters/setters to avoid circular dependencies while maintaining access to view state.
 
-#### Drag and Drop
-- Validates moves to prevent folder being moved into its own descendant
-- Uses `isDescendant()` helper for validation
-- Supports both file and folder dragging
+#### Event Delegation Architecture (IMPORTANT: Major Memory Optimization)
+The plugin uses event delegation for all interactive elements to prevent memory leaks:
+- **Single setup**: `setupEventDelegation()` called once in `onOpen()`
+- **7 total listeners**: All events handled at container level
+- **Zero memory leaks**: No cleanup needed when elements are re-rendered
+- **Data attributes**: Elements identified by `data-*` attributes instead of direct listeners
+
+Supported events:
+- Drag operations: `dragstart`, `dragend`, `dragover`, `dragleave`, `drop`
+- User interactions: `click`, `dblclick`, `contextmenu`
+
+Key data attributes:
+- `data-draggable="true"` - Marks draggable elements
+- `data-drag-type="file|folder"` - Type of item
+- `data-drop-zone="folder"` - Valid drop targets
+- `data-clickable="file|folder"` - Clickable elements
+
+#### Drag and Drop Implementation
+- **Event delegation**: No individual listeners on elements
+- **Validation**: Prevents folder being moved into its own descendant
+- **Visual feedback**: CSS classes `nn-dragging` and `nn-drag-over`
+- **Drag handles**: Folders use content area, files use entire element
 
 ### Settings System
 
@@ -166,6 +184,8 @@ interface NotebookNavigatorSettings {
 - Folder counts update separately from tree rendering
 - Preview text loaded asynchronously
 - No virtual scrolling (potential enhancement for large vaults)
+- **Event delegation eliminates memory leaks from orphaned event listeners**
+- **Only 7 total event listeners regardless of vault size**
 
 ### Known Limitations
 1. No search functionality within navigator
@@ -218,9 +238,10 @@ When making changes, test:
 - Check `showNotesFromSubfolders` setting
 
 ### Drag and Drop Not Working
-- Verify `draggable` attribute is set
-- Check event propagation isn't stopped
-- Ensure drop validation logic
+- Verify `data-draggable="true"` attribute is set
+- Check `data-drag-path` and `data-drop-zone` attributes
+- Ensure elements have proper data attributes for event delegation
+- Check browser console for errors in `setupEventDelegation()`
 
 ## Contributing Guidelines
 1. Maintain comprehensive function documentation
