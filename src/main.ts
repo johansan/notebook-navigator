@@ -971,74 +971,57 @@ class NotebookNavigatorView extends ItemView {
             .map(f => f.trim())
             .filter(f => f);
 
-        if (this.expandedFolders.has(folder.path)) {
+        const isExpanded = this.expandedFolders.has(folder.path);
+        const arrow = folderEl.querySelector('.nn-folder-arrow svg');
+        
+        if (isExpanded) {
+            // Collapse folder
             this.expandedFolders.delete(folder.path);
-            // Collapse with animation
             const childrenContainer = folderEl.querySelector('.nn-folder-children') as HTMLElement;
+            
             if (childrenContainer) {
-                // Get actual height before collapsing
-                const height = childrenContainer.scrollHeight;
-                childrenContainer.style.maxHeight = height + 'px';
+                // Animate from current height to 0
+                childrenContainer.style.maxHeight = childrenContainer.scrollHeight + 'px';
+                childrenContainer.offsetHeight; // Force reflow
                 
-                // Force reflow
-                childrenContainer.offsetHeight;
-                
-                // Start collapse animation
                 childrenContainer.addClass('nn-animating');
                 childrenContainer.removeClass('nn-expanded');
                 childrenContainer.style.maxHeight = '0px';
                 
-                // Remove after animation
-                setTimeout(() => {
-                    childrenContainer.remove();
-                }, 200);
+                setTimeout(() => childrenContainer.remove(), 180);
             }
-            // Update arrow icon
-            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
-            if (arrow) {
-                setIcon(arrow.parentElement as HTMLElement, 'chevron-right');
-            }
+            
+            if (arrow) setIcon(arrow.parentElement as HTMLElement, 'chevron-right');
         } else {
+            // Expand folder
             this.expandedFolders.add(folder.path);
-            // Add children container
             const childrenContainer = folderEl.createDiv('nn-folder-children');
             
+            // Render subfolders
             const subfolders = folder.children
-                .filter(child => child instanceof TFolder)
-                .filter(child => !ignoredFolders.includes(child.name))
+                .filter(child => child instanceof TFolder && !ignoredFolders.includes(child.name))
                 .sort((a, b) => a.name.localeCompare(b.name));
             
-            subfolders.forEach((subfolder) => {
+            subfolders.forEach(subfolder => {
                 this.renderFolderItem(subfolder as TFolder, childrenContainer, 
                     parseInt(folderEl.getAttribute('data-level') || '0') + 1, ignoredFolders);
             });
             
-            // Prepare for animation - temporarily show to measure height
-            childrenContainer.style.maxHeight = 'none';
-            childrenContainer.style.visibility = 'hidden';
+            // Animate from 0 to content height
             const targetHeight = childrenContainer.scrollHeight;
             childrenContainer.style.maxHeight = '0px';
-            childrenContainer.style.visibility = '';
+            childrenContainer.offsetHeight; // Force reflow
             
-            // Force reflow
-            childrenContainer.offsetHeight;
-            
-            // Animate expansion
             childrenContainer.addClass('nn-animating');
             childrenContainer.style.maxHeight = targetHeight + 'px';
             
-            // After animation, set to expanded state
             setTimeout(() => {
                 childrenContainer.removeClass('nn-animating');
                 childrenContainer.addClass('nn-expanded');
                 childrenContainer.style.maxHeight = '';
             }, 180);
             
-            // Update arrow icon
-            const arrow = folderEl.querySelector('.nn-folder-arrow svg');
-            if (arrow) {
-                setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
-            }
+            if (arrow) setIcon(arrow.parentElement as HTMLElement, 'chevron-down');
         }
         
         // Save state after toggling folder
