@@ -378,7 +378,6 @@ class NotebookNavigatorView extends ItemView {
         this.leftPane = this.splitContainer.createDiv('nn-left-pane');
         this.leftPane.style.width = `${this.plugin.settings.leftPaneWidth}px`;
         const folderHeader = this.leftPane.createDiv('nn-pane-header');
-        folderHeader.createEl('h3', { text: 'Folders' });
         
         const folderActions = folderHeader.createDiv('nn-header-actions');
         const newFolderBtn = folderActions.createEl('button', { 
@@ -398,7 +397,6 @@ class NotebookNavigatorView extends ItemView {
         
         const rightPane = this.splitContainer.createDiv('nn-right-pane');
         const fileHeader = rightPane.createDiv('nn-pane-header');
-        const fileHeaderTitle = fileHeader.createEl('h3', { text: 'Files' });
         
         const fileActions = fileHeader.createDiv('nn-header-actions');
         
