@@ -54,7 +54,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showFeatureImage: false,
     featureImageProperty: 'feature',
     // Folder display
-    showRootFolder: true,
+    showRootFolder: false,
     showFolderFileCount: true,
     // Appearance
     selectionColor: '#B3D9FF',
