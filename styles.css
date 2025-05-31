@@ -1,15 +1,20 @@
 /* Notebook Navigator - Notes Style */
 
+/* Remove default padding from view-content when it has our class */
+.view-content.notebook-navigator {
+    padding: 0 !important;
+}
+
 .notebook-navigator {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--background-primary);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .theme-dark .notebook-navigator {
-    background-color: black;
+    background-color: var(--background-primary);
 }
 
 .notebook-navigator:focus {
@@ -28,7 +33,7 @@
     width: 300px;
     min-width: 150px;
     max-width: 600px;
-    background-color: white;
+    background-color: var(--background-secondary);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -37,7 +42,7 @@
 
 .theme-dark .notebook-navigator .nn-left-pane,
 .theme-dark .nn-left-pane {
-    background-color: black;
+    background-color: var(--background-secondary);
 }
 
 /* Resize Handle */
@@ -86,6 +91,15 @@
 
 .theme-dark .nn-pane-header {
     background-color: black;
+}
+
+/* Left pane header should match the folder tree background */
+.nn-left-pane .nn-pane-header {
+    background-color: var(--background-secondary);
+}
+
+.theme-dark .nn-left-pane .nn-pane-header {
+    background-color: var(--background-secondary);
 }
 
 .nn-pane-header h3 {
@@ -142,12 +156,12 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 8px 0;
-    background-color: white;
+    background-color: var(--background-secondary);
 }
 
 .theme-dark .notebook-navigator .nn-folder-tree,
 .theme-dark .nn-folder-tree {
-    background-color: black;
+    background-color: var(--background-secondary);
 }
 
 .notebook-navigator .nn-folder-item,
