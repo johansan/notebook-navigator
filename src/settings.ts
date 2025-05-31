@@ -11,24 +11,30 @@ export type SortOption = 'modified' | 'created' | 'title';
  * These settings control the appearance and behavior of the navigator
  */
 export interface NotebookNavigatorSettings {
+    // File organization
+    sortOption: SortOption;
+    groupByDate: boolean;
+    showNotesFromSubfolders: boolean;
+    autoRevealActiveFile: boolean;
+    excludedFiles: string;
+    ignoreFolders: string;
+    // File display
     showFilePreview: boolean;
     skipNonTextInPreview: boolean;
     showFeatureImage: boolean;
     featureImageProperty: string;
+    // Folder display
+    showRootFolder: boolean;
+    showFolderFileCount: boolean;
+    // Appearance
     selectionColor: string;
     dateFormat: string;
     animationSpeed: number;
-    sortOption: SortOption;
-    leftPaneWidth: number;
-    showRootFolder: boolean;
-    ignoreFolders: string;
-    showFolderFileCount: boolean;
-    groupByDate: boolean;
-    pinnedNotes: Record<string, string[]>;
-    showNotesFromSubfolders: boolean;
-    autoRevealActiveFile: boolean;
+    // Advanced
     confirmBeforeDelete: boolean;
-    excludedFiles: string;
+    // Internal
+    leftPaneWidth: number;
+    pinnedNotes: Record<string, string[]>;
 }
 
 /**
@@ -36,24 +42,30 @@ export interface NotebookNavigatorSettings {
  * Used when plugin is first installed or settings are reset
  */
 export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
+    // File organization
+    sortOption: 'modified',
+    groupByDate: true,
+    showNotesFromSubfolders: false,
+    autoRevealActiveFile: true,
+    excludedFiles: '',
+    ignoreFolders: '',
+    // File display
     showFilePreview: true,
     skipNonTextInPreview: true,
     showFeatureImage: false,
     featureImageProperty: 'feature',
+    // Folder display
+    showRootFolder: false,
+    showFolderFileCount: true,
+    // Appearance
     selectionColor: '#B3D9FF',
     dateFormat: 'MMM d, yyyy',
     animationSpeed: 200,
-    sortOption: 'modified',
-    leftPaneWidth: 300,
-    showRootFolder: false,
-    ignoreFolders: '',
-    showFolderFileCount: true,
-    groupByDate: true,
-    pinnedNotes: {},
-    showNotesFromSubfolders: false,
-    autoRevealActiveFile: true,
+    // Advanced
     confirmBeforeDelete: true,
-    excludedFiles: ''
+    // Internal
+    leftPaneWidth: 300,
+    pinnedNotes: {}
 }
 
 /**
