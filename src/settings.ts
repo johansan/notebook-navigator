@@ -298,15 +298,27 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
             .setName('Appearance')
             .setHeading();
 
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Selection color',
-            'Background color for selected items (hex format).',
-            '#B3D9FF',
-            () => this.plugin.settings.selectionColor,
-            (value) => { this.plugin.settings.selectionColor = value || '#B3D9FF'; },
-            false  // Don't refresh view, just update CSS
-        );
+        new Setting(containerEl)
+            .setName('Selection color')
+            .setDesc('Background color for selected items')
+            .addColorPicker(color => color
+                .setValue(this.plugin.settings.selectionColor)
+                .onChange(async (value) => {
+                    this.plugin.settings.selectionColor = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.updateSelectionColor();
+                }))
+            .addText(text => text
+                .setPlaceholder('#B3D9FF')
+                .setValue(this.plugin.settings.selectionColor)
+                .onChange(async (value) => {
+                    // Validate hex color format
+                    if (/^#[0-9A-F]{6}$/i.test(value) || value === '') {
+                        this.plugin.settings.selectionColor = value || '#B3D9FF';
+                        await this.plugin.saveSettings();
+                        this.plugin.updateSelectionColor();
+                    }
+                }));
 
         this.createDebouncedTextSetting(
             containerEl,
