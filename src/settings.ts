@@ -29,7 +29,6 @@ export interface NotebookNavigatorSettings {
     // Appearance
     selectionColor: string;
     dateFormat: string;
-    animationSpeed: number;
     // Advanced
     confirmBeforeDelete: boolean;
     // Internal
@@ -60,7 +59,6 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // Appearance
     selectionColor: '#B3D9FF',
     dateFormat: 'MMM d, yyyy',
-    animationSpeed: 200,
     // Advanced
     confirmBeforeDelete: true,
     // Internal
@@ -356,25 +354,6 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
             .onClick(() => {
                 new Notice('Common formats:\nMMM d, yyyy = May 25, 2022\ndd/MM/yyyy = 25/05/2022\nyyyy-MM-dd = 2022-05-25\n\nTokens:\nyyyy/yy = year\nMMMM/MMM/MM = month\ndd/d = day\nEEEE/EEE = weekday', 10000);
             }));
-
-        this.createDebouncedTextSetting(
-            containerEl,
-            'Animation speed',
-            'UI animation duration in milliseconds.',
-            '200',
-            () => this.plugin.settings.animationSpeed.toString(),
-            (value) => {
-                const speed = parseInt(value);
-                if (!isNaN(speed) && speed >= 0) {
-                    this.plugin.settings.animationSpeed = speed;
-                }
-            },
-            false,
-            (value) => {
-                const speed = parseInt(value);
-                return !isNaN(speed) && speed >= 0;
-            }
-        );
 
         // Section 5: Advanced
         new Setting(containerEl)
