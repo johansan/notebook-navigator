@@ -28,6 +28,7 @@ export interface NotebookNavigatorSettings {
     showNotesFromSubfolders: boolean;
     autoRevealActiveFile: boolean;
     confirmBeforeDelete: boolean;
+    excludedFiles: string;
 }
 
 /**
@@ -51,7 +52,8 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     pinnedNotes: {},
     showNotesFromSubfolders: false,
     autoRevealActiveFile: true,
-    confirmBeforeDelete: true
+    confirmBeforeDelete: true,
+    excludedFiles: ''
 }
 
 /**
@@ -204,8 +206,17 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
 
         this.createDebouncedTextSetting(
             containerEl,
+            'Excluded files',
+            'Comma-separated list of frontmatter properties. Files containing any of these properties will be hidden (e.g., draft, private, archived).',
+            'draft, private',
+            () => this.plugin.settings.excludedFiles,
+            (value) => { this.plugin.settings.excludedFiles = value; }
+        );
+
+        this.createDebouncedTextSetting(
+            containerEl,
             'Excluded folders',
-            'Comma-separated list of folders to hide (e.g., .obsidian, templates).',
+            'Comma-separated list of folders to hide (e.g., resources, templates).',
             'folder1, folder2',
             () => this.plugin.settings.ignoreFolders,
             (value) => { this.plugin.settings.ignoreFolders = value; }

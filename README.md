@@ -80,6 +80,7 @@ A plugin for [Obsidian](https://obsidian.md) that replaces the default file expl
 - **Show notes from subfolders:** Display all notes from subfolders in the current folder view
 - **Auto-reveal active file:** Automatically show and select files when opened from search or links
 - **Excluded folders:** Comma-separated list of folders to hide (e.g., `resources, templates`)
+- **Excluded files:** Comma-separated list of frontmatter properties. Files containing any of these properties will be hidden (e.g., `draft, private, archived`)
 
 ### File Display
 
@@ -147,6 +148,25 @@ Pin frequently accessed notes to keep them at the top:
 - **Parent folder navigation:** Press Left arrow to go up the folder tree
 - **Rapid browsing:** Hold arrow keys for continuous navigation
 - **Focus management:** The focused pane has a subtle border highlight
+
+### Managing Draft and Private Notes
+
+Use the "Excluded files" setting to hide notes with specific frontmatter properties:
+
+1. Add properties like `draft, private, archived` to the excluded files list
+2. Add frontmatter to your notes:
+   ```yaml
+   ---
+   draft: true
+   ---
+   ```
+3. These files will be automatically hidden from the navigator
+
+This is perfect for:
+- Work-in-progress notes
+- Personal/sensitive content
+- Archived notes you want to keep but not see daily
+- Template files with a `template: true` property
 
 ## Compatibility
 

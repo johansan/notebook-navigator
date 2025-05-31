@@ -834,11 +834,26 @@ class NotebookNavigatorView extends ItemView {
      * Counts the number of markdown files in a folder
      * Only counts direct children, not files in subfolders
      * Filters for .md extension to exclude images and other files
+     * Excludes files with specified frontmatter properties
      * @param folder - The folder to count files in
      * @returns Number of markdown files in the folder
      */
     private getFileCount(folder: TFolder): number {
-        return folder.children.filter(child => child instanceof TFile && child.extension === 'md').length;
+        const excludedProperties = this.plugin.settings.excludedFiles
+            .split(',')
+            .map(p => p.trim())
+            .filter(p => p);
+        
+        return folder.children.filter(child => {
+            if (!(child instanceof TFile) || child.extension !== 'md') return false;
+            
+            // Check if file should be excluded based on frontmatter
+            if (excludedProperties.length > 0 && this.shouldExcludeFile(child, excludedProperties)) {
+                return false;
+            }
+            
+            return true;
+        }).length;
     }
 
     /**
@@ -1119,6 +1134,23 @@ class NotebookNavigatorView extends ItemView {
         
         return files;
     }
+
+    /**
+     * Checks if a file should be excluded based on its frontmatter properties
+     * Files are excluded if they contain any of the properties listed in excludedFiles setting
+     * @param file - The file to check
+     * @param excludedProperties - Array of property names that should cause exclusion
+     * @returns True if the file should be excluded
+     */
+    private shouldExcludeFile(file: TFile, excludedProperties: string[]): boolean {
+        if (excludedProperties.length === 0) return false;
+        
+        const metadata = this.app.metadataCache.getFileCache(file);
+        if (!metadata?.frontmatter) return false;
+        
+        // Check if any excluded property exists in the frontmatter
+        return excludedProperties.some(prop => prop in metadata.frontmatter);
+    }
     
     /**
      * Recursively collects paths of all pinned notes in folder hierarchy
@@ -1198,6 +1230,16 @@ class NotebookNavigatorView extends ItemView {
         } else {
             files = this.selectedFolder.children
                 .filter(child => child instanceof TFile && child.extension === 'md') as TFile[];
+        }
+
+        // Filter out files based on frontmatter properties
+        const excludedProperties = this.plugin.settings.excludedFiles
+            .split(',')
+            .map(p => p.trim())
+            .filter(p => p);
+        
+        if (excludedProperties.length > 0) {
+            files = files.filter(file => !this.shouldExcludeFile(file, excludedProperties));
         }
 
         // Sort files based on current sort option
