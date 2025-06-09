@@ -26,6 +26,7 @@ import { parseExcludedProperties, shouldExcludeFile } from '../utils/fileFilters
 import { getFileFromElement } from '../utils/domUtils';
 import { buildTagTree, findTagNode, collectAllTagPaths } from '../utils/tagUtils';
 import { UNTAGGED_TAG_ID } from '../types';
+import { buildBacklinkTree, collectAllBacklinkPaths, findBacklinkNode, GenericLinkCache } from 'src/utils/backlinkUtils';
 
 /**
  * Renders the file list pane displaying files from the selected folder.
@@ -36,7 +37,7 @@ import { UNTAGGED_TAG_ID } from '../types';
  */
 export function FileList() {
     const { app, appState, dispatch, plugin, refreshCounter } = useAppContext();
-    const { selectionType, selectedFolder, selectedTag } = appState;
+    const { selectionType, selectedFolder, selectedTag, selectedBacklink } = appState;
     
     const handleFileClick = useCallback((file: TFile) => {
         dispatch({ type: 'SET_SELECTED_FILE', file });
@@ -108,6 +109,65 @@ export function FileList() {
                     allFiles = [];
                 }
             }
+        } else if (selectionType === 'backlink' && selectedBacklink) {
+            // Get all markdown files that aren't excluded
+            const allMarkdownFiles = app.vault.getMarkdownFiles()
+                .filter(file => excludedProperties.length === 0 || !shouldExcludeFile(file, excludedProperties, app));
+            
+            // Special case for untagged files
+            if (selectedBacklink === UNTAGGED_TAG_ID) {
+                allFiles = allMarkdownFiles.filter(file => {
+                    if (file.path.startsWith(plugin.settings.backlinksFolderPath)) {
+                        return false;
+                    }
+                    const cache = app.metadataCache.getFileCache(file);
+                    let links: GenericLinkCache[] | undefined = cache?.links || [];
+                    links = links.concat(cache?.frontmatterLinks || []);
+                    const procLinks = links?.filter(link => {
+                        const linkFile = app.metadataCache.getFirstLinkpathDest(link.link, file.path);
+                        if (!linkFile) return false;
+                        if (!linkFile.path.startsWith(plugin.settings.backlinksFolderPath)) return false;
+                        return true;
+                    });
+                    return !procLinks || procLinks.length === 0;
+                });
+            } else {
+                // Build the backlink tree once
+                const backlinkTree = buildBacklinkTree(allMarkdownFiles, plugin.settings.backlinksFolderPath, app);
+                
+                // Find the selected backlink node
+                const selectedNode = findBacklinkNode(selectedBacklink, backlinkTree);
+                if (selectedNode) {
+                    // Collect all tags to include (selected tag and all children)
+                    const backlinksToInclude = collectAllBacklinkPaths(selectedNode);
+                    
+                    // Filter files that have any of the collected backlinks
+                    allFiles = allMarkdownFiles.filter(file => {
+                        const cache = app.metadataCache.getFileCache(file);
+                        let links: GenericLinkCache[] | undefined = cache?.links || [];
+                        links = links.concat(cache?.frontmatterLinks || []);
+                        const linksFPaths = links?.map(link => {
+                            const linkFile = app.metadataCache.getFirstLinkpathDest(link.link, file.path);
+                            if (!linkFile) return '';
+                            // Check if the link file is within the backlinks folder path
+                            if (!linkFile.path.startsWith(plugin.settings.backlinksFolderPath)) return '';
+                            let backlinkPath;
+                            if (plugin.settings.backlinksFolderPath) {
+                                backlinkPath = linkFile.path.replace(plugin.settings.backlinksFolderPath + '/', '');
+                            } else {
+                                backlinkPath = linkFile.path; // Use full path if no folderPath is set
+                            }
+                            // Remove any extension if present
+                            backlinkPath = backlinkPath.replace(/\.(md|canvas|base)$/, '');
+                            return backlinkPath;
+                        });
+                        return linksFPaths && linksFPaths.some(link => backlinksToInclude.has(link));
+                    });
+                } else {
+                    // Fallback to empty if tag not found
+                    allFiles = [];
+                }
+            }
         }
         
         // Filter out excluded files based on frontmatter properties
@@ -145,6 +205,7 @@ export function FileList() {
         selectionType,
         selectedFolder,
         selectedTag,
+        selectedBacklink,
         plugin.settings.sortOption,
         plugin.settings.showNotesFromSubfolders,
         plugin.settings.pinnedNotes,
@@ -167,7 +228,7 @@ export function FileList() {
         }
         
         // For tags, also check if we already have a file selected
-        if (selectionType === 'tag' && appState.selectedFile) {
+        if ((selectionType === 'tag' || selectionType === 'backlink') && appState.selectedFile) {
             // Check if the selected file is in the current file list
             const fileElements = Array.from(document.querySelectorAll('.nn-file-item'));
             const selectedFileInList = fileElements.some(el => 
@@ -193,7 +254,7 @@ export function FileList() {
                 }
             }
         }
-    }, [selectionType, selectedFolder?.path, selectedTag, appState.selectedFile, app.workspace, dispatch]);
+    }, [selectionType, selectedFolder?.path, selectedTag, selectedBacklink, appState.selectedFile, app.workspace, dispatch]);
     
     // Group files by date if enabled
     const groupedFiles = useMemo(() => {
@@ -246,7 +307,7 @@ export function FileList() {
         selectedFolder
     ]);
     
-    if (!selectedFolder && !selectedTag) {
+    if (!selectedFolder && !selectedTag && !selectedBacklink) {
         return (
             <div className="nn-file-list nn-empty-state">
                 <div className="nn-empty-message">Select a folder or tag to view notes</div>

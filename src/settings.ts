@@ -48,6 +48,9 @@ export interface NotebookNavigatorSettings {
     // Tag display
     showTags: boolean;
     showUntagged: boolean;
+    // Backlink display
+    showBacklinks: boolean;
+    backlinksFolderPath: string;
     // Appearance
     dateFormat: string;
     // Advanced
@@ -84,6 +87,9 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // Tag display
     showTags: true,
     showUntagged: false,
+    // Backlink display
+    showBacklinks: true,
+    backlinksFolderPath: "",
     // Appearance
     dateFormat: 'MMM d, yyyy',
     // Advanced
@@ -138,7 +144,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         getValue: () => string,
         setValue: (value: string) => void,
         refreshView: boolean = true,
-        validator?: (value: string) => boolean
+        validator?: (value: string) => boolean,
     ): Setting {
         return new Setting(container)
             .setName(name)
@@ -394,7 +400,32 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                     await this.saveAndRefresh();
                 }));
 
-        // Section 5: Appearance
+        // Section 5: Backlink display
+        new Setting(containerEl)
+            .setName('Tag Link display')
+            .setHeading();
+
+        const showBacklinksSetting = new Setting(containerEl)
+            .setName('Show tag links')
+            .setDesc('Display tag links section below folders in the navigator.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showBacklinks)
+                .onChange(async (value) => {
+                    this.plugin.settings.showBacklinks = value;
+                    await this.saveAndRefresh();
+                }));
+
+        this.createDebouncedTextSetting(
+            containerEl,
+            'Tag links folder path',
+            'Root folder for tag links (to use if you have a tags folder and want to exclude all other backlinks). Leave empty to use the whole vault.',
+            '',
+            () => this.plugin.settings.backlinksFolderPath,
+            (value) => { this.plugin.settings.backlinksFolderPath = value || ''; },
+        );
+
+
+        // Section 6: Appearance
         new Setting(containerEl)
             .setName('Appearance')
             .setHeading();
@@ -413,7 +444,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                 new Notice('Common formats:\nMMM d, yyyy = May 25, 2022\ndd/MM/yyyy = 25/05/2022\nyyyy-MM-dd = 2022-05-25\n\nTokens:\nyyyy/yy = year\nMMMM/MMM/MM = month\ndd/d = day\nEEEE/EEE = weekday', 10000);
             }));
 
-        // Section 6: Advanced
+        // Section 7: Advanced
         new Setting(containerEl)
             .setName('Advanced')
             .setHeading();

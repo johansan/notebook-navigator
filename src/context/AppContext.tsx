@@ -28,13 +28,15 @@ import { isTFolder, isTFile } from '../utils/typeGuards';
  */
 export interface AppState {
     /** Type of selection - either folder or tag */
-    selectionType: 'folder' | 'tag';
+    selectionType: 'folder' | 'tag' | 'backlink';
     /** Currently selected folder in the folder tree */
     selectedFolder: TFolder | null;
     /** Currently selected tag */
     selectedTag: string | null;
     /** Currently selected file in the file list */
     selectedFile: TFile | null;
+    /** Currently selected backlink */
+    selectedBacklink: string | null;
     /** Set of folder paths that are currently expanded in the tree */
     expandedFolders: Set<string>;
     /** Set of tag paths that are currently expanded in the tree */
@@ -54,6 +56,7 @@ export interface AppState {
 export type AppAction = 
     | { type: 'SET_SELECTED_FOLDER'; folder: TFolder | null }
     | { type: 'SET_SELECTED_TAG'; tag: string | null }
+    | { type: 'SET_SELECTED_BACKLINK'; backlink: string | null }
     | { type: 'SET_SELECTED_FILE'; file: TFile | null }
     | { type: 'SET_EXPANDED_FOLDERS'; folders: Set<string> }
     | { type: 'TOGGLE_FOLDER_EXPANDED'; folderPath: string }
@@ -210,12 +213,17 @@ function appReducer(state: AppState, action: AppAction, app: App): AppState {
     switch (action.type) {
         case 'SET_SELECTED_FOLDER': {
             // Update the selected folder and clear tag selection
-            return { ...state, selectionType: 'folder', selectedFolder: action.folder, selectedTag: null };
+            return { ...state, selectionType: 'folder', selectedFolder: action.folder, selectedBacklink: null, selectedTag: null };
         }
         
         case 'SET_SELECTED_TAG': {
             // Update the selected tag and clear folder selection
-            return { ...state, selectionType: 'tag', selectedTag: action.tag, selectedFolder: null };
+            return { ...state, selectionType: 'tag', selectedTag: action.tag, selectedBacklink: null, selectedFolder: null };
+        }
+
+        case 'SET_SELECTED_BACKLINK': {
+            // Update the selected backlink and clear folder selection
+            return { ...state, selectionType: 'backlink', selectedTag: null, selectedBacklink: action.backlink, selectedFolder: null };
         }
         
         case 'SET_SELECTED_FILE': {

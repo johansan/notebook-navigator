@@ -22,6 +22,7 @@ import { TFile, WorkspaceLeaf } from 'obsidian';
 import { PaneHeader } from './PaneHeader';
 import { FolderTree } from './FolderTree';
 import { TagList } from './TagList';
+import { BacklinkList } from './BacklinkList';
 import { FileList } from './FileList';
 import { useAppContext } from '../context/AppContext';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
@@ -130,6 +131,7 @@ export const NotebookNavigatorComponent = forwardRef<NotebookNavigatorHandle>((_
                 <div className="nn-left-pane-scroller">
                     <FolderTree />
                     <TagList />
+                    <BacklinkList />
                 </div>
             </div>
             {!isMobile && <div className="nn-resize-handle" {...resizeHandleProps} />}
