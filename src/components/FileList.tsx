@@ -117,7 +117,7 @@ export function FileList() {
             // Special case for untagged files
             if (selectedBacklink === UNTAGGED_TAG_ID) {
                 allFiles = allMarkdownFiles.filter(file => {
-                    if (file.path.startsWith(plugin.settings.backlinksFolderPath)) {
+                    if (plugin.settings.backlinksFolderPath && file.path.startsWith(plugin.settings.backlinksFolderPath)) {
                         return false;
                     }
                     const cache = app.metadataCache.getFileCache(file);

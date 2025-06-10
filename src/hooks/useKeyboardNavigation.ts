@@ -140,6 +140,37 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
             return true; // This tag is visible
         });
     }, [containerRef, appState.expandedTags]);
+
+    /**
+     * Gets all visible backlink elements from the DOM.
+     * Filters out backlink that are inside collapsed parent backlink.
+     * 
+     * @returns Array of visible tag DOM elements
+     */
+        const getBacklinkElements = useCallback(() => {
+            if (!containerRef.current) return [];
+            const allTags = Array.from(containerRef.current.querySelectorAll('.nn-backlink-item'));
+            
+            // Filter out tags that are inside collapsed parents
+            return allTags.filter(element => {
+                // Check if this element is visible by checking if it's inside collapsed tag children
+                let parent = element.parentElement;
+                while (parent && parent !== containerRef.current) {
+                    if (parent.classList.contains('nn-tag-children')) {
+                        // Check if the parent tag item is expanded
+                        const parentTagItem = parent.previousElementSibling;
+                        if (parentTagItem && parentTagItem.classList.contains('nn-tag-item')) {
+                            const parentPath = (parentTagItem as HTMLElement).dataset.tag;
+                            if (parentPath && appState.expandedTags && !appState.expandedTags.has(parentPath)) {
+                                return false; // This tag is inside a collapsed parent
+                            }
+                        }
+                    }
+                    parent = parent.parentElement;
+                }
+                return true; // This tag is visible
+            });
+        }, [containerRef, appState.expandedBacklinks]);
     
     /**
      * Finds the index of the selected element in an array of elements.
@@ -163,6 +194,18 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
     const getSelectedTagIndex = useCallback((elements: Element[], selectedTag: string | null) => {
         if (!selectedTag) return -1;
         return elements.findIndex(el => (el as HTMLElement).dataset.tag === selectedTag);
+    }, []);
+
+    /**
+     * Finds the index of the selected backlink element.
+     * 
+     * @param elements - Array of tag DOM elements  
+     * @param selectedBacklink - Selected backlink string
+     * @returns Index of selected element or -1 if not found
+     */
+    const getSelectedBacklinkIndex = useCallback((elements: Element[], selectedBacklink: string | null) => {
+        if (!selectedBacklink) return -1;
+        return elements.findIndex(el => (el as HTMLElement).dataset.tag === selectedBacklink);
     }, []);
     
     /**
@@ -222,6 +265,35 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
             }
         }
     }, [getTagElements, getSelectedTagIndex, appState.selectedTag, dispatch]);
+
+    /**
+     * Navigates through backlink items using arrow keys.
+     * Updates selection and scrolls the selected backlink into view.
+     * 
+     * @param direction - Direction to navigate ('up' or 'down')
+     */
+    const navigateBacklinks = useCallback((direction: 'up' | 'down') => {
+        console.log(appState)
+        const elements = getBacklinkElements();
+        if (elements.length === 0) return;
+        const currentIndex = getSelectedBacklinkIndex(elements, appState.selectedBacklink);
+        let newIndex = currentIndex;
+        
+        if (direction === 'up') {
+            newIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+        } else {
+            newIndex = currentIndex < elements.length - 1 ? currentIndex + 1 : elements.length - 1;
+        }
+        
+        if (newIndex !== currentIndex && elements[newIndex]) {
+            const tagElement = elements[newIndex] as HTMLElement;
+            const backlink = tagElement.dataset.tag;
+            if (backlink) {
+                dispatch({ type: 'SET_SELECTED_BACKLINK', backlink: backlink });
+                tagElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }
+    }, [getBacklinkElements, getSelectedBacklinkIndex, appState.selectedBacklink, dispatch]);
     
     /**
      * Navigates through file items using arrow keys.
@@ -284,6 +356,8 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
                     // Check if we're in tag mode or folder mode
                     if (appState.selectionType === 'tag') {
                         navigateTags('up');
+                    } else if (appState.selectionType === 'backlink') {
+                        navigateBacklinks('up');
                     } else {
                         navigateFolders('up');
                     }
@@ -298,6 +372,8 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
                     // Check if we're in tag mode or folder mode
                     if (appState.selectionType === 'tag') {
                         navigateTags('down');
+                    } else if (appState.selectionType === 'backlink') {
+                        navigateBacklinks('down');
                     } else {
                         navigateFolders('down');
                     }
@@ -326,6 +402,27 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
                             // Ensure parent is visible by scrolling to it
                             const tagElements = getTagElements();
                             const parentElement = tagElements.find(el => (el as HTMLElement).dataset.tag === parentPath);
+                            if (parentElement) {
+                                parentElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                            }
+                        }
+                    }
+                } else if (appState.selectionType === 'backlink' && appState.selectedBacklink) {
+                    // Backlink mode: collapse or move to parent
+                    const backlinkPath = appState.selectedBacklink;
+                    if (appState.expandedBacklinks.has(backlinkPath)) {
+                        // Collapse the tag
+                        dispatch({ type: 'TOGGLE_BACKLINK_EXPANDED', backlinkPath });
+                    } else {
+                        // Move to parent tag
+                        const lastSlashIndex = backlinkPath.lastIndexOf('/');
+                        if (lastSlashIndex > 0) { // Has a parent (not a root tag)
+                            const parentPath = backlinkPath.substring(0, lastSlashIndex);
+                            dispatch({ type: 'SET_SELECTED_BACKLINK', backlink: parentPath });
+                            
+                            // Ensure parent is visible by scrolling to it
+                            const backlinkElements = getBacklinkElements();
+                            const parentElement = backlinkElements.find(el => (el as HTMLElement).dataset.tag === parentPath);
                             if (parentElement) {
                                 parentElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
                             }
@@ -372,6 +469,24 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
                                 const hasChildren = arrow && getComputedStyle(arrow).visibility !== 'hidden';
                                 if (hasChildren) {
                                     dispatch({ type: 'TOGGLE_TAG_EXPANDED', tagPath: appState.selectedTag });
+                                } else {
+                                    dispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+                                }
+                            }
+                        } else {
+                            dispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+                        }
+                    }if (appState.selectionType === 'backlink' && appState.selectedBacklink) {
+                        // Tag mode: expand or move to files
+                        if (!appState.expandedBacklinks.has(appState.selectedBacklink)) {
+                            // Check if tag has children by looking at DOM
+                            const backlinkElements = getBacklinkElements();
+                            const currentElement = backlinkElements.find(el => (el as HTMLElement).dataset.tag === appState.selectedBacklink);
+                            if (currentElement) {
+                                const arrow = currentElement.querySelector('.nn-tag-arrow');
+                                const hasChildren = arrow && getComputedStyle(arrow).visibility !== 'hidden';
+                                if (hasChildren) {
+                                    dispatch({ type: 'TOGGLE_BACKLINK_EXPANDED', backlinkPath: appState.selectedBacklink });
                                 } else {
                                     dispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
                                 }
@@ -471,7 +586,7 @@ export function useKeyboardNavigation(containerRef: React.RefObject<HTMLElement 
                 }
                 break;
         }
-    }, [appState, dispatch, navigateFolders, navigateTags, navigateFiles, app, fileSystemOps, getFolderElements, plugin]);
+    }, [appState, dispatch, navigateFolders, navigateTags, navigateBacklinks, navigateFiles, app, fileSystemOps, getFolderElements, plugin]);
     
     useEffect(() => {
         const container = containerRef.current;

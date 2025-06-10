@@ -469,6 +469,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                     // Clear all localStorage keys
                     localStorage.removeItem(this.plugin.keys.expandedFoldersKey);
                     localStorage.removeItem(this.plugin.keys.expandedTagsKey);
+                    localStorage.removeItem(this.plugin.keys.expandedBacklinksKey);
                     localStorage.removeItem(this.plugin.keys.selectedFolderKey);
                     localStorage.removeItem(this.plugin.keys.selectedFileKey);
                     localStorage.removeItem(this.plugin.keys.leftPaneWidthKey);

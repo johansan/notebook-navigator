@@ -49,6 +49,7 @@ export default class NotebookNavigatorPlugin extends Plugin {
     keys: LocalStorageKeys = {
         expandedFoldersKey: 'notebook-navigator-expanded-folders',
         expandedTagsKey: 'notebook-navigator-expanded-tags',
+        expandedBacklinksKey: 'notebook-navigator-expanded-backlinks',
         selectedFolderKey: 'notebook-navigator-selected-folder',
         selectedFileKey: 'notebook-navigator-selected-file',
         leftPaneWidthKey: 'notebook-navigator-left-pane-width'

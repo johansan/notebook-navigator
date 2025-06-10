@@ -46,6 +46,7 @@ export type FocusedPane = 'folders' | 'files';
 export interface LocalStorageKeys {
     expandedFoldersKey: string;
     expandedTagsKey: string;
+    expandedBacklinksKey: string;
     selectedFolderKey: string;
     selectedFileKey: string;
     leftPaneWidthKey: string;

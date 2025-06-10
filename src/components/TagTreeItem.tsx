@@ -40,6 +40,8 @@ interface TagTreeItemProps {
     fileCount: number;
     /** Whether to show file counts */
     showFileCount: boolean;
+    /** Whether this is a backlink item */
+    backlink?: boolean;
 }
 
 /**
@@ -54,7 +56,8 @@ export function TagTreeItem({
     onToggle, 
     onClick, 
     fileCount,
-    showFileCount
+    showFileCount,
+    backlink=false
 }: TagTreeItemProps) {
     const chevronRef = React.useRef<HTMLDivElement>(null);
     const hasChildren = tagNode.children.size > 0;
@@ -68,7 +71,7 @@ export function TagTreeItem({
 
     return (
         <div 
-            className={`nn-tag-item ${isSelected ? 'nn-selected' : ''}`} 
+            className={`nn-tag-item ${isSelected ? 'nn-selected' : ''} ${backlink ? 'nn-backlink-item' : ''}`} 
             data-tag={tagNode.path}
             style={{ paddingLeft: `${level * 20}px` }}
         >

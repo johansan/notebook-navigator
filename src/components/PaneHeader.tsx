@@ -98,6 +98,8 @@ export function PaneHeader({ type }: PaneHeaderProps) {
             headerTitle = appState.selectedFolder.path === '/' ? 'Vault' : appState.selectedFolder.name;
         } else if (appState.selectionType === 'tag' && appState.selectedTag) {
             headerTitle = appState.selectedTag === '__untagged__' ? 'Untagged' : appState.selectedTag;
+        } else if (appState.selectionType === 'backlink' && appState.selectedBacklink) {
+            headerTitle = appState.selectedBacklink === '__untagged__' ? 'Untagged' : appState.selectedBacklink;
         }
         
         // For file pane header on mobile

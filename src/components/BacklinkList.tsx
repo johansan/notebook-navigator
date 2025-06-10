@@ -23,6 +23,7 @@ import { useAppContext } from '../context/AppContext';
 import { buildBacklinkTree, BacklinkTreeNode, getTotalNoteCount, GenericLinkCache } from '../utils/backlinkUtils';
 import { TagTreeItem } from './TagTreeItem';
 import { parseExcludedProperties, shouldExcludeFile } from '../utils/fileFilters';
+import { UNTAGGED_TAG_ID } from 'src/types';
 
 /**
  * Component that displays all Backlinks in the vault as a hierarchical tree.
@@ -47,8 +48,8 @@ export function BacklinkList() {
 
     // Recursive render function for tag nodes
     const renderBacklinkNode = (tagNode: BacklinkTreeNode, level: number = 0): React.ReactNode => {
-        const isExpanded = appState.expandedTags.has(tagNode.path);
-        const isSelected = appState.selectionType === 'tag' && appState.selectedTag === tagNode.path;
+        const isExpanded = appState.expandedBacklinks.has(tagNode.path);
+        const isSelected = appState.selectionType === 'backlink' && appState.selectedBacklink === tagNode.path;
         const fileCount = getTotalNoteCount(tagNode);
 
         return (
@@ -66,7 +67,8 @@ export function BacklinkList() {
                             dispatch({ type: 'SET_MOBILE_VIEW', view: 'files' });
                         }
                     }}
-                    onToggle={() => dispatch({ type: 'TOGGLE_TAG_EXPANDED', tagPath: tagNode.path })}
+                    onToggle={() => dispatch({ type: 'TOGGLE_BACKLINK_EXPANDED', backlinkPath: tagNode.path })}
+                    backlink={true}
                 />
                 <div className={`nn-tag-children ${isExpanded ? 'nn-expanded' : ''}`}>
                     <div className="nn-tag-children-inner">
@@ -86,8 +88,9 @@ export function BacklinkList() {
         }
         
         const excludedProperties = parseExcludedProperties(plugin.settings.excludedFiles);
+        console.log(appState)
         return app.vault.getMarkdownFiles().filter(file => {
-            if (excludedProperties.length && shouldExcludeFile(file, excludedProperties, app) || file.path.startsWith(plugin.settings.backlinksFolderPath)) {
+            if (excludedProperties.length && shouldExcludeFile(file, excludedProperties, app) || (plugin.settings.backlinksFolderPath && file.path.startsWith(plugin.settings.backlinksFolderPath))) {
                 return false;
             }
             const cache = app.metadataCache.getFileCache(file);
@@ -102,7 +105,6 @@ export function BacklinkList() {
             return !procLinks || procLinks.length === 0;
         }).length;
     }, [plugin.settings.showUntagged, app.vault, app.metadataCache, plugin.settings.excludedFiles, refreshCounter]);
-
     // Get root nodes and sort them
     const rootNodes = Array.from(tagTree.values()).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -114,8 +116,27 @@ export function BacklinkList() {
     return (
         <div className="nn-tag-list-container">
             <div className="nn-section-header">Tag Links</div>
-            <div className="nn-tag-list">
+            <div className="nn-backlink-list">
                 {rootNodes.map(node => renderBacklinkNode(node, 0))}
+                {plugin.settings.showUntagged && untaggedCount > 0 && (
+                    <div 
+                        className={`nn-backlink-item nn-tag-item ${appState.selectionType === 'backlink' && appState.selectedBacklink === UNTAGGED_TAG_ID ? 'nn-selected' : ''}`}
+                        data-tag={UNTAGGED_TAG_ID}
+                        onClick={() => {
+                            dispatch({ type: 'SET_SELECTED_BACKLINK', backlink: UNTAGGED_TAG_ID });
+                            if (isMobile) {
+                                dispatch({ type: 'SET_MOBILE_VIEW', view: 'files' });
+                            }
+                        }}
+                        style={{ paddingLeft: '0px' }}
+                    >
+                        <div className="nn-tag-arrow" style={{ visibility: 'hidden' }} />
+                        <span className="nn-tag-name">Untagged</span>
+                        {plugin.settings.showFolderFileCount && (
+                            <span className="nn-tag-count">{untaggedCount}</span>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

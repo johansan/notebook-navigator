@@ -41,6 +41,8 @@ export interface AppState {
     expandedFolders: Set<string>;
     /** Set of tag paths that are currently expanded in the tree */
     expandedTags: Set<string>;
+    /** Set of backlink paths that are currently expanded in the tree */
+    expandedBacklinks: Set<string>;
     /** Which pane currently has keyboard focus */
     focusedPane: 'folders' | 'files';
     /** Counter that increments when we need to trigger a scroll to the selected folder */
@@ -62,6 +64,7 @@ export type AppAction =
     | { type: 'TOGGLE_FOLDER_EXPANDED'; folderPath: string }
     | { type: 'SET_EXPANDED_TAGS'; tags: Set<string> }
     | { type: 'TOGGLE_TAG_EXPANDED'; tagPath: string }
+    | { type: 'TOGGLE_BACKLINK_EXPANDED'; backlinkPath: string }
     | { type: 'SET_FOCUSED_PANE'; pane: 'folders' | 'files' }
     | { type: 'EXPAND_FOLDERS'; folderPaths: string[] }
     | { type: 'REVEAL_FILE'; file: TFile }
@@ -103,6 +106,8 @@ const STORAGE_KEYS = {
     expandedFolders: 'notebook-navigator-expanded-folders',
     /** Key for storing expanded tag paths */
     expandedTags: 'notebook-navigator-expanded-tags',
+    /** Key for storing expanded backlink paths */
+    expandedBacklinks: 'notebook-navigator-expanded-backlinks',
     /** Key for storing selected folder path */
     selectedFolder: 'notebook-navigator-selected-folder',
     /** Key for storing selected file path */
@@ -121,6 +126,7 @@ const STORAGE_KEYS = {
 function loadStateFromStorage(app: App): AppState {
     const expandedFoldersData = localStorage.getItem(STORAGE_KEYS.expandedFolders);
     const expandedTagsData = localStorage.getItem(STORAGE_KEYS.expandedTags);
+    const expandedBacklinksData = localStorage.getItem(STORAGE_KEYS.expandedBacklinks);
     const selectedFolderPath = localStorage.getItem(STORAGE_KEYS.selectedFolder);
     const selectedFilePath = localStorage.getItem(STORAGE_KEYS.selectedFile);
     
@@ -142,6 +148,18 @@ function loadStateFromStorage(app: App): AppState {
             const parsed = JSON.parse(expandedTagsData);
             if (Array.isArray(parsed)) {
                 expandedTags = new Set(parsed);
+            }
+        }
+    } catch (e) {
+        // Silently ignore parse errors
+    }
+
+    let expandedBacklinks = new Set<string>();
+    try {
+        if (expandedBacklinksData) {
+            const parsed = JSON.parse(expandedBacklinksData);
+            if (Array.isArray(parsed)) {
+                expandedBacklinks = new Set(parsed);
             }
         }
     } catch (e) {
@@ -172,9 +190,11 @@ function loadStateFromStorage(app: App): AppState {
         selectionType: 'folder',
         selectedFolder,
         selectedTag: null,
+        selectedBacklink: null,
         selectedFile,
         expandedFolders,
         expandedTags,
+        expandedBacklinks,
         focusedPane: 'folders',
         scrollToFolderTrigger: 0,
         currentMobileView
@@ -261,6 +281,17 @@ function appReducer(state: AppState, action: AppAction, app: App): AppState {
                 newExpanded.add(action.tagPath);
             }
             return { ...state, expandedTags: newExpanded };
+        }
+
+        case 'TOGGLE_BACKLINK_EXPANDED': {
+            // Toggle a single backlink's expanded state
+            const newExpanded = new Set(state.expandedBacklinks);
+            if (newExpanded.has(action.backlinkPath)) {
+                newExpanded.delete(action.backlinkPath);
+            } else {
+                newExpanded.add(action.backlinkPath);
+            }
+            return { ...state, expandedBacklinks: newExpanded };
         }
         
         case 'SET_FOCUSED_PANE': {
@@ -473,6 +504,9 @@ export function AppProvider({ children, plugin, isMobile = false }: { children: 
         
         // Save expanded tags
         saveToStorage(STORAGE_KEYS.expandedTags, appState.expandedTags);
+
+        // Save expanded backlinks
+        saveToStorage(STORAGE_KEYS.expandedBacklinks, appState.expandedBacklinks);
         
         // Save selected folder
         saveToStorage(STORAGE_KEYS.selectedFolder, appState.selectedFolder?.path);
@@ -481,7 +515,7 @@ export function AppProvider({ children, plugin, isMobile = false }: { children: 
         saveToStorage(STORAGE_KEYS.selectedFile, appState.selectedFile?.path);
         
         // Note: We don't persist currentMobileView to always start fresh on mobile
-    }, [appState.expandedFolders, appState.expandedTags, appState.selectedFolder, appState.selectedFile]);
+    }, [appState.expandedFolders, appState.expandedTags, appState.expandedBacklinks, appState.selectedFolder, appState.selectedFile]);
 
     const contextValue = useMemo(() => ({
         app,
