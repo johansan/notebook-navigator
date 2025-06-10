@@ -36,7 +36,7 @@ import { UNTAGGED_TAG_ID } from '../types';
  */
 export function FileList() {
     const { app, appState, dispatch, plugin, refreshCounter } = useAppContext();
-    const { selectionType, selectedFolder, selectedTag } = appState;
+    const { selectionType, selectedFolder, selectedTag, selectedFile } = appState;
     
     const handleFileClick = useCallback((file: TFile) => {
         dispatch({ type: 'SET_SELECTED_FILE', file });
@@ -155,45 +155,45 @@ export function FileList() {
     
     // Auto-select first file when folder/tag changes
     useLayoutEffect(() => {
-        // Need either a folder or tag selected
-        if (!selectedFolder && !selectedTag) return;
-        
-        // Don't auto-select if we already have a file selected in the current context
-        if (selectionType === 'folder' && selectedFolder && appState.selectedFile) {
-            // Check if the selected file is in the current folder
-            if (appState.selectedFile.parent?.path === selectedFolder.path) {
-                return; // Keep current selection
+        if (files.length > 0) {
+            // If we have a selected file and it's in the current file list, keep it selected
+            if (selectedFile && files.some(f => f.path === selectedFile.path)) {
+                return;
             }
-        }
-        
-        // For tags, also check if we already have a file selected
-        if (selectionType === 'tag' && appState.selectedFile) {
-            // Check if the selected file is in the current file list
-            const fileElements = Array.from(document.querySelectorAll('.nn-file-item'));
-            const selectedFileInList = fileElements.some(el => 
-                (el as HTMLElement).dataset.path === appState.selectedFile?.path
-            );
-            if (selectedFileInList) {
-                return; // Keep current selection if it's in the current tag's file list
-            }
-        }
-        
-        // Find and select the first file
-        const firstFileElement = document.querySelector('.nn-file-item');
-        if (firstFileElement) {
-            const file = getFileFromElement(firstFileElement as HTMLElement, app);
-            if (file) {
-                dispatch({ type: 'SET_SELECTED_FILE', file });
-                
-                // Always open the file when a new folder/tag is selected
-                // This matches the original behavior
-                const leaf = app.workspace.getMostRecentLeaf();
-                if (leaf) {
-                    leaf.openFile(file);
+
+            // If we have a selected file and we're showing subfolders, check if it's in the current folder hierarchy
+            if (selectedFile && plugin.settings.showNotesFromSubfolders) {
+                const selectedFileParentPath = selectedFile.path.split('/').slice(0, -1).join('/');
+                const currentFolderPath = selectedFolder?.path || '';
+                if (selectedFileParentPath.startsWith(currentFolderPath)) {
+                    return;
                 }
             }
+
+            // If we have a selected file and we're not showing subfolders, check if it's in the current folder
+            if (selectedFile && !plugin.settings.showNotesFromSubfolders) {
+                const selectedFileParentPath = selectedFile.path.split('/').slice(0, -1).join('/');
+                if (selectedFileParentPath === selectedFolder?.path) {
+                    return;
+                }
+            }
+
+            // If we have a selected folder, select the first file in that folder
+            if (selectedFolder) {
+                const firstFileInFolder = files.find(f => {
+                    const parentPath = f.path.split('/').slice(0, -1).join('/');
+                    return parentPath === selectedFolder.path;
+                });
+                if (firstFileInFolder) {
+                    dispatch({ type: 'SET_SELECTED_FILE', file: firstFileInFolder });
+                    return;
+                }
+            }
+
+            // Otherwise, select the first file in the list
+            dispatch({ type: 'SET_SELECTED_FILE', file: files[0] });
         }
-    }, [selectionType, selectedFolder?.path, selectedTag, appState.selectedFile, app.workspace, dispatch]);
+    }, [files, selectedFolder, selectedFile, dispatch, plugin.settings.showNotesFromSubfolders]);
     
     // Group files by date if enabled
     const groupedFiles = useMemo(() => {
