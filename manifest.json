@@ -1,7 +1,7 @@
 {
 	"id": "notebook-navigator",
 	"name": "Notebook Navigator",
-	"version": "1.1.3",
+	"version": "1.2.0",
 	"minAppVersion": "1.6.0",
 	"description": "Replace the default file explorer with a clean two-pane interface featuring folder tree, tag browsing, file previews, keyboard navigation, drag-and-drop, pinned notes, and customizable display options.",
 	"author": "Johan Sanneblad",
