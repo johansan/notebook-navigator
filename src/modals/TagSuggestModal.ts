@@ -22,6 +22,7 @@ import { TagTreeNode } from '../types/storage';
 import { getTotalNoteCount } from '../utils/tagTree';
 import { BaseSuggestModal } from './BaseSuggestModal';
 import NotebookNavigatorPlugin from '../main';
+import { alphanumericCompare } from 'src/utils/sortUtils'
 
 /**
  * Modal for selecting a tag to navigate to
@@ -169,7 +170,7 @@ export class TagSuggestModal extends BaseSuggestModal<TagTreeNode> {
             // Keep untagged at the top
             if (a.path === '__untagged__') return -1;
             if (b.path === '__untagged__') return 1;
-            return a.path.localeCompare(b.path);
+            return alphanumericCompare(a.path, b.path);
         });
 
         return tags;

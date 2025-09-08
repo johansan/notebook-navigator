@@ -19,6 +19,7 @@
 import { App, TFolder } from 'obsidian';
 import { strings } from '../i18n';
 import { BaseSuggestModal } from './BaseSuggestModal';
+import { alphanumericCompare } from 'src/utils/sortUtils'
 
 /**
  * Modal for selecting a folder to move files to
@@ -73,7 +74,7 @@ export class FolderSuggestModal extends BaseSuggestModal<TFolder> {
         collectFolders(this.app.vault.getRoot());
 
         // Sort folders by path for consistent ordering
-        folders.sort((a, b) => a.path.localeCompare(b.path));
+        folders.sort((a, b) => alphanumericCompare(a.path, b.path));
 
         return folders;
     }

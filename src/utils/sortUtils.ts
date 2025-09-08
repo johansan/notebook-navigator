@@ -66,8 +66,6 @@ export function sortFiles(
         return type === 'created' ? getCreatedTime(file) : getModifiedTime(file);
     };
 
-    const collator = new Intl.Collator(undefined, { numeric: true });
-
     switch (sortOption) {
         case 'modified-desc':
             files.sort((a, b) => getTimestamp(b, 'modified') - getTimestamp(a, 'modified'));
@@ -82,12 +80,26 @@ export function sortFiles(
             files.sort((a, b) => getTimestamp(a, 'created') - getTimestamp(b, 'created'));
             break;
         case 'title-asc':
-            files.sort((a, b) => collator.compare(a.basename, b.basename));
+            files.sort((a, b) => alphanumericCompare(a.basename, b.basename));
             break;
         case 'title-desc':
-            files.sort((a, b) => collator.compare(b.basename, a.basename));
+            files.sort((a, b) => alphanumericCompare(b.basename, a.basename));
             break;
     }
+}
+
+/**
+ * Determines whether two strings are equivalent in the current locale.
+ * Orders numbers in numerical order, not alphanumeric order
+ * For example:
+ * Alphanumeric order: 1, 10, 11, 2, 3
+ * Numeric order: 1, 2, 3, 10, 11
+ * @param a - First string in compare operation
+ * @param b - Second string in compare operation
+ */
+export function alphanumericCompare(a: string, b: string, locales?: Intl.LocalesArgument) {
+    const collator = new Intl.Collator(locales, { numeric: true });
+    return collator.compare(a, b)
 }
 
 /**

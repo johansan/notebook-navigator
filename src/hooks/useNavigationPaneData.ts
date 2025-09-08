@@ -45,6 +45,7 @@ import { shouldDisplayFile } from '../utils/fileTypeUtils';
 import { leadingEdgeDebounce } from '../utils/leadingEdgeDebounce';
 import { getTotalNoteCount, excludeFromTagTree } from '../utils/tagTree';
 import { flattenFolderTree, flattenTagTree } from '../utils/treeFlattener';
+import { alphanumericCompare } from 'src/utils/sortUtils'
 
 /**
  * Parameters for the useNavigationPaneData hook
@@ -479,7 +480,7 @@ export function useNavigationPaneData({ settings, isVisible }: UseNavigationPane
             } else {
                 folders = root.children
                     .filter((child): child is TFolder => child instanceof TFolder)
-                    .sort((a, b) => a.name.localeCompare(b.name));
+                    .sort((a, b) => alphanumericCompare(a.name, b.name));
             }
 
             setRootFolders(folders);

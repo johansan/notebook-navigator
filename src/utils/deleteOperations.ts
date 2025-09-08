@@ -23,6 +23,7 @@ import { TagTreeService } from '../services/TagTreeService';
 import { NotebookNavigatorSettings } from '../settings';
 import { ItemType } from '../types';
 import { getFilesForFolder, getFilesForTag } from './fileFinder';
+import { alphanumericCompare } from './sortUtils'
 
 interface BaseDeleteOperationsContext {
     app: App;
@@ -109,7 +110,7 @@ export async function deleteSelectedFolder({
     if (parentFolder) {
         const siblings = parentFolder.children
             .filter((child): child is TFolder => child instanceof TFolder)
-            .sort((a, b) => a.name.localeCompare(b.name));
+            .sort((a, b) => alphanumericCompare(a.name, b.name));
 
         const currentIndex = siblings.findIndex(f => f.path === folderToDelete.path);
 
@@ -131,7 +132,7 @@ export async function deleteSelectedFolder({
         const rootFolder = app.vault.getRoot();
         const rootFolders = rootFolder.children
             .filter((child): child is TFolder => child instanceof TFolder && child.path !== folderToDelete.path)
-            .sort((a, b) => a.name.localeCompare(b.name));
+            .sort((a, b) => alphanumericCompare(a.name, b.name));
 
         if (rootFolders.length > 0) {
             nextFolderToSelect = rootFolders[0];

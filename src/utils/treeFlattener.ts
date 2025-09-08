@@ -23,6 +23,7 @@ import { TagTreeNode } from '../types/storage';
 import type { FolderTreeItem, TagTreeItem } from '../types/virtualization';
 import { isFolderInExcludedFolder } from './fileFilters';
 import { matchesAnyPrefix } from './tagPrefixMatcher';
+import { alphanumericCompare } from './sortUtils'
 
 /**
  * Flattens a folder tree into a linear array for virtualization.
@@ -77,7 +78,7 @@ export function flattenFolderTree(
             // Get the current language from Obsidian to sort correctly for that locale.
             const locale = getCurrentLanguage();
             // Sort the child folders alphabetically using the detected locale.
-            childFolders.sort((a, b) => a.name.localeCompare(b.name, locale));
+            childFolders.sort((a, b) => alphanumericCompare(a.name, b.name, locale));
 
             if (childFolders.length > 0) {
                 // Create a new set with the current path added
@@ -113,7 +114,7 @@ export function flattenTagTree(
     const items: TagTreeItem[] = [];
 
     // Sort tags alphabetically
-    const sortedNodes = tagNodes.slice().sort((a, b) => a.name.localeCompare(b.name));
+    const sortedNodes = tagNodes.slice().sort((a, b) => alphanumericCompare(a.name, b.name));
 
     function addNode(node: TagTreeNode, currentLevel: number) {
         const item: TagTreeItem = {
@@ -134,7 +135,7 @@ export function flattenTagTree(
 
         // Add children if expanded and has children
         if (expandedTags.has(node.path) && node.children && node.children.size > 0) {
-            const sortedChildren = Array.from(node.children.values()).sort((a, b) => a.name.localeCompare(b.name));
+            const sortedChildren = Array.from(node.children.values()).sort((a, b) => alphanumericCompare(a.name, b.name));
 
             sortedChildren.forEach(child => addNode(child, currentLevel + 1));
         }
