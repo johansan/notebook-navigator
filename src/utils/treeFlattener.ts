@@ -17,7 +17,6 @@
  */
 
 import { TFolder } from 'obsidian';
-import { getCurrentLanguage } from '../i18n';
 import { NavigationPaneItemType } from '../types';
 import { TagTreeNode } from '../types/storage';
 import type { FolderTreeItem, TagTreeItem } from '../types/virtualization';
@@ -75,10 +74,8 @@ export function flattenFolderTree(
         if (expandedFolders.has(folder.path) && folder.children && folder.children.length > 0) {
             const childFolders = folder.children.filter((child): child is TFolder => child instanceof TFolder);
 
-            // Get the current language from Obsidian to sort correctly for that locale.
-            const locale = getCurrentLanguage();
             // Sort the child folders alphabetically using the detected locale.
-            childFolders.sort((a, b) => alphanumericCompare(a.name, b.name, locale));
+            childFolders.sort((a, b) => alphanumericCompare(a.name, b.name));
 
             if (childFolders.length > 0) {
                 // Create a new set with the current path added

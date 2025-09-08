@@ -19,6 +19,7 @@
 import { TFile, TFolder } from 'obsidian';
 import type { SortOption, NotebookNavigatorSettings } from '../settings';
 import { NavigationItemType, ItemType } from '../types';
+import { getCurrentLanguage } from 'src/i18n'
 
 /**
  * Available sort options in order they appear in menus
@@ -97,10 +98,10 @@ export function sortFiles(
  * @param a - First string in compare operation
  * @param b - Second string in compare operation
  */
-export function alphanumericCompare(a: string, b: string, locales?: Intl.LocalesArgument) {
-    const collator = new Intl.Collator(locales, { numeric: true });
+export function alphanumericCompare(a: string, b: string) {
     return collator.compare(a, b)
 }
+const collator = new Intl.Collator(getCurrentLanguage(), { numeric: true });
 
 /**
  * Gets the sort icon name based on sort option
