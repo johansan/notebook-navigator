@@ -66,6 +66,8 @@ export function sortFiles(
         return type === 'created' ? getCreatedTime(file) : getModifiedTime(file);
     };
 
+    const collator = new Intl.Collator(undefined, { numeric: true });
+
     switch (sortOption) {
         case 'modified-desc':
             files.sort((a, b) => getTimestamp(b, 'modified') - getTimestamp(a, 'modified'));
@@ -80,10 +82,10 @@ export function sortFiles(
             files.sort((a, b) => getTimestamp(a, 'created') - getTimestamp(b, 'created'));
             break;
         case 'title-asc':
-            files.sort((a, b) => a.basename.localeCompare(b.basename));
+            files.sort((a, b) => collator.compare(a.basename, b.basename));
             break;
         case 'title-desc':
-            files.sort((a, b) => b.basename.localeCompare(a.basename));
+            files.sort((a, b) => collator.compare(b.basename, a.basename));
             break;
     }
 }
