@@ -31,7 +31,7 @@ declare global {
 }
 
 const cacheDirPath = `thumbnails/full`
-const cacheFilePath = (excalidrawFile: TFile) => `${cacheDirPath}/${excalidrawFile.basename}_${excalidrawFile.stat.mtime}.png`
+const cacheFilePath = (excalidrawFile: TFile) => `${cacheDirPath}/${excalidrawFile.basename}_${excalidrawFile.stat.size}.png`
 const getDbFile = (path: string) => getDBInstance().getFile(path)
 
 function getExcalidrawAttachmentType(outlink: LinkCache, metadata: CachedMetadata | null) {
