@@ -319,6 +319,12 @@ export const STRINGS_PL = {
                 add: 'aby dodać tag',
                 remove: 'aby usunąć tag'
             }
+        },
+        folderNoteType: {
+            title: 'Wybierz typ notatki folderu',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -888,7 +894,8 @@ export const STRINGS_PL = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: 'Pytaj podczas tworzenia'
                 }
             },
             folderNoteName: {

@@ -70,6 +70,7 @@ export function renderFoldersTagsTab(context: SettingsTabContext): void {
                 .addOption('markdown', strings.settings.items.folderNoteType.options.markdown)
                 .addOption('canvas', strings.settings.items.folderNoteType.options.canvas)
                 .addOption('base', strings.settings.items.folderNoteType.options.base)
+                .addOption('ask', strings.settings.items.folderNoteType.options.ask)
                 .setValue(plugin.settings.folderNoteType)
                 .onChange(async value => {
                     if (!isFolderNoteType(value)) {

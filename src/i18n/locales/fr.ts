@@ -318,6 +318,12 @@ export const STRINGS_FR = {
                 add: "pour ajouter l'étiquette",
                 remove: "pour supprimer l'étiquette"
             }
+        },
+        folderNoteType: {
+            title: 'Choisir le type de note de dossier',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -889,7 +895,8 @@ export const STRINGS_FR = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: 'Demander lors de la création'
                 }
             },
             folderNoteName: {

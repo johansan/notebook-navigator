@@ -2531,6 +2531,14 @@ body.nn-resizing {
     margin-top: 16px;
 }
 
+/* Modal button container - vertical layout for stacked buttons */
+.nn-button-container-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+}
+
 /* ========================================================================
    What's New Modal
    ======================================================================== */

@@ -318,6 +318,12 @@ export const STRINGS_ES = {
                 add: 'para añadir etiqueta',
                 remove: 'para eliminar etiqueta'
             }
+        },
+        folderNoteType: {
+            title: 'Elegir tipo de nota de carpeta',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -887,7 +893,8 @@ export const STRINGS_ES = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: 'Preguntar al crear'
                 }
             },
             folderNoteName: {

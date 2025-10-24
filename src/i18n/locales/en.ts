@@ -318,6 +318,12 @@ export const STRINGS_EN = {
                 add: 'to add tag',
                 remove: 'to remove tag'
             }
+        },
+        folderNoteType: {
+            title: 'Choose folder note type',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
     // File system operations
@@ -886,7 +892,8 @@ export const STRINGS_EN = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: 'Ask when creating'
                 }
             },
             folderNoteName: {

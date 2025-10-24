@@ -219,27 +219,42 @@ export function buildFolderMenu(params: FolderMenuBuilderParams): void {
                 item.setTitle(strings.contextMenu.folder.createFolderNote)
                     .setIcon('lucide-pen-box')
                     .onClick(async () => {
-                        const createdNote = await createFolderNote(
-                            app,
-                            folder,
-                            {
-                                folderNoteType: settings.folderNoteType,
-                                folderNoteName: settings.folderNoteName,
-                                folderNoteProperties: settings.folderNoteProperties
-                            },
-                            services.commandQueue
-                        );
-                        if (createdNote && settings.pinCreatedFolderNote) {
-                            try {
-                                if (!metadataService.isFilePinned(createdNote.path, 'folder')) {
-                                    await metadataService.togglePin(createdNote.path, 'folder');
+                        // Helper function to create a folder note with a specific type
+                        const createNote = async (folderNoteType: 'markdown' | 'canvas' | 'base') => {
+                            const createdNote = await createFolderNote(
+                                app,
+                                folder,
+                                {
+                                    folderNoteType,
+                                    folderNoteName: settings.folderNoteName,
+                                    folderNoteProperties: settings.folderNoteProperties
+                                },
+                                services.commandQueue
+                            );
+                            if (createdNote && settings.pinCreatedFolderNote) {
+                                try {
+                                    if (!metadataService.isFilePinned(createdNote.path, 'folder')) {
+                                        await metadataService.togglePin(createdNote.path, 'folder');
+                                    }
+                                } catch (error) {
+                                    console.error('Failed to pin created folder note', {
+                                        path: createdNote.path,
+                                        error
+                                    });
                                 }
-                            } catch (error) {
-                                console.error('Failed to pin created folder note', {
-                                    path: createdNote.path,
-                                    error
-                                });
                             }
+                        };
+
+                        // If "ask" is selected, show modal to choose type
+                        if (settings.folderNoteType === 'ask') {
+                            const { FolderNoteTypeModal } = await import('../../modals/FolderNoteTypeModal');
+                            const modal = new FolderNoteTypeModal(app, async selectedType => {
+                                await createNote(selectedType);
+                            });
+                            modal.open();
+                        } else {
+                            // Otherwise, use the default type from settings
+                            await createNote(settings.folderNoteType);
                         }
                     });
             });

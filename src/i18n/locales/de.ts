@@ -320,6 +320,12 @@ export const STRINGS_DE = {
                 add: 'zum Hinzufügen des Tags',
                 remove: 'zum Entfernen des Tags'
             }
+        },
+        folderNoteType: {
+            title: 'Ordnernotiztyp wählen',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -890,7 +896,8 @@ export const STRINGS_DE = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: 'Beim Erstellen fragen'
                 }
             },
             folderNoteName: {

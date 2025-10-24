@@ -318,6 +318,12 @@ export const STRINGS_ZH_CN = {
                 add: '添加标签',
                 remove: '移除标签'
             }
+        },
+        folderNoteType: {
+            title: '选择文件夹笔记类型',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -887,7 +893,8 @@ export const STRINGS_ZH_CN = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: '创建时询问'
                 }
             },
             folderNoteName: {

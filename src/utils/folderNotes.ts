@@ -32,9 +32,11 @@ export interface FolderNoteDetectionSettings {
 
 /**
  * Settings required for creating folder notes
+ * Note: folderNoteType excludes 'ask' because by the time this function is called,
+ * the user has already selected a specific type (via modal or settings)
  */
 export interface FolderNoteCreationSettings {
-    folderNoteType: FolderNoteType;
+    folderNoteType: Exclude<FolderNoteType, 'ask'>;
     folderNoteName: string;
     folderNoteProperties: string[];
 }

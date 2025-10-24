@@ -317,6 +317,12 @@ export const STRINGS_KO = {
                 add: '태그 추가',
                 remove: '태그 제거'
             }
+        },
+        folderNoteType: {
+            title: '폴더 노트 유형 선택',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -886,7 +892,8 @@ export const STRINGS_KO = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: '생성 시 묻기'
                 }
             },
             folderNoteName: {

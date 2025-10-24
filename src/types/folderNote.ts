@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type FolderNoteType = 'markdown' | 'canvas' | 'base';
+export type FolderNoteType = 'markdown' | 'canvas' | 'base' | 'ask';
 
-export const FOLDER_NOTE_TYPE_EXTENSIONS: Record<FolderNoteType, string> = {
+export const FOLDER_NOTE_TYPE_EXTENSIONS: Record<Exclude<FolderNoteType, 'ask'>, string> = {
     markdown: 'md',
     canvas: 'canvas',
     base: 'base'
 };
 
 export function isFolderNoteType(value: string): value is FolderNoteType {
-    return value === 'markdown' || value === 'canvas' || value === 'base';
+    return value === 'markdown' || value === 'canvas' || value === 'base' || value === 'ask';
 }

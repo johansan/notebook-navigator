@@ -318,6 +318,12 @@ export const STRINGS_JA = {
                 add: 'タグを追加',
                 remove: 'タグを削除'
             }
+        },
+        folderNoteType: {
+            title: 'フォルダノートの種類を選択',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
 
@@ -888,7 +894,8 @@ export const STRINGS_JA = {
                 options: {
                     markdown: 'Markdown',
                     canvas: 'Canvas',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: '作成時に確認'
                 }
             },
             folderNoteName: {

@@ -318,6 +318,12 @@ export const STRINGS_ZH_TW = {
                 add: '新增標籤',
                 remove: '移除標籤'
             }
+        },
+        folderNoteType: {
+            title: '選擇資料夾筆記類型',
+            markdown: 'Markdown',
+            canvas: 'Canvas',
+            base: 'Base'
         }
     },
     // 檔案系統操作
@@ -885,7 +891,8 @@ export const STRINGS_ZH_TW = {
                 options: {
                     markdown: 'Markdown',
                     canvas: '畫布',
-                    base: 'Base'
+                    base: 'Base',
+                    ask: '建立時詢問'
                 }
             },
             folderNoteName: {
