@@ -93,6 +93,7 @@ export class NotebookNavigatorView extends ItemView {
         // Detect mobile environment and add mobile class
         const isMobile = Platform.isMobile;
         if (isMobile) {
+            console.log('Notebook Navigator: Pane opened on mobile');
             container.classList.add('notebook-navigator-mobile');
 
             // Add platform-specific classes
@@ -340,6 +341,11 @@ export class NotebookNavigatorView extends ItemView {
 
         if (rect.width > 0 && rect.height > 0) {
             window.dispatchEvent(new CustomEvent('notebook-navigator-visible'));
+
+            // If search is open, focus it when the pane becomes visible
+            if (this.componentRef.current?.isSearchOpen()) {
+                this.componentRef.current.focusSearch();
+            }
         }
     }
 }

@@ -113,6 +113,8 @@ export interface ListPaneHandle {
     selectAdjacentFile: (direction: 'next' | 'previous') => boolean;
     modifySearchWithTag: (tag: string, operator: InclusionOperator) => void;
     toggleSearch: () => void;
+    isSearchOpen: () => boolean;
+    focusSearch: () => void;
     executeSearchShortcut: (params: ExecuteSearchShortcutParams) => Promise<void>;
 }
 
@@ -898,6 +900,19 @@ export const ListPane = React.memo(
                             uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
                         }
                         uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'search' });
+                    }
+                },
+                isSearchOpen: () => isSearchActive,
+                focusSearch: () => {
+                    if (isSearchActive) {
+                        setTimeout(() => {
+                            const scope = props.rootContainerRef.current ?? document;
+                            const searchInput = scope.querySelector('.nn-search-input') as HTMLInputElement;
+                            if (searchInput) {
+                                searchInput.focus();
+                                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'search' });
+                            }
+                        }, 0);
                     }
                 },
                 executeSearchShortcut
