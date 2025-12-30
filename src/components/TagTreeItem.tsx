@@ -217,11 +217,16 @@ export const TagTreeItem = React.memo(
 
         // Update chevron icon based on expanded state
         React.useEffect(() => {
-            if (chevronRef.current && hasChildren) {
-                getIconService().renderIcon(
-                    chevronRef.current,
-                    resolveUXIcon(settings.interfaceIcons, isExpanded ? 'nav-tree-collapse' : 'nav-tree-expand')
-                );
+            if (chevronRef.current) {
+                if (hasChildren) {
+                    getIconService().renderIcon(
+                        chevronRef.current,
+                        resolveUXIcon(settings.interfaceIcons, isExpanded ? 'nav-tree-collapse' : 'nav-tree-expand')
+                    );
+                } else {
+                    // Clear the icon when there are no children to prevent stale icons from virtualized list reuse
+                    chevronRef.current.empty();
+                }
             }
         }, [hasChildren, iconVersion, isExpanded, settings.interfaceIcons]);
 
