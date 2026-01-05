@@ -1230,6 +1230,10 @@ export const STRINGS_JA = {
                 name: '削除前に確認',
                 desc: 'ノートやフォルダを削除する際に確認ダイアログを表示'
             },
+            interceptTagClicks: {
+                name: 'クリック時にタグへ移動',
+                desc: 'ノート内のタグをクリックした際、Obsidianの検索を起動する代わりに、Notebook Navigatorでそのタグに移動します。'
+            },
             metadataCleanup: {
                 name: 'メタデータをクリーンアップ',
                 desc: 'Obsidian外でファイル、フォルダ、タグが削除、移動、または名前変更された際に残された孤立したメタデータを削除します。これはNotebook Navigatorの設定ファイルのみに影響します。',

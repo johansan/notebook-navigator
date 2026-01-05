@@ -1230,6 +1230,10 @@ export const STRINGS_NL = {
                 name: 'Bevestigen voor verwijderen',
                 desc: 'Bevestigingsdialoog tonen bij het verwijderen van notities of mappen'
             },
+            interceptTagClicks: {
+                name: 'Navigeer naar tags bij klikken',
+                desc: 'Bij het klikken op tags in notities, navigeer naar die tag in Notebook Navigator in plaats van de Obsidian-zoekfunctie te activeren.'
+            },
             metadataCleanup: {
                 name: 'Metadata opschonen',
                 desc: 'Verwijdert verweesde metadata die achterblijft wanneer bestanden, mappen of tags worden verwijderd, verplaatst of hernoemd buiten Obsidian. Dit beïnvloedt alleen het Notebook Navigator-instellingenbestand.',

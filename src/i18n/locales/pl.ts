@@ -1230,6 +1230,10 @@ export const STRINGS_PL = {
                 name: 'Potwierdź przed usunięciem',
                 desc: 'Pokaż dialog potwierdzenia podczas usuwania notatek lub folderów'
             },
+            interceptTagClicks: {
+                name: 'Przejdź do tagów po kliknięciu',
+                desc: 'Po kliknięciu tagów w notatkach przejdź do tego tagu w Notebook Navigator zamiast uruchamiać wyszukiwanie Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Wyczyść metadane',
                 desc: 'Usuwa osierocone metadane pozostawione, gdy pliki, foldery lub tagi są usuwane, przenoszone lub zmieniane poza Obsidian. Ma to wpływ tylko na plik ustawień Notebook Navigator.',

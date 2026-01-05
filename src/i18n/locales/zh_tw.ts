@@ -1224,6 +1224,10 @@ export const STRINGS_ZH_TW = {
                 name: '刪除前確認',
                 desc: '刪除筆記或資料夾時顯示確認對話框'
             },
+            interceptTagClicks: {
+                name: '點擊時導航到標籤',
+                desc: '點擊筆記中的標籤時，導航到 Notebook Navigator 中的該標籤，而不是觸發 Obsidian 搜尋。'
+            },
             metadataCleanup: {
                 name: '清理中繼資料',
                 desc: '移除在 Obsidian 外部刪除、移動或重新命名檔案、資料夾或標籤時遺留的孤立中繼資料。這只會影響 Notebook Navigator 的設定檔。',

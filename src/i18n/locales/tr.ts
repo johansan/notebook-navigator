@@ -1227,6 +1227,10 @@ export const STRINGS_TR = {
                 name: 'Silmeden önce onayla',
                 desc: 'Not veya klasör silerken onay iletişim kutusunu göster'
             },
+            interceptTagClicks: {
+                name: 'Tıklamada etiketlere git',
+                desc: 'Notlardaki etiketlere tıklandığında, Obsidian aramasını tetiklemek yerine Notebook Navigator\'da o etikete git.'
+            },
             metadataCleanup: {
                 name: 'Meta verileri temizle',
                 desc: 'Dosyalar, klasörler veya etiketler Obsidian dışında silindiğinde, taşındığında veya yeniden adlandırıldığında geride kalan yetim meta verileri kaldırır. Bu yalnızca Notebook Navigator ayarlar dosyasını etkiler.',

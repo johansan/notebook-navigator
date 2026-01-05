@@ -1226,6 +1226,10 @@ export const STRINGS_ZH_CN = {
                 name: '删除前确认',
                 desc: '删除笔记或文件夹时显示确认对话框'
             },
+            interceptTagClicks: {
+                name: '点击时导航到标签',
+                desc: '点击笔记中的标签时，导航到 Notebook Navigator 中的该标签，而不是触发 Obsidian 搜索。'
+            },
             metadataCleanup: {
                 name: '清理元数据',
                 desc: '移除在 Obsidian 外部删除、移动或重命名文件、文件夹或标签时留下的孤立元数据。这仅影响 Notebook Navigator 设置文件。',

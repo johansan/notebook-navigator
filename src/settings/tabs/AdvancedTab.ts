@@ -63,6 +63,18 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
             );
     });
 
+    advancedGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.interceptTagClicks.name)
+            .setDesc(strings.settings.items.interceptTagClicks.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.interceptTagClicks).onChange(async value => {
+                    plugin.settings.interceptTagClicks = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+            );
+    });
+
     if (!Platform.isMobile) {
         advancedGroup.addSetting(setting => {
             setting

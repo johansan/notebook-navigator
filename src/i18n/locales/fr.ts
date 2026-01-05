@@ -1231,6 +1231,10 @@ export const STRINGS_FR = {
                 name: 'Confirmer avant de supprimer',
                 desc: 'Afficher une boîte de dialogue de confirmation lors de la suppression de notes ou de dossiers'
             },
+            interceptTagClicks: {
+                name: 'Naviguer vers les tags au clic',
+                desc: 'Lorsque vous cliquez sur des tags dans les notes, naviguer vers ce tag dans Notebook Navigator au lieu de déclencher la recherche Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Nettoyer les métadonnées',
                 desc: "Supprime les métadonnées orphelines laissées lorsque des fichiers, dossiers ou étiquettes sont supprimés, déplacés ou renommés en dehors d'Obsidian. Cela n'affecte que le fichier de configuration de Notebook Navigator.",

@@ -238,6 +238,7 @@ export interface NotebookNavigatorSettings {
     // Advanced tab
     checkForUpdatesOnStart: boolean;
     confirmBeforeDelete: boolean;
+    interceptTagClicks: boolean;
 
     // Runtime state and cached data
     customVaultName: string;

@@ -1227,6 +1227,10 @@ export const STRINGS_KO = {
                 name: '삭제 전 확인',
                 desc: '노트나 폴더를 삭제할 때 확인 대화 상자 표시'
             },
+            interceptTagClicks: {
+                name: '클릭 시 태그로 이동',
+                desc: '노트에서 태그를 클릭하면 Obsidian 검색 대신 Notebook Navigator에서 해당 태그로 이동합니다.'
+            },
             metadataCleanup: {
                 name: '메타데이터 정리',
                 desc: 'Obsidian 외부에서 파일, 폴더 또는 태그가 삭제, 이동 또는 이름이 변경될 때 남겨진 고아 메타데이터를 제거합니다. 이는 Notebook Navigator 설정 파일에만 영향을 줍니다.',

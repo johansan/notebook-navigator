@@ -1225,6 +1225,10 @@ export const STRINGS_EN = {
                 name: 'Confirm before deleting',
                 desc: 'Show confirmation dialog when deleting notes or folders'
             },
+            interceptTagClicks: {
+                name: 'Navigate to tags on click',
+                desc: 'When clicking tags in notes, navigate to that tag in Notebook Navigator instead of triggering Obsidian search.'
+            },
             metadataCleanup: {
                 name: 'Clean up metadata',
                 desc: 'Removes orphaned metadata left behind when files, folders, or tags are deleted, moved, or renamed outside of Obsidian. This only affects the Notebook Navigator settings file.',

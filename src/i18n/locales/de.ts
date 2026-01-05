@@ -1231,6 +1231,10 @@ export const STRINGS_DE = {
                 name: 'Vor dem Löschen bestätigen',
                 desc: 'Bestätigungsdialog beim Löschen von Notizen oder Ordnern anzeigen'
             },
+            interceptTagClicks: {
+                name: 'Zu Tags beim Klicken navigieren',
+                desc: 'Beim Klicken auf Tags in Notizen zu diesem Tag im Notebook Navigator navigieren, anstatt die Obsidian-Suche auszulösen.'
+            },
             metadataCleanup: {
                 name: 'Metadaten bereinigen',
                 desc: 'Entfernt verwaiste Metadaten, die zurückbleiben, wenn Dateien, Ordner oder Tags außerhalb von Obsidian gelöscht, verschoben oder umbenannt werden. Dies betrifft nur die Notebook Navigator Einstellungsdatei.',

@@ -1229,6 +1229,10 @@ export const STRINGS_ES = {
                 name: 'Confirmar antes de eliminar',
                 desc: 'Muestra un diálogo de confirmación al eliminar notas o carpetas'
             },
+            interceptTagClicks: {
+                name: 'Navegar a etiquetas al hacer clic',
+                desc: 'Al hacer clic en etiquetas en notas, navegar a esa etiqueta en Notebook Navigator en lugar de activar la búsqueda de Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Limpiar metadatos',
                 desc: 'Elimina metadatos huérfanos dejados cuando archivos, carpetas o etiquetas son eliminados, movidos o renombrados fuera de Obsidian. Esto solo afecta el archivo de configuración de Notebook Navigator.',

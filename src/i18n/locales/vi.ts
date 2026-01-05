@@ -1227,6 +1227,10 @@ export const STRINGS_VI = {
                 name: 'Xác nhận trước khi xóa',
                 desc: 'Hiện hộp thoại xác nhận khi xóa ghi chú hoặc thư mục'
             },
+            interceptTagClicks: {
+                name: 'Điều hướng đến thẻ khi nhấp',
+                desc: 'Khi nhấp vào thẻ trong ghi chú, điều hướng đến thẻ đó trong Notebook Navigator thay vì kích hoạt tìm kiếm Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Dọn dẹp metadata',
                 desc: 'Gỡ metadata mồ côi còn sót lại khi tệp, thư mục hoặc thẻ bị xóa, di chuyển hoặc đổi tên bên ngoài Obsidian. Điều này chỉ ảnh hưởng đến tệp cài đặt Notebook Navigator.',

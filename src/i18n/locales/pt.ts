@@ -1228,6 +1228,10 @@ export const STRINGS_PT = {
                 name: 'Confirmar antes de eliminar',
                 desc: 'Mostrar diálogo de confirmação ao eliminar notas ou pastas'
             },
+            interceptTagClicks: {
+                name: 'Navegar para etiquetas ao clicar',
+                desc: 'Ao clicar em etiquetas nas notas, navegar para essa etiqueta no Notebook Navigator em vez de ativar a pesquisa do Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Limpar metadados',
                 desc: 'Remove metadados órfãos deixados quando ficheiros, pastas ou etiquetas são eliminados, movidos ou renomeados fora do Obsidian. Isto afeta apenas o ficheiro de definições do Notebook Navigator.',

@@ -1228,6 +1228,10 @@ export const STRINGS_ID = {
                 name: 'Konfirmasi sebelum menghapus',
                 desc: 'Tampilkan dialog konfirmasi saat menghapus catatan atau folder'
             },
+            interceptTagClicks: {
+                name: 'Navigasi ke tag saat diklik',
+                desc: 'Saat mengklik tag di catatan, navigasi ke tag tersebut di Notebook Navigator alih-alih memicu pencarian Obsidian.'
+            },
             metadataCleanup: {
                 name: 'Bersihkan metadata',
                 desc: 'Menghapus metadata yatim yang ditinggalkan saat file, folder, atau tag dihapus, dipindahkan, atau diganti nama di luar Obsidian. Ini hanya mempengaruhi file pengaturan Notebook Navigator.',

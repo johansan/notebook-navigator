@@ -200,6 +200,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // Advanced tab
     checkForUpdatesOnStart: true,
     confirmBeforeDelete: true,
+    interceptTagClicks: true,
 
     // Runtime state and cached data
     customVaultName: '',
