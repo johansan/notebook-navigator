@@ -19,6 +19,17 @@
     contain: layout style;
 }
 
+/* Nav-right mode: swap borders */
+.nn-split-container[data-pane-side="right"] .nn-navigation-pane {
+    border-right: none;
+    border-left: 1px solid var(--nn-theme-divider-border-color);
+}
+
+.nn-split-container[data-pane-side="right"] .nn-resize-handle {
+    left: auto;
+    right: 0;
+}
+
 /* Right pane - contains the file list */
 .nn-list-pane {
     flex: 1;

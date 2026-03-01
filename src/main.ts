@@ -42,6 +42,7 @@ import {
     NOTEBOOK_NAVIGATOR_VIEW,
     STORAGE_KEYS,
     type DualPaneOrientation,
+    type NavigationPaneSide,
     type UXPreferences,
     type VisibilityPreferences
 } from './types';
@@ -1162,6 +1163,32 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.settings.dualPaneOrientation = normalized;
         localStorage.set(this.keys.dualPaneOrientationKey, normalized);
         await this.persistSyncModeSettingUpdateAsync('dualPaneOrientation');
+    }
+
+    /**
+     * Returns the navigation pane side preference (left or right).
+     */
+    public getNavigationPaneSide(): NavigationPaneSide {
+        if (this.isLocal('navigationPaneSide')) {
+            const stored = localStorage.get<NavigationPaneSide>(this.keys.navigationPaneSideKey);
+            return stored === 'left' || stored === 'right' ? stored : 'left';
+        }
+        return this.settings.navigationPaneSide === 'right' ? 'right' : 'left';
+    }
+
+    /**
+     * Updates the navigation pane side and persists to storage.
+     */
+    public setNavigationPaneSide(side: NavigationPaneSide): void {
+        const sanitized: NavigationPaneSide = side === 'right' ? 'right' : 'left';
+        
+        this.updateSettingAndMirrorToLocalStorage({
+            settingId: 'navigationPaneSide',
+            localStorageKey: this.keys.navigationPaneSideKey,
+            nextValue: sanitized
+        });
+        
+        this.persistSyncModeSettingUpdate('navigationPaneSide');
     }
 
     /**

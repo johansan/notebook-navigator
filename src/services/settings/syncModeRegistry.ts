@@ -456,6 +456,21 @@ export function createSyncModeRegistry(params: CreateSyncModeRegistryParams): Sy
                 const next = sanitizeUIScale(Platform.isMobile ? settings.mobileScale : settings.desktopScale);
                 setLocalStorage(params.keys.uiScaleKey, next);
             }
+        }),
+        navigationPaneSide: createResolvedLocalStorageSettingEntry({
+            settingId: 'navigationPaneSide',
+            loadPhase: 'preProfiles',
+            localStorageKey: params.keys.navigationPaneSideKey,
+            resolveDeviceLocal: storedData => {
+                const value = typeof storedData === 'string' && (storedData === 'left' || storedData === 'right') 
+                    ? storedData 
+                    : params.defaultSettings.navigationPaneSide;
+                return { value, migrated: false };
+            },
+            sanitizeSynced: () => {
+                const value = params.getSettings().navigationPaneSide;
+                return value === 'right' ? 'right' : 'left';
+            }
         })
     };
 }

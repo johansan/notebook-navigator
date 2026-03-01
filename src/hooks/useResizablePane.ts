@@ -29,6 +29,7 @@ interface UseResizablePaneConfig {
     min?: number;
     storageKey?: string;
     scale?: number;
+    paneSide?: 'left' | 'right';
 }
 
 interface UseResizablePaneResult {
@@ -52,7 +53,8 @@ export function useResizablePane({
     initialSize,
     min,
     storageKey,
-    scale
+    scale,
+    paneSide = 'left'
 }: UseResizablePaneConfig = {}): UseResizablePaneResult {
     // Get default sizing parameters for orientation
     const sizing = getNavigationPaneSizing(orientation);
@@ -108,6 +110,10 @@ export function useResizablePane({
                     if (isRTL) {
                         delta = -delta;
                     }
+                    // Reverse delta when nav pane is on the right
+                    if (orientation === 'horizontal' && paneSide === 'right') {
+                        delta = -delta;
+                    }
                     const scaledDelta = delta / scaleFactor;
                     currentSize = Math.max(resolvedMin, startSize + scaledDelta);
                     setPaneSize(currentSize);
@@ -122,7 +128,7 @@ export function useResizablePane({
                 }
             });
         },
-        [orientation, paneSize, resolvedMin, scaleFactor, storageKey, startPointerDrag]
+        [orientation, paneSize, paneSide, resolvedMin, scaleFactor, storageKey, startPointerDrag]
     );
 
     // Reload pane size when orientation changes

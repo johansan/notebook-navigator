@@ -18,7 +18,7 @@
 
 import type { FileVisibility } from '../utils/fileTypeUtils';
 import type { FolderAppearance, TagAppearance } from '../hooks/useListPaneAppearance';
-import type { BackgroundMode, DualPaneOrientation, PinnedNotes } from '../types';
+import type { BackgroundMode, DualPaneOrientation, NavigationPaneSide, PinnedNotes } from '../types';
 import type { FolderNoteCreationPreference } from '../types/folderNote';
 import type { KeyboardShortcutConfig } from '../utils/keyboardShortcuts';
 import type { ShortcutEntry } from '../types/shortcuts';
@@ -60,6 +60,7 @@ export const SYNC_MODE_SETTING_IDS = [
     'useFloatingToolbars',
     'dualPane',
     'dualPaneOrientation',
+    'navigationPaneSide',
     'paneTransitionDuration',
     'toolbarVisibility',
     'pinNavigationBanner',
@@ -272,6 +273,7 @@ export interface NotebookNavigatorSettings {
     // General tab - Desktop appearance
     dualPane: boolean;
     dualPaneOrientation: DualPaneOrientation;
+    navigationPaneSide: NavigationPaneSide;
     showTooltips: boolean;
     showTooltipPath: boolean;
     desktopBackground: BackgroundMode;

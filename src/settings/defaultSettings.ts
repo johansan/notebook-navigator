@@ -89,6 +89,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // General tab - Desktop appearance
     dualPane: true,
     dualPaneOrientation: 'horizontal',
+    navigationPaneSide: 'left',
     showTooltips: false,
     showTooltipPath: true,
     desktopBackground: 'separate',

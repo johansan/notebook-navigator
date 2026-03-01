@@ -252,6 +252,7 @@ export interface LocalStorageKeys {
     navigationPaneHeightKey: string;
     dualPaneOrientationKey: string;
     dualPaneKey: string;
+    navigationPaneSideKey: string;
     uiScaleKey: string;
     shortcutsExpandedKey: string;
     recentNotesExpandedKey: string;
@@ -305,6 +306,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     navigationPaneHeightKey: 'notebook-navigator-navigation-pane-height',
     dualPaneOrientationKey: 'notebook-navigator-dual-pane-orientation',
     dualPaneKey: 'notebook-navigator-dual-pane',
+    navigationPaneSideKey: 'notebook-navigator-navigation-pane-side',
     uiScaleKey: 'notebook-navigator-ui-scale',
     shortcutsExpandedKey: 'notebook-navigator-shortcuts-expanded',
     recentNotesExpandedKey: 'notebook-navigator-recent-notes-expanded',
@@ -352,6 +354,9 @@ export type VisibilityPreferences = Pick<UXPreferences, 'includeDescendantNotes'
 
 /** Orientation options for dual-pane layout */
 export type DualPaneOrientation = 'horizontal' | 'vertical';
+
+/** Side where the navigation pane appears in horizontal dual-pane mode */
+export type NavigationPaneSide = 'left' | 'right';
 
 /** Background color mode for navigation/list panes on desktop */
 export type BackgroundMode = 'separate' | 'primary' | 'secondary';

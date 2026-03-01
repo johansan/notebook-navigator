@@ -261,7 +261,8 @@ export const NotebookNavigatorComponent = React.memo(
             initialSize: navigationPaneDefaultSize,
             min: navigationPaneMinSize,
             storageKey: navigationPaneStorageKey,
-            scale: uiScale
+            scale: uiScale,
+            paneSide: settings.navigationPaneSide
         });
 
         // Tracks whether initial dual/single pane check has been performed
@@ -1140,6 +1141,7 @@ export const NotebookNavigatorComponent = React.memo(
                     }
                     data-navigator-focused={isMobile ? 'true' : isNavigatorFocused}
                     tabIndex={-1}
+                    data-pane-side={settings.navigationPaneSide}
                     onKeyDown={() => {
                         // Allow keyboard events to bubble up from child components
                         // The actual keyboard handling is done in NavigationPane and ListPane
@@ -1153,31 +1155,63 @@ export const NotebookNavigatorComponent = React.memo(
                 4. This allows Tab/Arrow navigation between panes while keeping
                    all keyboard events scoped to the navigator container only
             */}
-                    <NavigationPane
-                        ref={navigationPaneRef}
-                        style={navigationPaneStyle}
-                        uiScale={uiScale}
-                        rootContainerRef={containerRef}
-                        searchNavFilters={searchNavFilters}
-                        onExecuteSearchShortcut={handleSearchShortcutExecution}
-                        onNavigateToFolder={navigateToFolder}
-                        onRevealTag={revealTag}
-                        onRevealProperty={revealProperty}
-                        onRevealFile={revealFileInNearestFolder}
-                        onRevealShortcutFile={handleShortcutNoteReveal}
-                        onModifySearchWithTag={handleModifySearchWithTag}
-                        onModifySearchWithProperty={handleModifySearchWithProperty}
-                        onModifySearchWithDateFilter={handleModifySearchWithDateFilter}
-                    />
-                    <ListPane
-                        ref={listPaneRef}
-                        rootContainerRef={containerRef}
-                        onSearchTokensChange={handleSearchTokensChange}
-                        onNavigateToFolder={navigateToFolder}
-                        onRevealTag={revealTag}
-                        onRevealProperty={revealProperty}
-                        resizeHandleProps={!uiState.singlePane ? resizeHandleProps : undefined}
-                    />
+                    {settings.navigationPaneSide === 'right' ? (
+                        <>
+                            <ListPane
+                                ref={listPaneRef}
+                                rootContainerRef={containerRef}
+                                onSearchTokensChange={handleSearchTokensChange}
+                                onNavigateToFolder={navigateToFolder}
+                                onRevealTag={revealTag}
+                                onRevealProperty={revealProperty}
+                                resizeHandleProps={!uiState.singlePane ? resizeHandleProps : undefined}
+                            />
+                            <NavigationPane
+                                ref={navigationPaneRef}
+                                style={navigationPaneStyle}
+                                uiScale={uiScale}
+                                rootContainerRef={containerRef}
+                                searchNavFilters={searchNavFilters}
+                                onExecuteSearchShortcut={handleSearchShortcutExecution}
+                                onNavigateToFolder={navigateToFolder}
+                                onRevealTag={revealTag}
+                                onRevealProperty={revealProperty}
+                                onRevealFile={revealFileInNearestFolder}
+                                onRevealShortcutFile={handleShortcutNoteReveal}
+                                onModifySearchWithTag={handleModifySearchWithTag}
+                                onModifySearchWithProperty={handleModifySearchWithProperty}
+                                onModifySearchWithDateFilter={handleModifySearchWithDateFilter}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <NavigationPane
+                                ref={navigationPaneRef}
+                                style={navigationPaneStyle}
+                                uiScale={uiScale}
+                                rootContainerRef={containerRef}
+                                searchNavFilters={searchNavFilters}
+                                onExecuteSearchShortcut={handleSearchShortcutExecution}
+                                onNavigateToFolder={navigateToFolder}
+                                onRevealTag={revealTag}
+                                onRevealProperty={revealProperty}
+                                onRevealFile={revealFileInNearestFolder}
+                                onRevealShortcutFile={handleShortcutNoteReveal}
+                                onModifySearchWithTag={handleModifySearchWithTag}
+                                onModifySearchWithProperty={handleModifySearchWithProperty}
+                                onModifySearchWithDateFilter={handleModifySearchWithDateFilter}
+                            />
+                            <ListPane
+                                ref={listPaneRef}
+                                rootContainerRef={containerRef}
+                                onSearchTokensChange={handleSearchTokensChange}
+                                onNavigateToFolder={navigateToFolder}
+                                onRevealTag={revealTag}
+                                onRevealProperty={revealProperty}
+                                resizeHandleProps={!uiState.singlePane ? resizeHandleProps : undefined}
+                            />
+                        </>
+                    )}
                     {shouldRenderSinglePaneCalendar ? (
                         <div className="nn-single-pane-calendar">
                             <Calendar

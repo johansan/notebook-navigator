@@ -1425,4 +1425,16 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
             return true;
         }
     });
+
+    // Command to toggle navigation pane side
+    plugin.addCommand({
+        id: 'toggle-navigation-pane-side',
+        name: 'Toggle navigation pane side (left/right)',
+        callback: () => {
+            const currentSide = plugin.getNavigationPaneSide();
+            const newSide = currentSide === 'left' ? 'right' : 'left';
+            plugin.setNavigationPaneSide(newSide);
+            showNotice(`Navigation pane moved to ${newSide}`);
+        }
+    });
 }

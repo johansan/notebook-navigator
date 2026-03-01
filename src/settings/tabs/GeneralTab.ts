@@ -768,6 +768,26 @@ export function renderGeneralTab(context: SettingsTabContext): void {
 
         addSettingSyncModeToggle({ setting: dualPaneOrientationSetting, plugin, settingId: 'dualPaneOrientation' });
 
+        const navigationPaneSideSetting = desktopAppearanceGroup.addSetting(setting => {
+            setting
+                .setName('Navigation pane side')
+                .setDesc('Choose which side the navigation pane appears on (horizontal mode only)')
+                .addDropdown(dropdown => {
+                    dropdown
+                        .addOptions({
+                            left: 'Left (default)',
+                            right: 'Right'
+                        })
+                        .setValue(plugin.getNavigationPaneSide())
+                        .onChange(async value => {
+                            const nextValue = value === 'right' ? 'right' : 'left';
+                            plugin.setNavigationPaneSide(nextValue);
+                        });
+                });
+        });
+
+        addSettingSyncModeToggle({ setting: navigationPaneSideSetting, plugin, settingId: 'navigationPaneSide' });
+
         desktopAppearanceGroup.addSetting(setting => {
             setting
                 .setName(strings.settings.items.appearanceBackground.name)
