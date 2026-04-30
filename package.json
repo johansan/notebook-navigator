@@ -60,7 +60,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@tanstack/react-virtual": "^3.13.12",
     "emoji-regex": "^9.2.2",
-    "emojilib": "^4.0.2",
+    "emojilib": "^4.0.3",
     "parse5": "^8.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
