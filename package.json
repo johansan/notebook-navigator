@@ -59,7 +59,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@tanstack/react-virtual": "^3.13.12",
-    "emoji-regex": "^9.2.2",
+    "emoji-regex": "^10.6.0",
     "emojilib": "^4.0.2",
     "parse5": "^8.0.1",
     "react": "^19.1.0",
