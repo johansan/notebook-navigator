@@ -81,6 +81,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-05-01',
         showOnUpdate: true,
         bannerUrl: true,
+        info: 'Notebook Navigator 2.6.3 adds CodeQL security scanning and OpenSSF Scorecard checks to all releases, with current security status visible in the official repo at https://github.com/johansan/notebook-navigator. Every build also runs ESLint with the official Obsidian ESLint plugin and fails on any warning, so code and Obsidian integration issues are caught before release. This gives you a clear signal that the plugin has been checked for security, code quality, and Obsidian compatibility.',
         new: [
             '**Settings.** General > ==Show tooltips > Show word count==. Shows word counts in tooltips.',
             '**Commands.** ==Toggle tags by selection== and ==Toggle properties by selection==.'
@@ -89,10 +90,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Calendar.** Calendar now keeps the displayed date when switching between the left and right sidebar.',
             '**Search.** Property value filters now match substrings, so ".author=chomsky" matches values such as "Avram Noam Chomsky" and "Chomsky et al.".',
             '**List pane.** Sort and appearance menus in list pane now include options for "Change default settings" to open settings.',
-            '**Internal.** Added automated GitHub quality checks, CodeQL security scanning, and OpenSSF Scorecard.',
             '**Internal.** Updated all third-party libraries used by the plugin to their latest versions.',
-            '**Internal.** Improved robustness across services, modals, and content providers.',
-            '**Internal.** Full support for the latest Obsidian ESLint plugin (0.2.9, released April 30).'
+            '**Internal.** Improved robustness across services, modals, and content providers.'
         ],
         changed: [
             '**Calendar.** The setting "Calendar > Month name format" now applies to all views.',
