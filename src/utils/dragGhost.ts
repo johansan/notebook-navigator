@@ -181,19 +181,19 @@ export function createDragGhostManager(): DragGhostManager {
         const resolvedIcon = resolveIcon(options);
         const ownerDocument = options.customElement?.ownerDocument ?? activeDocument;
 
-        const baseGhost = options.customElement ?? ownerDocument.createDiv();
+        const baseGhost = options.customElement ?? ownerDocument.createElement('div');
         if (!baseGhost.classList.contains('nn-drag-ghost')) {
             baseGhost.classList.add('nn-drag-ghost');
         }
 
         if (!options.customElement) {
             if (options.itemCount && options.itemCount > 1) {
-                const info = ownerDocument.createDiv();
+                const info = ownerDocument.createElement('div');
                 info.className = 'nn-drag-ghost-badge';
                 info.textContent = `${options.itemCount}`;
                 baseGhost.appendChild(info);
             } else {
-                const iconWrapper = ownerDocument.createDiv();
+                const iconWrapper = ownerDocument.createElement('div');
                 iconWrapper.className = 'nn-drag-ghost-icon';
                 const iconColor = options.iconColor ?? '#ffffff';
                 iconWrapper.style.color = iconColor;
