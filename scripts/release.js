@@ -22,7 +22,7 @@
  * This script automates the release process for Obsidian plugins by:
  * - Incrementing version numbers in manifest.json, package.json, and versions.json
  * - Creating a release branch and pull request with the version bump
- * - Waiting for the release pull request to merge, then publishing by creating and pushing a git tag
+ * - Waiting for release pull request checks, merging the pull request, then publishing by creating and pushing a git tag
  * - Verifying the GitHub release assets and release workflow result
  *
  * Usage:
@@ -67,8 +67,29 @@ const lockFilePath = path.join(projectRoot, '.release.lock');
 const releaseAssetNames = ['main.js', 'manifest.json', 'styles.css'];
 const signedReleaseAssetSuffixes = ['.minisig', '.asc', '.sig', '.sign', '.sigstore', '.sigstore.json', '.intoto.jsonl'];
 const pullRequestPollIntervalMs = 30 * 1000;
+const pullRequestChecksTimeoutMs = 30 * 60 * 1000;
 const releasePollIntervalMs = 15 * 1000;
 const releaseVerificationTimeoutMs = 15 * 60 * 1000;
+const releaseAutomationAllowedDirtyFiles = ['scripts/release.js'];
+const successfulPullRequestCheckConclusions = new Set(['SUCCESS', 'SKIPPED', 'NEUTRAL']);
+const failedPullRequestCheckConclusions = new Set(['FAILURE', 'CANCELLED', 'TIMED_OUT', 'ACTION_REQUIRED', 'STALE']);
+const successfulPullRequestStatusStates = new Set(['SUCCESS']);
+const failedPullRequestStatusStates = new Set(['FAILURE', 'ERROR']);
+const pullRequestInfoFields = [
+    'number',
+    'url',
+    'state',
+    'mergedAt',
+    'mergeCommit',
+    'headRefName',
+    'headRefOid',
+    'baseRefName',
+    'isDraft',
+    'mergeStateStatus',
+    'mergeable',
+    'reviewDecision',
+    'statusCheckRollup'
+].join(',');
 
 // ============================================================================
 // GLOBAL STATE
@@ -164,6 +185,21 @@ function sleep(ms) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
+function compareVersions(leftVersion, rightVersion) {
+    const leftParts = leftVersion.split('.').map(Number);
+    const rightParts = rightVersion.split('.').map(Number);
+
+    for (let index = 0; index < 3; index++) {
+        const leftPart = leftParts[index] || 0;
+        const rightPart = rightParts[index] || 0;
+        if (leftPart !== rightPart) {
+            return leftPart - rightPart;
+        }
+    }
+
+    return 0;
+}
+
 function runGhJson(args) {
     let output;
 
@@ -189,6 +225,18 @@ function tryRunGhJson(args) {
         return runGhJson(args);
     } catch (error) {
         return null;
+    }
+}
+
+function runGh(args) {
+    try {
+        return execFileSync('gh', args, {
+            cwd: projectRoot,
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'pipe']
+        }).trim();
+    } catch (error) {
+        throw new Error(getCommandErrorMessage(error));
     }
 }
 
@@ -223,6 +271,51 @@ function canUseGitHubCliForVerification() {
     return true;
 }
 
+function requireGitHubCliForReleaseAutomation() {
+    if (!commandAvailable('gh')) {
+        console.error('❌ GitHub CLI is required for autonomous release pull requests.');
+        console.error('   Install and authenticate gh, then run: node scripts/release.js');
+        process.exit(1);
+    }
+
+    try {
+        execFileSync('gh', ['auth', 'status'], {
+            cwd: projectRoot,
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'pipe']
+        });
+    } catch (error) {
+        console.error('❌ GitHub CLI is not authenticated or cannot access GitHub.');
+        console.error(`   ${getCommandErrorMessage(error)}`);
+        process.exit(1);
+    }
+
+    try {
+        runGhJson(['repo', 'view', '--json', 'nameWithOwner']);
+    } catch (error) {
+        console.error('❌ GitHub CLI could not read this repository.');
+        console.error(`   ${error.message}`);
+        process.exit(1);
+    }
+
+    console.log('✓ GitHub CLI can manage release pull requests');
+}
+
+function getGitStatusPath(statusLine) {
+    const pathPart = statusLine.slice(3);
+    const changedPath = pathPart.includes(' -> ') ? pathPart.split(' -> ').pop() : pathPart;
+    return changedPath.replace(/\\/g, '/');
+}
+
+function getUnexpectedStatusLines(status, allowedDirtyFiles = []) {
+    if (!status) {
+        return [];
+    }
+
+    const allowedFileSet = new Set(allowedDirtyFiles.map(file => file.replace(/\\/g, '/')));
+    return status.split('\n').filter(line => !allowedFileSet.has(getGitStatusPath(line)));
+}
+
 function assertOnlyExpectedChanges(expectedFiles) {
     const expectedFileSet = new Set(expectedFiles);
     const status = gitExecArray(['status', '--porcelain'], { encoding: 'utf8' }).trimEnd();
@@ -232,8 +325,7 @@ function assertOnlyExpectedChanges(expectedFiles) {
     }
 
     const unexpectedChanges = status.split('\n').filter(line => {
-        const pathPart = line.slice(3);
-        const changedPath = pathPart.includes(' -> ') ? pathPart.split(' -> ').pop() : pathPart;
+        const changedPath = getGitStatusPath(line);
         return !expectedFileSet.has(changedPath);
     });
 
@@ -351,7 +443,9 @@ function checkVersionOverflow(major, minor, patch, releaseType) {
 // GIT OPERATIONS
 // ============================================================================
 
-function preReleaseChecks() {
+function preReleaseChecks(options = {}) {
+    const { allowedDirtyFiles = [] } = options;
+
     try {
         // Check if we're in a git repository
         try {
@@ -363,18 +457,17 @@ function preReleaseChecks() {
         }
 
         // Check for uncommitted changes FIRST
-        const status = gitExecString(['status', '--porcelain']);
-        if (status) {
+        const status = gitExecArray(['status', '--porcelain'], { encoding: 'utf8' }).trimEnd();
+        const unexpectedStatusLines = getUnexpectedStatusLines(status, allowedDirtyFiles);
+        if (unexpectedStatusLines.length > 0) {
             console.error('❌ You have uncommitted changes:');
-            console.error(
-                status
-                    .split('\n')
-                    .map(line => '   ' + line)
-                    .join('\n')
-            );
+            console.error(unexpectedStatusLines.map(line => '   ' + line).join('\n'));
             console.error('\n   Please commit or stash all changes before releasing.');
             console.error('   Run: git status');
             process.exit(1);
+        }
+        if (status) {
+            console.log(`✓ Worktree changes are limited to ${allowedDirtyFiles.join(', ')}`);
         }
 
         // Check current branch
@@ -458,19 +551,16 @@ function syncMainForDefaultFlow(selectedReleaseType, dryRun) {
     }
 }
 
-function requireCleanWorktree(message, guidance) {
-    const status = gitExecString(['status', '--porcelain']);
-    if (!status) {
+function requireCleanWorktree(message, guidance, options = {}) {
+    const { allowedDirtyFiles = [] } = options;
+    const status = gitExecArray(['status', '--porcelain'], { encoding: 'utf8' }).trimEnd();
+    const unexpectedStatusLines = getUnexpectedStatusLines(status, allowedDirtyFiles);
+    if (unexpectedStatusLines.length === 0) {
         return;
     }
 
     console.error(message);
-    console.error(
-        status
-            .split('\n')
-            .map(line => '   ' + line)
-            .join('\n')
-    );
+    console.error(unexpectedStatusLines.map(line => '   ' + line).join('\n'));
     if (guidance) {
         console.error(guidance);
     }
@@ -480,7 +570,8 @@ function requireCleanWorktree(message, guidance) {
 function fastForwardMainFromOrigin(options = {}) {
     const {
         dirtyMessage = '❌ Local main is behind origin/main, but the worktree has uncommitted changes.',
-        dirtyGuidance = '   Commit or stash the changes, then run: node scripts/release.js'
+        dirtyGuidance = '   Commit or stash the changes, then run: node scripts/release.js',
+        allowedDirtyFiles = []
     } = options;
 
     gitExecArray(['fetch', 'origin', 'main'], { stdio: 'pipe' });
@@ -491,7 +582,7 @@ function fastForwardMainFromOrigin(options = {}) {
         return false;
     }
 
-    requireCleanWorktree(dirtyMessage, dirtyGuidance);
+    requireCleanWorktree(dirtyMessage, dirtyGuidance, { allowedDirtyFiles });
 
     const mergeBase = gitExecString(['merge-base', 'main', 'origin/main']);
     if (mergeBase !== localCommit) {
@@ -736,19 +827,167 @@ function validateReleaseNotes(version) {
 }
 
 function getPullRequestInfo(selector) {
-    return runGhJson(['pr', 'view', String(selector), '--json', 'number,url,state,mergedAt,mergeCommit']);
+    return runGhJson(['pr', 'view', String(selector), '--json', pullRequestInfoFields]);
 }
 
 function tryGetPullRequestInfo(selector) {
-    return tryRunGhJson(['pr', 'view', String(selector), '--json', 'number,url,state,mergedAt,mergeCommit']);
+    return tryRunGhJson(['pr', 'view', String(selector), '--json', pullRequestInfoFields]);
+}
+
+function parseReleaseVersionFromBranch(branchName) {
+    const match = /^release\/(\d+\.\d+\.\d+)$/.exec(branchName || '');
+    return match ? match[1] : null;
+}
+
+function getPullRequestCheckName(check) {
+    return check.name || check.context || check.workflowName || 'Unnamed check';
+}
+
+function normalizePullRequestCheckValue(value) {
+    return value ? String(value).toUpperCase() : '';
+}
+
+function getPullRequestCheckResult(check) {
+    const state = normalizePullRequestCheckValue(check.state);
+    if (state) {
+        if (successfulPullRequestStatusStates.has(state)) {
+            return { result: 'successful', detail: state };
+        }
+        if (failedPullRequestStatusStates.has(state)) {
+            return { result: 'failed', detail: state };
+        }
+        return { result: 'pending', detail: state };
+    }
+
+    const status = normalizePullRequestCheckValue(check.status);
+    const conclusion = normalizePullRequestCheckValue(check.conclusion);
+    if (status === 'COMPLETED' || conclusion) {
+        if (successfulPullRequestCheckConclusions.has(conclusion)) {
+            return { result: 'successful', detail: conclusion };
+        }
+        if (failedPullRequestCheckConclusions.has(conclusion) || status === 'COMPLETED') {
+            return { result: 'failed', detail: conclusion || status };
+        }
+    }
+
+    return { result: 'pending', detail: status || 'PENDING' };
+}
+
+function summarizePullRequestChecks(checks) {
+    const summary = {
+        total: checks.length,
+        successful: [],
+        pending: [],
+        failed: []
+    };
+
+    checks.forEach(check => {
+        const checkResult = getPullRequestCheckResult(check);
+        const describedCheck = {
+            name: getPullRequestCheckName(check),
+            detail: checkResult.detail
+        };
+        summary[checkResult.result].push(describedCheck);
+    });
+
+    return summary;
+}
+
+function logPendingPullRequestChecks(prInfo, summary) {
+    if (summary.total === 0) {
+        console.log(`Waiting for pull request #${prInfo.number} checks to start...`);
+        return;
+    }
+
+    console.log(`Waiting for pull request #${prInfo.number} checks (${summary.successful.length}/${summary.total} passed)...`);
+    summary.pending.slice(0, 5).forEach(check => {
+        console.log(`   - ${check.name}: ${check.detail}`);
+    });
+    if (summary.pending.length > 5) {
+        console.log(`   - ${summary.pending.length - 5} more pending checks`);
+    }
+}
+
+function failForClosedPullRequest(prInfo) {
+    if (prInfo.state === 'CLOSED') {
+        console.error(`❌ Pull request #${prInfo.number} was closed without merging.`);
+        console.error('   Run the release script again after preparing a new release pull request.');
+        process.exit(1);
+    }
+}
+
+function failForUnmergeablePullRequest(prInfo) {
+    if (prInfo.isDraft) {
+        console.error(`❌ Pull request #${prInfo.number} is a draft and cannot be merged automatically.`);
+        process.exit(1);
+    }
+
+    if (prInfo.reviewDecision === 'REVIEW_REQUIRED') {
+        console.error(`❌ Pull request #${prInfo.number} requires review before it can be merged.`);
+        process.exit(1);
+    }
+
+    if (prInfo.reviewDecision === 'CHANGES_REQUESTED') {
+        console.error(`❌ Pull request #${prInfo.number} has requested changes.`);
+        process.exit(1);
+    }
+
+    if (prInfo.mergeStateStatus === 'DIRTY') {
+        console.error(`❌ Pull request #${prInfo.number} has merge conflicts.`);
+        process.exit(1);
+    }
+}
+
+function waitForPullRequestChecks(prInfo) {
+    console.log('\nRelease pull request is ready:');
+    console.log(`   ${prInfo.url}`);
+    console.log('\nWaiting for CI to pass before merging automatically.\n');
+
+    const deadline = Date.now() + pullRequestChecksTimeoutMs;
+
+    while (Date.now() < deadline) {
+        let latestPrInfo;
+        try {
+            latestPrInfo = getPullRequestInfo(prInfo.number);
+        } catch (error) {
+            console.log(`⚠️  Could not read pull request status: ${error.message}`);
+            sleep(pullRequestPollIntervalMs);
+            continue;
+        }
+
+        if (latestPrInfo.mergedAt || latestPrInfo.state === 'MERGED') {
+            console.log(`✓ Pull request #${latestPrInfo.number} merged`);
+            return latestPrInfo;
+        }
+
+        failForClosedPullRequest(latestPrInfo);
+        failForUnmergeablePullRequest(latestPrInfo);
+
+        const checks = Array.isArray(latestPrInfo.statusCheckRollup) ? latestPrInfo.statusCheckRollup : [];
+        const summary = summarizePullRequestChecks(checks);
+
+        if (summary.failed.length > 0) {
+            console.error(`❌ Pull request #${latestPrInfo.number} checks failed:`);
+            summary.failed.forEach(check => console.error(`   - ${check.name}: ${check.detail}`));
+            process.exit(1);
+        }
+
+        if (summary.total > 0 && summary.pending.length === 0) {
+            console.log(`✓ Pull request #${latestPrInfo.number} checks passed`);
+            return latestPrInfo;
+        }
+
+        logPendingPullRequestChecks(latestPrInfo, summary);
+        sleep(pullRequestPollIntervalMs);
+    }
+
+    console.error(`❌ Pull request checks did not complete within ${pullRequestChecksTimeoutMs / 60000} minutes.`);
+    console.error(`   Check status: ${prInfo.url}`);
+    process.exit(1);
 }
 
 function waitForPullRequestMerge(prInfo) {
-    console.log('\nRelease pull request is ready:');
-    console.log(`   ${prInfo.url}`);
-    console.log('\nMerge the pull request after CI passes.');
-    console.log('This script will wait here, then publish the tag after main is updated.');
-    console.log('Press Ctrl+C to stop waiting; you can run node scripts/release.js later to publish.\n');
+    console.log(`Waiting for pull request #${prInfo.number} to merge...`);
 
     while (true) {
         let latestPrInfo;
@@ -765,22 +1004,105 @@ function waitForPullRequestMerge(prInfo) {
             return latestPrInfo;
         }
 
-        if (latestPrInfo.state === 'CLOSED') {
-            console.error(`❌ Pull request #${latestPrInfo.number} was closed without merging.`);
-            console.error('   Run the release script again after preparing a new release pull request.');
-            process.exit(1);
-        }
+        failForClosedPullRequest(latestPrInfo);
 
         console.log(`Waiting for pull request #${latestPrInfo.number} to merge...`);
         sleep(pullRequestPollIntervalMs);
     }
 }
 
-function syncMergedReleaseToMain(expectedVersion) {
+function mergePullRequest(prInfo) {
+    const latestPrInfo = getPullRequestInfo(prInfo.number);
+    if (latestPrInfo.mergedAt || latestPrInfo.state === 'MERGED') {
+        console.log(`✓ Pull request #${latestPrInfo.number} merged`);
+        return latestPrInfo;
+    }
+
+    failForClosedPullRequest(latestPrInfo);
+    failForUnmergeablePullRequest(latestPrInfo);
+
+    console.log(`\nMerging pull request #${latestPrInfo.number}...`);
+    const args = ['pr', 'merge', String(latestPrInfo.number), '--merge', '--delete-branch'];
+    if (latestPrInfo.headRefOid) {
+        args.push('--match-head-commit', latestPrInfo.headRefOid);
+    }
+
+    try {
+        const output = runGh(args);
+        if (output) {
+            console.log(output);
+        }
+    } catch (error) {
+        console.error(`❌ Could not merge pull request #${latestPrInfo.number}.`);
+        console.error(`   ${error.message}`);
+        process.exit(1);
+    }
+
+    return waitForPullRequestMerge(latestPrInfo);
+}
+
+function completeReleasePullRequest(prInfo) {
+    const checkedPrInfo = waitForPullRequestChecks(prInfo);
+    if (checkedPrInfo.mergedAt || checkedPrInfo.state === 'MERGED') {
+        return checkedPrInfo;
+    }
+
+    return mergePullRequest(checkedPrInfo);
+}
+
+function findOpenReleasePullRequest(currentVersion) {
+    if (!commandAvailable('gh')) {
+        return null;
+    }
+
+    const pullRequests = tryRunGhJson([
+        'pr',
+        'list',
+        '--state',
+        'open',
+        '--base',
+        'main',
+        '--limit',
+        '50',
+        '--json',
+        'number,url,title,headRefName,baseRefName,createdAt'
+    ]);
+
+    if (!Array.isArray(pullRequests)) {
+        return null;
+    }
+
+    const releasePullRequests = pullRequests
+        .map(prInfo => ({
+            ...prInfo,
+            releaseVersion: parseReleaseVersionFromBranch(prInfo.headRefName)
+        }))
+        .filter(prInfo => prInfo.releaseVersion && compareVersions(prInfo.releaseVersion, currentVersion) > 0);
+
+    if (releasePullRequests.length === 0) {
+        return null;
+    }
+
+    if (releasePullRequests.length > 1) {
+        console.error('❌ Multiple open release pull requests found:');
+        releasePullRequests.forEach(prInfo => {
+            console.error(`   - #${prInfo.number}: ${prInfo.url}`);
+        });
+        console.error('   Close the stale release pull requests, then run: node scripts/release.js');
+        process.exit(1);
+    }
+
+    return releasePullRequests[0];
+}
+
+function syncMergedReleaseToMain(expectedVersion, options = {}) {
+    const { allowedDirtyFiles = [] } = options;
+
     try {
         requireCleanWorktree(
             '❌ Worktree has uncommitted changes before syncing merged release:',
-            '   Commit or stash the changes, then run: node scripts/release.js'
+            '   Commit or stash the changes, then run: node scripts/release.js',
+            { allowedDirtyFiles }
         );
 
         const currentBranch = gitExecString(['rev-parse', '--abbrev-ref', 'HEAD']);
@@ -788,7 +1110,7 @@ function syncMergedReleaseToMain(expectedVersion) {
             gitExecArray(['checkout', 'main'], { stdio: 'inherit' });
         }
 
-        fastForwardMainFromOrigin();
+        fastForwardMainFromOrigin({ allowedDirtyFiles });
 
         const mergedManifest = parseJsonFile(path.join(projectRoot, 'manifest.json'), 'manifest.json');
         validateManifest(mergedManifest);
@@ -1002,6 +1324,9 @@ function prepareRelease(releaseType, manifest, currentVersion, newVersion) {
     validateReleaseNotes(newVersion);
     checkVersionOverflow(...currentVersion.split('.').map(Number), releaseType);
     preReleaseChecks();
+    if (!isDryRun) {
+        requireGitHubCliForReleaseAutomation();
+    }
     checkExistingTag(newVersion);
     const releaseBranch = checkReleaseBranchAvailable(newVersion);
 
@@ -1180,23 +1505,19 @@ function prepareRelease(releaseType, manifest, currentVersion, newVersion) {
     }
 
     if (prInfo) {
-        waitForPullRequestMerge(prInfo);
+        completeReleasePullRequest(prInfo);
         const mergedManifest = syncMergedReleaseToMain(newVersion);
         publishRelease(mergedManifest, newVersion);
         return;
     }
 
-    console.log('\nNext steps:');
-    console.log('1. Wait for CI to pass on the release pull request');
-    console.log('2. Merge the pull request into main');
-    console.log('3. Run: node scripts/release.js\n');
+    console.error('❌ Release pull request could not be created.');
+    process.exit(1);
 }
 
 function createReleasePullRequest(releaseBranch, newVersion) {
     if (!commandAvailable('gh')) {
-        console.log('⚠️  GitHub CLI not found; create the release pull request manually.');
-        console.log(`   Branch: ${releaseBranch}`);
-        return null;
+        throw new Error('GitHub CLI not found');
     }
 
     try {
@@ -1228,8 +1549,7 @@ function createReleasePullRequest(releaseBranch, newVersion) {
         }
 
         console.log('✓ Created release pull request');
-        console.log('⚠️  Could not read pull request details; publish after merge with: node scripts/release.js');
-        return null;
+        throw new Error('Could not read release pull request details');
     } catch (error) {
         const existingPrInfo = tryGetPullRequestInfo(releaseBranch);
         if (existingPrInfo) {
@@ -1237,16 +1557,16 @@ function createReleasePullRequest(releaseBranch, newVersion) {
             return existingPrInfo;
         }
 
-        console.log('⚠️  Could not create the release pull request automatically.');
-        console.log(`   Create it manually from branch: ${releaseBranch}`);
-        return null;
+        throw new Error(`Could not create release pull request from ${releaseBranch}: ${getCommandErrorMessage(error)}`);
     }
 }
 
-function publishRelease(manifest, currentVersion) {
+function publishRelease(manifest, currentVersion, options = {}) {
+    const { allowedDirtyFiles = [] } = options;
+
     validateReleaseReadiness(manifest, currentVersion);
     validateReleaseNotes(currentVersion);
-    preReleaseChecks();
+    preReleaseChecks({ allowedDirtyFiles });
     checkExistingTag(currentVersion);
     verifyBuild();
 
@@ -1472,8 +1792,28 @@ if (hasValidArg) {
 
     if (!localTagExists && !remoteTagExists) {
         console.log(`\nCurrent version ${currentVersion} is not tagged. Publishing merged release.`);
-        publishRelease(manifest, currentVersion);
+        publishRelease(manifest, currentVersion, { allowedDirtyFiles: releaseAutomationAllowedDirtyFiles });
     } else {
-        showInteractivePrompt(currentVersion, versions);
+        const openReleasePullRequest = findOpenReleasePullRequest(currentVersion);
+        if (openReleasePullRequest) {
+            console.log(
+                `\nFound open release pull request #${openReleasePullRequest.number} for version ${openReleasePullRequest.releaseVersion}.`
+            );
+            requireGitHubCliForReleaseAutomation();
+            requireCleanWorktree(
+                '❌ Worktree has uncommitted changes before completing the release pull request:',
+                '   Commit or stash the changes, then run: node scripts/release.js',
+                { allowedDirtyFiles: releaseAutomationAllowedDirtyFiles }
+            );
+            completeReleasePullRequest(openReleasePullRequest);
+            const mergedManifest = syncMergedReleaseToMain(openReleasePullRequest.releaseVersion, {
+                allowedDirtyFiles: releaseAutomationAllowedDirtyFiles
+            });
+            publishRelease(mergedManifest, openReleasePullRequest.releaseVersion, {
+                allowedDirtyFiles: releaseAutomationAllowedDirtyFiles
+            });
+        } else {
+            showInteractivePrompt(currentVersion, versions);
+        }
     }
 }
