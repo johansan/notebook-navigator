@@ -75,7 +75,7 @@ function mockVaultFiles(app: App, filesByPath: Map<string, TFile>): void {
 describe('OmnisearchService', () => {
     afterEach(() => {
         vi.restoreAllMocks();
-        Reflect.deleteProperty(globalThis, 'omnisearch');
+        Reflect.deleteProperty(activeWindow, 'omnisearch');
     });
 
     it('appends a scoped path filter when pathScope is safe', async () => {

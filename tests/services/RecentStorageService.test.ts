@@ -46,7 +46,7 @@ vi.mock('../../src/utils/localStorage', () => {
     };
 });
 
-vi.stubGlobal('window', globalThis);
+vi.stubGlobal('window', activeWindow);
 
 import { RecentStorageService } from '../../src/services/RecentStorageService';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
