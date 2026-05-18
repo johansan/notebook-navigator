@@ -1,6 +1,6 @@
 # Notebook Navigator Theming Guide
 
-Updated: March 16, 2026
+Updated: May 17, 2026
 
 ## Table of Contents
 
@@ -203,6 +203,7 @@ Border variables apply to navigation rows, file rows, count badges, and file pil
 | `--nn-theme-file-task-icon-color`                 | `var(--nn-theme-navitem-icon-color)`          | Icon color for notes with unfinished tasks                      |
 | `--nn-theme-file-feature-border-radius`           | `4px`                                         | Corner radius for feature images (0-32px)                       |
 | `--nn-theme-file-date-color`                      | `var(--nn-theme-foreground-faded)`            | Text color for creation or modification dates                   |
+| `--nn-theme-file-word-count-color`                | `var(--nn-theme-foreground-faded)`            | Text color for word count suffixes                             |
 | `--nn-theme-file-parent-color`                    | `var(--nn-theme-foreground-faded)`            | Text color for parent folder path (when showing subfolders)     |
 | `--nn-theme-file-tag-color`                       | `var(--nn-theme-foreground-faded)`            | Text color for tag pills without custom colors                  |
 | `--nn-theme-file-tag-custom-color-text-color`     | `var(--nn-theme-navitem-name-color)`          | Text color for tags with custom backgrounds but no custom color |
@@ -216,6 +217,7 @@ Border variables apply to navigation rows, file rows, count badges, and file pil
 | `--nn-theme-file-selected-name-color`             | `var(--nn-theme-file-name-color)`             | Text color for file names when selected                         |
 | `--nn-theme-file-selected-preview-color`          | `var(--nn-theme-file-preview-color)`          | Text color for content preview when selected                    |
 | `--nn-theme-file-selected-date-color`             | `var(--nn-theme-foreground-muted)`            | Text color for file dates when selected                         |
+| `--nn-theme-file-selected-word-count-color`       | `var(--nn-theme-foreground-muted)`            | Text color for word count suffixes when selected                |
 | `--nn-theme-file-selected-parent-color`           | `var(--nn-theme-foreground-muted)`            | Text color for parent folder path when selected                 |
 | `--nn-theme-file-selected-tag-color`              | `var(--nn-theme-foreground-muted)`            | Text color for tag pills when selected                          |
 | `--nn-theme-file-selected-tag-bg`                 | `var(--nn-theme-file-tag-bg)`                 | Background color for tag pills when selected                    |
@@ -225,6 +227,7 @@ Border variables apply to navigation rows, file rows, count badges, and file pil
 | `--nn-theme-file-selected-inactive-name-color`    | `var(--nn-theme-file-selected-name-color)`    | File name color when selected and pane is inactive              |
 | `--nn-theme-file-selected-inactive-preview-color` | `var(--nn-theme-file-selected-preview-color)` | Content preview color when selected and pane is inactive        |
 | `--nn-theme-file-selected-inactive-date-color`    | `var(--nn-theme-file-selected-date-color)`    | File date color when selected and pane is inactive              |
+| `--nn-theme-file-selected-inactive-word-count-color` | `var(--nn-theme-file-selected-word-count-color)` | Word count suffix color when selected and pane is inactive      |
 | `--nn-theme-file-selected-inactive-parent-color`  | `var(--nn-theme-file-selected-parent-color)`  | Parent folder color when selected and pane is inactive          |
 | `--nn-theme-file-selected-inactive-tag-color`     | `var(--nn-theme-file-selected-tag-color)`     | Tag text color when selected and pane is inactive               |
 | `--nn-theme-file-selected-inactive-tag-bg`        | `var(--nn-theme-file-tag-bg)`                 | Tag background color when selected and pane is inactive         |
@@ -245,6 +248,7 @@ navigation pane background. In `primary` and `secondary` background modes, both 
 | `--nn-theme-file-compact-name-font-weight`      | `400`   | Font weight for file names in compact mode           |
 | `--nn-theme-file-preview-font-weight`           | `400`   | Font weight for file preview text                    |
 | `--nn-theme-file-date-font-weight`              | `400`   | Font weight for file dates                           |
+| `--nn-theme-file-word-count-font-weight`        | `400`   | Font weight for word count suffixes                  |
 | `--nn-theme-file-parent-font-weight`            | `400`   | Font weight for parent folder path                   |
 | `--nn-theme-file-tag-font-weight`               | `400`   | Font weight for tag and property pills               |
 
@@ -395,6 +399,7 @@ body {
   --nn-theme-file-task-icon-color: #afb1b3;
   --nn-theme-file-feature-border-radius: 3px;
   --nn-theme-file-date-color: #6a8759;
+  --nn-theme-file-word-count-color: #6a8759;
   --nn-theme-file-parent-color: #cc7832;
   --nn-theme-file-tag-color: #9876aa;
   --nn-theme-file-tag-custom-color-text-color: #ffffff;
@@ -408,6 +413,7 @@ body {
   --nn-theme-file-selected-name-color: #ffffff;
   --nn-theme-file-selected-preview-color: #c5c5c5;
   --nn-theme-file-selected-date-color: #a5dc86;
+  --nn-theme-file-selected-word-count-color: #a5dc86;
   --nn-theme-file-selected-parent-color: #ffd580;
   --nn-theme-file-selected-tag-color: #ffffff;
   --nn-theme-file-selected-tag-bg: #5a5f66;
@@ -417,6 +423,7 @@ body {
   --nn-theme-file-selected-inactive-name-color: #dfe3e8;
   --nn-theme-file-selected-inactive-preview-color: #b9bec6;
   --nn-theme-file-selected-inactive-date-color: #8fb275;
+  --nn-theme-file-selected-inactive-word-count-color: #8fb275;
   --nn-theme-file-selected-inactive-parent-color: #e3b173;
   --nn-theme-file-selected-inactive-tag-color: #dfe3e8;
   --nn-theme-file-selected-inactive-tag-bg: #4c5058;
@@ -438,6 +445,7 @@ body {
   --nn-theme-file-compact-name-font-weight: 400;
   --nn-theme-file-preview-font-weight: 400;
   --nn-theme-file-date-font-weight: 400;
+  --nn-theme-file-word-count-font-weight: 400;
   --nn-theme-file-parent-font-weight: 400;
   --nn-theme-file-tag-font-weight: 400;
 

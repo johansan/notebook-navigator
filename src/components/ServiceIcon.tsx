@@ -16,18 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { getIconService, useIconServiceVersion } from '../services/icons';
 
 interface ServiceIconProps {
     iconId: string;
     size?: number;
     className?: string;
+    style?: CSSProperties;
+    'data-has-color'?: 'true' | 'false';
     'aria-label'?: string;
     'aria-hidden'?: boolean;
 }
 
-export function ServiceIcon({ iconId, size, className, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden }: ServiceIconProps) {
+export function ServiceIcon({
+    iconId,
+    size,
+    className,
+    style,
+    'data-has-color': dataHasColor,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden
+}: ServiceIconProps) {
     const ref = useRef<HTMLSpanElement | null>(null);
     const iconServiceVersion = useIconServiceVersion();
 
@@ -39,5 +49,7 @@ export function ServiceIcon({ iconId, size, className, 'aria-label': ariaLabel, 
         getIconService().renderIcon(ref.current, iconId, size);
     }, [iconId, iconServiceVersion, size]);
 
-    return <span ref={ref} className={className} aria-label={ariaLabel} aria-hidden={ariaHidden} />;
+    return (
+        <span ref={ref} className={className} style={style} data-has-color={dataHasColor} aria-label={ariaLabel} aria-hidden={ariaHidden} />
+    );
 }

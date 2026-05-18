@@ -229,6 +229,182 @@
     justify-content: flex-start; /* Top-align content */
 }
 
+/* Manual property sort editing */
+.nn-manual-sort-scroller {
+    padding: 0 var(--nn-scroller-padding);
+}
+
+.nn-manual-sort-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 0 1rem;
+}
+
+.nn-manual-sort-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0 var(--nn-file-item-padding-horizontal);
+}
+
+.nn-manual-sort-header-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.nn-manual-sort-title {
+    font-size: var(--nn-desktop-header-font-size);
+    font-weight: var(--nn-theme-list-header-breadcrumb-font-weight);
+    line-height: 1.3;
+    color: var(--nn-theme-list-heading-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nn-manual-sort-hint {
+    font-size: var(--nn-root-reorder-hint-font-size);
+    color: var(--nn-theme-foreground-muted);
+    line-height: 1.25;
+}
+
+.nn-manual-sort-done {
+    flex-shrink: 0;
+    padding: 0 0.75rem;
+    cursor: pointer;
+}
+
+.nn-manual-sort-done:disabled {
+    cursor: default;
+}
+
+.nn-manual-sort-list {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+
+.nn-manual-sort-section-header {
+    margin-top: var(--nn-list-group-header-spacer-before);
+}
+
+.nn-manual-sort-list > .nn-manual-sort-section-header:first-child {
+    margin-top: 0;
+}
+
+.nn-manual-sort-sortable-item {
+    position: relative;
+    width: 100%;
+}
+
+.nn-manual-sort-sortable-item-sorting {
+    z-index: 2;
+}
+
+.nn-manual-sort-row {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    cursor: grab;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.nn-manual-sort-row-sorting {
+    z-index: 2;
+}
+
+.nn-manual-sort-row-sorting::after {
+    display: none;
+}
+
+.nn-manual-sort-row-hide-separator::after,
+.nn-manual-sort-row-has-custom-background::after,
+.nn-manual-sort-row-has-custom-background-next::after {
+    display: none;
+}
+
+.nn-manual-sort-row-has-custom-background-previous .nn-file.nn-has-custom-background {
+    --nn-file-top-left-radius: 0;
+    --nn-file-top-right-radius: 0;
+}
+
+.nn-manual-sort-row-has-custom-background-next .nn-file.nn-has-custom-background {
+    --nn-file-bottom-left-radius: 0;
+    --nn-file-bottom-right-radius: 0;
+}
+
+.nn-manual-sort-row-drag-block .nn-file.nn-selected .nn-file-content::before {
+    box-shadow: inset 0 0 0 2px var(--interactive-accent);
+}
+
+.nn-manual-sort-row-disabled {
+    cursor: default;
+}
+
+.nn-manual-sort-row:not(.nn-manual-sort-row-last)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: calc(
+        var(--nn-file-item-padding-horizontal) + var(--nn-file-icon-slot-width-mobile, var(--nn-file-icon-slot-width)) +
+            var(--nn-file-icon-slot-gap)
+    );
+    inset-inline-end: var(--nn-file-item-padding-horizontal);
+    height: var(--nn-separator-height);
+    background-color: var(--nn-theme-list-separator-color);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.nn-manual-sort-file {
+    flex: 1;
+    min-width: 0;
+}
+
+.nn-manual-sort-file .nn-file,
+.nn-manual-sort-file .nn-file-content,
+.nn-manual-sort-file .nn-file-inner-content {
+    height: auto;
+}
+
+.nn-file-manual-sort-disabled {
+    opacity: 0.55;
+}
+
+.notebook-navigator-mobile .nn-manual-sort-title {
+    font-size: var(--nn-mobile-header-font-size);
+}
+
+.notebook-navigator-mobile .nn-manual-sort-hint {
+    font-size: var(--nn-root-reorder-hint-font-size-mobile);
+}
+
+.notebook-navigator-mobile .nn-manual-sort-row {
+    cursor: default;
+}
+
+.notebook-navigator-mobile .nn-manual-sort-row-draggable:not(.nn-manual-sort-row-last)::after {
+    inset-inline-start: calc(
+        var(--nn-file-item-padding-horizontal) + var(--nn-file-icon-slot-width-mobile, var(--nn-file-icon-slot-width)) +
+            var(--nn-file-icon-slot-gap)
+    );
+    inset-inline-end: calc(var(--nn-file-item-padding-horizontal) + 28px + var(--nn-file-item-padding-horizontal));
+}
+
+.notebook-navigator-mobile .nn-manual-sort-row .nn-drag-handle {
+    align-self: center;
+    width: calc(28px + var(--nn-file-item-padding-horizontal));
+    padding-inline-end: var(--nn-file-item-padding-horizontal);
+    box-sizing: border-box;
+}
+
 /* File name - primary text with ellipsis overflow */
 .nn-file-name {
     font-size: var(--nn-file-name-size-mobile, var(--nn-file-name-size));
@@ -253,6 +429,11 @@
 
 .nn-file-name[data-has-color='true'] {
     color: var(--nn-file-name-custom-color);
+}
+
+.nn-file-word-count-suffix {
+    color: var(--nn-theme-file-word-count-color);
+    font-weight: var(--nn-theme-file-word-count-font-weight);
 }
 
 .nn-file-icon {
@@ -295,10 +476,6 @@
 
 .nn-file.nn-selected .nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
     color: var(--nn-theme-file-task-icon-color);
-}
-
-.nn-file-icon[data-has-color='true'] svg {
-    stroke-width: 2.4;
 }
 
 /* Quick actions panel - horizontal container for action icons */
@@ -469,10 +646,6 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-}
-
-.nn-parent-folder-icon[data-has-color='true'] svg {
-    stroke-width: 2.4;
 }
 
 .nn-parent-folder-label {

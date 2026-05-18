@@ -66,7 +66,6 @@ function createSettings(overrides?: Partial<NotebookNavigatorSettings>): Noteboo
     return {
         ...DEFAULT_SETTINGS,
         showFilePreview: false,
-        notePropertyType: 'none',
         featureImageProperties: ['thumbnail'],
         downloadExternalFeatureImages: true,
         ...overrides

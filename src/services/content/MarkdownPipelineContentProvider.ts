@@ -22,10 +22,13 @@ import { type ContentProviderType } from '../../interfaces/IContentProvider';
 import { NotebookNavigatorSettings } from '../../settings';
 import { type PropertyItem, type PropertyValueKind, FileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance } from '../../storage/fileOperations';
-import { getCachedCommaSeparatedList } from '../../utils/commaSeparatedListUtils';
 import { areStringArraysEqual } from '../../utils/arrayUtils';
-import { arePropertyItemsEqual, hasPropertyFrontmatterFields } from '../../utils/propertyUtils';
-import { getActivePropertyFields } from '../../utils/vaultProfiles';
+import {
+    arePropertyItemsEqual,
+    getPropertyFrontmatterFields,
+    getPropertyFrontmatterFieldSignature,
+    hasPropertyFrontmatterFields
+} from '../../utils/propertyUtils';
 import {
     type FenceMarkerChar,
     isFenceClose,
@@ -472,7 +475,8 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             // Toggling preview clears stale text while the disabled state hides the intermediate empty rows.
             oldSettings.showFilePreview !== newSettings.showFilePreview;
 
-        const shouldClearProperties = getActivePropertyFields(oldSettings) !== getActivePropertyFields(newSettings);
+        const shouldClearProperties =
+            getPropertyFrontmatterFieldSignature(oldSettings) !== getPropertyFrontmatterFieldSignature(newSettings);
 
         const featureImagePropertiesChanged = !areStringArraysEqual(oldSettings.featureImageProperties, newSettings.featureImageProperties);
         const featureImageExcludePropertiesChanged = !areStringArraysEqual(
@@ -559,7 +563,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             return { update: null, processed: true };
         }
 
-        const propertyNameFields = getCachedCommaSeparatedList(getActivePropertyFields(settings));
+        const propertyNameFields = getPropertyFrontmatterFields(settings);
         const propertiesEnabled = propertyNameFields.length > 0;
         const previewPropertiesEnabled = settings.showFilePreview && settings.previewProperties.length > 0;
         const featureImagePropertiesEnabled = settings.showFeatureImage && settings.featureImageProperties.length > 0;

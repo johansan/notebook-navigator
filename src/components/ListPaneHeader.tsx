@@ -35,11 +35,15 @@ import { resolveFolderNoteClickOpenContext } from '../utils/keyboardOpenContext'
 import { normalizeTagPath } from '../utils/tagUtils';
 import { runAsyncAction } from '../utils/async';
 import { resolveUXIcon } from '../utils/uxIcons';
+import type { ManualSortNewFilePlacementContext } from '../utils/manualSort';
 
 interface ListPaneHeaderProps {
     onHeaderClick?: () => void;
     isSearchActive?: boolean;
     onSearchToggle?: () => void;
+    onManualSortStart?: (propertyKey: string) => void;
+    getManualSortNewFileContext?: () => ManualSortNewFilePlacementContext | null;
+    actionsDisabled?: boolean;
     desktopTitle: string;
     breadcrumbSegments: BreadcrumbSegment[];
     iconName: string;
@@ -50,6 +54,9 @@ export function ListPaneHeader({
     onHeaderClick,
     isSearchActive,
     onSearchToggle,
+    onManualSortStart,
+    getManualSortNewFileContext,
+    actionsDisabled = false,
     desktopTitle,
     breadcrumbSegments,
     iconName,
@@ -76,11 +83,11 @@ export function ListPaneHeader({
         handleSortMenu,
         handleToggleDescendants,
         descendantsTooltip,
-        getCurrentSortOption,
+        getSortIcon,
         hasAppearanceOrSortSelection,
         hasCustomSortOrGroup,
         hasCustomAppearance
-    } = useListActions();
+    } = useListActions({ onManualSortStart, getManualSortNewFileContext });
     const listToolbarVisibility = settings.toolbarVisibility.list;
     const showBackButton = listToolbarVisibility.back && uiState.singlePane;
     const showSearchButton = listToolbarVisibility.search;
@@ -107,9 +114,8 @@ export function ListPaneHeader({
     }, []);
 
     const sortIconId = useMemo(() => {
-        const sortOption = getCurrentSortOption();
-        return resolveUXIcon(settings.interfaceIcons, sortOption.endsWith('-desc') ? 'list-sort-descending' : 'list-sort-ascending');
-    }, [getCurrentSortOption, settings.interfaceIcons]);
+        return getSortIcon();
+    }, [getSortIcon]);
 
     // Folder note interactions only apply when a folder is the active selection.
     const selectedFolder = selectionState.selectionType === ItemType.FOLDER ? selectionState.selectedFolder : null;
@@ -377,7 +383,7 @@ export function ListPaneHeader({
                             className={`nn-icon-button ${isSearchActive ? 'nn-icon-button-active' : ''}`}
                             aria-label={strings.paneHeader.search}
                             onClick={onSearchToggle}
-                            disabled={!hasNavigationSelection}
+                            disabled={actionsDisabled || !hasNavigationSelection}
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'list-search')} />
@@ -388,7 +394,7 @@ export function ListPaneHeader({
                             className={`nn-icon-button ${includeDescendantNotes ? 'nn-icon-button-active' : ''}`}
                             aria-label={descendantsTooltip}
                             onClick={handleToggleDescendants}
-                            disabled={!hasNavigationSelection}
+                            disabled={actionsDisabled || !hasNavigationSelection}
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'list-descendants')} />
@@ -399,7 +405,7 @@ export function ListPaneHeader({
                             className={`nn-icon-button ${hasCustomSortOrGroup ? 'nn-icon-button-active' : ''}`}
                             aria-label={strings.paneHeader.changeSortAndGroup}
                             onClick={handleSortMenu}
-                            disabled={!hasAppearanceOrSortSelection}
+                            disabled={actionsDisabled || !hasAppearanceOrSortSelection}
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={sortIconId} />
@@ -410,7 +416,7 @@ export function ListPaneHeader({
                             className={`nn-icon-button ${hasCustomAppearance ? 'nn-icon-button-active' : ''}`}
                             aria-label={strings.paneHeader.changeAppearance}
                             onClick={handleAppearanceMenu}
-                            disabled={!hasAppearanceOrSortSelection}
+                            disabled={actionsDisabled || !hasAppearanceOrSortSelection}
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'list-appearance')} />
@@ -423,7 +429,7 @@ export function ListPaneHeader({
                             onClick={() => {
                                 runAsyncAction(() => handleNewFile());
                             }}
-                            disabled={!canCreateNewFile}
+                            disabled={actionsDisabled || !canCreateNewFile}
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'list-new-note')} />

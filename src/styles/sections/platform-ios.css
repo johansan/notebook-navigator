@@ -160,7 +160,7 @@
     border-radius: 999px;
 }
 
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-mobile-toolbar-button svg {
+.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-mobile-toolbar-button svg:not(.nn-vault-icon-svg) {
     stroke-width: 2;
 }
 

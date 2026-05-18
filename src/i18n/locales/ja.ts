@@ -29,6 +29,7 @@ export const STRINGS_JA = {
         remove: '削除', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'デフォルトに戻す', // Button text for restoring values to defaults (English: Restore default)
         submit: '送信', // Button text for submitting forms and dialogs (English: Submit)
+        save: '保存', // Button text for saving settings and dialogs (English: Save)
         configure: '設定', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'ライトモード', // Label for light theme mode (English: Light mode)
         darkMode: 'ダークモード', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_JA = {
         pinnedSection: 'ピン留め', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'ノート', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'ファイル', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (非表示)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (非表示)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'グループを折りたたむ',
+        expandGroup: 'グループを展開',
+        manualSortTitle: '手動並べ替え: {property}',
+        manualSortHint: 'ドラッグして並べ替えます。並び順は数値インデックス値としてプロパティ「{property}」に保存されます。',
+        manualSortNonMarkdownHint: 'Markdown 以外のファイルは下部に表示され、並べ替えできません。',
+        unsortedSection: '未ソート',
+        manualSortDone: '完了',
+        manualSortMultipleWriteFailure: '{count} 件のファイルが失敗しました。最初: {path}: {message}'
     },
 
     // Tag list
@@ -131,6 +140,9 @@ export const STRINGS_JA = {
         changeChildSortOrder: '並び順を変更',
         changeSortAndGroup: '並び順とグループを変更',
         defaultSort: 'デフォルト', // Label for default sorting mode (English: Default)
+        manualSort: '手動並べ替え',
+        editSortOrder: '並べ替え順を編集...',
+        removeSortProperty: '並べ替えプロパティを削除',
         descendants: '子孫',
         subfolders: 'サブフォルダー',
         subtags: 'サブタグ',
@@ -285,6 +297,14 @@ export const STRINGS_JA = {
             moveFileToFolder: 'ファイルを移動先...',
             moveMultipleNotesToFolder: '{count}個のノートを移動先...',
             moveMultipleFilesToFolder: '{count}個のファイルを移動先...',
+            setManualSortGroupHeader: 'グループヘッダーを設定',
+            changeManualSortGroupHeader: 'グループヘッダーを変更',
+            manualSortGroupHeader: {
+                title: 'グループヘッダー',
+                copyStyle: 'ヘッダースタイルをコピー',
+                pasteStyle: 'ヘッダースタイルを貼り付け',
+                remove: 'グループヘッダーを削除'
+            },
             addTag: 'タグを追加',
             addPropertyKey: 'プロパティを設定',
             removeTag: 'タグを削除',
@@ -389,6 +409,33 @@ export const STRINGS_JA = {
             applyAppearanceTitle: (target: string) => `${target}に外観を適用しますか？`,
             affectedCountMessage: (count: number) => `変更される既存のオーバーライド: ${count}。`
         },
+        manualSortConfirm: {
+            propertySortTitle: '手動並べ替えを使用しますか？',
+            propertySortMessage: (property: string, count: number) =>
+                `現在のビューを「${property}」を使った手動並べ替えに切り替えます。並び順を編集すると、必要に応じて ${count} 件のノートのそのプロパティに数値インデックス値が書き込まれます。`,
+            propertySortConfirmButton: '手動並べ替えを使用',
+            removePropertyTitle: '並べ替えプロパティを削除しますか？',
+            removePropertyMessage: (property: string, count: number) =>
+                `現在のリストの ${count} 件のノートから「${property}」を削除します。それらのノートの手動並べ替え順はクリアされます。`,
+            removePropertyConfirmButton: 'プロパティを削除',
+            compactTitle: 'インデックス値を圧縮しますか？',
+            compactMessage: (count: number) =>
+                `この並べ替えにはより多くの数値領域が必要です。${count} 件のノートに新しいインデックス値が割り当てられます。`,
+            compactConfirmButton: 'インデックス値を圧縮'
+        },
+        manualSortGroupHeader: {
+            title: 'グループヘッダーを設定',
+            titleLabel: 'タイトル',
+            placeholder: 'グループヘッダー',
+            icon: 'アイコン',
+            color: '色',
+            wordCount: 'ワード数を表示',
+            wordCountTarget: '目標ワード数',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'このフィールドが空の場合、グループ目標には設定 > ノート > ワード数で設定した目標プロパティが使われます。このグループに目標値を設定すると上書きできます。',
+            description: 'このノートのグループヘッダーをカスタマイズします。ヘッダーを削除するには、タイトルを空のままにします。'
+        },
         navRainbowSection: {
             title: (section: string) => `レインボーカラー: ${section}`
         },
@@ -427,6 +474,11 @@ export const STRINGS_JA = {
                 'list-descendants': 'サブフォルダからのノート',
                 'list-sort-ascending': '並べ替え: 昇順',
                 'list-sort-descending': '並べ替え: 降順',
+                'list-sort-modified': '更新日時で並べ替え',
+                'list-sort-created': '作成日時で並べ替え',
+                'list-sort-title': 'タイトルで並べ替え',
+                'list-sort-filename': 'ファイル名で並べ替え',
+                'list-sort-property': 'プロパティで並べ替え',
                 'list-appearance': '外観を変更',
                 'list-new-note': '新規ノート',
                 'nav-folder-open': 'フォルダ（開）',
@@ -700,6 +752,8 @@ export const STRINGS_JA = {
             propertiesRequireMarkdown: 'プロパティはMarkdownノートでのみサポートされています',
             propertySetOnNote: '1件のノートでプロパティを更新しました',
             propertySetOnNotes: '{count}件のノートでプロパティを更新しました',
+            manualSortPropertyRemovedFromNote: '1件のノートから並べ替えプロパティを削除しました',
+            manualSortPropertyRemovedFromNotes: '{count}件のノートから並べ替えプロパティを削除しました',
             iconPackDownloaded: '「{provider}」をダウンロードしました',
             iconPackUpdated: '「{provider}」を更新しました ({version})',
             iconPackRemoved: '「{provider}」を削除しました',
@@ -862,6 +916,9 @@ export const STRINGS_JA = {
             list: {
                 display: '外観',
                 organization: '整理',
+                groupHeaders: 'グループヘッダー',
+                propertySort: 'プロパティで並べ替え',
+                manualSort: '手動並べ替え',
                 pinnedNotes: 'ピン留めされたノート',
                 drawingPreviews: '描画プレビュー'
             },
@@ -875,7 +932,8 @@ export const STRINGS_JA = {
                 tags: 'タグ',
                 properties: 'プロパティ',
                 date: '日付',
-                parentFolder: '親フォルダ'
+                parentFolder: '親フォルダ',
+                wordCount: '単語数'
             }
         },
         syncMode: {
@@ -895,8 +953,8 @@ export const STRINGS_JA = {
                 }
             },
             sortNotesBy: {
-                name: 'ノートの並び順',
-                desc: 'ノートリストでのノートの並び順を選択します。',
+                name: 'デフォルトの並び順',
+                desc: 'ノートのデフォルトの並び順を選択します。',
                 options: {
                     'modified-desc': '編集日時（新しいものが上）',
                     'modified-asc': '編集日時（古いものが上）',
@@ -905,19 +963,24 @@ export const STRINGS_JA = {
                     'title-asc': 'タイトル（昇順）',
                     'title-desc': 'タイトル（降順）',
                     'filename-asc': 'ファイル名（昇順）',
-                    'filename-desc': 'ファイル名（降順）',
-                    'property-asc': 'プロパティ（昇順）',
-                    'property-desc': 'プロパティ（降順）'
+                    'filename-desc': 'ファイル名（降順）'
                 },
-                propertyOverride: {
-                    asc: 'プロパティ ‘{property}’（昇順）',
-                    desc: 'プロパティ ‘{property}’（降順）'
+                directions: {
+                    asc: '昇順',
+                    desc: '降順'
+                },
+                fields: {
+                    modified: '更新日時',
+                    created: '作成日時',
+                    title: 'タイトル',
+                    filename: 'ファイル名',
+                    property: 'プロパティ'
                 }
             },
             propertySortKey: {
-                name: 'ソートプロパティ',
-                desc: 'プロパティソートで使用されます。このfrontmatterプロパティを持つノートが最初にリストされ、プロパティの値でソートされます。配列は1つの値に結合されます。',
-                placeholder: 'order'
+                name: 'ソートに使うプロパティ',
+                desc: 'プロパティソートオプションとして表示されるカンマ区切りのfrontmatterプロパティ。配列値は1つの文字列に結合されます。これらのプロパティは変更されません。',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: '二次ソート',
@@ -928,6 +991,46 @@ export const STRINGS_JA = {
                     created: '作成日',
                     modified: '編集日'
                 }
+            },
+            propertySortInstructions: {
+                intro: '上記の各プロパティは、リストペインの並べ替えメニューに並べ替えオプションとして表示されます。選択すると、そのフロントマターの値でノートが並べ替えられます。'
+            },
+            manualSortPropertyKey: {
+                name: '手動並べ替え用プロパティ',
+                desc: '手動並べ替えの数値インデックス値を保存するために使用される frontmatter プロパティ。'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'グループヘッダープロパティ',
+                desc: 'カスタムグループヘッダーを保存するために使用される frontmatter プロパティ。'
+            },
+            groupHeadersInstructions: {
+                intro: 'カスタムグループヘッダーは、リストペインでノートの上に表示されます。',
+                items: [
+                    'リストペインの並べ替えメニューから、グループ化を **カスタム** に設定します。',
+                    'ノートを右クリックして **グループヘッダーを設定** を選ぶと、その上にヘッダーを追加できます。'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: '新規ノートの配置',
+                desc: '現在のリストが手動並べ替えを使用しているときに、新規ノートを配置する場所を選択します。',
+                options: {
+                    top: '先頭',
+                    bottom: '末尾',
+                    'below-selected-note': '選択ノートの下',
+                    unsorted: '未ソート'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: '手動並べ替えの前に確認',
+                desc: '手動並べ替えプロパティを初めてノートに書き込む前に警告を表示します。無効にすると、ノートは警告なしでプロパティを受け取ります。'
+            },
+            manualSortInstructions: {
+                intro: '手動並べ替えは、各ノートの frontmatter プロパティに数値インデックス値を書き込みます。インデックスのないノートは「未ソート」の下に表示されます。',
+                items: [
+                    'ソートメニューから **手動並べ替え** を選択して手動並べ替えを有効にします。その後、ノートを並べ替える方法は 2 つあります。',
+                    'ソートメニューから **並べ替え順を編集...** を選んで並べ替えビューを開きます。マウスでドラッグするか、モバイルではタッチでドラッグします。デスクトップでは、**Cmd/Ctrl** または **Shift** クリックで複数のノートを選択し、いずれかをドラッグするとグループ全体が移動します。',
+                    'リストペインで 1 つのノートを選択するか複数選択し、**Cmd/Ctrl + Arrow Up/Down** を押すと選択範囲を上下に移動できます。'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'リスト変更時に選択ファイルへスクロール',
@@ -946,12 +1049,12 @@ export const STRINGS_JA = {
                 desc: 'フォルダとタグのノート数を「現在 ▾ 子孫」形式で表示します。'
             },
             groupNotes: {
-                name: 'ノートをグループ化',
-                desc: '日付またはフォルダでグループ化されたノート間に見出しを表示します。フォルダでのグループ化が有効な場合、タグビューは日付グループを使用します。',
+                name: 'デフォルトのグループ化',
+                desc: 'カスタムは frontmatter で定義されたヘッダーを表示します。日付はノートを日付でグループ化します。フォルダはノートをフォルダでグループ化します。タグとプロパティビューでは、フォルダが選択されている場合は日付グループが使用されます。',
                 options: {
-                    none: 'グループ化しない',
-                    date: '日付でグループ化',
-                    folder: 'フォルダでグループ化'
+                    custom: 'カスタム',
+                    date: '日付',
+                    folder: 'フォルダ'
                 }
             },
             showSelectedNavigationPills: {
@@ -1201,8 +1304,7 @@ export const STRINGS_JA = {
             calendarLocale: {
                 name: 'ロケール',
                 desc: 'カレンダーの日付形式、週番号、週の開始曜日を制御します。',
-                incompatibleWeekPatternWarning:
-                    'ウィークリーノートのパターンがISO週トークン（"W" または "G"）を使用しています。カレンダーはこのロケールの週の開始曜日ではなく、月曜日から始まる週を表示します。',
+                weekPathMismatchWarning: '表示されるカレンダーとウィークリーノートのパスで、週の開始曜日または週番号が異なります。',
                 options: {
                     systemDefault: 'デフォルト'
                 }
@@ -1273,6 +1375,14 @@ export const STRINGS_JA = {
                     dailyNotes: 'フォルダと日付形式はデイリーノートコアプラグインで設定されています。'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: '定期ノートのロケール',
+                desc: 'Notebook Navigator の定期ノートのパスでローカライズされた月名、曜日名、週番号、週の開始曜日を制御します。',
+                options: {
+                    calendar: 'カレンダー',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'ルートフォルダ',
@@ -1298,8 +1408,10 @@ export const STRINGS_JA = {
             calendarCustomWeekPattern: {
                 name: 'ウィークリーノート',
                 parsingError: 'パターンは完全な週（週年、週番号）としてフォーマットされ、再度パースできる必要があります。',
-                localeMismatchWarning:
-                    'このパターンはISO週トークン（"W" または "G"）を使用しています。カレンダーは月曜日から始まる週を表示します。ウィークリーノートが選択したロケールに従う場合は、"w" または "g" を使用してください。'
+                weekPathMismatchWarning:
+                    'ウィークリーノートのパスは定期ノートのロケールを使用します。一致するロケールを使用するか、月曜日から始まる週には "GGGG" と "WW" を使用してください。',
+                mixedWeekTokensWarning:
+                    'このパターンは月曜日基準の週トークン（"W" または "G"）とロケール基準の週トークン（"w" または "g"）を混在させています。一貫して 1 つのセットを使用してください。月曜日から始まる週には "GGGG" と "WW"、ウィークリーノートが選択したロケールに従う場合は "gggg" と "ww" を使用してください。'
             },
             calendarCustomMonthPattern: {
                 name: 'マンスリーノート',
@@ -1532,14 +1644,25 @@ export const STRINGS_JA = {
                 name: 'コンパクトモードでプロパティを表示',
                 desc: 'コンパクトモードが有効な時にプロパティを表示します。'
             },
-            notePropertyType: {
-                name: 'ノートプロパティ',
-                desc: 'ファイル項目に表示するノートプロパティを選択します。',
+            showWordCount: {
+                name: '単語数を表示',
+                desc: 'ファイル項目にノートの単語数を表示します。'
+            },
+            wordCountPlacement: {
+                name: '配置',
+                desc: '単語数を表示する場所を選択します。',
                 options: {
-                    frontmatter: 'フロントマタープロパティ',
-                    wordCount: '文字数',
-                    none: 'なし'
+                    title: 'タイトル内',
+                    property: 'プロパティとして'
                 }
+            },
+            wordCountTargetProperty: {
+                name: '目標プロパティ',
+                desc: '目標単語数を含むフロントマターのプロパティキー。目標を非表示にするには空にします。'
+            },
+            showWordCountPercentage: {
+                name: '目標パーセントを表示',
+                desc: '目標単語数がある場合、進捗パーセントのみを表示します。'
             },
             propertyFields: {
                 name: 'プロパティキー（保管庫プロファイル）',

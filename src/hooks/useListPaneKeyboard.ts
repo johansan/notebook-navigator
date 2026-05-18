@@ -34,6 +34,7 @@ import { Virtualizer } from '@tanstack/react-virtual';
 import { useSelectionState, useSelectionDispatch, resolvePrimarySelectedFile } from '../context/SelectionContext';
 import { useServices, useFileSystemOps } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
+import type { MultiSelectModifier } from '../settings/types';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import { useUIState, useUIDispatch } from '../context/UIStateContext';
 import { getSupportedLeaves, ListPaneItemType } from '../types';
@@ -46,7 +47,7 @@ import { useFileOpener } from './useFileOpener';
 import { matchesShortcut, KeyboardShortcutAction } from '../utils/keyboardShortcuts';
 import { runAsyncAction } from '../utils/async';
 import { openFileInContext } from '../utils/openFileInContext';
-import { isEnterKey, resolveKeyboardOpenContext } from '../utils/keyboardOpenContext';
+import { isEnterKey, isMultiSelectModifierPressed, resolveKeyboardOpenContext } from '../utils/keyboardOpenContext';
 import type { Align } from '../types/scroll';
 
 /**
@@ -56,7 +57,26 @@ const isSelectableListItem = (item: ListPaneItem): boolean => {
     return item.type === ListPaneItemType.FILE;
 };
 
+const isPropertyReorderShortcut = (event: KeyboardEvent, multiSelectModifier: MultiSelectModifier): boolean => {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+        return false;
+    }
+    if (event.shiftKey) {
+        return false;
+    }
+    if (!isMultiSelectModifierPressed(event, multiSelectModifier)) {
+        return false;
+    }
+    if (multiSelectModifier === 'optionAlt') {
+        return !event.metaKey && !event.ctrlKey;
+    }
+
+    return !event.altKey;
+};
+
 interface UseListPaneKeyboardProps {
+    /** Whether list pane keyboard handling is active */
+    enabled?: boolean;
     /** List items to navigate through */
     items: ListPaneItem[];
     /** Virtualizer instance for scroll management */
@@ -79,6 +99,8 @@ interface UseListPaneKeyboardProps {
     onScheduleKeyboardOpenForFile?: (file: TFile) => void;
     /** Commit selection by opening the currently selected file */
     onCommitKeyboardOpen?: () => void;
+    /** Reorder the selected property-sorted file block */
+    onReorderPropertySort?: (direction: 'up' | 'down') => boolean;
 }
 
 /**
@@ -86,6 +108,7 @@ interface UseListPaneKeyboardProps {
  * Handles file-specific keyboard interactions and multi-selection.
  */
 export function useListPaneKeyboard({
+    enabled = true,
     items,
     virtualizer,
     containerRef,
@@ -96,7 +119,8 @@ export function useListPaneKeyboard({
     scrollToIndexSafely,
     onScheduleKeyboardOpen,
     onScheduleKeyboardOpenForFile,
-    onCommitKeyboardOpen
+    onCommitKeyboardOpen,
+    onReorderPropertySort
 }: UseListPaneKeyboardProps) {
     const { app, commandQueue, isMobile, tagTreeService, propertyTreeService } = useServices();
     const openFileInWorkspace = useFileOpener();
@@ -198,6 +222,10 @@ export function useListPaneKeyboard({
      */
     const handleKeyDown = useCallback(
         (e: KeyboardEvent, helpers: KeyboardNavigationHelpers<ListPaneItem>) => {
+            if (!enabled) {
+                return;
+            }
+
             const currentIndex = getCurrentIndex();
             const shortcuts = settings.keyboardShortcuts;
             const isRTL = helpers.isRTL();
@@ -303,6 +331,14 @@ export function useListPaneKeyboard({
                 }
                 openFileInWorkspace(file);
             };
+
+            if (isPropertyReorderShortcut(e, settings.multiSelectModifier)) {
+                const direction = e.key === 'ArrowDown' ? 'down' : 'up';
+                if (onReorderPropertySort?.(direction) === true) {
+                    e.preventDefault();
+                    return;
+                }
+            }
 
             if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_EXTEND_SELECTION_DOWN)) {
                 e.preventDefault();
@@ -525,6 +561,7 @@ export function useListPaneKeyboard({
         },
         [
             getCurrentIndex,
+            enabled,
             settings,
             isMobile,
             selectionState,
@@ -549,12 +586,16 @@ export function useListPaneKeyboard({
             openFileInWorkspace,
             onScheduleKeyboardOpen,
             onScheduleKeyboardOpenForFile,
+            onReorderPropertySort,
             scrollToIndexSafely
         ]
     );
 
     const handleKeyUp = useCallback(
         (e: KeyboardEvent) => {
+            if (!enabled) {
+                return;
+            }
             if (!onCommitKeyboardOpen) {
                 return;
             }
@@ -571,7 +612,7 @@ export function useListPaneKeyboard({
             // Commit the last pending debounced open so the final selection opens immediately.
             onCommitKeyboardOpen();
         },
-        [onCommitKeyboardOpen]
+        [enabled, onCommitKeyboardOpen]
     );
 
     // Use the base keyboard navigation hook

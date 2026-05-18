@@ -33,7 +33,7 @@ import {
 } from '../../utils/calendarNotes';
 import { createDailyNote, getDailyNoteFile, getDailyNoteSettings } from '../../utils/dailyNotes';
 import { getCurrentLanguage } from '../../i18n';
-import { getMomentApi, resolveCalendarLocales, resolveDailyNoteLocale } from '../../utils/moment';
+import { getMomentApi, resolveCalendarLocales, resolveCalendarPeriodicNotesLocale, resolveDailyNoteLocale } from '../../utils/moment';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import type { HomepageSource } from '../../settings/types';
 
@@ -300,6 +300,11 @@ export default class HomepageController {
 
         const currentLanguage = getCurrentLanguage();
         const { calendarRulesLocale } = resolveCalendarLocales(this.plugin.settings.calendarLocale, momentApi, currentLanguage);
+        const periodicNotesLocale = resolveCalendarPeriodicNotesLocale(
+            this.plugin.settings.calendarPeriodicNotesLocaleSource,
+            calendarRulesLocale,
+            momentApi
+        );
         const date = momentApi().startOf('day');
 
         if (kind === 'day' && this.plugin.settings.calendarIntegrationMode === 'daily-notes') {
@@ -318,7 +323,7 @@ export default class HomepageController {
             return null;
         }
 
-        const dateForPath = resolveCalendarCustomNotePathDate(kind, date, momentPattern, calendarRulesLocale, calendarRulesLocale);
+        const dateForPath = resolveCalendarCustomNotePathDate(kind, date, momentPattern, periodicNotesLocale, periodicNotesLocale);
         const expected = buildCustomCalendarFilePathForPattern(
             dateForPath,
             { calendarCustomRootFolder: getActiveVaultProfile(this.plugin.settings).periodicNotesFolder },
@@ -337,6 +342,11 @@ export default class HomepageController {
 
         const currentLanguage = getCurrentLanguage();
         const { calendarRulesLocale } = resolveCalendarLocales(this.plugin.settings.calendarLocale, momentApi, currentLanguage);
+        const periodicNotesLocale = resolveCalendarPeriodicNotesLocale(
+            this.plugin.settings.calendarPeriodicNotesLocaleSource,
+            calendarRulesLocale,
+            momentApi
+        );
         const date = momentApi().startOf('day');
 
         if (kind === 'day' && this.plugin.settings.calendarIntegrationMode === 'daily-notes') {
@@ -355,7 +365,7 @@ export default class HomepageController {
             return null;
         }
 
-        const dateForPath = resolveCalendarCustomNotePathDate(kind, date, momentPattern, calendarRulesLocale, calendarRulesLocale);
+        const dateForPath = resolveCalendarCustomNotePathDate(kind, date, momentPattern, periodicNotesLocale, periodicNotesLocale);
         const expected = buildCustomCalendarFilePathForPattern(
             dateForPath,
             { calendarCustomRootFolder: getActiveVaultProfile(this.plugin.settings).periodicNotesFolder },

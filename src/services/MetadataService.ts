@@ -17,7 +17,7 @@
  */
 
 import { App, TFolder } from 'obsidian';
-import { SortOption, type AlphaSortOrder, type NotebookNavigatorSettings } from '../settings';
+import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../settings';
 import { ISettingsProvider } from '../interfaces/ISettingsProvider';
 import { ITagTreeProvider } from '../interfaces/ITagTreeProvider';
 import type { IPropertyTreeProvider } from '../interfaces/IPropertyTreeProvider';
@@ -199,15 +199,15 @@ export class MetadataService {
         return this.folderService.subscribeToFolderDisplayNameChanges(listener);
     }
 
-    async setFolderSortOverride(folderPath: string, sortOption: SortOption): Promise<void> {
-        return this.folderService.setFolderSortOverride(folderPath, sortOption);
+    async setFolderSortOverride(folderPath: string, sortOverride: ListSortOverrideValue): Promise<void> {
+        return this.folderService.setFolderSortOverride(folderPath, sortOverride);
     }
 
     async removeFolderSortOverride(folderPath: string): Promise<void> {
         return this.folderService.removeFolderSortOverride(folderPath);
     }
 
-    getFolderSortOverride(folderPath: string): SortOption | undefined {
+    getFolderSortOverride(folderPath: string): ListSortOverrideValue | undefined {
         return this.folderService.getFolderSortOverride(folderPath);
     }
 
@@ -294,15 +294,15 @@ export class MetadataService {
         await this.tagService.handleTagDelete(tagPath, settings => this.navigationSeparatorService.applyTagDelete(settings, tagPath));
     }
 
-    async setTagSortOverride(tagPath: string, sortOption: SortOption): Promise<void> {
-        return this.tagService.setTagSortOverride(tagPath, sortOption);
+    async setTagSortOverride(tagPath: string, sortOverride: ListSortOverrideValue): Promise<void> {
+        return this.tagService.setTagSortOverride(tagPath, sortOverride);
     }
 
     async removeTagSortOverride(tagPath: string): Promise<void> {
         return this.tagService.removeTagSortOverride(tagPath);
     }
 
-    getTagSortOverride(tagPath: string): SortOption | undefined {
+    getTagSortOverride(tagPath: string): ListSortOverrideValue | undefined {
         return this.tagService.getTagSortOverride(tagPath);
     }
 
@@ -360,15 +360,15 @@ export class MetadataService {
         return this.propertyService.getPropertyIcon(nodeId);
     }
 
-    async setPropertySortOverride(nodeId: string, sortOption: SortOption): Promise<void> {
-        return this.propertyService.setPropertySortOverride(nodeId, sortOption);
+    async setPropertySortOverride(nodeId: string, sortOverride: ListSortOverrideValue): Promise<void> {
+        return this.propertyService.setPropertySortOverride(nodeId, sortOverride);
     }
 
     async removePropertySortOverride(nodeId: string): Promise<void> {
         return this.propertyService.removePropertySortOverride(nodeId);
     }
 
-    getPropertySortOverride(nodeId: string): SortOption | undefined {
+    getPropertySortOverride(nodeId: string): ListSortOverrideValue | undefined {
         return this.propertyService.getPropertySortOverride(nodeId);
     }
 

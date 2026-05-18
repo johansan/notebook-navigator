@@ -929,3 +929,34 @@ export function compositeWithBase(
     const blended = compositeOntoBase(effectiveBase, overlay);
     return formatRgb(blended);
 }
+
+// ============================================================================
+// File Row Background Resolution
+// ============================================================================
+
+interface ResolveFileRowBackgroundColorParams {
+    customBackgroundColor?: string;
+    taskUnfinished?: number | null;
+    showUnfinishedTaskBackground: boolean;
+    unfinishedTaskBackgroundColor: string;
+    getSolidBackground: (color?: string | null) => string | undefined;
+}
+
+export function resolveFileRowBackgroundColor({
+    customBackgroundColor,
+    taskUnfinished,
+    showUnfinishedTaskBackground,
+    unfinishedTaskBackgroundColor,
+    getSolidBackground
+}: ResolveFileRowBackgroundColorParams): string | undefined {
+    const taskBackgroundColor =
+        showUnfinishedTaskBackground && typeof taskUnfinished === 'number' && taskUnfinished > 0
+            ? unfinishedTaskBackgroundColor
+            : undefined;
+
+    return getSolidBackground(taskBackgroundColor ?? customBackgroundColor);
+}
+
+export function hasSolidFileRowBackground(params: ResolveFileRowBackgroundColorParams): boolean {
+    return Boolean(resolveFileRowBackgroundColor(params));
+}

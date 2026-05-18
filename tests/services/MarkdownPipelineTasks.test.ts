@@ -50,7 +50,6 @@ function createSettings(overrides?: Partial<NotebookNavigatorSettings>): Noteboo
         ...DEFAULT_SETTINGS,
         showFilePreview: false,
         showFeatureImage: false,
-        notePropertyType: 'wordCount',
         ...overrides
     };
 }

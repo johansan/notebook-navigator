@@ -36,7 +36,6 @@ function createSettings(overrides: Partial<NotebookNavigatorSettings> & { proper
     const settings = structuredClone(DEFAULT_SETTINGS);
     settings.showFilePreview = false;
     settings.showFeatureImage = false;
-    settings.notePropertyType = 'none';
     Object.assign(settings, settingsOverrides);
 
     if (typeof propertyFields === 'string') {

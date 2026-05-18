@@ -27,7 +27,14 @@ import { getDBInstanceOrNull, isShutdownInProgress, waitForDatabaseInitializatio
 import { runAsyncAction } from '../../utils/async';
 import { getCalendarCustomWeekAnchorUnit } from '../../utils/calendarCustomNotePatterns';
 import { getDailyNoteFile, getDailyNoteSettings as getCoreDailyNoteSettings } from '../../utils/dailyNotes';
-import { getMomentApi, resolveCalendarLocales, resolveDailyNoteLocale, type MomentApi, type MomentInstance } from '../../utils/moment';
+import {
+    getMomentApi,
+    resolveCalendarLocales,
+    resolveCalendarPeriodicNotesLocale,
+    resolveDailyNoteLocale,
+    type MomentApi,
+    type MomentInstance
+} from '../../utils/moment';
 import { useFileOpener } from '../../hooks/useFileOpener';
 import { useLocalDayKey } from '../../hooks/useLocalDayKey';
 import { extractFrontmatterName } from '../../utils/metadataExtractor';
@@ -437,6 +444,11 @@ export function Calendar({
         [currentLanguage, momentApi, settings.calendarLocale]
     );
     const dailyNoteLocale = resolveDailyNoteLocale(momentApi);
+    const periodicNotesLocale = resolveCalendarPeriodicNotesLocale(
+        settings.calendarPeriodicNotesLocaleSource,
+        calendarRulesLocale,
+        momentApi
+    );
 
     useEffect(() => {
         setCursorDate(previousCursorDate => previousCursorDate?.clone().locale(displayLocale) ?? previousCursorDate);
@@ -514,8 +526,8 @@ export function Calendar({
         dailyNoteSettings,
         dayNoteResolverContext,
         dailyNoteLocale,
-        calendarRulesLocale,
         momentApi,
+        periodicNotesLocale,
         settings.calendarIntegrationMode,
         vaultVersion
     ]);
@@ -535,8 +547,8 @@ export function Calendar({
                     kind: 'day',
                     date,
                     resolverContext: dayNoteResolverContext,
-                    calendarLocale: calendarRulesLocale,
-                    weekLocale: calendarRulesLocale,
+                    calendarLocale: periodicNotesLocale,
+                    weekLocale: periodicNotesLocale,
                     customCalendarRootFolderSettings,
                     momentApi
                 });
@@ -554,8 +566,8 @@ export function Calendar({
             dailyNoteSettings,
             dailyNoteLocale,
             dayNoteResolverContext,
-            calendarRulesLocale,
             momentApi,
+            periodicNotesLocale,
             settings.calendarIntegrationMode
         ]
     );
@@ -602,7 +614,7 @@ export function Calendar({
             const fullPattern = rootFolderPattern
                 ? `${rootFolderPattern}/${dayNoteResolverContext.momentPattern}`
                 : dayNoteResolverContext.momentPattern;
-            const parsedDate = momentApi(pathWithoutExtension, fullPattern, calendarRulesLocale, true);
+            const parsedDate = momentApi(pathWithoutExtension, fullPattern, periodicNotesLocale, true);
             if (!parsedDate.isValid()) {
                 return null;
             }
@@ -621,9 +633,9 @@ export function Calendar({
             dailyNoteSettings,
             dailyNoteLocale,
             dayNoteResolverContext.momentPattern,
-            calendarRulesLocale,
             getExistingDayNoteFile,
             momentApi,
+            periodicNotesLocale,
             settings.calendarIntegrationMode
         ]
     );
@@ -639,10 +651,10 @@ export function Calendar({
                 kind: Extract<CalendarNoteKind, 'week' | 'month' | 'quarter' | 'year'>;
                 parseLocale: string;
             }[] = [
-                { kind: 'week', enabled: weekNotesEnabled, parseLocale: calendarRulesLocale },
-                { kind: 'month', enabled: monthNotesEnabled, parseLocale: calendarRulesLocale },
-                { kind: 'quarter', enabled: quarterNotesEnabled, parseLocale: calendarRulesLocale },
-                { kind: 'year', enabled: yearNotesEnabled, parseLocale: calendarRulesLocale }
+                { kind: 'week', enabled: weekNotesEnabled, parseLocale: periodicNotesLocale },
+                { kind: 'month', enabled: monthNotesEnabled, parseLocale: periodicNotesLocale },
+                { kind: 'quarter', enabled: quarterNotesEnabled, parseLocale: periodicNotesLocale },
+                { kind: 'year', enabled: yearNotesEnabled, parseLocale: periodicNotesLocale }
             ];
 
             for (const { enabled, kind, parseLocale } of activePeriodKinds) {
@@ -655,8 +667,8 @@ export function Calendar({
                     filePath,
                     kind,
                     resolverContext,
-                    calendarLocale: calendarRulesLocale,
-                    weekLocale: calendarRulesLocale,
+                    calendarLocale: periodicNotesLocale,
+                    weekLocale: periodicNotesLocale,
                     customCalendarRootFolderSettings,
                     momentApi,
                     parseLocale
@@ -670,7 +682,7 @@ export function Calendar({
                         return {
                             date: parsedDate
                                 .clone()
-                                .locale(calendarRulesLocale)
+                                .locale(periodicNotesLocale)
                                 .startOf(getCalendarCustomWeekAnchorUnit(resolverContext.momentPattern)),
                             shouldAutoReveal: shouldAutoRevealCalendarNoteKind(kind)
                         };
@@ -696,8 +708,8 @@ export function Calendar({
         },
         [
             displayLocale,
-            calendarRulesLocale,
             momentApi,
+            periodicNotesLocale,
             settings,
             weekNotesEnabled,
             monthNotesEnabled,
@@ -1079,8 +1091,8 @@ export function Calendar({
             dailyNoteSettings,
             momentApi,
             dailyNoteLocale,
-            calendarLocale: calendarRulesLocale,
-            weekLocale: calendarRulesLocale,
+            calendarLocale: periodicNotesLocale,
+            weekLocale: periodicNotesLocale,
             customCalendarRootFolderSettings,
             openFile,
             clearHoverTooltip,

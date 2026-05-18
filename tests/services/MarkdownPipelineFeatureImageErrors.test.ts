@@ -190,7 +190,6 @@ describe('MarkdownPipelineContentProvider feature image errors', () => {
         const settings: NotebookNavigatorSettings = {
             ...DEFAULT_SETTINGS,
             showFilePreview: false,
-            notePropertyType: 'none',
             showFeatureImage: true,
             featureImageProperties: ['thumbnail']
         };

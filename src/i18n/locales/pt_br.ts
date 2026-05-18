@@ -29,6 +29,7 @@ export const STRINGS_PT_BR = {
         remove: 'Remover',
         restoreDefault: 'Restaurar padrão', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Enviar',
+        save: 'Salvar', // Button text for saving settings and dialogs (English: Save)
         configure: 'Configurar', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Modo claro', // Label for light theme mode (English: Light mode)
         darkMode: 'Modo escuro', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_PT_BR = {
         pinnedSection: 'Fixadas',
         notesSection: 'Notas',
         filesSection: 'Arquivos',
-        hiddenItemAriaLabel: '{name} (oculto)'
+        hiddenItemAriaLabel: '{name} (oculto)',
+        collapseGroup: 'Recolher grupo',
+        expandGroup: 'Expandir grupo',
+        manualSortTitle: 'Classificação manual: {property}',
+        manualSortHint: 'Arraste para reordenar. A ordem é salva como valores numéricos de índice na propriedade "{property}".',
+        manualSortNonMarkdownHint: 'Arquivos não Markdown são exibidos no final e não podem ser reordenados.',
+        unsortedSection: 'Não classificados',
+        manualSortDone: 'Concluído',
+        manualSortMultipleWriteFailure: '{count} arquivos falharam; primeiro: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_PT_BR = {
         changeChildSortOrder: 'Alterar ordem de classificação',
         changeSortAndGroup: 'Alterar classificação e agrupamento',
         defaultSort: 'Padrão',
+        manualSort: 'Classificação manual',
+        editSortOrder: 'Editar ordem de classificação...',
+        removeSortProperty: 'Remover propriedade de classificação',
         descendants: 'descendentes',
         subfolders: 'subpastas',
         subtags: 'subtags',
@@ -302,6 +314,14 @@ export const STRINGS_PT_BR = {
             moveFileToFolder: 'Mover arquivo para...',
             moveMultipleNotesToFolder: 'Mover {count} notas para...',
             moveMultipleFilesToFolder: 'Mover {count} arquivos para...',
+            setManualSortGroupHeader: 'Definir cabeçalho de grupo',
+            changeManualSortGroupHeader: 'Alterar cabeçalho de grupo',
+            manualSortGroupHeader: {
+                title: 'Cabeçalho de grupo',
+                copyStyle: 'Copiar estilo do cabeçalho',
+                pasteStyle: 'Colar estilo do cabeçalho',
+                remove: 'Remover cabeçalho de grupo'
+            },
             addTag: 'Adicionar tag',
             addPropertyKey: 'Definir propriedade',
             removeTag: 'Remover tag',
@@ -391,6 +411,33 @@ export const STRINGS_PT_BR = {
             applyAppearanceTitle: (target: string) => `Aplicar aparência a ${target}?`,
             affectedCountMessage: (count: number) => `Substituições existentes que serão alteradas: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Usar classificação manual?',
+            propertySortMessage: (property: string, count: number) =>
+                `Isso muda a visualização atual para classificação manual usando "${property}". Editar a ordem grava valores numéricos de índice nessa propriedade em ${count} ${count === 1 ? 'nota' : 'notas'} conforme necessário.`,
+            propertySortConfirmButton: 'Usar classificação manual',
+            removePropertyTitle: 'Remover propriedade de classificação?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Isso remove "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} na lista atual. A ordem de classificação manual será limpa para essas notas.`,
+            removePropertyConfirmButton: 'Remover propriedade',
+            compactTitle: 'Compactar valores de índice?',
+            compactMessage: (count: number) =>
+                `Esta reordenação precisa de mais espaço numérico. ${count} ${count === 1 ? 'nota receberá' : 'notas receberão'} novos valores de índice.`,
+            compactConfirmButton: 'Compactar valores de índice'
+        },
+        manualSortGroupHeader: {
+            title: 'Definir cabeçalho de grupo',
+            titleLabel: 'Título',
+            placeholder: 'Cabeçalho de grupo',
+            icon: 'Ícone',
+            color: 'Cor',
+            wordCount: 'Mostrar contagem de palavras',
+            wordCountTarget: 'Contagem de palavras alvo',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'Quando este campo estiver vazio, a meta do grupo usa a propriedade de meta definida em Configurações > Notas > Contagem de palavras. Substitua-a definindo um valor de meta para este grupo.',
+            description: 'Personalize o cabeçalho de grupo para esta nota. Deixe o título em branco para remover o cabeçalho.'
+        },
         navRainbowSection: {
             title: (section: string) => `Cores arco-íris: ${section}`
         },
@@ -429,6 +476,11 @@ export const STRINGS_PT_BR = {
                 'list-descendants': 'Notas de subpastas',
                 'list-sort-ascending': 'Ordem: crescente',
                 'list-sort-descending': 'Ordem: decrescente',
+                'list-sort-modified': 'Classificar por data de edição',
+                'list-sort-created': 'Classificar por data de criação',
+                'list-sort-title': 'Classificar por título',
+                'list-sort-filename': 'Classificar por nome do arquivo',
+                'list-sort-property': 'Classificar por propriedade',
                 'list-appearance': 'Alterar aparência',
                 'list-new-note': 'Nova nota',
                 'nav-folder-open': 'Pasta aberta',
@@ -703,6 +755,8 @@ export const STRINGS_PT_BR = {
             propertiesRequireMarkdown: 'As propriedades só são suportadas em notas Markdown',
             propertySetOnNote: 'Propriedade atualizada em 1 nota',
             propertySetOnNotes: 'Propriedade atualizada em {count} notas',
+            manualSortPropertyRemovedFromNote: 'Propriedade de classificação removida de 1 nota',
+            manualSortPropertyRemovedFromNotes: 'Propriedade de classificação removida de {count} notas',
             iconPackDownloaded: '{provider} baixado',
             iconPackUpdated: '{provider} atualizado ({version})',
             iconPackRemoved: '{provider} removido',
@@ -865,6 +919,9 @@ export const STRINGS_PT_BR = {
             list: {
                 display: 'Aparência',
                 organization: 'Organização',
+                groupHeaders: 'Cabeçalhos de grupo',
+                propertySort: 'Classificação por propriedade',
+                manualSort: 'Classificação manual',
                 pinnedNotes: 'Notas fixadas',
                 drawingPreviews: 'Pré-visualizações de desenhos'
             },
@@ -878,7 +935,8 @@ export const STRINGS_PT_BR = {
                 tags: 'Tags',
                 properties: 'Propriedades',
                 date: 'Data',
-                parentFolder: 'Pasta superior'
+                parentFolder: 'Pasta superior',
+                wordCount: 'Contagem de palavras'
             }
         },
         syncMode: {
@@ -898,8 +956,8 @@ export const STRINGS_PT_BR = {
                 }
             },
             sortNotesBy: {
-                name: 'Ordenar notas por',
-                desc: 'Escolha como as notas são ordenadas na lista.',
+                name: 'Ordem de classificação padrão',
+                desc: 'Escolha a ordem de classificação padrão para as notas.',
                 options: {
                     'modified-desc': 'Data de edição (mais recente no topo)',
                     'modified-asc': 'Data de edição (mais antiga no topo)',
@@ -908,19 +966,24 @@ export const STRINGS_PT_BR = {
                     'title-asc': 'Título (A no topo)',
                     'title-desc': 'Título (Z no topo)',
                     'filename-asc': 'Nome do arquivo (A no topo)',
-                    'filename-desc': 'Nome do arquivo (Z no topo)',
-                    'property-asc': 'Propriedade (A no topo)',
-                    'property-desc': 'Propriedade (Z no topo)'
+                    'filename-desc': 'Nome do arquivo (Z no topo)'
                 },
-                propertyOverride: {
-                    asc: 'Propriedade ‘{property}’ (A no topo)',
-                    desc: 'Propriedade ‘{property}’ (Z no topo)'
+                directions: {
+                    asc: 'Ascendente',
+                    desc: 'Descendente'
+                },
+                fields: {
+                    modified: 'Data de edição',
+                    created: 'Data de criação',
+                    title: 'Título',
+                    filename: 'Nome do arquivo',
+                    property: 'Propriedade'
                 }
             },
             propertySortKey: {
-                name: 'Propriedade de ordenação',
-                desc: 'Usado com a ordenação por propriedade. Notas com esta propriedade frontmatter são listadas primeiro e ordenadas pelo valor da propriedade. Arrays são combinados em um único valor.',
-                placeholder: 'order'
+                name: 'Propriedades para ordenar',
+                desc: 'Propriedades frontmatter separadas por vírgulas exibidas como opções de classificação por propriedade. Valores em array são unidos em uma única string. Essas propriedades não são alteradas.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Ordenação secundária',
@@ -931,6 +994,46 @@ export const STRINGS_PT_BR = {
                     created: 'Data de criação',
                     modified: 'Data de edição'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Cada propriedade listada acima aparece como uma opção de classificação no menu de ordenação no painel de lista. Selecionar uma classifica as notas pelo valor do frontmatter.'
+            },
+            manualSortPropertyKey: {
+                name: 'Propriedade da classificação manual',
+                desc: 'Propriedade frontmatter usada para armazenar valores numéricos de índice para a classificação manual.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Propriedade do cabeçalho de grupo',
+                desc: 'Propriedade frontmatter usada para armazenar cabeçalhos personalizados de grupo.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Cabeçalhos personalizados de grupo são exibidos acima das notas no painel de lista.',
+                items: [
+                    'No menu de ordenação no painel de lista, defina o agrupamento como **Personalizado**.',
+                    'Clique com o botão direito em uma nota e escolha **Definir cabeçalho de grupo** para adicionar um cabeçalho acima dela.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Posicionamento de novas notas',
+                desc: 'Escolha onde as novas notas são colocadas quando a lista atual usa classificação manual.',
+                options: {
+                    top: 'Topo',
+                    bottom: 'Final',
+                    'below-selected-note': 'Abaixo da nota selecionada',
+                    unsorted: 'Não classificadas'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Confirmar antes da classificação manual',
+                desc: 'Mostrar um aviso antes de gravar a propriedade de classificação manual nas notas pela primeira vez. Quando desativado, as notas recebem a propriedade sem aviso.'
+            },
+            manualSortInstructions: {
+                intro: 'A classificação manual grava um valor numérico de índice em uma propriedade frontmatter de cada nota. Notas sem índice aparecem em Não classificadas.',
+                items: [
+                    'Ative a classificação manual escolhendo **Classificação manual** no menu de ordenação. Depois disso, há duas formas de reorganizar as notas.',
+                    'Escolha **Editar ordem de classificação...** no menu de ordenação para abrir uma visualização de reordenação. Arraste notas com o mouse ou com toque no celular. No desktop, **Cmd/Ctrl** ou **Shift** clique seleciona várias notas, e arrastar qualquer uma delas move o grupo inteiro.',
+                    'No painel de lista, selecione uma nota ou várias com seleção múltipla e pressione **Cmd/Ctrl + Arrow Up/Down** para mover a seleção para cima ou para baixo.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Rolar para o arquivo selecionado em mudanças da lista',
@@ -949,12 +1052,12 @@ export const STRINGS_PT_BR = {
                 desc: 'Exibir contagens de notas no formato "atual ▾ descendentes" em pastas e tags.'
             },
             groupNotes: {
-                name: 'Agrupar notas',
-                desc: 'Exibir cabeçalhos entre notas agrupadas por data ou pasta. Visualizações de tags usam grupos de data quando o agrupamento de pastas está ativado.',
+                name: 'Agrupamento padrão',
+                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. Visualizações de tag e propriedade usam grupos de data quando uma pasta está selecionada.',
                 options: {
-                    none: 'Não agrupar',
-                    date: 'Agrupar por data',
-                    folder: 'Agrupar por pasta'
+                    custom: 'Personalizado',
+                    date: 'Data',
+                    folder: 'Pasta'
                 }
             },
             showSelectedNavigationPills: {
@@ -1204,8 +1307,8 @@ export const STRINGS_PT_BR = {
             calendarLocale: {
                 name: 'Idioma',
                 desc: 'Controla a formatação das datas do calendário, a numeração das semanas e o primeiro dia da semana.',
-                incompatibleWeekPatternWarning:
-                    'O padrão de notas semanais usa tokens de semana ISO ("W" ou "G"). O calendário exibirá as semanas começando na segunda-feira em vez do primeiro dia da semana deste idioma.',
+                weekPathMismatchWarning:
+                    'O calendário visível e os caminhos das notas semanais usam inícios de semana ou numeração de semana diferentes.',
                 options: {
                     systemDefault: 'Padrão'
                 }
@@ -1276,6 +1379,14 @@ export const STRINGS_PT_BR = {
                     dailyNotes: 'Pasta e formato de data são configurados no plugin Daily Notes.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Idioma das notas periódicas',
+                desc: 'Controla nomes de meses, nomes de dias da semana, números de semana e inícios de semana localizados nos caminhos das notas periódicas do Notebook Navigator.',
+                options: {
+                    calendar: 'Calendário',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Pasta raiz',
@@ -1302,8 +1413,10 @@ export const STRINGS_PT_BR = {
                 name: 'Notas semanais',
                 parsingError:
                     'O padrão deve ser formatado e analisado novamente como uma semana completa (ano da semana, número da semana).',
-                localeMismatchWarning:
-                    'Este padrão usa tokens de semana ISO ("W" ou "G"). O calendário exibirá as semanas começando na segunda-feira. Use "w" ou "g" se as notas semanais devem seguir o idioma selecionado.'
+                weekPathMismatchWarning:
+                    'Os caminhos das notas semanais usam o idioma das notas periódicas. Use idiomas correspondentes ou use "GGGG" com "WW" para semanas baseadas na segunda-feira.',
+                mixedWeekTokensWarning:
+                    'Este padrão mistura tokens de semana baseados na segunda-feira ("W" ou "G") com tokens de semana baseados no idioma ("w" ou "g"). Use um conjunto de forma consistente: "GGGG" com "WW" para semanas baseadas na segunda-feira, ou "gggg" com "ww" se as notas semanais devem seguir o idioma selecionado.'
             },
             calendarCustomMonthPattern: {
                 name: 'Notas mensais',
@@ -1537,14 +1650,25 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar propriedades no modo compacto',
                 desc: 'Exibir propriedades quando o modo compacto está ativo.'
             },
-            notePropertyType: {
-                name: 'Propriedade da nota',
-                desc: 'Selecione a propriedade da nota para exibir nos itens de arquivo.',
+            showWordCount: {
+                name: 'Mostrar contagem de palavras',
+                desc: 'Mostrar contagens de palavras das notas nos itens de arquivo.'
+            },
+            wordCountPlacement: {
+                name: 'Posição',
+                desc: 'Escolha onde as contagens de palavras aparecem.',
                 options: {
-                    frontmatter: 'Propriedade frontmatter',
-                    wordCount: 'Contagem de palavras',
-                    none: 'Nenhum'
+                    title: 'No título',
+                    property: 'Como propriedade'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Propriedade alvo',
+                desc: 'Chave da propriedade frontmatter que contém a contagem de palavras alvo. Deixe em branco para ocultar alvos.'
+            },
+            showWordCountPercentage: {
+                name: 'Mostrar porcentagem da meta',
+                desc: 'Mostrar apenas a porcentagem de progresso quando houver uma contagem de palavras alvo disponível.'
             },
             propertyFields: {
                 name: 'Chaves de propriedades (perfil do cofre)',

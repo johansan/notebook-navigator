@@ -51,11 +51,21 @@
     outline-offset: 2px;
 }
 
+.nn-search-clear-button > span,
+.nn-search-star-button > span,
+.nn-search-help-button > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
 .nn-search-clear-button svg,
 .nn-search-star-button svg,
 .nn-search-help-button svg {
     width: 16px;
     height: 16px;
+    display: block;
 }
 
 .nn-search-clear-button {

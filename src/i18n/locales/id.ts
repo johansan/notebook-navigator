@@ -29,6 +29,7 @@ export const STRINGS_ID = {
         remove: 'Buang',
         restoreDefault: 'Pulihkan default', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Kirim',
+        save: 'Simpan', // Button text for saving settings and dialogs (English: Save)
         configure: 'Konfigurasi', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Mode terang', // Label for light theme mode (English: Light mode)
         darkMode: 'Mode gelap', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_ID = {
         pinnedSection: 'Disematkan',
         notesSection: 'Catatan',
         filesSection: 'File',
-        hiddenItemAriaLabel: '{name} (tersembunyi)'
+        hiddenItemAriaLabel: '{name} (tersembunyi)',
+        collapseGroup: 'Ciutkan grup',
+        expandGroup: 'Bentangkan grup',
+        manualSortTitle: 'Urutan manual: {property}',
+        manualSortHint: 'Seret untuk mengatur ulang. Urutan disimpan sebagai nilai indeks numerik di properti "{property}".',
+        manualSortNonMarkdownHint: 'File non-Markdown ditampilkan di bawah dan tidak dapat diatur ulang.',
+        unsortedSection: 'Belum diurutkan',
+        manualSortDone: 'Selesai',
+        manualSortMultipleWriteFailure: '{count} file gagal; pertama: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_ID = {
         changeChildSortOrder: 'Ubah urutan',
         changeSortAndGroup: 'Ubah urutan dan grup',
         defaultSort: 'Default',
+        manualSort: 'Urutan manual',
+        editSortOrder: 'Edit urutan...',
+        removeSortProperty: 'Hapus properti urutan',
         descendants: 'turunan',
         subfolders: 'subfolder',
         subtags: 'subtag',
@@ -301,6 +313,14 @@ export const STRINGS_ID = {
             moveFileToFolder: 'Pindahkan file ke...',
             moveMultipleNotesToFolder: 'Pindahkan {count} catatan ke...',
             moveMultipleFilesToFolder: 'Pindahkan {count} file ke...',
+            setManualSortGroupHeader: 'Atur header grup',
+            changeManualSortGroupHeader: 'Ubah header grup',
+            manualSortGroupHeader: {
+                title: 'Header grup',
+                copyStyle: 'Salin gaya header',
+                pasteStyle: 'Tempel gaya header',
+                remove: 'Hapus header grup'
+            },
             addTag: 'Tambah tag',
             addPropertyKey: 'Atur properti',
             removeTag: 'Hapus tag',
@@ -390,6 +410,33 @@ export const STRINGS_ID = {
             applyAppearanceTitle: (target: string) => `Terapkan tampilan ke ${target}?`,
             affectedCountMessage: (count: number) => `Penimpaan yang ada dan akan berubah: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Gunakan urutan manual?',
+            propertySortMessage: (property: string, count: number) =>
+                `Ini akan mengalihkan tampilan saat ini ke urutan manual menggunakan "${property}". Mengedit urutan akan menulis nilai indeks numerik ke properti tersebut di ${count} catatan sesuai kebutuhan.`,
+            propertySortConfirmButton: 'Gunakan urutan manual',
+            removePropertyTitle: 'Hapus properti urutan?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Ini akan menghapus "${property}" dari ${count} catatan di daftar saat ini. Urutan manual akan dihapus untuk catatan tersebut.`,
+            removePropertyConfirmButton: 'Hapus properti',
+            compactTitle: 'Padatkan nilai indeks?',
+            compactMessage: (count: number) =>
+                `Pengaturan ulang ini memerlukan lebih banyak ruang numerik. ${count} catatan akan menerima nilai indeks baru.`,
+            compactConfirmButton: 'Padatkan nilai indeks'
+        },
+        manualSortGroupHeader: {
+            title: 'Atur header grup',
+            titleLabel: 'Judul',
+            placeholder: 'Header grup',
+            icon: 'Ikon',
+            color: 'Warna',
+            wordCount: 'Tampilkan jumlah kata',
+            wordCountTarget: 'Target jumlah kata',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'Saat bidang ini kosong, target grup menggunakan properti target yang diatur di Pengaturan > Catatan > Jumlah kata. Timpa dengan menetapkan nilai target untuk grup ini.',
+            description: 'Sesuaikan header grup untuk catatan ini. Biarkan judul kosong untuk menghapus header.'
+        },
         navRainbowSection: {
             title: (section: string) => `Warna pelangi: ${section}`
         },
@@ -428,6 +475,11 @@ export const STRINGS_ID = {
                 'list-descendants': 'Catatan dari subfolder',
                 'list-sort-ascending': 'Urutan: menaik',
                 'list-sort-descending': 'Urutan: menurun',
+                'list-sort-modified': 'Urutkan berdasarkan tanggal edit',
+                'list-sort-created': 'Urutkan berdasarkan tanggal dibuat',
+                'list-sort-title': 'Urutkan berdasarkan judul',
+                'list-sort-filename': 'Urutkan berdasarkan nama file',
+                'list-sort-property': 'Urutkan berdasarkan properti',
                 'list-appearance': 'Ubah tampilan',
                 'list-new-note': 'Catatan baru',
                 'nav-folder-open': 'Folder terbuka',
@@ -701,6 +753,8 @@ export const STRINGS_ID = {
             propertiesRequireMarkdown: 'Properti hanya didukung pada catatan Markdown',
             propertySetOnNote: 'Properti diperbarui pada 1 catatan',
             propertySetOnNotes: 'Properti diperbarui pada {count} catatan',
+            manualSortPropertyRemovedFromNote: 'Properti urutan dihapus dari 1 catatan',
+            manualSortPropertyRemovedFromNotes: 'Properti urutan dihapus dari {count} catatan',
             iconPackDownloaded: '{provider} diunduh',
             iconPackUpdated: '{provider} diperbarui ({version})',
             iconPackRemoved: '{provider} dihapus',
@@ -863,6 +917,9 @@ export const STRINGS_ID = {
             list: {
                 display: 'Tampilan',
                 organization: 'Organisasi',
+                groupHeaders: 'Header grup',
+                propertySort: 'Urutan properti',
+                manualSort: 'Urutan manual',
                 pinnedNotes: 'Catatan yang disematkan',
                 drawingPreviews: 'Pratinjau gambar'
             },
@@ -876,7 +933,8 @@ export const STRINGS_ID = {
                 tags: 'Tag',
                 properties: 'Properti',
                 date: 'Tanggal',
-                parentFolder: 'Folder induk'
+                parentFolder: 'Folder induk',
+                wordCount: 'Jumlah kata'
             }
         },
         syncMode: {
@@ -896,8 +954,8 @@ export const STRINGS_ID = {
                 }
             },
             sortNotesBy: {
-                name: 'Urutkan catatan berdasarkan',
-                desc: 'Pilih cara catatan diurutkan dalam daftar catatan.',
+                name: 'Urutan default',
+                desc: 'Pilih urutan default untuk catatan.',
                 options: {
                     'modified-desc': 'Tanggal diedit (terbaru di atas)',
                     'modified-asc': 'Tanggal diedit (terlama di atas)',
@@ -906,19 +964,24 @@ export const STRINGS_ID = {
                     'title-asc': 'Judul (A di atas)',
                     'title-desc': 'Judul (Z di atas)',
                     'filename-asc': 'Nama file (A di atas)',
-                    'filename-desc': 'Nama file (Z di atas)',
-                    'property-asc': 'Properti (A di atas)',
-                    'property-desc': 'Properti (Z di atas)'
+                    'filename-desc': 'Nama file (Z di atas)'
                 },
-                propertyOverride: {
-                    asc: 'Properti ‘{property}’ (A di atas)',
-                    desc: 'Properti ‘{property}’ (Z di atas)'
+                directions: {
+                    asc: 'Menaik',
+                    desc: 'Menurun'
+                },
+                fields: {
+                    modified: 'Tanggal diedit',
+                    created: 'Tanggal dibuat',
+                    title: 'Judul',
+                    filename: 'Nama file',
+                    property: 'Properti'
                 }
             },
             propertySortKey: {
-                name: 'Properti pengurutan',
-                desc: 'Digunakan dengan pengurutan Properti. Catatan dengan properti frontmatter ini ditampilkan lebih dulu dan diurutkan berdasarkan nilai properti. Array digabungkan menjadi satu nilai.',
-                placeholder: 'order'
+                name: 'Properti untuk diurutkan',
+                desc: 'Properti frontmatter yang dipisahkan koma ditampilkan sebagai opsi urutan properti. Nilai array digabungkan menjadi satu string. Properti ini tidak diubah.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Urutan sekunder',
@@ -929,6 +992,46 @@ export const STRINGS_ID = {
                     created: 'Tanggal dibuat',
                     modified: 'Tanggal diedit'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Setiap properti yang tercantum di atas muncul sebagai opsi urutan di menu urutan pada panel daftar. Memilih salah satu akan mengurutkan catatan berdasarkan nilai frontmatter-nya.'
+            },
+            manualSortPropertyKey: {
+                name: 'Properti urutan manual',
+                desc: 'Properti frontmatter yang digunakan untuk menyimpan nilai indeks numerik untuk urutan manual.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Properti header grup',
+                desc: 'Properti frontmatter yang digunakan untuk menyimpan header grup kustom.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Header grup kustom ditampilkan di atas catatan di panel daftar.',
+                items: [
+                    'Dari menu urutan di panel daftar, atur pengelompokan ke **Kustom**.',
+                    'Klik kanan catatan dan pilih **Atur header grup** untuk menambahkan header di atasnya.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Penempatan catatan baru',
+                desc: 'Pilih tempat catatan baru ditempatkan saat daftar saat ini menggunakan urutan manual.',
+                options: {
+                    top: 'Atas',
+                    bottom: 'Bawah',
+                    'below-selected-note': 'Di bawah catatan yang dipilih',
+                    unsorted: 'Belum diurutkan'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Konfirmasi sebelum urutan manual',
+                desc: 'Tampilkan peringatan sebelum menulis properti urutan manual ke catatan untuk pertama kalinya. Saat dinonaktifkan, catatan menerima properti tanpa peringatan.'
+            },
+            manualSortInstructions: {
+                intro: 'Urutan manual menulis nilai indeks numerik ke properti frontmatter pada setiap catatan. Catatan tanpa indeks muncul di bawah Belum diurutkan.',
+                items: [
+                    'Aktifkan urutan manual dengan memilih **Urutan manual** dari menu urutan. Setelah itu, ada dua cara untuk mengatur ulang catatan.',
+                    'Pilih **Edit urutan...** dari menu urutan untuk membuka tampilan pengaturan ulang. Seret catatan dengan mouse, atau dengan sentuhan di seluler. Di desktop, klik **Cmd/Ctrl** atau **Shift** memilih beberapa catatan, lalu menyeret salah satunya akan memindahkan seluruh grup.',
+                    'Di panel daftar, pilih satu catatan atau pilih beberapa, lalu tekan **Cmd/Ctrl + Arrow Up/Down** untuk memindahkan pilihan ke atas atau ke bawah.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Gulir ke file yang dipilih saat perubahan daftar',
@@ -947,12 +1050,12 @@ export const STRINGS_ID = {
                 desc: 'Tampilkan jumlah catatan sebagai format "saat ini ▾ turunan" di folder dan tag.'
             },
             groupNotes: {
-                name: 'Kelompokkan catatan',
-                desc: 'Tampilkan header antara catatan yang dikelompokkan berdasarkan tanggal atau folder. Tampilan tag menggunakan grup tanggal saat pengelompokan folder diaktifkan.',
+                name: 'Pengelompokan default',
+                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih.',
                 options: {
-                    none: 'Jangan kelompokkan',
-                    date: 'Kelompokkan berdasarkan tanggal',
-                    folder: 'Kelompokkan berdasarkan folder'
+                    custom: 'Kustom',
+                    date: 'Tanggal',
+                    folder: 'Folder'
                 }
             },
             showSelectedNavigationPills: {
@@ -1202,8 +1305,8 @@ export const STRINGS_ID = {
             calendarLocale: {
                 name: 'Bahasa',
                 desc: 'Mengontrol format tanggal kalender, penomoran minggu, dan hari pertama dalam seminggu.',
-                incompatibleWeekPatternWarning:
-                    'Pola catatan mingguan menggunakan token minggu ISO ("W" atau "G"). Kalender akan menampilkan minggu dimulai dari Senin, bukan hari pertama minggu dari bahasa ini.',
+                weekPathMismatchWarning:
+                    'Kalender yang terlihat dan jalur catatan mingguan menggunakan awal minggu atau penomoran minggu yang berbeda.',
                 options: {
                     systemDefault: 'Default'
                 }
@@ -1274,6 +1377,14 @@ export const STRINGS_ID = {
                     dailyNotes: 'Folder dan format tanggal dikonfigurasi di plugin inti Daily Notes.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Bahasa catatan berkala',
+                desc: 'Mengontrol nama bulan, nama hari, nomor minggu, dan awal minggu yang dilokalkan di jalur catatan berkala Notebook Navigator.',
+                options: {
+                    calendar: 'Kalender',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Folder root',
@@ -1299,8 +1410,10 @@ export const STRINGS_ID = {
             calendarCustomWeekPattern: {
                 name: 'Catatan mingguan',
                 parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai minggu lengkap (tahun minggu, nomor minggu).',
-                localeMismatchWarning:
-                    'Pola ini menggunakan token minggu ISO ("W" atau "G"). Kalender akan menampilkan minggu dimulai dari Senin. Gunakan "w" atau "g" jika catatan mingguan harus mengikuti bahasa yang dipilih.'
+                weekPathMismatchWarning:
+                    'Jalur catatan mingguan menggunakan bahasa catatan berkala. Gunakan bahasa yang cocok, atau gunakan "GGGG" dengan "WW" untuk minggu berbasis Senin.',
+                mixedWeekTokensWarning:
+                    'Pola ini menggabungkan token minggu berbasis Senin ("W" atau "G") dengan token minggu berbasis bahasa ("w" atau "g"). Gunakan satu set secara konsisten: "GGGG" dengan "WW" untuk minggu berbasis Senin, atau "gggg" dengan "ww" jika catatan mingguan harus mengikuti bahasa yang dipilih.'
             },
             calendarCustomMonthPattern: {
                 name: 'Catatan bulanan',
@@ -1533,14 +1646,25 @@ export const STRINGS_ID = {
                 name: 'Tampilkan properti dalam mode kompak',
                 desc: 'Tampilkan properti saat mode kompak aktif.'
             },
-            notePropertyType: {
-                name: 'Properti catatan',
-                desc: 'Pilih properti catatan untuk ditampilkan di item file.',
+            showWordCount: {
+                name: 'Tampilkan jumlah kata',
+                desc: 'Tampilkan jumlah kata catatan pada item file.'
+            },
+            wordCountPlacement: {
+                name: 'Penempatan',
+                desc: 'Pilih tempat jumlah kata muncul.',
                 options: {
-                    frontmatter: 'Properti frontmatter',
-                    wordCount: 'Jumlah kata',
-                    none: 'Tidak ada'
+                    title: 'Di judul',
+                    property: 'Sebagai properti'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Properti target',
+                desc: 'Kunci properti frontmatter yang berisi target jumlah kata. Biarkan kosong untuk menyembunyikan target.'
+            },
+            showWordCountPercentage: {
+                name: 'Tampilkan persentase target',
+                desc: 'Tampilkan hanya persentase kemajuan saat target jumlah kata tersedia.'
             },
             propertyFields: {
                 name: 'Kunci properti (profil brankas)',

@@ -85,6 +85,9 @@ button.nn-mobile-toolbar-button {
 .nn-mobile-toolbar-button svg {
     width: 24px;
     height: 24px;
+}
+
+.nn-mobile-toolbar-button svg:not(.nn-vault-icon-svg) {
     stroke-width: 1.5;
     stroke: var(--nn-theme-mobile-toolbar-button-icon-color);
 }
@@ -100,7 +103,7 @@ button.nn-mobile-toolbar-button {
     background-color: var(--nn-theme-mobile-toolbar-button-active-bg);
 }
 
-.notebook-navigator-mobile button.nn-mobile-toolbar-button.nn-mobile-toolbar-button-active svg {
+.notebook-navigator-mobile button.nn-mobile-toolbar-button.nn-mobile-toolbar-button-active svg:not(.nn-vault-icon-svg) {
     stroke: var(--nn-theme-mobile-toolbar-button-active-icon-color);
     stroke-width: 2;
 }

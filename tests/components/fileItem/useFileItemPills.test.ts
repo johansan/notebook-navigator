@@ -75,9 +75,10 @@ vi.mock('../../../src/components/ServiceIcon', () => ({
 }));
 
 function renderPillRows(
-    params: Omit<UseFileItemPillsParams, 'hiddenTagVisibility' | 'fileItemPillDecorationModel'> & {
+    params: Omit<UseFileItemPillsParams, 'hiddenTagVisibility' | 'fileItemPillDecorationModel' | 'wordCountDisplayText'> & {
         hiddenTagVisibility?: HiddenTagVisibility;
         fileItemPillDecorationModel?: FileItemPillDecorationModel;
+        wordCountDisplayText?: string | null;
     }
 ): string {
     const emptyDecorationModel: FileItemPillDecorationModel = {
@@ -98,6 +99,9 @@ function renderPillRows(
     function Host() {
         const state = useFileItemPills({
             ...params,
+            wordCountDisplayText:
+                params.wordCountDisplayText ??
+                (typeof params.wordCount === 'number' ? Math.trunc(params.wordCount).toLocaleString() : null),
             hiddenTagVisibility: params.hiddenTagVisibility ?? createHiddenTagVisibility([], false),
             fileItemPillDecorationModel: params.fileItemPillDecorationModel ?? emptyDecorationModel
         });
@@ -149,7 +153,6 @@ describe('useFileItemPills', () => {
             tags: ['alpha', 'beta'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -174,7 +177,6 @@ describe('useFileItemPills', () => {
             tags: ['alpha', 'beta'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -211,7 +213,6 @@ describe('useFileItemPills', () => {
             tags: ['Alpha'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -246,10 +247,11 @@ describe('useFileItemPills', () => {
             tags: [],
             properties: null,
             wordCount: 1234,
-            notePropertyType: 'wordCount',
             settings: {
                 ...DEFAULT_SETTINGS,
-                showFileProperties: true
+                showFileProperties: true,
+                showWordCount: true,
+                wordCountPlacement: 'property'
             },
             visiblePropertyKeys: new Set<string>(),
             visibleNavigationPropertyKeys: new Set<string>()
@@ -259,6 +261,27 @@ describe('useFileItemPills', () => {
         expect(markup).toContain('1,234');
     });
 
+    it('renders configured word count target text as a property pill', () => {
+        const markup = renderPillRows({
+            file: createTestTFile('Notes/Target.md'),
+            isCompactMode: false,
+            tags: [],
+            properties: [{ fieldKey: 'word-goal', value: '5000', valueKind: 'number' }],
+            wordCount: 1250,
+            wordCountDisplayText: '25%',
+            settings: {
+                ...DEFAULT_SETTINGS,
+                showWordCount: true,
+                wordCountPlacement: 'property'
+            },
+            visiblePropertyKeys: new Set<string>(),
+            visibleNavigationPropertyKeys: new Set<string>()
+        });
+
+        expect(markup).toContain('data-show-word-count="true"');
+        expect(markup).toContain('25%');
+    });
+
     it('filters hidden tags using the provided visibility helper', () => {
         const markup = renderPillRows({
             file: createTestTFile('Notes/Hidden.md'),
@@ -266,7 +289,6 @@ describe('useFileItemPills', () => {
             tags: ['visible', 'archive/private'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -291,7 +313,6 @@ describe('useFileItemPills', () => {
             tags: ['ai', 'ai/openai', 'ml'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -317,7 +338,6 @@ describe('useFileItemPills', () => {
             tags: ['ai', 'ai/openai'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -342,7 +362,6 @@ describe('useFileItemPills', () => {
             tags: ['ai', 'ml'],
             properties: null,
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showTags: true,
@@ -370,7 +389,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -400,7 +418,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true
@@ -434,7 +451,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true
@@ -463,7 +479,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true
@@ -491,7 +506,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -525,7 +539,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -560,7 +573,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -603,7 +615,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -643,7 +654,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -687,7 +697,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -715,7 +724,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -744,7 +752,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -773,7 +780,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -803,7 +809,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -831,7 +836,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -861,7 +865,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -890,7 +893,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -919,7 +921,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -948,7 +949,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -978,7 +978,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,
@@ -1008,7 +1007,6 @@ describe('useFileItemPills', () => {
                 }
             ],
             wordCount: null,
-            notePropertyType: DEFAULT_SETTINGS.notePropertyType,
             settings: {
                 ...DEFAULT_SETTINGS,
                 showFileProperties: true,

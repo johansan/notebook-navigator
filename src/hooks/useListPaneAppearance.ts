@@ -19,7 +19,7 @@
 import { useMemo } from 'react';
 import { useSettingsState } from '../context/SettingsContext';
 import { useSelectionState } from '../context/SelectionContext';
-import type { NotePropertyType, ListDisplayMode, ListNoteGroupingOption } from '../settings/types';
+import type { ListDisplayMode, ListNoteGroupingOption } from '../settings/types';
 import type { NotebookNavigatorSettings } from '../settings';
 import { ItemType } from '../types';
 import { resolveListGroupingOverride } from '../utils/listGrouping';
@@ -28,7 +28,6 @@ export interface FolderAppearance {
     mode?: ListDisplayMode;
     titleRows?: number;
     previewRows?: number;
-    notePropertyType?: NotePropertyType;
     groupBy?: ListNoteGroupingOption;
 }
 
@@ -38,7 +37,6 @@ export interface ListPaneAppearanceSettings {
     mode: ListDisplayMode;
     titleRows: number;
     previewRows: number;
-    notePropertyType: NotePropertyType;
     showDate: boolean;
     showPreview: boolean;
     showImage: boolean;
@@ -110,18 +108,15 @@ export function useListPaneAppearance() {
     const selectedMode = selectedAppearance?.mode;
     const selectedTitleRows = selectedAppearance?.titleRows;
     const selectedPreviewRows = selectedAppearance?.previewRows;
-    const selectedNotePropertyType = selectedAppearance?.notePropertyType;
     const selectedGroupBy = selectedAppearance?.groupBy;
-    const { defaultListMode, fileNameRows, noteGrouping, notePropertyType, previewRows, showFeatureImage, showFileDate, showFilePreview } =
-        settings;
+    const { defaultListMode, fileNameRows, noteGrouping, previewRows, showFeatureImage, showFileDate, showFilePreview } = settings;
 
     return useMemo<ListPaneAppearanceSettings>(() => {
         const defaultMode = defaultListMode === 'compact' ? 'compact' : 'standard';
         const appearance = {
             mode: selectedMode,
             titleRows: selectedTitleRows,
-            previewRows: selectedPreviewRows,
-            notePropertyType: selectedNotePropertyType
+            previewRows: selectedPreviewRows
         };
         const mode = resolveListMode({ appearance, defaultMode });
         const visibility = getVisibilityForMode(mode, { showFileDate, showFilePreview, showFeatureImage });
@@ -134,7 +129,6 @@ export function useListPaneAppearance() {
             mode,
             titleRows: selectedTitleRows ?? fileNameRows,
             previewRows: selectedPreviewRows ?? previewRows,
-            notePropertyType: selectedNotePropertyType ?? notePropertyType,
             showDate: visibility.showDate,
             showPreview: visibility.showPreview,
             showImage: visibility.showImage,
@@ -144,12 +138,10 @@ export function useListPaneAppearance() {
         defaultListMode,
         fileNameRows,
         noteGrouping,
-        notePropertyType,
         previewRows,
         selectedMode,
         selectedTitleRows,
         selectedPreviewRows,
-        selectedNotePropertyType,
         selectedGroupBy,
         showFeatureImage,
         showFileDate,

@@ -21,7 +21,7 @@ import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import { useSettingsState } from '../context/SettingsContext';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import type { ListReorderHandlers } from '../types/listReorder';
-import { NavigationListRow, type DragHandleConfig } from './NavigationListRow';
+import { NavigationListRow, type DragHandleConfig, type NativeDragData } from './NavigationListRow';
 import type { NoteCountInfo } from '../types/noteCounts';
 import { buildNoteCountDisplay } from '../utils/noteCountFormatting';
 import { strings } from '../i18n';
@@ -62,6 +62,7 @@ interface ShortcutItemProps {
     dragListeners?: DraggableSyntheticListeners;
     dragStyle?: React.CSSProperties;
     isSorting?: boolean;
+    nativeDragData?: NativeDragData;
 }
 
 /**
@@ -99,7 +100,8 @@ export const ShortcutItem = React.memo(function ShortcutItem({
     dragAttributes,
     dragListeners,
     dragStyle,
-    isSorting
+    isSorting,
+    nativeDragData
 }: ShortcutItemProps) {
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -222,6 +224,7 @@ export const ShortcutItem = React.memo(function ShortcutItem({
             dragListeners={dragListeners}
             dragStyle={dragStyle}
             isSorting={isSorting}
+            nativeDragData={nativeDragData}
         />
     );
 });

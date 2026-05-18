@@ -22,6 +22,7 @@ import type { SearchResultMeta } from './search';
 import { PropertyTreeNode, TagTreeNode } from '../types/storage';
 import type { SearchShortcut, ShortcutEntry } from '../types/shortcuts';
 import type { NoteCountInfo } from '../types/noteCounts';
+import type { ManualSortGroupHeaderData } from '../utils/manualSort';
 
 export interface VirtualItem<T> {
     type: string;
@@ -30,6 +31,8 @@ export interface VirtualItem<T> {
     level?: number; // For hierarchical items
 }
 
+export type ListPaneHeaderKind = 'date' | 'folder' | 'pinned' | 'section' | 'manual-sort-custom';
+
 export interface ListPaneItem {
     type: ListPaneItemType;
     data: TFile | string; // File, header text, or spacer payload
@@ -37,6 +40,20 @@ export interface ListPaneItem {
     // Folder path associated with a folder-group header.
     // Present only when grouping by folder in the list pane.
     headerFolderPath?: string | null;
+    // Markdown file path that owns a manual sort custom header.
+    // Present only on manual-sort-custom headers.
+    manualSortHeaderFilePath?: string | null;
+    // Whether a manual sort custom header label depends on stored word counts.
+    manualSortHeaderShowsWordCount?: boolean;
+    // Parsed manual sort custom header display data.
+    manualSortHeader?: ManualSortGroupHeaderData;
+    // Accumulated word count for the manual sort custom header segment.
+    manualSortHeaderWordCount?: number;
+    // Resolved target word count for the manual sort custom header segment.
+    manualSortHeaderTargetWordCount?: number | null;
+    headerKind?: ListPaneHeaderKind;
+    collapseKey?: string;
+    isCollapsed?: boolean;
     key: string;
     // Pre-computed file index for stable onClick handlers
     fileIndex?: number;

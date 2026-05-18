@@ -485,6 +485,49 @@ describe('listPaneMeasurements layout helpers', () => {
         expect(heightWithoutDate).toBe(heightWithDate);
     });
 
+    it('lets pill rows use the hidden image metadata line when the date is hidden', () => {
+        const layoutState = getFileItemLayoutState({
+            showDate: false,
+            showPreview: true,
+            showImage: true,
+            isPinned: false,
+            hasPreviewContent: true,
+            showFeatureImageArea: true,
+            hasVisiblePillRows: true
+        });
+        const richBaseHeight =
+            desktopHeights.basePadding +
+            desktopHeights.titleLineHeight +
+            desktopHeights.multilineTextLineHeight * 2 +
+            desktopHeights.singleTextLineHeight;
+
+        expect(
+            calculateNormalListFileRowHeightEstimate({
+                heights: desktopHeights,
+                titleRows: 1,
+                previewRows: 2,
+                layoutState,
+                showFeatureImageArea: true,
+                showExtensionBadgeThumbnail: false,
+                showParentFolderLine: false,
+                visiblePillRowCount: 1
+            })
+        ).toBe(richBaseHeight + desktopHeights.tagRowHeight - desktopHeights.singleTextLineHeight);
+
+        expect(
+            calculateNormalListFileRowHeightEstimate({
+                heights: desktopHeights,
+                titleRows: 1,
+                previewRows: 2,
+                layoutState,
+                showFeatureImageArea: true,
+                showExtensionBadgeThumbnail: false,
+                showParentFolderLine: false,
+                visiblePillRowCount: 3
+            })
+        ).toBe(richBaseHeight + desktopHeights.tagRowHeight * 3 - desktopHeights.singleTextLineHeight);
+    });
+
     it('lets replacement pill rows use the rich preview slot before growing the row', () => {
         const layoutState = getFileItemLayoutState({
             showDate: true,
@@ -653,7 +696,7 @@ describe('listPaneMeasurements layout helpers', () => {
     it('counts numeric frontmatter properties as visible property rows', () => {
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -669,7 +712,7 @@ describe('listPaneMeasurements layout helpers', () => {
     it('counts boolean frontmatter properties as visible property rows', () => {
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -692,7 +735,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -706,7 +749,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: true,
                 showFilePropertiesInCompactMode: true,
@@ -753,7 +796,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -768,7 +811,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -793,7 +836,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -807,7 +850,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,
@@ -821,7 +864,7 @@ describe('listPaneMeasurements layout helpers', () => {
 
         expect(
             getPropertyRowCount({
-                notePropertyType: 'none',
+                showWordCountProperty: false,
                 showFileProperties: true,
                 showPropertiesOnSeparateRows: false,
                 showFilePropertiesInCompactMode: true,

@@ -29,6 +29,7 @@ export const STRINGS_KO = {
         remove: '제거', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: '기본값 복원', // Button text for restoring values to defaults (English: Restore default)
         submit: '제출', // Button text for submitting forms and dialogs (English: Submit)
+        save: '저장', // Button text for saving settings and dialogs (English: Save)
         configure: '구성', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: '라이트 모드', // Label for light theme mode (English: Light mode)
         darkMode: '다크 모드', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_KO = {
         pinnedSection: '고정됨', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: '노트', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: '파일', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (숨김)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (숨김)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: '그룹 접기',
+        expandGroup: '그룹 펼치기',
+        manualSortTitle: '수동 정렬: {property}',
+        manualSortHint: '드래그하여 순서를 변경하세요. 순서는 숫자 인덱스 값으로 속성 "{property}"에 저장됩니다.',
+        manualSortNonMarkdownHint: '마크다운이 아닌 파일은 하단에 표시되며 순서를 변경할 수 없습니다.',
+        unsortedSection: '정렬되지 않음',
+        manualSortDone: '완료',
+        manualSortMultipleWriteFailure: '{count}개 파일 실패; 첫 번째: {path}: {message}'
     },
 
     // Tag list
@@ -131,6 +140,9 @@ export const STRINGS_KO = {
         changeChildSortOrder: '정렬 순서 변경',
         changeSortAndGroup: '정렬 및 그룹 변경',
         defaultSort: '기본', // Label for default sorting mode (English: Default)
+        manualSort: '수동 정렬',
+        editSortOrder: '정렬 순서 편집...',
+        removeSortProperty: '정렬 속성 제거',
         descendants: '하위 항목',
         subfolders: '하위 폴더',
         subtags: '하위 태그',
@@ -299,6 +311,14 @@ export const STRINGS_KO = {
             moveFileToFolder: '파일 이동...',
             moveMultipleNotesToFolder: '{count}개의 노트 이동...',
             moveMultipleFilesToFolder: '{count}개의 파일 이동...',
+            setManualSortGroupHeader: '그룹 머리글 설정',
+            changeManualSortGroupHeader: '그룹 머리글 변경',
+            manualSortGroupHeader: {
+                title: '그룹 머리글',
+                copyStyle: '머리글 스타일 복사',
+                pasteStyle: '머리글 스타일 붙여넣기',
+                remove: '그룹 머리글 제거'
+            },
             addTag: '태그 추가',
             addPropertyKey: '속성 설정',
             removeTag: '태그 제거',
@@ -388,6 +408,33 @@ export const STRINGS_KO = {
             applyAppearanceTitle: (target: string) => `${target}에 모양을 적용하시겠습니까?`,
             affectedCountMessage: (count: number) => `변경될 기존 재정의: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: '수동 정렬을 사용하시겠습니까?',
+            propertySortMessage: (property: string, count: number) =>
+                `현재 보기를 "${property}"을(를) 사용한 수동 정렬로 전환합니다. 순서를 편집하면 필요에 따라 ${count}개 노트의 해당 속성에 숫자 인덱스 값이 기록됩니다.`,
+            propertySortConfirmButton: '수동 정렬 사용',
+            removePropertyTitle: '정렬 속성을 제거하시겠습니까?',
+            removePropertyMessage: (property: string, count: number) =>
+                `현재 목록의 ${count}개 노트에서 "${property}"을(를) 제거합니다. 해당 노트의 수동 정렬 순서가 초기화됩니다.`,
+            removePropertyConfirmButton: '속성 제거',
+            compactTitle: '인덱스 값을 압축하시겠습니까?',
+            compactMessage: (count: number) =>
+                `이 재정렬에는 더 많은 숫자 공간이 필요합니다. ${count}개 노트에 새로운 인덱스 값이 할당됩니다.`,
+            compactConfirmButton: '인덱스 값 압축'
+        },
+        manualSortGroupHeader: {
+            title: '그룹 머리글 설정',
+            titleLabel: '제목',
+            placeholder: '그룹 머리글',
+            icon: '아이콘',
+            color: '색상',
+            wordCount: '단어 수 표시',
+            wordCountTarget: '목표 단어 수',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                '이 필드가 비어 있으면 그룹 목표는 설정 > 노트 > 단어 수에서 설정한 목표 속성을 사용합니다. 이 그룹의 목표값을 설정하면 재정의할 수 있습니다.',
+            description: '이 노트의 그룹 머리글을 사용자 지정합니다. 머리글을 제거하려면 제목을 비워 두세요.'
+        },
         navRainbowSection: {
             title: (section: string) => `무지개 색상: ${section}`
         },
@@ -426,6 +473,11 @@ export const STRINGS_KO = {
                 'list-descendants': '하위 폴더의 노트',
                 'list-sort-ascending': '정렬 순서: 오름차순',
                 'list-sort-descending': '정렬 순서: 내림차순',
+                'list-sort-modified': '수정 날짜로 정렬',
+                'list-sort-created': '생성 날짜로 정렬',
+                'list-sort-title': '제목으로 정렬',
+                'list-sort-filename': '파일 이름으로 정렬',
+                'list-sort-property': '속성으로 정렬',
                 'list-appearance': '모양 변경',
                 'list-new-note': '새 노트',
                 'nav-folder-open': '열린 폴더',
@@ -700,6 +752,8 @@ export const STRINGS_KO = {
             propertiesRequireMarkdown: '속성은 Markdown 노트에서만 지원됩니다',
             propertySetOnNote: '1개 노트의 속성을 업데이트했습니다',
             propertySetOnNotes: '{count}개 노트의 속성을 업데이트했습니다',
+            manualSortPropertyRemovedFromNote: '1개 노트에서 정렬 속성을 제거했습니다',
+            manualSortPropertyRemovedFromNotes: '{count}개 노트에서 정렬 속성을 제거했습니다',
             iconPackDownloaded: '{provider} 다운로드됨',
             iconPackUpdated: '{provider} 업데이트됨 ({version})',
             iconPackRemoved: '{provider} 제거됨',
@@ -862,6 +916,9 @@ export const STRINGS_KO = {
             list: {
                 display: '모양',
                 organization: '정리',
+                groupHeaders: '그룹 머리글',
+                propertySort: '속성 정렬',
+                manualSort: '수동 정렬',
                 pinnedNotes: '고정된 노트',
                 drawingPreviews: '그림 미리보기'
             },
@@ -875,7 +932,8 @@ export const STRINGS_KO = {
                 tags: '태그',
                 properties: '속성',
                 date: '날짜',
-                parentFolder: '상위 폴더'
+                parentFolder: '상위 폴더',
+                wordCount: '단어 수'
             }
         },
         syncMode: {
@@ -895,8 +953,8 @@ export const STRINGS_KO = {
                 }
             },
             sortNotesBy: {
-                name: '노트 정렬 기준',
-                desc: '노트 목록에서 노트를 정렬하는 방법을 선택하세요.',
+                name: '기본 정렬 순서',
+                desc: '노트의 기본 정렬 순서를 선택하세요.',
                 options: {
                     'modified-desc': '수정 날짜 (최신 상위)',
                     'modified-asc': '수정 날짜 (오래된 상위)',
@@ -905,19 +963,24 @@ export const STRINGS_KO = {
                     'title-asc': '제목 (가나다 상위)',
                     'title-desc': '제목 (역순 상위)',
                     'filename-asc': '파일 이름 (가나다 상위)',
-                    'filename-desc': '파일 이름 (역순 상위)',
-                    'property-asc': '속성 (가나다 상위)',
-                    'property-desc': '속성 (역순 상위)'
+                    'filename-desc': '파일 이름 (역순 상위)'
                 },
-                propertyOverride: {
-                    asc: '속성 ‘{property}’ (가나다 상위)',
-                    desc: '속성 ‘{property}’ (역순 상위)'
+                directions: {
+                    asc: '오름차순',
+                    desc: '내림차순'
+                },
+                fields: {
+                    modified: '수정 날짜',
+                    created: '생성 날짜',
+                    title: '제목',
+                    filename: '파일 이름',
+                    property: '속성'
                 }
             },
             propertySortKey: {
-                name: '정렬 속성',
-                desc: '속성 정렬과 함께 사용됩니다. 이 frontmatter 속성이 있는 노트가 먼저 나열되고 속성 값으로 정렬됩니다. 배열은 하나의 값으로 결합됩니다.',
-                placeholder: 'order'
+                name: '정렬에 사용할 속성',
+                desc: '속성 정렬 옵션으로 표시되는 쉼표로 구분된 frontmatter 속성. 배열 값은 하나의 문자열로 결합됩니다. 이 속성들은 변경되지 않습니다.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: '보조 정렬',
@@ -928,6 +991,46 @@ export const STRINGS_KO = {
                     created: '생성 날짜',
                     modified: '편집 날짜'
                 }
+            },
+            propertySortInstructions: {
+                intro: '위에 나열된 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션으로 표시됩니다. 그중 하나를 선택하면 해당 frontmatter 값으로 노트가 정렬됩니다.'
+            },
+            manualSortPropertyKey: {
+                name: '수동 정렬 속성',
+                desc: '수동 정렬에서 숫자 인덱스 값을 저장하는 데 사용되는 frontmatter 속성입니다.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: '그룹 머리글 속성',
+                desc: '사용자 지정 그룹 머리글을 저장하는 데 사용되는 frontmatter 속성입니다.'
+            },
+            groupHeadersInstructions: {
+                intro: '사용자 지정 그룹 머리글은 목록 창에서 노트 위에 표시됩니다.',
+                items: [
+                    '목록 창의 정렬 메뉴에서 그룹화를 **사용자 지정**으로 설정합니다.',
+                    '노트를 마우스 오른쪽 버튼으로 클릭하고 **그룹 머리글 설정**을 선택하여 노트 위에 머리글을 추가합니다.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: '새 노트 배치',
+                desc: '현재 목록이 수동 정렬을 사용할 때 새 노트가 배치될 위치를 선택하세요.',
+                options: {
+                    top: '상단',
+                    bottom: '하단',
+                    'below-selected-note': '선택한 노트 아래',
+                    unsorted: '정렬되지 않음'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: '수동 정렬 전 확인',
+                desc: '수동 정렬 속성을 처음으로 노트에 기록하기 전에 경고를 표시합니다. 비활성화하면 노트는 경고 없이 속성을 받습니다.'
+            },
+            manualSortInstructions: {
+                intro: '수동 정렬은 각 노트의 frontmatter 속성에 숫자 인덱스 값을 기록합니다. 인덱스가 없는 노트는 정렬되지 않음 아래에 표시됩니다.',
+                items: [
+                    '정렬 메뉴에서 **수동 정렬**을 선택하여 수동 정렬을 활성화합니다. 그 후 노트를 재정렬하는 두 가지 방법이 있습니다.',
+                    '정렬 메뉴에서 **정렬 순서 편집...**을 선택하여 재정렬 보기를 엽니다. 마우스로, 또는 모바일에서는 터치로 노트를 드래그합니다. 데스크톱에서는 **Cmd/Ctrl** 또는 **Shift** 클릭으로 여러 노트를 선택한 다음, 그 중 하나를 드래그하여 전체 그룹을 이동합니다.',
+                    '목록 창에서 한 노트를 선택하거나 여러 노트를 다중 선택한 다음, **Cmd/Ctrl + Arrow Up/Down**을 눌러 선택 항목을 위아래로 이동합니다.'
+                ]
             },
             revealFileOnListChanges: {
                 name: '목록 변경 시 선택된 파일로 스크롤',
@@ -946,12 +1049,12 @@ export const STRINGS_KO = {
                 desc: '폴더와 태그의 노트 수를 "현재 ▾ 하위" 형식으로 표시합니다.'
             },
             groupNotes: {
-                name: '노트 그룹화',
-                desc: '날짜 또는 폴더별로 그룹화된 노트 사이에 머리글을 표시합니다. 폴더 그룹화가 활성화되면 태그 보기는 날짜 그룹을 사용합니다.',
+                name: '기본 그룹화',
+                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다.',
                 options: {
-                    none: '그룹화 안 함',
-                    date: '날짜별 그룹',
-                    folder: '폴더별 그룹'
+                    custom: '사용자 지정',
+                    date: '날짜',
+                    folder: '폴더'
                 }
             },
             showSelectedNavigationPills: {
@@ -1201,8 +1304,7 @@ export const STRINGS_KO = {
             calendarLocale: {
                 name: '지역',
                 desc: '달력 날짜 형식, 주 번호, 그리고 한 주의 첫 번째 요일을 제어합니다.',
-                incompatibleWeekPatternWarning:
-                    '주간 노트 패턴이 ISO 주 토큰("W" 또는 "G")을 사용합니다. 캘린더는 이 지역의 시작 요일 대신 월요일부터 시작하는 주를 표시합니다.',
+                weekPathMismatchWarning: '표시되는 캘린더와 주간 노트 경로가 주의 시작 요일 또는 주 번호 매김이 서로 다릅니다.',
                 options: {
                     systemDefault: '기본값'
                 }
@@ -1273,6 +1375,14 @@ export const STRINGS_KO = {
                     dailyNotes: '폴더 및 날짜 형식은 데일리 노트 코어 플러그인에서 설정됩니다.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: '정기 노트 지역',
+                desc: 'Notebook Navigator의 정기 노트 경로에서 지역화된 월 이름, 요일 이름, 주 번호, 주의 시작 요일을 제어합니다.',
+                options: {
+                    calendar: '캘린더',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: '루트 폴더',
@@ -1298,8 +1408,10 @@ export const STRINGS_KO = {
             calendarCustomWeekPattern: {
                 name: '주간 노트',
                 parsingError: '패턴은 전체 주(주 연도, 주 번호)로 포맷되고 다시 파싱될 수 있어야 합니다.',
-                localeMismatchWarning:
-                    '이 패턴은 ISO 주 토큰("W" 또는 "G")을 사용합니다. 캘린더는 월요일부터 시작하는 주를 표시합니다. 주간 노트가 선택한 지역 설정을 따르려면 "w" 또는 "g"를 사용하세요.'
+                weekPathMismatchWarning:
+                    '주간 노트 경로는 정기 노트 지역을 사용합니다. 일치하는 지역을 사용하거나 월요일 기준 주에는 "GGGG"와 "WW"를 사용하세요.',
+                mixedWeekTokensWarning:
+                    '이 패턴은 월요일 기준 주 토큰("W" 또는 "G")과 지역 기준 주 토큰("w" 또는 "g")을 혼합하여 사용합니다. 일관되게 한 가지 세트를 사용하세요. 월요일 기준 주에는 "GGGG"와 "WW", 주간 노트가 선택한 지역 설정을 따라야 하는 경우 "gggg"와 "ww"를 사용하세요.'
             },
             calendarCustomMonthPattern: {
                 name: '월간 노트',
@@ -1531,14 +1643,25 @@ export const STRINGS_KO = {
                 name: '간결 모드에서 속성 표시',
                 desc: '간결 모드가 활성화되면 속성을 표시합니다.'
             },
-            notePropertyType: {
-                name: '노트 속성',
-                desc: '파일 항목에 표시할 노트 속성을 선택합니다.',
+            showWordCount: {
+                name: '단어 수 표시',
+                desc: '파일 항목에 노트 단어 수를 표시합니다.'
+            },
+            wordCountPlacement: {
+                name: '위치',
+                desc: '단어 수가 표시될 위치를 선택합니다.',
                 options: {
-                    frontmatter: '프론트매터 속성',
-                    wordCount: '단어 수',
-                    none: '없음'
+                    title: '제목에 표시',
+                    property: '속성으로 표시'
                 }
+            },
+            wordCountTargetProperty: {
+                name: '대상 속성',
+                desc: '목표 단어 수가 들어 있는 프런트매터 속성 키입니다. 대상을 숨기려면 비워 두세요.'
+            },
+            showWordCountPercentage: {
+                name: '대상 백분율 표시',
+                desc: '목표 단어 수가 있을 때 진행률 백분율만 표시합니다.'
             },
             propertyFields: {
                 name: '속성 키 (보관함 프로필)',

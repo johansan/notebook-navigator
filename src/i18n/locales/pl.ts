@@ -29,6 +29,7 @@ export const STRINGS_PL = {
         remove: 'Usuń', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'Przywróć domyślne', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Wyślij', // Button text for submitting forms and dialogs (English: Submit)
+        save: 'Zapisz', // Button text for saving settings and dialogs (English: Save)
         configure: 'Konfiguruj', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Tryb jasny', // Label for light theme mode (English: Light mode)
         darkMode: 'Tryb ciemny', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,16 @@ export const STRINGS_PL = {
         pinnedSection: 'Przypięte', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'Notatki', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'Pliki', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (ukryte)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (ukryte)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'Zwiń grupę',
+        expandGroup: 'Rozwiń grupę',
+        manualSortTitle: 'Sortowanie ręczne: {property}',
+        manualSortHint:
+            'Przeciągnij, aby zmienić kolejność. Kolejność jest zapisywana jako wartości indeksu liczbowego we właściwości „{property}".',
+        manualSortNonMarkdownHint: 'Pliki inne niż Markdown są wyświetlane na dole i nie można zmieniać ich kolejności.',
+        unsortedSection: 'Nieposortowane',
+        manualSortDone: 'Gotowe',
+        manualSortMultipleWriteFailure: '{count} plików nie powiodło się; pierwszy: {path}: {message}'
     },
 
     // Tag list
@@ -131,6 +141,9 @@ export const STRINGS_PL = {
         changeChildSortOrder: 'Zmień kolejność sortowania',
         changeSortAndGroup: 'Zmień sortowanie i grupowanie',
         defaultSort: 'Domyślne', // Label for default sorting mode (English: Default)
+        manualSort: 'Sortowanie ręczne',
+        editSortOrder: 'Edytuj kolejność sortowania...',
+        removeSortProperty: 'Usuń atrybut sortowania',
         descendants: 'potomków',
         subfolders: 'podfolderów',
         subtags: 'podtagów',
@@ -300,6 +313,14 @@ export const STRINGS_PL = {
             moveFileToFolder: 'Przenieś plik do...',
             moveMultipleNotesToFolder: 'Przenieś notatki ({count}) do...',
             moveMultipleFilesToFolder: 'Przenieś pliki ({count}) do...',
+            setManualSortGroupHeader: 'Ustaw nagłówek grupy',
+            changeManualSortGroupHeader: 'Zmień nagłówek grupy',
+            manualSortGroupHeader: {
+                title: 'Nagłówek grupy',
+                copyStyle: 'Kopiuj styl nagłówka',
+                pasteStyle: 'Wklej styl nagłówka',
+                remove: 'Usuń nagłówek grupy'
+            },
             addTag: 'Dodaj tag',
             addPropertyKey: 'Ustaw właściwość',
             removeTag: 'Usuń tag',
@@ -391,6 +412,33 @@ export const STRINGS_PL = {
             applyAppearanceTitle: (target: string) => `Zastosuj wygląd dla ${target}?`,
             affectedCountMessage: (count: number) => `Istniejące nadpisania do zmiany: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Użyć sortowania ręcznego?',
+            propertySortMessage: (property: string, count: number) =>
+                `Przełącza bieżący widok na sortowanie ręczne z użyciem „${property}". Edycja kolejności w razie potrzeby zapisuje wartości indeksu liczbowego do tej właściwości w ${count} ${count === 1 ? 'notatce' : 'notatkach'}.`,
+            propertySortConfirmButton: 'Użyj sortowania ręcznego',
+            removePropertyTitle: 'Usunąć atrybut sortowania?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Usuwa „${property}" z ${count} ${count === 1 ? 'notatki' : 'notatek'} na bieżącej liście. Kolejność sortowania ręcznego zostanie wyczyszczona dla tych notatek.`,
+            removePropertyConfirmButton: 'Usuń atrybut',
+            compactTitle: 'Zagęścić wartości indeksu?',
+            compactMessage: (count: number) =>
+                `Ta zmiana kolejności wymaga więcej miejsca na wartości liczbowe. ${count} ${count === 1 ? 'notatka otrzyma' : 'notatek otrzyma'} nowe wartości indeksu.`,
+            compactConfirmButton: 'Zagęść wartości indeksu'
+        },
+        manualSortGroupHeader: {
+            title: 'Ustaw nagłówek grupy',
+            titleLabel: 'Tytuł',
+            placeholder: 'Nagłówek grupy',
+            icon: 'Ikona',
+            color: 'Kolor',
+            wordCount: 'Pokaż liczbę słów',
+            wordCountTarget: 'Docelowa liczba słów',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'Gdy to pole jest puste, cel grupy używa właściwości celu ustawionej w Ustawienia > Notatki > Liczba słów. Nadpisz go, ustawiając wartość docelową dla tej grupy.',
+            description: 'Dostosuj nagłówek grupy dla tej notatki. Pozostaw tytuł pusty, aby usunąć nagłówek.'
+        },
         navRainbowSection: {
             title: (section: string) => `Kolory tęczy: ${section}`
         },
@@ -429,6 +477,11 @@ export const STRINGS_PL = {
                 'list-descendants': 'Notatki z podfolderów',
                 'list-sort-ascending': 'Kolejność: rosnąco',
                 'list-sort-descending': 'Kolejność: malejąco',
+                'list-sort-modified': 'Sortuj według daty modyfikacji',
+                'list-sort-created': 'Sortuj według daty utworzenia',
+                'list-sort-title': 'Sortuj według tytułu',
+                'list-sort-filename': 'Sortuj według nazwy pliku',
+                'list-sort-property': 'Sortuj według atrybutu',
                 'list-appearance': 'Zmień wygląd',
                 'list-new-note': 'Nowa notatka',
                 'nav-folder-open': 'Folder otwarty',
@@ -703,6 +756,8 @@ export const STRINGS_PL = {
             propertiesRequireMarkdown: 'Atrybuty są obsługiwane tylko w notatkach Markdown',
             propertySetOnNote: 'Zaktualizowano atrybut w 1 notatce',
             propertySetOnNotes: 'Zaktualizowano atrybut w wielu ({count}) notatkach',
+            manualSortPropertyRemovedFromNote: 'Usunięto atrybut sortowania z 1 notatki',
+            manualSortPropertyRemovedFromNotes: 'Usunięto atrybut sortowania z {count} notatek',
             iconPackDownloaded: '{provider} pobrano',
             iconPackUpdated: '{provider} zaktualizowano ({version})',
             iconPackRemoved: '{provider} usunięto',
@@ -865,6 +920,9 @@ export const STRINGS_PL = {
             list: {
                 display: 'Wygląd',
                 organization: 'Organizacja',
+                groupHeaders: 'Nagłówki grup',
+                propertySort: 'Sortowanie według właściwości',
+                manualSort: 'Sortowanie ręczne',
                 pinnedNotes: 'Przypięte notatki',
                 drawingPreviews: 'Podglądy rysunków'
             },
@@ -878,7 +936,8 @@ export const STRINGS_PL = {
                 tags: 'Tagi',
                 properties: 'Atrybuty',
                 date: 'Data',
-                parentFolder: 'Folder nadrzędny'
+                parentFolder: 'Folder nadrzędny',
+                wordCount: 'Liczba słów'
             }
         },
         syncMode: {
@@ -898,8 +957,8 @@ export const STRINGS_PL = {
                 }
             },
             sortNotesBy: {
-                name: 'Sortuj notatki według',
-                desc: 'Wybierz sposób sortowania notatek na liście.',
+                name: 'Domyślny porządek sortowania',
+                desc: 'Wybierz domyślny porządek sortowania notatek.',
                 options: {
                     'modified-desc': 'daty edycji (od najnowszych)',
                     'modified-asc': 'daty edycji (od najstarszych)',
@@ -908,19 +967,24 @@ export const STRINGS_PL = {
                     'title-asc': 'tytułu (od A do Z)',
                     'title-desc': 'tytułu (od Z do A)',
                     'filename-asc': 'nazwy (od A do Z)',
-                    'filename-desc': 'nazwy (od Z do A)',
-                    'property-asc': 'atrybutu (od A do Z)',
-                    'property-desc': 'atrybutu (od Z do A)'
+                    'filename-desc': 'nazwy (od Z do A)'
                 },
-                propertyOverride: {
-                    asc: 'atrybut ‘{property}’ (od A do Z)',
-                    desc: 'atrybut ‘{property}’ (od Z do A)'
+                directions: {
+                    asc: 'Rosnąco',
+                    desc: 'Malejąco'
+                },
+                fields: {
+                    modified: 'Data edycji',
+                    created: 'Data utworzenia',
+                    title: 'Tytuł',
+                    filename: 'Nazwa pliku',
+                    property: 'Atrybut'
                 }
             },
             propertySortKey: {
-                name: 'Atrybut do sortowania',
-                desc: 'Używane z sortowaniem według atrybutu. Notatki z tym atrybutem są widoczne jako pierwsze i sortowane według wartości. Tablice są łączone w jedną wartość.',
-                placeholder: 'order'
+                name: 'Atrybuty do sortowania',
+                desc: 'Rozdzielone przecinkami atrybuty frontmatter pokazywane jako opcje sortowania według właściwości. Tablice są łączone w jeden ciąg. Te atrybuty nie są zmieniane.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Sortowanie drugorzędne',
@@ -931,6 +995,46 @@ export const STRINGS_PL = {
                     created: 'Data utworzenia',
                     modified: 'Data edycji'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Każdy wymieniony powyżej atrybut pojawia się jako opcja sortowania w menu sortowania w panelu listy. Wybranie jednego sortuje notatki według jego wartości frontmatter.'
+            },
+            manualSortPropertyKey: {
+                name: 'Atrybut sortowania ręcznego',
+                desc: 'Atrybut frontmatter używany do przechowywania wartości indeksu liczbowego dla sortowania ręcznego.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Atrybut nagłówka grupy',
+                desc: 'Atrybut frontmatter używany do przechowywania niestandardowych nagłówków grup.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Niestandardowe nagłówki grup wyświetlają się nad notatkami w panelu listy.',
+                items: [
+                    'W menu sortowania w panelu listy ustaw grupowanie na **Niestandardowe**.',
+                    'Kliknij notatkę prawym przyciskiem myszy i wybierz **Ustaw nagłówek grupy**, aby dodać nagłówek nad nią.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Umiejscowienie nowych notatek',
+                desc: 'Wybierz, gdzie umieszczane są nowe notatki, gdy bieżąca lista używa sortowania ręcznego.',
+                options: {
+                    top: 'Na górze',
+                    bottom: 'Na dole',
+                    'below-selected-note': 'Pod wybraną notatką',
+                    unsorted: 'Nieposortowane'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Potwierdzaj przed sortowaniem ręcznym',
+                desc: 'Pokaż ostrzeżenie przed pierwszym zapisaniem właściwości sortowania ręcznego w notatkach. Po wyłączeniu notatki otrzymują właściwość bez ostrzeżenia.'
+            },
+            manualSortInstructions: {
+                intro: 'Sortowanie ręczne zapisuje wartość indeksu liczbowego do atrybutu frontmatter w każdej notatce. Notatki bez indeksu pojawiają się w sekcji Nieposortowane.',
+                items: [
+                    'Włącz sortowanie ręczne, wybierając **Sortowanie ręczne** z menu sortowania. Następnie istnieją dwa sposoby zmiany kolejności notatek.',
+                    'Wybierz **Edytuj kolejność sortowania...** z menu sortowania, aby otworzyć widok zmiany kolejności. Przeciągaj notatki myszą lub dotykiem na urządzeniach mobilnych. Na komputerze kliknięcie z **Cmd/Ctrl** lub **Shift** zaznacza wiele notatek, a następnie przeciągnięcie którejkolwiek z nich przenosi całą grupę.',
+                    'W panelu listy zaznacz jedną notatkę lub zaznacz wiele, a następnie naciśnij **Cmd/Ctrl + Arrow Up/Down**, aby przesunąć zaznaczenie w górę lub w dół.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Przewiń do wybranego pliku podczas zmian na liście',
@@ -949,12 +1053,12 @@ export const STRINGS_PL = {
                 desc: 'Wyświetla liczbę notatek jako "nadrzędne ▾ podrzędne" w folderach i tagach.'
             },
             groupNotes: {
-                name: 'Grupuj notatki',
-                desc: 'Wyświetla nagłówki pomiędzy grupami notatek na podstawie daty lub folderu. Tagi są grupowane według dat, gdy włączone jest grupowanie według folderów.',
+                name: 'Domyślne grupowanie',
+                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i właściwości używają grup dat, gdy wybrany jest folder.',
                 options: {
-                    none: 'Nie grupuj',
-                    date: 'Grupuj według daty',
-                    folder: 'Grupuj według folderu'
+                    custom: 'Niestandardowe',
+                    date: 'Data',
+                    folder: 'Folder'
                 }
             },
             showSelectedNavigationPills: {
@@ -1204,8 +1308,8 @@ export const STRINGS_PL = {
             calendarLocale: {
                 name: 'Ustawienia regionalne',
                 desc: 'Kontroluje formatowanie dat kalendarza, numerację tygodni i pierwszy dzień tygodnia.',
-                incompatibleWeekPatternWarning:
-                    'Wzór notatek tygodniowych używa tokenów tygodnia ISO ("W" lub "G"). Kalendarz będzie wyświetlał tygodnie zaczynające się od poniedziałku zamiast od pierwszego dnia tygodnia tych ustawień regionalnych.',
+                weekPathMismatchWarning:
+                    'Widoczny kalendarz i ścieżki notatek tygodniowych używają różnych początków tygodni lub numeracji tygodni.',
                 options: {
                     systemDefault: 'Domyślne'
                 }
@@ -1276,6 +1380,14 @@ export const STRINGS_PL = {
                     dailyNotes: 'Folder i format daty można zmienić w ustawieniach wtyczki.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Ustawienia regionalne notatek okresowych',
+                desc: 'Kontroluje zlokalizowane nazwy miesięcy, dni tygodnia, numery tygodni oraz początki tygodni w ścieżkach notatek okresowych Notebook Navigator.',
+                options: {
+                    calendar: 'Kalendarz',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Folder główny',
@@ -1301,8 +1413,10 @@ export const STRINGS_PL = {
             calendarCustomWeekPattern: {
                 name: 'Notatki tygodniowe',
                 parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać kompletną datę (rok tygodnia, numer tygodnia).',
-                localeMismatchWarning:
-                    'Ten wzór używa tokenów tygodnia ISO ("W" lub "G"). Kalendarz będzie wyświetlał tygodnie zaczynające się od poniedziałku. Użyj "w" lub "g", jeśli notatki tygodniowe mają być zgodne z wybranymi ustawieniami regionalnymi.'
+                weekPathMismatchWarning:
+                    'Ścieżki notatek tygodniowych używają ustawień regionalnych notatek okresowych. Użyj pasujących ustawień regionalnych lub użyj "GGGG" z "WW" dla tygodni rozpoczynających się w poniedziałek.',
+                mixedWeekTokensWarning:
+                    'Ten wzór miesza tokeny tygodnia rozpoczynające się w poniedziałek ("W" lub "G") z tokenami tygodnia opartymi na ustawieniach regionalnych ("w" lub "g"). Użyj konsekwentnie jednego zestawu: "GGGG" z "WW" dla tygodni rozpoczynających się w poniedziałek lub "gggg" z "ww", jeśli notatki tygodniowe mają być zgodne z wybranymi ustawieniami regionalnymi.'
             },
             calendarCustomMonthPattern: {
                 name: 'Notatki miesięczne',
@@ -1536,14 +1650,25 @@ export const STRINGS_PL = {
                 name: 'Pokaż atrybuty w trybie kompaktowym',
                 desc: 'Wyświetlaj atrybuty, gdy tryb kompaktowy jest aktywny.'
             },
-            notePropertyType: {
-                name: 'Atrybut notatki',
-                desc: 'Wybierz atrybut notatki do wyświetlenia w elementach plików.',
+            showWordCount: {
+                name: 'Pokaż liczbę słów',
+                desc: 'Wyświetlaj liczbę słów notatek w elementach plików.'
+            },
+            wordCountPlacement: {
+                name: 'Położenie',
+                desc: 'Wybierz, gdzie pojawia się liczba słów.',
                 options: {
-                    frontmatter: 'Atrybut',
-                    wordCount: 'Liczba słów',
-                    none: 'Brak'
+                    title: 'W tytule',
+                    property: 'Jako właściwość'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Właściwość celu',
+                desc: 'Klucz właściwości frontmatter zawierający docelową liczbę słów. Pozostaw puste, aby ukryć cele.'
+            },
+            showWordCountPercentage: {
+                name: 'Pokaż procent celu',
+                desc: 'Wyświetlaj tylko procent postępu, gdy dostępna jest docelowa liczba słów.'
             },
             propertyFields: {
                 name: 'Klucze atrybutów (profil sejfu)',

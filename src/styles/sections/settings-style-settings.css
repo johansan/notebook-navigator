@@ -878,6 +878,14 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-word-count-color
+        title: File word count color
+        description: Text color for word count suffixes.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
         id: nn-theme-file-parent-color
         title: File parent folder color
         description: Text color for parent folder path (when showing subfolders).
@@ -988,6 +996,14 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-selected-word-count-color
+        title: Selected file word count color
+        description: Text color for word count suffixes when selected.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
         id: nn-theme-file-selected-parent-color
         title: Selected file parent folder color
         description: Text color for parent folder path when selected.
@@ -1039,6 +1055,14 @@ settings:
         id: nn-theme-file-selected-inactive-date-color
         title: Selected file date color (inactive)
         description: File date color when selected and pane is inactive.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-selected-inactive-word-count-color
+        title: Selected file word count color (inactive)
+        description: Word count suffix color when file is selected and pane is inactive.
         type: variable-themed-color
         format: hex
         default-light: '#'
@@ -1145,6 +1169,15 @@ settings:
         id: nn-theme-file-date-font-weight
         title: Date font weight
         description: Font weight for file dates.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-word-count-font-weight
+        title: Word count font weight
+        description: Font weight for word count suffixes.
         type: variable-number-slider
         default: 400
         min: 100

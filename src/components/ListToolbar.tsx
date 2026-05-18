@@ -24,14 +24,23 @@ import { ServiceIcon } from './ServiceIcon';
 import { useListActions } from '../hooks/useListActions';
 import { runAsyncAction } from '../utils/async';
 import { resolveUXIcon } from '../utils/uxIcons';
+import type { ManualSortNewFilePlacementContext } from '../utils/manualSort';
 
 interface ListToolbarProps {
     isSearchActive?: boolean;
     onSearchToggle?: () => void;
+    onManualSortStart?: (propertyKey: string) => void;
+    getManualSortNewFileContext?: () => ManualSortNewFilePlacementContext | null;
     useFloatingLayout?: boolean;
 }
 
-export function ListToolbar({ isSearchActive, onSearchToggle, useFloatingLayout = false }: ListToolbarProps) {
+export function ListToolbar({
+    isSearchActive,
+    onSearchToggle,
+    onManualSortStart,
+    getManualSortNewFileContext,
+    useFloatingLayout = false
+}: ListToolbarProps) {
     const uxPreferences = useUXPreferences();
     const includeDescendantNotes = uxPreferences.includeDescendantNotes;
     const selectionState = useSelectionState();
@@ -46,11 +55,11 @@ export function ListToolbar({ isSearchActive, onSearchToggle, useFloatingLayout 
         handleSortMenu,
         handleToggleDescendants,
         descendantsTooltip,
-        getCurrentSortOption,
+        getSortIcon,
         hasAppearanceOrSortSelection,
         hasCustomSortOrGroup,
         hasCustomAppearance
-    } = useListActions();
+    } = useListActions({ onManualSortStart, getManualSortNewFileContext });
 
     const showSearchButton = listVisibility.search;
     const showDescendantsButton = listVisibility.descendants;
@@ -103,12 +112,7 @@ export function ListToolbar({ isSearchActive, onSearchToggle, useFloatingLayout 
                 disabled={!hasAppearanceOrSortSelection}
                 tabIndex={-1}
             >
-                <ServiceIcon
-                    iconId={resolveUXIcon(
-                        settings.interfaceIcons,
-                        getCurrentSortOption().endsWith('-desc') ? 'list-sort-descending' : 'list-sort-ascending'
-                    )}
-                />
+                <ServiceIcon iconId={getSortIcon()} />
             </button>
         ) : null,
         showAppearanceButton ? (

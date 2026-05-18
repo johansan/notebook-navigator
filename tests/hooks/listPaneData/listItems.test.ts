@@ -17,7 +17,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { App, TFile } from 'obsidian';
+import { App, TFile, TFolder } from 'obsidian';
 import { DEFAULT_SETTINGS } from '../../../src/settings/defaultSettings';
 import type { PropertyItem } from '../../../src/storage/IndexedDBStorage';
 import type { IndexedDBStorage } from '../../../src/storage/IndexedDBStorage';
@@ -25,10 +25,12 @@ import { buildListItems, type ListPaneConfig } from '../../../src/hooks/listPane
 import { FILE_VISIBILITY } from '../../../src/utils/fileTypeUtils';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType, ListPaneItemType, PINNED_SECTION_HEADER_KEY } from '../../../src/types';
+import { buildListGroupCollapseKey } from '../../../src/utils/listGroupCollapse';
 
 interface FileMetadataRecord {
     properties: PropertyItem[] | null;
     tags: readonly string[] | null;
+    wordCount?: number | null;
 }
 
 function createApp(): App {
@@ -57,6 +59,29 @@ function createListConfig(pinnedNotes: ListPaneConfig['pinnedNotes']): ListPaneC
     };
 }
 
+function createFolder(path: string): TFolder {
+    const folder = new TFolder();
+    folder.path = path;
+    folder.name = path === '/' ? '' : (path.split('/').pop() ?? path);
+    return folder;
+}
+
+function assignParent(file: TFile, folderPath: string): TFile {
+    file.parent = createFolder(folderPath);
+    return file;
+}
+
+function createCollapseKey(groupingMode: ListPaneConfig['groupBy'], groupId: string): string {
+    return buildListGroupCollapseKey({
+        selectionType: ItemType.FOLDER,
+        selectedFolderPath: '/',
+        selectedTag: null,
+        selectedProperty: null,
+        groupingMode,
+        groupId
+    });
+}
+
 function getFileItems(items: ReturnType<typeof buildListItems>): { path: string; isPinned: boolean }[] {
     const fileItems: { path: string; isPinned: boolean }[] = [];
 
@@ -77,6 +102,15 @@ function getFileItems(items: ReturnType<typeof buildListItems>): { path: string;
     });
 
     return fileItems;
+}
+
+function getHeaderItems(items: ReturnType<typeof buildListItems>): { data: string; kind: string | undefined }[] {
+    return items
+        .filter(item => item.type === ListPaneItemType.HEADER && typeof item.data === 'string')
+        .map(item => ({
+            data: item.data as string,
+            kind: item.headerKind
+        }));
 }
 
 describe('buildListItems pinned display scope', () => {
@@ -124,6 +158,650 @@ describe('buildListItems pinned display scope', () => {
             ListPaneItemType.BOTTOM_SPACER
         ]);
         expect(items[3].key).toMatch(/-spacer-before$/);
+    });
+
+    it('adds an Unsorted section for manual sort files missing a valid rank', () => {
+        const app = createApp();
+        const rankedFile = createTestTFile('notes/ranked.md');
+        const invalidRankFile = createTestTFile('notes/invalid-rank.md');
+        const unsortedFile = createTestTFile('notes/unsorted.md');
+        app.metadataCache.getFileCache = (file: TFile) => ({
+            frontmatter: file.path === rankedFile.path ? { index: 1 } : file.path === invalidRankFile.path ? { index: 'custom' } : {}
+        });
+        const db = createDb({
+            [rankedFile.path]: { tags: null, properties: null },
+            [invalidRankFile.path]: { tags: null, properties: null },
+            [unsortedFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [rankedFile, invalidRankFile, unsortedFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true
+        });
+
+        expect(items.map(item => item.type)).toEqual([
+            ListPaneItemType.TOP_SPACER,
+            ListPaneItemType.FILE,
+            ListPaneItemType.HEADER_SPACER,
+            ListPaneItemType.HEADER,
+            ListPaneItemType.FILE,
+            ListPaneItemType.FILE,
+            ListPaneItemType.BOTTOM_SPACER
+        ]);
+        expect(items[3].data).toBe('Unsorted');
+        expect(items[3].headerKind).toBe('section');
+        expect(getFileItems(items)).toEqual([
+            { path: rankedFile.path, isPinned: false },
+            { path: invalidRankFile.path, isPinned: false },
+            { path: unsortedFile.path, isPinned: false }
+        ]);
+    });
+
+    it('adds manual sort custom headers in pinned, ranked, and Unsorted sections', () => {
+        const app = createApp();
+        const pinnedFile = createTestTFile('notes/pinned.md');
+        const rankedHeaderFile = createTestTFile('notes/ranked-header.md');
+        const rankedPlainFile = createTestTFile('notes/ranked-plain.md');
+        const unsortedHeaderFile = createTestTFile('notes/unsorted-header.md');
+        app.metadataCache.getFileCache = (file: TFile) => ({
+            frontmatter:
+                file.path === pinnedFile.path
+                    ? { index: 1000, Group_Header: 'Pinned header' }
+                    : file.path === rankedHeaderFile.path
+                      ? { index: 2000, group_header: 'Ranked header' }
+                      : file.path === rankedPlainFile.path
+                        ? { index: 3000 }
+                        : file.path === unsortedHeaderFile.path
+                          ? { group_header: 'Unsorted header' }
+                          : {}
+        });
+        const db = createDb({
+            [pinnedFile.path]: { tags: null, properties: null },
+            [rankedHeaderFile.path]: { tags: null, properties: null },
+            [rankedPlainFile.path]: { tags: null, properties: null },
+            [unsortedHeaderFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [pinnedFile, rankedHeaderFile, rankedPlainFile, unsortedHeaderFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({
+                    [pinnedFile.path]: { folder: true, tag: false, property: false }
+                }),
+                groupBy: 'custom'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Pinned', kind: 'pinned' },
+            { data: 'Pinned header', kind: 'manual-sort-custom' },
+            { data: 'Ranked header', kind: 'manual-sort-custom' },
+            { data: 'Unsorted', kind: 'section' },
+            { data: 'Unsorted header', kind: 'manual-sort-custom' }
+        ]);
+        expect(getFileItems(items)).toEqual([
+            { path: pinnedFile.path, isPinned: true },
+            { path: rankedHeaderFile.path, isPinned: false },
+            { path: rankedPlainFile.path, isPinned: false },
+            { path: unsortedHeaderFile.path, isPinned: false }
+        ]);
+    });
+
+    it('adds manual sort custom header word counts and targets', () => {
+        const app = createApp();
+        const firstFile = createTestTFile('notes/first.md');
+        const secondFile = createTestTFile('notes/second.md');
+        const targetFile = createTestTFile('notes/target.md');
+        const hiddenTargetFile = createTestTFile('notes/hidden-target.md');
+        app.metadataCache.getFileCache = (file: TFile) => ({
+            frontmatter:
+                file.path === firstFile.path
+                    ? { index: 1000, group_header: { title: 'Part 1', show_word_count: true } }
+                    : file.path === secondFile.path
+                      ? { index: 2000, 'word-goal': 2000 }
+                      : file.path === targetFile.path
+                        ? {
+                              index: 3000,
+                              'word-goal': 9999,
+                              group_header: { title: 'Part 2', show_word_count: true, target_word_count: 10000 }
+                          }
+                        : file.path === hiddenTargetFile.path
+                          ? { index: 4000, group_header: { title: 'Part 3', show_word_count: false, target_word_count: 5000 } }
+                          : {}
+        });
+        const db = createDb({
+            [firstFile.path]: {
+                tags: null,
+                properties: [{ fieldKey: 'word-goal', value: '1,000', valueKind: 'string' }],
+                wordCount: 1000
+            },
+            [secondFile.path]: {
+                tags: null,
+                properties: null,
+                wordCount: 234
+            },
+            [targetFile.path]: {
+                tags: null,
+                properties: null,
+                wordCount: 4123
+            },
+            [hiddenTargetFile.path]: {
+                tags: null,
+                properties: [{ fieldKey: 'word-goal', value: 5000, valueKind: 'number' }],
+                wordCount: 99
+            }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [firstFile, secondFile, targetFile, hiddenTargetFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header',
+            wordCountTargetProperty: 'word-goal'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Part 1 (1,234 / 3,000)', kind: 'manual-sort-custom' },
+            { data: 'Part 2 (4,123 / 10,000)', kind: 'manual-sort-custom' },
+            { data: 'Part 3', kind: 'manual-sort-custom' }
+        ]);
+        const manualSortHeaders = items.filter(item => item.type === ListPaneItemType.HEADER && item.headerKind === 'manual-sort-custom');
+        expect(manualSortHeaders.map(item => item.manualSortHeaderFilePath)).toEqual([
+            firstFile.path,
+            targetFile.path,
+            hiddenTargetFile.path
+        ]);
+        expect(manualSortHeaders.map(item => item.manualSortHeaderShowsWordCount)).toEqual([true, true, false]);
+        expect(manualSortHeaders.map(item => item.manualSortHeaderTargetWordCount)).toEqual([3000, 10000, 5000]);
+    });
+
+    it('does not add manual sort custom headers when the group header key is disabled', () => {
+        const app = createApp();
+        const rankedFile = createTestTFile('notes/ranked.md');
+        app.metadataCache.getFileCache = () => ({
+            frontmatter: { index: 1000, group_header: 'Ranked header' }
+        });
+        const db = createDb({
+            [rankedFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [rankedFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: null
+        });
+
+        expect(getHeaderItems(items)).toEqual([]);
+    });
+
+    it('does not split missing values into Unsorted for normal property sort', () => {
+        const app = createApp();
+        const rankedFile = createTestTFile('notes/ranked.md');
+        const missingFile = createTestTFile('notes/missing.md');
+        app.metadataCache.getFileCache = (file: TFile) => ({
+            frontmatter: file.path === rankedFile.path ? { author: 'Ada' } : {}
+        });
+        const db = createDb({
+            [rankedFile.path]: { tags: null, properties: null },
+            [missingFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [rankedFile, missingFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'author',
+            isManualSortActive: false
+        });
+
+        expect(items.map(item => item.type)).toEqual([
+            ListPaneItemType.TOP_SPACER,
+            ListPaneItemType.FILE,
+            ListPaneItemType.FILE,
+            ListPaneItemType.BOTTOM_SPACER
+        ]);
+    });
+
+    it('marks date headers with date header kind', () => {
+        const app = createApp();
+        const todayFile = createTestTFile('notes/today.md');
+        const olderFile = createTestTFile('notes/older.md');
+        const db = createDb({
+            [todayFile.path]: { tags: null, properties: null },
+            [olderFile.path]: { tags: null, properties: null }
+        });
+        const timestamps = new Map([
+            [todayFile.path, new Date(2026, 2, 7).getTime()],
+            [olderFile.path, new Date(2026, 1, 20).getTime()]
+        ]);
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [todayFile, olderFile],
+            getDB: () => db,
+            getFileTimestamps: file => {
+                const timestamp = timestamps.get(file.path) ?? 0;
+                return { created: timestamp, modified: timestamp };
+            },
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: createListConfig({}),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'modified-desc'
+        });
+
+        expect(getHeaderItems(items).map(item => item.kind)).toEqual(['date', 'date']);
+    });
+
+    it('keeps collapsed date headers visible and hides their files', () => {
+        const app = createApp();
+        const todayFile = createTestTFile('notes/today.md');
+        const olderFile = createTestTFile('notes/older.md');
+        const db = createDb({
+            [todayFile.path]: { tags: null, properties: null },
+            [olderFile.path]: { tags: null, properties: null }
+        });
+        const timestamps = new Map([
+            [todayFile.path, new Date(2026, 2, 7).getTime()],
+            [olderFile.path, new Date(2026, 1, 20).getTime()]
+        ]);
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [todayFile, olderFile],
+            getDB: () => db,
+            getFileTimestamps: file => {
+                const timestamp = timestamps.get(file.path) ?? 0;
+                return { created: timestamp, modified: timestamp };
+            },
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'date' },
+            collapsedListGroups: new Set([createCollapseKey('date', 'date:mtime:relative:today')]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'modified-desc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Today', kind: 'date' },
+            { data: 'Previous 30 days', kind: 'date' }
+        ]);
+        expect(getFileItems(items)).toEqual([{ path: olderFile.path, isPinned: false }]);
+        expect(items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Today')?.isCollapsed).toBe(true);
+    });
+
+    it('keeps collapsed folder headers visible and hides their files', () => {
+        const app = createApp();
+        const alphaFile = assignParent(createTestTFile('Alpha/one.md'), 'Alpha');
+        const betaFile = assignParent(createTestTFile('Beta/two.md'), 'Beta');
+        const db = createDb({
+            [alphaFile.path]: { tags: null, properties: null },
+            [betaFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [alphaFile, betaFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'folder' },
+            collapsedListGroups: new Set([createCollapseKey('folder', 'folder:/Alpha')]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'modified-desc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Alpha', kind: 'folder' },
+            { data: 'Beta', kind: 'folder' }
+        ]);
+        expect(getFileItems(items)).toEqual([{ path: betaFile.path, isPinned: false }]);
+    });
+
+    it('keeps the pinned divider section non-collapsible', () => {
+        const app = createApp();
+        const pinnedFile = createTestTFile('notes/pinned.md');
+        const regularFile = createTestTFile('notes/regular.md');
+        const db = createDb({
+            [pinnedFile.path]: { tags: null, properties: null },
+            [regularFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [pinnedFile, regularFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({
+                    [pinnedFile.path]: { folder: true, tag: false, property: false }
+                }),
+                groupBy: 'custom'
+            },
+            collapsedListGroups: new Set([createCollapseKey('custom', 'section:notes')]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'modified-desc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Pinned', kind: 'pinned' },
+            { data: 'Notes', kind: 'section' }
+        ]);
+        expect(getFileItems(items)).toEqual([
+            { path: pinnedFile.path, isPinned: true },
+            { path: regularFile.path, isPinned: false }
+        ]);
+        const notesHeader = items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Notes');
+        expect(notesHeader?.collapseKey).toBeUndefined();
+        expect(notesHeader?.isCollapsed).toBe(false);
+    });
+
+    it('keeps collapsed unsorted section headers visible and hides their files', () => {
+        const app = createApp();
+        const sortedFile = createTestTFile('notes/sorted.md');
+        const unsortedFile = createTestTFile('notes/unsorted.md');
+        app.metadataCache.getFileCache = file => ({
+            frontmatter: file.path === sortedFile.path ? { index: 1000 } : {}
+        });
+        const db = createDb({
+            [sortedFile.path]: { tags: null, properties: null },
+            [unsortedFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [sortedFile, unsortedFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            collapsedListGroups: new Set([createCollapseKey('custom', 'section:unsorted')]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true
+        });
+
+        expect(getHeaderItems(items)).toEqual([{ data: 'Unsorted', kind: 'section' }]);
+        expect(getFileItems(items)).toEqual([{ path: sortedFile.path, isPinned: false }]);
+    });
+
+    it('omits the pinned divider section when manual sort custom headers appear below pinned files', () => {
+        const app = createApp();
+        const pinnedFile = createTestTFile('notes/pinned.md');
+        const groupedFile = createTestTFile('notes/grouped.md');
+        const regularFile = createTestTFile('notes/regular.md');
+        app.metadataCache.getFileCache = file => ({
+            frontmatter: {
+                index: file.path === pinnedFile.path ? 1000 : file.path === groupedFile.path ? 2000 : 3000,
+                ...(file.path === groupedFile.path ? { group_header: 'Group A' } : {})
+            }
+        });
+        const db = createDb({
+            [pinnedFile.path]: { tags: null, properties: null },
+            [groupedFile.path]: { tags: null, properties: null },
+            [regularFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.SUPPORTED,
+            files: [pinnedFile, groupedFile, regularFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({
+                    [pinnedFile.path]: { folder: true, tag: false, property: false }
+                }),
+                groupBy: 'custom'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Pinned', kind: 'pinned' },
+            { data: 'Group A', kind: 'manual-sort-custom' }
+        ]);
+        expect(getFileItems(items)).toEqual([
+            { path: pinnedFile.path, isPinned: true },
+            { path: groupedFile.path, isPinned: false },
+            { path: regularFile.path, isPinned: false }
+        ]);
+    });
+
+    it('keeps the pinned divider section when the first unpinned manual sort file has no custom header', () => {
+        const app = createApp();
+        const pinnedFile = createTestTFile('notes/pinned.md');
+        const regularFile = createTestTFile('notes/regular.md');
+        const groupedFile = createTestTFile('notes/grouped.md');
+        app.metadataCache.getFileCache = file => ({
+            frontmatter: {
+                index: file.path === pinnedFile.path ? 1000 : file.path === regularFile.path ? 2000 : 3000,
+                ...(file.path === groupedFile.path ? { group_header: 'Group A' } : {})
+            }
+        });
+        const db = createDb({
+            [pinnedFile.path]: { tags: null, properties: null },
+            [regularFile.path]: { tags: null, properties: null },
+            [groupedFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.SUPPORTED,
+            files: [pinnedFile, regularFile, groupedFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({
+                    [pinnedFile.path]: { folder: true, tag: false, property: false }
+                }),
+                groupBy: 'custom'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Pinned', kind: 'pinned' },
+            { data: 'Files', kind: 'section' },
+            { data: 'Group A', kind: 'manual-sort-custom' }
+        ]);
+        expect(getFileItems(items)).toEqual([
+            { path: pinnedFile.path, isPinned: true },
+            { path: regularFile.path, isPinned: false },
+            { path: groupedFile.path, isPinned: false }
+        ]);
+    });
+
+    it('does not render manual sort custom headers inside collapsed folder groups', () => {
+        const app = createApp();
+        const groupedFile = assignParent(createTestTFile('Alpha/grouped.md'), 'Alpha');
+        const betaFile = assignParent(createTestTFile('Beta/two.md'), 'Beta');
+        app.metadataCache.getFileCache = file => ({
+            frontmatter: file.path === groupedFile.path ? { index: 1000, group_header: 'Group A' } : { index: 2000 }
+        });
+        const db = createDb({
+            [groupedFile.path]: { tags: null, properties: null },
+            [betaFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [groupedFile, betaFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'folder' },
+            collapsedListGroups: new Set([createCollapseKey('folder', 'folder:/Alpha')]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Alpha', kind: 'folder' },
+            { data: 'Beta', kind: 'folder' }
+        ]);
+        expect(getFileItems(items)).toEqual([{ path: betaFile.path, isPinned: false }]);
+    });
+
+    it('keeps collapsed manual sort custom headers visible and hides their files', () => {
+        const app = createApp();
+        const groupedFile = createTestTFile('notes/grouped.md');
+        app.metadataCache.getFileCache = () => ({
+            frontmatter: { index: 1000, group_header: 'Ranked header' }
+        });
+        const db = createDb({
+            [groupedFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [groupedFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' },
+            collapsedListGroups: new Set([createCollapseKey('custom', `manual-sort-custom:${groupedFile.path}`)]),
+            searchMetaMap: new Map(),
+            selectedFolder: createFolder('/'),
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc',
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([{ data: 'Ranked header', kind: 'manual-sort-custom' }]);
+        expect(getFileItems(items)).toEqual([]);
     });
 
     it('keeps tag pins in the pinned section when folder pin scoping is enabled', () => {
@@ -304,7 +982,7 @@ describe('buildListItems pinned display scope', () => {
                 ...createListConfig({
                     [pinnedFile.path]: { folder: true, tag: false, property: false }
                 }),
-                groupBy: 'none',
+                groupBy: 'custom',
                 pinnedGroupExpanded: false
             },
             searchMetaMap: new Map(),

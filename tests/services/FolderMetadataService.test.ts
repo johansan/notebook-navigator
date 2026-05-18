@@ -17,11 +17,12 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { App, TFile } from 'obsidian';
+import { App, TFile, TFolder } from 'obsidian';
 import { FolderMetadataService } from '../../src/services/metadata/FolderMetadataService';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings';
 import type { ISettingsProvider } from '../../src/interfaces/ISettingsProvider';
+import { ShortcutType } from '../../src/types/shortcuts';
 
 type MetadataChangeEvent = {
     path: string;
@@ -249,6 +250,52 @@ describe('FolderMetadataService folder note frontmatter integration', () => {
             color: '#112233',
             background: '#223344'
         });
+    });
+
+    it('renames folder shortcuts that uniquely match the old path with different casing', async () => {
+        settingsProvider.settings.vaultProfiles = [
+            {
+                ...DEFAULT_SETTINGS.vaultProfiles[0],
+                shortcuts: [{ type: ShortcutType.FOLDER, path: 'appLab/SKILLS-WORKFLOWS/mmgi' }]
+            }
+        ];
+        app.vault.getAllLoadedFiles = vi.fn(() => [new TFolder('applab/skills-workflows/mmgi-renamed')]);
+
+        await service.handleFolderRename('applab/skills-workflows/mmgi', 'applab/skills-workflows/mmgi-renamed');
+
+        expect(settingsProvider.settings.vaultProfiles[0].shortcuts).toEqual([
+            { type: ShortcutType.FOLDER, path: 'applab/skills-workflows/mmgi-renamed' }
+        ]);
+    });
+
+    it('removes folder shortcuts that uniquely match the deleted path with different casing', async () => {
+        settingsProvider.settings.vaultProfiles = [
+            {
+                ...DEFAULT_SETTINGS.vaultProfiles[0],
+                shortcuts: [{ type: ShortcutType.FOLDER, path: 'appLab/SKILLS-WORKFLOWS/mmgi' }]
+            }
+        ];
+        app.vault.getAllLoadedFiles = vi.fn(() => []);
+
+        await service.handleFolderDelete('applab/skills-workflows/mmgi');
+
+        expect(settingsProvider.settings.vaultProfiles[0].shortcuts).toEqual([]);
+    });
+
+    it('does not remove ambiguous casefolded folder shortcuts', async () => {
+        settingsProvider.settings.vaultProfiles = [
+            {
+                ...DEFAULT_SETTINGS.vaultProfiles[0],
+                shortcuts: [{ type: ShortcutType.FOLDER, path: 'appLab/SKILLS-WORKFLOWS/mmgi' }]
+            }
+        ];
+        app.vault.getAllLoadedFiles = vi.fn(() => [new TFolder('applab/skills-workflows/MMGI')]);
+
+        await service.handleFolderDelete('applab/skills-workflows/mmgi');
+
+        expect(settingsProvider.settings.vaultProfiles[0].shortcuts).toEqual([
+            { type: ShortcutType.FOLDER, path: 'appLab/SKILLS-WORKFLOWS/mmgi' }
+        ]);
     });
 
     it('prefers folder note icon/color/background when frontmatter metadata is enabled', () => {

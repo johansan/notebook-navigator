@@ -13,7 +13,6 @@ Notebook Navigator is currently in a **stabilization phase**, which means develo
 Large or structural requests will generally be declined — so to save you time, please keep your suggestion focused and concise. If you have a bigger idea, please discuss it on [Discord](https://discord.gg/6eeSUvzEJr) first before writing up a detailed proposal here.
 
 **Before submitting:**
-- Check if your feature is already planned for the next release: [Next release](https://github.com/johansan/notebook-navigator/issues/935)
 - Check the Wiki for features that will be re-evaluated and followed up in the future: [Wiki](https://github.com/johansan/notebook-navigator/wiki)
 
 **Describe the feature**

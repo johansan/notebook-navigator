@@ -23,14 +23,25 @@ import { ListPaneItemType, ItemType, PINNED_SECTION_HEADER_KEY } from '../../typ
 import type { ListPaneItem } from '../../types/virtualization';
 import { strings } from '../../i18n';
 import { FILE_VISIBILITY, type FileVisibility } from '../../utils/fileTypeUtils';
-import { compareByAlphaSortOrder, getDateField, isDateSortOption } from '../../utils/sortUtils';
+import { compareByAlphaSortOrder, getDateField, isDateSortOption, isPropertySortOption } from '../../utils/sortUtils';
 import { partitionPinnedFiles } from '../../utils/fileFinder';
+import {
+    formatManualSortGroupHeaderLabel,
+    getCachedManualSortGroupHeader,
+    getCachedManualSortRank,
+    normalizeManualSortGroupHeaderWordCount,
+    shouldShowManualSortGroupHeaderWordCount,
+    type ManualSortGroupHeaderData
+} from '../../utils/manualSort';
+import { getCachedWordCountTargetFromFrontmatter, getWordCountTargetFromProperties } from '../../utils/wordCountUtils';
 import { createHiddenTagVisibility } from '../../utils/tagPrefixMatcher';
 import { getCachedFileTags } from '../../utils/tagUtils';
 import { DateUtils } from '../../utils/dateUtils';
+import { buildListGroupCollapseKey } from '../../utils/listGroupCollapse';
 import type { SearchResultMeta } from '../../types/search';
 import type { IndexedDBStorage } from '../../storage/IndexedDBStorage';
 import type { ListNoteGroupingOption } from '../../settings/types';
+import type { PropertySelectionNodeId } from '../../utils/propertyTree';
 
 export interface ListPaneConfig {
     filterPinnedByFolder: boolean;
@@ -52,11 +63,18 @@ interface BuildListItemsArgs {
     hiddenFileState: ReadonlyMap<string, boolean>;
     hiddenTags: string[];
     listConfig: ListPaneConfig;
+    collapsedListGroups?: ReadonlySet<string>;
     searchMetaMap: ReadonlyMap<string, SearchResultMeta>;
     selectedFolder: TFolder | null;
+    selectedTag?: string | null;
+    selectedProperty?: PropertySelectionNodeId | null;
     selectionType: ItemType | null;
     showHiddenItems: boolean;
     sortOption: SortOption;
+    propertySortKey?: string;
+    isManualSortActive?: boolean;
+    manualSortGroupHeaderPropertyKey?: string | null;
+    wordCountTargetProperty?: string;
 }
 
 export function buildListItems({
@@ -69,11 +87,18 @@ export function buildListItems({
     hiddenFileState,
     hiddenTags,
     listConfig,
+    collapsedListGroups,
     searchMetaMap,
     selectedFolder,
+    selectedTag = null,
+    selectedProperty = null,
     selectionType,
     showHiddenItems,
-    sortOption
+    sortOption,
+    propertySortKey = '',
+    isManualSortActive = false,
+    manualSortGroupHeaderPropertyKey = null,
+    wordCountTargetProperty = ''
 }: BuildListItemsArgs): ListPaneItem[] {
     const items: ListPaneItem[] = [
         {
@@ -109,9 +134,80 @@ export function buildListItems({
           }
         : () => false;
 
+    const groupingMode = listConfig.groupBy;
+    const selectedFolderPath = selectedFolder?.path ?? null;
+    const createCollapseKey = (groupId: string): string =>
+        buildListGroupCollapseKey({
+            selectionType,
+            selectedFolderPath,
+            selectedTag,
+            selectedProperty,
+            groupingMode,
+            groupId
+        });
+
+    let activeListGroupCollapsed = false;
+    let activeCollapsedHeaderKind: ListPaneItem['headerKind'] | null = null;
     let fileIndexCounter = 0;
+    const getFileWordCount = (file: TFile): number => {
+        return normalizeManualSortGroupHeaderWordCount(db.getFile(file.path)?.wordCount);
+    };
+    const getFileWordCountTarget = (file: TFile): number | null => {
+        return (
+            getWordCountTargetFromProperties(db.getFile(file.path)?.properties, wordCountTargetProperty) ??
+            getCachedWordCountTargetFromFrontmatter(app, file, wordCountTargetProperty)
+        );
+    };
+    const manualSortCustomHeaderByPath = new Map<string, ManualSortGroupHeaderData | null>();
+    const getManualSortCustomHeaderValue = (file: TFile): ManualSortGroupHeaderData | null => {
+        if (groupingMode !== 'custom' || !manualSortGroupHeaderPropertyKey || file.extension !== 'md') {
+            return null;
+        }
+
+        if (manualSortCustomHeaderByPath.has(file.path)) {
+            return manualSortCustomHeaderByPath.get(file.path) ?? null;
+        }
+
+        const header = getCachedManualSortGroupHeader(app, file, manualSortGroupHeaderPropertyKey);
+        manualSortCustomHeaderByPath.set(file.path, header);
+        return header;
+    };
+    let activeManualSortHeader: {
+        item: ListPaneItem;
+        header: ManualSortGroupHeaderData;
+        wordCount: number;
+        targetWordCount: number | null;
+    } | null = null;
+    const updateActiveManualSortHeaderLabel = (): void => {
+        if (!activeManualSortHeader) {
+            return;
+        }
+
+        activeManualSortHeader.item.data = formatManualSortGroupHeaderLabel(
+            activeManualSortHeader.header,
+            activeManualSortHeader.wordCount,
+            activeManualSortHeader.targetWordCount
+        );
+        activeManualSortHeader.item.manualSortHeaderWordCount = activeManualSortHeader.wordCount;
+        activeManualSortHeader.item.manualSortHeaderTargetWordCount = activeManualSortHeader.targetWordCount;
+    };
     type FileItemOverrides = Partial<Omit<ListPaneItem, 'type' | 'data' | 'fileIndex' | 'hasTags' | 'isHidden' | 'key' | 'searchMeta'>>;
     const pushFileItem = (file: TFile, overrides: FileItemOverrides = {}) => {
+        if (activeManualSortHeader && shouldShowManualSortGroupHeaderWordCount(activeManualSortHeader.header) && file.extension === 'md') {
+            activeManualSortHeader.wordCount += getFileWordCount(file);
+            if (activeManualSortHeader.header.targetWordCount === null) {
+                const fileTargetWordCount = getFileWordCountTarget(file);
+                if (fileTargetWordCount !== null) {
+                    activeManualSortHeader.targetWordCount = (activeManualSortHeader.targetWordCount ?? 0) + fileTargetWordCount;
+                }
+            }
+            updateActiveManualSortHeaderLabel();
+        }
+
+        if (activeListGroupCollapsed) {
+            return;
+        }
+
         const baseItem: ListPaneItem = {
             type: ListPaneItemType.FILE,
             data: file,
@@ -125,7 +221,24 @@ export function buildListItems({
         items.push({ ...baseItem, ...overrides });
     };
 
-    const pushHeaderItem = ({ data, key, headerFolderPath }: Pick<ListPaneItem, 'data' | 'key' | 'headerFolderPath'>) => {
+    const pushHeaderItem = ({
+        data,
+        key,
+        headerFolderPath,
+        headerKind,
+        collapseKey,
+        manualSortHeader,
+        manualSortHeaderFilePath
+    }: Pick<ListPaneItem, 'data' | 'key' | 'headerFolderPath' | 'headerKind' | 'collapseKey' | 'manualSortHeaderFilePath'> & {
+        manualSortHeader?: ManualSortGroupHeaderData;
+    }) => {
+        if (activeListGroupCollapsed && activeCollapsedHeaderKind !== 'manual-sort-custom' && headerKind === 'manual-sort-custom') {
+            return;
+        }
+
+        const isCollapsed = collapseKey ? collapsedListGroups?.has(collapseKey) === true : false;
+        activeListGroupCollapsed = isCollapsed;
+        activeCollapsedHeaderKind = isCollapsed ? (headerKind ?? null) : null;
         const useHeaderSpacers = items.length > 1;
         if (useHeaderSpacers) {
             items.push({
@@ -135,57 +248,129 @@ export function buildListItems({
             });
         }
 
-        items.push({
+        const headerItem: ListPaneItem = {
             type: ListPaneItemType.HEADER,
             data,
             headerFolderPath,
+            manualSortHeaderFilePath,
+            manualSortHeaderShowsWordCount: manualSortHeader ? shouldShowManualSortGroupHeaderWordCount(manualSortHeader) : undefined,
+            manualSortHeader,
+            manualSortHeaderWordCount: manualSortHeader ? 0 : undefined,
+            manualSortHeaderTargetWordCount: manualSortHeader ? manualSortHeader.targetWordCount : undefined,
+            headerKind,
+            collapseKey,
+            isCollapsed,
             key
+        };
+        items.push(headerItem);
+        activeManualSortHeader = null;
+        if (headerKind === 'manual-sort-custom' && manualSortHeader) {
+            activeManualSortHeader = {
+                item: headerItem,
+                header: manualSortHeader,
+                wordCount: 0,
+                targetWordCount: manualSortHeader.targetWordCount
+            };
+            updateActiveManualSortHeaderLabel();
+        }
+    };
+    const maybePushManualSortCustomHeader = (file: TFile) => {
+        const header = getManualSortCustomHeaderValue(file);
+        if (!header) {
+            return;
+        }
+
+        pushHeaderItem({
+            data: header.title,
+            manualSortHeader: header,
+            manualSortHeaderFilePath: file.path,
+            headerKind: 'manual-sort-custom',
+            collapseKey: createCollapseKey(`manual-sort-custom:${file.path}`),
+            key: `manual-sort-custom-header-${file.path}`
         });
+    };
+    const pushManualSortAwareFileItem = (file: TFile, overrides: FileItemOverrides = {}) => {
+        maybePushManualSortCustomHeader(file);
+        pushFileItem(file, overrides);
     };
 
     if (pinnedFiles.length > 0) {
         pushHeaderItem({
             data: strings.listPane.pinnedSection,
-            key: PINNED_SECTION_HEADER_KEY
+            key: PINNED_SECTION_HEADER_KEY,
+            headerKind: 'pinned'
         });
 
         if (listConfig.pinnedGroupExpanded) {
             pinnedFiles.forEach(file => {
-                pushFileItem(file, { isPinned: true });
+                pushManualSortAwareFileItem(file, { isPinned: true });
             });
         }
     }
 
-    const groupingMode = listConfig.groupBy;
     const shouldGroupByDate = groupingMode === 'date' && isDateSortOption(sortOption);
     const shouldGroupByFolder = groupingMode === 'folder' && selectionType === ItemType.FOLDER;
+    const shouldShowUnsortedSection = isPropertySortOption(sortOption) && isManualSortActive && propertySortKey.trim().length > 0;
 
     if (!shouldGroupByDate && !shouldGroupByFolder) {
-        if (pinnedFiles.length > 0 && unpinnedFiles.length > 0) {
+        const sortedFiles: TFile[] = [];
+        const unsortedFiles: TFile[] = [];
+        if (shouldShowUnsortedSection) {
+            unpinnedFiles.forEach(file => {
+                if (file.extension === 'md' && getCachedManualSortRank(app, file, propertySortKey) === null) {
+                    unsortedFiles.push(file);
+                    return;
+                }
+                sortedFiles.push(file);
+            });
+        } else {
+            sortedFiles.push(...unpinnedFiles);
+        }
+
+        const firstSortedFile = sortedFiles[0] ?? null;
+        const firstSortedFileHasManualSortCustomHeader =
+            groupingMode === 'custom' && firstSortedFile !== null && getManualSortCustomHeaderValue(firstSortedFile) !== null;
+        if (pinnedFiles.length > 0 && sortedFiles.length > 0 && !firstSortedFileHasManualSortCustomHeader) {
             const label = fileVisibility === FILE_VISIBILITY.DOCUMENTS ? strings.listPane.notesSection : strings.listPane.filesSection;
             pushHeaderItem({
                 data: label,
-                key: `header-${label}`
+                key: `header-${label}`,
+                headerKind: 'section'
             });
         }
 
-        unpinnedFiles.forEach(file => {
-            pushFileItem(file);
+        sortedFiles.forEach(file => {
+            pushManualSortAwareFileItem(file);
         });
+
+        if (unsortedFiles.length > 0) {
+            pushHeaderItem({
+                data: strings.listPane.unsortedSection,
+                collapseKey: createCollapseKey('section:unsorted'),
+                key: 'header-unsorted',
+                headerKind: 'section'
+            });
+            unsortedFiles.forEach(file => {
+                pushManualSortAwareFileItem(file);
+            });
+        }
     } else if (shouldGroupByDate) {
         const now = DateUtils.parseLocalDayKey(dayKey) ?? new Date();
         const dateField = getDateField(sortOption);
-        let currentGroup: string | null = null;
+        let currentGroupKey: string | null = null;
 
         unpinnedFiles.forEach(file => {
             const timestamps = getFileTimestamps(file);
             const timestamp = dateField === 'ctime' ? timestamps.created : timestamps.modified;
-            const groupTitle = DateUtils.getDateGroup(timestamp, now);
-            if (groupTitle !== currentGroup) {
-                currentGroup = groupTitle;
+            const group = DateUtils.getDateGroupInfo(timestamp, now);
+            const groupKey = group.key;
+            if (groupKey !== currentGroupKey) {
+                currentGroupKey = groupKey;
                 pushHeaderItem({
-                    data: groupTitle,
-                    key: `header-${groupTitle}`
+                    data: group.label,
+                    collapseKey: createCollapseKey(`date:${dateField}:${groupKey}`),
+                    key: `header-${group.label}`,
+                    headerKind: 'date'
                 });
             }
 
@@ -297,8 +482,10 @@ export function buildListItems({
             if (!group.isCurrentFolder || pinnedFiles.length > 0) {
                 pushHeaderItem({
                     data: group.label,
+                    collapseKey: createCollapseKey(group.key),
                     headerFolderPath: group.folderPath,
-                    key: `header-${group.key}`
+                    key: `header-${group.key}`,
+                    headerKind: 'folder'
                 });
             }
 

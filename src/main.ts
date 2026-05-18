@@ -461,9 +461,6 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             this
         );
         this.omnisearchService = new OmnisearchService(this.app);
-        if (this.settings.searchProvider === 'omnisearch' && !this.omnisearchService.isAvailable()) {
-            this.setSearchProvider('internal');
-        }
         this.api = new NotebookNavigatorAPI(this, this.app);
         this.metadataService.setFolderStyleChangeListener(folderPath => {
             if (this.isUnloading || !this.api) {

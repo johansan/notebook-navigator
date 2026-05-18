@@ -51,6 +51,7 @@
     --nn-selected-file-name-color: var(--nn-theme-file-selected-name-color);
     --nn-selected-file-preview-color: var(--nn-theme-file-selected-preview-color);
     --nn-selected-file-date-color: var(--nn-theme-file-selected-date-color);
+    --nn-selected-file-word-count-color: var(--nn-theme-file-selected-word-count-color);
     --nn-selected-file-parent-color: var(--nn-theme-file-selected-parent-color);
     --nn-selected-file-tag-color: var(--nn-theme-file-selected-tag-color);
     --nn-selected-file-tag-bg: var(--nn-theme-file-selected-tag-bg);
@@ -72,6 +73,7 @@
     --nn-selected-file-name-color: var(--nn-theme-file-selected-inactive-name-color);
     --nn-selected-file-preview-color: var(--nn-theme-file-selected-inactive-preview-color);
     --nn-selected-file-date-color: var(--nn-theme-file-selected-inactive-date-color);
+    --nn-selected-file-word-count-color: var(--nn-theme-file-selected-inactive-word-count-color);
     --nn-selected-file-parent-color: var(--nn-theme-file-selected-inactive-parent-color);
     --nn-selected-file-tag-color: var(--nn-theme-file-selected-inactive-tag-color);
     --nn-selected-file-tag-bg: var(--nn-theme-file-selected-inactive-tag-bg);

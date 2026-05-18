@@ -18,7 +18,7 @@
 
 import { describe, expect, test } from 'vitest';
 import { resolveCalendarCustomNotePathDate } from '../../src/utils/calendarNotes';
-import type { MomentInstance, MomentLocaleData } from '../../src/utils/moment';
+import { resolveCalendarPeriodicNotesLocale, type MomentApi, type MomentInstance, type MomentLocaleData } from '../../src/utils/moment';
 
 describe('calendar note locale policy', () => {
     const createMoment = (context: { localeCalls: string[]; startOfCalls: string[] }): MomentInstance => {
@@ -94,5 +94,19 @@ describe('calendar note locale policy', () => {
         resolveCalendarCustomNotePathDate('week', date, 'GGGG-[W]WW', 'fr', 'en-gb');
         expect(context.localeCalls).toEqual(['en-gb']);
         expect(context.startOfCalls).toEqual(['isoWeek']);
+    });
+
+    test('uses calendar locale when periodic notes locale source is calendar', () => {
+        expect(resolveCalendarPeriodicNotesLocale('calendar', 'sv', null)).toBe('sv');
+    });
+
+    test('uses Obsidian moment locale when periodic notes locale source is obsidian', () => {
+        const momentApi = (() => createMoment({ localeCalls: [], startOfCalls: [] })) as MomentApi;
+        momentApi.locales = () => ['en', 'sv'];
+        momentApi.locale = () => 'en-US';
+        momentApi.fn = {};
+        momentApi.utc = () => ({});
+
+        expect(resolveCalendarPeriodicNotesLocale('obsidian', 'sv', momentApi)).toBe('en');
     });
 });

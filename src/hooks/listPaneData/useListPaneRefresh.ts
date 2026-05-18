@@ -20,7 +20,7 @@ import { useEffect, useRef } from 'react';
 import { TFile } from 'obsidian';
 import { debounce } from 'obsidian';
 import type { App, TFolder } from 'obsidian';
-import type { NotebookNavigatorSettings, SortOption } from '../../settings';
+import type { NotebookNavigatorSettings, PropertySortSecondaryOption, SortOption } from '../../settings';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { OperationType, type CommandQueueService } from '../../services/CommandQueueService';
 import { shouldExcludeFileWithMatcher } from '../../utils/fileFilters';
@@ -30,16 +30,20 @@ import type { IPropertyTreeProvider } from '../../interfaces/IPropertyTreeProvid
 import { ItemType } from '../../types';
 import type { PropertySelectionNodeId } from '../../utils/propertyTree';
 import { createFrontmatterPropertyExclusionMatcher } from '../../utils/fileFilters';
+import { getCachedManualSortGroupHeader } from '../../utils/manualSort';
 
 interface UseListPaneRefreshArgs {
     app: App;
     basePathSet: ReadonlySet<string>;
     commandQueue: CommandQueueService | null;
+    customGroupHeaderFilePaths: ReadonlySet<string>;
     getDB: () => IndexedDBStorage;
+    hasManualSortWordCountGroupHeaders: boolean;
     hasTaskSearchFilters: boolean;
     hiddenFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
     hiddenFileTags: string[];
     includeDescendantNotes: boolean;
+    manualSortGroupHeaderPropertyKey: string | null;
     onRefresh: () => void;
     propertyTreeService: IPropertyTreeProvider | null;
     selectedFolder: TFolder | null;
@@ -47,8 +51,11 @@ interface UseListPaneRefreshArgs {
     selectedTag: string | null;
     selectionType: ItemType | null;
     settings: NotebookNavigatorSettings;
+    shouldRefreshOnCustomGroupHeaderMetadataChange: boolean;
     showHiddenItems: boolean;
     sortOption: SortOption;
+    propertySortKey: string;
+    propertySortSecondary: PropertySortSecondaryOption;
 }
 
 function fileIsWithinSelectedFolder(file: TFile, includeDescendantNotes: boolean, selectedFolder: TFolder | null): boolean {
@@ -74,11 +81,14 @@ export function useListPaneRefresh({
     app,
     basePathSet,
     commandQueue,
+    customGroupHeaderFilePaths,
     getDB,
+    hasManualSortWordCountGroupHeaders,
     hasTaskSearchFilters,
     hiddenFilePropertyMatcher,
     hiddenFileTags,
     includeDescendantNotes,
+    manualSortGroupHeaderPropertyKey,
     onRefresh,
     propertyTreeService,
     selectedFolder,
@@ -86,44 +96,63 @@ export function useListPaneRefresh({
     selectedTag,
     selectionType,
     settings,
+    shouldRefreshOnCustomGroupHeaderMetadataChange,
     showHiddenItems,
-    sortOption
+    sortOption,
+    propertySortKey,
+    propertySortSecondary
 }: UseListPaneRefreshArgs): void {
     const onRefreshRef = useRef(onRefresh);
+    const operationActiveRef = useRef(false);
+    const pendingRefreshRef = useRef(false);
+    const pendingImmediateRefreshRef = useRef(false);
 
     useEffect(() => {
         onRefreshRef.current = onRefresh;
     }, [onRefresh]);
 
     useEffect(() => {
-        const scheduleRefresh = debounce(
-            () => {
-                onRefreshRef.current();
-            },
-            TIMEOUTS.FILE_OPERATION_DELAY,
-            true
-        );
+        const runRefresh = () => {
+            pendingRefreshRef.current = false;
+            pendingImmediateRefreshRef.current = false;
+            onRefreshRef.current();
+        };
 
-        const operationActiveRef = { current: false };
-        const pendingRefreshRef = { current: false };
-        const isTrackedOperationActive = () =>
-            operationActiveRef.current ||
-            Boolean(
-                commandQueue?.hasActiveOperation(OperationType.MOVE_FILE) || commandQueue?.hasActiveOperation(OperationType.DELETE_FILES)
-            );
+        const scheduleRefresh = debounce(runRefresh, TIMEOUTS.FILE_OPERATION_DELAY, true);
+
+        const hasActiveDeleteOperation = () => Boolean(commandQueue?.hasActiveOperation(OperationType.DELETE_FILES));
+        const hasActiveQueuedOperation = () =>
+            Boolean(commandQueue?.hasActiveOperation(OperationType.MOVE_FILE) || hasActiveDeleteOperation());
+        operationActiveRef.current = hasActiveQueuedOperation();
+        const isTrackedOperationActive = () => operationActiveRef.current || hasActiveQueuedOperation();
 
         const flushPendingWhenIdle = () => {
             if (!pendingRefreshRef.current || isTrackedOperationActive()) {
                 return;
             }
 
-            pendingRefreshRef.current = false;
+            if (pendingImmediateRefreshRef.current) {
+                scheduleRefresh.cancel();
+                runRefresh();
+                return;
+            }
+
             scheduleRefresh();
         };
 
-        const queueRefresh = () => {
+        const queueRefresh = (options?: { immediateWhenIdle?: boolean }) => {
+            pendingRefreshRef.current = true;
+            if (options?.immediateWhenIdle) {
+                pendingImmediateRefreshRef.current = true;
+            }
+
             if (isTrackedOperationActive()) {
-                pendingRefreshRef.current = true;
+                return;
+            }
+
+            if (pendingImmediateRefreshRef.current) {
+                scheduleRefresh.cancel();
+                runRefresh();
                 return;
             }
 
@@ -141,6 +170,7 @@ export function useListPaneRefresh({
                 }
             });
         }
+        flushPendingWhenIdle();
 
         let unsubscribePropertyTree: (() => void) | null = null;
         if (selectionType === ItemType.PROPERTY && selectedProperty && propertyTreeService) {
@@ -149,11 +179,11 @@ export function useListPaneRefresh({
             });
         }
 
-        const shouldRefreshOnFileModify = shouldRefreshOnFileModifyForSort(sortOption, settings.propertySortSecondary);
+        const shouldRefreshOnFileModify = shouldRefreshOnFileModifyForSort(sortOption, propertySortSecondary);
         const shouldRefreshOnMetadataChange = shouldRefreshOnMetadataChangeForSort({
             sortOption,
-            propertySortKey: settings.propertySortKey,
-            propertySortSecondary: settings.propertySortSecondary,
+            propertySortKey,
+            propertySortSecondary,
             useFrontmatterMetadata: settings.useFrontmatterMetadata,
             frontmatterNameField: settings.frontmatterNameField,
             frontmatterCreatedField: settings.frontmatterCreatedField,
@@ -161,9 +191,15 @@ export function useListPaneRefresh({
         });
 
         const vaultEvents = [
-            app.vault.on('create', queueRefresh),
-            app.vault.on('delete', queueRefresh),
-            app.vault.on('rename', queueRefresh),
+            app.vault.on('create', () => {
+                queueRefresh();
+            }),
+            app.vault.on('delete', () => {
+                queueRefresh({ immediateWhenIdle: hasActiveDeleteOperation() });
+            }),
+            app.vault.on('rename', () => {
+                queueRefresh();
+            }),
             app.vault.on('modify', file => {
                 if (!shouldRefreshOnFileModify || !(file instanceof TFile) || !basePathSet.has(file.path)) {
                     return;
@@ -200,6 +236,17 @@ export function useListPaneRefresh({
                 return;
             }
 
+            if (shouldRefreshOnCustomGroupHeaderMetadataChange && file.extension === 'md' && basePathSet.has(file.path)) {
+                const hadVisibleHeader = customGroupHeaderFilePaths.has(file.path);
+                const hasCurrentHeader =
+                    manualSortGroupHeaderPropertyKey !== null &&
+                    getCachedManualSortGroupHeader(app, file, manualSortGroupHeaderPropertyKey) !== null;
+                if (hadVisibleHeader || hasCurrentHeader) {
+                    queueRefresh();
+                    return;
+                }
+            }
+
             if (hiddenFilePropertyMatcher.hasCriteria && file.extension === 'md') {
                 const db = getDB();
                 const record = db.getFile(file.path);
@@ -209,6 +256,16 @@ export function useListPaneRefresh({
                     queueRefresh();
                     return;
                 }
+            }
+
+            if (
+                hasManualSortWordCountGroupHeaders &&
+                settings.wordCountTargetProperty.trim().length > 0 &&
+                file.extension === 'md' &&
+                basePathSet.has(file.path)
+            ) {
+                queueRefresh();
+                return;
             }
 
             if (shouldRefreshOnMetadataChange && file.extension === 'md' && basePathSet.has(file.path)) {
@@ -266,6 +323,13 @@ export function useListPaneRefresh({
                 shouldRefresh = changes.some(change => change.changes.taskUnfinished !== undefined && basePathSet.has(change.path));
             }
 
+            if (!shouldRefresh && hasManualSortWordCountGroupHeaders) {
+                shouldRefresh = changes.some(
+                    change =>
+                        (change.changes.wordCount !== undefined || change.changes.properties !== undefined) && basePathSet.has(change.path)
+                );
+            }
+
             if (shouldRefresh) {
                 queueRefresh();
             }
@@ -283,23 +347,28 @@ export function useListPaneRefresh({
         app,
         basePathSet,
         commandQueue,
+        customGroupHeaderFilePaths,
         getDB,
+        hasManualSortWordCountGroupHeaders,
         hasTaskSearchFilters,
         hiddenFilePropertyMatcher,
         hiddenFileTags,
         includeDescendantNotes,
+        manualSortGroupHeaderPropertyKey,
         propertyTreeService,
         selectedFolder,
         selectedProperty,
         selectedTag,
         selectionType,
+        shouldRefreshOnCustomGroupHeaderMetadataChange,
         settings.frontmatterCreatedField,
         settings.frontmatterModifiedField,
         settings.frontmatterNameField,
-        settings.propertySortKey,
-        settings.propertySortSecondary,
+        propertySortKey,
+        propertySortSecondary,
         settings.showFileBackgroundUnfinishedTask,
         settings.useFrontmatterMetadata,
+        settings.wordCountTargetProperty,
         showHiddenItems,
         sortOption
     ]);

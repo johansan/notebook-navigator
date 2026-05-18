@@ -17,6 +17,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+import type { App } from 'obsidian';
 import { useSelectionState } from '../context/SelectionContext';
 import { useServices } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
@@ -48,6 +49,7 @@ import {
 import { showNotice } from '../utils/noticeUtils';
 import { normalizeOptionalVaultFolderPath } from '../utils/pathUtils';
 import { parsePropertyNodeId } from '../utils/propertyTree';
+import { resolveFolderShortcutTarget } from '../utils/shortcutPathResolver';
 import { normalizeTagPath } from '../utils/tagUtils';
 import type { FilterSearchTokens } from '../utils/filterSearch';
 import type { NavigateToFolderOptions, RevealPropertyOptions, RevealTagOptions } from './useNavigatorReveal';
@@ -151,6 +153,19 @@ function formatSearchShortcutStartTargetPath(startTarget: ShortcutStartTarget): 
         case ShortcutStartType.PROPERTY:
             return formatSearchShortcutPropertyLabel(startTarget.nodeId);
     }
+}
+
+export function resolveSearchShortcutStartFolderPath(app: App, startTarget: ShortcutStartTarget): string | null {
+    if (!isShortcutStartFolder(startTarget)) {
+        return null;
+    }
+
+    const normalizedStartFolder = normalizeOptionalVaultFolderPath(startTarget.path);
+    if (!normalizedStartFolder) {
+        return null;
+    }
+
+    return resolveFolderShortcutTarget(app, normalizedStartFolder)?.path ?? null;
 }
 
 export function useListPaneSearch({
@@ -521,9 +536,9 @@ export function useListPaneSearch({
 
             if (startTarget) {
                 if (isShortcutStartFolder(startTarget)) {
-                    const normalizedStartFolder = normalizeOptionalVaultFolderPath(startTarget.path);
-                    if (normalizedStartFolder) {
-                        onNavigateToFolder(normalizedStartFolder, {
+                    const startFolderPath = resolveSearchShortcutStartFolderPath(app, startTarget);
+                    if (startFolderPath) {
+                        onNavigateToFolder(startFolderPath, {
                             source: 'shortcut',
                             suppressAutoSelect: true,
                             skipScroll: settings.skipAutoScroll
@@ -565,6 +580,7 @@ export function useListPaneSearch({
             focusListScroller();
         },
         [
+            app,
             ensureSelectionForCurrentFilterRef,
             focusListScroller,
             isMobile,

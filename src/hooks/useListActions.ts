@@ -17,22 +17,34 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Menu, TFolder } from 'obsidian';
+import { Menu, TFolder, type App, type TFile } from 'obsidian';
 import { useSelectionState, useSelectionDispatch } from '../context/SelectionContext';
 import { useServices, useFileSystemOps, useMetadataService } from '../context/ServicesContext';
 import { useSettingsState, useSettingsUpdate } from '../context/SettingsContext';
 import { useUXPreferenceActions, useUXPreferences } from '../context/UXPreferencesContext';
 import { strings } from '../i18n';
 import { ConfirmModal } from '../modals/ConfirmModal';
-import type { SortOption } from '../settings';
+import type { ListSortOverrideValue, NotebookNavigatorSettings, SortOption } from '../settings';
 import type { ListNoteGroupingOption } from '../settings/types';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
 import {
-    getEffectiveSortOption,
+    areListSortOverridesEqual,
+    buildSortOption,
+    cloneListSortOverride,
+    createListSortOverride,
+    getListSortFieldIconId,
+    getListSortToolbarIconId,
+    getListSortOverrideForSelection,
+    getManualSortPropertyKey,
+    getSortDirection,
+    getSortField,
     getSortIcon as getSortIconName,
+    isManualSortPropertyKey,
     isDateSortOption,
-    isPropertySortOption,
-    SORT_OPTIONS
+    parsePropertySortKeys,
+    resolveListSort,
+    type SortDirection,
+    type SortField
 } from '../utils/sortUtils';
 import { showListPaneAppearanceMenu } from '../components/ListPaneAppearanceMenu';
 import { getDefaultListMode } from './useListPaneAppearance';
@@ -40,10 +52,25 @@ import type { FolderAppearance } from './useListPaneAppearance';
 import { getFilesForFolder } from '../utils/fileFinder';
 import { runAsyncAction } from '../utils/async';
 import { FILE_VISIBILITY } from '../utils/fileTypeUtils';
-import { parsePropertyNodeId } from '../utils/propertyTree';
+import {
+    getManualSortBaselineSettings,
+    getCachedManualSortPropertyState,
+    getLocalizedManualSortWriteFailureMessage,
+    hasCachedManualSortProperty,
+    isValidManualSortPropertyKey,
+    orderManualSortFiles,
+    removeManualSortProperty,
+    writeManualSortOrder,
+    type ManualSortNewFilePlacementContext
+} from '../utils/manualSort';
+import { resolveIconForMenu, resolveUXIcon, resolveUXIconForMenu } from '../utils/uxIcons';
+import { buildPropertyKeyNodeId, parsePropertyNodeId } from '../utils/propertyTree';
+import { getFilesForNavigationSelection } from '../utils/selectionUtils';
 import { findVaultProfileById } from '../utils/vaultProfiles';
-import { ensureRecord, sanitizeRecord } from '../utils/recordUtils';
-import { resolveListGrouping } from '../utils/listGrouping';
+import { casefold, ensureRecord, sanitizeRecord } from '../utils/recordUtils';
+import { resolveEffectiveListGroupingForSort, resolveListGrouping } from '../utils/listGrouping';
+import { getErrorMessage } from '../utils/errorUtils';
+import { showNotice } from '../utils/noticeUtils';
 
 type SelectionSortTarget =
     | { type: typeof ItemType.FOLDER; key: string }
@@ -59,6 +86,105 @@ type DescendantApplyStats = {
     affectedCount: number;
     disabled: boolean;
 };
+
+type ManualSortPropertyStats = {
+    markdownCount: number;
+    validRankCount: number;
+    invalidPropertyCount: number;
+};
+
+interface UseListActionsOptions {
+    onManualSortStart?: (propertyKey: string) => void;
+    getManualSortNewFileContext?: () => ManualSortNewFilePlacementContext | null;
+}
+
+const BIDI_ISOLATE_START = '\u2068'; // First Strong Isolate
+const BIDI_ISOLATE_END = '\u2069'; // Pop Directional Isolate
+
+function isolateBidiText(value: string): string {
+    // Keeps user-authored LTR property keys from reordering quotes and punctuation inside RTL labels.
+    return `${BIDI_ISOLATE_START}${value}${BIDI_ISOLATE_END}`;
+}
+
+function countMarkdownFilesWithManualSortProperty(app: App, files: readonly TFile[], propertyKey: string): number {
+    return files.reduce((count, file) => {
+        if (file.extension !== 'md') {
+            return count;
+        }
+        return hasCachedManualSortProperty(app, file, propertyKey) ? count + 1 : count;
+    }, 0);
+}
+
+function getManualSortPropertyStats(app: App, files: readonly TFile[], propertyKey: string): ManualSortPropertyStats {
+    return files.reduce<ManualSortPropertyStats>(
+        (stats, file) => {
+            if (file.extension !== 'md') {
+                return stats;
+            }
+
+            stats.markdownCount += 1;
+            const manualSortProperty = getCachedManualSortPropertyState(app, file, propertyKey);
+            if (!manualSortProperty.hasProperty) {
+                return stats;
+            }
+
+            if (manualSortProperty.rank === null) {
+                stats.invalidPropertyCount += 1;
+            } else {
+                stats.validRankCount += 1;
+            }
+            return stats;
+        },
+        {
+            markdownCount: 0,
+            validRankCount: 0,
+            invalidPropertyCount: 0
+        }
+    );
+}
+
+function samePropertySortKey(left: string, right: string): boolean {
+    return casefold(left) === casefold(right);
+}
+
+function getSortOverridesForTarget(
+    settings: NotebookNavigatorSettings,
+    target: SelectionSortTarget
+): Record<string, ListSortOverrideValue> {
+    if (target.type === ItemType.FOLDER) {
+        return sanitizeRecord(ensureRecord(settings.folderSortOverrides));
+    }
+    if (target.type === ItemType.TAG) {
+        return sanitizeRecord(ensureRecord(settings.tagSortOverrides));
+    }
+    return sanitizeRecord(ensureRecord(settings.propertySortOverrides));
+}
+
+function setSortOverridesForTarget(
+    settings: NotebookNavigatorSettings,
+    target: SelectionSortTarget,
+    sortOverrides: Record<string, ListSortOverrideValue>
+): void {
+    if (target.type === ItemType.FOLDER) {
+        settings.folderSortOverrides = sortOverrides;
+        return;
+    }
+    if (target.type === ItemType.TAG) {
+        settings.tagSortOverrides = sortOverrides;
+        return;
+    }
+    settings.propertySortOverrides = sortOverrides;
+}
+
+function setSortOverrideForTarget(
+    settings: NotebookNavigatorSettings,
+    target: SelectionSortTarget,
+    sortOverride: ListSortOverrideValue
+): void {
+    const sortOverrides = getSortOverridesForTarget(settings, target);
+    sortOverrides[target.key] = cloneListSortOverride(sortOverride);
+    setSortOverridesForTarget(settings, target, sortOverrides);
+}
 
 function collectFolderDescendantPaths(folder: TFolder): string[] {
     const paths: string[] = [];
@@ -216,13 +342,14 @@ function buildDescendantApplyStats<T>({
 
 function getGroupingIcon(option: ListNoteGroupingOption): string {
     switch (option) {
+        case 'custom':
+            return 'lucide-heading';
         case 'date':
             return 'lucide-calendar';
         case 'folder':
             return 'lucide-folder';
-        case 'none':
         default:
-            return 'lucide-x';
+            return 'lucide-heading';
     }
 }
 
@@ -246,10 +373,6 @@ function normalizeAppearanceOverride(
 
     if (appearance.previewRows !== undefined) {
         normalized.previewRows = appearance.previewRows;
-    }
-
-    if (appearance.notePropertyType !== undefined) {
-        normalized.notePropertyType = appearance.notePropertyType;
     }
 
     return Object.keys(normalized).length > 0 ? normalized : null;
@@ -290,8 +413,7 @@ function areAppearanceOverridesEqual(
     return (
         normalizedLeft.mode === normalizedRight.mode &&
         normalizedLeft.titleRows === normalizedRight.titleRows &&
-        normalizedLeft.previewRows === normalizedRight.previewRows &&
-        normalizedLeft.notePropertyType === normalizedRight.notePropertyType
+        normalizedLeft.previewRows === normalizedRight.previewRows
     );
 }
 
@@ -329,7 +451,7 @@ function collectAllPropertyNodeIds(propertyTreeService: NonNullable<ReturnType<t
  *
  * @returns Object containing action handlers and computed values for list pane operations
  */
-export function useListActions() {
+export function useListActions({ onManualSortStart, getManualSortNewFileContext }: UseListActionsOptions = {}) {
     const { app, plugin, tagTreeService, propertyTreeService } = useServices();
     const settings = useSettingsState();
     const vaultProfileId = settings.vaultProfile;
@@ -375,20 +497,31 @@ export function useListActions() {
 
     const handleNewFile = useCallback(async () => {
         try {
+            const manualSortContext = getManualSortNewFileContext?.() ?? null;
             if (selectionState.selectedFolder) {
-                await fileSystemOps.createNewFile(selectionState.selectedFolder, settings.createNewNotesInNewTab);
+                await fileSystemOps.createNewFile(selectionState.selectedFolder, settings.createNewNotesInNewTab, manualSortContext);
                 return;
             }
 
             if (hasCreatableTagSelection && selectionState.selectedTag) {
                 const sourcePath = selectionState.selectedFile?.path ?? app.workspace.getActiveFile()?.path ?? '';
-                await fileSystemOps.createNewFileForTag(selectionState.selectedTag, sourcePath, settings.createNewNotesInNewTab);
+                await fileSystemOps.createNewFileForTag(
+                    selectionState.selectedTag,
+                    sourcePath,
+                    settings.createNewNotesInNewTab,
+                    manualSortContext
+                );
                 return;
             }
 
             if (hasCreatablePropertySelection && selectionState.selectedProperty) {
                 const sourcePath = selectionState.selectedFile?.path ?? app.workspace.getActiveFile()?.path ?? '';
-                await fileSystemOps.createNewFileForProperty(selectionState.selectedProperty, sourcePath, settings.createNewNotesInNewTab);
+                await fileSystemOps.createNewFileForProperty(
+                    selectionState.selectedProperty,
+                    sourcePath,
+                    settings.createNewNotesInNewTab,
+                    manualSortContext
+                );
             }
         } catch {
             // Error is handled by FileSystemOperations with user notification
@@ -401,12 +534,13 @@ export function useListActions() {
         hasCreatableTagSelection,
         hasCreatablePropertySelection,
         settings.createNewNotesInNewTab,
+        getManualSortNewFileContext,
         fileSystemOps,
         app
     ]);
 
-    const getCurrentSortOption = useCallback((): SortOption => {
-        return getEffectiveSortOption(
+    const getSelectionSortOverride = useCallback((): ListSortOverrideValue | undefined => {
+        return getListSortOverrideForSelection(
             settings,
             selectionState.selectionType,
             selectionState.selectedFolder,
@@ -414,36 +548,11 @@ export function useListActions() {
             selectionState.selectedProperty
         );
     }, [
-        settings,
-        selectionState.selectionType,
-        selectionState.selectedFolder,
-        selectionState.selectedTag,
-        selectionState.selectedProperty
-    ]);
-
-    const getSortIcon = useCallback(() => {
-        return getSortIconName(getCurrentSortOption());
-    }, [getCurrentSortOption]);
-
-    const getSelectionSortOverride = useCallback((): SortOption | undefined => {
-        if (selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder) {
-            return settings.folderSortOverrides?.[selectionState.selectedFolder.path];
-        }
-        if (selectionState.selectionType === ItemType.TAG && selectionState.selectedTag) {
-            return settings.tagSortOverrides?.[selectionState.selectedTag];
-        }
-        if (selectionState.selectionType === ItemType.PROPERTY && selectionState.selectedProperty) {
-            return settings.propertySortOverrides?.[selectionState.selectedProperty];
-        }
-        return undefined;
-    }, [
         selectionState.selectionType,
         selectionState.selectedFolder,
         selectionState.selectedTag,
         selectionState.selectedProperty,
-        settings.folderSortOverrides,
-        settings.tagSortOverrides,
-        settings.propertySortOverrides
+        settings
     ]);
 
     const getSelectionAppearanceOverride = useCallback((): FolderAppearance | undefined => {
@@ -536,6 +645,33 @@ export function useListActions() {
     const defaultMode = getDefaultListMode(settings);
     const selectionSortTarget = useMemo(() => getSelectionSortTarget(), [getSelectionSortTarget]);
     const selectionSortOverride = useMemo(() => getSelectionSortOverride(), [getSelectionSortOverride]);
+    const selectionSortSpec = useMemo(() => resolveListSort(settings, selectionSortOverride), [settings, selectionSortOverride]);
+    const isSelectionManualSortActive = isManualSortPropertyKey(settings, selectionSortSpec.propertyKey);
+    const resolvePropertySortIcon = useCallback(
+        (propertyKey: string): string | null => {
+            const normalizedPropertyKey = casefold(propertyKey);
+            if (!normalizedPropertyKey) {
+                return null;
+            }
+
+            return metadataService.getPropertyIcon(buildPropertyKeyNodeId(normalizedPropertyKey)) ?? null;
+        },
+        [metadataService]
+    );
+    const getSortIcon = useCallback(() => {
+        const sortIconId = getListSortToolbarIconId(settings, selectionSortOverride);
+        if (isManualSortPropertyKey(settings, selectionSortSpec.propertyKey)) {
+            return 'list-ordered';
+        }
+        if (sortIconId === 'list-sort-property') {
+            const propertyIcon = resolvePropertySortIcon(selectionSortSpec.propertyKey);
+            if (propertyIcon) {
+                return propertyIcon;
+            }
+        }
+
+        return resolveUXIcon(settings.interfaceIcons, sortIconId);
+    }, [resolvePropertySortIcon, selectionSortOverride, selectionSortSpec.propertyKey, settings]);
     const selectionAppearanceOverride = useMemo(() => getSelectionAppearanceOverride(), [getSelectionAppearanceOverride]);
     const selectionAppearanceFields = useMemo(
         () => normalizeAppearanceOverride(selectionAppearanceOverride, defaultMode),
@@ -555,6 +691,15 @@ export function useListActions() {
     );
     const selectionGroupOverride = groupingInfo.normalizedOverride;
     const hasSelectionGroupOverride = groupingInfo.hasCustomOverride;
+    const effectiveSelectionGroupOverride = isSelectionManualSortActive
+        ? 'custom'
+        : selectionGroupOverride === undefined
+          ? undefined
+          : resolveEffectiveListGroupingForSort({
+                groupBy: selectionGroupOverride,
+                sortOption: selectionSortSpec.option,
+                selectionType: selectionState.selectionType
+            });
     const selectionDescendantLabel = useMemo(() => getSelectionDescendantLabel(), [getSelectionDescendantLabel]);
     const [folderTreeVersion, setFolderTreeVersion] = useState(0);
     const [tagTreeVersion, setTagTreeVersion] = useState(0);
@@ -672,20 +817,20 @@ export function useListActions() {
     }, [getSelectionSortTarget, metadataService]);
 
     const setSelectionSortOverride = useCallback(
-        async (sortOption: SortOption) => {
+        async (sortOverride: ListSortOverrideValue) => {
             const target = getSelectionSortTarget();
             if (!target) {
                 return;
             }
             if (target.type === ItemType.FOLDER) {
-                await metadataService.setFolderSortOverride(target.key, sortOption);
+                await metadataService.setFolderSortOverride(target.key, sortOverride);
                 return;
             }
             if (target.type === ItemType.TAG) {
-                await metadataService.setTagSortOverride(target.key, sortOption);
+                await metadataService.setTagSortOverride(target.key, sortOverride);
                 return;
             }
-            await metadataService.setPropertySortOverride(target.key, sortOption);
+            await metadataService.setPropertySortOverride(target.key, sortOverride);
         },
         [getSelectionSortTarget, metadataService]
     );
@@ -730,6 +875,240 @@ export function useListActions() {
         [defaultMode, getSelectionSortTarget, updateSettings]
     );
 
+    const openManualSortConfirm = useCallback(
+        (propertyKey: string, affectedCount: number, onConfirm: () => Promise<void>) => {
+            new ConfirmModal(
+                app,
+                strings.modals.manualSortConfirm.propertySortTitle,
+                strings.modals.manualSortConfirm.propertySortMessage(propertyKey, affectedCount),
+                onConfirm,
+                strings.modals.manualSortConfirm.propertySortConfirmButton
+            ).open();
+        },
+        [app]
+    );
+
+    const getManualSortInitialFiles = useCallback(
+        (target: SelectionSortTarget, sortOverride?: ListSortOverrideValue): TFile[] => {
+            const baselineSettings = getManualSortBaselineSettings(settings);
+            if (sortOverride !== undefined) {
+                setSortOverrideForTarget(baselineSettings, target, sortOverride);
+            }
+
+            return orderManualSortFiles(
+                getFilesForNavigationSelection(
+                    {
+                        selectionType: selectionState.selectionType,
+                        selectedFolder: selectionState.selectedFolder,
+                        selectedTag: selectionState.selectedTag,
+                        selectedProperty: selectionState.selectedProperty
+                    },
+                    baselineSettings,
+                    { includeDescendantNotes, showHiddenItems },
+                    app,
+                    tagTreeService,
+                    propertyTreeService
+                )
+            );
+        },
+        [
+            app,
+            includeDescendantNotes,
+            propertyTreeService,
+            selectionState.selectedFolder,
+            selectionState.selectedProperty,
+            selectionState.selectedTag,
+            selectionState.selectionType,
+            settings,
+            showHiddenItems,
+            tagTreeService
+        ]
+    );
+
+    const getManualSortPropertyRemovalFiles = useCallback((): TFile[] => {
+        const baselineSettings = getManualSortBaselineSettings(settings);
+
+        return getFilesForNavigationSelection(
+            {
+                selectionType: selectionState.selectionType,
+                selectedFolder: selectionState.selectedFolder,
+                selectedTag: selectionState.selectedTag,
+                selectedProperty: selectionState.selectedProperty
+            },
+            baselineSettings,
+            { includeDescendantNotes, showHiddenItems },
+            app,
+            tagTreeService,
+            propertyTreeService,
+            { orderResults: false }
+        );
+    }, [
+        app,
+        includeDescendantNotes,
+        propertyTreeService,
+        selectionState.selectedFolder,
+        selectionState.selectedProperty,
+        selectionState.selectedTag,
+        selectionState.selectionType,
+        settings,
+        showHiddenItems,
+        tagTreeService
+    ]);
+
+    const applyManualSortForProperty = useCallback(
+        async (propertyKey: string, target: SelectionSortTarget) => {
+            await updateSettings(current => {
+                setSortOverrideForTarget(current, target, createListSortOverride('property-asc', propertyKey));
+
+                const appearances =
+                    target.type === ItemType.FOLDER
+                        ? sanitizeRecord(ensureRecord(current.folderAppearances))
+                        : target.type === ItemType.TAG
+                          ? sanitizeRecord(ensureRecord(current.tagAppearances))
+                          : sanitizeRecord(ensureRecord(current.propertyAppearances));
+                const normalizedAppearance = normalizeAppearanceOverride(appearances[target.key], defaultMode);
+
+                if (normalizedAppearance) {
+                    appearances[target.key] = normalizedAppearance;
+                } else {
+                    delete appearances[target.key];
+                }
+
+                if (target.type === ItemType.FOLDER) {
+                    current.folderAppearances = appearances;
+                    return;
+                }
+                if (target.type === ItemType.TAG) {
+                    current.tagAppearances = appearances;
+                    return;
+                }
+                current.propertyAppearances = appearances;
+            });
+
+            app.workspace.requestSaveLayout();
+        },
+        [app.workspace, defaultMode, updateSettings]
+    );
+
+    const writeInitialManualSortOrder = useCallback(
+        async (files: readonly TFile[], propertyKey: string): Promise<boolean> => {
+            try {
+                const result = await writeManualSortOrder(app, files, propertyKey);
+                if (result.failed > 0) {
+                    showNotice(
+                        strings.dragDrop.errors.failedToSetProperty.replace('{error}', getLocalizedManualSortWriteFailureMessage(result)),
+                        { variant: 'warning' }
+                    );
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                showNotice(
+                    strings.dragDrop.errors.failedToSetProperty.replace('{error}', getErrorMessage(error, strings.common.unknownError)),
+                    { variant: 'warning' }
+                );
+                return false;
+            }
+        },
+        [app]
+    );
+
+    const removeManualSortPropertyFromFiles = useCallback(
+        async (files: readonly TFile[], propertyKey: string): Promise<void> => {
+            try {
+                const result = await removeManualSortProperty(app, files, propertyKey);
+                if (result.updated > 0) {
+                    const message =
+                        result.updated === 1
+                            ? strings.fileSystem.notifications.manualSortPropertyRemovedFromNote
+                            : strings.fileSystem.notifications.manualSortPropertyRemovedFromNotes.replace(
+                                  '{count}',
+                                  result.updated.toString()
+                              );
+                    showNotice(message, { variant: 'success' });
+                }
+                if (result.failed > 0) {
+                    showNotice(
+                        strings.dragDrop.errors.failedToSetProperty.replace('{error}', getLocalizedManualSortWriteFailureMessage(result)),
+                        { variant: 'warning' }
+                    );
+                }
+            } catch (error) {
+                showNotice(
+                    strings.dragDrop.errors.failedToSetProperty.replace('{error}', getErrorMessage(error, strings.common.unknownError)),
+                    { variant: 'warning' }
+                );
+            }
+        },
+        [app]
+    );
+
+    const promptRemoveManualSortProperty = useCallback(
+        (propertyKey: string, files: readonly TFile[], affectedCount: number) => {
+            if (!isValidManualSortPropertyKey(propertyKey) || affectedCount === 0) {
+                return;
+            }
+
+            new ConfirmModal(
+                app,
+                strings.modals.manualSortConfirm.removePropertyTitle,
+                strings.modals.manualSortConfirm.removePropertyMessage(propertyKey, affectedCount),
+                async () => {
+                    await removeManualSortPropertyFromFiles(files, propertyKey);
+                },
+                strings.modals.manualSortConfirm.removePropertyConfirmButton
+            ).open();
+        },
+        [app, removeManualSortPropertyFromFiles]
+    );
+
+    const applyManualSortMode = useCallback(async () => {
+        const normalizedPropertyKey = getManualSortPropertyKey(settings);
+        const target = getSelectionSortTarget();
+        if (!target || !isValidManualSortPropertyKey(normalizedPropertyKey)) {
+            return;
+        }
+
+        const currentSortSpec = resolveListSort(settings, selectionSortOverride);
+        const isCurrentManualSort = isManualSortPropertyKey(settings, currentSortSpec.propertyKey);
+        const initialFiles = getManualSortInitialFiles(target, selectionSortOverride);
+        const propertyStats = getManualSortPropertyStats(app, initialFiles, normalizedPropertyKey);
+        const allMarkdownFilesHaveValidManualSortRanks =
+            propertyStats.markdownCount > 0 && propertyStats.validRankCount === propertyStats.markdownCount;
+        const hasInvalidManualSortProperty = propertyStats.invalidPropertyCount > 0;
+        const shouldInitializeManualSort = !isCurrentManualSort && propertyStats.markdownCount > 0 && propertyStats.validRankCount === 0;
+        const shouldConfirmManualSort =
+            !isCurrentManualSort &&
+            !allMarkdownFilesHaveValidManualSortRanks &&
+            (hasInvalidManualSortProperty || settings.confirmBeforeManualSort);
+        const applyManualSort = async () => {
+            if (shouldInitializeManualSort) {
+                const didWriteInitialOrder = await writeInitialManualSortOrder(initialFiles, normalizedPropertyKey);
+                if (!didWriteInitialOrder) {
+                    return;
+                }
+            }
+
+            await applyManualSortForProperty(normalizedPropertyKey, target);
+        };
+
+        if (shouldConfirmManualSort) {
+            openManualSortConfirm(normalizedPropertyKey, propertyStats.markdownCount, applyManualSort);
+            return;
+        }
+
+        await applyManualSort();
+    }, [
+        app,
+        applyManualSortForProperty,
+        getManualSortInitialFiles,
+        getSelectionSortTarget,
+        openManualSortConfirm,
+        selectionSortOverride,
+        settings,
+        writeInitialManualSortOrder
+    ]);
+
     const getDescendantSortAndGroupChangeStats = useCallback((): DescendantApplyStats => {
         const target = selectionSortTarget;
         if (!target) {
@@ -766,7 +1145,7 @@ export function useListActions() {
         const missingRequiredKeys = new Set<string>();
         const matchingSavedKeys = new Set<string>();
         const hasCurrentSortOverride = selectionSortOverride !== undefined;
-        const hasCurrentGroupOverride = selectionGroupOverride !== undefined;
+        const hasCurrentGroupOverride = effectiveSelectionGroupOverride !== undefined;
 
         savedKeys.forEach(key => {
             let changed = false;
@@ -775,7 +1154,7 @@ export function useListActions() {
             if (hasCurrentSortOverride) {
                 if (!sortByKey.has(key)) {
                     missingRequired = true;
-                } else if (sortByKey.get(key) !== selectionSortOverride) {
+                } else if (!areListSortOverridesEqual(sortByKey.get(key), selectionSortOverride)) {
                     changed = true;
                 }
             } else if (sortByKey.has(key)) {
@@ -785,7 +1164,7 @@ export function useListActions() {
             if (hasCurrentGroupOverride) {
                 if (!groupByKey.has(key)) {
                     missingRequired = true;
-                } else if (groupByKey.get(key) !== selectionGroupOverride) {
+                } else if (groupByKey.get(key) !== effectiveSelectionGroupOverride) {
                     changed = true;
                 }
             } else if (groupByKey.has(key)) {
@@ -821,7 +1200,7 @@ export function useListActions() {
     }, [
         isSelectionDescendantSettingKey,
         selectionDescendantCount,
-        selectionGroupOverride,
+        effectiveSelectionGroupOverride,
         selectionSortOverride,
         selectionSortTarget,
         settings.folderAppearances,
@@ -852,7 +1231,7 @@ export function useListActions() {
                       : sanitizeRecord(ensureRecord(current.propertySortOverrides));
             selectionDescendantKeys.forEach(key => {
                 if (selectionSortOverride !== undefined) {
-                    sortOverrides[key] = selectionSortOverride;
+                    sortOverrides[key] = cloneListSortOverride(selectionSortOverride);
                     return;
                 }
                 delete sortOverrides[key];
@@ -875,7 +1254,7 @@ export function useListActions() {
             selectionDescendantKeys.forEach(key => {
                 const normalizedAppearance = mergeAppearanceAndGrouping(
                     normalizeAppearanceOverride(appearances[key], defaultMode),
-                    selectionGroupOverride
+                    effectiveSelectionGroupOverride
                 );
                 if (normalizedAppearance) {
                     appearances[key] = normalizedAppearance;
@@ -895,7 +1274,15 @@ export function useListActions() {
             current.propertyAppearances = appearances;
         });
         app.workspace.requestSaveLayout();
-    }, [app, defaultMode, getSelectionDescendantKeys, selectionGroupOverride, selectionSortOverride, selectionSortTarget, updateSettings]);
+    }, [
+        app,
+        defaultMode,
+        effectiveSelectionGroupOverride,
+        getSelectionDescendantKeys,
+        selectionSortOverride,
+        selectionSortTarget,
+        updateSettings
+    ]);
 
     const promptApplySortAndGroupToDescendants = useCallback(() => {
         const target = selectionSortTarget;
@@ -1136,20 +1523,65 @@ export function useListActions() {
             }
 
             const menu = new Menu();
-            const currentSort = getCurrentSortOption();
-            const propertySortKey = settings.propertySortKey.trim();
-
-            const getSortOptionLabel = (option: SortOption): string => {
-                if (isPropertySortOption(option) && propertySortKey.length > 0) {
-                    const template =
-                        option === 'property-asc'
-                            ? strings.settings.items.sortNotesBy.propertyOverride.asc
-                            : strings.settings.items.sortNotesBy.propertyOverride.desc;
-                    return template.replace('{property}', propertySortKey);
-                }
-                return strings.settings.items.sortNotesBy.options[option];
+            const currentSortSpec = resolveListSort(settings, selectionSortOverride);
+            const defaultSortSpec = resolveListSort(settings);
+            const currentSort = currentSortSpec.option;
+            const currentDirection = getSortDirection(currentSort);
+            const currentField = getSortField(currentSort);
+            const manualSortPropertyKey = getManualSortPropertyKey(settings);
+            const propertySortKeys = parsePropertySortKeys(settings.propertySortKey).filter(
+                propertyKey => !isManualSortPropertyKey(settings, propertyKey)
+            );
+            const hasManualSortPropertyKey = isValidManualSortPropertyKey(manualSortPropertyKey);
+            const manualSortPropertyFiles = hasManualSortPropertyKey && selectionSortTarget ? getManualSortPropertyRemovalFiles() : [];
+            const manualSortPropertyCount = hasManualSortPropertyKey
+                ? countMarkdownFilesWithManualSortProperty(app, manualSortPropertyFiles, manualSortPropertyKey)
+                : 0;
+            const isPropertySortActive = currentField === 'property';
+            const isManualSortActive = isPropertySortActive && isManualSortPropertyKey(settings, currentSortSpec.propertyKey);
+            const sortFieldLabels: Record<SortField, string> = {
+                modified: strings.settings.items.sortNotesBy.fields.modified,
+                created: strings.settings.items.sortNotesBy.fields.created,
+                title: strings.settings.items.sortNotesBy.fields.title,
+                filename: strings.settings.items.sortNotesBy.fields.filename,
+                property: strings.settings.items.sortNotesBy.fields.property
             };
+            const sortDirectionLabels: Record<SortDirection, string> = {
+                asc: strings.settings.items.sortNotesBy.directions.asc,
+                desc: strings.settings.items.sortNotesBy.directions.desc
+            };
+            const getSortFieldLabel = (field: SortField, propertyKey?: string): string => {
+                if (field === 'property') {
+                    const trimmedPropertyKey = propertyKey?.trim();
+                    return trimmedPropertyKey
+                        ? `${sortFieldLabels.property} \u2018${isolateBidiText(trimmedPropertyKey)}\u2019`
+                        : sortFieldLabels.property;
+                }
 
+                return sortFieldLabels[field];
+            };
+            const getSortFieldMenuIcon = (field: SortField, propertyKey?: string): string => {
+                if (field === 'property') {
+                    const propertyMenuIcon = resolveIconForMenu(resolvePropertySortIcon(propertyKey ?? ''));
+                    if (propertyMenuIcon) {
+                        return propertyMenuIcon;
+                    }
+                }
+
+                return resolveUXIconForMenu(settings.interfaceIcons, getListSortFieldIconId(field));
+            };
+            const getSortOptionLabel = (option: SortOption, propertyKey?: string): string => {
+                return `${getSortFieldLabel(getSortField(option), propertyKey)}, ${sortDirectionLabels[getSortDirection(option)]}`;
+            };
+            const applySort = (field: SortField, direction: SortDirection, propertyKey?: string) => {
+                const option = buildSortOption(field, direction);
+                const applySortOverride = async () => {
+                    await setSelectionSortOverride(createListSortOverride(option, propertyKey));
+                    app.workspace.requestSaveLayout();
+                };
+
+                runAsyncAction(applySortOverride);
+            };
             const hasSelectionSortOverride = selectionSortOverride !== undefined;
 
             menu.addItem(item => {
@@ -1157,38 +1589,97 @@ export function useListActions() {
             });
 
             menu.addItem(item => {
-                item.setTitle(`${strings.paneHeader.defaultSort}: ${getSortOptionLabel(settings.defaultFolderSort)}`)
-                    .setIcon(getSortIconName(settings.defaultFolderSort))
+                item.setTitle(
+                    `${strings.paneHeader.defaultSort}: ${getSortOptionLabel(defaultSortSpec.option, defaultSortSpec.propertyKey)}`
+                )
+                    .setIcon(getSortIconName(defaultSortSpec.option))
                     .setChecked(!hasSelectionSortOverride)
                     .onClick(() => {
                         // Reset to default sort
-                        runAsyncAction(async () => {
+                        const resetSortOverride = async () => {
                             await removeSelectionSortOverride();
                             app.workspace.requestSaveLayout();
-                        });
+                        };
+
+                        runAsyncAction(resetSortOverride);
                     });
             });
 
             menu.addSeparator();
 
-            let lastCategory = '';
-            SORT_OPTIONS.forEach(option => {
-                const category = option.split('-')[0];
-                if (lastCategory && lastCategory !== category) {
-                    menu.addSeparator();
-                }
-                lastCategory = category;
-
+            (['modified', 'created', 'title', 'filename'] as const).forEach(field => {
                 menu.addItem(item => {
-                    item.setTitle(getSortOptionLabel(option))
-                        .setIcon(getSortIconName(option))
-                        .setChecked(hasSelectionSortOverride && currentSort === option)
+                    item.setTitle(getSortFieldLabel(field))
+                        .setIcon(getSortFieldMenuIcon(field))
+                        .setChecked(currentField === field)
                         .onClick(() => {
-                            // Apply sort option
-                            runAsyncAction(async () => {
-                                await setSelectionSortOverride(option);
-                                app.workspace.requestSaveLayout();
-                            });
+                            applySort(field, currentDirection);
+                        });
+                });
+            });
+
+            propertySortKeys.forEach(propertyKey => {
+                menu.addItem(item => {
+                    item.setTitle(getSortFieldLabel('property', propertyKey))
+                        .setIcon(getSortFieldMenuIcon('property', propertyKey))
+                        .setChecked(currentField === 'property' && samePropertySortKey(currentSortSpec.propertyKey, propertyKey))
+                        .onClick(() => {
+                            applySort('property', currentDirection, propertyKey);
+                        });
+                });
+            });
+
+            menu.addItem(item => {
+                item.setTitle(strings.paneHeader.manualSort)
+                    .setIcon('lucide-list-ordered')
+                    .setDisabled(!hasManualSortPropertyKey)
+                    .setChecked(isManualSortActive)
+                    .onClick(() => {
+                        if (!hasManualSortPropertyKey) {
+                            return;
+                        }
+                        runAsyncAction(applyManualSortMode);
+                    });
+            });
+
+            menu.addItem(item => {
+                item.setTitle(strings.paneHeader.editSortOrder)
+                    .setIcon('lucide-list-ordered')
+                    .setDisabled(!isManualSortActive || !onManualSortStart)
+                    .onClick(() => {
+                        if (!isManualSortActive || !onManualSortStart) {
+                            return;
+                        }
+                        onManualSortStart(currentSortSpec.propertyKey);
+                    });
+            });
+
+            menu.addItem(item => {
+                item.setTitle(strings.paneHeader.removeSortProperty)
+                    .setIcon('lucide-eraser')
+                    .setDisabled(manualSortPropertyCount === 0)
+                    .onClick(() => {
+                        if (manualSortPropertyCount === 0) {
+                            return;
+                        }
+                        promptRemoveManualSortProperty(manualSortPropertyKey, manualSortPropertyFiles, manualSortPropertyCount);
+                    });
+            });
+
+            menu.addSeparator();
+
+            (['asc', 'desc'] as const).forEach(direction => {
+                menu.addItem(item => {
+                    const option = buildSortOption(currentField, direction);
+                    item.setTitle(sortDirectionLabels[direction])
+                        .setIcon(getSortIconName(option))
+                        .setDisabled(isManualSortActive)
+                        .setChecked(currentDirection === direction)
+                        .onClick(() => {
+                            if (isManualSortActive) {
+                                return;
+                            }
+                            applySort(currentField, direction, currentField === 'property' ? currentSortSpec.propertyKey : undefined);
                         });
                 });
             });
@@ -1199,12 +1690,25 @@ export function useListActions() {
                 item.setTitle(strings.folderAppearance.groupBy).setIcon('lucide-layers').setDisabled(true);
             });
 
+            const effectiveCurrentGroup = resolveEffectiveListGroupingForSort({
+                groupBy: groupingInfo.effectiveGrouping,
+                sortOption: currentSort,
+                selectionType: selectionState.selectionType,
+                isManualSortActive
+            });
+            const isGroupOptionDisabled = (option: ListNoteGroupingOption): boolean =>
+                isManualSortActive || (option === 'date' && !isDateSortOption(currentSort));
             const defaultGroupLabel = strings.settings.items.groupNotes.options[groupingInfo.defaultGrouping];
+            const isDefaultGroupDisabled = isGroupOptionDisabled(groupingInfo.defaultGrouping);
             menu.addItem(item => {
                 item.setTitle(`    ${strings.folderAppearance.defaultGroupOption(defaultGroupLabel)}`)
                     .setIcon(getGroupingIcon(groupingInfo.defaultGrouping))
-                    .setChecked(!hasSelectionGroupOverride)
+                    .setDisabled(isDefaultGroupDisabled)
+                    .setChecked(!isDefaultGroupDisabled && !hasSelectionGroupOverride)
                     .onClick(() => {
+                        if (isDefaultGroupDisabled) {
+                            return;
+                        }
                         runAsyncAction(async () => {
                             await setSelectionGroupOverride(undefined);
                             app.workspace.requestSaveLayout();
@@ -1212,14 +1716,18 @@ export function useListActions() {
                     });
             });
 
-            const groupOptions: ListNoteGroupingOption[] = hasFolderSelection ? ['none', 'date', 'folder'] : ['none', 'date'];
+            const groupOptions: ListNoteGroupingOption[] = hasFolderSelection ? ['custom', 'date', 'folder'] : ['custom', 'date'];
             groupOptions.forEach(option => {
-                const isDisabled = option === 'date' && !isDateSortOption(currentSort);
+                const isDisabled = isGroupOptionDisabled(option);
                 menu.addItem(item => {
                     item.setTitle(`    ${strings.settings.items.groupNotes.options[option]}`)
                         .setIcon(getGroupingIcon(option))
                         .setDisabled(isDisabled)
-                        .setChecked(hasSelectionGroupOverride && selectionGroupOverride === option)
+                        .setChecked(
+                            isManualSortActive
+                                ? option === 'custom'
+                                : (hasSelectionGroupOverride || isDefaultGroupDisabled) && effectiveCurrentGroup === option
+                        )
                         .onClick(() => {
                             if (isDisabled) {
                                 return;
@@ -1262,18 +1770,24 @@ export function useListActions() {
             hasFolderSelection,
             hasSelectionGroupOverride,
             app,
-            getCurrentSortOption,
+            applyManualSortMode,
             getDescendantSortAndGroupChangeStats,
+            getManualSortPropertyRemovalFiles,
             groupingInfo.defaultGrouping,
+            groupingInfo.effectiveGrouping,
             openDefaultListSettings,
             promptApplySortAndGroupToDescendants,
+            promptRemoveManualSortProperty,
             removeSelectionSortOverride,
+            resolvePropertySortIcon,
             selectionDescendantLabel,
-            selectionGroupOverride,
+            selectionSortTarget,
             selectionSortOverride,
+            selectionState.selectionType,
             setSelectionGroupOverride,
             setSelectionSortOverride,
-            settings
+            settings,
+            onManualSortStart
         ]
     );
 
@@ -1323,8 +1837,7 @@ export function useListActions() {
         }
 
         const hasModeOverride = (appearance.mode === 'compact' || appearance.mode === 'standard') && appearance.mode !== defaultMode;
-        const otherOverrides =
-            appearance.titleRows !== undefined || appearance.previewRows !== undefined || appearance.notePropertyType !== undefined;
+        const otherOverrides = appearance.titleRows !== undefined || appearance.previewRows !== undefined;
 
         return hasModeOverride || otherOverrides;
     };
@@ -1367,7 +1880,6 @@ export function useListActions() {
         handleAppearanceMenu,
         handleSortMenu,
         handleToggleDescendants,
-        getCurrentSortOption,
         getSortIcon,
         hasAppearanceOrSortSelection,
         hasCustomSortOrGroup,

@@ -17,6 +17,7 @@
     --nn-file-single-text-line-height: var(--nn-file-single-text-line-height-mobile);
     --nn-file-multiline-text-line-height: var(--nn-file-multiline-text-line-height-mobile);
     --nn-list-group-header-height-mobile: calc(var(--nn-list-group-header-height) + 8px);
+    --nn-list-group-goal-header-height-mobile: calc(var(--nn-list-group-header-height-mobile) + var(--nn-list-group-progress-gap-after));
 }
 
 /* Folder text size on mobile */

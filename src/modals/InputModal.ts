@@ -28,6 +28,7 @@ interface InputModalCheckboxOptions {
 interface InputModalOptions {
     closeOnSubmit?: boolean;
     checkbox?: InputModalCheckboxOptions;
+    description?: string;
     inputFilter?: (value: string) => string;
     onInputChange?: (context: { rawValue: string; filteredValue: string }) => void;
     submitButtonText?: string;
@@ -75,6 +76,10 @@ export class InputModal extends Modal {
         // Apply input filter to default value if provided
         const inputFilter = options?.inputFilter;
         const initialValue = inputFilter ? inputFilter(defaultValue) : defaultValue;
+
+        if (options?.description) {
+            this.contentEl.createDiv({ cls: 'nn-input-description', text: options.description });
+        }
 
         this.inputEl = this.contentEl.createEl('input', {
             type: 'text',

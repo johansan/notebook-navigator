@@ -23,7 +23,7 @@ import { localStorage } from '../../../utils/localStorage';
 
 // PDF_CRASH_DIAGNOSTICS: searchable marker for PDF crash diagnostics kept in support builds.
 // Internal diagnostic switch that identifies the last PDF path being processed.
-export const pdfProcessingCrashDiagnosticsConfig = {
+const pdfProcessingCrashDiagnosticsConfig = {
     enabled: false
 };
 

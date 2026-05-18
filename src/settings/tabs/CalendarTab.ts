@@ -22,6 +22,7 @@ import { MOMENT_FORMAT_DOCS_URL } from '../../constants/urls';
 import {
     isCalendarMonthHeadingFormat,
     isCalendarLeftPlacement,
+    isCalendarPeriodicNotesLocaleSource,
     isCalendarPlacement,
     isCalendarWeekendDays,
     type CalendarWeeksToShow
@@ -34,7 +35,8 @@ import {
     DEFAULT_CALENDAR_CUSTOM_QUARTER_PATTERN,
     DEFAULT_CALENDAR_CUSTOM_WEEK_PATTERN,
     DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN,
-    doesCalendarCustomWeekPatternOverrideLocaleWeekStart,
+    doesCalendarCustomWeekPatternMixWeekTokenTypes,
+    doesCalendarCustomWeekPatternUseDifferentWeekRules,
     ensureMarkdownFileName,
     isCalendarCustomDatePatternValid,
     isCalendarCustomMonthPatternValid,
@@ -44,14 +46,21 @@ import {
     normalizeCalendarCustomFilePattern,
     normalizeCalendarCustomRootFolder,
     normalizeCalendarVaultFolderPath,
-    splitCalendarCustomPattern
+    splitCalendarCustomPattern,
+    type CalendarCustomWeekRules
 } from '../../utils/calendarCustomNotePatterns';
 import { resolveCalendarCustomNotePathDate, type CalendarNoteKind } from '../../utils/calendarNotes';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { createSettingGroupFactory } from '../settingGroups';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createSubSettingsContainer, setElementVisible } from '../subSettings';
-import { getMomentApi, resolveCalendarLocales, type MomentApi } from '../../utils/moment';
+import {
+    getMomentApi,
+    resolveCalendarLocales,
+    resolveCalendarPeriodicNotesLocale,
+    resolveDailyNoteLocale,
+    type MomentApi
+} from '../../utils/moment';
 import { runAsyncAction } from '../../utils/async';
 import { CalendarTemplateModal } from '../../modals/CalendarTemplateModal';
 import { createInlineExternalLinkText } from './externalLink';
@@ -116,6 +125,23 @@ export function renderCalendarTab(context: SettingsTabContext): void {
     // This is only used to show a hint in the UI for "system default".
     const systemLocale = typeof navigator !== 'undefined' ? (navigator.language ?? '').toLowerCase() : '';
     const currentLocale = momentApi?.locale() || systemLocale;
+
+    const formatLocaleWeekdayExample = (locale: string): string => {
+        const currentMomentApi = getMomentApi();
+        const sampleDate = currentMomentApi?.('2026-01-19', 'YYYY-MM-DD', true).locale(locale);
+        if (!sampleDate?.isValid()) {
+            return '';
+        }
+
+        const formatted = sampleDate.format('dddd').trim();
+        const [first = '', ...rest] = Array.from(formatted);
+        return first ? `${first.toLocaleUpperCase()}${rest.join('')}` : '';
+    };
+
+    const formatPeriodicNotesLocaleOption = (label: string, locale: string): string => {
+        const example = formatLocaleWeekdayExample(locale);
+        return example ? `${label} - ${locale} (${example})` : `${label} - ${locale}`;
+    };
 
     topGroup
         .addSetting(setting => {
@@ -335,6 +361,53 @@ export function renderCalendarTab(context: SettingsTabContext): void {
     dailyNotesInfoSetting.descEl.empty();
     dailyNotesInfoSetting.descEl.createDiv({ text: strings.settings.items.calendarIntegrationMode.info.dailyNotes });
 
+    let calendarPeriodicNotesLocaleDropdown: DropdownComponent | null = null;
+
+    const renderCalendarPeriodicNotesLocaleOptions = (): void => {
+        if (!calendarPeriodicNotesLocaleDropdown) {
+            return;
+        }
+
+        const currentMomentApi = getMomentApi();
+        const { calendarRulesLocale } = resolveCalendarLocales(plugin.settings.calendarLocale, currentMomentApi, getCurrentLanguage());
+        const obsidianLocale = resolveDailyNoteLocale(currentMomentApi);
+        const optionLabels = {
+            calendar: formatPeriodicNotesLocaleOption(
+                strings.settings.items.calendarPeriodicNotesLocale.options.calendar,
+                calendarRulesLocale
+            ),
+            obsidian: formatPeriodicNotesLocaleOption(strings.settings.items.calendarPeriodicNotesLocale.options.obsidian, obsidianLocale)
+        };
+
+        Object.entries(optionLabels).forEach(([value, label]) => {
+            const optionEl = calendarPeriodicNotesLocaleDropdown?.selectEl.querySelector<HTMLOptionElement>(`option[value="${value}"]`);
+            if (optionEl) {
+                optionEl.text = label;
+            }
+        });
+    };
+
+    new Setting(customCalendarSettingsEl)
+        .setName(strings.settings.items.calendarPeriodicNotesLocale.name)
+        .setDesc(strings.settings.items.calendarPeriodicNotesLocale.desc)
+        .addDropdown(dropdown => {
+            calendarPeriodicNotesLocaleDropdown = dropdown;
+            dropdown
+                .addOption('calendar', strings.settings.items.calendarPeriodicNotesLocale.options.calendar)
+                .addOption('obsidian', strings.settings.items.calendarPeriodicNotesLocale.options.obsidian)
+                .setValue(plugin.settings.calendarPeriodicNotesLocaleSource)
+                .onChange(async value => {
+                    if (!isCalendarPeriodicNotesLocaleSource(value)) {
+                        return;
+                    }
+
+                    plugin.settings.calendarPeriodicNotesLocaleSource = value;
+                    renderCalendarIntegrationVisibility();
+                    await plugin.saveSettingsAndUpdate();
+                });
+            renderCalendarPeriodicNotesLocaleOptions();
+        });
+
     const calendarCustomRootFolderSetting = createDebouncedTextSetting(
         customCalendarSettingsEl,
         strings.settings.items.calendarCustomRootFolder.name,
@@ -543,8 +616,26 @@ export function renderCalendarTab(context: SettingsTabContext): void {
         return folderPattern ? `${folderPattern}/${filePattern}` : filePattern;
     };
 
-    const resolveSelectedCalendarLocales = (momentApi: MomentApi): { displayLocale: string; calendarRulesLocale: string } => {
-        return resolveCalendarLocales(plugin.settings.calendarLocale, momentApi, getCurrentLanguage());
+    const resolveSelectedCalendarLocales = (
+        momentApi: MomentApi
+    ): { displayLocale: string; calendarRulesLocale: string; periodicNotesLocale: string } => {
+        const locales = resolveCalendarLocales(plugin.settings.calendarLocale, momentApi, getCurrentLanguage());
+        return {
+            ...locales,
+            periodicNotesLocale: resolveCalendarPeriodicNotesLocale(
+                plugin.settings.calendarPeriodicNotesLocaleSource,
+                locales.calendarRulesLocale,
+                momentApi
+            )
+        };
+    };
+
+    const getLocaleWeekRules = (momentApi: MomentApi, locale: string): CalendarCustomWeekRules => {
+        const localeData = momentApi().locale(locale).localeData();
+        return {
+            firstDayOfWeek: localeData.firstDayOfWeek(),
+            firstDayOfYear: localeData.firstDayOfYear?.() ?? null
+        };
     };
 
     const templateTargets = [
@@ -605,7 +696,7 @@ export function renderCalendarTab(context: SettingsTabContext): void {
             return;
         }
 
-        const { calendarRulesLocale } = resolveSelectedCalendarLocales(momentApi);
+        const { periodicNotesLocale } = resolveSelectedCalendarLocales(momentApi);
 
         const sampleDate = momentApi('2026-01-19', 'YYYY-MM-DD', true);
         if (!sampleDate.isValid()) {
@@ -629,8 +720,8 @@ export function renderCalendarTab(context: SettingsTabContext): void {
                 kind,
                 sampleDate,
                 momentPattern,
-                calendarRulesLocale,
-                calendarRulesLocale
+                periodicNotesLocale,
+                periodicNotesLocale
             );
             const folderSuffix = folderFormatter(dateForPath);
             const folderPath = normalizeCalendarVaultFolderPath(folderSuffix || '/');
@@ -690,16 +781,22 @@ export function renderCalendarTab(context: SettingsTabContext): void {
             return;
         }
 
-        const { calendarRulesLocale } = resolveSelectedCalendarLocales(momentApi);
-        const localeData = momentApi().locale(calendarRulesLocale).localeData();
-        const localeFirstDayOfWeek = localeData.firstDayOfWeek();
-        const showWarning = doesCalendarCustomWeekPatternOverrideLocaleWeekStart(weekCustomPattern, localeFirstDayOfWeek);
+        const { calendarRulesLocale, periodicNotesLocale } = resolveSelectedCalendarLocales(momentApi);
+        const showWarning = doesCalendarCustomWeekPatternUseDifferentWeekRules(
+            weekCustomPattern,
+            getLocaleWeekRules(momentApi, calendarRulesLocale),
+            getLocaleWeekRules(momentApi, periodicNotesLocale)
+        );
         if (!showWarning) {
             return;
         }
 
-        calendarLocaleWarningEl.setText(strings.settings.items.calendarLocale.incompatibleWeekPatternWarning);
-        calendarCustomWeekPatternWarningEl.setText(strings.settings.items.calendarCustomWeekPattern.localeMismatchWarning);
+        calendarLocaleWarningEl.setText(strings.settings.items.calendarLocale.weekPathMismatchWarning);
+        calendarCustomWeekPatternWarningEl.setText(
+            doesCalendarCustomWeekPatternMixWeekTokenTypes(weekCustomPattern)
+                ? strings.settings.items.calendarCustomWeekPattern.mixedWeekTokensWarning
+                : strings.settings.items.calendarCustomWeekPattern.weekPathMismatchWarning
+        );
         setElementVisible(calendarLocaleWarningEl, true);
         setElementVisible(calendarCustomWeekPatternWarningEl, true);
     };
@@ -713,6 +810,8 @@ export function renderCalendarTab(context: SettingsTabContext): void {
         if (calendarCustomRootFolderInputEl && activeDocument.activeElement !== calendarCustomRootFolderInputEl) {
             calendarCustomRootFolderInputEl.value = activeProfile.periodicNotesFolder;
         }
+
+        renderCalendarPeriodicNotesLocaleOptions();
 
         const setAllMessagesHidden = () => {
             setElementVisible(calendarCustomFilePatternErrorEl, false);

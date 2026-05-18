@@ -62,7 +62,7 @@ interface UseListPaneSelectionCoordinatorResult {
     selectFileFromList: (file: TFile, options?: SelectFileOptions) => void;
     selectAdjacentFile: (direction: 'next' | 'previous') => boolean;
     ensureSelectionForCurrentFilter: (options?: EnsureSelectionOptions) => EnsureSelectionResult;
-    handleFileItemClick: (file: TFile, fileIndex: number | undefined, event: ReactMouseEvent) => void;
+    handleFileItemClick: (file: TFile, fileIndex: number | undefined, event: ReactMouseEvent, filesOverride?: TFile[]) => void;
     lastSelectedFilePath: string | null;
     isFileSelected: (file: TFile) => boolean;
     scheduleKeyboardSelectionOpen: () => void;
@@ -378,22 +378,23 @@ export function useListPaneSelectionCoordinator({
     );
 
     const handleFileClick = useCallback(
-        (file: TFile, event: ReactMouseEvent, fileIndex?: number) => {
+        (file: TFile, event: ReactMouseEvent, fileIndex?: number, filesOverride?: TFile[]) => {
             if (event.button === 1) {
                 return;
             }
 
             isUserSelectionRef.current = true;
 
+            const clickOrderedFiles = filesOverride ?? orderedFiles;
             const isShiftKey = event.shiftKey;
             const isCmdCtrlClick = isCmdCtrlModifierPressed(event);
             const shouldMultiSelect = !isMobile && isMultiSelectModifierPressed(event, settings.multiSelectModifier);
             const shouldOpenInNewTab = !isMobile && !shouldMultiSelect && settings.multiSelectModifier === 'optionAlt' && isCmdCtrlClick;
 
             if (shouldMultiSelect) {
-                multiSelection.handleMultiSelectClick(file, fileIndex, orderedFiles);
+                multiSelection.handleMultiSelectClick(file, fileIndex, clickOrderedFiles);
             } else if (!isMobile && isShiftKey && fileIndex !== undefined) {
-                multiSelection.handleRangeSelectClick(file, fileIndex, orderedFiles);
+                multiSelection.handleRangeSelectClick(file, fileIndex, clickOrderedFiles);
             } else {
                 selectFileFromList(file, {
                     markUserSelection: true,
@@ -415,8 +416,8 @@ export function useListPaneSelectionCoordinator({
     );
 
     const handleFileItemClick = useCallback(
-        (file: TFile, fileIndex: number | undefined, event: ReactMouseEvent) => {
-            handleFileClick(file, event, fileIndex);
+        (file: TFile, fileIndex: number | undefined, event: ReactMouseEvent, filesOverride?: TFile[]) => {
+            handleFileClick(file, event, fileIndex, filesOverride);
         },
         [handleFileClick]
     );

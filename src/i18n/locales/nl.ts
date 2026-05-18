@@ -29,6 +29,7 @@ export const STRINGS_NL = {
         remove: 'Verwijderen',
         restoreDefault: 'Standaard herstellen', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Verzenden',
+        save: 'Opslaan', // Button text for saving settings and dialogs (English: Save)
         configure: 'Configureren', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Lichte modus', // Label for light theme mode (English: Light mode)
         darkMode: 'Donkere modus', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,16 @@ export const STRINGS_NL = {
         pinnedSection: 'Vastgepind',
         notesSection: 'Notities',
         filesSection: 'Bestanden',
-        hiddenItemAriaLabel: '{name} (verborgen)'
+        hiddenItemAriaLabel: '{name} (verborgen)',
+        collapseGroup: 'Groep samenvouwen',
+        expandGroup: 'Groep uitvouwen',
+        manualSortTitle: 'Handmatig sorteren: {property}',
+        manualSortHint:
+            'Sleep om opnieuw te ordenen. De volgorde wordt opgeslagen als numerieke indexwaarden in de eigenschap "{property}".',
+        manualSortNonMarkdownHint: 'Niet-Markdown-bestanden worden onderaan getoond en kunnen niet opnieuw worden geordend.',
+        unsortedSection: 'Niet gesorteerd',
+        manualSortDone: 'Klaar',
+        manualSortMultipleWriteFailure: '{count} bestanden mislukt; eerste: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +142,9 @@ export const STRINGS_NL = {
         changeChildSortOrder: 'Sorteervolgorde wijzigen',
         changeSortAndGroup: 'Sortering en groepering wijzigen',
         defaultSort: 'Standaard',
+        manualSort: 'Handmatig sorteren',
+        editSortOrder: 'Sorteervolgorde bewerken...',
+        removeSortProperty: 'Sorteereigenschap verwijderen',
         descendants: 'subelementen',
         subfolders: 'submappen',
         subtags: 'subtags',
@@ -302,6 +315,14 @@ export const STRINGS_NL = {
             moveFileToFolder: 'Bestand verplaatsen naar...',
             moveMultipleNotesToFolder: '{count} notities verplaatsen naar...',
             moveMultipleFilesToFolder: '{count} bestanden verplaatsen naar...',
+            setManualSortGroupHeader: 'Groepskop instellen',
+            changeManualSortGroupHeader: 'Groepskop wijzigen',
+            manualSortGroupHeader: {
+                title: 'Groepskop',
+                copyStyle: 'Kopstijl kopiëren',
+                pasteStyle: 'Kopstijl plakken',
+                remove: 'Groepskop verwijderen'
+            },
             addTag: 'Tag toevoegen',
             addPropertyKey: 'Eigenschap instellen',
             removeTag: 'Tag verwijderen',
@@ -391,6 +412,33 @@ export const STRINGS_NL = {
             applyAppearanceTitle: (target: string) => `Weergave toepassen op ${target}?`,
             affectedCountMessage: (count: number) => `Bestaande overschrijvingen die wijzigen: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Handmatig sorteren gebruiken?',
+            propertySortMessage: (property: string, count: number) =>
+                `Dit schakelt de huidige weergave over naar handmatig sorteren met "${property}". Bij het bewerken van de volgorde worden indien nodig numerieke indexwaarden naar die eigenschap geschreven in ${count} ${count === 1 ? 'notitie' : 'notities'}.`,
+            propertySortConfirmButton: 'Handmatig sorteren gebruiken',
+            removePropertyTitle: 'Sorteereigenschap verwijderen?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Dit verwijdert "${property}" uit ${count} ${count === 1 ? 'notitie' : 'notities'} in de huidige lijst. Voor die notities wordt de handmatige sorteervolgorde gewist.`,
+            removePropertyConfirmButton: 'Eigenschap verwijderen',
+            compactTitle: 'Indexwaarden comprimeren?',
+            compactMessage: (count: number) =>
+                `Deze herordening heeft meer numerieke ruimte nodig. ${count} ${count === 1 ? 'notitie krijgt' : 'notities krijgen'} nieuwe indexwaarden.`,
+            compactConfirmButton: 'Indexwaarden comprimeren'
+        },
+        manualSortGroupHeader: {
+            title: 'Groepskop instellen',
+            titleLabel: 'Titel',
+            placeholder: 'Groepskop',
+            icon: 'Pictogram',
+            color: 'Kleur',
+            wordCount: 'Aantal woorden tonen',
+            wordCountTarget: 'Doel aantal woorden',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'Wanneer dit veld leeg is, gebruikt het groepsdoel de doeleigenschap die is ingesteld in Instellingen > Notities > Aantal woorden. Overschrijf dit door een doelwaarde voor deze groep in te stellen.',
+            description: 'Pas de groepskop voor deze notitie aan. Laat de titel leeg om de kop te verwijderen.'
+        },
         navRainbowSection: {
             title: (section: string) => `Regenboogkleuren: ${section}`
         },
@@ -429,6 +477,11 @@ export const STRINGS_NL = {
                 'list-descendants': 'Notities uit submappen',
                 'list-sort-ascending': 'Sorteervolgorde: oplopend',
                 'list-sort-descending': 'Sorteervolgorde: aflopend',
+                'list-sort-modified': 'Sorteren op bewerkingsdatum',
+                'list-sort-created': 'Sorteren op aanmaakdatum',
+                'list-sort-title': 'Sorteren op titel',
+                'list-sort-filename': 'Sorteren op bestandsnaam',
+                'list-sort-property': 'Sorteren op eigenschap',
                 'list-appearance': 'Uiterlijk wijzigen',
                 'list-new-note': 'Nieuwe notitie',
                 'nav-folder-open': 'Map open',
@@ -702,6 +755,8 @@ export const STRINGS_NL = {
             propertiesRequireMarkdown: 'Eigenschappen worden alleen ondersteund in Markdown-notities',
             propertySetOnNote: 'Eigenschap bijgewerkt op 1 notitie',
             propertySetOnNotes: 'Eigenschap bijgewerkt op {count} notities',
+            manualSortPropertyRemovedFromNote: 'Sorteereigenschap verwijderd uit 1 notitie',
+            manualSortPropertyRemovedFromNotes: 'Sorteereigenschap verwijderd uit {count} notities',
             iconPackDownloaded: '{provider} gedownload',
             iconPackUpdated: '{provider} bijgewerkt ({version})',
             iconPackRemoved: '{provider} verwijderd',
@@ -864,6 +919,9 @@ export const STRINGS_NL = {
             list: {
                 display: 'Uiterlijk',
                 organization: 'Organisatie',
+                groupHeaders: 'Groepskoppen',
+                propertySort: 'Sorteren op eigenschap',
+                manualSort: 'Handmatig sorteren',
                 pinnedNotes: 'Vastgezette notities',
                 drawingPreviews: 'Tekeningvoorbeelden'
             },
@@ -877,7 +935,8 @@ export const STRINGS_NL = {
                 tags: 'Tags',
                 properties: 'Eigenschappen',
                 date: 'Datum',
-                parentFolder: 'Bovenliggende map'
+                parentFolder: 'Bovenliggende map',
+                wordCount: 'Aantal woorden'
             }
         },
         syncMode: {
@@ -897,8 +956,8 @@ export const STRINGS_NL = {
                 }
             },
             sortNotesBy: {
-                name: 'Notities sorteren op',
-                desc: 'Kies hoe notities worden gesorteerd in de notitielijst.',
+                name: 'Standaard sorteervolgorde',
+                desc: 'Kies de standaard sorteervolgorde voor notities.',
                 options: {
                     'modified-desc': 'Datum bewerkt (nieuwste bovenaan)',
                     'modified-asc': 'Datum bewerkt (oudste bovenaan)',
@@ -907,19 +966,24 @@ export const STRINGS_NL = {
                     'title-asc': 'Titel (A bovenaan)',
                     'title-desc': 'Titel (Z bovenaan)',
                     'filename-asc': 'Bestandsnaam (A bovenaan)',
-                    'filename-desc': 'Bestandsnaam (Z bovenaan)',
-                    'property-asc': 'Eigenschap (A bovenaan)',
-                    'property-desc': 'Eigenschap (Z bovenaan)'
+                    'filename-desc': 'Bestandsnaam (Z bovenaan)'
                 },
-                propertyOverride: {
-                    asc: 'Eigenschap ‘{property}’ (A bovenaan)',
-                    desc: 'Eigenschap ‘{property}’ (Z bovenaan)'
+                directions: {
+                    asc: 'Oplopend',
+                    desc: 'Aflopend'
+                },
+                fields: {
+                    modified: 'Datum bewerkt',
+                    created: 'Datum gemaakt',
+                    title: 'Titel',
+                    filename: 'Bestandsnaam',
+                    property: 'Eigenschap'
                 }
             },
             propertySortKey: {
-                name: 'Sorteereigenschap',
-                desc: 'Gebruikt met Eigenschap-sortering. Notities met deze frontmatter-eigenschap worden eerst weergegeven en gesorteerd op de eigenschapswaarde. Arrays worden samengevoegd tot één waarde.',
-                placeholder: 'order'
+                name: 'Eigenschappen om op te sorteren',
+                desc: "Door komma's gescheiden frontmatter-eigenschappen die worden weergegeven als sorteeropties op eigenschap. Arraywaarden worden samengevoegd tot één string. Deze eigenschappen worden niet gewijzigd.",
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Secundaire sortering',
@@ -930,6 +994,46 @@ export const STRINGS_NL = {
                     created: 'Aanmaakdatum',
                     modified: 'Bewerkingsdatum'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Elke hierboven vermelde eigenschap verschijnt als sorteeroptie in het sorteermenu van het lijstpaneel. Een keuze sorteert notities op de frontmatter-waarde ervan.'
+            },
+            manualSortPropertyKey: {
+                name: 'Eigenschap voor handmatig sorteren',
+                desc: 'Frontmatter-eigenschap gebruikt om numerieke indexwaarden voor handmatig sorteren op te slaan.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Eigenschap voor groepskop',
+                desc: 'Frontmatter-eigenschap gebruikt om aangepaste groepskoppen op te slaan.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Aangepaste groepskoppen verschijnen boven notities in het lijstpaneel.',
+                items: [
+                    'Stel in het sorteermenu van het lijstpaneel groepering in op **Aangepast**.',
+                    'Klik met de rechtermuisknop op een notitie en kies **Groepskop instellen** om een kop boven de notitie te plaatsen.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Plaatsing nieuwe notitie',
+                desc: 'Kies waar nieuwe notities worden geplaatst wanneer de huidige lijst handmatig sorteren gebruikt.',
+                options: {
+                    top: 'Bovenaan',
+                    bottom: 'Onderaan',
+                    'below-selected-note': 'Onder geselecteerde notitie',
+                    unsorted: 'Niet gesorteerd'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Bevestigen voor handmatig sorteren',
+                desc: 'Toon een waarschuwing voordat de eigenschap voor handmatig sorteren voor het eerst naar notities wordt geschreven. Wanneer uitgeschakeld, ontvangen notities de eigenschap zonder waarschuwing.'
+            },
+            manualSortInstructions: {
+                intro: 'Handmatig sorteren schrijft een numerieke indexwaarde naar een frontmatter-eigenschap op elke notitie. Notities zonder index verschijnen onder Niet gesorteerd.',
+                items: [
+                    'Schakel handmatig sorteren in door **Handmatig sorteren** te kiezen uit het sorteermenu. Daarna zijn er twee manieren om notities te herschikken.',
+                    'Kies **Sorteervolgorde bewerken...** uit het sorteermenu om een herschikweergave te openen. Sleep notities met de muis, of met aanraking op mobiel. Op desktop selecteert **Cmd/Ctrl** of **Shift** klikken meerdere notities, daarna verplaatst slepen van een ervan de hele groep.',
+                    'Selecteer in het lijstpaneel één notitie of selecteer er meerdere, en druk vervolgens op **Cmd/Ctrl + Arrow Up/Down** om de selectie omhoog of omlaag te verplaatsen.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Scroll naar geselecteerd bestand bij lijstwijzigingen',
@@ -948,12 +1052,12 @@ export const STRINGS_NL = {
                 desc: 'Notitietelingen weergeven in "huidig ▾ afstammelingen" formaat in mappen en tags.'
             },
             groupNotes: {
-                name: 'Notities groeperen',
-                desc: 'Koppen tussen notities weergeven gegroepeerd op datum of map. Tagweergaven gebruiken datumgroepen wanneer mapgroepering is ingeschakeld.',
+                name: 'Standaard groepering',
+                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd.',
                 options: {
-                    none: 'Niet groeperen',
-                    date: 'Groeperen op datum',
-                    folder: 'Groeperen op map'
+                    custom: 'Aangepast',
+                    date: 'Datum',
+                    folder: 'Map'
                 }
             },
             showSelectedNavigationPills: {
@@ -1203,8 +1307,8 @@ export const STRINGS_NL = {
             calendarLocale: {
                 name: 'Taal',
                 desc: 'Bepaalt datumopmaak van de kalender, weeknummering en eerste dag van de week.',
-                incompatibleWeekPatternWarning:
-                    'Het patroon voor wekelijkse notities gebruikt ISO-weektokens ("W" of "G"). De kalender toont weken beginnend op maandag in plaats van de eerste dag van de week van deze taal.',
+                weekPathMismatchWarning:
+                    'De zichtbare kalender en de paden voor wekelijkse notities gebruiken verschillende weekbegindagen of weeknummering.',
                 options: {
                     systemDefault: 'Standaard'
                 }
@@ -1275,6 +1379,14 @@ export const STRINGS_NL = {
                     dailyNotes: 'Map en datumformaat worden geconfigureerd in de Daily Notes core plugin.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Taal voor periodieke notities',
+                desc: 'Bepaalt gelokaliseerde maandnamen, dagnamen, weeknummers en weekbegindagen in de paden voor periodieke notities van Notebook Navigator.',
+                options: {
+                    calendar: 'Kalender',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Hoofdmap',
@@ -1300,8 +1412,10 @@ export const STRINGS_NL = {
             calendarCustomWeekPattern: {
                 name: 'Wekelijkse notities',
                 parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige week (weekjaar, weeknummer).',
-                localeMismatchWarning:
-                    'Dit patroon gebruikt ISO-weektokens ("W" of "G"). De kalender toont weken beginnend op maandag. Gebruik "w" of "g" als wekelijkse notities de geselecteerde taal moeten volgen.'
+                weekPathMismatchWarning:
+                    'De paden voor wekelijkse notities gebruiken de taal voor periodieke notities. Gebruik overeenkomende talen, of gebruik "GGGG" met "WW" voor maandag-gebaseerde weken.',
+                mixedWeekTokensWarning:
+                    'Dit patroon combineert maandag-gebaseerde weektokens ("W" of "G") met taal-gebaseerde weektokens ("w" of "g"). Gebruik consistent één set: "GGGG" met "WW" voor maandag-gebaseerde weken, of "gggg" met "ww" als wekelijkse notities de geselecteerde taal moeten volgen.'
             },
             calendarCustomMonthPattern: {
                 name: 'Maandelijkse notities',
@@ -1535,14 +1649,25 @@ export const STRINGS_NL = {
                 name: 'Eigenschappen tonen in compacte modus',
                 desc: 'Eigenschappen weergeven wanneer de compacte modus actief is.'
             },
-            notePropertyType: {
-                name: 'Notitie-eigenschap',
-                desc: 'Selecteer de notitie-eigenschap om weer te geven in bestandsitems.',
+            showWordCount: {
+                name: 'Aantal woorden tonen',
+                desc: 'Toon het aantal woorden van notities in bestandsitems.'
+            },
+            wordCountPlacement: {
+                name: 'Plaatsing',
+                desc: 'Kies waar het aantal woorden verschijnt.',
                 options: {
-                    frontmatter: 'Frontmatter eigenschap',
-                    wordCount: 'Woordentelling',
-                    none: 'Geen'
+                    title: 'In titel',
+                    property: 'Als eigenschap'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Doeleigenschap',
+                desc: 'Frontmatter-eigenschapssleutel met het doelaantal woorden. Laat leeg om doelen te verbergen.'
+            },
+            showWordCountPercentage: {
+                name: 'Doelpercentage tonen',
+                desc: 'Toon alleen het voortgangspercentage wanneer een doelaantal woorden beschikbaar is.'
             },
             propertyFields: {
                 name: 'Eigenschapssleutels (kluisprofiel)',

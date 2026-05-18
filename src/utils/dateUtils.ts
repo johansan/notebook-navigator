@@ -25,6 +25,11 @@ import { getMomentApi, resolveMomentLocale, type MomentApi } from './moment';
 // Example ISO 8601 moment format string used as a settings placeholder
 export const ISO_DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ssZ';
 
+export interface DateGroupInfo {
+    label: string;
+    key: string;
+}
+
 export class DateUtils {
     /**
      * Normalizes language codes for consistent lookups.
@@ -148,13 +153,7 @@ export class DateUtils {
         return Number.isFinite(reference.getTime()) ? reference : null;
     }
 
-    /**
-     * Get a date group label for grouping files by date
-     * @param timestamp - Unix timestamp in milliseconds
-     * @param nowOverride - Optional reference time for grouping comparisons
-     * @returns Date group label (e.g. "Today", "Yesterday", "Previous 7 Days", etc.)
-     */
-    static getDateGroup(timestamp: number, nowOverride?: Date): string {
+    static getDateGroupInfo(timestamp: number, nowOverride?: Date): DateGroupInfo {
         const now = nowOverride && Number.isFinite(nowOverride.getTime()) ? nowOverride : new Date();
         const date = new Date(timestamp);
 
@@ -170,13 +169,13 @@ export class DateUtils {
         const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
         if (dateOnly.getTime() === today.getTime()) {
-            return strings.dateGroups.today;
+            return { label: strings.dateGroups.today, key: 'relative:today' };
         } else if (dateOnly.getTime() === yesterday.getTime()) {
-            return strings.dateGroups.yesterday;
+            return { label: strings.dateGroups.yesterday, key: 'relative:yesterday' };
         } else if (dateOnly > weekAgo) {
-            return strings.dateGroups.previous7Days;
+            return { label: strings.dateGroups.previous7Days, key: 'relative:previous-7-days' };
         } else if (dateOnly > monthAgo) {
-            return strings.dateGroups.previous30Days;
+            return { label: strings.dateGroups.previous30Days, key: 'relative:previous-30-days' };
         } else if (date.getFullYear() === now.getFullYear()) {
             // Same year - show month name
             const normalizedLanguage = DateUtils.getNormalizedLanguage();
@@ -194,10 +193,23 @@ export class DateUtils {
                 monthName = DateUtils.capitalizeFirst(monthName);
             }
 
-            return monthName;
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return { label: monthName, key: `month:${date.getFullYear()}-${month}` };
         }
+
         // Previous years - show year
-        return date.getFullYear().toString();
+        const year = date.getFullYear().toString();
+        return { label: year, key: `year:${year}` };
+    }
+
+    /**
+     * Get a date group label for grouping files by date
+     * @param timestamp - Unix timestamp in milliseconds
+     * @param nowOverride - Optional reference time for grouping comparisons
+     * @returns Date group label (e.g. "Today", "Yesterday", "Previous 7 Days", etc.)
+     */
+    static getDateGroup(timestamp: number, nowOverride?: Date): string {
+        return DateUtils.getDateGroupInfo(timestamp, nowOverride).label;
     }
 
     /**

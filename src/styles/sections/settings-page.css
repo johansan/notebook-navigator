@@ -364,7 +364,7 @@ button.nn-toolbar-visibility-toggle.nn-mobile-toolbar-button.nn-mobile-toolbar-b
     color: var(--nn-theme-mobile-toolbar-button-active-icon-color);
 }
 
-button.nn-toolbar-visibility-toggle.nn-mobile-toolbar-button.nn-mobile-toolbar-button-active svg {
+button.nn-toolbar-visibility-toggle.nn-mobile-toolbar-button.nn-mobile-toolbar-button-active svg:not(.nn-vault-icon-svg) {
     stroke: var(--nn-theme-mobile-toolbar-button-active-icon-color);
     stroke-width: 2;
 }
@@ -378,10 +378,15 @@ button.nn-toolbar-visibility-toggle.nn-mobile-toolbar-button.nn-mobile-toolbar-b
     color: var(--nn-theme-foreground);
 }
 
-.nn-toolbar-visibility-icon svg {
+.nn-toolbar-visibility-icon svg:not(.nn-vault-icon-svg) {
     width: 18px;
     height: 18px;
     stroke-width: 1.5;
+}
+
+.nn-toolbar-visibility-icon svg.nn-vault-icon-svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Mobile-specific toolbar visibility button styles */

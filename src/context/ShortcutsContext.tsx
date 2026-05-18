@@ -42,6 +42,7 @@ import { showNotice } from '../utils/noticeUtils';
 import { normalizeTagPath } from '../utils/tagUtils';
 import { runAsyncAction } from '../utils/async';
 import { findVaultProfileById } from '../utils/vaultProfiles';
+import { buildShortcutTargetKeyMaps, foldShortcutTargetPath, resolveShortcutTargets } from '../utils/shortcutPathResolver';
 
 // Generates a unique fingerprint for a shortcut based on its type and key properties
 const getShortcutFingerprint = (shortcut: ShortcutEntry): string => {
@@ -298,27 +299,21 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
         return map;
     }, [rawShortcuts]);
 
+    const shortcutTargetResolution = useMemo(() => {
+        void vaultChangeVersion;
+        return resolveShortcutTargets(app, rawShortcuts);
+    }, [app, rawShortcuts, vaultChangeVersion]);
+
     // Maps folder paths to their shortcut keys for duplicate detection
-    const folderShortcutKeysByPath = useMemo(() => {
-        const map = new Map<string, string>();
-        rawShortcuts.forEach(shortcut => {
-            if (isFolderShortcut(shortcut)) {
-                map.set(shortcut.path, getShortcutKey(shortcut));
-            }
-        });
-        return map;
-    }, [rawShortcuts]);
+    const shortcutTargetKeyMaps = useMemo(
+        () => buildShortcutTargetKeyMaps(rawShortcuts, shortcutTargetResolution),
+        [rawShortcuts, shortcutTargetResolution]
+    );
+
+    const folderShortcutKeysByPath = shortcutTargetKeyMaps.folderShortcutKeysByPath;
 
     // Maps note paths to their shortcut keys for duplicate detection
-    const noteShortcutKeysByPath = useMemo(() => {
-        const map = new Map<string, string>();
-        rawShortcuts.forEach(shortcut => {
-            if (isNoteShortcut(shortcut)) {
-                map.set(shortcut.path, getShortcutKey(shortcut));
-            }
-        });
-        return map;
-    }, [rawShortcuts]);
+    const noteShortcutKeysByPath = shortcutTargetKeyMaps.noteShortcutKeysByPath;
 
     // Maps tag paths to their shortcut keys for duplicate detection
     const tagShortcutKeysByPath = useMemo(() => {
@@ -365,6 +360,8 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
     useEffect(() => {
         const folderPaths = new Map(folderShortcutKeysByPath);
         const notePaths = new Map(noteShortcutKeysByPath);
+        const foldedFolderPaths = new Set(Array.from(folderPaths.keys(), foldShortcutTargetPath));
+        const foldedNotePaths = new Set(Array.from(notePaths.keys(), foldShortcutTargetPath));
 
         if (folderPaths.size === 0 && notePaths.size === 0) {
             return;
@@ -372,11 +369,25 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
 
         const vault = app.vault;
 
+        const matchesShortcutExactPath = (path: string): boolean => folderPaths.has(path) || notePaths.has(path);
+
+        const matchesShortcutPath = (file: TFile | TFolder, path: string): boolean => {
+            if (matchesShortcutExactPath(path)) {
+                return true;
+            }
+
+            if (isFolder(file)) {
+                return foldedFolderPaths.has(foldShortcutTargetPath(path));
+            }
+
+            return foldedNotePaths.has(foldShortcutTargetPath(path));
+        };
+
         const handleCreate = (file: TAbstractFile) => {
             if (!isFolder(file) && !isFile(file)) {
                 return;
             }
-            if (folderPaths.has(file.path) || notePaths.has(file.path)) {
+            if (matchesShortcutPath(file, file.path)) {
                 setVaultChangeVersion(value => value + 1);
             }
         };
@@ -385,7 +396,7 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
             if (!isFolder(file) && !isFile(file)) {
                 return;
             }
-            if (folderPaths.has(file.path) || notePaths.has(file.path)) {
+            if (matchesShortcutPath(file, file.path)) {
                 setVaultChangeVersion(value => value + 1);
             }
         };
@@ -394,7 +405,7 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
             if (!isFolder(file) && !isFile(file)) {
                 return;
             }
-            if (folderPaths.has(oldPath) || notePaths.has(oldPath) || folderPaths.has(file.path) || notePaths.has(file.path)) {
+            if (matchesShortcutPath(file, oldPath) || matchesShortcutPath(file, file.path)) {
                 setVaultChangeVersion(value => value + 1);
             }
         };
@@ -413,12 +424,11 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
     }, [app.vault, folderShortcutKeysByPath, noteShortcutKeysByPath]);
 
     const hydratedShortcuts = useMemo<HydratedShortcut[]>(() => {
-        void vaultChangeVersion; // Ensures memo recalculates after vault changes
         return rawShortcuts.map(shortcut => {
             const key = getShortcutKey(shortcut);
 
             if (isFolderShortcut(shortcut)) {
-                const target = shortcut.path === '/' ? app.vault.getRoot() : app.vault.getAbstractFileByPath(shortcut.path);
+                const target = shortcutTargetResolution.folderTargetsByPath.get(shortcut.path) ?? null;
                 if (isFolder(target)) {
                     return {
                         key,
@@ -444,7 +454,7 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
             }
 
             if (isNoteShortcut(shortcut)) {
-                const target = app.vault.getAbstractFileByPath(shortcut.path);
+                const target = shortcutTargetResolution.noteTargetsByPath.get(shortcut.path) ?? null;
                 if (isFile(target)) {
                     return {
                         key,
@@ -509,7 +519,7 @@ export function ShortcutsProvider({ children }: ShortcutsProviderProps) {
                 isMissing: false
             };
         });
-    }, [app.vault, rawShortcuts, vaultChangeVersion]);
+    }, [rawShortcuts, shortcutTargetResolution]);
 
     // Inserts a shortcut at the specified index or appends to the end
     const insertShortcut = useCallback(

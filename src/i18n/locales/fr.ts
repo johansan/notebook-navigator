@@ -29,6 +29,7 @@ export const STRINGS_FR = {
         remove: 'Supprimer', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'Restaurer la valeur par défaut', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Soumettre', // Button text for submitting forms and dialogs (English: Submit)
+        save: 'Enregistrer', // Button text for saving settings and dialogs (English: Save)
         configure: 'Configurer', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Mode clair', // Label for light theme mode (English: Light mode)
         darkMode: 'Mode sombre', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,16 @@ export const STRINGS_FR = {
         pinnedSection: 'Épinglées', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'Notes', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'Fichiers', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (masqué)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (masqué)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'Réduire le groupe',
+        expandGroup: 'Développer le groupe',
+        manualSortTitle: 'Tri manuel : {property}',
+        manualSortHint:
+            "Glissez pour réorganiser. L'ordre est enregistré sous forme de valeurs numériques dans la propriété « {property} ».",
+        manualSortNonMarkdownHint: 'Les fichiers non Markdown sont affichés en bas et ne peuvent pas être réorganisés.',
+        unsortedSection: 'Non trié',
+        manualSortDone: 'Terminé',
+        manualSortMultipleWriteFailure: '{count} fichiers ont échoué ; premier : {path} : {message}'
     },
 
     // Tag list
@@ -131,6 +141,9 @@ export const STRINGS_FR = {
         changeChildSortOrder: "Changer l'ordre de tri",
         changeSortAndGroup: 'Changer le tri et le regroupement',
         defaultSort: 'Par défaut', // Label for default sorting mode (English: Default)
+        manualSort: 'Tri manuel',
+        editSortOrder: "Modifier l'ordre de tri...",
+        removeSortProperty: 'Supprimer la propriété de tri',
         descendants: 'descendants',
         subfolders: 'sous-dossiers',
         subtags: 'sous-étiquettes',
@@ -286,6 +299,14 @@ export const STRINGS_FR = {
             moveFileToFolder: 'Déplacer le fichier vers...',
             moveMultipleNotesToFolder: 'Déplacer {count} notes vers...',
             moveMultipleFilesToFolder: 'Déplacer {count} fichiers vers...',
+            setManualSortGroupHeader: "Définir l'en-tête de groupe",
+            changeManualSortGroupHeader: "Modifier l'en-tête de groupe",
+            manualSortGroupHeader: {
+                title: 'En-tête de groupe',
+                copyStyle: "Copier le style d'en-tête",
+                pasteStyle: "Coller le style d'en-tête",
+                remove: "Supprimer l'en-tête de groupe"
+            },
             addTag: 'Ajouter une étiquette',
             addPropertyKey: 'Définir la propriété',
             removeTag: 'Supprimer l’étiquette',
@@ -390,6 +411,33 @@ export const STRINGS_FR = {
             applyAppearanceTitle: (target: string) => `Appliquer l'apparence aux ${target}\u202f?`,
             affectedCountMessage: (count: number) => `Remplacements existants qui seront modifiés\u202f: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Utiliser le tri manuel ?',
+            propertySortMessage: (property: string, count: number) =>
+                `Ceci bascule la vue actuelle sur le tri manuel en utilisant « ${property} ». La modification de l'ordre écrit des valeurs numériques dans cette propriété sur ${count} ${count === 1 ? 'note' : 'notes'} au besoin.`,
+            propertySortConfirmButton: 'Utiliser le tri manuel',
+            removePropertyTitle: 'Supprimer la propriété de tri ?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Ceci supprime « ${property} » de ${count} ${count === 1 ? 'note' : 'notes'} dans la liste actuelle. L'ordre de tri manuel sera effacé pour ces notes.`,
+            removePropertyConfirmButton: 'Supprimer la propriété',
+            compactTitle: 'Compacter les valeurs numériques ?',
+            compactMessage: (count: number) =>
+                `Cette réorganisation nécessite plus d'espace numérique. ${count} ${count === 1 ? 'note recevra' : 'notes recevront'} de nouvelles valeurs numériques.`,
+            compactConfirmButton: 'Compacter les valeurs numériques'
+        },
+        manualSortGroupHeader: {
+            title: "Définir l'en-tête de groupe",
+            titleLabel: 'Titre',
+            placeholder: 'En-tête de groupe',
+            icon: 'Icône',
+            color: 'Couleur',
+            wordCount: 'Afficher le nombre de mots',
+            wordCountTarget: 'Nombre de mots cible',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                "Lorsque ce champ est vide, l'objectif du groupe utilise la propriété cible définie dans Paramètres > Notes > Nombre de mots. Remplacez-la en définissant une valeur cible pour ce groupe.",
+            description: "Personnalisez l'en-tête de groupe pour cette note. Laissez le titre vide pour supprimer l'en-tête."
+        },
         navRainbowSection: {
             title: (section: string) => `Couleurs arc-en-ciel: ${section}`
         },
@@ -428,6 +476,11 @@ export const STRINGS_FR = {
                 'list-descendants': 'Notes des sous-dossiers',
                 'list-sort-ascending': 'Ordre de tri : croissant',
                 'list-sort-descending': 'Ordre de tri : décroissant',
+                'list-sort-modified': 'Trier par date de modification',
+                'list-sort-created': 'Trier par date de création',
+                'list-sort-title': 'Trier par titre',
+                'list-sort-filename': 'Trier par nom de fichier',
+                'list-sort-property': 'Trier par propriété',
                 'list-appearance': "Modifier l'apparence",
                 'list-new-note': 'Nouvelle note',
                 'nav-folder-open': 'Dossier ouvert',
@@ -703,6 +756,8 @@ export const STRINGS_FR = {
             propertiesRequireMarkdown: 'Les propriétés ne sont prises en charge que sur les notes Markdown',
             propertySetOnNote: 'Propriété mise à jour sur 1 note',
             propertySetOnNotes: 'Propriété mise à jour sur {count} notes',
+            manualSortPropertyRemovedFromNote: 'Propriété de tri supprimée de 1 note',
+            manualSortPropertyRemovedFromNotes: 'Propriété de tri supprimée de {count} notes',
             iconPackDownloaded: '{provider} téléchargé',
             iconPackUpdated: '{provider} mis à jour ({version})',
             iconPackRemoved: '{provider} supprimé',
@@ -865,6 +920,9 @@ export const STRINGS_FR = {
             list: {
                 display: 'Apparence',
                 organization: 'Organisation',
+                groupHeaders: 'En-têtes de groupe',
+                propertySort: 'Tri par propriété',
+                manualSort: 'Tri manuel',
                 pinnedNotes: 'Notes épinglées',
                 drawingPreviews: 'Aperçus des dessins'
             },
@@ -878,7 +936,8 @@ export const STRINGS_FR = {
                 tags: 'Étiquettes',
                 properties: 'Propriétés',
                 date: 'Date',
-                parentFolder: 'Dossier parent'
+                parentFolder: 'Dossier parent',
+                wordCount: 'Nombre de mots'
             }
         },
         syncMode: {
@@ -898,8 +957,8 @@ export const STRINGS_FR = {
                 }
             },
             sortNotesBy: {
-                name: 'Trier les notes par',
-                desc: 'Choisissez comment les notes sont triées dans la liste des notes.',
+                name: 'Ordre de tri par défaut',
+                desc: "Choisissez l'ordre de tri par défaut des notes.",
                 options: {
                     'modified-desc': 'Date de modification (plus récente en haut)',
                     'modified-asc': 'Date de modification (plus ancienne en haut)',
@@ -908,19 +967,24 @@ export const STRINGS_FR = {
                     'title-asc': 'Titre (A en haut)',
                     'title-desc': 'Titre (Z en haut)',
                     'filename-asc': 'Nom de fichier (A en haut)',
-                    'filename-desc': 'Nom de fichier (Z en haut)',
-                    'property-asc': 'Propriété (A en haut)',
-                    'property-desc': 'Propriété (Z en haut)'
+                    'filename-desc': 'Nom de fichier (Z en haut)'
                 },
-                propertyOverride: {
-                    asc: 'Propriété ‘{property}’ (A en haut)',
-                    desc: 'Propriété ‘{property}’ (Z en haut)'
+                directions: {
+                    asc: 'Croissant',
+                    desc: 'Décroissant'
+                },
+                fields: {
+                    modified: 'Date de modification',
+                    created: 'Date de création',
+                    title: 'Titre',
+                    filename: 'Nom de fichier',
+                    property: 'Propriété'
                 }
             },
             propertySortKey: {
-                name: 'Propriété de tri',
-                desc: 'Utilisé avec le tri par propriété. Les notes avec cette propriété frontmatter sont listées en premier et triées par la valeur de la propriété. Les tableaux sont combinés en une seule valeur.',
-                placeholder: 'order'
+                name: 'Propriétés de tri',
+                desc: 'Propriétés frontmatter séparées par des virgules affichées comme options de tri par propriété. Les valeurs de tableau sont jointes en une seule chaîne. Ces propriétés ne sont pas modifiées.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Tri secondaire',
@@ -931,6 +995,46 @@ export const STRINGS_FR = {
                     created: 'Date de création',
                     modified: 'Date de modification'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Chaque propriété listée ci-dessus apparaît comme option de tri dans le menu de tri du panneau de liste. En sélectionner une trie les notes selon sa valeur frontmatter.'
+            },
+            manualSortPropertyKey: {
+                name: 'Propriété de tri manuel',
+                desc: 'Propriété frontmatter utilisée pour enregistrer les valeurs numériques du tri manuel.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: "Propriété d'en-tête de groupe",
+                desc: 'Propriété frontmatter utilisée pour enregistrer les en-têtes de groupe personnalisés.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Les en-têtes de groupe personnalisés sont affichés au-dessus des notes dans le panneau de liste.',
+                items: [
+                    'Depuis le menu de tri du panneau de liste, définissez le regroupement sur **Personnalisé**.',
+                    "Cliquez avec le bouton droit sur une note et choisissez **Définir l'en-tête de groupe** pour ajouter un en-tête au-dessus."
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Emplacement des nouvelles notes',
+                desc: 'Choisissez où sont placées les nouvelles notes lorsque la liste actuelle utilise le tri manuel.',
+                options: {
+                    top: 'En haut',
+                    bottom: 'En bas',
+                    'below-selected-note': 'Sous la note sélectionnée',
+                    unsorted: 'Non trié'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Confirmer avant le tri manuel',
+                desc: 'Afficher un avertissement avant d’écrire la propriété de tri manuel dans les notes pour la première fois. Lorsque désactivé, les notes reçoivent la propriété sans avertissement.'
+            },
+            manualSortInstructions: {
+                intro: 'Le tri manuel écrit une valeur numérique dans une propriété frontmatter sur chaque note. Les notes sans valeur apparaissent sous Non trié.',
+                items: [
+                    'Activez le tri manuel en choisissant **Tri manuel** dans le menu de tri. Ensuite, il existe deux façons de réorganiser les notes.',
+                    "Choisissez **Modifier l'ordre de tri...** dans le menu de tri pour ouvrir une vue de réorganisation. Glissez les notes avec la souris, ou par toucher sur mobile. Sur ordinateur, **Cmd/Ctrl** ou **Shift** clic sélectionne plusieurs notes, puis glisser l'une d'elles déplace tout le groupe.",
+                    'Dans le panneau de liste, sélectionnez une note ou plusieurs notes, puis appuyez sur **Cmd/Ctrl + Arrow Up/Down** pour déplacer la sélection vers le haut ou le bas.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Défiler vers le fichier sélectionné lors des changements de liste',
@@ -949,12 +1053,12 @@ export const STRINGS_FR = {
                 desc: 'Affiche le nombre de notes au format "actuel ▾ descendants" dans les dossiers et étiquettes.'
             },
             groupNotes: {
-                name: 'Grouper les notes',
-                desc: 'Affiche des en-têtes entre les notes groupées par date ou par dossier. Les vues de tags utilisent des groupes de dates lorsque le regroupement par dossier est activé.',
+                name: 'Regroupement par défaut',
+                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné.',
                 options: {
-                    none: 'Ne pas grouper',
-                    date: 'Grouper par date',
-                    folder: 'Grouper par dossier'
+                    custom: 'Personnalisé',
+                    date: 'Date',
+                    folder: 'Dossier'
                 }
             },
             showSelectedNavigationPills: {
@@ -1204,8 +1308,8 @@ export const STRINGS_FR = {
             calendarLocale: {
                 name: 'Langue',
                 desc: 'Contrôle le formatage des dates du calendrier, la numérotation des semaines et le premier jour de la semaine.',
-                incompatibleWeekPatternWarning:
-                    'Le modèle de notes hebdomadaires utilise des jetons de semaine ISO ("W" ou "G"). Le calendrier affichera les semaines commençant le lundi au lieu du premier jour de la semaine de cette langue.',
+                weekPathMismatchWarning:
+                    'Le calendrier visible et les chemins des notes hebdomadaires utilisent des débuts de semaine ou une numérotation des semaines différents.',
                 options: {
                     systemDefault: 'Par défaut'
                 }
@@ -1276,6 +1380,14 @@ export const STRINGS_FR = {
                     dailyNotes: 'Le dossier et le format de date sont configurés dans le plugin Notes quotidiennes.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Langue des notes périodiques',
+                desc: 'Contrôle les noms de mois localisés, les noms de jours de la semaine, les numéros de semaine et les débuts de semaine dans les chemins de notes périodiques de Notebook Navigator.',
+                options: {
+                    calendar: 'Calendrier',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Dossier racine',
@@ -1302,8 +1414,10 @@ export const STRINGS_FR = {
                 name: 'Notes hebdomadaires',
                 parsingError:
                     'Le modèle doit pouvoir être formaté et ré-analysé comme une semaine complète (année de semaine, numéro de semaine).',
-                localeMismatchWarning:
-                    'Ce modèle utilise des jetons de semaine ISO ("W" ou "G"). Le calendrier affichera les semaines commençant le lundi. Utilisez "w" ou "g" si les notes hebdomadaires doivent suivre la langue sélectionnée.'
+                weekPathMismatchWarning:
+                    'Les chemins des notes hebdomadaires utilisent la langue des notes périodiques. Utilisez des langues correspondantes, ou utilisez "GGGG" avec "WW" pour des semaines basées sur le lundi.',
+                mixedWeekTokensWarning:
+                    'Ce modèle mélange des jetons de semaine basés sur le lundi ("W" ou "G") avec des jetons de semaine basés sur la langue ("w" ou "g"). Utilisez un seul ensemble de manière cohérente : "GGGG" avec "WW" pour des semaines basées sur le lundi, ou "gggg" avec "ww" si les notes hebdomadaires doivent suivre la langue sélectionnée.'
             },
             calendarCustomMonthPattern: {
                 name: 'Notes mensuelles',
@@ -1538,14 +1652,25 @@ export const STRINGS_FR = {
                 name: 'Afficher les propriétés en mode compact',
                 desc: 'Afficher les propriétés lorsque le mode compact est actif.'
             },
-            notePropertyType: {
-                name: 'Propriété de note',
-                desc: 'Sélectionnez la propriété de note à afficher dans les éléments de fichier.',
+            showWordCount: {
+                name: 'Afficher le nombre de mots',
+                desc: 'Afficher le nombre de mots des notes dans les éléments de fichier.'
+            },
+            wordCountPlacement: {
+                name: 'Emplacement',
+                desc: 'Choisissez où le nombre de mots apparaît.',
                 options: {
-                    frontmatter: 'Propriété frontmatter',
-                    wordCount: 'Nombre de mots',
-                    none: 'Aucun'
+                    title: 'Dans le titre',
+                    property: 'Comme propriété'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Propriété cible',
+                desc: 'Clé de propriété frontmatter contenant l’objectif de nombre de mots. Laissez vide pour masquer les objectifs.'
+            },
+            showWordCountPercentage: {
+                name: 'Afficher le pourcentage cible',
+                desc: 'Afficher uniquement le pourcentage de progression lorsqu’un objectif de nombre de mots est disponible.'
             },
             propertyFields: {
                 name: 'Clés de propriétés (profil de coffre)',

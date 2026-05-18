@@ -29,6 +29,7 @@ export const STRINGS_TH = {
         remove: 'นำออก',
         restoreDefault: 'คืนค่าเริ่มต้น', // Button text for restoring values to defaults (English: Restore default)
         submit: 'ส่ง',
+        save: 'บันทึก', // Button text for saving settings and dialogs (English: Save)
         configure: 'กำหนดค่า', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'โหมดสว่าง', // Label for light theme mode (English: Light mode)
         darkMode: 'โหมดมืด', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_TH = {
         pinnedSection: 'ปักหมุด',
         notesSection: 'โน้ต',
         filesSection: 'ไฟล์',
-        hiddenItemAriaLabel: '{name} (ซ่อนอยู่)'
+        hiddenItemAriaLabel: '{name} (ซ่อนอยู่)',
+        collapseGroup: 'ยุบกลุ่ม',
+        expandGroup: 'ขยายกลุ่ม',
+        manualSortTitle: 'จัดเรียงด้วยตนเอง: {property}',
+        manualSortHint: 'ลากเพื่อจัดเรียงใหม่ ลำดับจะถูกบันทึกเป็นค่าดัชนีตัวเลขในคุณสมบัติ "{property}"',
+        manualSortNonMarkdownHint: 'ไฟล์ที่ไม่ใช่ Markdown จะแสดงด้านล่างและไม่สามารถจัดเรียงใหม่ได้',
+        unsortedSection: 'ยังไม่จัดเรียง',
+        manualSortDone: 'เสร็จ',
+        manualSortMultipleWriteFailure: '{count} ไฟล์ล้มเหลว ไฟล์แรก: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_TH = {
         changeChildSortOrder: 'เปลี่ยนลำดับการเรียง',
         changeSortAndGroup: 'เปลี่ยนการเรียงและการจัดกลุ่ม',
         defaultSort: 'ค่าเริ่มต้น',
+        manualSort: 'จัดเรียงด้วยตนเอง',
+        editSortOrder: 'แก้ไขลำดับการจัดเรียง...',
+        removeSortProperty: 'ลบคุณสมบัติการจัดเรียง',
         descendants: 'รายการย่อย',
         subfolders: 'โฟลเดอร์ย่อย',
         subtags: 'แท็กย่อย',
@@ -300,6 +312,14 @@ export const STRINGS_TH = {
             moveFileToFolder: 'ย้ายไฟล์ไปยัง...',
             moveMultipleNotesToFolder: 'ย้าย {count} โน้ตไปยัง...',
             moveMultipleFilesToFolder: 'ย้าย {count} ไฟล์ไปยัง...',
+            setManualSortGroupHeader: 'ตั้งค่าส่วนหัวกลุ่ม',
+            changeManualSortGroupHeader: 'เปลี่ยนส่วนหัวกลุ่ม',
+            manualSortGroupHeader: {
+                title: 'ส่วนหัวกลุ่ม',
+                copyStyle: 'คัดลอกสไตล์ส่วนหัว',
+                pasteStyle: 'วางสไตล์ส่วนหัว',
+                remove: 'นำส่วนหัวกลุ่มออก'
+            },
             addTag: 'เพิ่มแท็ก',
             addPropertyKey: 'ตั้งค่าคุณสมบัติ',
             removeTag: 'นำแท็กออก',
@@ -389,6 +409,32 @@ export const STRINGS_TH = {
             applyAppearanceTitle: (target: string) => `ใช้รูปลักษณ์กับ${target}?`,
             affectedCountMessage: (count: number) => `การแทนที่ที่มีอยู่ซึ่งจะเปลี่ยนแปลง: ${count}`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'ใช้การจัดเรียงด้วยตนเองหรือไม่?',
+            propertySortMessage: (property: string, count: number) =>
+                `จะสลับมุมมองปัจจุบันเป็นการจัดเรียงด้วยตนเองโดยใช้ "${property}" การแก้ไขลำดับจะเขียนค่าดัชนีตัวเลขลงในคุณสมบัตินั้นใน ${count} โน้ต ตามความจำเป็น`,
+            propertySortConfirmButton: 'ใช้การจัดเรียงด้วยตนเอง',
+            removePropertyTitle: 'ลบคุณสมบัติการจัดเรียงหรือไม่?',
+            removePropertyMessage: (property: string, count: number) =>
+                `จะลบ "${property}" ออกจาก ${count} โน้ตในรายการปัจจุบัน ลำดับการจัดเรียงด้วยตนเองของโน้ตเหล่านั้นจะถูกล้าง`,
+            removePropertyConfirmButton: 'ลบคุณสมบัติ',
+            compactTitle: 'บีบอัดค่าดัชนีหรือไม่?',
+            compactMessage: (count: number) => `การจัดเรียงใหม่นี้ต้องการพื้นที่ตัวเลขเพิ่มเติม ${count} โน้ต จะได้รับค่าดัชนีใหม่`,
+            compactConfirmButton: 'บีบอัดค่าดัชนี'
+        },
+        manualSortGroupHeader: {
+            title: 'ตั้งค่าส่วนหัวกลุ่ม',
+            titleLabel: 'ชื่อเรื่อง',
+            placeholder: 'ส่วนหัวกลุ่ม',
+            icon: 'ไอคอน',
+            color: 'สี',
+            wordCount: 'แสดงจำนวนคำ',
+            wordCountTarget: 'จำนวนคำเป้าหมาย',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'เมื่อช่องนี้ว่าง เป้าหมายของกลุ่มจะใช้คุณสมบัติเป้าหมายที่ตั้งไว้ใน การตั้งค่า > โน้ต > จำนวนคำ แทนที่ได้โดยตั้งค่าเป้าหมายสำหรับกลุ่มนี้',
+            description: 'ปรับแต่งส่วนหัวกลุ่มสำหรับโน้ตนี้ เว้นชื่อเรื่องว่างเพื่อนำส่วนหัวออก'
+        },
         navRainbowSection: {
             title: (section: string) => `สีรุ้ง: ${section}`
         },
@@ -427,6 +473,11 @@ export const STRINGS_TH = {
                 'list-descendants': 'โน้ตจากโฟลเดอร์ย่อย',
                 'list-sort-ascending': 'ลำดับ: น้อยไปมาก',
                 'list-sort-descending': 'ลำดับ: มากไปน้อย',
+                'list-sort-modified': 'จัดเรียงตามวันที่แก้ไข',
+                'list-sort-created': 'จัดเรียงตามวันที่สร้าง',
+                'list-sort-title': 'จัดเรียงตามชื่อเรื่อง',
+                'list-sort-filename': 'จัดเรียงตามชื่อไฟล์',
+                'list-sort-property': 'จัดเรียงตามคุณสมบัติ',
                 'list-appearance': 'เปลี่ยนรูปลักษณ์',
                 'list-new-note': 'โน้ตใหม่',
                 'nav-folder-open': 'โฟลเดอร์เปิด',
@@ -697,6 +748,8 @@ export const STRINGS_TH = {
             propertiesRequireMarkdown: 'คุณสมบัติรองรับเฉพาะโน้ต Markdown เท่านั้น',
             propertySetOnNote: 'อัปเดตคุณสมบัติใน 1 โน้ต',
             propertySetOnNotes: 'อัปเดตคุณสมบัติใน {count} โน้ต',
+            manualSortPropertyRemovedFromNote: 'ลบคุณสมบัติการจัดเรียงจาก 1 โน้ตแล้ว',
+            manualSortPropertyRemovedFromNotes: 'ลบคุณสมบัติการจัดเรียงจาก {count} โน้ตแล้ว',
             iconPackDownloaded: 'ดาวน์โหลด {provider} แล้ว',
             iconPackUpdated: 'อัปเดต {provider} แล้ว ({version})',
             iconPackRemoved: 'นำ {provider} ออกแล้ว',
@@ -859,6 +912,9 @@ export const STRINGS_TH = {
             list: {
                 display: 'ลักษณะ',
                 organization: 'การจัดระเบียบ',
+                groupHeaders: 'ส่วนหัวกลุ่ม',
+                propertySort: 'การจัดเรียงตามคุณสมบัติ',
+                manualSort: 'การจัดเรียงด้วยตนเอง',
                 pinnedNotes: 'โน้ตที่ปักหมุด',
                 drawingPreviews: 'ตัวอย่างภาพวาด'
             },
@@ -872,7 +928,8 @@ export const STRINGS_TH = {
                 tags: 'แท็ก',
                 properties: 'คุณสมบัติ',
                 date: 'วันที่',
-                parentFolder: 'โฟลเดอร์หลัก'
+                parentFolder: 'โฟลเดอร์หลัก',
+                wordCount: 'จำนวนคำ'
             }
         },
         syncMode: {
@@ -892,8 +949,8 @@ export const STRINGS_TH = {
                 }
             },
             sortNotesBy: {
-                name: 'เรียงโน้ตตาม',
-                desc: 'เลือกวิธีเรียงโน้ตในรายการโน้ต',
+                name: 'ลำดับการเรียงเริ่มต้น',
+                desc: 'เลือกลำดับการเรียงเริ่มต้นสำหรับโน้ต',
                 options: {
                     'modified-desc': 'วันที่แก้ไข (ใหม่สุดบน)',
                     'modified-asc': 'วันที่แก้ไข (เก่าสุดบน)',
@@ -902,19 +959,24 @@ export const STRINGS_TH = {
                     'title-asc': 'ชื่อเรื่อง (A บน)',
                     'title-desc': 'ชื่อเรื่อง (Z บน)',
                     'filename-asc': 'ชื่อไฟล์ (A บน)',
-                    'filename-desc': 'ชื่อไฟล์ (Z บน)',
-                    'property-asc': 'คุณสมบัติ (A บน)',
-                    'property-desc': 'คุณสมบัติ (Z บน)'
+                    'filename-desc': 'ชื่อไฟล์ (Z บน)'
                 },
-                propertyOverride: {
-                    asc: 'คุณสมบัติ ‘{property}’ (A บน)',
-                    desc: 'คุณสมบัติ ‘{property}’ (Z บน)'
+                directions: {
+                    asc: 'จากน้อยไปมาก',
+                    desc: 'จากมากไปน้อย'
+                },
+                fields: {
+                    modified: 'วันที่แก้ไข',
+                    created: 'วันที่สร้าง',
+                    title: 'ชื่อเรื่อง',
+                    filename: 'ชื่อไฟล์',
+                    property: 'คุณสมบัติ'
                 }
             },
             propertySortKey: {
                 name: 'คุณสมบัติสำหรับเรียงลำดับ',
-                desc: 'ใช้กับการเรียงลำดับตามคุณสมบัติ โน้ตที่มีคุณสมบัติ frontmatter นี้จะแสดงก่อนและเรียงตามค่าคุณสมบัติ อาร์เรย์จะรวมเป็นค่าเดียว',
-                placeholder: 'order'
+                desc: 'คุณสมบัติ frontmatter ที่คั่นด้วยเครื่องหมายจุลภาคซึ่งแสดงเป็นตัวเลือกการจัดเรียงตามคุณสมบัติ ค่าอาร์เรย์จะรวมเป็นข้อความเดียว คุณสมบัติเหล่านี้จะไม่ถูกเปลี่ยนแปลง',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'การเรียงลำดับรอง',
@@ -925,6 +987,46 @@ export const STRINGS_TH = {
                     created: 'วันที่สร้าง',
                     modified: 'วันที่แก้ไข'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'คุณสมบัติแต่ละรายการที่ระบุไว้ด้านบนจะปรากฏเป็นตัวเลือกการจัดเรียงในเมนูจัดเรียงของแผงรายการ การเลือกตัวเลือกหนึ่งจะจัดเรียงโน้ตตามค่าใน frontmatter'
+            },
+            manualSortPropertyKey: {
+                name: 'คุณสมบัติสำหรับการจัดเรียงด้วยตนเอง',
+                desc: 'คุณสมบัติ frontmatter ที่ใช้เก็บค่าดัชนีตัวเลขสำหรับการจัดเรียงด้วยตนเอง'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'คุณสมบัติส่วนหัวกลุ่ม',
+                desc: 'คุณสมบัติ frontmatter ที่ใช้เก็บส่วนหัวกลุ่มกำหนดเอง'
+            },
+            groupHeadersInstructions: {
+                intro: 'ส่วนหัวกลุ่มกำหนดเองจะแสดงเหนือโน้ตในแผงรายการ',
+                items: [
+                    'จากเมนูจัดเรียงในแผงรายการ ตั้งค่าการจัดกลุ่มเป็น **กำหนดเอง**',
+                    'คลิกขวาที่โน้ตและเลือก **ตั้งค่าส่วนหัวกลุ่ม** เพื่อเพิ่มส่วนหัวเหนือโน้ตนั้น'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'ตำแหน่งโน้ตใหม่',
+                desc: 'เลือกตำแหน่งที่จะวางโน้ตใหม่เมื่อรายการปัจจุบันใช้การจัดเรียงด้วยตนเอง',
+                options: {
+                    top: 'ด้านบน',
+                    bottom: 'ด้านล่าง',
+                    'below-selected-note': 'ใต้โน้ตที่เลือก',
+                    unsorted: 'ยังไม่จัดเรียง'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'ยืนยันก่อนการจัดเรียงด้วยตนเอง',
+                desc: 'แสดงคำเตือนก่อนเขียนคุณสมบัติการจัดเรียงด้วยตนเองลงในบันทึกเป็นครั้งแรก เมื่อปิดใช้งาน บันทึกจะได้รับคุณสมบัตินั้นโดยไม่มีคำเตือน'
+            },
+            manualSortInstructions: {
+                intro: 'การจัดเรียงด้วยตนเองจะเขียนค่าดัชนีตัวเลขลงในคุณสมบัติ frontmatter ของแต่ละโน้ต โน้ตที่ไม่มีดัชนีจะปรากฏอยู่ใต้ยังไม่จัดเรียง',
+                items: [
+                    'เปิดใช้การจัดเรียงด้วยตนเองโดยเลือก **จัดเรียงด้วยตนเอง** จากเมนูจัดเรียง หลังจากนั้น มีสองวิธีในการจัดเรียงโน้ตใหม่',
+                    'เลือก **แก้ไขลำดับการจัดเรียง...** จากเมนูจัดเรียงเพื่อเปิดมุมมองจัดเรียงใหม่ ลากโน้ตด้วยเมาส์หรือสัมผัสบนมือถือ บนเดสก์ท็อป **Cmd/Ctrl** หรือ **Shift** คลิกเพื่อเลือกหลายโน้ต จากนั้นลากโน้ตใดโน้ตหนึ่งเพื่อย้ายทั้งกลุ่ม',
+                    'ในแผงรายการ เลือกโน้ตหนึ่งโน้ตหรือเลือกหลายโน้ต จากนั้นกด **Cmd/Ctrl + Arrow Up/Down** เพื่อเลื่อนการเลือกขึ้นหรือลง'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'เลื่อนไปยังไฟล์ที่เลือกเมื่อรายการเปลี่ยนแปลง',
@@ -943,12 +1045,12 @@ export const STRINGS_TH = {
                 desc: 'แสดงจำนวนโน้ตเป็นรูปแบบ "ปัจจุบัน ▾ ลูกหลาน" ในโฟลเดอร์และแท็ก'
             },
             groupNotes: {
-                name: 'จัดกลุ่มโน้ต',
-                desc: 'แสดงส่วนหัวระหว่างโน้ตที่จัดกลุ่มตามวันที่หรือโฟลเดอร์ มุมมองแท็กใช้กลุ่มวันที่เมื่อเปิดใช้งานการจัดกลุ่มโฟลเดอร์',
+                name: 'การจัดกลุ่มเริ่มต้น',
+                desc: 'กำหนดเองจะแสดงส่วนหัวที่กำหนดไว้ใน frontmatter วันที่จัดกลุ่มโน้ตตามวันที่ โฟลเดอร์จัดกลุ่มโน้ตตามโฟลเดอร์ มุมมองแท็กและคุณสมบัติจะใช้กลุ่มวันที่เมื่อเลือกโฟลเดอร์',
                 options: {
-                    none: 'ไม่จัดกลุ่ม',
-                    date: 'จัดกลุ่มตามวันที่',
-                    folder: 'จัดกลุ่มตามโฟลเดอร์'
+                    custom: 'กำหนดเอง',
+                    date: 'วันที่',
+                    folder: 'โฟลเดอร์'
                 }
             },
             showSelectedNavigationPills: {
@@ -1198,8 +1300,8 @@ export const STRINGS_TH = {
             calendarLocale: {
                 name: 'ภาษา',
                 desc: 'ควบคุมการจัดรูปแบบวันที่ในปฏิทิน การนับสัปดาห์ และวันแรกของสัปดาห์',
-                incompatibleWeekPatternWarning:
-                    'แพทเทิร์นโน้ตรายสัปดาห์ใช้โทเค็นสัปดาห์ ISO ("W" หรือ "G") ปฏิทินจะแสดงสัปดาห์เริ่มต้นจากวันจันทร์แทนวันแรกของสัปดาห์ตามภาษานี้',
+                weekPathMismatchWarning:
+                    'ปฏิทินที่มองเห็นได้และเส้นทางโน้ตรายสัปดาห์ใช้วันเริ่มต้นของสัปดาห์หรือการนับสัปดาห์ที่แตกต่างกัน',
                 options: {
                     systemDefault: 'ค่าเริ่มต้น'
                 }
@@ -1270,6 +1372,14 @@ export const STRINGS_TH = {
                     dailyNotes: 'โฟลเดอร์และรูปแบบวันที่ถูกกำหนดค่าในปลั๊กอิน Daily Notes หลัก'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'ภาษาของโน้ตตามรอบ',
+                desc: 'ควบคุมชื่อเดือน ชื่อวันของสัปดาห์ หมายเลขสัปดาห์ และวันเริ่มต้นของสัปดาห์ที่แปลแล้วในเส้นทางโน้ตตามรอบของ Notebook Navigator',
+                options: {
+                    calendar: 'ปฏิทิน',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'โฟลเดอร์หลัก',
@@ -1295,8 +1405,10 @@ export const STRINGS_TH = {
             calendarCustomWeekPattern: {
                 name: 'โน้ตรายสัปดาห์',
                 parsingError: 'แพทเทิร์นต้องสามารถฟอร์แมตและพาร์สกลับเป็นสัปดาห์แบบเต็ม (ปีของสัปดาห์ หมายเลขสัปดาห์) ได้',
-                localeMismatchWarning:
-                    'แพทเทิร์นนี้ใช้โทเค็นสัปดาห์ ISO ("W" หรือ "G") ปฏิทินจะแสดงสัปดาห์เริ่มต้นจากวันจันทร์ ใช้ "w" หรือ "g" หากโน้ตรายสัปดาห์ควรเป็นไปตามภาษาที่เลือก'
+                weekPathMismatchWarning:
+                    'เส้นทางโน้ตรายสัปดาห์ใช้ภาษาของโน้ตตามรอบ ใช้ภาษาที่ตรงกัน หรือใช้ "GGGG" กับ "WW" สำหรับสัปดาห์ที่เริ่มจากวันจันทร์',
+                mixedWeekTokensWarning:
+                    'แพทเทิร์นนี้ผสมโทเค็นสัปดาห์ที่เริ่มจากวันจันทร์ ("W" หรือ "G") กับโทเค็นสัปดาห์ที่อิงตามภาษา ("w" หรือ "g") ใช้ชุดเดียวอย่างสม่ำเสมอ: "GGGG" กับ "WW" สำหรับสัปดาห์ที่เริ่มจากวันจันทร์ หรือ "gggg" กับ "ww" หากโน้ตรายสัปดาห์ควรเป็นไปตามภาษาที่เลือก'
             },
             calendarCustomMonthPattern: {
                 name: 'โน้ตรายเดือน',
@@ -1528,14 +1640,25 @@ export const STRINGS_TH = {
                 name: 'แสดงคุณสมบัติในโหมดกะทัดรัด',
                 desc: 'แสดงคุณสมบัติเมื่อโหมดกะทัดรัดเปิดใช้งาน'
             },
-            notePropertyType: {
-                name: 'คุณสมบัติโน้ต',
-                desc: 'เลือกคุณสมบัติโน้ตที่จะแสดงในรายการไฟล์',
+            showWordCount: {
+                name: 'แสดงจำนวนคำ',
+                desc: 'แสดงจำนวนคำของโน้ตในรายการไฟล์'
+            },
+            wordCountPlacement: {
+                name: 'ตำแหน่ง',
+                desc: 'เลือกตำแหน่งที่จำนวนคำจะแสดง',
                 options: {
-                    frontmatter: 'คุณสมบัติ Frontmatter',
-                    wordCount: 'จำนวนคำ',
-                    none: 'ไม่มี'
+                    title: 'ในชื่อเรื่อง',
+                    property: 'เป็นคุณสมบัติ'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'คุณสมบัติเป้าหมาย',
+                desc: 'คีย์คุณสมบัติ frontmatter ที่มีจำนวนคำเป้าหมาย เว้นว่างไว้เพื่อซ่อนเป้าหมาย'
+            },
+            showWordCountPercentage: {
+                name: 'แสดงเปอร์เซ็นต์เป้าหมาย',
+                desc: 'แสดงเฉพาะเปอร์เซ็นต์ความคืบหน้าเมื่อมีจำนวนคำเป้าหมาย'
             },
             propertyFields: {
                 name: 'คีย์คุณสมบัติ (โปรไฟล์ห้องนิรภัย)',

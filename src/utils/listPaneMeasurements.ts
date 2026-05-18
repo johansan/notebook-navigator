@@ -17,9 +17,10 @@
  */
 
 import type { TFile } from 'obsidian';
-import { ItemType, type NavigationItemType } from '../types';
+import { ItemType, ListPaneItemType, type NavigationItemType } from '../types';
 import type { FeatureImageStatus, FileData } from '../storage/IndexedDBStorage';
-import { type FeatureImageSizeSetting, type NotePropertyType } from '../settings/types';
+import { type FeatureImageSizeSetting } from '../settings/types';
+import type { ListPaneItem } from '../types/virtualization';
 import { isImageFile } from './fileTypeUtils';
 import {
     buildPropertyKeyNodeId,
@@ -32,6 +33,7 @@ import {
 import { casefold } from './recordUtils';
 import type { HiddenTagVisibility } from './tagPrefixMatcher';
 import { normalizeTagPath } from './tagUtils';
+import { shouldShowManualSortGroupHeaderProgress } from './manualSort';
 
 /**
  * Layout measurements used by the list pane virtualizer.
@@ -45,6 +47,7 @@ export interface ListPaneMeasurements {
     tagRowHeight: number;
     featureImageMinHeight: number;
     groupHeaderHeight: number;
+    manualSortGoalHeaderHeight: number;
     groupHeaderSpacerBefore: number;
     fileIconSize: number;
     topSpacer: number;
@@ -69,6 +72,7 @@ const DESKTOP_MEASUREMENTS: ListPaneMeasurements = Object.freeze({
     tagRowHeight: 26, // 22px row + 4px gap
     featureImageMinHeight: 42,
     groupHeaderHeight: 27,
+    manualSortGoalHeaderHeight: 32,
     groupHeaderSpacerBefore: 20,
     fileIconSize: 16,
     topSpacer: 8,
@@ -83,6 +87,7 @@ const MOBILE_MEASUREMENTS: ListPaneMeasurements = Object.freeze({
     tagRowHeight: 26, // 22px row + 4px gap
     featureImageMinHeight: 42,
     groupHeaderHeight: 35, // 27px + 8px mobile increment
+    manualSortGoalHeaderHeight: 40, // 35px header row + 5px below progress
     groupHeaderSpacerBefore: 20,
     fileIconSize: 20, // 16px + 4px mobile increment
     topSpacer: 8,
@@ -98,6 +103,19 @@ export function getFeatureImageDisplayMeasurements(featureImageSize: FeatureImag
 
 export function getListPaneMeasurements(isMobile: boolean): ListPaneMeasurements {
     return isMobile ? MOBILE_MEASUREMENTS : DESKTOP_MEASUREMENTS;
+}
+
+export function getListPaneHeaderHeight(item: ListPaneItem | undefined, measurements: ListPaneMeasurements): number {
+    if (
+        item?.type === ListPaneItemType.HEADER &&
+        item.headerKind === 'manual-sort-custom' &&
+        item.manualSortHeader !== undefined &&
+        shouldShowManualSortGroupHeaderProgress(item.manualSortHeader, item.manualSortHeaderTargetWordCount)
+    ) {
+        return measurements.manualSortGoalHeaderHeight;
+    }
+
+    return measurements.groupHeaderHeight;
 }
 
 export function getSelectedTagPillToHide({
@@ -350,11 +368,11 @@ export function calculateNormalListFileRowHeightEstimate({
     const reservedPreviewSlotHeight = Math.max(previewSlotHeight, replacementPreviewSlotHeight);
     const reserveImageMetadataLine = hasImageTextArea && !layoutState.isPinnedImageRow;
     const reservedMetadataLineHeight = reserveImageMetadataLine ? heights.singleTextLineHeight : metadataLineHeight;
+    const reservedEmptyMetadataLineHeight = reserveImageMetadataLine && metadataLineHeight === 0 ? reservedMetadataLineHeight : 0;
     const richContentHeight = titleContentHeight + reservedPreviewSlotHeight + reservedMetadataLineHeight;
     const pillRowsHeight = heights.tagRowHeight * pillRowCount;
-    const pillRowsExtraHeight = layoutState.shouldReplaceEmptyPreviewWithPills
-        ? Math.max(0, pillRowsHeight - replacementPreviewSlotHeight)
-        : pillRowsHeight;
+    const pillRowsReservedHeight = replacementPreviewSlotHeight + reservedEmptyMetadataLineHeight;
+    const pillRowsExtraHeight = Math.max(0, pillRowsHeight - pillRowsReservedHeight);
 
     return heights.basePadding + applyFeatureImageFloor(richContentHeight + pillRowsExtraHeight);
 }
@@ -533,7 +551,7 @@ function getVisibleFrontmatterPropertySummary({
 }
 
 export function getPropertyRowCount({
-    notePropertyType,
+    showWordCountProperty,
     showFileProperties,
     showPropertiesOnSeparateRows,
     showFilePropertiesInCompactMode,
@@ -544,7 +562,7 @@ export function getPropertyRowCount({
     visiblePropertyKeys,
     hiddenPropertyValueNodeId
 }: {
-    notePropertyType: NotePropertyType;
+    showWordCountProperty: boolean;
     showFileProperties: boolean;
     showPropertiesOnSeparateRows: boolean;
     showFilePropertiesInCompactMode: boolean;
@@ -565,8 +583,7 @@ export function getPropertyRowCount({
         return 0;
     }
 
-    const wordCountEnabled =
-        notePropertyType === 'wordCount' && typeof wordCount === 'number' && Number.isFinite(wordCount) && wordCount > 0;
+    const wordCountEnabled = showWordCountProperty && typeof wordCount === 'number' && Number.isFinite(wordCount) && wordCount > 0;
     const propertySummary = showFileProperties
         ? getVisibleFrontmatterPropertySummary({
               properties,

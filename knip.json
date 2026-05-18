@@ -2,8 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/main.ts"],
   "project": ["src/**/*.{ts,tsx}"],
-  "ignore": ["src/i18n/locales/**", "scripts/release.js", "codemods/**"],
-  "ignoreDependencies": ["jscodeshift", "@types/jscodeshift", "recast", "obsidian"],
+  "ignoreDependencies": ["jscodeshift", "@types/jscodeshift", "recast"],
   "ignoreExportsUsedInFile": {
     "interface": true,
     "type": true,

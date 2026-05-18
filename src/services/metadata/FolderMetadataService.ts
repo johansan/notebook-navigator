@@ -17,13 +17,14 @@
  */
 
 import { EventRef, TFile } from 'obsidian';
-import { SortOption, type AlphaSortOrder, type NotebookNavigatorSettings } from '../../settings';
+import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings';
 import { getDBInstanceOrNull } from '../../storage/fileOperations';
 import { ItemType } from '../../types';
 import { isFolderShortcut } from '../../types/shortcuts';
 import type { FileContentChange } from '../../storage/IndexedDBStorage';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';
 import { getParentFolderPath } from '../../utils/pathUtils';
+import { createShortcutTargetPathEventMatcher } from '../../utils/shortcutPathResolver';
 import {
     cleanupCollapsedPinnedContextKeys,
     deleteCollapsedPinnedContextKeys,
@@ -684,18 +685,18 @@ export class FolderMetadataService extends BaseMetadataService {
         }).icon;
     }
 
-    async setFolderSortOverride(folderPath: string, sortOption: SortOption): Promise<void> {
+    async setFolderSortOverride(folderPath: string, sortOverride: ListSortOverrideValue): Promise<void> {
         if (!this.validateFolder(folderPath)) {
             return;
         }
-        return this.setEntitySortOverride(ItemType.FOLDER, folderPath, sortOption);
+        return this.setEntitySortOverride(ItemType.FOLDER, folderPath, sortOverride);
     }
 
     async removeFolderSortOverride(folderPath: string): Promise<void> {
         return this.removeEntitySortOverride(ItemType.FOLDER, folderPath);
     }
 
-    getFolderSortOverride(folderPath: string): SortOption | undefined {
+    getFolderSortOverride(folderPath: string): ListSortOverrideValue | undefined {
         return this.getEntitySortOverride(ItemType.FOLDER, folderPath);
     }
 
@@ -716,6 +717,7 @@ export class FolderMetadataService extends BaseMetadataService {
 
     async handleFolderRename(oldPath: string, newPath: string, extraMutation?: SettingsMutation): Promise<void> {
         this.folderDisplayCache.clear();
+        const matchesShortcutPath = createShortcutTargetPathEventMatcher(this.app, 'folder', oldPath, newPath);
         await this.saveAndUpdate(settings => {
             let changed = false;
 
@@ -731,7 +733,7 @@ export class FolderMetadataService extends BaseMetadataService {
                 }) || changed;
 
             const shortcutsChanged = this.updateShortcuts(settings, shortcut => {
-                if (!isFolderShortcut(shortcut) || shortcut.path !== oldPath) {
+                if (!isFolderShortcut(shortcut) || !matchesShortcutPath(shortcut.path)) {
                     return undefined;
                 }
 
@@ -752,6 +754,7 @@ export class FolderMetadataService extends BaseMetadataService {
 
     async handleFolderDelete(folderPath: string, extraMutation?: SettingsMutation): Promise<void> {
         this.folderDisplayCache.clear();
+        const matchesShortcutPath = createShortcutTargetPathEventMatcher(this.app, 'folder', folderPath);
         await this.saveAndUpdate(settings => {
             let changed = false;
 
@@ -770,7 +773,7 @@ export class FolderMetadataService extends BaseMetadataService {
                 if (!isFolderShortcut(shortcut)) {
                     return undefined;
                 }
-                return shortcut.path === folderPath ? null : undefined;
+                return matchesShortcutPath(shortcut.path) ? null : undefined;
             });
             changed = shortcutsChanged || changed;
 

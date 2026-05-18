@@ -85,6 +85,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     // Stores canonical path of dragged tag for comparison and validation
     const dragTagCanonicalRef = useRef<string | null>(null);
     const suppressClickUntilRef = useRef(0);
+    const draggingElementsRef = useRef<Set<HTMLElement>>(new Set());
     const dragGhostManager = useMemo(() => createDragGhostManager(), []);
     const springLoadedInitialDelayMs = useMemo(() => {
         const delaySeconds = settings.springLoadedFoldersInitialDelay;
@@ -139,6 +140,32 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const isGhostableDragType = (value: string | null): value is ItemType => {
         return value === ItemType.FILE || value === ItemType.FOLDER || value === ItemType.TAG;
     };
+
+    const markDraggingElement = useCallback((element: HTMLElement) => {
+        element.classList.add('nn-dragging');
+        draggingElementsRef.current.add(element);
+    }, []);
+
+    const clearDraggingElements = useCallback(() => {
+        draggingElementsRef.current.forEach(element => {
+            element.classList.remove('nn-dragging');
+        });
+        draggingElementsRef.current.clear();
+    }, []);
+
+    const markSelectedFileRowsDragging = useCallback(() => {
+        const container = containerRef.current;
+        if (!container) {
+            return;
+        }
+
+        container.querySelectorAll<HTMLElement>('.nn-file[data-drag-path]').forEach(element => {
+            const selectedPath = getPathFromDataAttribute(element, 'data-drag-path');
+            if (selectedPath && selectionState.selectedFiles.has(selectedPath)) {
+                markDraggingElement(element);
+            }
+        });
+    }, [containerRef, markDraggingElement, selectionState.selectedFiles]);
 
     /**
      * Helper function to get current file list based on selection
@@ -228,6 +255,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             }
 
             springLoadedExpandCountRef.current = 0;
+            clearDraggingElements();
 
             const draggable = e.target.closest('[data-draggable="true"]');
             if (!draggable || !draggable.instanceOf(HTMLElement)) {
@@ -239,6 +267,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             const canonicalTag = draggable.getAttribute('data-drag-canonical');
             const iconIdAttr = draggable.getAttribute('data-drag-icon');
             const iconColorAttr = draggable.getAttribute('data-drag-icon-color');
+            const allowMultiFileDrag = draggable.getAttribute('data-drag-allow-multi-file') !== 'false';
             const iconId = iconIdAttr && iconIdAttr.trim().length > 0 ? iconIdAttr : undefined;
             const iconColor = iconColorAttr && iconColorAttr.trim().length > 0 ? iconColorAttr : undefined;
             if (!path || !e.dataTransfer) {
@@ -249,7 +278,12 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             setDragManagerPayload(null);
 
             // Handle multiple file selection drag
-            if (type === ItemType.FILE && selectionState.selectedFiles.has(path) && selectionState.selectedFiles.size > 1) {
+            if (
+                allowMultiFileDrag &&
+                type === ItemType.FILE &&
+                selectionState.selectedFiles.has(path) &&
+                selectionState.selectedFiles.size > 1
+            ) {
                 const selectedPaths = Array.from(selectionState.selectedFiles);
                 e.dataTransfer.setData('obsidian/files', JSON.stringify(selectedPaths));
                 e.dataTransfer.effectAllowed = 'all';
@@ -278,10 +312,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     e.dataTransfer.setData('text/plain', markdownLinks.join('\n'));
                 }
 
-                selectedPaths.forEach(selectedPath => {
-                    const el = containerRef.current?.querySelector(`[data-drag-path="${selectedPath}"]`);
-                    el?.classList.add('nn-dragging');
-                });
+                markSelectedFileRowsDragging();
 
                 dragGhostManager.hideNativePreview(e);
                 dragGhostManager.showGhost(e, {
@@ -343,7 +374,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 }
             }
 
-            draggable.classList.add('nn-dragging');
+            markDraggingElement(draggable);
             const resolvedType = isGhostableDragType(type) ? type : null;
             dragGhostManager.hideNativePreview(e);
             dragGhostManager.showGhost(e, {
@@ -353,7 +384,16 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 iconColor
             });
         },
-        [selectionState, containerRef, app, dragGhostManager, getFilesFromPaths, setDragManagerPayload]
+        [
+            selectionState,
+            app,
+            dragGhostManager,
+            getFilesFromPaths,
+            setDragManagerPayload,
+            clearDraggingElements,
+            markDraggingElement,
+            markSelectedFileRowsDragging
+        ]
     );
 
     useEffect(() => {
@@ -1017,6 +1057,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 }
             } finally {
                 // Clean up drag state and payload after drop completes
+                clearDraggingElements();
                 setDragManagerPayload(null);
                 dragTypeRef.current = null;
                 dragTagDisplayRef.current = null;
@@ -1032,6 +1073,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             moveFilesWithContext,
             getFilesFromPaths,
             clearAutoExpandTimer,
+            clearDraggingElements,
             setDragManagerPayload,
             tagOperations,
             fileSystemOps
@@ -1067,40 +1109,23 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
      * Cleans up drag state and visual feedback when drag ends
      * Removes CSS classes, hides ghost, and clears drag payload
      */
-    const handleDragEnd = useCallback(
-        (e: DragEvent) => {
-            springLoadedExpandCountRef.current = 0;
+    const handleDragEnd = useCallback(() => {
+        springLoadedExpandCountRef.current = 0;
+        clearDraggingElements();
 
-            const target = e.target;
-            if (!isHTMLElement(target)) return;
-            const draggable = target.closest('[data-draggable="true"]');
-            const path = getPathFromDataAttribute(draggable instanceof HTMLElement ? draggable : null, 'data-drag-path');
+        if (dragOverElement.current) {
+            dragOverElement.current.classList.remove('nn-drag-over');
+            dragOverElement.current = null;
+        }
 
-            // Remove dragging class from all selected files if dragging multiple
-            if (path && selectionState.selectedFiles.has(path)) {
-                selectionState.selectedFiles.forEach(selectedPath => {
-                    const el = containerRef.current?.querySelector(`[data-drag-path="${selectedPath}"]`);
-                    el?.classList.remove('nn-dragging');
-                });
-            } else {
-                draggable?.classList.remove('nn-dragging');
-            }
-
-            if (dragOverElement.current) {
-                dragOverElement.current.classList.remove('nn-drag-over');
-                dragOverElement.current = null;
-            }
-
-            dragGhostManager.hideGhost();
-            // Clean up drag state and payload when drag ends
-            setDragManagerPayload(null);
-            clearAutoExpandTimer();
-            dragTypeRef.current = null;
-            dragTagDisplayRef.current = null;
-            dragTagCanonicalRef.current = null;
-        },
-        [selectionState, containerRef, dragGhostManager, clearAutoExpandTimer, setDragManagerPayload]
-    );
+        dragGhostManager.hideGhost();
+        // Clean up drag state and payload when drag ends
+        setDragManagerPayload(null);
+        clearAutoExpandTimer();
+        dragTypeRef.current = null;
+        dragTagDisplayRef.current = null;
+        dragTagCanonicalRef.current = null;
+    }, [clearDraggingElements, dragGhostManager, clearAutoExpandTimer, setDragManagerPayload]);
 
     /**
      * Attaches drag and drop event listeners to container element
@@ -1149,6 +1174,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             ownerDocument.removeEventListener('keydown', handleKeyDown);
 
             // Clean up any lingering drag state on unmount
+            clearDraggingElements();
             dragGhostManager.hideGhost();
             setDragManagerPayload(null);
             clearAutoExpandTimer();
@@ -1163,6 +1189,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
         handleDragEnd,
         isMobile,
         dragGhostManager,
+        clearDraggingElements,
         clearAutoExpandTimer,
         setDragManagerPayload
     ]);

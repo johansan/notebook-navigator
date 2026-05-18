@@ -384,10 +384,10 @@ export class NotebookNavigatorView extends ItemView {
     }
 
     /**
-     * Refreshes the UI by triggering a settings version update
+     * Deletes selected files.
      */
-    deleteActiveFile() {
-        this.componentHandle?.deleteActiveFile();
+    deleteSelectedFiles() {
+        this.componentHandle?.deleteSelectedFiles();
     }
 
     /**

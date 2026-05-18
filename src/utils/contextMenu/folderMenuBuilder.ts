@@ -55,16 +55,17 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
             fallbackName: folder.name
         });
 
-    const ensureFolderSelected = () => {
+    const ensureFolderSelected = (): boolean => {
         if (
             selectionState.selectionType === ItemType.FOLDER &&
             selectionState.selectedFolder &&
             selectionState.selectedFolder.path === folder.path
         ) {
-            return;
+            return false;
         }
 
         selectionDispatch({ type: 'SET_SELECTED_FOLDER', folder });
+        return true;
     };
 
     // Selects newly created file and switches focus to files pane
@@ -81,8 +82,11 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
 
     menu.addItem((item: MenuItem) => {
         setAsyncOnClick(item.setTitle(strings.contextMenu.folder.newNote).setIcon('lucide-pen-box'), async () => {
-            ensureFolderSelected();
-            const createdFile = await fileSystemOps.createNewFile(folder, params.settings.createNewNotesInNewTab);
+            const selectionChanged = ensureFolderSelected();
+            const manualSortContext = await fileSystemOps.getManualSortNewFileContextForTarget('folder', folder.path, {
+                waitForSelectionUpdate: selectionChanged
+            });
+            const createdFile = await fileSystemOps.createNewFile(folder, params.settings.createNewNotesInNewTab, manualSortContext);
             handleFileCreation(createdFile);
         });
     });

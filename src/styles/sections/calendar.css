@@ -443,7 +443,7 @@ button.nn-navigation-calendar-nav-button.nn-navigation-calendar-year-nav-button 
     height: var(--nn-calendar-nav-button-size);
 }
 
-.nn-navigation-calendar-year-label {
+button.nn-navigation-calendar-year-label {
     color: var(--nn-theme-foreground-muted);
     font-size: var(--nn-calendar-today-font-size);
     font-weight: 600;
@@ -727,9 +727,9 @@ button.nn-navigation-calendar-year-month {
     font-variant-numeric: tabular-nums;
 }
 
-.nn-navigation-calendar-weeknumber-button {
+button.nn-navigation-calendar-weeknumber-button {
     width: 100%;
-    background: transparent;
+    background-color: transparent;
 }
 
 .nn-navigation-calendar button.nn-navigation-calendar-weeknumber {
@@ -1107,8 +1107,13 @@ button.nn-navigation-calendar-day {
 
 .nn-calendar-right-sidebar .nn-navigation-calendar {
     --nn-calendar-header-chip-bg: var(--nn-calendar-right-sidebar-bg);
-    --nn-calendar-header-font-size: 13px;
+    --nn-calendar-header-font-size: 16px;
     --nn-calendar-today-font-size: 13px;
+}
+
+.notebook-navigator-mobile .nn-calendar-right-sidebar .nn-navigation-calendar {
+    --nn-calendar-header-font-size: 18px;
+    --nn-calendar-today-font-size: 14px;
 }
 
 .nn-calendar-right-sidebar .nn-navigation-calendar-year-grid {

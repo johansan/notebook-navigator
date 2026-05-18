@@ -29,6 +29,7 @@ export const STRINGS_ZH_TW = {
         remove: '移除',
         restoreDefault: '恢復預設', // Button text for restoring values to defaults (English: Restore default)
         submit: '提交',
+        save: '儲存', // Button text for saving settings and dialogs (English: Save)
         configure: '設定', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: '淺色模式', // Label for light theme mode (English: Light mode)
         darkMode: '深色模式', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_ZH_TW = {
         pinnedSection: '已釘選',
         notesSection: '筆記',
         filesSection: '檔案',
-        hiddenItemAriaLabel: '{name} (已隱藏)'
+        hiddenItemAriaLabel: '{name} (已隱藏)',
+        collapseGroup: '摺疊群組',
+        expandGroup: '展開群組',
+        manualSortTitle: '手動排序: {property}',
+        manualSortHint: '拖曳以重新排序。順序會以數字索引值儲存在屬性「{property}」中。',
+        manualSortNonMarkdownHint: '非 Markdown 檔案顯示於底部，無法重新排序。',
+        unsortedSection: '未排序',
+        manualSortDone: '完成',
+        manualSortMultipleWriteFailure: '{count} 個檔案失敗；第一個: {path}: {message}'
     },
 
     // Tag list
@@ -131,6 +140,9 @@ export const STRINGS_ZH_TW = {
         changeChildSortOrder: '變更排序方式',
         changeSortAndGroup: '變更排序與分組',
         defaultSort: '預設',
+        manualSort: '手動排序',
+        editSortOrder: '編輯排序方式...',
+        removeSortProperty: '移除排序屬性',
         descendants: '子項',
         subfolders: '子資料夾',
         subtags: '子標籤',
@@ -285,6 +297,14 @@ export const STRINGS_ZH_TW = {
             moveFileToFolder: '移動檔案至...',
             moveMultipleNotesToFolder: '將 {count} 個筆記移動至...',
             moveMultipleFilesToFolder: '將 {count} 個檔案移動至...',
+            setManualSortGroupHeader: '設定群組標題',
+            changeManualSortGroupHeader: '變更群組標題',
+            manualSortGroupHeader: {
+                title: '群組標題',
+                copyStyle: '複製標題樣式',
+                pasteStyle: '貼上標題樣式',
+                remove: '移除群組標題'
+            },
             addTag: '新增標籤',
             addPropertyKey: '設定屬性',
             removeTag: '移除標籤',
@@ -389,6 +409,31 @@ export const STRINGS_ZH_TW = {
             applyAppearanceTitle: (target: string) => `將外觀套用到${target}？`,
             affectedCountMessage: (count: number) => `將更改的現有覆寫：${count}。`
         },
+        manualSortConfirm: {
+            propertySortTitle: '使用手動排序？',
+            propertySortMessage: (property: string, count: number) =>
+                `這會將目前檢視切換為使用「${property}」的手動排序。編輯順序時會依需要將數字索引值寫入該屬性，影響 ${count} 則筆記。`,
+            propertySortConfirmButton: '使用手動排序',
+            removePropertyTitle: '移除排序屬性？',
+            removePropertyMessage: (property: string, count: number) =>
+                `這會從目前列表中的 ${count} 則筆記移除「${property}」。這些筆記的手動排序順序將被清除。`,
+            removePropertyConfirmButton: '移除屬性',
+            compactTitle: '壓縮索引值？',
+            compactMessage: (count: number) => `此次重新排序需要更多數字空間。${count} 則筆記將獲得新的索引值。`,
+            compactConfirmButton: '壓縮索引值'
+        },
+        manualSortGroupHeader: {
+            title: '設定群組標題',
+            titleLabel: '標題',
+            placeholder: '群組標題',
+            icon: '圖示',
+            color: '顏色',
+            wordCount: '顯示字數',
+            wordCountTarget: '目標字數',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription: '此欄位為空時，群組目標會使用「設定 > 筆記 > 字數」中設定的目標屬性。為此群組設定目標值即可覆寫。',
+            description: '為此筆記自訂群組標題。將標題留空以移除標題。'
+        },
         navRainbowSection: {
             title: (section: string) => `彩虹顏色: ${section}`
         },
@@ -427,6 +472,11 @@ export const STRINGS_ZH_TW = {
                 'list-descendants': '子資料夾中的筆記',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
+                'list-sort-modified': '依編輯日期排序',
+                'list-sort-created': '依建立日期排序',
+                'list-sort-title': '依標題排序',
+                'list-sort-filename': '依檔案名稱排序',
+                'list-sort-property': '依屬性排序',
                 'list-appearance': '變更外觀',
                 'list-new-note': '新建筆記',
                 'nav-folder-open': '資料夾開啟',
@@ -694,6 +744,8 @@ export const STRINGS_ZH_TW = {
             propertiesRequireMarkdown: '屬性僅在 Markdown 筆記中受支援',
             propertySetOnNote: '已在 1 篇筆記中更新屬性',
             propertySetOnNotes: '已在 {count} 篇筆記中更新屬性',
+            manualSortPropertyRemovedFromNote: '已從 1 則筆記移除排序屬性',
+            manualSortPropertyRemovedFromNotes: '已從 {count} 則筆記移除排序屬性',
             iconPackDownloaded: '{provider} 已下載',
             iconPackUpdated: '{provider} 已更新 ({version})',
             iconPackRemoved: '{provider} 已移除',
@@ -856,6 +908,9 @@ export const STRINGS_ZH_TW = {
             list: {
                 display: '外觀',
                 organization: '組織',
+                groupHeaders: '群組標題',
+                propertySort: '屬性排序',
+                manualSort: '手動排序',
                 pinnedNotes: '釘選筆記',
                 drawingPreviews: '繪圖預覽'
             },
@@ -869,7 +924,8 @@ export const STRINGS_ZH_TW = {
                 tags: '標籤',
                 properties: '屬性',
                 date: '日期',
-                parentFolder: '父資料夾'
+                parentFolder: '父資料夾',
+                wordCount: '字數'
             }
         },
         syncMode: {
@@ -889,8 +945,8 @@ export const STRINGS_ZH_TW = {
                 }
             },
             sortNotesBy: {
-                name: '筆記排序方式',
-                desc: '選擇筆記列表中的筆記排序方式。',
+                name: '預設排序方式',
+                desc: '選擇筆記的預設排序方式。',
                 options: {
                     'modified-desc': '編輯日期（最新在頂部）',
                     'modified-asc': '編輯日期（最舊在頂部）',
@@ -899,19 +955,24 @@ export const STRINGS_ZH_TW = {
                     'title-asc': '標題（升序）',
                     'title-desc': '標題（降序）',
                     'filename-asc': '檔案名稱（升序）',
-                    'filename-desc': '檔案名稱（降序）',
-                    'property-asc': '屬性（升序）',
-                    'property-desc': '屬性（降序）'
+                    'filename-desc': '檔案名稱（降序）'
                 },
-                propertyOverride: {
-                    asc: '屬性 ‘{property}’（升序）',
-                    desc: '屬性 ‘{property}’（降序）'
+                directions: {
+                    asc: '升序',
+                    desc: '降序'
+                },
+                fields: {
+                    modified: '編輯日期',
+                    created: '建立日期',
+                    title: '標題',
+                    filename: '檔案名稱',
+                    property: '屬性'
                 }
             },
             propertySortKey: {
-                name: '排序屬性',
-                desc: '用於屬性排序。具有此 frontmatter 屬性的筆記首先列出，並按屬性值排序。陣列合併為單一值。',
-                placeholder: 'order'
+                name: '用於排序的屬性',
+                desc: '顯示為屬性排序選項的以逗號分隔的 frontmatter 屬性。陣列值會合併為單一字串。這些屬性不會被變更。',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: '次要排序',
@@ -922,6 +983,43 @@ export const STRINGS_ZH_TW = {
                     created: '建立日期',
                     modified: '編輯日期'
                 }
+            },
+            propertySortInstructions: {
+                intro: '上面列出的每個屬性都會在列表面板的排序選單中顯示為排序選項。選擇其中一個會依其 frontmatter 值排序筆記。'
+            },
+            manualSortPropertyKey: {
+                name: '手動排序屬性',
+                desc: '用於儲存手動排序數字索引值的 frontmatter 屬性。'
+            },
+            manualSortGroupHeaderProperty: {
+                name: '群組標題屬性',
+                desc: '用於儲存自訂群組標題的 frontmatter 屬性。'
+            },
+            groupHeadersInstructions: {
+                intro: '自訂群組標題會顯示在列表面板的筆記上方。',
+                items: ['從列表面板的排序選單中，將分組設定為 **自訂**。', '右鍵點擊筆記並選擇 **設定群組標題** 以在其上方新增標題。']
+            },
+            manualSortNewNotePlacement: {
+                name: '新筆記位置',
+                desc: '選擇當目前列表使用手動排序時新筆記的放置位置。',
+                options: {
+                    top: '頂部',
+                    bottom: '底部',
+                    'below-selected-note': '在選定筆記下方',
+                    unsorted: '未排序'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: '手動排序前確認',
+                desc: '在首次將手動排序屬性寫入筆記之前顯示警告。停用時，筆記將不顯示警告即接收該屬性。'
+            },
+            manualSortInstructions: {
+                intro: '手動排序會將數字索引值寫入每則筆記的 frontmatter 屬性。沒有索引的筆記會顯示在「未排序」之下。',
+                items: [
+                    '從排序選單中選擇 **手動排序** 以啟用手動排序。之後有兩種方式可以重新排列筆記。',
+                    '從排序選單中選擇 **編輯排序方式...** 以開啟重新排序檢視。使用滑鼠拖曳筆記，或在行動裝置上使用觸控。在桌面上，**Cmd/Ctrl** 或 **Shift** 點擊可選取多則筆記，拖曳其中任何一則即可移動整個群組。',
+                    '在列表面板中，選取一則筆記或多選數則，然後按 **Cmd/Ctrl + Arrow Up/Down** 將所選項目上移或下移。'
+                ]
             },
             revealFileOnListChanges: {
                 name: '列表變更時捲動到選定檔案',
@@ -940,12 +1038,12 @@ export const STRINGS_ZH_TW = {
                 desc: '在資料夾和標籤中以「目前 ▾ 後代」格式顯示筆記計數。'
             },
             groupNotes: {
-                name: '分組筆記',
-                desc: '在按日期或資料夾分組的筆記之間顯示標題。啟用資料夾分組時，標籤檢視使用日期分組。',
+                name: '預設分組',
+                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。',
                 options: {
-                    none: '不分組',
-                    date: '按日期分組',
-                    folder: '按資料夾分組'
+                    custom: '自訂',
+                    date: '日期',
+                    folder: '資料夾'
                 }
             },
             showSelectedNavigationPills: {
@@ -1195,8 +1293,7 @@ export const STRINGS_ZH_TW = {
             calendarLocale: {
                 name: '日曆語言',
                 desc: '控制日曆日期格式、週編號和每週的第一天。',
-                incompatibleWeekPatternWarning:
-                    '週記模式使用了 ISO 週標記（"W" 或 "G"）。日曆將從星期一開始顯示每週，而不是此語言設定的每週第一天。',
+                weekPathMismatchWarning: '可見日曆和週記路徑使用了不同的每週起始日或週編號方式。',
                 options: {
                     systemDefault: '系統預設'
                 }
@@ -1267,6 +1364,14 @@ export const STRINGS_ZH_TW = {
                     dailyNotes: '資料夾和日期格式在日記核心外掛程式中設定。'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: '週期筆記語言',
+                desc: '控制 Notebook Navigator 週期筆記路徑中本地化的月份名稱、星期名稱、週號和每週起始日。',
+                options: {
+                    calendar: '日曆',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: '根資料夾',
@@ -1292,8 +1397,9 @@ export const STRINGS_ZH_TW = {
             calendarCustomWeekPattern: {
                 name: '週記',
                 parsingError: '模式必須能格式化並重新解析為完整週（週年、週數）。',
-                localeMismatchWarning:
-                    '此模式使用了 ISO 週標記（"W" 或 "G"）。日曆將從星期一開始顯示每週。如果週記應遵循所選語言設定，請使用 "w" 或 "g"。'
+                weekPathMismatchWarning: '週記路徑使用週期筆記語言。請使用相符的語言，或使用 "GGGG" 搭配 "WW" 以星期一為基準的週。',
+                mixedWeekTokensWarning:
+                    '此模式混用了以星期一為基準的週標記（"W" 或 "G"）和以語言為基準的週標記（"w" 或 "g"）。請始終使用同一組：以星期一為基準的週使用 "GGGG" 搭配 "WW"，若週記應遵循所選語言設定，則使用 "gggg" 搭配 "ww"。'
             },
             calendarCustomMonthPattern: {
                 name: '月記',
@@ -1525,14 +1631,25 @@ export const STRINGS_ZH_TW = {
                 name: '在精簡模式中顯示屬性',
                 desc: '精簡模式啟用時顯示屬性。'
             },
-            notePropertyType: {
-                name: '筆記屬性',
-                desc: '選擇要在檔案項目中顯示的筆記屬性。',
+            showWordCount: {
+                name: '顯示字數',
+                desc: '在檔案項目中顯示筆記字數。'
+            },
+            wordCountPlacement: {
+                name: '位置',
+                desc: '選擇字數的顯示位置。',
                 options: {
-                    frontmatter: '前置中繼資料屬性',
-                    wordCount: '字數統計',
-                    none: '無'
+                    title: '在標題中',
+                    property: '作為屬性'
                 }
+            },
+            wordCountTargetProperty: {
+                name: '目標屬性',
+                desc: '包含目標字數的前置元資料屬性鍵。留空可隱藏目標。'
+            },
+            showWordCountPercentage: {
+                name: '顯示目標百分比',
+                desc: '有目標字數時，只顯示進度百分比。'
             },
             propertyFields: {
                 name: '屬性鍵（保險庫設定檔）',

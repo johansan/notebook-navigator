@@ -29,6 +29,7 @@ export const STRINGS_IT = {
         remove: 'Rimuovi', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'Ripristina predefinito', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Invia', // Button text for submitting forms and dialogs (English: Submit)
+        save: 'Salva', // Button text for saving settings and dialogs (English: Save)
         configure: 'Configura', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Modalità chiara', // Label for light theme mode (English: Light mode)
         darkMode: 'Modalità scura', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_IT = {
         pinnedSection: 'Fissate', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'Note', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'File', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (nascosto)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (nascosto)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'Comprimi gruppo',
+        expandGroup: 'Espandi gruppo',
+        manualSortTitle: 'Ordinamento manuale: {property}',
+        manualSortHint: 'Trascina per riordinare. L\'ordine è salvato come valori indice numerici nella proprietà "{property}".',
+        manualSortNonMarkdownHint: 'I file non Markdown sono mostrati in fondo e non possono essere riordinati.',
+        unsortedSection: 'Non ordinato',
+        manualSortDone: 'Fatto',
+        manualSortMultipleWriteFailure: '{count} file non riusciti; primo: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_IT = {
         changeChildSortOrder: 'Cambia ordine',
         changeSortAndGroup: 'Cambia ordine e raggruppamento',
         defaultSort: 'Predefinito', // Label for default sorting mode (English: Default)
+        manualSort: 'Ordinamento manuale',
+        editSortOrder: 'Modifica ordinamento...',
+        removeSortProperty: 'Rimuovi proprietà di ordinamento',
         descendants: 'discendenti',
         subfolders: 'sottocartelle',
         subtags: 'sotto-tag',
@@ -300,6 +312,14 @@ export const STRINGS_IT = {
             moveFileToFolder: 'Sposta file in...',
             moveMultipleNotesToFolder: 'Sposta {count} note in...',
             moveMultipleFilesToFolder: 'Sposta {count} file in...',
+            setManualSortGroupHeader: 'Imposta intestazione gruppo',
+            changeManualSortGroupHeader: 'Cambia intestazione gruppo',
+            manualSortGroupHeader: {
+                title: 'Intestazione gruppo',
+                copyStyle: 'Copia stile intestazione',
+                pasteStyle: 'Incolla stile intestazione',
+                remove: 'Rimuovi intestazione gruppo'
+            },
             addTag: 'Aggiungi tag',
             addPropertyKey: 'Imposta proprietà',
             removeTag: 'Rimuovi tag',
@@ -389,6 +409,33 @@ export const STRINGS_IT = {
             applyAppearanceTitle: (target: string) => `Applicare aspetto a ${target}?`,
             affectedCountMessage: (count: number) => `Sostituzioni esistenti che cambieranno: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: "Usare l'ordinamento manuale?",
+            propertySortMessage: (property: string, count: number) =>
+                `Questo cambia la vista corrente all'ordinamento manuale usando "${property}". La modifica dell'ordine scrive valori indice numerici in quella proprietà in ${count} ${count === 1 ? 'nota' : 'note'} secondo necessità.`,
+            propertySortConfirmButton: 'Usa ordinamento manuale',
+            removePropertyTitle: 'Rimuovere la proprietà di ordinamento?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Questo rimuove "${property}" da ${count} ${count === 1 ? 'nota' : 'note'} nella lista corrente. L'ordinamento manuale verrà cancellato per quelle note.`,
+            removePropertyConfirmButton: 'Rimuovi proprietà',
+            compactTitle: 'Compattare i valori indice?',
+            compactMessage: (count: number) =>
+                `Questo riordino richiede più spazio numerico. ${count} ${count === 1 ? 'nota riceverà' : 'note riceveranno'} nuovi valori indice.`,
+            compactConfirmButton: 'Compatta valori indice'
+        },
+        manualSortGroupHeader: {
+            title: 'Imposta intestazione gruppo',
+            titleLabel: 'Titolo',
+            placeholder: 'Intestazione gruppo',
+            icon: 'Icona',
+            color: 'Colore',
+            wordCount: 'Mostra il conteggio parole',
+            wordCountTarget: 'Conteggio parole obiettivo',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                "Quando questo campo è vuoto, l'obiettivo del gruppo usa la proprietà obiettivo impostata in Impostazioni > Note > Conteggio parole. Sostituiscilo impostando un valore obiettivo per questo gruppo.",
+            description: "Personalizza l'intestazione di gruppo per questa nota. Lascia il titolo vuoto per rimuovere l'intestazione."
+        },
         navRainbowSection: {
             title: (section: string) => `Colori arcobaleno: ${section}`
         },
@@ -427,6 +474,11 @@ export const STRINGS_IT = {
                 'list-descendants': 'Note dalle sottocartelle',
                 'list-sort-ascending': 'Ordine: crescente',
                 'list-sort-descending': 'Ordine: decrescente',
+                'list-sort-modified': 'Ordina per data di modifica',
+                'list-sort-created': 'Ordina per data di creazione',
+                'list-sort-title': 'Ordina per titolo',
+                'list-sort-filename': 'Ordina per nome file',
+                'list-sort-property': 'Ordina per proprietà',
                 'list-appearance': 'Cambia aspetto',
                 'list-new-note': 'Nuova nota',
                 'nav-folder-open': 'Cartella aperta',
@@ -697,6 +749,8 @@ export const STRINGS_IT = {
             propertiesRequireMarkdown: 'Le proprietà sono supportate solo nelle note Markdown',
             propertySetOnNote: 'Proprietà aggiornata su 1 nota',
             propertySetOnNotes: 'Proprietà aggiornata su {count} note',
+            manualSortPropertyRemovedFromNote: 'Proprietà di ordinamento rimossa da 1 nota',
+            manualSortPropertyRemovedFromNotes: 'Proprietà di ordinamento rimossa da {count} note',
             iconPackDownloaded: '{provider} scaricato',
             iconPackUpdated: '{provider} aggiornato ({version})',
             iconPackRemoved: '{provider} rimosso',
@@ -859,6 +913,9 @@ export const STRINGS_IT = {
             list: {
                 display: 'Aspetto',
                 organization: 'Organizzazione',
+                groupHeaders: 'Intestazioni di gruppo',
+                propertySort: 'Ordinamento per proprietà',
+                manualSort: 'Ordinamento manuale',
                 pinnedNotes: 'Note fissate',
                 drawingPreviews: 'Anteprime dei disegni'
             },
@@ -872,7 +929,8 @@ export const STRINGS_IT = {
                 tags: 'Tag',
                 properties: 'Proprietà',
                 date: 'Data',
-                parentFolder: 'Cartella superiore'
+                parentFolder: 'Cartella superiore',
+                wordCount: 'Conteggio parole'
             }
         },
         syncMode: {
@@ -892,8 +950,8 @@ export const STRINGS_IT = {
                 }
             },
             sortNotesBy: {
-                name: 'Ordina note per',
-                desc: "Scegli come ordinare le note nell'elenco.",
+                name: 'Ordinamento predefinito',
+                desc: "Scegli l'ordinamento predefinito per le note.",
                 options: {
                     'modified-desc': 'Data modifica (più recenti in alto)',
                     'modified-asc': 'Data modifica (più vecchie in alto)',
@@ -902,19 +960,24 @@ export const STRINGS_IT = {
                     'title-asc': 'Titolo (A in alto)',
                     'title-desc': 'Titolo (Z in alto)',
                     'filename-asc': 'Nome file (A in alto)',
-                    'filename-desc': 'Nome file (Z in alto)',
-                    'property-asc': 'Proprietà (A in alto)',
-                    'property-desc': 'Proprietà (Z in alto)'
+                    'filename-desc': 'Nome file (Z in alto)'
                 },
-                propertyOverride: {
-                    asc: 'Proprietà ‘{property}’ (A in alto)',
-                    desc: 'Proprietà ‘{property}’ (Z in alto)'
+                directions: {
+                    asc: 'Crescente',
+                    desc: 'Decrescente'
+                },
+                fields: {
+                    modified: 'Data di modifica',
+                    created: 'Data di creazione',
+                    title: 'Titolo',
+                    filename: 'Nome file',
+                    property: 'Proprietà'
                 }
             },
             propertySortKey: {
-                name: 'Proprietà di ordinamento',
-                desc: "Utilizzato con l'ordinamento per proprietà. Le note con questa proprietà frontmatter vengono elencate per prime e ordinate per valore della proprietà. Gli array vengono uniti in un unico valore.",
-                placeholder: 'order'
+                name: 'Proprietà per ordinare',
+                desc: 'Proprietà frontmatter separate da virgola mostrate come opzioni di ordinamento per proprietà. I valori array vengono uniti in una singola stringa. Queste proprietà non vengono modificate.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'Ordinamento secondario',
@@ -925,6 +988,46 @@ export const STRINGS_IT = {
                     created: 'Data di creazione',
                     modified: 'Data di modifica'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Ogni proprietà elencata sopra appare come opzione di ordinamento nel menu di ordinamento nel pannello lista. Selezionandone una si ordinano le note per il suo valore frontmatter.'
+            },
+            manualSortPropertyKey: {
+                name: 'Proprietà ordinamento manuale',
+                desc: "Proprietà frontmatter usata per memorizzare i valori indice numerici per l'ordinamento manuale."
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Proprietà intestazione gruppo',
+                desc: 'Proprietà frontmatter usata per memorizzare le intestazioni di gruppo personalizzate.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Le intestazioni di gruppo personalizzate vengono visualizzate sopra le note nel pannello lista.',
+                items: [
+                    'Dal menu di ordinamento nel pannello lista, imposta il raggruppamento su **Personalizzato**.',
+                    "Fai clic destro su una nota e scegli **Imposta intestazione gruppo** per aggiungere un'intestazione sopra di essa."
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Posizionamento nuove note',
+                desc: "Scegli dove sono posizionate le nuove note quando la lista corrente usa l'ordinamento manuale.",
+                options: {
+                    top: 'In alto',
+                    bottom: 'In basso',
+                    'below-selected-note': 'Sotto la nota selezionata',
+                    unsorted: 'Non ordinato'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: "Conferma prima dell'ordinamento manuale",
+                desc: 'Mostra un avviso prima di scrivere la proprietà di ordinamento manuale nelle note per la prima volta. Quando disattivato, le note ricevono la proprietà senza avviso.'
+            },
+            manualSortInstructions: {
+                intro: "L'ordinamento manuale scrive un valore indice numerico in una proprietà frontmatter su ogni nota. Le note senza indice appaiono sotto Non ordinato.",
+                items: [
+                    "Abilita l'ordinamento manuale scegliendo **Ordinamento manuale** dal menu di ordinamento. Successivamente, ci sono due modi per riordinare le note.",
+                    "Scegli **Modifica ordinamento...** dal menu di ordinamento per aprire una vista di riordinamento. Trascina le note con il mouse, o con il tocco su mobile. Su desktop, **Cmd/Ctrl** o **Shift** clic seleziona più note, quindi trascinandone una qualsiasi sposta l'intero gruppo.",
+                    'Nel pannello lista, seleziona una nota o selezionane più, quindi premi **Cmd/Ctrl + Arrow Up/Down** per spostare la selezione su o giù.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Scorri al file selezionato quando la lista cambia',
@@ -943,12 +1046,12 @@ export const STRINGS_IT = {
                 desc: 'Visualizza i conteggi note nel formato "correnti ▾ discendenti" in cartelle e tag.'
             },
             groupNotes: {
-                name: 'Raggruppa note',
-                desc: 'Visualizza intestazioni tra note raggruppate per data o cartella. Le viste tag usano gruppi per data quando il raggruppamento per cartella è abilitato.',
+                name: 'Raggruppamento predefinito',
+                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella.',
                 options: {
-                    none: 'Non raggruppare',
-                    date: 'Raggruppa per data',
-                    folder: 'Raggruppa per cartella'
+                    custom: 'Personalizzato',
+                    date: 'Data',
+                    folder: 'Cartella'
                 }
             },
             showSelectedNavigationPills: {
@@ -1198,8 +1301,8 @@ export const STRINGS_IT = {
             calendarLocale: {
                 name: 'Lingua',
                 desc: 'Controlla la formattazione delle date del calendario, la numerazione delle settimane e il primo giorno della settimana.',
-                incompatibleWeekPatternWarning:
-                    'Il modello delle note settimanali utilizza token di settimana ISO ("W" o "G"). Il calendario mostrerà le settimane a partire da lunedì invece del primo giorno della settimana di questa lingua.',
+                weekPathMismatchWarning:
+                    'Il calendario visibile e i percorsi delle note settimanali utilizzano inizi settimana o numerazioni delle settimane diversi.',
                 options: {
                     systemDefault: 'Predefinito'
                 }
@@ -1270,6 +1373,14 @@ export const STRINGS_IT = {
                     dailyNotes: 'Cartella e formato data sono configurati nel plugin Note giornaliere.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Lingua delle note periodiche',
+                desc: 'Controlla i nomi localizzati di mesi, giorni della settimana, numeri di settimana e inizi settimana nei percorsi delle note periodiche di Notebook Navigator.',
+                options: {
+                    calendar: 'Calendario',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Cartella radice',
@@ -1296,8 +1407,10 @@ export const STRINGS_IT = {
                 name: 'Note settimanali',
                 parsingError:
                     'Il modello deve poter essere formattato e rianalizzato come una settimana completa (anno settimana, numero settimana).',
-                localeMismatchWarning:
-                    'Questo modello utilizza token di settimana ISO ("W" o "G"). Il calendario mostrerà le settimane a partire da lunedì. Usa "w" o "g" se le note settimanali devono seguire la lingua selezionata.'
+                weekPathMismatchWarning:
+                    'I percorsi delle note settimanali utilizzano la lingua delle note periodiche. Usa lingue corrispondenti, o usa "GGGG" con "WW" per settimane basate sul lunedì.',
+                mixedWeekTokensWarning:
+                    'Questo modello mescola token di settimana basati sul lunedì ("W" o "G") con token di settimana basati sulla lingua ("w" o "g"). Usa un solo insieme in modo coerente: "GGGG" con "WW" per settimane basate sul lunedì, o "gggg" con "ww" se le note settimanali devono seguire la lingua selezionata.'
             },
             calendarCustomMonthPattern: {
                 name: 'Note mensili',
@@ -1532,14 +1645,25 @@ export const STRINGS_IT = {
                 name: 'Mostra proprietà in modalità compatta',
                 desc: 'Visualizza le proprietà quando la modalità compatta è attiva.'
             },
-            notePropertyType: {
-                name: 'Proprietà della nota',
-                desc: 'Seleziona la proprietà della nota da visualizzare negli elementi file.',
+            showWordCount: {
+                name: 'Mostra conteggio parole',
+                desc: 'Mostra il conteggio parole delle note negli elementi file.'
+            },
+            wordCountPlacement: {
+                name: 'Posizione',
+                desc: 'Scegli dove appare il conteggio parole.',
                 options: {
-                    frontmatter: 'Proprietà frontmatter',
-                    wordCount: 'Conteggio parole',
-                    none: 'Nessuno'
+                    title: 'Nel titolo',
+                    property: 'Come proprietà'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Proprietà obiettivo',
+                desc: 'Chiave della proprietà frontmatter contenente l’obiettivo di conteggio parole. Lascia vuoto per nascondere gli obiettivi.'
+            },
+            showWordCountPercentage: {
+                name: 'Mostra percentuale obiettivo',
+                desc: 'Mostra solo la percentuale di avanzamento quando è disponibile un obiettivo di conteggio parole.'
             },
             propertyFields: {
                 name: 'Chiavi proprietà (profilo cassaforte)',

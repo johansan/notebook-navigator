@@ -17,7 +17,7 @@
  */
 
 import { App, TFile } from 'obsidian';
-import type { NotebookNavigatorSettings } from '../settings/types';
+import { normalizeListSortOverride, type ListSortOverrideValue, type NotebookNavigatorSettings } from '../settings/types';
 import type { IPropertyTreeProvider } from '../interfaces/IPropertyTreeProvider';
 import { strings } from '../i18n';
 import { ConfirmModal } from '../modals/ConfirmModal';
@@ -29,6 +29,7 @@ import { runAsyncAction } from '../utils/async';
 import { removePropertyField, renamePropertyField } from '../utils/propertyUtils';
 import { isRecord } from '../utils/typeGuards';
 import { buildPropertyKeyNodeId } from '../utils/propertyTree';
+import { replacePropertySortKey, SORT_OVERRIDE_RECORD_KEYS } from '../utils/sortUtils';
 import { buildUsageSummaryFromPaths, renderAffectedFilesPreview, yieldToEventLoop } from './operations/OperationBatchUtils';
 import { PropertyFileMutations } from './propertyOperations/PropertyFileMutations';
 import type { PropertyKeyDeleteEventPayload, PropertyKeyRenameEventPayload } from './propertyOperations/types';
@@ -84,13 +85,101 @@ const PROPERTY_KEY_METADATA_ACCESSORS: readonly PropertyMetadataAccessor[] = [
         }
     }
 ];
+function updatePropertySortKeySetting(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    if (!settings.propertySortKey.trim()) {
+        return false;
+    }
+
+    const nextValue = replacePropertySortKey(settings.propertySortKey, oldKeyNormalized, newKeyDisplay);
+    if (nextValue === settings.propertySortKey) {
+        return false;
+    }
+
+    settings.propertySortKey = nextValue;
+    return true;
+}
+
+function updateManualSortPropertyKeySetting(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    const currentKey = settings.manualSortPropertyKey.trim();
+    if (!currentKey || casefold(currentKey) !== oldKeyNormalized) {
+        return false;
+    }
+
+    settings.manualSortPropertyKey = newKeyDisplay ?? '';
+    return true;
+}
+
+function updateManualSortGroupHeaderPropertySetting(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    const currentKey = settings.manualSortGroupHeaderProperty.trim();
+    if (!currentKey || casefold(currentKey) !== oldKeyNormalized) {
+        return false;
+    }
+
+    settings.manualSortGroupHeaderProperty = newKeyDisplay ?? '';
+    return true;
+}
+
+function updateSortOverridePropertyKeys(
+    record: Record<string, ListSortOverrideValue> | undefined,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    if (!record) {
+        return false;
+    }
+
+    let changed = false;
+    for (const key of Object.keys(record)) {
+        const normalizedOverride = normalizeListSortOverride((record as Record<string, unknown>)[key]);
+        if (!normalizedOverride || typeof normalizedOverride === 'string') {
+            continue;
+        }
+
+        if (casefold(normalizedOverride.propertyKey ?? '') !== oldKeyNormalized) {
+            continue;
+        }
+
+        if (newKeyDisplay) {
+            record[key] = { ...normalizedOverride, propertyKey: newKeyDisplay };
+        } else {
+            delete record[key];
+        }
+        changed = true;
+    }
+
+    return changed;
+}
+
+function updateSortOverridePropertyKeySettings(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    let changed = false;
+    SORT_OVERRIDE_RECORD_KEYS.forEach(recordKey => {
+        changed = updateSortOverridePropertyKeys(settings[recordKey], oldKeyNormalized, newKeyDisplay) || changed;
+    });
+    return changed;
+}
 
 /**
  * Facade for property key rename/delete operations across the vault.
  *
  * Contract:
  * - Mutates YAML frontmatter in markdown files via `processFrontMatter`.
- * - Updates active-profile property keys and `propertySortKey` when at least one note changed and no file mutation failed.
+ * - Updates active-profile property keys, sort property keys, and related overrides after successful file mutations.
  * - Emits rename/delete events only when settings updates are attempted.
  * - Relies on existing Obsidian modify/metadata listeners for reindexing.
  */
@@ -576,10 +665,10 @@ export class PropertyOperations {
         const nextPropertyFields = renamePropertyField(activePropertyFields, oldKeyNormalized, newKeyDisplay, false);
         changed = setActivePropertyFields(settings, nextPropertyFields) || changed;
 
-        if (casefold(settings.propertySortKey) === oldKeyNormalized && settings.propertySortKey !== newKeyDisplay) {
-            settings.propertySortKey = newKeyDisplay;
-            changed = true;
-        }
+        changed = updatePropertySortKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updateManualSortPropertyKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updateManualSortGroupHeaderPropertySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updateSortOverridePropertyKeySettings(settings, oldKeyNormalized, newKeyDisplay) || changed;
 
         if (newKeyNormalized) {
             changed = this.migratePropertyMetadataAfterRename(settings, oldKeyNormalized, newKeyNormalized) || changed;
@@ -598,10 +687,10 @@ export class PropertyOperations {
         const nextPropertyFields = removePropertyField(activePropertyFields, normalizedKey);
         changed = setActivePropertyFields(settings, nextPropertyFields) || changed;
 
-        if (casefold(settings.propertySortKey) === normalizedKey && settings.propertySortKey.length > 0) {
-            settings.propertySortKey = '';
-            changed = true;
-        }
+        changed = updatePropertySortKeySetting(settings, normalizedKey, null) || changed;
+        changed = updateManualSortPropertyKeySetting(settings, normalizedKey, null) || changed;
+        changed = updateManualSortGroupHeaderPropertySetting(settings, normalizedKey, null) || changed;
+        changed = updateSortOverridePropertyKeySettings(settings, normalizedKey, null) || changed;
 
         changed = this.removePropertyMetadataForDeletedKey(settings, normalizedKey) || changed;
 

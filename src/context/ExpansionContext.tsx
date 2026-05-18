@@ -19,6 +19,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, STORAGE_KEYS, TAGS_ROOT_VIRTUAL_FOLDER_ID } from '../types';
 import { localStorage } from '../utils/localStorage';
+import { normalizeStoredCollapsedListGroupKeys } from '../utils/listGroupCollapse';
 
 // State interface
 interface ExpansionState {
@@ -26,6 +27,7 @@ interface ExpansionState {
     expandedTags: Set<string>;
     expandedProperties: Set<string>;
     expandedVirtualFolders: Set<string>;
+    collapsedListGroups: Set<string>;
 }
 
 // Action types
@@ -38,6 +40,7 @@ export type ExpansionAction =
     | { type: 'TOGGLE_TAG_EXPANDED'; tagPath: string }
     | { type: 'TOGGLE_PROPERTY_EXPANDED'; propertyNodeId: string }
     | { type: 'TOGGLE_VIRTUAL_FOLDER_EXPANDED'; folderId: string }
+    | { type: 'TOGGLE_LIST_GROUP_COLLAPSED'; collapseKey: string }
     | { type: 'EXPAND_FOLDERS'; folderPaths: string[] }
     | { type: 'EXPAND_TAGS'; tagPaths: string[] }
     | { type: 'EXPAND_PROPERTIES'; propertyNodeIds: string[] }
@@ -127,6 +130,16 @@ function expansionReducer(state: ExpansionState, action: ExpansionAction): Expan
                 newExpanded.add(action.folderId);
             }
             return { ...state, expandedVirtualFolders: newExpanded };
+        }
+
+        case 'TOGGLE_LIST_GROUP_COLLAPSED': {
+            const newCollapsed = new Set(state.collapsedListGroups);
+            if (newCollapsed.has(action.collapseKey)) {
+                newCollapsed.delete(action.collapseKey);
+            } else {
+                newCollapsed.add(action.collapseKey);
+            }
+            return { ...state, collapsedListGroups: newCollapsed };
         }
 
         case 'EXPAND_FOLDERS': {
@@ -224,6 +237,7 @@ export function ExpansionProvider({ children }: ExpansionProviderProps) {
         const savedExpandedTags = localStorage.get<string[]>(STORAGE_KEYS.expandedTagsKey);
         const savedExpandedProperties = localStorage.get<string[]>(STORAGE_KEYS.expandedPropertiesKey);
         const savedExpandedVirtualFolders = localStorage.get<string[]>(STORAGE_KEYS.expandedVirtualFoldersKey);
+        const savedCollapsedListGroups = localStorage.get<unknown>(STORAGE_KEYS.collapsedListGroupsKey);
 
         const expandedFolders = new Set<string>(savedExpandedFolders || []);
         const expandedTags = new Set<string>(savedExpandedTags || []);
@@ -231,8 +245,9 @@ export function ExpansionProvider({ children }: ExpansionProviderProps) {
         const expandedVirtualFolders = new Set<string>(
             savedExpandedVirtualFolders || [TAGS_ROOT_VIRTUAL_FOLDER_ID, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID]
         ); // Default expand tag/property roots
+        const collapsedListGroups = new Set<string>(normalizeStoredCollapsedListGroupKeys(savedCollapsedListGroups));
 
-        return { expandedFolders, expandedTags, expandedProperties, expandedVirtualFolders };
+        return { expandedFolders, expandedTags, expandedProperties, expandedVirtualFolders, collapsedListGroups };
     };
 
     const [state, dispatch] = useReducer(expansionReducer, undefined, loadInitialState);
@@ -253,6 +268,10 @@ export function ExpansionProvider({ children }: ExpansionProviderProps) {
     useEffect(() => {
         localStorage.set(STORAGE_KEYS.expandedVirtualFoldersKey, Array.from(state.expandedVirtualFolders));
     }, [state.expandedVirtualFolders]);
+
+    useEffect(() => {
+        localStorage.set(STORAGE_KEYS.collapsedListGroupsKey, Array.from(state.collapsedListGroups));
+    }, [state.collapsedListGroups]);
 
     return (
         <ExpansionContext.Provider value={state}>

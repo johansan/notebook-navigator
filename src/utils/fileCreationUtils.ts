@@ -37,6 +37,8 @@ export interface CreateFileOptions {
     openInNewTab?: boolean;
     /** Whether to trigger rename mode after opening */
     triggerRename?: boolean;
+    /** Hook run after creating the file and before opening it */
+    afterCreate?: (file: TFile) => Promise<void>;
     /** Custom error message key */
     errorKey?: string;
 }
@@ -124,7 +126,15 @@ export function generateUniqueFilename(
  * @returns The created file or null if creation failed
  */
 export async function createFileWithOptions(parent: TFolder, app: App, options: CreateFileOptions): Promise<TFile | null> {
-    const { extension, content = '', openFile = true, openInNewTab = false, triggerRename = true, errorKey = 'createFile' } = options;
+    const {
+        extension,
+        content = '',
+        openFile = true,
+        openInNewTab = false,
+        triggerRename = true,
+        afterCreate,
+        errorKey = 'createFile'
+    } = options;
 
     try {
         // Generate unique file path
@@ -137,6 +147,10 @@ export async function createFileWithOptions(parent: TFolder, app: App, options: 
         } else {
             const path = buildFilePathInFolder(parent.path, fileName, extension);
             file = await app.vault.create(path, content);
+        }
+
+        if (afterCreate) {
+            await afterCreate(file);
         }
 
         // Open the file if requested

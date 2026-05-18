@@ -17,7 +17,12 @@
  */
 
 import { App } from 'obsidian';
-import { NotebookNavigatorSettings, SortOption, type AlphaSortOrder } from '../../settings';
+import {
+    normalizeListSortOverride,
+    type AlphaSortOrder,
+    type ListSortOverrideValue,
+    type NotebookNavigatorSettings
+} from '../../settings/types';
 import { ItemType } from '../../types';
 import { ISettingsProvider } from '../../interfaces/ISettingsProvider';
 import { FolderAppearance, TagAppearance } from '../../hooks/useListPaneAppearance';
@@ -34,7 +39,7 @@ type MetadataFields = {
     folderIcons: Record<string, string>;
     folderColors: Record<string, string>;
     folderBackgroundColors: Record<string, string>;
-    folderSortOverrides: Record<string, SortOption>;
+    folderSortOverrides: Record<string, ListSortOverrideValue>;
     folderTreeSortOverrides: Record<string, AlphaSortOrder>;
     folderAppearances: Record<string, FolderAppearance>;
     fileIcons: Record<string, string>;
@@ -43,13 +48,13 @@ type MetadataFields = {
     tagColors: Record<string, string>;
     tagIcons: Record<string, string>;
     tagBackgroundColors: Record<string, string>;
-    tagSortOverrides: Record<string, SortOption>;
+    tagSortOverrides: Record<string, ListSortOverrideValue>;
     tagTreeSortOverrides: Record<string, AlphaSortOrder>;
     tagAppearances: Record<string, TagAppearance>;
     propertyIcons: Record<string, string>;
     propertyColors: Record<string, string>;
     propertyBackgroundColors: Record<string, string>;
-    propertySortOverrides: Record<string, SortOption>;
+    propertySortOverrides: Record<string, ListSortOverrideValue>;
     propertyTreeSortOverrides: Record<string, AlphaSortOrder>;
     propertyAppearances: Record<string, FolderAppearance>;
 };
@@ -383,28 +388,33 @@ export abstract class BaseMetadataService {
      * Sets a custom sort order for an entity.
      * @param entityType - Type of entity ('folder', 'tag', or 'property')
      * @param path - Path of the entity
-     * @param sortOption - Sort option to apply
+     * @param sortOverride - Sort override to apply
      */
-    protected async setEntitySortOverride(entityType: EntityType, path: string, sortOption: SortOption): Promise<void> {
+    protected async setEntitySortOverride(entityType: EntityType, path: string, sortOverride: ListSortOverrideValue): Promise<void> {
         await this.saveAndUpdate(settings => {
+            const normalizedOverride = normalizeListSortOverride(sortOverride);
+            if (!normalizedOverride) {
+                return false;
+            }
+
             if (entityType === ItemType.FOLDER) {
                 const overrides = ensureRecord(settings.folderSortOverrides);
                 const next = sanitizeRecord(overrides);
-                next[path] = sortOption;
+                next[path] = normalizedOverride;
                 settings.folderSortOverrides = next;
                 return;
             }
             if (entityType === ItemType.TAG) {
                 const overrides = ensureRecord(settings.tagSortOverrides);
                 const next = sanitizeRecord(overrides);
-                next[path] = sortOption;
+                next[path] = normalizedOverride;
                 settings.tagSortOverrides = next;
                 return;
             }
             if (entityType === ItemType.PROPERTY) {
                 const overrides = ensureRecord(settings.propertySortOverrides);
                 const next = sanitizeRecord(overrides);
-                next[path] = sortOption;
+                next[path] = normalizedOverride;
                 settings.propertySortOverrides = next;
                 return;
             }
@@ -447,9 +457,9 @@ export abstract class BaseMetadataService {
      * Gets the sort override for an entity
      * @param entityType - Type of entity ('folder', 'tag', or 'property')
      * @param path - Path of the entity
-     * @returns The sort option or undefined
+     * @returns The sort override or undefined
      */
-    protected getEntitySortOverride(entityType: EntityType, path: string): SortOption | undefined {
+    protected getEntitySortOverride(entityType: EntityType, path: string): ListSortOverrideValue | undefined {
         if (entityType === ItemType.FOLDER) {
             return this.settingsProvider.settings.folderSortOverrides?.[path];
         }

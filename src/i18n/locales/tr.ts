@@ -29,6 +29,7 @@ export const STRINGS_TR = {
         remove: 'Kaldır', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'Varsayılana geri yükle', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Gönder', // Button text for submitting forms and dialogs (English: Submit)
+        save: 'Kaydet', // Button text for saving settings and dialogs (English: Save)
         configure: 'Yapılandır', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Açık mod', // Label for light theme mode (English: Light mode)
         darkMode: 'Koyu mod', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_TR = {
         pinnedSection: 'Sabitlenmiş', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'Notlar', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'Dosyalar', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (gizli)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (gizli)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'Grubu daralt',
+        expandGroup: 'Grubu genişlet',
+        manualSortTitle: 'Manuel sıralama: {property}',
+        manualSortHint: 'Yeniden sıralamak için sürükleyin. Sıra, "{property}" özelliğinde sayısal indeks değerleri olarak kaydedilir.',
+        manualSortNonMarkdownHint: 'Markdown olmayan dosyalar altta gösterilir ve yeniden sıralanamaz.',
+        unsortedSection: 'Sıralanmamış',
+        manualSortDone: 'Tamam',
+        manualSortMultipleWriteFailure: '{count} dosya başarısız oldu; ilki: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_TR = {
         changeChildSortOrder: 'Sıralama düzenini değiştir',
         changeSortAndGroup: 'Sıralama ve gruplandırmayı değiştir',
         defaultSort: 'Varsayılan', // Label for default sorting mode (English: Default)
+        manualSort: 'Manuel sıralama',
+        editSortOrder: 'Sıralama düzenini düzenle...',
+        removeSortProperty: 'Sıralama özelliğini kaldır',
         descendants: 'alt öğeler',
         subfolders: 'alt klasörler',
         subtags: 'alt etiketler',
@@ -301,6 +313,14 @@ export const STRINGS_TR = {
             moveFileToFolder: 'Dosyayı taşı...',
             moveMultipleNotesToFolder: '{count} notu taşı...',
             moveMultipleFilesToFolder: '{count} dosyayı taşı...',
+            setManualSortGroupHeader: 'Grup başlığını ayarla',
+            changeManualSortGroupHeader: 'Grup başlığını değiştir',
+            manualSortGroupHeader: {
+                title: 'Grup başlığı',
+                copyStyle: 'Başlık stilini kopyala',
+                pasteStyle: 'Başlık stilini yapıştır',
+                remove: 'Grup başlığını kaldır'
+            },
             addTag: 'Etiket ekle',
             addPropertyKey: 'Özellik ayarla',
             removeTag: 'Etiketi kaldır',
@@ -390,6 +410,33 @@ export const STRINGS_TR = {
             applyAppearanceTitle: (target: string) => `Görünüm ${target} için uygulansın mı?`,
             affectedCountMessage: (count: number) => `Değişecek mevcut geçersiz kılmalar: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'Manuel sıralama kullanılsın mı?',
+            propertySortMessage: (property: string, count: number) =>
+                `Bu, geçerli görünümü "${property}" kullanarak manuel sıralamaya geçirir. Sıralamayı düzenlemek, gerektiğinde ${count} ${count === 1 ? 'nottaki' : 'nottaki'} bu özelliğe sayısal indeks değerleri yazar.`,
+            propertySortConfirmButton: 'Manuel sıralamayı kullan',
+            removePropertyTitle: 'Sıralama özelliği kaldırılsın mı?',
+            removePropertyMessage: (property: string, count: number) =>
+                `Bu işlem, geçerli listedeki ${count} ${count === 1 ? 'nottan' : 'nottan'} "${property}" özelliğini kaldırır. Bu notlar için manuel sıralama düzeni temizlenecek.`,
+            removePropertyConfirmButton: 'Özelliği kaldır',
+            compactTitle: 'İndeks değerleri sıkıştırılsın mı?',
+            compactMessage: (count: number) =>
+                `Bu yeniden sıralama daha fazla sayısal alana ihtiyaç duyar. ${count} ${count === 1 ? 'not' : 'not'} yeni indeks değerleri alacak.`,
+            compactConfirmButton: 'İndeks değerlerini sıkıştır'
+        },
+        manualSortGroupHeader: {
+            title: 'Grup başlığını ayarla',
+            titleLabel: 'Başlık',
+            placeholder: 'Grup başlığı',
+            icon: 'Simge',
+            color: 'Renk',
+            wordCount: 'Kelime sayısını göster',
+            wordCountTarget: 'Hedef kelime sayısı',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'Bu alan boş olduğunda, grup hedefi Ayarlar > Notlar > Kelime sayısı bölümünde ayarlanan hedef özelliğini kullanır. Bu grup için bir hedef değeri ayarlayarak geçersiz kılın.',
+            description: 'Bu not için grup başlığını özelleştirin. Başlığı kaldırmak için başlığı boş bırakın.'
+        },
         navRainbowSection: {
             title: (section: string) => `Gökkuşağı renkleri: ${section}`
         },
@@ -428,6 +475,11 @@ export const STRINGS_TR = {
                 'list-descendants': 'Alt klasörlerden notlar',
                 'list-sort-ascending': 'Sıralama: artan',
                 'list-sort-descending': 'Sıralama: azalan',
+                'list-sort-modified': 'Düzenlenme tarihine göre sırala',
+                'list-sort-created': 'Oluşturulma tarihine göre sırala',
+                'list-sort-title': 'Başlığa göre sırala',
+                'list-sort-filename': 'Dosya adına göre sırala',
+                'list-sort-property': 'Özelliğe göre sırala',
                 'list-appearance': 'Görünümü değiştir',
                 'list-new-note': 'Yeni not',
                 'nav-folder-open': 'Klasör açık',
@@ -701,6 +753,8 @@ export const STRINGS_TR = {
             propertiesRequireMarkdown: 'Özellikler yalnızca Markdown notlarında desteklenir',
             propertySetOnNote: '1 notta özellik güncellendi',
             propertySetOnNotes: '{count} notta özellik güncellendi',
+            manualSortPropertyRemovedFromNote: '1 nottan sıralama özelliği kaldırıldı',
+            manualSortPropertyRemovedFromNotes: '{count} nottan sıralama özelliği kaldırıldı',
             iconPackDownloaded: '{provider} indirildi',
             iconPackUpdated: '{provider} güncellendi ({version})',
             iconPackRemoved: '{provider} kaldırıldı',
@@ -863,6 +917,9 @@ export const STRINGS_TR = {
             list: {
                 display: 'Görünüm',
                 organization: 'Düzenleme',
+                groupHeaders: 'Grup başlıkları',
+                propertySort: 'Özelliğe göre sıralama',
+                manualSort: 'Manuel sıralama',
                 pinnedNotes: 'Sabitlenmiş notlar',
                 drawingPreviews: 'Çizim önizlemeleri'
             },
@@ -876,7 +933,8 @@ export const STRINGS_TR = {
                 tags: 'Etiketler',
                 properties: 'Özellikler',
                 date: 'Tarih',
-                parentFolder: 'Üst klasör'
+                parentFolder: 'Üst klasör',
+                wordCount: 'Kelime sayısı'
             }
         },
         syncMode: {
@@ -896,8 +954,8 @@ export const STRINGS_TR = {
                 }
             },
             sortNotesBy: {
-                name: 'Notları sırala',
-                desc: 'Not listesinde notların nasıl sıralanacağını seçin.',
+                name: 'Varsayılan sıralama düzeni',
+                desc: 'Notlar için varsayılan sıralama düzenini seçin.',
                 options: {
                     'modified-desc': 'Düzenleme tarihi (en yeni üstte)',
                     'modified-asc': 'Düzenleme tarihi (en eski üstte)',
@@ -906,19 +964,24 @@ export const STRINGS_TR = {
                     'title-asc': 'Başlık (A üstte)',
                     'title-desc': 'Başlık (Z üstte)',
                     'filename-asc': 'Dosya adı (A üstte)',
-                    'filename-desc': 'Dosya adı (Z üstte)',
-                    'property-asc': 'Özellik (A üstte)',
-                    'property-desc': 'Özellik (Z üstte)'
+                    'filename-desc': 'Dosya adı (Z üstte)'
                 },
-                propertyOverride: {
-                    asc: 'Özellik ‘{property}’ (A üstte)',
-                    desc: 'Özellik ‘{property}’ (Z üstte)'
+                directions: {
+                    asc: 'Artan',
+                    desc: 'Azalan'
+                },
+                fields: {
+                    modified: 'Düzenleme tarihi',
+                    created: 'Oluşturma tarihi',
+                    title: 'Başlık',
+                    filename: 'Dosya adı',
+                    property: 'Özellik'
                 }
             },
             propertySortKey: {
-                name: 'Sıralama özelliği',
-                desc: 'Özellik sıralaması ile kullanılır. Bu frontmatter özelliğine sahip notlar önce listelenir ve özellik değerine göre sıralanır. Diziler tek bir değere birleştirilir.',
-                placeholder: 'order'
+                name: 'Sıralama özellikleri',
+                desc: 'Özelliğe göre sıralama seçenekleri olarak gösterilen virgülle ayrılmış frontmatter özellikleri. Dizi değerleri tek bir dizede birleştirilir. Bu özellikler değiştirilmez.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'İkincil sıralama',
@@ -929,6 +992,46 @@ export const STRINGS_TR = {
                     created: 'Oluşturma tarihi',
                     modified: 'Düzenleme tarihi'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'Yukarıda listelenen her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği olarak görünür. Birini seçmek, notları frontmatter değerine göre sıralar.'
+            },
+            manualSortPropertyKey: {
+                name: 'Manuel sıralama özelliği',
+                desc: 'Manuel sıralama için sayısal indeks değerlerini saklamak üzere kullanılan frontmatter özelliği.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'Grup başlığı özelliği',
+                desc: 'Özel grup başlıklarını saklamak üzere kullanılan frontmatter özelliği.'
+            },
+            groupHeadersInstructions: {
+                intro: 'Özel grup başlıkları, liste bölmesinde notların üstünde görüntülenir.',
+                items: [
+                    'Liste bölmesindeki sıralama menüsünden gruplamayı **Özel** olarak ayarlayın.',
+                    'Bir nota sağ tıklayın ve üstüne bir başlık eklemek için **Grup başlığını ayarla** seçeneğini seçin.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'Yeni not yerleşimi',
+                desc: 'Geçerli liste manuel sıralama kullandığında yeni notların nereye yerleştirileceğini seçin.',
+                options: {
+                    top: 'Üst',
+                    bottom: 'Alt',
+                    'below-selected-note': 'Seçili notun altında',
+                    unsorted: 'Sıralanmamış'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'Manuel sıralamadan önce onayla',
+                desc: 'Manuel sıralama özelliği notlara ilk kez yazılmadan önce bir uyarı göster. Devre dışı bırakıldığında notlar uyarı olmadan özelliği alır.'
+            },
+            manualSortInstructions: {
+                intro: 'Manuel sıralama, her notun frontmatter özelliğine sayısal bir indeks değeri yazar. İndeksi olmayan notlar Sıralanmamış altında görünür.',
+                items: [
+                    'Sıralama menüsünden **Manuel sıralama** seçeneğini seçerek manuel sıralamayı etkinleştirin. Bundan sonra, notları yeniden düzenlemenin iki yolu vardır.',
+                    'Yeniden sıralama görünümünü açmak için sıralama menüsünden **Sıralama düzenini düzenle...** seçeneğini seçin. Notları fareyle veya mobilde dokunarak sürükleyin. Masaüstünde, **Cmd/Ctrl** veya **Shift** ile tıklayarak birden fazla not seçin, ardından herhangi birini sürüklediğinizde tüm grup taşınır.',
+                    'Liste bölmesinde, bir notu seçin veya birden fazlasını çoklu seçin, ardından seçimi yukarı veya aşağı taşımak için **Cmd/Ctrl + Arrow Up/Down** tuşlarına basın.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'Liste değişikliklerinde seçili dosyaya kaydır',
@@ -947,12 +1050,12 @@ export const STRINGS_TR = {
                 desc: 'Klasör ve etiketlerde not sayılarını "mevcut ▾ alt öğeler" biçiminde göster.'
             },
             groupNotes: {
-                name: 'Notları grupla',
-                desc: 'Tarihe veya klasöre göre gruplandırılmış notlar arasında başlıklar görüntüle. Etiket görünümleri klasör gruplandırması etkinken tarih gruplarını kullanır.',
+                name: 'Varsayılan gruplama',
+                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır.",
                 options: {
-                    none: 'Gruplama yok',
-                    date: 'Tarihe göre grupla',
-                    folder: 'Klasöre göre grupla'
+                    custom: 'Özel',
+                    date: 'Tarih',
+                    folder: 'Klasör'
                 }
             },
             showSelectedNavigationPills: {
@@ -1202,8 +1305,8 @@ export const STRINGS_TR = {
             calendarLocale: {
                 name: 'Dil',
                 desc: 'Takvim tarih biçimlendirmesini, hafta numaralandırmasını ve haftanın ilk gününü kontrol eder.',
-                incompatibleWeekPatternWarning:
-                    'Haftalık not deseni ISO hafta belirteçleri ("W" veya "G") kullanıyor. Takvim, bu dilin haftanın ilk günü yerine Pazartesi\'den başlayan haftaları gösterecek.',
+                weekPathMismatchWarning:
+                    'Görünen takvim ve haftalık not yolları farklı hafta başlangıçları veya hafta numaralandırması kullanıyor.',
                 options: {
                     systemDefault: 'Varsayılan'
                 }
@@ -1274,6 +1377,14 @@ export const STRINGS_TR = {
                     dailyNotes: 'Klasör ve tarih formatı Daily Notes çekirdek eklentisinde yapılandırılır.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'Periyodik not dili',
+                desc: 'Notebook Navigator periyodik not yollarındaki yerelleştirilmiş ay adlarını, gün adlarını, hafta numaralarını ve hafta başlangıçlarını kontrol eder.',
+                options: {
+                    calendar: 'Takvim',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'Kök klasör',
@@ -1299,8 +1410,10 @@ export const STRINGS_TR = {
             calendarCustomWeekPattern: {
                 name: 'Haftalık notlar',
                 parsingError: 'Desen, tam bir hafta (hafta yılı, hafta numarası) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.',
-                localeMismatchWarning:
-                    'Bu desen ISO hafta belirteçleri ("W" veya "G") kullanıyor. Takvim, Pazartesi\'den başlayan haftaları gösterecek. Haftalık notların seçilen dili izlemesi gerekiyorsa "w" veya "g" kullanın.'
+                weekPathMismatchWarning:
+                    'Haftalık not yolları periyodik not dilini kullanır. Eşleşen diller kullanın veya Pazartesi tabanlı haftalar için "GGGG" ile "WW" kullanın.',
+                mixedWeekTokensWarning:
+                    'Bu desen Pazartesi tabanlı hafta belirteçleri ("W" veya "G") ile dil tabanlı hafta belirteçlerini ("w" veya "g") karıştırıyor. Tutarlı olarak tek bir set kullanın: Pazartesi tabanlı haftalar için "GGGG" ile "WW" veya haftalık notların seçilen dili izlemesi gerekiyorsa "gggg" ile "ww" kullanın.'
             },
             calendarCustomMonthPattern: {
                 name: 'Aylık notlar',
@@ -1532,14 +1645,25 @@ export const STRINGS_TR = {
                 name: 'Kompakt modda özellikleri göster',
                 desc: 'Kompakt mod etkinken özellikleri görüntüle.'
             },
-            notePropertyType: {
-                name: 'Not özelliği',
-                desc: 'Dosya öğelerinde görüntülenecek not özelliğini seçin.',
+            showWordCount: {
+                name: 'Kelime sayısını göster',
+                desc: 'Dosya öğelerinde notların kelime sayısını göster.'
+            },
+            wordCountPlacement: {
+                name: 'Yerleşim',
+                desc: 'Kelime sayılarının nerede görüneceğini seçin.',
                 options: {
-                    frontmatter: 'Frontmatter özelliği',
-                    wordCount: 'Kelime sayısı',
-                    none: 'Hiçbiri'
+                    title: 'Başlıkta',
+                    property: 'Özellik olarak'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'Hedef özelliği',
+                desc: 'Hedef kelime sayısını içeren frontmatter özellik anahtarı. Hedefleri gizlemek için boş bırakın.'
+            },
+            showWordCountPercentage: {
+                name: 'Hedef yüzdesini göster',
+                desc: 'Hedef kelime sayısı varsa yalnızca ilerleme yüzdesini göster.'
             },
             propertyFields: {
                 name: 'Özellik anahtarları (kasa profili)',

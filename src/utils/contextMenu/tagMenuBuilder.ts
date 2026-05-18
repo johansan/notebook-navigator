@@ -52,12 +52,13 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
     // Add rename/delete options only for real tags (not virtual aggregations)
     const isVirtualTag = tagPath === UNTAGGED_TAG_ID || tagPath === TAGGED_TAG_ID;
 
-    const ensureTagSelected = () => {
+    const ensureTagSelected = (): boolean => {
         if (selectionState.selectionType === ItemType.TAG && selectionState.selectedTag === tagPath) {
-            return;
+            return false;
         }
 
         selectionDispatch({ type: 'SET_SELECTED_TAG', tag: tagPath });
+        return true;
     };
 
     const handleFileCreation = (file: TFile | null | undefined) => {
@@ -72,9 +73,20 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
     if (!isVirtualTag) {
         menu.addItem((item: MenuItem) => {
             setAsyncOnClick(item.setTitle(strings.contextMenu.folder.newNote).setIcon('lucide-pen-box'), async () => {
-                ensureTagSelected();
+                const selectionChanged = ensureTagSelected();
                 const sourcePath = selectionState.selectedFile?.path ?? app.workspace.getActiveFile()?.path ?? '';
-                const createdFile = await fileSystemOps.createNewFileForTag(tagPath, sourcePath, settings.createNewNotesInNewTab);
+                const normalizedTagPath = normalizeTagPath(tagPath);
+                const manualSortContext = normalizedTagPath
+                    ? await fileSystemOps.getManualSortNewFileContextForTarget('tag', normalizedTagPath, {
+                          waitForSelectionUpdate: selectionChanged
+                      })
+                    : null;
+                const createdFile = await fileSystemOps.createNewFileForTag(
+                    tagPath,
+                    sourcePath,
+                    settings.createNewNotesInNewTab,
+                    manualSortContext
+                );
                 handleFileCreation(createdFile);
             });
         });

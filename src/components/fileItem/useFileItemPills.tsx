@@ -22,7 +22,7 @@ import { useMetadataService, useServices } from '../../context/ServicesContext';
 import { useSelectionState } from '../../context/SelectionContext';
 import { useTagNavigation } from '../../hooks/useTagNavigation';
 import type { PropertyItem } from '../../storage/IndexedDBStorage';
-import type { NotePropertyType, NotebookNavigatorSettings } from '../../settings/types';
+import type { NotebookNavigatorSettings } from '../../settings/types';
 import { runAsyncAction } from '../../utils/async';
 import {
     forEachVisibleFrontmatterProperty,
@@ -73,7 +73,7 @@ export interface UseFileItemPillsParams {
     tags: string[];
     properties: PropertyItem[] | null;
     wordCount: number | null;
-    notePropertyType: NotePropertyType;
+    wordCountDisplayText: string | null;
     settings: NotebookNavigatorSettings;
     visiblePropertyKeys: ReadonlySet<string>;
     visibleNavigationPropertyKeys: ReadonlySet<string>;
@@ -175,7 +175,7 @@ export function useFileItemPills({
     tags,
     properties,
     wordCount,
-    notePropertyType,
+    wordCountDisplayText,
     settings,
     visiblePropertyKeys,
     visibleNavigationPropertyKeys,
@@ -465,7 +465,12 @@ export function useFileItemPills({
     }, [file.extension, isCompactMode, settings.showFilePropertiesInCompactMode]);
 
     const wordCountPropertyPill = useMemo<PropertyPill | null>(() => {
-        if (!canShowPropertyPills || notePropertyType !== 'wordCount') {
+        if (
+            !canShowPropertyPills ||
+            !settings.showWordCount ||
+            settings.wordCountPlacement !== 'property' ||
+            wordCountDisplayText === null
+        ) {
             return null;
         }
 
@@ -476,11 +481,11 @@ export function useFileItemPills({
         const truncatedWordCount = Math.trunc(wordCount);
         return {
             value: truncatedWordCount.toString(),
-            label: truncatedWordCount.toLocaleString(),
+            label: wordCountDisplayText,
             linkTarget: null,
             iconId: wordCountPillIconId
         };
-    }, [canShowPropertyPills, notePropertyType, wordCount, wordCountPillIconId]);
+    }, [canShowPropertyPills, settings.showWordCount, settings.wordCountPlacement, wordCount, wordCountDisplayText, wordCountPillIconId]);
 
     const propertyPills = useMemo<PropertyPill[]>(() => {
         void propertyColorSignature;

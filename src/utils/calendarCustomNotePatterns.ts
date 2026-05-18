@@ -28,6 +28,33 @@ export const DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN = 'YYYY';
 
 export type CalendarCustomWeekAnchorUnit = 'week' | 'isoWeek';
 
+export interface CalendarCustomWeekRules {
+    firstDayOfWeek: number;
+    firstDayOfYear?: number | null;
+}
+
+function normalizeFirstDayOfWeek(value: number): number {
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 1;
+}
+
+function normalizeFirstDayOfYear(value: number | null | undefined): number | null {
+    return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 7 ? value : null;
+}
+
+function getCalendarCustomWeekTokenUsage(pattern: string): { usesIsoWeekTokens: boolean; usesLocaleWeekTokens: boolean } {
+    const normalized = normalizeCalendarCustomMomentPattern(pattern);
+    const tokenSource = stripMomentLiterals(normalized);
+    return {
+        usesIsoWeekTokens: /[GW]/u.test(tokenSource),
+        usesLocaleWeekTokens: /[gw]/u.test(tokenSource)
+    };
+}
+
+export function doesCalendarCustomWeekPatternMixWeekTokenTypes(pattern: string): boolean {
+    const { usesIsoWeekTokens, usesLocaleWeekTokens } = getCalendarCustomWeekTokenUsage(pattern);
+    return usesIsoWeekTokens && usesLocaleWeekTokens;
+}
+
 export function getCalendarCustomWeekAnchorDate(date: MomentInstance, pattern: string, locale?: string): MomentInstance {
     const unit = getCalendarCustomWeekAnchorUnit(pattern);
     const cloned = date.clone();
@@ -35,9 +62,30 @@ export function getCalendarCustomWeekAnchorDate(date: MomentInstance, pattern: s
     return localized.startOf(unit);
 }
 
-export function doesCalendarCustomWeekPatternOverrideLocaleWeekStart(pattern: string, firstDayOfWeek: number): boolean {
-    const normalizedFirstDay = Number.isInteger(firstDayOfWeek) && firstDayOfWeek >= 0 && firstDayOfWeek <= 6 ? firstDayOfWeek : 1;
-    return getCalendarCustomWeekAnchorUnit(pattern) === 'isoWeek' && normalizedFirstDay !== 1;
+export function doesCalendarCustomWeekPatternUseDifferentWeekRules(
+    pattern: string,
+    displayWeekRules: CalendarCustomWeekRules,
+    pathWeekRules: CalendarCustomWeekRules
+): boolean {
+    const { usesIsoWeekTokens, usesLocaleWeekTokens } = getCalendarCustomWeekTokenUsage(pattern);
+
+    if (usesIsoWeekTokens && !usesLocaleWeekTokens) {
+        return false;
+    }
+
+    if (usesIsoWeekTokens && usesLocaleWeekTokens) {
+        return true;
+    }
+
+    const displayFirstDayOfWeek = normalizeFirstDayOfWeek(displayWeekRules.firstDayOfWeek);
+    const pathFirstDayOfWeek = normalizeFirstDayOfWeek(pathWeekRules.firstDayOfWeek);
+    if (displayFirstDayOfWeek !== pathFirstDayOfWeek) {
+        return true;
+    }
+
+    const displayFirstDayOfYear = normalizeFirstDayOfYear(displayWeekRules.firstDayOfYear);
+    const pathFirstDayOfYear = normalizeFirstDayOfYear(pathWeekRules.firstDayOfYear);
+    return displayFirstDayOfYear !== null && pathFirstDayOfYear !== null && displayFirstDayOfYear !== pathFirstDayOfYear;
 }
 
 /**

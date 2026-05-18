@@ -119,10 +119,6 @@
     line-height: var(--nn-nav-icon-size);
 }
 
-.nn-pane-header-icon[data-has-color='true'] svg {
-    stroke-width: 2.4;
-}
-
 .nn-pane-header-text {
     line-height: var(--nn-nav-line-height);
     overflow: hidden;

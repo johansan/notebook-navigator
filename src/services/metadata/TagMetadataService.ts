@@ -17,7 +17,7 @@
  */
 
 import { App } from 'obsidian';
-import { SortOption, type AlphaSortOrder, type NotebookNavigatorSettings } from '../../settings';
+import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings';
 import { ItemType, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../../types';
 import { ISettingsProvider } from '../../interfaces/ISettingsProvider';
 import { ITagTreeProvider } from '../../interfaces/ITagTreeProvider';
@@ -240,14 +240,14 @@ export class TagMetadataService extends BaseMetadataService {
     /**
      * Sets a custom sort order for a tag
      * @param tagPath - Path of the tag
-     * @param sortOption - Sort option to apply
+     * @param sortOverride - Sort override to apply
      */
-    async setTagSortOverride(tagPath: string, sortOption: SortOption): Promise<void> {
+    async setTagSortOverride(tagPath: string, sortOverride: ListSortOverrideValue): Promise<void> {
         const normalized = normalizeTagPath(tagPath);
         if (!normalized) {
             return Promise.resolve();
         }
-        return this.setEntitySortOverride(ItemType.TAG, normalized, sortOption);
+        return this.setEntitySortOverride(ItemType.TAG, normalized, sortOverride);
     }
 
     /**
@@ -265,9 +265,9 @@ export class TagMetadataService extends BaseMetadataService {
     /**
      * Gets the sort override for a tag
      * @param tagPath - Path of the tag
-     * @returns The sort option or undefined
+     * @returns The sort override or undefined
      */
-    getTagSortOverride(tagPath: string): SortOption | undefined {
+    getTagSortOverride(tagPath: string): ListSortOverrideValue | undefined {
         const normalized = normalizeTagPath(tagPath);
         if (!normalized) {
             return undefined;

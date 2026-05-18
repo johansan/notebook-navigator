@@ -35,7 +35,10 @@ interface TestVault {
     registerFolder(folder: TFolder): void;
     unregisterFolder(path: string): void;
     getFolderByPath(path: string): TFolder | null;
+    getFileByPath(path: string): TFile | null;
     getAbstractFileByPath(path: string): TFile | TFolder | null;
+    getRoot(): TFolder;
+    getAllLoadedFiles(): Array<TFile | TFolder>;
     cachedRead(file: TFile): Promise<string>;
     adapter: {
         readBinary(path: string): Promise<ArrayBuffer>;
@@ -57,6 +60,7 @@ export class App {
     constructor() {
         const files = new Map<string, TFile>();
         const folders = new Map<string, TFolder>();
+        const root = new TFolder('/');
 
         this.vault = {
             _files: files,
@@ -76,8 +80,17 @@ export class App {
             getFolderByPath(path: string): TFolder | null {
                 return folders.get(path) ?? null;
             },
+            getFileByPath(path: string): TFile | null {
+                return files.get(path) ?? null;
+            },
             getAbstractFileByPath(path: string): TFile | TFolder | null {
                 return files.get(path) ?? folders.get(path) ?? null;
+            },
+            getRoot(): TFolder {
+                return root;
+            },
+            getAllLoadedFiles(): Array<TFile | TFolder> {
+                return [...folders.values(), ...files.values()];
             },
             cachedRead: async () => '',
             adapter: {

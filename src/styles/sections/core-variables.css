@@ -85,8 +85,11 @@ body {
 
     /* List group header heights and spacing */
     --nn-list-group-header-height: 27px; /* Header row and sticky header */
+    --nn-list-group-progress-gap-after: 5px; /* Space below manual sort progress bars */
+    --nn-list-group-goal-header-height: calc(var(--nn-list-group-header-height) + var(--nn-list-group-progress-gap-after));
     --nn-list-group-header-spacer-before: 20px; /* Spacer before subsequent headers */
     --nn-list-group-header-height-mobile: var(--nn-list-group-header-height);
+    --nn-list-group-goal-header-height-mobile: var(--nn-list-group-goal-header-height);
 
     /* Navigation item heights - fixed pixel values to prevent fractional rendering */
     --nn-nav-line-height: 18px; /* Fixed line height for folder/tag names */
@@ -238,6 +241,7 @@ body {
     --nn-theme-file-task-icon-color: var(--nn-theme-navitem-icon-color);
     --nn-theme-file-feature-border-radius: 4px;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-word-count-color: var(--nn-theme-foreground-faded);
     --nn-theme-file-parent-color: var(--nn-theme-foreground-faded);
     --nn-theme-file-tag-color: var(--nn-theme-foreground-faded);
     --nn-theme-file-tag-border-color: color-mix(in srgb, var(--nn-theme-foreground) 30%, transparent);
@@ -259,6 +263,7 @@ body {
     --nn-theme-file-selected-name-color: var(--nn-theme-file-name-color);
     --nn-theme-file-selected-preview-color: var(--nn-theme-file-preview-color);
     --nn-theme-file-selected-date-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-selected-word-count-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-parent-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-tag-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-tag-bg: var(--nn-theme-file-tag-bg);
@@ -268,6 +273,7 @@ body {
     --nn-theme-file-selected-inactive-name-color: var(--nn-theme-file-selected-name-color);
     --nn-theme-file-selected-inactive-preview-color: var(--nn-theme-file-selected-preview-color);
     --nn-theme-file-selected-inactive-date-color: var(--nn-theme-file-selected-date-color);
+    --nn-theme-file-selected-inactive-word-count-color: var(--nn-theme-file-selected-word-count-color);
     --nn-theme-file-selected-inactive-parent-color: var(--nn-theme-file-selected-parent-color);
     --nn-theme-file-selected-inactive-tag-color: var(--nn-theme-file-selected-tag-color);
     --nn-theme-file-selected-inactive-tag-bg: var(--nn-theme-file-tag-bg);
@@ -280,6 +286,7 @@ body {
     --nn-theme-file-compact-name-font-weight: 400;
     --nn-theme-file-preview-font-weight: 400;
     --nn-theme-file-date-font-weight: 400;
+    --nn-theme-file-word-count-font-weight: 400;
     --nn-theme-file-parent-font-weight: 400;
     --nn-theme-file-tag-font-weight: 400;
 

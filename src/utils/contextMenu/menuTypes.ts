@@ -43,6 +43,7 @@ export type MenuConfig =
     | {
           type: typeof ItemType.FILE;
           item: TFile;
+          options?: FileMenuOptions;
       }
     | {
           type: typeof ItemType.FOLDER;
@@ -122,6 +123,10 @@ export interface PropertyMenuOptions {
     disableNavigationSeparatorActions?: boolean;
 }
 
+export interface FileMenuOptions {
+    source?: 'list-pane';
+}
+
 /**
  * Parameters for folder menu builder
  */
@@ -151,4 +156,5 @@ export interface PropertyMenuBuilderParams extends MenuBuilderParams {
  */
 export interface FileMenuBuilderParams extends MenuBuilderParams {
     file: TFile;
+    options?: FileMenuOptions;
 }

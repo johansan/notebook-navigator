@@ -40,6 +40,10 @@ import { isFolderNote } from '../../utils/folderNotes';
 import { getFilesForNavigationSelection, getNavigatorPinContext } from '../selectionUtils';
 import { collectFileMenuPropertyActions, type FileMenuPropertyAction } from '../../utils/propertyMenuActions';
 import { INTERNAL_NOTEBOOK_NAVIGATOR_API } from '../../api/NotebookNavigatorAPI';
+import { getManualSortGroupHeaderPropertyKey } from '../manualSort';
+import { getEffectiveListSort, isManualSortPropertyKey } from '../sortUtils';
+import { addManualSortGroupHeaderMenuItems } from './manualSortGroupHeaderMenuItems';
+import { resolveEffectiveListGroupingForSort, resolveListGrouping } from '../listGrouping';
 
 type FileStyleTarget = { type: 'folder'; folderPath: string } | { type: 'files'; files: TFile[] };
 
@@ -82,6 +86,17 @@ interface FileStyleRemovalAvailability {
     hasRemovableBackground: boolean;
 }
 
+interface AddManualSortGroupHeaderActionParams {
+    menu: Menu;
+    app: App;
+    metadataService: MetadataService;
+    settings: NotebookNavigatorSettings;
+    file: TFile;
+    source: NonNullable<FileMenuBuilderParams['options']>['source'] | undefined;
+    selectionState: SelectionState;
+    shouldShowMultiOptions: boolean;
+}
+
 /**
  * Resolves an icon for a file-menu property action.
  */
@@ -109,7 +124,7 @@ function resolveFileMenuPropertyActionIcon(
  * Builds the context menu for a file
  */
 export function buildFileMenu(params: FileMenuBuilderParams): void {
-    const { file, menu, services, settings, state, dispatchers } = params;
+    const { file, menu, services, settings, state, dispatchers, options } = params;
     const { app, isMobile, fileSystemOps, metadataService, tagTreeService, propertyTreeService, commandQueue, visibility } = services;
     const { selectionState } = state;
     const { selectionDispatch } = dispatchers;
@@ -194,6 +209,21 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
     });
 
     menu.addSeparator();
+
+    if (
+        addManualSortGroupHeaderAction({
+            menu,
+            app,
+            metadataService,
+            settings,
+            file,
+            source: options?.source,
+            selectionState,
+            shouldShowMultiOptions
+        })
+    ) {
+        menu.addSeparator();
+    }
 
     const filesForTagOps = shouldShowMultiOptions ? cachedSelectedFiles : [file];
     // Only show tag operations if all files are markdown (tags only work with markdown)
@@ -511,6 +541,40 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
         // Delete note
         addSingleFileDeleteOption(menu, file, selectionState, settings, fileSystemOps, selectionDispatch, isFolderNoteFile);
     }
+}
+
+function addManualSortGroupHeaderAction(params: AddManualSortGroupHeaderActionParams): boolean {
+    const { menu, app, metadataService, settings, file, source, selectionState, shouldShowMultiOptions } = params;
+    const propertyKey = getManualSortGroupHeaderPropertyKey(settings);
+    if (source !== 'list-pane' || shouldShowMultiOptions || file.extension !== 'md' || !propertyKey) {
+        return false;
+    }
+
+    const sortSpec = getEffectiveListSort(
+        settings,
+        selectionState.selectionType,
+        selectionState.selectedFolder,
+        selectionState.selectedTag,
+        selectionState.selectedProperty
+    );
+    const groupingInfo = resolveListGrouping({
+        settings,
+        selectionType: selectionState.selectionType,
+        folderPath: selectionState.selectedFolder?.path ?? null,
+        tag: selectionState.selectedTag ?? null,
+        propertyNodeId: selectionState.selectedProperty ?? null
+    });
+    const effectiveGrouping = resolveEffectiveListGroupingForSort({
+        groupBy: groupingInfo.effectiveGrouping,
+        sortOption: sortSpec.option,
+        selectionType: selectionState.selectionType,
+        isManualSortActive: isManualSortPropertyKey(settings, sortSpec.propertyKey)
+    });
+    if (effectiveGrouping !== 'custom') {
+        return false;
+    }
+
+    return addManualSortGroupHeaderMenuItems({ menu, app, file, propertyKey, metadataService });
 }
 
 function resolveFileStyleTarget(params: ResolveFileStyleTargetParams): FileStyleTarget {

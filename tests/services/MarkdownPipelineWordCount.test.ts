@@ -41,7 +41,6 @@ function createSettings(overrides?: Partial<NotebookNavigatorSettings> & { prope
     const settings = structuredClone(DEFAULT_SETTINGS);
     settings.showFilePreview = false;
     settings.showFeatureImage = false;
-    settings.notePropertyType = 'wordCount';
     Object.assign(settings, settingsOverrides);
 
     if (typeof propertyFields === 'string') {

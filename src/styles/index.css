@@ -100,6 +100,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/modal-icon-picker.css';
 /* modal-property-keys.css: property key visibility modal layout (navigation/list toggles). */
 @import './sections/modal-property-keys.css';
+/* modal-manual-sort-group-header.css: manual sort group header icon and color controls. */
+@import './sections/modal-manual-sort-group-header.css';
 /* modal-settings-transfer.css: settings import/export modal sizing and JSON editor layout. */
 @import './sections/modal-settings-transfer.css';
 

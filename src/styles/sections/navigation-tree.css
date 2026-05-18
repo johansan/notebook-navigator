@@ -236,10 +236,6 @@
     line-height: var(--nn-nav-icon-size);
 }
 
-.nn-navitem-icon[data-has-color='true'] svg {
-    stroke-width: 2.4;
-}
-
 /* Folder name text - truncates with ellipsis on overflow */
 .nn-navitem-name {
     font-size: var(--nn-setting-nav-font-size);

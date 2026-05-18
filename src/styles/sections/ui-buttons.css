@@ -25,7 +25,7 @@ button.nn-icon-button {
     color: var(--nn-theme-header-button-icon-color);
 }
 
-.nn-desktop .nn-pane-header .nn-icon-button svg {
+.nn-desktop .nn-pane-header .nn-icon-button svg:not(.nn-vault-icon-svg) {
     stroke: currentColor;
 }
 
@@ -66,7 +66,7 @@ button.nn-icon-button.nn-icon-button-active {
 }
 
 /* Active button icon color */
-button.nn-icon-button.nn-icon-button-active svg {
+button.nn-icon-button.nn-icon-button-active svg:not(.nn-vault-icon-svg) {
     stroke: var(--nn-theme-header-button-active-icon-color);
 }
 
@@ -78,7 +78,7 @@ button.nn-icon-button.nn-icon-button-active svg {
 }
 
 /* Disabled icon svg stroke color */
-.nn-icon-button:disabled svg {
+.nn-icon-button:disabled svg:not(.nn-vault-icon-svg) {
     stroke: currentColor;
 }
 
@@ -89,7 +89,7 @@ button.nn-icon-button.nn-icon-button-active svg {
 }
 
 /* Disabled icon color - maintains muted appearance */
-.nn-desktop .nn-icon-button:disabled:hover svg {
+.nn-desktop .nn-icon-button:disabled:hover svg:not(.nn-vault-icon-svg) {
     stroke: currentColor;
 }
 
@@ -105,6 +105,9 @@ button.nn-icon-button.nn-icon-button-active svg {
 .nn-icon-button svg {
     width: 16px;
     height: 16px;
+}
+
+.nn-icon-button svg:not(.nn-vault-icon-svg) {
     stroke: currentColor;
     stroke-width: 2;
     fill: none;

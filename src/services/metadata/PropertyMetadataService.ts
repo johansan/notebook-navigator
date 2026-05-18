@@ -17,7 +17,7 @@
  */
 
 import { App } from 'obsidian';
-import type { AlphaSortOrder, NotebookNavigatorSettings, SortOption } from '../../settings';
+import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings';
 import type { ISettingsProvider } from '../../interfaces/ISettingsProvider';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../types';
 import type { CleanupValidators } from '../MetadataService';
@@ -160,13 +160,13 @@ export class PropertyMetadataService extends BaseMetadataService {
         return this.getEntityIcon(ItemType.PROPERTY, normalized);
     }
 
-    async setPropertySortOverride(nodeId: string, sortOption: SortOption): Promise<void> {
+    async setPropertySortOverride(nodeId: string, sortOverride: ListSortOverrideValue): Promise<void> {
         const normalized = nodeId === PROPERTIES_ROOT_VIRTUAL_FOLDER_ID ? nodeId : normalizePropertyNodeId(nodeId);
         if (!normalized) {
             return Promise.resolve();
         }
 
-        return this.setEntitySortOverride(ItemType.PROPERTY, normalized, sortOption);
+        return this.setEntitySortOverride(ItemType.PROPERTY, normalized, sortOverride);
     }
 
     async removePropertySortOverride(nodeId: string): Promise<void> {
@@ -178,7 +178,7 @@ export class PropertyMetadataService extends BaseMetadataService {
         return this.removeEntitySortOverride(ItemType.PROPERTY, normalized);
     }
 
-    getPropertySortOverride(nodeId: string): SortOption | undefined {
+    getPropertySortOverride(nodeId: string): ListSortOverrideValue | undefined {
         const normalized = nodeId === PROPERTIES_ROOT_VIRTUAL_FOLDER_ID ? nodeId : normalizePropertyNodeId(nodeId);
         if (!normalized) {
             return undefined;

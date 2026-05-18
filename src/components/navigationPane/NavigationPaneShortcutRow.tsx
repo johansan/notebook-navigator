@@ -19,7 +19,7 @@
 import React from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
-import { NavigationPaneItemType } from '../../types';
+import { ItemType, NavigationPaneItemType } from '../../types';
 import type { ShortcutContextMenuTarget } from '../../hooks/navigationPane/navigationPaneShortcutTypes';
 import { isFolderShortcut, isNoteShortcut, isPropertyShortcut, isTagShortcut } from '../../types/shortcuts';
 import { runAsyncAction } from '../../utils/async';
@@ -423,6 +423,17 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                     onClick={() => shortcuts.handleRecentNoteActivate(note)}
                     onMouseDown={event => shortcuts.handleShortcutNoteMouseDown(event, note)}
                     onContextMenu={event => shortcuts.handleRecentFileContextMenu(event, note)}
+                    nativeDragData={
+                        context.isMobile
+                            ? undefined
+                            : {
+                                  path: note.path,
+                                  type: ItemType.FILE,
+                                  icon: item.icon ?? 'lucide-file-text',
+                                  iconColor: item.color,
+                                  allowMultiFileDrag: false
+                              }
+                    }
                 />
             );
         }

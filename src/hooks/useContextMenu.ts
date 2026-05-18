@@ -131,7 +131,7 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
                         return;
                     }
 
-                    menuConfig = { type: ItemType.FILE, item: file };
+                    menuConfig = { type: ItemType.FILE, item: file, options: { source: 'list-pane' } };
                     menuElement = fileTarget;
                 }
             }
@@ -218,7 +218,8 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
                         services,
                         settings,
                         state,
-                        dispatchers
+                        dispatchers,
+                        options: menuConfig.options
                     });
                 };
             }

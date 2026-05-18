@@ -1,0 +1,97 @@
+/* Source: src/styles/sections/modal-manual-sort-group-header.css */
+
+/* ========================================================================
+   Manual Sort Group Header Modal
+   ======================================================================== */
+
+.modal.nn-manual-sort-group-header-modal {
+    width: min(360px, calc(100vw - 32px));
+}
+
+.modal.nn-manual-sort-group-header-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.nn-manual-sort-header-description {
+    margin: 0;
+}
+
+.nn-manual-sort-header-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nn-manual-sort-header-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nn-manual-sort-header-field-label {
+    color: var(--text-muted);
+    font-size: var(--font-ui-smaller);
+}
+
+.nn-manual-sort-header-input {
+    width: 100%;
+}
+
+.nn-manual-sort-header-appearance-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+
+.nn-manual-sort-header-action-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.nn-manual-sort-header-style-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.nn-manual-sort-header-style-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--text-muted);
+}
+
+.nn-manual-sort-header-style-preview svg {
+    width: 16px;
+    height: 16px;
+}
+
+.nn-manual-sort-header-style-preview.nn-color-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--background-modifier-border);
+    background-color: var(--nn-manual-sort-header-preview-color);
+}
+
+.nn-manual-sort-header-style-preview.is-empty.nn-color-swatch {
+    background-color: transparent;
+}
+
+.nn-manual-sort-header-style-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nn-manual-sort-header-toggle-setting {
+    border: 0;
+    padding: 0;
+}

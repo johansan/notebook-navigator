@@ -49,7 +49,7 @@ import { PluginSettingsController } from '../../src/services/settings/PluginSett
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { STORAGE_KEYS } from '../../src/types';
 import { buildPropertySeparatorKey, buildTagSeparatorKey } from '../../src/utils/navigationSeparators';
-import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
+import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
 
 beforeEach(() => {
     mockLocalStorageStore.clear();
@@ -161,6 +161,93 @@ describe('PluginSettingsController.loadSettings', () => {
         expect(savedSettings.useFolderColorForTitles).toBe(true);
         expect(savedSettings.useFolderColorForFileTitles).toBeUndefined();
     });
+
+    it('persists cleanup when property sort overrides target unavailable sort keys', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const statusNodeId = buildPropertyKeyNodeId('status');
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                propertySortKey: 'status',
+                folderSortOverrides: {
+                    Books: { option: 'property-asc', propertyKey: 'published' },
+                    Notes: { option: 'property-desc', propertyKey: 'Status' }
+                },
+                propertySortOverrides: {
+                    [statusNodeId]: { option: 'property-asc', propertyKey: 'published' }
+                }
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.folderSortOverrides.Books).toBeUndefined();
+        expect(controller.settings.folderSortOverrides.Notes).toEqual({ option: 'property-desc', propertyKey: 'Status' });
+        expect(controller.settings.propertySortOverrides[statusNodeId]).toBeUndefined();
+        expect(saveData).toHaveBeenCalledTimes(1);
+    });
+
+    it('sanitizes invalid property sort key settings before pruning overrides', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                propertySortKey: ['status'],
+                manualSortPropertyKey: ['sort_index'],
+                folderSortOverrides: {
+                    Books: { option: 'property-asc', propertyKey: 'published' }
+                }
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.propertySortKey).toBe(DEFAULT_SETTINGS.propertySortKey);
+        expect(controller.settings.manualSortPropertyKey).toBe(DEFAULT_SETTINGS.manualSortPropertyKey);
+        expect(controller.settings.folderSortOverrides.Books).toBeUndefined();
+        expect(saveData).toHaveBeenCalledTimes(1);
+        expect((saveData.mock.calls[0][0] as Record<string, unknown>).propertySortKey).toBe(DEFAULT_SETTINGS.propertySortKey);
+        expect((saveData.mock.calls[0][0] as Record<string, unknown>).manualSortPropertyKey).toBe(DEFAULT_SETTINGS.manualSortPropertyKey);
+    });
+
+    it('persists cleanup when legacy none grouping is migrated', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const statusNodeId = buildPropertyKeyNodeId('status');
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                noteGrouping: 'none',
+                folderAppearances: {
+                    Inbox: { groupBy: 'none' }
+                },
+                tagAppearances: {
+                    '#work': { groupBy: 'none' }
+                },
+                propertyAppearances: {
+                    [statusNodeId]: { groupBy: 'none' }
+                }
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.noteGrouping).toBe('custom');
+        expect(controller.settings.folderAppearances.Inbox?.groupBy).toBe('custom');
+        expect(controller.settings.tagAppearances['#work']?.groupBy).toBe('custom');
+        expect(controller.settings.propertyAppearances[statusNodeId]?.groupBy).toBe('custom');
+        expect(saveData).toHaveBeenCalledTimes(1);
+        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(savedSettings.noteGrouping).toBe('custom');
+        expect((savedSettings.folderAppearances as Record<string, Record<string, unknown>>).Inbox?.groupBy).toBe('custom');
+        expect((savedSettings.tagAppearances as Record<string, Record<string, unknown>>)['#work']?.groupBy).toBe('custom');
+        expect((savedSettings.propertyAppearances as Record<string, Record<string, unknown>>)[statusNodeId]?.groupBy).toBe('custom');
+    });
 });
 
 describe('PluginSettingsController.saveSettings', () => {
@@ -213,6 +300,47 @@ describe('PluginSettingsController.saveSettings', () => {
             source: 'daily-note',
             file: null,
             createMissingPeriodicNote: true
+        });
+    });
+
+    it('keeps property sort overrides during save when their targets are no longer configured', async () => {
+        let storedData: Record<string, unknown> | null = null;
+        const statusNodeId = buildPropertyKeyNodeId('status');
+
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn().mockResolvedValue(null),
+            saveData: vi.fn(async data => {
+                storedData = structuredClone(data) as Record<string, unknown>;
+            }),
+            mirrorUXPreferences: vi.fn()
+        });
+        const settings = structuredClone(DEFAULT_SETTINGS);
+
+        settings.propertySortKey = 'status';
+        settings.folderSortOverrides = {
+            Books: { option: 'property-asc', propertyKey: 'published' },
+            Notes: { option: 'property-desc', propertyKey: 'Status' },
+            Archive: 'title-asc'
+        };
+        settings.tagSortOverrides = {
+            clips: { option: 'property-desc', propertyKey: 'published' }
+        };
+        settings.propertySortOverrides = {
+            [statusNodeId]: { option: 'property-asc', propertyKey: 'published' }
+        };
+
+        controller.settings = settings;
+        await controller.saveSettings();
+
+        expect(controller.settings.folderSortOverrides.Books).toEqual({ option: 'property-asc', propertyKey: 'published' });
+        expect(controller.settings.folderSortOverrides.Notes).toEqual({ option: 'property-desc', propertyKey: 'Status' });
+        expect(controller.settings.folderSortOverrides.Archive).toBe('title-asc');
+        expect(controller.settings.tagSortOverrides.clips).toEqual({ option: 'property-desc', propertyKey: 'published' });
+        expect(controller.settings.propertySortOverrides[statusNodeId]).toEqual({ option: 'property-asc', propertyKey: 'published' });
+        expect((storedData?.['folderSortOverrides'] as Record<string, unknown>).Books).toEqual({
+            option: 'property-asc',
+            propertyKey: 'published'
         });
     });
 });

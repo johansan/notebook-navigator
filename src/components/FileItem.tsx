@@ -79,6 +79,8 @@ import { useFileItemPills } from './fileItem/useFileItemPills';
 import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
+import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
+import { getWordCountDisplayText } from '../utils/wordCountUtils';
 
 const FEATURE_IMAGE_MAX_ASPECT_RATIO = 16 / 9;
 
@@ -149,6 +151,8 @@ interface FileItemProps {
     folderDecorationModel: FolderDecorationModel;
     fileItemPillDecorationModel: FileItemPillDecorationModel;
     getSolidBackground: (color?: string | null) => string | undefined;
+    disableNativeDrag?: boolean;
+    manualSortDisabled?: boolean;
 }
 
 export interface FileItemStorageHelpers {
@@ -365,7 +369,9 @@ export const FileItem = React.memo(function FileItem({
     onToggleNoteShortcut,
     folderDecorationModel,
     fileItemPillDecorationModel,
-    getSolidBackground
+    getSolidBackground,
+    disableNativeDrag = false,
+    manualSortDisabled = false
 }: FileItemProps) {
     // === Hooks (all hooks together at the top) ===
     const { app, isMobile, plugin, commandQueue, tagOperations } = useServices();
@@ -514,10 +520,23 @@ export const FileItem = React.memo(function FileItem({
               }).color
             : undefined;
     const customFileBackgroundColor = metadataService.getFileBackgroundColor(file.path);
-    const unfinishedTaskBackgroundColor =
-        settings.showFileBackgroundUnfinishedTask && hasUnfinishedTasks ? settings.unfinishedTaskBackgroundColor : undefined;
-    const rawFileBackgroundColor = unfinishedTaskBackgroundColor ?? customFileBackgroundColor;
-    const fileBackgroundColor = useMemo(() => getSolidBackground(rawFileBackgroundColor), [getSolidBackground, rawFileBackgroundColor]);
+    const fileBackgroundColor = useMemo(
+        () =>
+            resolveFileRowBackgroundColor({
+                customBackgroundColor: customFileBackgroundColor,
+                taskUnfinished,
+                showUnfinishedTaskBackground: settings.showFileBackgroundUnfinishedTask,
+                unfinishedTaskBackgroundColor: settings.unfinishedTaskBackgroundColor,
+                getSolidBackground
+            }),
+        [
+            customFileBackgroundColor,
+            getSolidBackground,
+            settings.showFileBackgroundUnfinishedTask,
+            settings.unfinishedTaskBackgroundColor,
+            taskUnfinished
+        ]
+    );
     const fileExtension = file.extension.toLowerCase();
     const isBaseFile = fileExtension === 'base';
     const isCanvasFile = fileExtension === 'canvas';
@@ -600,6 +619,19 @@ export const FileItem = React.memo(function FileItem({
     const fileIconClassName = showFileIconUnfinishedTask ? 'nn-file-icon nn-file-icon-unfinished-task' : 'nn-file-icon';
     const dragIconColor = showFileIconUnfinishedTask ? undefined : (fileIconColor ?? undefined);
     const shouldShowCompactExtensionBadge = isCompactMode && (isBaseFile || isCanvasFile);
+    const wordCountDisplayText = useMemo(() => {
+        if (!settings.showWordCount || file.extension !== 'md') {
+            return null;
+        }
+
+        return getWordCountDisplayText({
+            wordCount,
+            properties,
+            targetProperty: settings.wordCountTargetProperty,
+            showTargetPercentage: settings.showWordCountPercentage
+        });
+    }, [file.extension, properties, settings.showWordCount, settings.showWordCountPercentage, settings.wordCountTargetProperty, wordCount]);
+    const shouldShowWordCountInTitle = settings.showWordCount && settings.wordCountPlacement === 'title' && wordCountDisplayText !== null;
 
     const fileTitleElement = useMemo(() => {
         return (
@@ -615,10 +647,19 @@ export const FileItem = React.memo(function FileItem({
                 }
             >
                 {highlightedName}
+                {shouldShowWordCountInTitle ? <span className="nn-file-word-count-suffix"> ({wordCountDisplayText})</span> : null}
                 {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
             </div>
         );
-    }, [appearanceSettings.titleRows, extensionSuffix, fileTitleColor, applyColorToName, highlightedName]);
+    }, [
+        appearanceSettings.titleRows,
+        extensionSuffix,
+        fileTitleColor,
+        applyColorToName,
+        highlightedName,
+        shouldShowWordCountInTitle,
+        wordCountDisplayText
+    ]);
 
     const { shouldShowFileTags, hasVisiblePillRows, pillRows } = useFileItemPills({
         file,
@@ -626,7 +667,7 @@ export const FileItem = React.memo(function FileItem({
         tags,
         properties,
         wordCount,
-        notePropertyType: appearanceSettings.notePropertyType,
+        wordCountDisplayText,
         settings,
         visiblePropertyKeys,
         visibleNavigationPropertyKeys,
@@ -859,8 +900,9 @@ export const FileItem = React.memo(function FileItem({
         if (fileBackgroundColor) classes.push('nn-has-custom-background');
         // Apply muted style when file is normally hidden but shown via "show hidden items"
         if (isHidden) classes.push('nn-hidden-file');
+        if (manualSortDisabled) classes.push('nn-file-manual-sort-disabled');
         return classes.join(' ');
-    }, [isSelected, isCompactMode, hasSelectedAbove, hasSelectedBelow, fileBackgroundColor, isHidden]);
+    }, [isSelected, isCompactMode, hasSelectedAbove, hasSelectedBelow, fileBackgroundColor, isHidden, manualSortDisabled]);
 
     const fileRowStyle = useMemo(() => {
         if (!fileBackgroundColor) {
@@ -1171,14 +1213,14 @@ export const FileItem = React.memo(function FileItem({
             // Type of item being dragged (folder, file, or tag)
             data-drag-type="file"
             // Marks element as draggable for event delegation
-            data-draggable={!isMobile ? 'true' : undefined}
+            data-draggable={!isMobile && !disableNativeDrag ? 'true' : undefined}
             // Icon to display in drag ghost
             data-drag-icon={dragIconId}
             // Icon color to display in drag ghost
             data-drag-icon-color={dragIconColor}
             onClick={handleItemClick}
             onMouseDown={handleMouseDown}
-            draggable={!isMobile}
+            draggable={!isMobile && !disableNativeDrag}
             role="listitem"
             aria-describedby={hiddenDescription ? hiddenDescriptionId : undefined}
             style={fileRowStyle}

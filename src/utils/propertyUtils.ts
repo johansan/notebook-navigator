@@ -45,8 +45,50 @@ const EXTERNAL_URI_SCHEME_PATTERN = /^([a-z][a-z0-9+.-]{1,31}):/i;
 const BLOCKED_EXTERNAL_URI_PROTOCOLS = new Set(['data:', 'javascript:', 'vbscript:']);
 const ALLOWED_NON_SLASH_EXTERNAL_URI_PROTOCOLS = new Set(['mailto:', 'sms:', 'tel:']);
 
+function hasCustomGroupHeaderProperty(settings: NotebookNavigatorSettings): boolean {
+    const key = settings.manualSortGroupHeaderProperty.trim();
+    if (!key || key.includes(',')) {
+        return false;
+    }
+
+    const manualSortPropertyKey = settings.manualSortPropertyKey.trim();
+    return !manualSortPropertyKey || casefold(key) !== casefold(manualSortPropertyKey);
+}
+
+function hasCustomGroupingAppearance(settings: NotebookNavigatorSettings): boolean {
+    if (settings.noteGrouping === 'custom') {
+        return true;
+    }
+
+    const appearances = [settings.folderAppearances, settings.tagAppearances, settings.propertyAppearances];
+    return appearances.some(collection => Object.values(collection).some(appearance => appearance?.groupBy === 'custom'));
+}
+
+function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSettings): boolean {
+    return settings.showWordCount || (hasCustomGroupHeaderProperty(settings) && hasCustomGroupingAppearance(settings));
+}
+
 export function hasPropertyFrontmatterFields(settings: NotebookNavigatorSettings): boolean {
-    return getCachedCommaSeparatedList(getActivePropertyFields(settings)).length > 0;
+    if (getActivePropertyFields(settings).trim().length > 0) {
+        return true;
+    }
+
+    return hasWordCountTargetPropertyConsumer(settings) && settings.wordCountTargetProperty.trim().length > 0;
+}
+
+export function getPropertyFrontmatterFields(settings: NotebookNavigatorSettings): string[] {
+    const fields = [...getCachedCommaSeparatedList(getActivePropertyFields(settings))];
+    const wordCountTargetProperty = hasWordCountTargetPropertyConsumer(settings) ? settings.wordCountTargetProperty.trim() : '';
+    const normalizedWordCountTargetProperty = casefold(wordCountTargetProperty);
+    if (normalizedWordCountTargetProperty && !fields.some(field => casefold(field) === normalizedWordCountTargetProperty)) {
+        fields.push(wordCountTargetProperty);
+    }
+
+    return fields;
+}
+
+export function getPropertyFrontmatterFieldSignature(settings: NotebookNavigatorSettings): string {
+    return formatCommaSeparatedList(getPropertyFrontmatterFields(settings));
 }
 
 export function collectVaultPropertyKeys(app: App): PropertyKeySuggestion[] {

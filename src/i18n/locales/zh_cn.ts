@@ -29,6 +29,7 @@ export const STRINGS_ZH_CN = {
         remove: '移除', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: '恢复默认', // Button text for restoring values to defaults (English: Restore default)
         submit: '提交', // Button text for submitting forms and dialogs (English: Submit)
+        save: '保存', // Button text for saving settings and dialogs (English: Save)
         configure: '配置', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: '浅色模式', // Label for light theme mode (English: Light mode)
         darkMode: '深色模式', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_ZH_CN = {
         pinnedSection: '已固定', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: '笔记', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: '文件', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (已隐藏)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (已隐藏)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: '折叠分组',
+        expandGroup: '展开分组',
+        manualSortTitle: '手动排序: {property}',
+        manualSortHint: '拖动以重新排序。顺序以数字索引值的形式保存在属性"{property}"中。',
+        manualSortNonMarkdownHint: '非 Markdown 文件显示在底部，无法重新排序。',
+        unsortedSection: '未排序',
+        manualSortDone: '完成',
+        manualSortMultipleWriteFailure: '{count} 个文件失败；第一个: {path}: {message}'
     },
 
     // Tag list
@@ -131,6 +140,9 @@ export const STRINGS_ZH_CN = {
         changeChildSortOrder: '更改排序方式',
         changeSortAndGroup: '更改排序和分组',
         defaultSort: '默认', // Label for default sorting mode (English: Default)
+        manualSort: '手动排序',
+        editSortOrder: '编辑排序方式...',
+        removeSortProperty: '移除排序属性',
         descendants: '子项',
         subfolders: '子文件夹',
         subtags: '子标签',
@@ -285,6 +297,14 @@ export const STRINGS_ZH_CN = {
             moveFileToFolder: '移动文件到...',
             moveMultipleNotesToFolder: '将 {count} 个笔记移动到...',
             moveMultipleFilesToFolder: '将 {count} 个文件移动到...',
+            setManualSortGroupHeader: '设置分组标题',
+            changeManualSortGroupHeader: '更改分组标题',
+            manualSortGroupHeader: {
+                title: '分组标题',
+                copyStyle: '复制标题样式',
+                pasteStyle: '粘贴标题样式',
+                remove: '移除分组标题'
+            },
             addTag: '添加标签',
             addPropertyKey: '设置属性',
             removeTag: '移除标签',
@@ -389,6 +409,31 @@ export const STRINGS_ZH_CN = {
             applyAppearanceTitle: (target: string) => `将外观应用到${target}？`,
             affectedCountMessage: (count: number) => `将更改的现有覆盖：${count}。`
         },
+        manualSortConfirm: {
+            propertySortTitle: '使用手动排序？',
+            propertySortMessage: (property: string, count: number) =>
+                `这会将当前视图切换为使用"${property}"的手动排序。编辑顺序时会按需将数字索引值写入 ${count} 条笔记的该属性。`,
+            propertySortConfirmButton: '使用手动排序',
+            removePropertyTitle: '移除排序属性？',
+            removePropertyMessage: (property: string, count: number) =>
+                `这将从当前列表中的 ${count} 篇笔记中移除"${property}"。这些笔记的手动排序顺序将被清除。`,
+            removePropertyConfirmButton: '移除属性',
+            compactTitle: '压缩索引值？',
+            compactMessage: (count: number) => `此次重新排序需要更多数字空间。${count} 条笔记将获得新的索引值。`,
+            compactConfirmButton: '压缩索引值'
+        },
+        manualSortGroupHeader: {
+            title: '设置分组标题',
+            titleLabel: '标题',
+            placeholder: '分组标题',
+            icon: '图标',
+            color: '颜色',
+            wordCount: '显示字数',
+            wordCountTarget: '目标字数',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription: '此字段为空时，组目标使用“设置 > 笔记 > 字数”中设置的目标属性。为此组设置目标值即可覆盖它。',
+            description: '为此笔记自定义分组标题。将标题留空以移除该标题。'
+        },
         navRainbowSection: {
             title: (section: string) => `彩虹颜色: ${section}`
         },
@@ -427,6 +472,11 @@ export const STRINGS_ZH_CN = {
                 'list-descendants': '子文件夹中的笔记',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
+                'list-sort-modified': '按编辑日期排序',
+                'list-sort-created': '按创建日期排序',
+                'list-sort-title': '按标题排序',
+                'list-sort-filename': '按文件名排序',
+                'list-sort-property': '按属性排序',
                 'list-appearance': '更改外观',
                 'list-new-note': '新建笔记',
                 'nav-folder-open': '文件夹打开',
@@ -694,6 +744,8 @@ export const STRINGS_ZH_CN = {
             propertiesRequireMarkdown: '属性仅在 Markdown 笔记中受支持',
             propertySetOnNote: '已在 1 篇笔记中更新属性',
             propertySetOnNotes: '已在 {count} 篇笔记中更新属性',
+            manualSortPropertyRemovedFromNote: '已从 1 篇笔记中移除排序属性',
+            manualSortPropertyRemovedFromNotes: '已从 {count} 篇笔记中移除排序属性',
             iconPackDownloaded: '{provider} 已下载',
             iconPackUpdated: '{provider} 已更新 ({version})',
             iconPackRemoved: '{provider} 已移除',
@@ -856,6 +908,9 @@ export const STRINGS_ZH_CN = {
             list: {
                 display: '外观',
                 organization: '组织',
+                groupHeaders: '分组标题',
+                propertySort: '属性排序',
+                manualSort: '手动排序',
                 pinnedNotes: '固定笔记',
                 drawingPreviews: '绘图预览'
             },
@@ -869,7 +924,8 @@ export const STRINGS_ZH_CN = {
                 tags: '标签',
                 properties: '属性',
                 date: '日期',
-                parentFolder: '父文件夹'
+                parentFolder: '父文件夹',
+                wordCount: '字数'
             }
         },
         syncMode: {
@@ -889,8 +945,8 @@ export const STRINGS_ZH_CN = {
                 }
             },
             sortNotesBy: {
-                name: '笔记排序方式',
-                desc: '选择笔记列表中的笔记排序方式。',
+                name: '默认排序方式',
+                desc: '选择笔记的默认排序方式。',
                 options: {
                     'modified-desc': '编辑日期（最新在顶部）',
                     'modified-asc': '编辑日期（最旧在顶部）',
@@ -899,19 +955,24 @@ export const STRINGS_ZH_CN = {
                     'title-asc': '标题（升序）',
                     'title-desc': '标题（降序）',
                     'filename-asc': '文件名（升序）',
-                    'filename-desc': '文件名（降序）',
-                    'property-asc': '属性（升序）',
-                    'property-desc': '属性（降序）'
+                    'filename-desc': '文件名（降序）'
                 },
-                propertyOverride: {
-                    asc: '属性 ‘{property}’（升序）',
-                    desc: '属性 ‘{property}’（降序）'
+                directions: {
+                    asc: '升序',
+                    desc: '降序'
+                },
+                fields: {
+                    modified: '编辑日期',
+                    created: '创建日期',
+                    title: '标题',
+                    filename: '文件名',
+                    property: '属性'
                 }
             },
             propertySortKey: {
-                name: '排序属性',
-                desc: '用于属性排序。具有此 frontmatter 属性的笔记首先列出，并按属性值排序。数组合并为单一值。',
-                placeholder: 'order'
+                name: '用于排序的属性',
+                desc: '以逗号分隔的 frontmatter 属性，作为属性排序选项显示。数组值会合并为单一字符串。这些属性不会被更改。',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: '次要排序',
@@ -922,6 +983,43 @@ export const STRINGS_ZH_CN = {
                     created: '创建日期',
                     modified: '编辑日期'
                 }
+            },
+            propertySortInstructions: {
+                intro: '上面列出的每个属性会在列表窗格的排序菜单中作为排序选项显示。选择某个属性会按其 frontmatter 值对笔记排序。'
+            },
+            manualSortPropertyKey: {
+                name: '手动排序属性',
+                desc: '用于存储手动排序数字索引值的 frontmatter 属性。'
+            },
+            manualSortGroupHeaderProperty: {
+                name: '分组标题属性',
+                desc: '用于存储自定义分组标题的 frontmatter 属性。'
+            },
+            groupHeadersInstructions: {
+                intro: '自定义分组标题显示在列表窗格中笔记的上方。',
+                items: ['在列表窗格的排序菜单中，将分组设置为 **自定义**。', '右键点击笔记并选择 **设置分组标题**，在其上方添加标题。']
+            },
+            manualSortNewNotePlacement: {
+                name: '新笔记位置',
+                desc: '选择当前列表使用手动排序时新笔记的放置位置。',
+                options: {
+                    top: '顶部',
+                    bottom: '底部',
+                    'below-selected-note': '所选笔记下方',
+                    unsorted: '未排序'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: '手动排序前确认',
+                desc: '在首次将手动排序属性写入笔记之前显示警告。禁用时，笔记将不显示警告即接收该属性。'
+            },
+            manualSortInstructions: {
+                intro: '手动排序会将数字索引值写入每条笔记的 frontmatter 属性。没有索引的笔记会显示在"未排序"下。',
+                items: [
+                    '从排序菜单中选择 **手动排序** 启用手动排序。之后有两种方式重新排列笔记。',
+                    '从排序菜单中选择 **编辑排序方式...** 打开重新排序视图。用鼠标拖动笔记，或在移动端使用触摸。在桌面端，按 **Cmd/Ctrl** 或 **Shift** 点击可选择多条笔记，然后拖动其中任意一条即可移动整组。',
+                    '在列表窗格中，选择一条笔记或多选若干条，然后按 **Cmd/Ctrl + Arrow Up/Down** 向上或向下移动所选内容。'
+                ]
             },
             revealFileOnListChanges: {
                 name: '列表变更时滚动到选定文件',
@@ -940,12 +1038,12 @@ export const STRINGS_ZH_CN = {
                 desc: '在文件夹和标签中以"当前 ▾ 后代"格式显示笔记计数。'
             },
             groupNotes: {
-                name: '分组笔记',
-                desc: '在按日期或文件夹分组的笔记之间显示标题。启用文件夹分组时，标签视图使用日期分组。',
+                name: '默认分组',
+                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。',
                 options: {
-                    none: '不分组',
-                    date: '按日期分组',
-                    folder: '按文件夹分组'
+                    custom: '自定义',
+                    date: '日期',
+                    folder: '文件夹'
                 }
             },
             showSelectedNavigationPills: {
@@ -1195,8 +1293,7 @@ export const STRINGS_ZH_CN = {
             calendarLocale: {
                 name: '日历语言',
                 desc: '控制日历日期格式、周编号和每周的第一天。',
-                incompatibleWeekPatternWarning:
-                    '周记模式使用了 ISO 周标记（"W" 或 "G"）。日历将从星期一开始显示每周，而不是此语言设置的每周第一天。',
+                weekPathMismatchWarning: '可见日历和周记路径使用了不同的每周起始日或周编号方式。',
                 options: {
                     systemDefault: '系统默认'
                 }
@@ -1267,6 +1364,14 @@ export const STRINGS_ZH_CN = {
                     dailyNotes: '文件夹和日期格式在日记核心插件中配置。'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: '周期笔记语言',
+                desc: '控制 Notebook Navigator 周期笔记路径中本地化的月份名称、星期名称、周号和每周起始日。',
+                options: {
+                    calendar: '日历',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: '根文件夹',
@@ -1292,8 +1397,9 @@ export const STRINGS_ZH_CN = {
             calendarCustomWeekPattern: {
                 name: '周记',
                 parsingError: '模式必须能格式化并重新解析为完整周（周年、周数）。',
-                localeMismatchWarning:
-                    '此模式使用了 ISO 周标记（"W" 或 "G"）。日历将从星期一开始显示每周。如果周记应遵循所选语言设置，请使用 "w" 或 "g"。'
+                weekPathMismatchWarning: '周记路径使用周期笔记语言。请使用匹配的语言，或使用 "GGGG" 与 "WW" 以星期一为基准的周。',
+                mixedWeekTokensWarning:
+                    '此模式混用了基于星期一的周标记（"W" 或 "G"）和基于语言的周标记（"w" 或 "g"）。请始终使用同一组：以星期一为基准的周使用 "GGGG" 与 "WW"，如果周记应遵循所选语言设置，则使用 "gggg" 与 "ww"。'
             },
             calendarCustomMonthPattern: {
                 name: '月记',
@@ -1525,14 +1631,25 @@ export const STRINGS_ZH_CN = {
                 name: '在精简模式中显示属性',
                 desc: '精简模式启用时显示属性。'
             },
-            notePropertyType: {
-                name: '笔记属性',
-                desc: '选择要在文件项中显示的笔记属性。',
+            showWordCount: {
+                name: '显示字数',
+                desc: '在文件项中显示笔记字数。'
+            },
+            wordCountPlacement: {
+                name: '位置',
+                desc: '选择字数的显示位置。',
                 options: {
-                    frontmatter: '前置元数据属性',
-                    wordCount: '字数统计',
-                    none: '无'
+                    title: '在标题中',
+                    property: '作为属性'
                 }
+            },
+            wordCountTargetProperty: {
+                name: '目标属性',
+                desc: '包含目标字数的前置元数据属性键。留空可隐藏目标。'
+            },
+            showWordCountPercentage: {
+                name: '显示目标百分比',
+                desc: '有目标字数时，仅显示进度百分比。'
             },
             propertyFields: {
                 name: '属性键（保险库配置）',

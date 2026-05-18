@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, it, expect } from 'vitest';
-import { normalizeUXIconMapRecord, resolveUXIcon } from '../../src/utils/uxIcons';
+import { normalizeUXIconMapRecord, resolveUXIcon, resolveUXIconForMenu } from '../../src/utils/uxIcons';
 
 describe('resolveUXIcon', () => {
     it('returns defaults when no overrides are present', () => {
@@ -28,6 +28,18 @@ describe('resolveUXIcon', () => {
 
     it('deserializes Iconize formatted overrides', () => {
         expect(resolveUXIcon({ 'list-search': 'LiStar' }, 'list-search')).toBe('star');
+    });
+});
+
+describe('resolveUXIconForMenu', () => {
+    it('uses the registered default icon when no explicit fallback is provided', () => {
+        expect(resolveUXIconForMenu(undefined, 'list-sort-modified')).toBe('lucide-calendar-clock');
+    });
+
+    it('uses the explicit fallback when the override cannot render in an Obsidian menu', () => {
+        expect(resolveUXIconForMenu({ 'list-sort-modified': 'icons/custom.svg' }, 'list-sort-modified', 'lucide-calendar')).toBe(
+            'lucide-calendar'
+        );
     });
 });
 

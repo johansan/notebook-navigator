@@ -19,13 +19,22 @@
 import { DropdownComponent, Platform, Setting, SliderComponent, setIcon } from 'obsidian';
 import { strings } from '../../i18n';
 import { DEFAULT_SETTINGS } from '../defaultSettings';
-import { isListDisplayMode, isListNoteGroupingOption, isListPaneTitleOption, isPropertySortSecondaryOption, isSortOption } from '../types';
-import { PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../types';
+import {
+    isListDisplayMode,
+    isListNoteGroupingOption,
+    isListPaneTitleOption,
+    isManualSortNewNotePlacement,
+    isPropertySortSecondaryOption,
+    isSortOption
+} from '../types';
+import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
 import { createSettingGroupFactory } from '../settingGroups';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createSubSettingsContainer } from '../subSettings';
+import { pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
+import { getManualSortGroupHeaderPropertyKey, isValidManualSortPropertyKey, normalizeManualSortPropertyKey } from '../../utils/manualSort';
 
 type QuickActionSettingKey =
     | 'quickActionRevealInFolder'
@@ -75,104 +84,106 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     const { containerEl, plugin, addToggleSetting, addInfoSetting } = context;
     const createGroup = createSettingGroupFactory(containerEl);
 
-    const appearanceGroup = createGroup(strings.settings.groups.list.display);
+    const renderAppearanceGroup = (): void => {
+        const appearanceGroup = createGroup(strings.settings.groups.list.display);
 
-    if (!Platform.isMobile) {
+        if (!Platform.isMobile) {
+            appearanceGroup.addSetting(setting => {
+                setting
+                    .setName(strings.settings.items.listPaneTitle.name)
+                    .setDesc(strings.settings.items.listPaneTitle.desc)
+                    .addDropdown(dropdown =>
+                        dropdown
+                            .addOption('header', strings.settings.items.listPaneTitle.options.header)
+                            .addOption('list', strings.settings.items.listPaneTitle.options.list)
+                            .addOption('hidden', strings.settings.items.listPaneTitle.options.hidden)
+                            .setValue(plugin.settings.listPaneTitle)
+                            .onChange(async value => {
+                                if (!isListPaneTitleOption(value)) {
+                                    return;
+                                }
+                                plugin.settings.listPaneTitle = value;
+                                await plugin.saveSettingsAndUpdate();
+                            })
+                    );
+            });
+        }
+
         appearanceGroup.addSetting(setting => {
             setting
-                .setName(strings.settings.items.listPaneTitle.name)
-                .setDesc(strings.settings.items.listPaneTitle.desc)
+                .setName(strings.settings.items.defaultListMode.name)
+                .setDesc(strings.settings.items.defaultListMode.desc)
                 .addDropdown(dropdown =>
                     dropdown
-                        .addOption('header', strings.settings.items.listPaneTitle.options.header)
-                        .addOption('list', strings.settings.items.listPaneTitle.options.list)
-                        .addOption('hidden', strings.settings.items.listPaneTitle.options.hidden)
-                        .setValue(plugin.settings.listPaneTitle)
+                        .addOption('standard', strings.settings.items.defaultListMode.options.standard)
+                        .addOption('compact', strings.settings.items.defaultListMode.options.compact)
+                        .setValue(plugin.settings.defaultListMode)
                         .onChange(async value => {
-                            if (!isListPaneTitleOption(value)) {
+                            if (!isListDisplayMode(value)) {
                                 return;
                             }
-                            plugin.settings.listPaneTitle = value;
+                            plugin.settings.defaultListMode = value === 'compact' ? 'compact' : 'standard';
                             await plugin.saveSettingsAndUpdate();
                         })
                 );
         });
-    }
 
-    appearanceGroup.addSetting(setting => {
-        setting
-            .setName(strings.settings.items.defaultListMode.name)
-            .setDesc(strings.settings.items.defaultListMode.desc)
-            .addDropdown(dropdown =>
-                dropdown
-                    .addOption('standard', strings.settings.items.defaultListMode.options.standard)
-                    .addOption('compact', strings.settings.items.defaultListMode.options.compact)
-                    .setValue(plugin.settings.defaultListMode)
-                    .onChange(async value => {
-                        if (!isListDisplayMode(value)) {
-                            return;
-                        }
-                        plugin.settings.defaultListMode = value === 'compact' ? 'compact' : 'standard';
-                        await plugin.saveSettingsAndUpdate();
-                    })
-            );
-    });
-
-    let compactItemHeightSlider: SliderComponent;
-    const compactItemHeightSetting = appearanceGroup.addSetting(setting => {
-        setting
-            .setName(strings.settings.items.compactItemHeight.name)
-            .setDesc(strings.settings.items.compactItemHeight.desc)
-            .addSlider(slider => {
-                compactItemHeightSlider = slider
-                    .setLimits(20, 28, 1)
-                    .setValue(plugin.settings.compactItemHeight)
-                    .setInstant(false)
-                    .setDynamicTooltip()
-                    .onChange(value => {
-                        plugin.setCompactItemHeight(value);
-                    });
-                return slider;
-            })
-            .addExtraButton(button =>
-                button
-                    .setIcon('lucide-rotate-ccw')
-                    .setTooltip(strings.settings.items.compactItemHeight.resetTooltip)
-                    .onClick(() => {
-                        // Reset item height to default without blocking the UI
-                        runAsyncAction(() => {
-                            const defaultValue = DEFAULT_SETTINGS.compactItemHeight;
-                            compactItemHeightSlider.setValue(defaultValue);
-                            plugin.setCompactItemHeight(defaultValue);
+        let compactItemHeightSlider: SliderComponent;
+        const compactItemHeightSetting = appearanceGroup.addSetting(setting => {
+            setting
+                .setName(strings.settings.items.compactItemHeight.name)
+                .setDesc(strings.settings.items.compactItemHeight.desc)
+                .addSlider(slider => {
+                    compactItemHeightSlider = slider
+                        .setLimits(20, 28, 1)
+                        .setValue(plugin.settings.compactItemHeight)
+                        .setInstant(false)
+                        .setDynamicTooltip()
+                        .onChange(value => {
+                            plugin.setCompactItemHeight(value);
                         });
-                    })
+                    return slider;
+                })
+                .addExtraButton(button =>
+                    button
+                        .setIcon('lucide-rotate-ccw')
+                        .setTooltip(strings.settings.items.compactItemHeight.resetTooltip)
+                        .onClick(() => {
+                            // Reset item height to default without blocking the UI
+                            runAsyncAction(() => {
+                                const defaultValue = DEFAULT_SETTINGS.compactItemHeight;
+                                compactItemHeightSlider.setValue(defaultValue);
+                                plugin.setCompactItemHeight(defaultValue);
+                            });
+                        })
+                );
+        });
+
+        addSettingSyncModeToggle({ setting: compactItemHeightSetting, plugin, settingId: 'compactItemHeight' });
+
+        const compactItemHeightSettingsEl = createSubSettingsContainer(compactItemHeightSetting);
+
+        const compactItemHeightScaleTextSetting = new Setting(compactItemHeightSettingsEl)
+            .setName(strings.settings.items.compactItemHeightScaleText.name)
+            .setDesc(strings.settings.items.compactItemHeightScaleText.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.compactItemHeightScaleText).onChange(value => {
+                    plugin.setCompactItemHeightScaleText(value);
+                })
             );
-    });
 
-    addSettingSyncModeToggle({ setting: compactItemHeightSetting, plugin, settingId: 'compactItemHeight' });
+        addSettingSyncModeToggle({ setting: compactItemHeightScaleTextSetting, plugin, settingId: 'compactItemHeightScaleText' });
 
-    const compactItemHeightSettingsEl = createSubSettingsContainer(compactItemHeightSetting);
-
-    const compactItemHeightScaleTextSetting = new Setting(compactItemHeightSettingsEl)
-        .setName(strings.settings.items.compactItemHeightScaleText.name)
-        .setDesc(strings.settings.items.compactItemHeightScaleText.desc)
-        .addToggle(toggle =>
-            toggle.setValue(plugin.settings.compactItemHeightScaleText).onChange(value => {
-                plugin.setCompactItemHeightScaleText(value);
-            })
+        addToggleSetting(
+            appearanceGroup.addSetting,
+            strings.settings.items.showSelectedNavigationPills.name,
+            strings.settings.items.showSelectedNavigationPills.desc,
+            () => plugin.settings.showSelectedNavigationPills,
+            value => {
+                plugin.settings.showSelectedNavigationPills = value;
+            }
         );
-
-    addSettingSyncModeToggle({ setting: compactItemHeightScaleTextSetting, plugin, settingId: 'compactItemHeightScaleText' });
-
-    addToggleSetting(
-        appearanceGroup.addSetting,
-        strings.settings.items.showSelectedNavigationPills.name,
-        strings.settings.items.showSelectedNavigationPills.desc,
-        () => plugin.settings.showSelectedNavigationPills,
-        value => {
-            plugin.settings.showSelectedNavigationPills = value;
-        }
-    );
+    };
 
     const organizationGroup = createGroup(strings.settings.groups.list.organization);
 
@@ -196,9 +207,16 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             .setDesc(strings.settings.items.sortNotesBy.desc)
             .addDropdown((dropdown: DropdownComponent) => {
                 SORT_OPTIONS.forEach(option => {
+                    if (option === 'property-asc' || option === 'property-desc') {
+                        return;
+                    }
                     dropdown.addOption(option, strings.settings.items.sortNotesBy.options[option]);
                 });
-                return dropdown.setValue(plugin.settings.defaultFolderSort).onChange(async value => {
+                const defaultFolderSort =
+                    plugin.settings.defaultFolderSort === 'property-asc' || plugin.settings.defaultFolderSort === 'property-desc'
+                        ? DEFAULT_SETTINGS.defaultFolderSort
+                        : plugin.settings.defaultFolderSort;
+                return dropdown.setValue(defaultFolderSort).onChange(async value => {
                     if (!isSortOption(value)) {
                         return;
                     }
@@ -208,19 +226,122 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             });
     });
 
-    const propertySortKeySetting = organizationGroup.addSetting(setting => {
+    organizationGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.propertySortKey.name)
-            .setDesc(strings.settings.items.propertySortKey.desc)
-            .addText(text =>
-                text
-                    .setPlaceholder(strings.settings.items.propertySortKey.placeholder)
-                    .setValue(plugin.settings.propertySortKey)
+            .setName(strings.settings.items.groupNotes.name)
+            .setDesc(strings.settings.items.groupNotes.desc)
+            .addDropdown(dropdown =>
+                dropdown
+                    .addOption('custom', strings.settings.items.groupNotes.options.custom)
+                    .addOption('date', strings.settings.items.groupNotes.options.date)
+                    .addOption('folder', strings.settings.items.groupNotes.options.folder)
+                    .setValue(plugin.settings.noteGrouping)
                     .onChange(async value => {
-                        plugin.settings.propertySortKey = value;
+                        if (!isListNoteGroupingOption(value)) {
+                            return;
+                        }
+                        plugin.settings.noteGrouping = value;
                         await plugin.saveSettingsAndUpdate();
                     })
             );
+    });
+
+    const groupHeadersGroup = createGroup(strings.settings.groups.list.groupHeaders);
+
+    addToggleSetting(
+        groupHeadersGroup.addSetting,
+        strings.settings.items.stickyGroupHeaders.name,
+        strings.settings.items.stickyGroupHeaders.desc,
+        () => plugin.settings.stickyGroupHeaders,
+        value => {
+            plugin.settings.stickyGroupHeaders = value;
+        }
+    );
+
+    groupHeadersGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.manualSortGroupHeaderProperty.name)
+            .setDesc(strings.settings.items.manualSortGroupHeaderProperty.desc)
+            .addText(text => {
+                const commitGroupHeaderProperty = async (): Promise<void> => {
+                    const value = text.getValue().trim();
+                    if (
+                        value.length > 0 &&
+                        getManualSortGroupHeaderPropertyKey({
+                            manualSortGroupHeaderProperty: value,
+                            manualSortPropertyKey: plugin.settings.manualSortPropertyKey
+                        }) === null
+                    ) {
+                        text.setValue(plugin.settings.manualSortGroupHeaderProperty);
+                        return;
+                    }
+                    text.setValue(value);
+                    if (plugin.settings.manualSortGroupHeaderProperty === value) {
+                        return;
+                    }
+                    plugin.settings.manualSortGroupHeaderProperty = value;
+                    await plugin.saveSettingsAndUpdate();
+                };
+
+                text.inputEl.addEventListener('blur', () => {
+                    runAsyncAction(commitGroupHeaderProperty);
+                });
+                text.inputEl.addEventListener('keydown', event => {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+                    event.preventDefault();
+                    runAsyncAction(commitGroupHeaderProperty);
+                    text.inputEl.blur();
+                });
+
+                return text
+                    .setPlaceholder(DEFAULT_SETTINGS.manualSortGroupHeaderProperty)
+                    .setValue(plugin.settings.manualSortGroupHeaderProperty);
+            });
+    });
+
+    addInfoSetting(groupHeadersGroup.addSetting, ['nn-setting-info-container', 'nn-setting-info-list'], descEl => {
+        const info = strings.settings.items.groupHeadersInstructions;
+        descEl.createDiv({ text: info.intro });
+        const listEl = descEl.createEl('ol');
+        info.items.forEach(item => {
+            const itemEl = listEl.createEl('li');
+            appendStrongText(itemEl, item);
+        });
+    });
+
+    const propertySortGroup = createGroup(strings.settings.groups.list.propertySort);
+
+    const propertySortKeySetting = propertySortGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.propertySortKey.name)
+            .setDesc(strings.settings.items.propertySortKey.desc)
+            .addText(text => {
+                const commitPropertySortKey = async (): Promise<void> => {
+                    const value = text.getValue();
+                    if (plugin.settings.propertySortKey === value) {
+                        return;
+                    }
+                    plugin.settings.propertySortKey = value;
+                    pruneUnavailablePropertySortOverrides(plugin.settings);
+                    await plugin.saveSettingsAndUpdate();
+                };
+
+                text.inputEl.addEventListener('blur', () => {
+                    runAsyncAction(commitPropertySortKey);
+                });
+                text.inputEl.addEventListener('keydown', event => {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+                    event.preventDefault();
+                    runAsyncAction(commitPropertySortKey);
+                    text.inputEl.blur();
+                });
+
+                return text.setPlaceholder(strings.settings.items.propertySortKey.placeholder).setValue(plugin.settings.propertySortKey);
+            });
     });
 
     const propertySortSecondarySettingsEl = createSubSettingsContainer(propertySortKeySetting);
@@ -241,35 +362,85 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             });
         });
 
-    organizationGroup.addSetting(setting => {
+    addInfoSetting(propertySortGroup.addSetting, 'nn-setting-info-container', descEl => {
+        descEl.createDiv({ text: strings.settings.items.propertySortInstructions.intro });
+    });
+
+    const manualSortGroup = createGroup(strings.settings.groups.list.manualSort);
+
+    manualSortGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.groupNotes.name)
-            .setDesc(strings.settings.items.groupNotes.desc)
-            .addDropdown(dropdown =>
-                dropdown
-                    .addOption('none', strings.settings.items.groupNotes.options.none)
-                    .addOption('date', strings.settings.items.groupNotes.options.date)
-                    .addOption('folder', strings.settings.items.groupNotes.options.folder)
-                    .setValue(plugin.settings.noteGrouping)
-                    .onChange(async value => {
-                        if (!isListNoteGroupingOption(value)) {
-                            return;
-                        }
-                        plugin.settings.noteGrouping = value;
-                        await plugin.saveSettingsAndUpdate();
-                    })
-            );
+            .setName(strings.settings.items.manualSortPropertyKey.name)
+            .setDesc(strings.settings.items.manualSortPropertyKey.desc)
+            .addText(text => {
+                const commitManualSortPropertyKey = async (): Promise<void> => {
+                    const value = normalizeManualSortPropertyKey(text.getValue());
+                    if (!isValidManualSortPropertyKey(value)) {
+                        text.setValue(plugin.settings.manualSortPropertyKey);
+                        return;
+                    }
+                    text.setValue(value);
+                    if (plugin.settings.manualSortPropertyKey === value) {
+                        return;
+                    }
+                    plugin.settings.manualSortPropertyKey = value;
+                    pruneUnavailablePropertySortOverrides(plugin.settings);
+                    await plugin.saveSettingsAndUpdate();
+                };
+
+                text.inputEl.addEventListener('blur', () => {
+                    runAsyncAction(commitManualSortPropertyKey);
+                });
+                text.inputEl.addEventListener('keydown', event => {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+                    event.preventDefault();
+                    runAsyncAction(commitManualSortPropertyKey);
+                    text.inputEl.blur();
+                });
+
+                return text.setPlaceholder(DEFAULT_SETTINGS.manualSortPropertyKey).setValue(plugin.settings.manualSortPropertyKey);
+            });
+    });
+
+    manualSortGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.manualSortNewNotePlacement.name)
+            .setDesc(strings.settings.items.manualSortNewNotePlacement.desc)
+            .addDropdown(dropdown => {
+                MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS.forEach(option => {
+                    dropdown.addOption(option, strings.settings.items.manualSortNewNotePlacement.options[option]);
+                });
+                return dropdown.setValue(plugin.settings.manualSortNewNotePlacement).onChange(async value => {
+                    if (!isManualSortNewNotePlacement(value)) {
+                        return;
+                    }
+                    plugin.settings.manualSortNewNotePlacement = value;
+                    await plugin.saveSettingsAndUpdate();
+                });
+            });
     });
 
     addToggleSetting(
-        organizationGroup.addSetting,
-        strings.settings.items.stickyGroupHeaders.name,
-        strings.settings.items.stickyGroupHeaders.desc,
-        () => plugin.settings.stickyGroupHeaders,
+        manualSortGroup.addSetting,
+        strings.settings.items.confirmBeforeManualSort.name,
+        strings.settings.items.confirmBeforeManualSort.desc,
+        () => plugin.settings.confirmBeforeManualSort,
         value => {
-            plugin.settings.stickyGroupHeaders = value;
+            plugin.settings.confirmBeforeManualSort = value;
         }
     );
+
+    addInfoSetting(manualSortGroup.addSetting, ['nn-setting-info-container', 'nn-setting-info-list'], descEl => {
+        const info = strings.settings.items.manualSortInstructions;
+        descEl.createDiv({ text: info.intro });
+        const listEl = descEl.createEl('ol');
+        info.items.forEach(item => {
+            const itemEl = listEl.createEl('li');
+            appendStrongText(itemEl, item);
+        });
+    });
 
     const pinnedNotesGroup = createGroup(strings.settings.groups.list.pinnedNotes);
 
@@ -282,6 +453,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             plugin.settings.filterPinnedByFolder = value;
         }
     );
+
+    renderAppearanceGroup();
 
     const behaviorGroup = createGroup(strings.settings.groups.general.behavior);
 

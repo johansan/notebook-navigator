@@ -154,12 +154,13 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
         menu.addSeparator();
     }
 
-    const ensurePropertySelected = () => {
+    const ensurePropertySelected = (): boolean => {
         if (selectionState.selectionType === ItemType.PROPERTY && selectionState.selectedProperty === normalizedNodeId) {
-            return;
+            return false;
         }
 
         selectionDispatch({ type: 'SET_SELECTED_PROPERTY', nodeId: normalizedNodeId });
+        return true;
     };
 
     const handleFileCreation = (file: TFile | null | undefined) => {
@@ -173,9 +174,17 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
 
     menu.addItem((item: MenuItem) => {
         setAsyncOnClick(item.setTitle(strings.contextMenu.folder.newNote).setIcon('lucide-pen-box'), async () => {
-            ensurePropertySelected();
+            const selectionChanged = ensurePropertySelected();
             const sourcePath = selectionState.selectedFile?.path ?? app.workspace.getActiveFile()?.path ?? '';
-            const createdFile = await fileSystemOps.createNewFileForProperty(normalizedNodeId, sourcePath, settings.createNewNotesInNewTab);
+            const manualSortContext = await fileSystemOps.getManualSortNewFileContextForTarget('property', normalizedNodeId, {
+                waitForSelectionUpdate: selectionChanged
+            });
+            const createdFile = await fileSystemOps.createNewFileForProperty(
+                normalizedNodeId,
+                sourcePath,
+                settings.createNewNotesInNewTab,
+                manualSortContext
+            );
             handleFileCreation(createdFile);
         });
     });

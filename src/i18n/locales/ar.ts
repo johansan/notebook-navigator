@@ -29,6 +29,7 @@ export const STRINGS_AR = {
         remove: 'إزالة', // Button text for remove operations in dialogs (English: Remove)
         restoreDefault: 'استعادة الافتراضي', // Button text for restoring values to defaults (English: Restore default)
         submit: 'إرسال', // Button text for submitting forms and dialogs (English: Submit)
+        save: 'حفظ', // Button text for saving settings and dialogs (English: Save)
         configure: 'تكوين', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'الوضع الفاتح', // Label for light theme mode (English: Light mode)
         darkMode: 'الوضع الداكن', // Label for dark theme mode (English: Dark mode)
@@ -50,7 +51,15 @@ export const STRINGS_AR = {
         pinnedSection: 'مثبت', // Header for the pinned notes section at the top of file list (English: Pinned)
         notesSection: 'ملاحظات', // Header shown between pinned and regular items when showing documents only (English: Notes)
         filesSection: 'ملفات', // Header shown between pinned and regular items when showing supported or all files (English: Files)
-        hiddenItemAriaLabel: '{name} (مخفي)' // Accessibility label applied to list items that are normally hidden
+        hiddenItemAriaLabel: '{name} (مخفي)', // Accessibility label applied to list items that are normally hidden
+        collapseGroup: 'طي المجموعة',
+        expandGroup: 'توسيع المجموعة',
+        manualSortTitle: 'فرز يدوي: {property}',
+        manualSortHint: 'اسحب لإعادة الترتيب. يتم حفظ الترتيب كقيم رقمية للفهرس في الخاصية "{property}".',
+        manualSortNonMarkdownHint: 'الملفات غير Markdown تظهر في الأسفل ولا يمكن إعادة ترتيبها.',
+        unsortedSection: 'غير مرتبة',
+        manualSortDone: 'تم',
+        manualSortMultipleWriteFailure: 'فشل {count} من الملفات؛ الأول: {path}: {message}'
     },
 
     // Tag list
@@ -132,6 +141,9 @@ export const STRINGS_AR = {
         changeChildSortOrder: 'تغيير ترتيب الفرز',
         changeSortAndGroup: 'تغيير الفرز والتجميع',
         defaultSort: 'افتراضي', // Label for default sorting mode (English: Default)
+        manualSort: 'فرز يدوي',
+        editSortOrder: 'تحرير ترتيب الفرز...',
+        removeSortProperty: 'إزالة خاصية الفرز',
         descendants: 'العناصر الفرعية',
         subfolders: 'المجلدات الفرعية',
         subtags: 'الوسوم الفرعية',
@@ -300,6 +312,14 @@ export const STRINGS_AR = {
             moveFileToFolder: 'نقل الملف إلى...',
             moveMultipleNotesToFolder: 'نقل {count} ملاحظة إلى...',
             moveMultipleFilesToFolder: 'نقل {count} ملف إلى...',
+            setManualSortGroupHeader: 'تعيين عنوان المجموعة',
+            changeManualSortGroupHeader: 'تغيير عنوان المجموعة',
+            manualSortGroupHeader: {
+                title: 'عنوان المجموعة',
+                copyStyle: 'نسخ نمط العنوان',
+                pasteStyle: 'لصق نمط العنوان',
+                remove: 'إزالة عنوان المجموعة'
+            },
             addTag: 'إضافة وسم',
             addPropertyKey: 'تعيين خاصية',
             removeTag: 'إزالة وسم',
@@ -389,6 +409,32 @@ export const STRINGS_AR = {
             applyAppearanceTitle: (target: string) => `تطبيق المظهر على ${target}؟`,
             affectedCountMessage: (count: number) => `التجاوزات الحالية التي ستتغير: ${count}.`
         },
+        manualSortConfirm: {
+            propertySortTitle: 'استخدام الفرز اليدوي؟',
+            propertySortMessage: (property: string, count: number) =>
+                `يبدّل العرض الحالي إلى الفرز اليدوي باستخدام "${property}". تحرير الترتيب يكتب قيم فهرس رقمية إلى تلك الخاصية في ${count} ملاحظة حسب الحاجة.`,
+            propertySortConfirmButton: 'استخدام الفرز اليدوي',
+            removePropertyTitle: 'إزالة خاصية الفرز؟',
+            removePropertyMessage: (property: string, count: number) =>
+                `يؤدي هذا إلى إزالة "${property}" من ${count} ${count === 1 ? 'ملاحظة' : 'ملاحظة'} في القائمة الحالية. سيتم مسح ترتيب الفرز اليدوي لتلك الملاحظات.`,
+            removePropertyConfirmButton: 'إزالة الخاصية',
+            compactTitle: 'ضغط قيم الفهرس؟',
+            compactMessage: (count: number) => `إعادة الترتيب هذه تحتاج إلى مساحة رقمية أكبر. ${count} ملاحظة ستحصل على قيم فهرس جديدة.`,
+            compactConfirmButton: 'ضغط قيم الفهرس'
+        },
+        manualSortGroupHeader: {
+            title: 'تعيين عنوان المجموعة',
+            titleLabel: 'العنوان',
+            placeholder: 'عنوان المجموعة',
+            icon: 'الأيقونة',
+            color: 'اللون',
+            wordCount: 'إظهار عدد الكلمات',
+            wordCountTarget: 'عدد الكلمات المستهدف',
+            wordCountTargetPlaceholder: '10,000',
+            wordCountTargetDescription:
+                'عندما يكون هذا الحقل فارغًا، يستخدم هدف المجموعة خاصية الهدف المحددة في الإعدادات > الملاحظات > عدد الكلمات. يمكنك تجاوزه بتعيين قيمة هدف لهذه المجموعة.',
+            description: 'خصص عنوان المجموعة لهذه الملاحظة. اترك العنوان فارغًا لإزالة العنوان.'
+        },
         navRainbowSection: {
             title: (section: string) => `ألوان قوس قزح: ${section}`
         },
@@ -427,6 +473,11 @@ export const STRINGS_AR = {
                 'list-descendants': 'ملاحظات من المجلدات الفرعية',
                 'list-sort-ascending': 'ترتيب الفرز: تصاعدي',
                 'list-sort-descending': 'ترتيب الفرز: تنازلي',
+                'list-sort-modified': 'الفرز حسب تاريخ التعديل',
+                'list-sort-created': 'الفرز حسب تاريخ الإنشاء',
+                'list-sort-title': 'الفرز حسب العنوان',
+                'list-sort-filename': 'الفرز حسب اسم الملف',
+                'list-sort-property': 'الفرز حسب الخاصية',
                 'list-appearance': 'تغيير المظهر',
                 'list-new-note': 'ملاحظة جديدة',
                 'nav-folder-open': 'مجلد مفتوح',
@@ -699,6 +750,8 @@ export const STRINGS_AR = {
             propertiesRequireMarkdown: 'الخصائص مدعومة فقط في ملاحظات Markdown',
             propertySetOnNote: 'تم تحديث الخاصية في ملاحظة واحدة',
             propertySetOnNotes: 'تم تحديث الخاصية في {count} ملاحظات',
+            manualSortPropertyRemovedFromNote: 'تمت إزالة خاصية الفرز من ملاحظة واحدة',
+            manualSortPropertyRemovedFromNotes: 'تمت إزالة خاصية الفرز من {count} ملاحظات',
             iconPackDownloaded: 'تم تنزيل {provider}',
             iconPackUpdated: 'تم تحديث {provider} ({version})',
             iconPackRemoved: 'تمت إزالة {provider}',
@@ -861,6 +914,9 @@ export const STRINGS_AR = {
             list: {
                 display: 'المظهر',
                 organization: 'التنظيم',
+                groupHeaders: 'رؤوس المجموعات',
+                propertySort: 'الفرز حسب الخاصية',
+                manualSort: 'الفرز اليدوي',
                 pinnedNotes: 'الملاحظات المثبتة',
                 drawingPreviews: 'معاينات الرسومات'
             },
@@ -874,7 +930,8 @@ export const STRINGS_AR = {
                 tags: 'الوسوم',
                 properties: 'الخصائص',
                 date: 'التاريخ',
-                parentFolder: 'المجلد الأصلي'
+                parentFolder: 'المجلد الأصلي',
+                wordCount: 'عدد الكلمات'
             }
         },
         syncMode: {
@@ -894,8 +951,8 @@ export const STRINGS_AR = {
                 }
             },
             sortNotesBy: {
-                name: 'ترتيب الملاحظات حسب',
-                desc: 'اختر كيفية ترتيب الملاحظات في قائمة الملاحظات.',
+                name: 'ترتيب الفرز الافتراضي',
+                desc: 'اختر ترتيب الفرز الافتراضي للملاحظات.',
                 options: {
                     'modified-desc': 'تاريخ التعديل (الأحدث في الأعلى)',
                     'modified-asc': 'تاريخ التعديل (الأقدم في الأعلى)',
@@ -904,19 +961,24 @@ export const STRINGS_AR = {
                     'title-asc': 'العنوان (أ في الأعلى)',
                     'title-desc': 'العنوان (ي في الأعلى)',
                     'filename-asc': 'اسم الملف (أ في الأعلى)',
-                    'filename-desc': 'اسم الملف (ي في الأعلى)',
-                    'property-asc': 'الخاصية (أ في الأعلى)',
-                    'property-desc': 'الخاصية (ي في الأعلى)'
+                    'filename-desc': 'اسم الملف (ي في الأعلى)'
                 },
-                propertyOverride: {
-                    asc: 'الخاصية ‘{property}’ (أ في الأعلى)',
-                    desc: 'الخاصية ‘{property}’ (ي في الأعلى)'
+                directions: {
+                    asc: 'تصاعدي',
+                    desc: 'تنازلي'
+                },
+                fields: {
+                    modified: 'تاريخ التعديل',
+                    created: 'تاريخ الإنشاء',
+                    title: 'العنوان',
+                    filename: 'اسم الملف',
+                    property: 'الخاصية'
                 }
             },
             propertySortKey: {
-                name: 'خاصية الترتيب',
-                desc: 'تُستخدم مع ترتيب الخاصية. الملاحظات التي تحتوي على هذه الخاصية في الواجهة الأمامية تُعرض أولاً وتُرتب حسب قيمة الخاصية. يتم دمج المصفوفات في قيمة واحدة.',
-                placeholder: 'order'
+                name: 'الخصائص للترتيب حسبها',
+                desc: 'خصائص الواجهة الأمامية مفصولة بفواصل تُعرض كخيارات للفرز حسب الخاصية. يتم دمج قيم المصفوفات في سلسلة واحدة. هذه الخصائص لا يتم تغييرها.',
+                placeholder: 'published, author'
             },
             propertySortSecondary: {
                 name: 'الترتيب الثانوي',
@@ -927,6 +989,46 @@ export const STRINGS_AR = {
                     created: 'تاريخ الإنشاء',
                     modified: 'تاريخ التعديل'
                 }
+            },
+            propertySortInstructions: {
+                intro: 'تظهر كل خاصية مدرجة أعلاه كخيار فرز في قائمة الفرز في لوحة القائمة. اختيار إحداها يفرز الملاحظات حسب قيمتها في الواجهة الأمامية.'
+            },
+            manualSortPropertyKey: {
+                name: 'خاصية الفرز اليدوي',
+                desc: 'خاصية الواجهة الأمامية المستخدمة لتخزين قيم الفهرس الرقمية للفرز اليدوي.'
+            },
+            manualSortGroupHeaderProperty: {
+                name: 'خاصية عنوان المجموعة',
+                desc: 'خاصية الواجهة الأمامية المستخدمة لتخزين رؤوس المجموعات المخصصة.'
+            },
+            groupHeadersInstructions: {
+                intro: 'تظهر رؤوس المجموعات المخصصة أعلى الملاحظات في لوحة القائمة.',
+                items: [
+                    'من قائمة الفرز في لوحة القائمة، اضبط التجميع على **مخصص**.',
+                    'انقر بزر الفأرة الأيمن على ملاحظة واختر **تعيين عنوان المجموعة** لإضافة عنوان فوقها.'
+                ]
+            },
+            manualSortNewNotePlacement: {
+                name: 'موضع الملاحظة الجديدة',
+                desc: 'اختر مكان وضع الملاحظات الجديدة عندما تستخدم القائمة الحالية الفرز اليدوي.',
+                options: {
+                    top: 'الأعلى',
+                    bottom: 'الأسفل',
+                    'below-selected-note': 'أسفل الملاحظة المحددة',
+                    unsorted: 'غير مرتبة'
+                }
+            },
+            confirmBeforeManualSort: {
+                name: 'تأكيد قبل الفرز اليدوي',
+                desc: 'إظهار تحذير قبل كتابة خاصية الفرز اليدوي في الملاحظات للمرة الأولى. عند التعطيل، تتلقى الملاحظات الخاصية دون تحذير.'
+            },
+            manualSortInstructions: {
+                intro: 'يكتب الفرز اليدوي قيمة فهرس رقمية إلى خاصية الواجهة الأمامية على كل ملاحظة. تظهر الملاحظات بدون فهرس ضمن "غير مرتبة".',
+                items: [
+                    'فعّل الفرز اليدوي باختيار **فرز يدوي** من قائمة الفرز. بعد ذلك، توجد طريقتان لإعادة ترتيب الملاحظات.',
+                    'اختر **تحرير ترتيب الفرز...** من قائمة الفرز لفتح عرض إعادة الترتيب. اسحب الملاحظات بالفأرة، أو باللمس على الجوال. على سطح المكتب، النقر مع **Cmd/Ctrl** أو **Shift** يحدد عدة ملاحظات، ثم سحب أي منها ينقل المجموعة بأكملها.',
+                    'في لوحة القائمة، حدد ملاحظة واحدة أو حدد عدة ملاحظات، ثم اضغط **Cmd/Ctrl + Arrow Up/Down** لنقل التحديد لأعلى أو لأسفل.'
+                ]
             },
             revealFileOnListChanges: {
                 name: 'التمرير إلى الملف المحدد عند تغيير القائمة',
@@ -945,12 +1047,12 @@ export const STRINGS_AR = {
                 desc: 'عرض عدد الملاحظات بتنسيق "الحالي ▾ الفروع" في المجلدات والوسوم.'
             },
             groupNotes: {
-                name: 'تجميع الملاحظات',
-                desc: 'عرض رؤوس بين الملاحظات مجمعة حسب التاريخ أو المجلد. تستخدم طرق عرض الوسوم تجميع التاريخ عند تمكين تجميع المجلدات.',
+                name: 'التجميع الافتراضي',
+                desc: 'يعرض "مخصص" الرؤوس المعرفة في الواجهة الأمامية. يجمع "التاريخ" الملاحظات حسب التاريخ. يجمع "المجلد" الملاحظات حسب المجلد. تستخدم عروض الوسوم والخصائص تجميع التاريخ عند تحديد المجلد.',
                 options: {
-                    none: 'بدون تجميع',
-                    date: 'تجميع حسب التاريخ',
-                    folder: 'تجميع حسب المجلد'
+                    custom: 'مخصص',
+                    date: 'التاريخ',
+                    folder: 'المجلد'
                 }
             },
             showSelectedNavigationPills: {
@@ -1200,8 +1302,7 @@ export const STRINGS_AR = {
             calendarLocale: {
                 name: 'اللغة',
                 desc: 'التحكم في تنسيق تواريخ التقويم وترقيم الأسابيع واليوم الأول من الأسبوع.',
-                incompatibleWeekPatternWarning:
-                    'نمط الملاحظات الأسبوعية يستخدم رموز أسبوع ISO ("W" أو "G"). سيعرض التقويم الأسابيع بدءًا من يوم الاثنين بدلاً من اليوم الأول للأسبوع في هذه اللغة.',
+                weekPathMismatchWarning: 'التقويم المرئي ومسارات الملاحظات الأسبوعية تستخدم بدايات أسابيع أو ترقيم أسابيع مختلفة.',
                 options: {
                     systemDefault: 'افتراضي'
                 }
@@ -1272,6 +1373,14 @@ export const STRINGS_AR = {
                     dailyNotes: 'يتم تكوين المجلد وتنسيق التاريخ في إضافة الملاحظات اليومية الأساسية.'
                 }
             },
+            calendarPeriodicNotesLocale: {
+                name: 'لغة الملاحظات الدورية',
+                desc: 'يتحكم في أسماء الأشهر والأيام المحلية وأرقام الأسابيع وبدايات الأسابيع في مسارات الملاحظات الدورية في Notebook Navigator.',
+                options: {
+                    calendar: 'التقويم',
+                    obsidian: 'Obsidian'
+                }
+            },
 
             calendarCustomRootFolder: {
                 name: 'المجلد الجذر',
@@ -1297,8 +1406,10 @@ export const STRINGS_AR = {
             calendarCustomWeekPattern: {
                 name: 'الملاحظات الأسبوعية',
                 parsingError: 'يجب أن يقوم النمط بتنسيق الأسبوع ثم تحليله مرة أخرى كأسبوع كامل (سنة الأسبوع، رقم الأسبوع).',
-                localeMismatchWarning:
-                    'هذا النمط يستخدم رموز أسبوع ISO ("W" أو "G"). سيعرض التقويم الأسابيع بدءًا من يوم الاثنين. استخدم "w" أو "g" إذا كانت الملاحظات الأسبوعية يجب أن تتبع اللغة المحددة.'
+                weekPathMismatchWarning:
+                    'تستخدم مسارات الملاحظات الأسبوعية لغة الملاحظات الدورية. استخدم لغات متطابقة، أو استخدم "GGGG" مع "WW" للأسابيع المستندة إلى الإثنين.',
+                mixedWeekTokensWarning:
+                    'هذا النمط يخلط رموز الأسبوع المستندة إلى الإثنين ("W" أو "G") مع رموز الأسبوع المستندة إلى اللغة ("w" أو "g"). استخدم مجموعة واحدة باستمرار: "GGGG" مع "WW" للأسابيع المستندة إلى الإثنين، أو "gggg" مع "ww" إذا كانت الملاحظات الأسبوعية يجب أن تتبع اللغة المحددة.'
             },
             calendarCustomMonthPattern: {
                 name: 'الملاحظات الشهرية',
@@ -1530,14 +1641,25 @@ export const STRINGS_AR = {
                 name: 'إظهار الخصائص في الوضع المضغوط',
                 desc: 'عرض الخصائص عند تفعيل الوضع المضغوط.'
             },
-            notePropertyType: {
-                name: 'خاصية الملاحظة',
-                desc: 'حدد خاصية الملاحظة لعرضها في عناصر الملفات.',
+            showWordCount: {
+                name: 'إظهار عدد الكلمات',
+                desc: 'عرض عدد كلمات الملاحظات في عناصر الملفات.'
+            },
+            wordCountPlacement: {
+                name: 'الموضع',
+                desc: 'اختر مكان ظهور عدد الكلمات.',
                 options: {
-                    frontmatter: 'خاصية الواجهة الأمامية',
-                    wordCount: 'عدد الكلمات',
-                    none: 'لا شيء'
+                    title: 'في العنوان',
+                    property: 'كخاصية'
                 }
+            },
+            wordCountTargetProperty: {
+                name: 'خاصية الهدف',
+                desc: 'مفتاح خاصية الواجهة الأمامية الذي يحتوي على عدد الكلمات المستهدف. اتركه فارغاً لإخفاء الأهداف.'
+            },
+            showWordCountPercentage: {
+                name: 'إظهار نسبة الهدف',
+                desc: 'عرض نسبة التقدم فقط عند توفر عدد كلمات مستهدف.'
             },
             propertyFields: {
                 name: 'مفاتيح الخصائص (ملف القبو)',

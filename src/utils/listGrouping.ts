@@ -18,7 +18,8 @@
 
 import { ItemType } from '../types';
 import type { NotebookNavigatorSettings } from '../settings';
-import type { ListNoteGroupingOption } from '../settings/types';
+import type { ListNoteGroupingOption, SortOption } from '../settings/types';
+import { getSortField, isDateSortOption } from './sortUtils';
 
 interface ResolveListGroupingParams {
     settings: Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
@@ -35,6 +36,34 @@ export interface ListGroupingResolution {
     hasCustomOverride: boolean;
 }
 
+export function resolveEffectiveListGroupingForSort({
+    groupBy,
+    sortOption,
+    selectionType,
+    isManualSortActive = false,
+    isManualSortEditActive = false
+}: {
+    groupBy: ListNoteGroupingOption;
+    sortOption: SortOption;
+    selectionType?: ItemType | null;
+    isManualSortActive?: boolean;
+    isManualSortEditActive?: boolean;
+}): ListNoteGroupingOption {
+    if (isManualSortActive || isManualSortEditActive) {
+        return 'custom';
+    }
+
+    if (getSortField(sortOption) === 'property') {
+        return selectionType === ItemType.FOLDER && groupBy === 'folder' ? 'folder' : 'custom';
+    }
+
+    if (groupBy === 'date' && !isDateSortOption(sortOption)) {
+        return 'custom';
+    }
+
+    return groupBy;
+}
+
 export function resolveListGroupingOverride({
     noteGrouping,
     selectionType,
@@ -44,7 +73,7 @@ export function resolveListGroupingOverride({
     selectionType?: ItemType | null;
     groupBy?: ListNoteGroupingOption;
 }): ListGroupingResolution {
-    const globalDefault: ListNoteGroupingOption = noteGrouping ?? 'none';
+    const globalDefault: ListNoteGroupingOption = noteGrouping ?? 'custom';
 
     if (selectionType === ItemType.FOLDER) {
         return {
@@ -94,7 +123,7 @@ export function resolveListGrouping({
     tag,
     propertyNodeId
 }: ResolveListGroupingParams): ListGroupingResolution {
-    const globalDefault: ListNoteGroupingOption = settings.noteGrouping ?? 'none';
+    const globalDefault: ListNoteGroupingOption = settings.noteGrouping ?? 'custom';
 
     // Folder selection: use folder-specific override if set, otherwise use global default
     if (selectionType === ItemType.FOLDER && folderPath) {

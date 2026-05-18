@@ -17,7 +17,7 @@
  */
 
 import React, { useCallback, useMemo } from 'react';
-import { TFile, TFolder } from 'obsidian';
+import { Menu, TFile, TFolder } from 'obsidian';
 import { Virtualizer } from '@tanstack/react-virtual';
 import { useMetadataService, useServices } from '../../context/ServicesContext';
 import { strings } from '../../i18n';
@@ -38,6 +38,12 @@ import type { FileNameIconNeedle } from '../../utils/fileIconUtils';
 import type { HiddenTagVisibility } from '../../utils/tagPrefixMatcher';
 import type { FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';
 import { resolveUXIcon } from '../../utils/uxIcons';
+import { hasSolidFileRowBackground } from '../../utils/colorUtils';
+import { getManualSortGroupHeaderPropertyKey, shouldShowManualSortGroupHeaderProgress } from '../../utils/manualSort';
+import type { ManualSortGroupHeaderData } from '../../utils/manualSort';
+import { resolveFolderDecorationColors } from '../../utils/folderDecoration';
+import { addManualSortGroupHeaderMenuItems } from '../../utils/contextMenu/manualSortGroupHeaderMenuItems';
+import { ManualSortGroupHeaderContent, ManualSortGroupHeaderProgress } from './ManualSortGroupHeaderContent';
 
 export interface PointerClientPosition {
     clientX: number;
@@ -54,7 +60,17 @@ interface HeaderRenderModel {
     label: string;
     isFirstHeader: boolean;
     isPinnedHeader: boolean;
+    collapseKey: string | null;
+    isCollapsed: boolean;
+    isCollapsible: boolean;
     folderGroupHeaderTarget: FolderGroupHeaderTarget | null;
+    manualSortHeaderFilePath: string | null;
+    manualSortHeader: ManualSortGroupHeaderData | null;
+    manualSortHeaderWordCount: number;
+    manualSortHeaderTargetWordCount: number | null;
+    folderIconId: string | null;
+    folderColor: string | null;
+    applyFolderColorToLabel: boolean;
 }
 
 interface HeaderRenderModels {
@@ -66,10 +82,15 @@ type VirtualRowStyle = React.CSSProperties & Record<'--item-height', string>;
 
 interface ListPaneGroupHeaderProps {
     header: HeaderRenderModel;
-    pinnedGroupChevronIcon: string;
+    collapseChevronIcons: {
+        collapsed: string;
+        expanded: string;
+    };
     onPinnedGroupHeaderToggle: () => void;
+    onListGroupHeaderToggle: (collapseKey: string) => void;
     onFolderGroupHeaderClick: (event: React.MouseEvent<HTMLSpanElement>, target: FolderGroupHeaderTarget) => void;
     onFolderGroupHeaderMouseDown: (event: React.MouseEvent<HTMLSpanElement>, target: FolderGroupHeaderTarget) => void;
+    onManualSortGroupHeaderContextMenu: (event: React.MouseEvent<HTMLDivElement>, filePath: string) => void;
 }
 
 interface ListPaneVirtualContentProps {
@@ -84,6 +105,7 @@ interface ListPaneVirtualContentProps {
     settings: NotebookNavigatorSettings;
     pinnedGroupExpanded: boolean;
     onPinnedGroupHeaderToggle: () => void;
+    onListGroupHeaderToggle: (collapseKey: string) => void;
     selectionType: NavigationItemType | null;
     sortOption?: SortOption;
     searchHighlightQuery?: string;
@@ -124,7 +146,7 @@ function getItemAt<T>(items: T[], index: number): T | undefined {
 function getGroupHeaderLabel(listItems: ListPaneItem[], index: number): string | null {
     for (let listIndex = index - 1; listIndex >= 0; listIndex -= 1) {
         const item = getItemAt(listItems, listIndex);
-        if (item?.type === ListPaneItemType.HEADER && typeof item.data === 'string') {
+        if (item?.type === ListPaneItemType.HEADER && item.headerKind === 'date' && typeof item.data === 'string') {
             return item.data;
         }
     }
@@ -174,55 +196,124 @@ function findActiveHeaderModel(headers: HeaderRenderModel[], firstVisibleIndex: 
     return activeHeader;
 }
 
+function shouldHideCollapsedHeaderSeparator(header: HeaderRenderModel | null): boolean {
+    return header?.isCollapsed === true;
+}
+
+function shouldHideManualSortGoalHeaderSeparator(header: HeaderRenderModel | null): boolean {
+    return header?.manualSortHeader
+        ? shouldShowManualSortGroupHeaderProgress(header.manualSortHeader, header.manualSortHeaderTargetWordCount)
+        : false;
+}
+
 function ListPaneGroupHeader({
     header,
-    pinnedGroupChevronIcon,
+    collapseChevronIcons,
     onPinnedGroupHeaderToggle,
+    onListGroupHeaderToggle,
     onFolderGroupHeaderClick,
-    onFolderGroupHeaderMouseDown
+    onFolderGroupHeaderMouseDown,
+    onManualSortGroupHeaderContextMenu
 }: ListPaneGroupHeaderProps) {
     const folderGroupHeaderTarget = header.folderGroupHeaderTarget;
+    const manualSortHeader = header.manualSortHeader;
     const isClickableFolderGroupHeader = Boolean(folderGroupHeaderTarget) && !header.isPinnedHeader;
-    const handlePinnedHeaderClick = useCallback(
-        (event: React.MouseEvent<HTMLDivElement>) => {
+    const hasManualSortGoal =
+        manualSortHeader !== null && shouldShowManualSortGroupHeaderProgress(manualSortHeader, header.manualSortHeaderTargetWordCount);
+    const folderColor = header.folderColor ?? undefined;
+    const folderIconStyle = folderColor ? { color: folderColor } : undefined;
+    const folderLabelStyle = header.applyFolderColorToLabel && folderColor ? { color: folderColor } : undefined;
+    const handleCollapseButtonClick = useCallback(
+        (event: React.MouseEvent<HTMLButtonElement>) => {
             event.stopPropagation();
-            onPinnedGroupHeaderToggle();
+            if (header.isPinnedHeader) {
+                onPinnedGroupHeaderToggle();
+                return;
+            }
+
+            if (header.collapseKey) {
+                onListGroupHeaderToggle(header.collapseKey);
+            }
         },
-        [onPinnedGroupHeaderToggle]
+        [header.collapseKey, header.isPinnedHeader, onListGroupHeaderToggle, onPinnedGroupHeaderToggle]
+    );
+    const headerClasses = ['nn-list-group-header'];
+    if (header.isPinnedHeader) {
+        headerClasses.push('nn-pinned-section-header');
+    }
+    if (manualSortHeader) {
+        headerClasses.push('nn-list-group-header--manual-sort');
+    }
+    const manualSortHeaderFilePath = header.manualSortHeaderFilePath;
+    const handleContextMenu = manualSortHeaderFilePath
+        ? (event: React.MouseEvent<HTMLDivElement>) => onManualSortGroupHeaderContextMenu(event, manualSortHeaderFilePath)
+        : undefined;
+
+    const headerRow = (
+        <div className={headerClasses.join(' ')} onContextMenu={hasManualSortGoal ? undefined : handleContextMenu}>
+            {manualSortHeader ? (
+                <ManualSortGroupHeaderContent
+                    header={manualSortHeader}
+                    wordCount={header.manualSortHeaderWordCount}
+                    targetWordCount={header.manualSortHeaderTargetWordCount}
+                />
+            ) : (
+                <>
+                    {header.folderIconId ? (
+                        <ServiceIcon
+                            iconId={header.folderIconId}
+                            className="nn-list-group-header-icon nn-list-group-header-folder-icon"
+                            aria-hidden={true}
+                            data-has-color={folderColor ? 'true' : 'false'}
+                            style={folderIconStyle}
+                        />
+                    ) : null}
+                    <span
+                        className={`nn-list-group-header-text ${
+                            isClickableFolderGroupHeader ? 'nn-list-group-header-text--folder-note' : ''
+                        } ${header.applyFolderColorToLabel ? 'nn-list-group-header-text--custom-color' : ''}`}
+                        style={folderLabelStyle}
+                        onClick={folderGroupHeaderTarget ? event => onFolderGroupHeaderClick(event, folderGroupHeaderTarget) : undefined}
+                        onMouseDown={
+                            folderGroupHeaderTarget ? event => onFolderGroupHeaderMouseDown(event, folderGroupHeaderTarget) : undefined
+                        }
+                    >
+                        {header.label}
+                    </span>
+                </>
+            )}
+            {header.isCollapsible ? (
+                <button
+                    type="button"
+                    className="nn-list-group-header-collapse-button"
+                    aria-label={header.isCollapsed ? strings.listPane.expandGroup : strings.listPane.collapseGroup}
+                    aria-expanded={!header.isCollapsed}
+                    onClick={handleCollapseButtonClick}
+                >
+                    <ServiceIcon
+                        iconId={header.isCollapsed ? collapseChevronIcons.collapsed : collapseChevronIcons.expanded}
+                        className="nn-list-group-header-icon"
+                        aria-hidden={true}
+                    />
+                </button>
+            ) : null}
+        </div>
     );
 
-    if (header.isPinnedHeader) {
-        const pinnedHeaderContent = (
-            <>
-                <ServiceIcon
-                    iconId={pinnedGroupChevronIcon}
-                    className="nn-list-group-header-icon nn-pinned-section-chevron"
-                    aria-hidden={true}
-                />
-                <span className="nn-list-group-header-text">{header.label}</span>
-            </>
-        );
-
+    if (hasManualSortGoal) {
         return (
-            <div className="nn-list-group-header nn-pinned-section-header">
-                <div className="nn-pinned-section-toggle" onClick={handlePinnedHeaderClick}>
-                    {pinnedHeaderContent}
-                </div>
+            <div className="nn-manual-sort-group-header-shell" onContextMenu={handleContextMenu}>
+                {headerRow}
+                <ManualSortGroupHeaderProgress
+                    header={manualSortHeader}
+                    wordCount={header.manualSortHeaderWordCount}
+                    targetWordCount={header.manualSortHeaderTargetWordCount}
+                />
             </div>
         );
     }
 
-    return (
-        <div className="nn-list-group-header">
-            <span
-                className={`nn-list-group-header-text ${isClickableFolderGroupHeader ? 'nn-list-group-header-text--folder-note' : ''}`}
-                onClick={folderGroupHeaderTarget ? event => onFolderGroupHeaderClick(event, folderGroupHeaderTarget) : undefined}
-                onMouseDown={folderGroupHeaderTarget ? event => onFolderGroupHeaderMouseDown(event, folderGroupHeaderTarget) : undefined}
-            >
-                {header.label}
-            </span>
-        </div>
-    );
+    return headerRow;
 }
 
 function getHoveredFilePathFromTarget(target: EventTarget | null): string | null {
@@ -267,6 +358,7 @@ export function ListPaneVirtualContent({
     settings,
     pinnedGroupExpanded,
     onPinnedGroupHeaderToggle,
+    onListGroupHeaderToggle,
     selectionType,
     sortOption,
     searchHighlightQuery,
@@ -297,9 +389,20 @@ export function ListPaneVirtualContent({
 }: ListPaneVirtualContentProps) {
     const { app, commandQueue, isMobile } = useServices();
     const metadataService = useMetadataService();
-    const pinnedGroupChevronIcon = useMemo(
-        () => resolveUXIcon(settings.interfaceIcons, pinnedGroupExpanded ? 'nav-tree-collapse' : 'nav-tree-expand'),
-        [pinnedGroupExpanded, settings.interfaceIcons]
+    const collapseChevronIcons = useMemo(
+        () => ({
+            collapsed: resolveUXIcon(settings.interfaceIcons, 'nav-tree-expand'),
+            expanded: resolveUXIcon(settings.interfaceIcons, 'nav-tree-collapse')
+        }),
+        [settings.interfaceIcons]
+    );
+    const manualSortGroupHeaderPropertyKey = useMemo(
+        () =>
+            getManualSortGroupHeaderPropertyKey({
+                manualSortGroupHeaderProperty: settings.manualSortGroupHeaderProperty,
+                manualSortPropertyKey: settings.manualSortPropertyKey
+            }),
+        [settings.manualSortGroupHeaderProperty, settings.manualSortPropertyKey]
     );
 
     const folderGroupHeaderTargets = useMemo(() => {
@@ -359,12 +462,56 @@ export function ListPaneVirtualContent({
             }
 
             const headerFolderPath = item.headerFolderPath ?? null;
+            const isPinnedHeader = item.key === PINNED_SECTION_HEADER_KEY;
+            const collapseKey = item.collapseKey ?? null;
+            const isCollapsed = isPinnedHeader ? !pinnedGroupExpanded : item.isCollapsed === true;
+            const manualSortHeader = item.headerKind === 'manual-sort-custom' ? (item.manualSortHeader ?? null) : null;
+            const folderGroupDecorationPath = item.headerKind === 'folder' ? (headerFolderPath ?? '/') : null;
+            let folderIconId: string | null = null;
+            let folderColor: string | null = null;
+            const shouldResolveFolderIcon = settings.showFolderIcons;
+            const shouldResolveFolderColor = settings.showFolderIcons || !settings.colorIconOnly;
+            if (folderGroupDecorationPath !== null && (shouldResolveFolderIcon || shouldResolveFolderColor)) {
+                const folderDisplayData = metadataService.getFolderDisplayData(folderGroupDecorationPath, {
+                    includeDisplayName: false,
+                    includeColor: shouldResolveFolderColor,
+                    includeBackgroundColor: false,
+                    includeIcon: shouldResolveFolderIcon,
+                    includeInheritedColors: shouldResolveFolderColor
+                });
+                folderIconId = shouldResolveFolderIcon
+                    ? (folderDisplayData.icon ??
+                      resolveUXIcon(
+                          settings.interfaceIcons,
+                          folderGroupDecorationPath === '/' ? 'nav-folder-root' : isCollapsed ? 'nav-folder-closed' : 'nav-folder-open'
+                      ))
+                    : null;
+                if (shouldResolveFolderColor) {
+                    folderColor =
+                        resolveFolderDecorationColors({
+                            model: folderDecorationModel,
+                            folderPath: folderGroupDecorationPath,
+                            color: folderDisplayData.color,
+                            backgroundColor: undefined
+                        }).color ?? null;
+                }
+            }
             const model: HeaderRenderModel = {
                 index,
                 label: item.data,
                 isFirstHeader: models.length === 0 && !hasSeenFile,
-                isPinnedHeader: item.key === PINNED_SECTION_HEADER_KEY,
-                folderGroupHeaderTarget: headerFolderPath !== null ? (folderGroupHeaderTargets.get(headerFolderPath) ?? null) : null
+                isPinnedHeader,
+                collapseKey,
+                isCollapsed,
+                isCollapsible: isPinnedHeader || collapseKey !== null,
+                folderGroupHeaderTarget: headerFolderPath !== null ? (folderGroupHeaderTargets.get(headerFolderPath) ?? null) : null,
+                manualSortHeaderFilePath: item.headerKind === 'manual-sort-custom' ? (item.manualSortHeaderFilePath ?? null) : null,
+                manualSortHeader,
+                manualSortHeaderWordCount: item.manualSortHeaderWordCount ?? 0,
+                manualSortHeaderTargetWordCount: item.manualSortHeaderTargetWordCount ?? null,
+                folderIconId,
+                folderColor,
+                applyFolderColorToLabel: folderColor !== null && !settings.colorIconOnly
             };
             models.push(model);
             modelsByIndex.set(index, model);
@@ -374,7 +521,16 @@ export function ListPaneVirtualContent({
             headerModels: models,
             headerModelByIndex: modelsByIndex
         };
-    }, [folderGroupHeaderTargets, listItems]);
+    }, [
+        folderDecorationModel,
+        folderGroupHeaderTargets,
+        listItems,
+        metadataService,
+        pinnedGroupExpanded,
+        settings.colorIconOnly,
+        settings.interfaceIcons,
+        settings.showFolderIcons
+    ]);
 
     const handleFolderGroupHeaderClick = useCallback(
         (event: React.MouseEvent<HTMLSpanElement>, target: FolderGroupHeaderTarget) => {
@@ -435,6 +591,27 @@ export function ListPaneVirtualContent({
         [app, commandQueue, onNavigateToFolder]
     );
 
+    const handleManualSortGroupHeaderContextMenu = useCallback(
+        (event: React.MouseEvent<HTMLDivElement>, filePath: string) => {
+            if (!manualSortGroupHeaderPropertyKey) {
+                return;
+            }
+
+            const file = app.vault.getFileByPath(filePath);
+            if (!(file instanceof TFile) || file.extension !== 'md') {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const menu = new Menu();
+            addManualSortGroupHeaderMenuItems({ menu, app, file, propertyKey: manualSortGroupHeaderPropertyKey, metadataService });
+            menu.showAtMouseEvent(event.nativeEvent);
+        },
+        [app, manualSortGroupHeaderPropertyKey, metadataService]
+    );
+
     const handleListMouseMove = useCallback(
         (event: React.MouseEvent<HTMLDivElement>) => {
             onHoveredFilePathChange(getHoveredFilePathFromTarget(event.target), {
@@ -456,14 +633,16 @@ export function ListPaneVirtualContent({
             }
 
             const file = item.data;
-            const customFileBackgroundColor = metadataService.getFileBackgroundColor(file.path);
-            const taskUnfinished = fileItemStorage.getDB().getFile(file.path)?.taskUnfinished;
-            const unfinishedTaskBackgroundColor =
-                settings.showFileBackgroundUnfinishedTask && typeof taskUnfinished === 'number' && taskUnfinished > 0
-                    ? settings.unfinishedTaskBackgroundColor
-                    : undefined;
-
-            return Boolean(getSolidBackground(unfinishedTaskBackgroundColor ?? customFileBackgroundColor));
+            const taskUnfinished = settings.showFileBackgroundUnfinishedTask
+                ? fileItemStorage.getDB().getFile(file.path)?.taskUnfinished
+                : undefined;
+            return hasSolidFileRowBackground({
+                customBackgroundColor: metadataService.getFileBackgroundColor(file.path),
+                taskUnfinished,
+                showUnfinishedTaskBackground: settings.showFileBackgroundUnfinishedTask,
+                unfinishedTaskBackgroundColor: settings.unfinishedTaskBackgroundColor,
+                getSolidBackground
+            });
         },
         [
             fileItemStorage,
@@ -482,7 +661,6 @@ export function ListPaneVirtualContent({
     const firstVisibleItem =
         stickyOffset !== null && listItems.length > 0 ? rowVirtualizer.getVirtualItemForOffset(stickyOffset) : undefined;
     const stickyHeader = stickyGroupHeaders ? findActiveHeaderModel(headerModels, firstVisibleItem?.index ?? null) : null;
-    const shouldSuppressStickyHeaderSeparator = stickyHeader?.isFirstHeader === true && stickyHeader.isPinnedHeader && !pinnedGroupExpanded;
 
     return (
         <div
@@ -499,13 +677,15 @@ export function ListPaneVirtualContent({
             onMouseLeave={handleListMouseLeave}
         >
             {stickyHeader ? (
-                <div className={`nn-list-sticky-header ${shouldSuppressStickyHeaderSeparator ? 'nn-first-list-group-header' : ''}`}>
+                <div className="nn-list-sticky-header">
                     <ListPaneGroupHeader
                         header={stickyHeader}
-                        pinnedGroupChevronIcon={pinnedGroupChevronIcon}
+                        collapseChevronIcons={collapseChevronIcons}
                         onPinnedGroupHeaderToggle={onPinnedGroupHeaderToggle}
+                        onListGroupHeaderToggle={onListGroupHeaderToggle}
                         onFolderGroupHeaderClick={handleFolderGroupHeaderClick}
                         onFolderGroupHeaderMouseDown={handleFolderGroupHeaderMouseDown}
+                        onManualSortGroupHeaderContextMenu={handleManualSortGroupHeaderContextMenu}
                     />
                 </div>
             ) : null}
@@ -574,8 +754,8 @@ export function ListPaneVirtualContent({
 
                             const headerModel = headerModelByIndex.get(virtualItem.index) ?? null;
                             const firstFileAfterHeader = headerModel ? getFirstFileAfterHeader(listItems, virtualItem.index) : null;
-                            const shouldSuppressFirstHeaderSeparator =
-                                headerModel?.isFirstHeader === true && headerModel.isPinnedHeader && !pinnedGroupExpanded;
+                            const shouldHideHeaderSeparatorForGroup =
+                                shouldHideCollapsedHeaderSeparator(headerModel) || shouldHideManualSortGoalHeaderSeparator(headerModel);
                             const hideFileSeparator =
                                 item.type === ListPaneItemType.FILE &&
                                 ((isSelected && !hasSelectedBelow) ||
@@ -597,8 +777,8 @@ export function ListPaneVirtualContent({
                             if (headerModel) {
                                 virtualItemClasses.push('nn-virtual-list-group-header');
                             }
-                            if (shouldSuppressFirstHeaderSeparator) {
-                                virtualItemClasses.push('nn-first-list-group-header');
+                            if (shouldHideHeaderSeparatorForGroup) {
+                                virtualItemClasses.push('nn-hide-list-group-header-separator');
                             }
                             if (isLastFile) {
                                 virtualItemClasses.push('nn-last-file');
@@ -626,10 +806,12 @@ export function ListPaneVirtualContent({
                                     {headerModel ? (
                                         <ListPaneGroupHeader
                                             header={headerModel}
-                                            pinnedGroupChevronIcon={pinnedGroupChevronIcon}
+                                            collapseChevronIcons={collapseChevronIcons}
                                             onPinnedGroupHeaderToggle={onPinnedGroupHeaderToggle}
+                                            onListGroupHeaderToggle={onListGroupHeaderToggle}
                                             onFolderGroupHeaderClick={handleFolderGroupHeaderClick}
                                             onFolderGroupHeaderMouseDown={handleFolderGroupHeaderMouseDown}
+                                            onManualSortGroupHeaderContextMenu={handleManualSortGroupHeaderContextMenu}
                                         />
                                     ) : item.type === ListPaneItemType.HEADER_SPACER ? (
                                         <div className="nn-list-group-header-spacer" />

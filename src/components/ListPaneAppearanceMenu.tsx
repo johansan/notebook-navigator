@@ -19,12 +19,11 @@
 import { Menu, TFolder } from 'obsidian';
 import { strings } from '../i18n';
 import { FolderAppearance, getDefaultListMode, resolveListMode } from '../hooks/useListPaneAppearance';
-import type { NotePropertyType, ListDisplayMode } from '../settings/types';
+import type { ListDisplayMode } from '../settings/types';
 import { NotebookNavigatorSettings } from '../settings';
 import { ItemType } from '../types';
 import { runAsyncAction } from '../utils/async';
 import { ensureRecord, sanitizeRecord } from '../utils/recordUtils';
-import { resolveUXIconForMenu } from '../utils/uxIcons';
 import type { PropertySelectionNodeId } from '../utils/propertyTree';
 
 interface AppearanceMenuProps {
@@ -51,10 +50,6 @@ interface AppearanceRecordAccessor {
     key: string;
     getRecord: (settings: NotebookNavigatorSettings) => Record<string, FolderAppearance> | undefined;
     setRecord: (settings: NotebookNavigatorSettings, next: Record<string, FolderAppearance>) => void;
-}
-
-function getNotePropertyIcon(type: NotePropertyType, settings: NotebookNavigatorSettings): string {
-    return type === 'wordCount' ? resolveUXIconForMenu(settings.interfaceIcons, 'file-word-count', 'lucide-sigma') : 'lucide-minus';
 }
 
 export function showListPaneAppearanceMenu({
@@ -239,60 +234,6 @@ export function showListPaneAppearanceMenu({
                     .setChecked(isChecked)
                     .onClick(() => {
                         updateAppearance({ previewRows: rows });
-                    });
-            });
-        });
-    }
-
-    const isFolderSelection = selectionType === ItemType.FOLDER && Boolean(selectedFolder);
-    const isTagSelection = selectionType === ItemType.TAG && Boolean(selectedTag);
-    const isPropertySelection = selectionType === ItemType.PROPERTY && Boolean(selectedProperty);
-
-    // Add note property section for folders, tags, and properties
-    if (isFolderSelection || isTagSelection || isPropertySelection) {
-        const getNotePropertyTypeLabel = (type: NotePropertyType): string => {
-            switch (type) {
-                case 'wordCount':
-                    return strings.settings.items.notePropertyType.options.wordCount;
-                case 'none':
-                default:
-                    return strings.settings.items.notePropertyType.options.none;
-            }
-        };
-
-        menu.addSeparator();
-
-        // Note property header
-        menu.addItem(item => {
-            item.setTitle(strings.settings.items.notePropertyType.name)
-                .setIcon(resolveUXIconForMenu(settings.interfaceIcons, 'file-word-count', 'lucide-sigma'))
-                .setDisabled(true);
-        });
-
-        // Default note property option (clears custom override)
-        const defaultNotePropertyLabel = getNotePropertyTypeLabel(settings.notePropertyType);
-        const currentNotePropertyType = appearance?.notePropertyType;
-        const hasNotePropertyType = currentNotePropertyType !== undefined;
-        menu.addItem(item => {
-            item.setTitle(`    ${strings.folderAppearance.defaultLabel} (${defaultNotePropertyLabel})`)
-                .setIcon(getNotePropertyIcon(settings.notePropertyType, settings))
-                .setChecked(!hasNotePropertyType)
-                .onClick(() => {
-                    updateAppearance({ notePropertyType: undefined });
-                });
-        });
-
-        // Note property options
-        const notePropertyOptions: NotePropertyType[] = ['none', 'wordCount'];
-        notePropertyOptions.forEach(option => {
-            menu.addItem(item => {
-                const isChecked = hasNotePropertyType && currentNotePropertyType === option;
-                const label = getNotePropertyTypeLabel(option);
-                item.setTitle(`    ${label}`)
-                    .setIcon(getNotePropertyIcon(option, settings))
-                    .setChecked(isChecked)
-                    .onClick(() => {
-                        updateAppearance({ notePropertyType: option });
                     });
             });
         });

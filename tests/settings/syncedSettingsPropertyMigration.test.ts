@@ -54,7 +54,9 @@ describe('migrateLegacySyncedSettings property key migration', () => {
         const legacyPropertyFields = extractLegacyPropertyFields({ settings, storedData: null });
         applyLegacyPropertyFieldsMigration({ settings, legacyPropertyFields });
 
-        expect(settings.notePropertyType).toBe('wordCount');
+        expect(settings.showWordCount).toBe(true);
+        expect(settings.wordCountPlacement).toBe('title');
+        expect(Object.prototype.hasOwnProperty.call(settingsRecord, 'notePropertyType')).toBe(false);
         expect(settings.vaultProfiles[0]?.propertyKeys).toEqual([
             { key: 'status', showInNavigation: true, showInList: true, showInFileMenu: false },
             { key: 'type', showInNavigation: true, showInList: true, showInFileMenu: false }
@@ -87,6 +89,23 @@ describe('migrateLegacySyncedSettings property key migration', () => {
         expect(settings.enablePropertyExternalLinks).toBe(true);
     });
 
+    it('migrates old note property word count setting to the word count title setting', () => {
+        const settings = createSettings();
+        const settingsRecord = settings as unknown as Record<string, unknown>;
+        settingsRecord['notePropertyType'] = 'wordCount';
+
+        migrateLegacySyncedSettings({
+            settings,
+            storedData: { notePropertyType: 'wordCount' },
+            keys: STORAGE_KEYS,
+            defaultSettings: DEFAULT_SETTINGS
+        });
+
+        expect(settings.showWordCount).toBe(true);
+        expect(settings.wordCountPlacement).toBe('title');
+        expect(Object.prototype.hasOwnProperty.call(settingsRecord, 'notePropertyType')).toBe(false);
+    });
+
     it('migrates legacy folder appearance customPropertyType override', () => {
         const settings = createSettings();
         settings.folderAppearances = { Inbox: {} };
@@ -101,7 +120,31 @@ describe('migrateLegacySyncedSettings property key migration', () => {
             defaultSettings: DEFAULT_SETTINGS
         });
 
-        expect(settings.folderAppearances['Inbox']?.notePropertyType).toBe('none');
+        expect(Object.prototype.hasOwnProperty.call(appearanceRecord, 'notePropertyType')).toBe(false);
         expect(Object.prototype.hasOwnProperty.call(appearanceRecord, 'customPropertyType')).toBe(false);
+    });
+
+    it('migrates legacy none grouping to custom groups', () => {
+        const settings = createSettings();
+        const settingsRecord = settings as unknown as Record<string, unknown>;
+        settingsRecord['noteGrouping'] = 'none';
+        settings.folderAppearances = { Inbox: { groupBy: 'date' } };
+        (settings.folderAppearances.Inbox as unknown as Record<string, unknown>)['groupBy'] = 'none';
+        settings.tagAppearances = { '#work': { groupBy: 'date' } };
+        (settings.tagAppearances['#work'] as unknown as Record<string, unknown>)['groupBy'] = 'none';
+        settings.propertyAppearances = { 'key:status': { groupBy: 'date' } };
+        (settings.propertyAppearances['key:status'] as unknown as Record<string, unknown>)['groupBy'] = 'none';
+
+        migrateLegacySyncedSettings({
+            settings,
+            storedData: { noteGrouping: 'none' },
+            keys: STORAGE_KEYS,
+            defaultSettings: DEFAULT_SETTINGS
+        });
+
+        expect(settings.noteGrouping).toBe('custom');
+        expect(settings.folderAppearances.Inbox?.groupBy).toBe('custom');
+        expect(settings.tagAppearances['#work']?.groupBy).toBe('custom');
+        expect(settings.propertyAppearances['key:status']?.groupBy).toBe('custom');
     });
 });
