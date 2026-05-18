@@ -185,16 +185,12 @@ describe('DateUtils.getDateGroupInfo', () => {
 
 describe('DateUtils.parseFrontmatterDate', () => {
     beforeEach(() => {
-        Object.defineProperty(globalThis, 'window', {
-            value: createMomentStub(),
-            writable: true,
-            configurable: true
-        });
+        vi.stubGlobal('window', createMomentStub());
         getLanguageMock.mockReturnValue('en');
     });
 
     afterEach(() => {
-        delete (globalThis as { window?: unknown }).window;
+        vi.unstubAllGlobals();
         resetMomentApiCacheForTests();
         getLanguageMock.mockReturnValue('en');
         getLanguageMock.mockClear();

@@ -69,7 +69,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
     beforeEach(() => {
         vi.useFakeTimers();
         vi.setSystemTime(0);
-        vi.stubGlobal('window', globalThis);
+        vi.stubGlobal('window', activeWindow);
     });
 
     afterEach(() => {

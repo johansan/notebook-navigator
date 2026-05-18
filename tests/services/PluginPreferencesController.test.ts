@@ -45,7 +45,7 @@ vi.mock('../../src/utils/localStorage', () => {
     };
 });
 
-vi.stubGlobal('window', globalThis);
+vi.stubGlobal('window', activeWindow);
 
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { PluginPreferencesController } from '../../src/services/settings/PluginPreferencesController';
