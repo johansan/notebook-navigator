@@ -36,7 +36,8 @@ const NAVIGATION_TOOLBAR_BUTTONS: ToolbarButtonConfig<NavigationToolbarButtonId>
     { id: 'hiddenItems', iconType: 'ux', iconId: 'nav-hidden-items', label: strings.paneHeader.showExcludedItems },
     { id: 'calendar', iconType: 'ux', iconId: 'nav-calendar', label: strings.paneHeader.showCalendar },
     { id: 'rootReorder', iconType: 'ux', iconId: 'nav-root-reorder', label: strings.paneHeader.reorderRootFolders },
-    { id: 'newFolder', iconType: 'ux', iconId: 'nav-new-folder', label: strings.paneHeader.newFolder }
+    { id: 'newFolder', iconType: 'ux', iconId: 'nav-new-folder', label: strings.paneHeader.newFolder },
+    { id: 'revealActiveFile', iconType: 'raw', iconId: 'lucide-folder-search', label: strings.paneHeader.revealActiveFile }
 ];
 
 const LIST_TOOLBAR_BUTTONS: ToolbarButtonConfig<ListToolbarButtonId>[] = [

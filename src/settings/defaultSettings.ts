@@ -187,7 +187,8 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
             calendar: true,
             hiddenItems: true,
             rootReorder: true,
-            newFolder: true
+            newFolder: true,
+            revealActiveFile: false
         },
         list: {
             back: true,

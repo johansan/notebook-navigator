@@ -33,6 +33,9 @@ scripts/build-local.sh
 # Release lock file
 .release.lock
 
+# Bun lock file
+bun.lock
+
 # Web site
 web/
 

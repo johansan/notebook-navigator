@@ -66,6 +66,7 @@ export function NavigationPaneHeader({
     const showHiddenItemsButton = navigationVisibility.hiddenItems;
     const showRootReorderButton = navigationVisibility.rootReorder;
     const showNewFolderButton = navigationVisibility.newFolder;
+    const showRevealActiveFileButton = navigationVisibility.revealActiveFile;
 
     if (!hasProfiles) {
         return null;
@@ -125,7 +126,8 @@ export function NavigationPaneHeader({
         showHiddenItemsButton ||
         showCalendarButton ||
         showRootReorderButton ||
-        showNewFolderButton;
+        showNewFolderButton ||
+        showRevealActiveFileButton;
 
     if (!shouldRenderDesktopHeader) {
         return null;
@@ -232,6 +234,26 @@ export function NavigationPaneHeader({
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'nav-new-folder')} />
+                        </button>
+                    ) : null}
+                    {showRevealActiveFileButton ? (
+                        <button
+                            className="nn-icon-button"
+                            aria-label={strings.paneHeader.revealActiveFile}
+                            onClick={() => {
+                                runAsyncAction(async () => {
+                                    const activeFile = plugin.app.workspace.getActiveFile();
+                                    if (!activeFile || !activeFile.parent) {
+                                        return;
+                                    }
+                                    await plugin.activateView();
+                                    await plugin.revealFileInActualFolder(activeFile, { showHiddenFileNotice: true });
+                                });
+                            }}
+                            disabled={!plugin.app.workspace.getActiveFile()}
+                            tabIndex={-1}
+                        >
+                            <ServiceIcon iconId="lucide-folder-search" />
                         </button>
                     ) : null}
                 </div>
