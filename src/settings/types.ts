@@ -477,6 +477,7 @@ export interface NotebookNavigatorSettings {
     showTooltips: boolean;
     showTooltipPath: boolean;
     showTooltipWordCount: boolean;
+    showHoverPreview: boolean;
     desktopBackground: BackgroundMode;
     desktopScale: number;
     mobileScale: number;

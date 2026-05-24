@@ -987,6 +987,28 @@ export const FileItem = React.memo(function FileItem({
         wordCount
     ]);
 
+    // Hover preview — triggers Obsidian's built-in page preview popup on mouseenter
+    useEffect(() => {
+        const el = fileRef.current;
+        if (!el || isMobile || !settings.showHoverPreview) {
+            return;
+        }
+
+        const handleMouseEnter = (event: MouseEvent) => {
+            app.workspace.trigger('hover-link', {
+                event,
+                source: 'notebook-navigator',
+                hoverParent: { hoverPopover: null },
+                targetEl: el,
+                linktext: file.path,
+                sourcePath: file.path
+            });
+        };
+
+        el.addEventListener('mouseenter', handleMouseEnter);
+        return () => el.removeEventListener('mouseenter', handleMouseEnter);
+    }, [app, file.path, isMobile, settings.showHoverPreview]);
+
     // Reveals the file by selecting its folder in navigation pane and showing the file in list pane
     const revealFileInNavigation = () => {
         runAsyncAction(async () => {

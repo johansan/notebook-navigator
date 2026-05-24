@@ -239,6 +239,10 @@ function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): Se
             name: strings.settings.items.showTooltipWordCount.name,
             desc: strings.settings.items.showTooltipWordCount.desc,
             visible: () => plugin.settings.showTooltips
+        }),
+        createToggleDefinition('showHoverPreview', {
+            name: strings.settings.items.showHoverPreview.name,
+            desc: strings.settings.items.showHoverPreview.desc
         })
     ]);
 }

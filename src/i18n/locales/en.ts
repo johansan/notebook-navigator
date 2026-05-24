@@ -1468,6 +1468,10 @@ export const STRINGS_EN = {
                 name: 'Show word count in tooltips',
                 desc: 'Display note word counts in tooltips.'
             },
+            showHoverPreview: {
+                name: 'Show hover preview',
+                desc: 'Show a page preview popup when hovering over notes. Requires the Page preview core plugin to be enabled.'
+            },
             resetPaneSeparator: {
                 name: 'Reset pane separator position',
                 desc: 'Reset the draggable separator between navigation pane and list pane to default position.',

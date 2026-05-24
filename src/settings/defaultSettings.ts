@@ -171,6 +171,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showTooltips: false,
     showTooltipPath: true,
     showTooltipWordCount: false,
+    showHoverPreview: false,
     desktopBackground: 'separate',
     desktopScale: DEFAULT_UI_SCALE,
 

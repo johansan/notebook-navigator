@@ -321,6 +321,18 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
                 await plugin.saveSettingsAndUpdate();
             })
         );
+
+    desktopAppearanceGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.showHoverPreview.name)
+            .setDesc(strings.settings.items.showHoverPreview.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.showHoverPreview).onChange(async value => {
+                    plugin.settings.showHoverPreview = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+            );
+    });
 }
 
 function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
