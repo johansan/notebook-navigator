@@ -86,6 +86,12 @@ export class IconPickerModal extends Modal {
     private removeButton: HTMLButtonElement | null = null;
     private providerLinkContainer: HTMLDivElement | null = null;
     private providerLinkEl: HTMLAnchorElement | null = null;
+    // Container the picker UI is built into. Defaults to contentEl; an embedding
+    // host (AppearanceModal) supplies its own container via mountEmbedded().
+    private rootEl!: HTMLElement;
+    private embedded = false;
+    private onSelectCallback?: (iconId: string | null) => void;
+    private cleared = false;
 
     public static getLastUsedProvider(): string | null {
         return IconPickerModal.lastUsedProvider;
@@ -120,6 +126,7 @@ export class IconPickerModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
         this.modalEl.addClass('nn-icon-picker-modal');
+        this.rootEl = contentEl;
         this.cleanupVaultRecentIcons();
 
         // Header showing the folder/tag name
@@ -147,25 +154,9 @@ export class IconPickerModal extends Modal {
         })();
         header.createEl('h3', { text: headerText });
 
-        // Create tabs for providers
-        this.createProviderTabs();
-
-        // Create search input
-        const searchContainer = contentEl.createDiv('nn-icon-search-container');
-        this.searchInput = searchContainer.createEl('input', {
-            type: 'text',
-            placeholder: strings.modals.iconPicker.searchPlaceholder,
-            cls: 'nn-icon-search-input'
-        });
-        this.searchInput.setAttribute('enterkeyhint', 'done');
-
         this.attachCloseButtonHandler();
 
-        // Create results container
-        this.resultsContainer = contentEl.createDiv('nn-icon-results-container');
-        this.domDisposers.push(addAsyncEventListener(this.resultsContainer, 'click', event => this.handleResultsClick(event)));
-        this.createProviderLinkRow();
-        this.updateProviderLink(this.currentProvider);
+        this.buildPickerBody();
 
         if (this.showRemoveButton) {
             const buttonContainer = contentEl.createDiv('nn-icon-button-container');
@@ -181,18 +172,6 @@ export class IconPickerModal extends Modal {
             this.domDisposers.push(addAsyncEventListener(removeButton, 'click', () => this.removeIcon()));
         }
 
-        // Search input with debouncing
-        this.domDisposers.push(
-            addAsyncEventListener(this.searchInput, 'input', () => {
-                if (this.searchDebounceTimer) {
-                    window.clearTimeout(this.searchDebounceTimer);
-                }
-                this.searchDebounceTimer = window.setTimeout(() => {
-                    this.updateResults();
-                }, TIMEOUTS.DEBOUNCE_KEYBOARD);
-            })
-        );
-
         // Set up keyboard navigation
         this.setupKeyboardNavigation();
 
@@ -206,6 +185,56 @@ export class IconPickerModal extends Modal {
 
         // Show initial results
         this.updateResults();
+    }
+
+    /**
+     * Mounts the icon picker UI (provider tabs, search, results) into an external
+     * container for use inside AppearanceModal. No header, remove button, keyboard
+     * navigation or metadata persistence; selecting an icon stages it via onSelect.
+     */
+    mountEmbedded(container: HTMLElement, options: { onSelect?: (iconId: string | null) => void } = {}): void {
+        this.embedded = true;
+        this.rootEl = container;
+        this.onSelectCallback = options.onSelect;
+        this.cleanupVaultRecentIcons();
+        this.buildPickerBody();
+        this.updateResults();
+    }
+
+    /**
+     * Builds the provider tabs, search field, results container and provider link
+     * into rootEl, and wires the search input. Shared by standalone and embedded modes.
+     */
+    private buildPickerBody(): void {
+        // Create tabs for providers
+        this.createProviderTabs();
+
+        // Create search input
+        const searchContainer = this.rootEl.createDiv('nn-icon-search-container');
+        this.searchInput = searchContainer.createEl('input', {
+            type: 'text',
+            placeholder: strings.modals.iconPicker.searchPlaceholder,
+            cls: 'nn-icon-search-input'
+        });
+        this.searchInput.setAttribute('enterkeyhint', 'done');
+
+        // Create results container
+        this.resultsContainer = this.rootEl.createDiv('nn-icon-results-container');
+        this.domDisposers.push(addAsyncEventListener(this.resultsContainer, 'click', event => this.handleResultsClick(event)));
+        this.createProviderLinkRow();
+        this.updateProviderLink(this.currentProvider);
+
+        // Search input with debouncing
+        this.domDisposers.push(
+            addAsyncEventListener(this.searchInput, 'input', () => {
+                if (this.searchDebounceTimer) {
+                    window.clearTimeout(this.searchDebounceTimer);
+                }
+                this.searchDebounceTimer = window.setTimeout(() => {
+                    this.updateResults();
+                }, TIMEOUTS.DEBOUNCE_KEYBOARD);
+            })
+        );
     }
 
     private async handleResultsClick(event: MouseEvent): Promise<void> {
@@ -239,7 +268,7 @@ export class IconPickerModal extends Modal {
     }
 
     private createProviderTabs() {
-        this.tabContainer = this.contentEl.createDiv('nn-icon-provider-tabs');
+        this.tabContainer = this.rootEl.createDiv('nn-icon-provider-tabs');
         this.tabContainer.setAttribute('role', 'tablist');
         this.providerTabs = [];
 
@@ -286,7 +315,7 @@ export class IconPickerModal extends Modal {
      * Creates the provider link row UI elements below the icon tabs
      */
     private createProviderLinkRow(): void {
-        this.providerLinkContainer = this.contentEl.createDiv('nn-icon-provider-link-row');
+        this.providerLinkContainer = this.rootEl.createDiv('nn-icon-provider-link-row');
         this.providerLinkEl = this.providerLinkContainer.createEl('a', { cls: 'nn-icon-provider-link' });
         this.providerLinkEl.setAttribute('target', '_blank');
         this.providerLinkEl.setAttribute('rel', 'noopener noreferrer');
@@ -628,6 +657,9 @@ export class IconPickerModal extends Modal {
 
         const iconItem = container.createDiv('nn-icon-item');
         iconItem.setAttribute('data-icon-id', fullIconId);
+        if (this.currentIcon && fullIconId === this.currentIcon) {
+            iconItem.addClass('nn-icon-item-selected');
+        }
 
         // Icon preview
         const iconPreview = iconItem.createDiv('nn-icon-item-preview');
@@ -693,6 +725,15 @@ export class IconPickerModal extends Modal {
     private async selectIcon(iconId: string) {
         // Save to recent icons
         this.saveToRecentIcons(iconId);
+
+        // Embedded mode: stage the selection without persisting or closing the host modal
+        if (this.embedded) {
+            this.currentIcon = iconId;
+            this.cleared = false;
+            this.onSelectCallback?.(iconId);
+            this.updateResults();
+            return;
+        }
 
         // Delegate to caller when a handler is provided to support multi-selection updates
         if (await this.wasHandledBySelection(iconId)) {
@@ -1035,15 +1076,32 @@ export class IconPickerModal extends Modal {
         return this.providerTabs.find(tab => tab.dataset.providerId === this.currentProvider) ?? null;
     }
 
-    onClose() {
+    /** Returns the currently staged icon id, or undefined if none selected */
+    getStagedIcon(): string | undefined {
+        return this.currentIcon;
+    }
+
+    /** Returns true if the icon has been flagged for removal */
+    isIconCleared(): boolean {
+        return this.cleared;
+    }
+
+    /** Stages removal of the icon (used by the embedding host's reset action) */
+    clearSelection(): void {
+        this.currentIcon = undefined;
+        this.cleared = true;
+        this.onSelectCallback?.(null);
+        if (this.resultsContainer) {
+            this.updateResults();
+        }
+    }
+
+    /** Releases listeners and timers. Shared by standalone onClose and the embedding host. */
+    detach(): void {
         if (this.searchDebounceTimer) {
             window.clearTimeout(this.searchDebounceTimer);
             this.searchDebounceTimer = null;
         }
-
-        const { contentEl } = this;
-        contentEl.empty();
-        this.modalEl.removeClass('nn-icon-picker-modal');
         this.removeButton = null;
         this.providerLinkContainer = null;
         this.providerLinkEl = null;
@@ -1058,6 +1116,13 @@ export class IconPickerModal extends Modal {
             });
             this.domDisposers = [];
         }
+    }
+
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+        this.modalEl.removeClass('nn-icon-picker-modal');
+        this.detach();
     }
 
     // Attaches event handlers to the modal close button to ensure proper modal closure

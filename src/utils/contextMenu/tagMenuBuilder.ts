@@ -93,53 +93,33 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
         menu.addSeparator();
     }
 
-    // Change icon
-    if (settings.showTagIcons) {
-        menu.addItem((item: MenuItem) => {
-            setAsyncOnClick(item.setTitle(strings.contextMenu.tag.changeIcon).setIcon('lucide-image'), async () => {
-                const { IconPickerModal } = await import('../../modals/IconPickerModal');
-                const modal = new IconPickerModal(app, metadataService, tagPath, ItemType.TAG);
-                modal.open();
-            });
-        });
-    }
-
-    // Change color
+    // Change appearance (icon, color, background)
     menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.tag.changeColor).setIcon('lucide-palette'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
+        setAsyncOnClick(item.setTitle(strings.modals.appearance.menuTitle).setIcon('lucide-palette'), async () => {
+            const { AppearanceModal } = await import('../../modals/AppearanceModal');
+            const modal = new AppearanceModal(app, {
                 title: `#${tagPath}`,
-                initialColor: metadataService.getTagColor(tagPath) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    if (color === null) {
-                        await metadataService.removeTagColor(tagPath);
-                        return;
-                    }
-
-                    await metadataService.setTagColor(tagPath, color);
-                }
-            });
-            modal.open();
-        });
-    });
-
-    // Change background color
-    menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.tag.changeBackground).setIcon('lucide-paint-bucket'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
-                title: `#${tagPath}`,
-                initialColor: metadataService.getTagBackgroundColor(tagPath) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    if (color === null) {
-                        await metadataService.removeTagBackgroundColor(tagPath);
-                        return;
-                    }
-
-                    await metadataService.setTagBackgroundColor(tagPath, color);
+                metadataService,
+                itemPath: tagPath,
+                itemType: ItemType.TAG,
+                icon: settings.showTagIcons
+                    ? {
+                          initial: metadataService.getTagIcon(tagPath) ?? null,
+                          apply: async iconId =>
+                              iconId === null ? metadataService.removeTagIcon(tagPath) : metadataService.setTagIcon(tagPath, iconId)
+                      }
+                    : undefined,
+                color: {
+                    initial: metadataService.getTagColor(tagPath) ?? null,
+                    apply: async color =>
+                        color === null ? metadataService.removeTagColor(tagPath) : metadataService.setTagColor(tagPath, color)
+                },
+                background: {
+                    initial: metadataService.getTagBackgroundColor(tagPath) ?? null,
+                    apply: async color =>
+                        color === null
+                            ? metadataService.removeTagBackgroundColor(tagPath)
+                            : metadataService.setTagBackgroundColor(tagPath, color)
                 }
             });
             modal.open();

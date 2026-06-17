@@ -7323,8 +7323,6 @@ button.nn-youtube-button svg {
 }
 
 .nn-preview-label,
-.nn-rgb-label,
-.nn-rgb-title,
 .nn-hex-title {
     font-size: 11px;
     color: var(--nn-theme-foreground-muted);
@@ -7385,88 +7383,89 @@ button.nn-youtube-button svg {
     height: 16px;
 }
 
-/* RGB sliders section */
-.nn-rgb-section,
+/* Visual color picker section */
+.nn-color-area-section,
 .nn-color-preview-section {
     padding-bottom: 15px;
 }
 
-.nn-rgb-section {
+.nn-color-area-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     margin-bottom: auto; /* Push everything below to the bottom */
 }
 
-.nn-rgb-title {
-    margin-bottom: 6px;
+/* Saturation (x) / brightness (y) 2D area */
+.nn-sv-area {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+    cursor: crosshair;
+    touch-action: none;
+    background-image:
+        linear-gradient(to top, #000000, rgba(0, 0, 0, 0)),
+        linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+    background-color: var(--nn-sv-hue, #ff0000);
 }
 
-.nn-rgb-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+.nn-sv-thumb {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    background: var(--nn-thumb-color, #ffffff);
 }
 
-.nn-rgb-row:last-child {
-    margin-bottom: 0;
-}
-
-.nn-rgb-label {
-    width: 16px;
-}
-
-.nn-rgb-slider {
-    flex: 1;
-    height: 4px;
-    -webkit-appearance: none;
-    appearance: none;
-    background: var(--background-modifier-border);
-    border-radius: 2px;
-    outline: none;
+/* Hue and alpha sliders */
+.nn-color-slider {
+    position: relative;
+    width: 100%;
+    height: 14px;
+    border-radius: 7px;
     cursor: pointer;
+    touch-action: none;
 }
 
-/* Slider thumb */
-.nn-rgb-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
+.nn-hue-slider {
+    background: linear-gradient(
+        to right,
+        #ff0000 0%,
+        #ffff00 16.66%,
+        #00ff00 33.33%,
+        #00ffff 50%,
+        #0000ff 66.66%,
+        #ff00ff 83.33%,
+        #ff0000 100%
+    );
+}
+
+.nn-alpha-gradient {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), var(--nn-alpha-color, #000000));
+    pointer-events: none;
+}
+
+.nn-color-slider .nn-slider-thumb {
+    position: absolute;
+    top: 50%;
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--interactive-accent);
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.nn-rgb-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--interactive-accent);
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* RGB value display */
-.nn-rgb-value {
-    width: 32px;
-    text-align: right;
-    font-size: 11px;
-    color: var(--nn-theme-foreground-muted);
-    font-family: var(--font-monospace);
-}
-
-/* Color gradients for sliders */
-.nn-rgb-slider-r {
-    background: linear-gradient(to right, #000000, #ff0000);
-}
-
-.nn-rgb-slider-g {
-    background: linear-gradient(to right, #000000, #00ff00);
-}
-
-.nn-rgb-slider-b {
-    background: linear-gradient(to right, #000000, #0000ff);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+    background: transparent;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
 }
 
 /* Hex input section */
@@ -7761,6 +7760,199 @@ button.nn-youtube-button svg {
     .nn-color-button-container {
         margin-top: 12px;
         padding-top: 12px;
+    }
+}
+/* Source: src/styles/sections/modal-appearance.css */
+
+/* ========================================================================
+   Appearance Modal - tabbed icon / color / background editor
+   ======================================================================== */
+
+.modal.nn-appearance-modal {
+    width: 520px;
+    max-width: calc(100vw - 40px);
+    max-height: 85vh;
+}
+
+.modal.nn-appearance-modal .modal-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.modal.nn-appearance-modal .modal-close-button {
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* Header doubles as a live preview of the item */
+.nn-appearance-header {
+    display: flex;
+    justify-content: center;
+}
+
+.nn-appearance-preview {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+}
+
+.nn-appearance-preview-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 6px 16px;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+    background: var(--nn-preview-bg, var(--background-secondary));
+    color: var(--nn-preview-fg, var(--nn-theme-foreground));
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.nn-appearance-preview-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nn-appearance-preview-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.nn-appearance-preview-icon.nn-appearance-preview-icon-empty {
+    display: none;
+}
+
+.nn-appearance-preview-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Tab bar */
+.nn-appearance-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.nn-appearance-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--nn-theme-foreground-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-size: 13px;
+    font-weight: 500;
+    user-select: none;
+}
+
+.nn-appearance-tab:hover {
+    color: var(--nn-theme-foreground);
+}
+
+.nn-appearance-tab.nn-active {
+    color: var(--nn-theme-foreground);
+    border-bottom-color: var(--interactive-accent);
+}
+
+.nn-appearance-tab-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.nn-appearance-tab-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* Body + panels */
+.nn-appearance-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 320px;
+}
+
+.nn-appearance-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nn-appearance-panel-hidden {
+    display: none;
+}
+
+/* Reset row (per-aspect remove control) */
+.nn-appearance-reset-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nn-appearance-reset-button {
+    padding: 4px 10px;
+    font-size: 12px;
+    background: transparent;
+    color: var(--nn-theme-foreground-muted);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    cursor: pointer;
+}
+
+.nn-appearance-reset-button:hover {
+    color: var(--nn-theme-foreground);
+    border-color: var(--background-modifier-border-hover);
+}
+
+.nn-appearance-reset-button.nn-appearance-reset-active {
+    color: var(--text-on-accent);
+    background: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+/* Host containers strip the embedded modals' own outer padding */
+.nn-appearance-picker-host {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Color picker reuses its own layout; just remove the now-unneeded bottom auto-margins */
+.nn-appearance-picker-host .nn-color-picker-content {
+    overflow: visible;
+}
+
+/* Selected icon highlight (icon picker embedded staging mode) */
+.nn-icon-item.nn-icon-item-selected {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-s);
+}
+
+/* Footer */
+.nn-appearance-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .modal.nn-appearance-modal {
+        width: 100%;
+    }
+
+    .nn-appearance-body {
+        min-height: 0;
     }
 }
 /* Source: src/styles/sections/theme-folder-colors.css */

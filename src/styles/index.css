@@ -122,6 +122,8 @@ Keep this list ordered: later files override earlier ones.
 /* Additional modals */
 /* modal-color-picker.css: color picker modal layout, palette grid, recent colors, and input rows. */
 @import './sections/modal-color-picker.css';
+/* modal-appearance.css: combined appearance modal (tabs hosting icon/color/background pickers). */
+@import './sections/modal-appearance.css';
 
 /* Theme + platform */
 /* theme-folder-colors.css: placeholder section for folder color rules (currently empty). */

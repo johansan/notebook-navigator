@@ -665,63 +665,51 @@ function addFileStyleActionsForFileContext(params: FileStyleActionsParams): void
     const removableStyleAvailability = resolveFileStyleRemovalAvailability(targetFiles, metadataService);
     const { hasRemovableIcon, hasRemovableColor, hasRemovableBackground } = removableStyleAvailability;
 
-    if (settings.showFileIcons) {
-        menu.addItem((item: MenuItem) => {
-            setAsyncOnClick(item.setTitle(strings.contextMenu.file.changeIcon).setIcon('lucide-image'), async () => {
-                const { IconPickerModal } = await import('../../modals/IconPickerModal');
-                const modal = new IconPickerModal(app, metadataService, file.path, ItemType.FILE);
-                modal.onChooseIcon = async iconId => {
-                    if (iconId === undefined) {
-                        return { handled: true };
+    menu.addItem((item: MenuItem) => {
+        setAsyncOnClick(item.setTitle(strings.modals.appearance.menuTitle).setIcon('lucide-palette'), async () => {
+            const { AppearanceModal } = await import('../../modals/AppearanceModal');
+            const modal = new AppearanceModal(app, {
+                title: file.basename,
+                metadataService,
+                itemPath: file.path,
+                itemType: ItemType.FILE,
+                icon: settings.showFileIcons
+                    ? {
+                          initial: metadataService.getFileIcon(file.path) ?? null,
+                          apply: async iconId => {
+                              await Promise.all(
+                                  targetFiles.map(selectedFile =>
+                                      iconId === null
+                                          ? metadataService.removeFileIcon(selectedFile.path)
+                                          : metadataService.setFileIcon(selectedFile.path, iconId)
+                                  )
+                              );
+                          }
+                      }
+                    : undefined,
+                color: {
+                    initial: metadataService.getFileColor(file.path) ?? null,
+                    apply: async color => {
+                        await Promise.all(
+                            targetFiles.map(selectedFile =>
+                                color === null
+                                    ? metadataService.removeFileColor(selectedFile.path)
+                                    : metadataService.setFileColor(selectedFile.path, color)
+                            )
+                        );
                     }
-
-                    const actions = targetFiles.map(selectedFile =>
-                        iconId === null
-                            ? metadataService.removeFileIcon(selectedFile.path)
-                            : metadataService.setFileIcon(selectedFile.path, iconId)
-                    );
-                    await Promise.all(actions);
-                    return { handled: true };
-                };
-                modal.open();
-            });
-        });
-    }
-
-    menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.file.changeColor).setIcon('lucide-palette'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
-                title: file.basename,
-                initialColor: metadataService.getFileColor(file.path) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    const actions = targetFiles.map(selectedFile =>
-                        color === null
-                            ? metadataService.removeFileColor(selectedFile.path)
-                            : metadataService.setFileColor(selectedFile.path, color)
-                    );
-                    await Promise.all(actions);
-                }
-            });
-            modal.open();
-        });
-    });
-
-    menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.folder.changeBackground).setIcon('lucide-paint-bucket'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
-                title: file.basename,
-                initialColor: metadataService.getFileBackgroundColor(file.path) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    const actions = targetFiles.map(selectedFile =>
-                        color === null
-                            ? metadataService.removeFileBackgroundColor(selectedFile.path)
-                            : metadataService.setFileBackgroundColor(selectedFile.path, color)
-                    );
-                    await Promise.all(actions);
+                },
+                background: {
+                    initial: metadataService.getFileBackgroundColor(file.path) ?? null,
+                    apply: async color => {
+                        await Promise.all(
+                            targetFiles.map(selectedFile =>
+                                color === null
+                                    ? metadataService.removeFileBackgroundColor(selectedFile.path)
+                                    : metadataService.setFileBackgroundColor(selectedFile.path, color)
+                            )
+                        );
+                    }
                 }
             });
             modal.open();

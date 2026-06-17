@@ -1,0 +1,193 @@
+/* Source: src/styles/sections/modal-appearance.css */
+
+/* ========================================================================
+   Appearance Modal - tabbed icon / color / background editor
+   ======================================================================== */
+
+.modal.nn-appearance-modal {
+    width: 520px;
+    max-width: calc(100vw - 40px);
+    max-height: 85vh;
+}
+
+.modal.nn-appearance-modal .modal-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.modal.nn-appearance-modal .modal-close-button {
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* Header doubles as a live preview of the item */
+.nn-appearance-header {
+    display: flex;
+    justify-content: center;
+}
+
+.nn-appearance-preview {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+}
+
+.nn-appearance-preview-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 6px 16px;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+    background: var(--nn-preview-bg, var(--background-secondary));
+    color: var(--nn-preview-fg, var(--nn-theme-foreground));
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.nn-appearance-preview-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nn-appearance-preview-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.nn-appearance-preview-icon.nn-appearance-preview-icon-empty {
+    display: none;
+}
+
+.nn-appearance-preview-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Tab bar */
+.nn-appearance-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.nn-appearance-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--nn-theme-foreground-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-size: 13px;
+    font-weight: 500;
+    user-select: none;
+}
+
+.nn-appearance-tab:hover {
+    color: var(--nn-theme-foreground);
+}
+
+.nn-appearance-tab.nn-active {
+    color: var(--nn-theme-foreground);
+    border-bottom-color: var(--interactive-accent);
+}
+
+.nn-appearance-tab-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.nn-appearance-tab-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* Body + panels */
+.nn-appearance-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 320px;
+}
+
+.nn-appearance-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nn-appearance-panel-hidden {
+    display: none;
+}
+
+/* Reset row (per-aspect remove control) */
+.nn-appearance-reset-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nn-appearance-reset-button {
+    padding: 4px 10px;
+    font-size: 12px;
+    background: transparent;
+    color: var(--nn-theme-foreground-muted);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    cursor: pointer;
+}
+
+.nn-appearance-reset-button:hover {
+    color: var(--nn-theme-foreground);
+    border-color: var(--background-modifier-border-hover);
+}
+
+.nn-appearance-reset-button.nn-appearance-reset-active {
+    color: var(--text-on-accent);
+    background: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+/* Host containers strip the embedded modals' own outer padding */
+.nn-appearance-picker-host {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Color picker reuses its own layout; just remove the now-unneeded bottom auto-margins */
+.nn-appearance-picker-host .nn-color-picker-content {
+    overflow: visible;
+}
+
+/* Selected icon highlight (icon picker embedded staging mode) */
+.nn-icon-item.nn-icon-item-selected {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-s);
+}
+
+/* Footer */
+.nn-appearance-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .modal.nn-appearance-modal {
+        width: 100%;
+    }
+
+    .nn-appearance-body {
+        min-height: 0;
+    }
+}

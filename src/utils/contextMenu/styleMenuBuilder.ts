@@ -73,50 +73,34 @@ export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsP
     const { menu, app, metadataService, folderPath, showFolderIcons } = params;
     const folderLabel = folderPath.split('/').pop() || folderPath;
 
-    if (showFolderIcons) {
-        menu.addItem((item: MenuItem) => {
-            setAsyncOnClick(item.setTitle(strings.contextMenu.folder.changeIcon).setIcon('lucide-image'), async () => {
-                const { IconPickerModal } = await import('../../modals/IconPickerModal');
-                const modal = new IconPickerModal(app, metadataService, folderPath, ItemType.FOLDER);
-                modal.open();
-            });
-        });
-    }
-
     menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.folder.changeColor).setIcon('lucide-palette'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
+        setAsyncOnClick(item.setTitle(strings.modals.appearance.menuTitle).setIcon('lucide-palette'), async () => {
+            const { AppearanceModal } = await import('../../modals/AppearanceModal');
+            const modal = new AppearanceModal(app, {
                 title: folderLabel,
-                initialColor: metadataService.getFolderColor(folderPath) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    if (color === null) {
-                        await metadataService.removeFolderColor(folderPath);
-                        return;
-                    }
-
-                    await metadataService.setFolderColor(folderPath, color);
-                }
-            });
-            modal.open();
-        });
-    });
-
-    menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.folder.changeBackground).setIcon('lucide-paint-bucket'), async () => {
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
-                title: folderLabel,
-                initialColor: metadataService.getFolderBackgroundColor(folderPath) ?? null,
-                settingsProvider: metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    if (color === null) {
-                        await metadataService.removeFolderBackgroundColor(folderPath);
-                        return;
-                    }
-
-                    await metadataService.setFolderBackgroundColor(folderPath, color);
+                metadataService,
+                itemPath: folderPath,
+                itemType: ItemType.FOLDER,
+                icon: showFolderIcons
+                    ? {
+                          initial: metadataService.getFolderIcon(folderPath) ?? null,
+                          apply: async iconId =>
+                              iconId === null
+                                  ? metadataService.removeFolderIcon(folderPath)
+                                  : metadataService.setFolderIcon(folderPath, iconId)
+                      }
+                    : undefined,
+                color: {
+                    initial: metadataService.getFolderColor(folderPath) ?? null,
+                    apply: async color =>
+                        color === null ? metadataService.removeFolderColor(folderPath) : metadataService.setFolderColor(folderPath, color)
+                },
+                background: {
+                    initial: metadataService.getFolderBackgroundColor(folderPath) ?? null,
+                    apply: async color =>
+                        color === null
+                            ? metadataService.removeFolderBackgroundColor(folderPath)
+                            : metadataService.setFolderBackgroundColor(folderPath, color)
                 }
             });
             modal.open();

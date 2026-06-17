@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, Modal, setIcon } from 'obsidian';
+import { App, Modal, Scope, setIcon } from 'obsidian';
 import { strings } from '../i18n';
 import {
     DEFAULT_CUSTOM_COLOR,
@@ -34,9 +34,9 @@ import { ConfirmModal } from './ConfirmModal';
 
 const DEFAULT_COLOR = '#3b82f6';
 
-type ColorChannel = 'r' | 'g' | 'b' | 'a';
-
 type RGBAValues = { r: number; g: number; b: number; a: number };
+
+type HSVValues = { h: number; s: number; v: number };
 
 /** Palette display mode: default (read-only preset colors) or custom (user-editable colors) */
 type PaletteMode = 'default' | 'custom';
@@ -70,8 +70,18 @@ export class ColorPickerModal extends Modal {
     private hexInput!: HTMLInputElement;
     private previewCurrent!: HTMLDivElement;
     private previewNew!: HTMLDivElement;
-    private channelSliders!: Record<ColorChannel, HTMLInputElement>;
-    private channelValues!: Record<ColorChannel, HTMLSpanElement>;
+    private svArea!: HTMLDivElement;
+    private svThumb!: HTMLDivElement;
+    private hueSlider!: HTMLDivElement;
+    private hueThumb!: HTMLDivElement;
+    private alphaSlider!: HTMLDivElement;
+    private alphaThumb!: HTMLDivElement;
+    // HSV/alpha working state for the visual picker. Hue is preserved across
+    // achromatic colors so dragging brightness/saturation to gray and back keeps it.
+    private hue = 0;
+    private saturation = 0;
+    private value = 0;
+    private alpha = 255;
     private recentColorsContainer!: HTMLDivElement;
     private userColorsContainer!: HTMLDivElement;
     private userColorDots: HTMLDivElement[] = [];
@@ -92,6 +102,15 @@ export class ColorPickerModal extends Modal {
     private domDisposers: (() => void)[] = [];
     private dragGhostManager: DragGhostManager;
     private pendingPaletteSwitchHandle: number | null = null;
+    // Embedded mode: the picker surface is hosted inside another modal (AppearanceModal).
+    // In this mode there is no header or Apply/Cancel footer, and the host commits the value.
+    private embedded = false;
+    private onUserEdit?: () => void;
+    private cleared = false;
+    // True only while building the initial UI, so the first programmatic color
+    // load is not mistaken for a user edit.
+    private building = false;
+    private touched = false;
 
     /** Returns the last used palette mode across modal instances */
     public static getLastPaletteMode(): PaletteMode {
@@ -146,8 +165,56 @@ export class ColorPickerModal extends Modal {
 
         this.attachCloseButtonHandler();
 
+        this.buildPickerInto(contentEl, this.scope);
+
+        // Action buttons
+        const buttonContainer = contentEl.createDiv('nn-color-button-container');
+
+        // Cancel/restore button
+        const restoreDefaultText = strings.common.restoreDefault;
+        const cancelRemoveButton = buttonContainer.createEl('button', {
+            text: this.currentColor ? restoreDefaultText : strings.common.cancel
+        });
+        this.domDisposers.push(
+            addAsyncEventListener(cancelRemoveButton, 'click', () => {
+                if (this.currentColor) {
+                    return this.restoreDefaultColor();
+                }
+                this.close();
+                return undefined;
+            })
+        );
+
+        // Apply color button
+        const applyButton = buttonContainer.createEl('button', {
+            text: strings.modals.colorPicker.apply,
+            cls: 'mod-cta'
+        });
+        this.domDisposers.push(addAsyncEventListener(applyButton, 'click', () => this.applyColor()));
+    }
+
+    /**
+     * Mounts the color editing surface into an external container (used by AppearanceModal).
+     * No header or Apply/Cancel footer is created; the host commits the value via getColor().
+     */
+    mountInto(container: HTMLElement, scope: Scope, options: { onUserEdit?: () => void } = {}) {
+        this.embedded = true;
+        this.onUserEdit = options.onUserEdit;
+        this.buildPickerInto(container, scope);
+    }
+
+    /** Returns true if the user has changed the color since mounting (embedded mode) */
+    isTouched(): boolean {
+        return this.touched;
+    }
+
+    /**
+     * Builds the color editing surface (preview, palette, picker area, hex, recent) into a container.
+     */
+    private buildPickerInto(root: HTMLElement, scope: Scope) {
+        this.building = true;
         // Two-column layout
-        const mainContent = contentEl.createDiv('nn-color-picker-content');
+        const mainContent = root.createDiv('nn-color-picker-content');
 
         // Left column
         const leftColumn = mainContent.createDiv('nn-color-picker-left');
@@ -278,38 +345,46 @@ export class ColorPickerModal extends Modal {
         });
         this.hexInput.setAttribute('enterkeyhint', 'done');
 
-        // RGB sliders section
-        const rgbSection = rightColumn.createDiv('nn-rgb-section');
-        rgbSection.createDiv({ text: strings.modals.colorPicker.rgbLabel, cls: 'nn-rgb-title' });
-        this.channelSliders = {} as Record<ColorChannel, HTMLInputElement>;
-        this.channelValues = {} as Record<ColorChannel, HTMLSpanElement>;
+        // Visual color picker: 2D saturation/brightness area plus hue and alpha sliders
+        const colorAreaSection = rightColumn.createDiv('nn-color-area-section');
 
-        (['r', 'g', 'b', 'a'] as const).forEach(channel => {
-            const sliderRow = rgbSection.createDiv('nn-rgb-row');
-            sliderRow.createSpan({
-                text: channel.toUpperCase(),
-                cls: 'nn-rgb-label'
-            });
+        this.svArea = colorAreaSection.createDiv('nn-sv-area');
+        this.svArea.setAttribute('aria-label', strings.modals.colorPicker.saturationValueArea);
+        this.svThumb = this.svArea.createDiv('nn-sv-thumb');
+        this.attachPointerArea(
+            this.svArea,
+            (x, y) => {
+                this.saturation = x;
+                this.value = 1 - y;
+                this.commitHsvColor();
+            },
+            this.domDisposers
+        );
 
-            const slider = sliderRow.createEl('input', {
-                type: 'range',
-                cls: 'nn-rgb-slider',
-                attr: {
-                    'aria-label': `${channel.toUpperCase()} value`,
-                    min: '0',
-                    max: '255'
-                }
-            });
-            slider.classList.add(`nn-rgb-slider-${channel}`);
+        this.hueSlider = colorAreaSection.createDiv('nn-color-slider nn-hue-slider');
+        this.hueSlider.setAttribute('aria-label', strings.modals.colorPicker.hueSlider);
+        this.hueThumb = this.hueSlider.createDiv('nn-slider-thumb');
+        this.attachPointerArea(
+            this.hueSlider,
+            x => {
+                this.hue = x * 360;
+                this.commitHsvColor();
+            },
+            this.domDisposers
+        );
 
-            const value = sliderRow.createSpan({
-                cls: 'nn-rgb-value',
-                text: '0'
-            });
-
-            this.channelSliders[channel] = slider;
-            this.channelValues[channel] = value;
-        });
+        this.alphaSlider = colorAreaSection.createDiv('nn-color-slider nn-alpha-slider nn-checkerboard');
+        this.alphaSlider.setAttribute('aria-label', strings.modals.colorPicker.alphaSlider);
+        this.alphaSlider.createDiv('nn-alpha-gradient');
+        this.alphaThumb = this.alphaSlider.createDiv('nn-slider-thumb');
+        this.attachPointerArea(
+            this.alphaSlider,
+            x => {
+                this.alpha = Math.round(x * 255);
+                this.commitHsvColor();
+            },
+            this.domDisposers
+        );
 
         // Recent colors section
         const recentSection = rightColumn.createDiv('nn-recent-section');
@@ -330,40 +405,15 @@ export class ColorPickerModal extends Modal {
 
         this.recentColorsContainer = recentSection.createDiv('nn-recent-colors');
 
-        // Action buttons
-        const buttonContainer = contentEl.createDiv('nn-color-button-container');
-
-        // Cancel/restore button
-        const restoreDefaultText = strings.common.restoreDefault;
-        const cancelRemoveButton = buttonContainer.createEl('button', {
-            text: this.currentColor ? restoreDefaultText : strings.common.cancel
-        });
-        this.domDisposers.push(
-            addAsyncEventListener(cancelRemoveButton, 'click', () => {
-                if (this.currentColor) {
-                    return this.restoreDefaultColor();
-                }
-                this.close();
-                return undefined;
-            })
-        );
-
-        // Apply color button
-        const applyButton = buttonContainer.createEl('button', {
-            text: strings.modals.colorPicker.apply,
-            cls: 'mod-cta'
-        });
-        this.domDisposers.push(addAsyncEventListener(applyButton, 'click', () => this.applyColor()));
-
         // Set up event handlers
-        this.setupEventHandlers();
-        this.registerKeyboardShortcuts();
+        this.registerKeyboardShortcuts(scope);
         this.loadRecentColors();
         this.loadCustomColors();
         this.updatePaletteToggleState();
         this.renderUserColors();
         this.updatePresetButtonsVisibility();
         this.updateFromHex(this.selectedColor);
+        this.building = false;
 
         // Hex input real-time validation and update
         this.domDisposers.push(
@@ -380,13 +430,31 @@ export class ColorPickerModal extends Modal {
         );
     }
 
+    /** Returns the currently selected color as a hex string */
+    getColor(): string {
+        return this.selectedColor;
+    }
+
+    /** Marks the value for removal when the host commits */
+    markCleared(): void {
+        this.cleared = true;
+    }
+
+    /** Returns true if the value has been flagged for removal */
+    isCleared(): boolean {
+        return this.cleared;
+    }
+
+    /** Persists the current color into the recent colors history */
+    commitRecentColor(): void {
+        this.saveToRecentColors(this.selectedColor);
+    }
+
     /**
-     * Called when the modal is closed
+     * Releases listeners and persists pending custom-palette edits.
+     * Shared by standalone onClose and the embedding host.
      */
-    onClose() {
-        const { contentEl } = this;
-        contentEl.empty();
-        this.modalEl.removeClass('nn-color-picker-modal');
+    detach(): void {
         if (this.customColorsDirty) {
             this.settingsProvider.settings.userColors = [...this.customColors];
             runAsyncAction(() => this.settingsProvider.saveSettingsAndUpdate());
@@ -412,6 +480,16 @@ export class ColorPickerModal extends Modal {
         }
     }
 
+    /**
+     * Called when the modal is closed
+     */
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+        this.modalEl.removeClass('nn-color-picker-modal');
+        this.detach();
+    }
+
     // Attaches event handlers to the modal close button to ensure proper modal closure
     private attachCloseButtonHandler() {
         const closeButton = this.modalEl.querySelector<HTMLElement>('.modal-close-button');
@@ -430,27 +508,58 @@ export class ColorPickerModal extends Modal {
     }
 
     /**
-     * Set up event handlers for sliders
+     * Attaches pointer drag handling to a track element, emitting normalized
+     * [0,1] coordinates on press and drag. Pointer capture keeps the drag alive
+     * even when the cursor leaves the element.
      */
-    private setupEventHandlers() {
-        // RGB slider handlers
-        (Object.keys(this.channelSliders) as ColorChannel[]).forEach(channel => {
-            const slider = this.channelSliders[channel];
-            this.domDisposers.push(
-                addAsyncEventListener(slider, 'input', () => {
-                    if (!this.isUpdating) {
-                        this.updateFromRGB();
-                    }
-                })
-            );
-        });
+    private attachPointerArea(
+        element: HTMLElement,
+        onChange: (xRatio: number, yRatio: number) => void,
+        disposers: (() => void)[]
+    ) {
+        let dragging = false;
+
+        const emit = (event: PointerEvent) => {
+            const rect = element.getBoundingClientRect();
+            const x = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+            const y = rect.height > 0 ? (event.clientY - rect.top) / rect.height : 0;
+            onChange(Math.max(0, Math.min(1, x)), Math.max(0, Math.min(1, y)));
+        };
+
+        const stop = (event: PointerEvent) => {
+            if (!dragging) {
+                return;
+            }
+            dragging = false;
+            if (element.hasPointerCapture(event.pointerId)) {
+                element.releasePointerCapture(event.pointerId);
+            }
+        };
+
+        disposers.push(
+            addAsyncEventListener(element, 'pointerdown', event => {
+                dragging = true;
+                element.setPointerCapture(event.pointerId);
+                event.preventDefault();
+                emit(event);
+            })
+        );
+        disposers.push(
+            addAsyncEventListener(element, 'pointermove', event => {
+                if (dragging) {
+                    emit(event);
+                }
+            })
+        );
+        disposers.push(addAsyncEventListener(element, 'pointerup', stop));
+        disposers.push(addAsyncEventListener(element, 'pointercancel', stop));
     }
 
     /**
      * Register keyboard shortcuts for the modal
      */
-    private registerKeyboardShortcuts() {
-        this.scope.register([], 'Enter', event => {
+    private registerKeyboardShortcuts(scope: Scope) {
+        scope.register([], 'Enter', event => {
             if (activeDocument.activeElement === this.hexInput) {
                 event.preventDefault();
                 window.setTimeout(() => {
@@ -1195,51 +1304,145 @@ export class ColorPickerModal extends Modal {
         if (rgba) {
             normalizedHex = this.rgbaToHex(rgba);
             this.selectedColor = normalizedHex;
+            this.alpha = rgba.a;
+
+            const hsv = this.rgbToHsv(rgba);
+            // Keep the previous hue for grayscale colors so the hue slider doesn't jump
+            if (hsv.s > 0 && hsv.v > 0) {
+                this.hue = hsv.h;
+            }
+            this.saturation = hsv.s;
+            this.value = hsv.v;
+
             this.applySwatchColor(this.previewNew, normalizedHex);
             if (syncInput) {
                 this.hexInput.value = normalizedHex.substring(1);
             }
 
-            this.channelSliders.r.value = rgba.r.toString();
-            this.channelSliders.g.value = rgba.g.toString();
-            this.channelSliders.b.value = rgba.b.toString();
-            this.channelSliders.a.value = rgba.a.toString();
-            this.channelValues.r.setText(rgba.r.toString());
-            this.channelValues.g.setText(rgba.g.toString());
-            this.channelValues.b.setText(rgba.b.toString());
-            this.channelValues.a.setText(rgba.a.toString());
+            this.renderColorControls();
         }
 
         this.isUpdating = false;
 
         if (normalizedHex) {
             this.updateActiveCustomColor(normalizedHex);
+            // A user-driven color change un-marks pending removal and notifies the host.
+            // The initial programmatic load (building) must not count as a user edit.
+            if (this.embedded && !this.building) {
+                this.cleared = false;
+                this.touched = true;
+                this.onUserEdit?.();
+            }
         }
     }
 
     /**
-     * Update from RGB slider values
+     * Builds a hex color from the current HSV/alpha state and applies it
      */
-    private updateFromRGB() {
-        const r = parseInt(this.channelSliders.r.value, 10) || 0;
-        const g = parseInt(this.channelSliders.g.value, 10) || 0;
-        const b = parseInt(this.channelSliders.b.value, 10) || 0;
-        const a = parseInt(this.channelSliders.a.value, 10) || 0;
+    private commitHsvColor() {
+        if (this.isUpdating) {
+            return;
+        }
+        this.updateFromHex(this.composeHsvColor(), { syncInput: true });
+    }
 
-        // Update value displays
-        this.channelValues.r.setText(r.toString());
-        this.channelValues.g.setText(g.toString());
-        this.channelValues.b.setText(b.toString());
-        this.channelValues.a.setText(a.toString());
+    /**
+     * Combines current hue, saturation, value and alpha into a hex string
+     */
+    private composeHsvColor(): string {
+        const rgb = this.hsvToRgb(this.hue, this.saturation, this.value);
+        return this.rgbaToHex({ ...rgb, a: this.alpha });
+    }
 
-        const rgba: RGBAValues = { r, g, b, a };
-        const hex = this.rgbaToHex(rgba);
-        this.selectedColor = hex;
+    /**
+     * Positions the picker thumbs and refreshes the gradients to match current state
+     */
+    private renderColorControls() {
+        if (!this.svArea) {
+            return;
+        }
 
-        // Update preview and hex input
-        this.applySwatchColor(this.previewNew, hex);
-        this.hexInput.value = hex.substring(1);
-        this.updateActiveCustomColor(hex);
+        const pureHue = this.rgbaToHex({ ...this.hsvToRgb(this.hue, 1, 1), a: 255 });
+        const opaque = this.rgbaToHex({ ...this.hsvToRgb(this.hue, this.saturation, this.value), a: 255 });
+
+        this.svArea.style.setProperty('--nn-sv-hue', pureHue);
+        this.svThumb.style.left = `${this.saturation * 100}%`;
+        this.svThumb.style.top = `${(1 - this.value) * 100}%`;
+        this.svThumb.style.setProperty('--nn-thumb-color', opaque);
+
+        this.hueThumb.style.left = `${(this.hue / 360) * 100}%`;
+
+        this.alphaSlider.style.setProperty('--nn-alpha-color', opaque);
+        this.alphaThumb.style.left = `${(this.alpha / 255) * 100}%`;
+    }
+
+    /**
+     * Converts an RGBA color to HSV (hue 0-360, saturation/value 0-1)
+     */
+    private rgbToHsv({ r, g, b }: RGBAValues): HSVValues {
+        const red = r / 255;
+        const green = g / 255;
+        const blue = b / 255;
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
+        const delta = max - min;
+
+        let h = 0;
+        if (delta !== 0) {
+            if (max === red) {
+                h = ((green - blue) / delta) % 6;
+            } else if (max === green) {
+                h = (blue - red) / delta + 2;
+            } else {
+                h = (red - green) / delta + 4;
+            }
+            h *= 60;
+            if (h < 0) {
+                h += 360;
+            }
+        }
+
+        const s = max === 0 ? 0 : delta / max;
+        return { h, s, v: max };
+    }
+
+    /**
+     * Converts HSV (hue 0-360, saturation/value 0-1) to an RGB color (0-255)
+     */
+    private hsvToRgb(h: number, s: number, v: number): { r: number; g: number; b: number } {
+        const chroma = v * s;
+        const sector = ((((h % 360) + 360) % 360) / 60);
+        const x = chroma * (1 - Math.abs((sector % 2) - 1));
+        const m = v - chroma;
+
+        let r1 = 0;
+        let g1 = 0;
+        let b1 = 0;
+        if (sector < 1) {
+            r1 = chroma;
+            g1 = x;
+        } else if (sector < 2) {
+            r1 = x;
+            g1 = chroma;
+        } else if (sector < 3) {
+            g1 = chroma;
+            b1 = x;
+        } else if (sector < 4) {
+            g1 = x;
+            b1 = chroma;
+        } else if (sector < 5) {
+            r1 = x;
+            b1 = chroma;
+        } else {
+            r1 = chroma;
+            b1 = x;
+        }
+
+        return {
+            r: Math.round((r1 + m) * 255),
+            g: Math.round((g1 + m) * 255),
+            b: Math.round((b1 + m) * 255)
+        };
     }
 
     /**
