@@ -163,7 +163,8 @@ export const STRINGS_KO = {
         showFilesFromSubfolders: '하위 폴더 파일 표시',
         showNotesFromDescendants: '하위 항목 노트 표시',
         showFilesFromDescendants: '하위 항목 파일 표시',
-        search: '검색' // Tooltip for search button (English: Search)
+        search: '검색', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

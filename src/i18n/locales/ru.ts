@@ -164,7 +164,8 @@ export const STRINGS_RU = {
         showFilesFromSubfolders: 'Показать файлы из подпапок',
         showNotesFromDescendants: 'Показать заметки из потомков',
         showFilesFromDescendants: 'Показать файлы из потомков',
-        search: 'Поиск' // Tooltip for search button (English: Search)
+        search: 'Поиск', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Показать активный файл' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

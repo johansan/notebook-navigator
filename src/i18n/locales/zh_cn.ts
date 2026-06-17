@@ -163,7 +163,8 @@ export const STRINGS_ZH_CN = {
         showFilesFromSubfolders: '显示子文件夹的文件',
         showNotesFromDescendants: '显示后代的笔记',
         showFilesFromDescendants: '显示后代的文件',
-        search: '搜索' // Tooltip for search button (English: Search)
+        search: '搜索', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

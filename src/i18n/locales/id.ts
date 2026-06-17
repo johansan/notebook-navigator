@@ -164,7 +164,8 @@ export const STRINGS_ID = {
         showFilesFromSubfolders: 'Tampilkan file dari subfolder',
         showNotesFromDescendants: 'Tampilkan catatan dari turunan',
         showFilesFromDescendants: 'Tampilkan file dari turunan',
-        search: 'Cari'
+        search: 'Cari',
+        revealActiveFile: 'Reveal active file'
     },
     // Search input
     searchInput: {

@@ -164,7 +164,8 @@ export const STRINGS_VI = {
         showFilesFromSubfolders: 'Hiện tập tin từ thư mục con',
         showNotesFromDescendants: 'Hiện ghi chú từ phần tử con',
         showFilesFromDescendants: 'Hiện tập tin từ phần tử con',
-        search: 'Tìm kiếm' // Tooltip for search button (English: Search)
+        search: 'Tìm kiếm', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

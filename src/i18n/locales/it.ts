@@ -164,7 +164,8 @@ export const STRINGS_IT = {
         showFilesFromSubfolders: 'Mostra file da sottocartelle',
         showNotesFromDescendants: 'Mostra note da discendenti',
         showFilesFromDescendants: 'Mostra file da discendenti',
-        search: 'Cerca' // Tooltip for search button (English: Search)
+        search: 'Cerca', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

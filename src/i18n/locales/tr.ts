@@ -164,7 +164,8 @@ export const STRINGS_TR = {
         showFilesFromSubfolders: 'Alt klasörlerden dosyaları göster',
         showNotesFromDescendants: 'Alt öğelerden notları göster',
         showFilesFromDescendants: 'Alt öğelerden dosyaları göster',
-        search: 'Ara' // Tooltip for search button (English: Search)
+        search: 'Ara', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

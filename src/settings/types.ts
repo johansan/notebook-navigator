@@ -469,7 +469,7 @@ export function showsCharacterCount(display: TextCountDisplay): boolean {
 }
 
 /** Buttons available in the navigation toolbar */
-export type NavigationToolbarButtonId = 'toggleDualPane' | 'expandCollapse' | 'calendar' | 'hiddenItems' | 'rootReorder' | 'newFolder';
+export type NavigationToolbarButtonId = 'toggleDualPane' | 'expandCollapse' | 'calendar' | 'hiddenItems' | 'rootReorder' | 'newFolder' | 'revealActiveFile';
 
 /** Buttons available in the list toolbar */
 export type ListToolbarButtonId = 'back' | 'search' | 'descendants' | 'sort' | 'appearance' | 'newNote';

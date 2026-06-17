@@ -164,7 +164,8 @@ export const STRINGS_AR = {
         showFilesFromSubfolders: 'إظهار الملفات من المجلدات الفرعية',
         showNotesFromDescendants: 'إظهار الملاحظات من الفروع',
         showFilesFromDescendants: 'إظهار الملفات من الفروع',
-        search: 'بحث' // Tooltip for search button (English: Search)
+        search: 'بحث', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {

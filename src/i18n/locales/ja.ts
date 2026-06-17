@@ -163,7 +163,8 @@ export const STRINGS_JA = {
         showFilesFromSubfolders: 'サブフォルダのファイルを表示',
         showNotesFromDescendants: '子孫のノートを表示',
         showFilesFromDescendants: '子孫のファイルを表示',
-        search: '検索' // Tooltip for search button (English: Search)
+        search: '検索', // Tooltip for search button (English: Search)
+        revealActiveFile: 'Reveal active file' // Tooltip for button that reveals the currently open file in the navigator (English: Reveal active file)
     },
     // Search input
     searchInput: {
