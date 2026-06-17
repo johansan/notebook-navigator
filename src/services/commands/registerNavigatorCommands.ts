@@ -1252,7 +1252,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
                 return true;
             }
 
-            runAsyncAction(() => fileSystemOps.renameFile(folderNote));
+            runAsyncAction(() => fileSystemOps.renameFile(folderNote, plugin.settings));
             return true;
         }
     });

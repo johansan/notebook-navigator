@@ -45,10 +45,10 @@
  */
 
 import React, { useRef, useEffect, useImperativeHandle, forwardRef, useState, useMemo, useLayoutEffect } from 'react';
-import { TFile, Platform, type App } from 'obsidian';
+import { Menu, TFile, TFolder, Platform, type App } from 'obsidian';
 import { Virtualizer } from '@tanstack/react-virtual';
 import { useSelectionState, useSelectionDispatch } from '../context/SelectionContext';
-import { useServices } from '../context/ServicesContext';
+import { useServices, useMetadataService, useTagOperations, usePropertyOperations, useCommandQueue } from '../context/ServicesContext';
 import { useSettingsState, useActiveProfile, useSettingsDerived } from '../context/SettingsContext';
 import { useUIDispatch, useUIState } from '../context/UIStateContext';
 import { useExpansionDispatch, useExpansionState } from '../context/ExpansionContext';
@@ -75,7 +75,7 @@ import { ManualSortListContent } from './listPane/ManualSortListContent';
 import type { FileItemStorageHelpers } from './FileItem';
 import { type SearchShortcut } from '../types/shortcuts';
 import { type SearchNavFilterState } from '../types/search';
-import { EMPTY_LIST_MENU_TYPE } from '../utils/contextMenu';
+import { EMPTY_LIST_MENU_TYPE, buildFolderMenu } from '../utils/contextMenu';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import { type InclusionOperator } from '../utils/filterSearch';
 import type { FolderDecorationModel } from '../utils/folderDecoration';
@@ -270,7 +270,11 @@ function ListPaneTitleChrome({
 
 export const ListPane = React.memo(
     forwardRef<ListPaneHandle, ListPaneProps>(function ListPane(props, ref) {
-        const { app, isMobile, plugin, fileSystemOps } = useServices();
+        const { app, isMobile, plugin, fileSystemOps, tagTreeService, propertyTreeService } = useServices();
+        const metadataService = useMetadataService();
+        const tagOperations = useTagOperations();
+        const propertyOperations = usePropertyOperations();
+        const commandQueue = useCommandQueue();
         const {
             onNavigateToFolder,
             onRevealTag,
@@ -292,9 +296,72 @@ export const ListPane = React.memo(
         const showCalendar = uxPreferences.showCalendar;
         const appearanceSettings = useListPaneAppearance();
         const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = useFileCache();
-        const { noteShortcutKeysByPath, addNoteShortcut, removeShortcut } = useShortcuts();
+        const shortcuts = useShortcuts();
+        const { noteShortcutKeysByPath, addNoteShortcut, removeShortcut } = shortcuts;
         const uiState = useUIState();
         const uiDispatch = useUIDispatch();
+
+        // Appends the full folder operations menu (rename, delete, new note, etc.) to a
+        // list-pane group header context menu. Used for folder group headers, including the
+        // empty-subfolder headers we render. ListPaneVirtualContent owns the Menu instance and
+        // adds its own merge-notes / manual-sort items after these.
+        const appendFolderGroupHeaderMenu = React.useCallback(
+            (menu: Menu, folder: TFolder) => {
+                buildFolderMenu({
+                    folder,
+                    menu,
+                    services: {
+                        app,
+                        plugin,
+                        isMobile,
+                        fileSystemOps,
+                        metadataService,
+                        tagOperations,
+                        propertyOperations,
+                        tagTreeService,
+                        propertyTreeService,
+                        commandQueue,
+                        shortcuts,
+                        visibility: { includeDescendantNotes, showHiddenItems }
+                    },
+                    settings,
+                    state: {
+                        selectionState,
+                        expandedFolders: expansionState.expandedFolders,
+                        expandedTags: expansionState.expandedTags,
+                        expandedProperties: expansionState.expandedProperties
+                    },
+                    dispatchers: {
+                        selectionDispatch,
+                        expansionDispatch,
+                        uiDispatch
+                    }
+                });
+            },
+            [
+                app,
+                plugin,
+                isMobile,
+                fileSystemOps,
+                metadataService,
+                tagOperations,
+                propertyOperations,
+                tagTreeService,
+                propertyTreeService,
+                commandQueue,
+                shortcuts,
+                includeDescendantNotes,
+                showHiddenItems,
+                settings,
+                selectionState,
+                expansionState.expandedFolders,
+                expansionState.expandedTags,
+                expansionState.expandedProperties,
+                selectionDispatch,
+                expansionDispatch,
+                uiDispatch
+            ]
+        );
         const isVerticalDualPane = !uiState.singlePane && uiState.effectiveDualPaneOrientation === 'vertical';
         const calendarPlacement = settings.calendarPlacement;
         const shouldRenderCalendarOverlay =
@@ -1479,6 +1546,7 @@ export const ListPane = React.memo(
                             noteShortcutKeysByPath={noteShortcutKeysByPath}
                             onToggleNoteShortcut={toggleNoteShortcut}
                             onNavigateToFolder={onNavigateToFolder}
+                            onAppendFolderGroupHeaderMenu={appendFolderGroupHeaderMenu}
                             folderDecorationModel={folderDecorationModel}
                             fileItemPillDecorationModel={fileItemPillDecorationModel}
                             fileItemPillOrderModel={fileItemPillOrderModel}

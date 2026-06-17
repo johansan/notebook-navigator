@@ -923,9 +923,11 @@ export class FileSystemOperations {
      * Renames a file with user-provided name
      * Shows input modal pre-filled with current basename
      * Preserves original file extension if not provided in new name
+     * If the file is a folder note, also renames the parent folder to match
      * @param file - The file to rename
+     * @param settings - Plugin settings (used for folder note sync)
      */
-    async renameFile(file: TFile): Promise<void> {
+    async renameFile(file: TFile, settings?: NotebookNavigatorSettings): Promise<void> {
         // Check if file is Excalidraw to handle composite extension
         const isExcalidraw = isExcalidrawFile(file);
         const extension = file.extension;
@@ -984,9 +986,29 @@ export class FileSystemOperations {
                 }
 
                 try {
-                    const parentPath = file.parent?.path ?? '/';
+                    const parentFolder = file.parent;
+                    const parentPath = parentFolder?.path ?? '/';
                     const newPath = buildPathInFolder(parentPath, finalFileName);
                     await this.app.fileManager.renameFile(file, newPath);
+
+                    // If the renamed file was a folder note, rename the parent folder too
+                    if (
+                        settings?.enableFolderNotes &&
+                        parentFolder instanceof TFolder &&
+                        parentFolder.path !== '/' &&
+                        isFolderNote(file, parentFolder, getFolderNoteDetectionSettings(settings))
+                    ) {
+                        const newBaseName = isExcalidraw
+                            ? stripExcalidrawSuffix(finalFileName.replace(/\.[^.]+$/, ''))
+                            : finalFileName.replace(/\.[^.]+$/, '');
+                        if (newBaseName && newBaseName !== parentFolder.name) {
+                            const grandParentPath = parentFolder.parent?.path ?? '/';
+                            const newFolderPath = buildPathInFolder(grandParentPath, newBaseName);
+                            const previousFolderPath = parentFolder.path;
+                            await this.app.fileManager.renameFile(parentFolder, newFolderPath);
+                            await this.folderPathSettingsSync.syncHiddenFolderPathChange(previousFolderPath, newFolderPath);
+                        }
+                    }
                 } catch (error) {
                     this.notifyError(strings.fileSystem.errors.renameFile, error);
                 }

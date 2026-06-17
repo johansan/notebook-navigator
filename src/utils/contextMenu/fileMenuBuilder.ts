@@ -523,7 +523,7 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
                   : strings.contextMenu.file.renameFile;
             const iconId = isFolderNoteFile ? 'lucide-unlink' : 'lucide-pencil';
             setAsyncOnClick(item.setTitle(title).setIcon(iconId), async () => {
-                await fileSystemOps.renameFile(file);
+                await fileSystemOps.renameFile(file, settings);
             });
         });
 

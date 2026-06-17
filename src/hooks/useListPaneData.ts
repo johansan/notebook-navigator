@@ -46,6 +46,7 @@ import type { ActiveProfileState } from '../context/SettingsContext';
 import type { SearchProvider } from '../types/search';
 import type { PropertySelectionNodeId } from '../utils/propertyTree';
 import { getFilesForNavigationSelection } from '../utils/selectionUtils';
+import { getFolderNoteDetectionSettings } from '../utils/folderNotes';
 import { getListSortOverrideForSelection, isManualSortPropertyKey, resolveListSort } from '../utils/sortUtils';
 import { applyManualSortMarkdownOrder, getManualSortGroupHeaderPropertyKey } from '../utils/manualSort';
 import { getPropertyFieldsFromPropertyKeys } from '../utils/vaultProfiles';
@@ -183,6 +184,11 @@ export function useListPaneData({
         () => ({
             pinnedNotes: settings.pinnedNotes,
             filterPinnedByFolder: settings.filterPinnedByFolder,
+            folderNoteSettings: getFolderNoteDetectionSettings({
+                enableFolderNotes: settings.enableFolderNotes,
+                folderNoteName: settings.folderNoteName,
+                folderNoteNamePattern: settings.folderNoteNamePattern
+            }),
             pinnedGroupExpanded,
             showTags: settings.showTags,
             showFileTags: settings.showFileTags,
@@ -200,7 +206,10 @@ export function useListPaneData({
             settings.showCurrentFolderFilesAtBottom,
             settings.showFolderGroupPaths,
             settings.showFileTags,
-            settings.showTags
+            settings.showTags,
+            settings.enableFolderNotes,
+            settings.folderNoteName,
+            settings.folderNoteNamePattern
         ]
     );
 

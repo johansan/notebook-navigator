@@ -145,6 +145,8 @@ interface ListPaneVirtualContentProps {
     noteShortcutKeysByPath: ReadonlyMap<string, string>;
     onToggleNoteShortcut: (file: TFile, shortcutKey: string | undefined) => Promise<void>;
     onNavigateToFolder: (folderPath: string, options?: NavigateToFolderOptions) => void;
+    /** Appends full folder-operation items to a group header context menu (folder group headers only). */
+    onAppendFolderGroupHeaderMenu?: (menu: Menu, folder: TFolder) => void;
     folderDecorationModel: FolderDecorationModel;
     fileItemPillDecorationModel: FileItemPillDecorationModel;
     fileItemPillOrderModel: FileItemPillOrderModel;
@@ -463,6 +465,7 @@ export function ListPaneVirtualContent({
     noteShortcutKeysByPath,
     onToggleNoteShortcut,
     onNavigateToFolder,
+    onAppendFolderGroupHeaderMenu,
     folderDecorationModel,
     fileItemPillDecorationModel,
     fileItemPillOrderModel,
@@ -723,8 +726,19 @@ export function ListPaneVirtualContent({
             const markdownGroupFiles = getMarkdownFilesInOrder(groupFiles);
             const menu = new Menu();
             let hasItems = false;
+
+            // Folder group header: prepend the full folder operations menu (rename, delete, new note, etc.)
+            const headerFolder = header.folderGroupHeaderTarget?.folder ?? null;
+            if (headerFolder && onAppendFolderGroupHeaderMenu) {
+                onAppendFolderGroupHeaderMenu(menu, headerFolder);
+                hasItems = true;
+            }
+
             if (markdownGroupFiles.length >= 2) {
-                hasItems = addMergeNotesMenuItem({
+                if (hasItems) {
+                    menu.addSeparator();
+                }
+                const addedMergeItem = addMergeNotesMenuItem({
                     menu,
                     app,
                     commandQueue,
@@ -734,6 +748,7 @@ export function ListPaneVirtualContent({
                     defaultOutputName: header.baseLabel || strings.modals.mergeNotes.outputNamePlaceholder,
                     title: strings.contextMenu.file.mergeNotesInGroup
                 });
+                hasItems = hasItems || addedMergeItem;
             }
 
             if (manualSortGroupHeaderPropertyKey && header.manualSortHeaderFilePath) {
@@ -761,7 +776,7 @@ export function ListPaneVirtualContent({
             event.stopPropagation();
             menu.showAtMouseEvent(event.nativeEvent);
         },
-        [app, commandQueue, fileSystemOps, manualSortGroupHeaderPropertyKey, metadataService]
+        [app, commandQueue, fileSystemOps, manualSortGroupHeaderPropertyKey, metadataService, onAppendFolderGroupHeaderMenu]
     );
 
     const handleListMouseMove = useCallback(
@@ -847,7 +862,7 @@ export function ListPaneVirtualContent({
                     <div className="nn-empty-state">
                         <div className="nn-empty-message">{strings.listPane.emptyStateNoSelection}</div>
                     </div>
-                ) : hasNoFiles ? (
+                ) : hasNoFiles && !listItems.some(item => item.type === ListPaneItemType.HEADER && item.headerKind === 'folder') ? (
                     <div className="nn-empty-state">
                         <div className="nn-empty-message">{strings.listPane.emptyStateNoNotes}</div>
                     </div>

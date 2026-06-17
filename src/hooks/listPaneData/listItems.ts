@@ -25,6 +25,7 @@ import { strings } from '../../i18n';
 import { FILE_VISIBILITY, type FileVisibility } from '../../utils/fileTypeUtils';
 import { compareByAlphaSortOrder, getDateField, isDateSortOption, isPropertySortOption } from '../../utils/sortUtils';
 import { partitionPinnedFiles } from '../../utils/fileFinder';
+import { getFolderNote, type FolderNoteDetectionSettings } from '../../utils/folderNotes';
 import {
     formatManualSortGroupHeaderLabel,
     getCachedManualSortGroupHeader,
@@ -46,6 +47,7 @@ import type { ListPaneFolderPathSegment } from '../../types/virtualization';
 
 export interface ListPaneConfig {
     filterPinnedByFolder: boolean;
+    folderNoteSettings: FolderNoteDetectionSettings;
     folderGroupSortOrder: AlphaSortOrder;
     groupBy: ListNoteGroupingOption;
     pinnedGroupExpanded: boolean;
@@ -541,6 +543,52 @@ export function buildListItems({
             });
         });
 
+        // Add direct subfolders that have no files so they appear as empty folder headers
+        if (selectedFolder && selectionType === ItemType.FOLDER && baseFolderPath && Array.isArray(selectedFolder.children)) {
+            for (const child of selectedFolder.children) {
+                if (!(child instanceof TFolder)) {
+                    continue;
+                }
+                const groupKey = `folder:${child.path}`;
+                if (folderGroups.has(groupKey)) {
+                    continue;
+                }
+                folderGroups.set(groupKey, {
+                    label: child.name,
+                    sortLabel: child.name,
+                    files: [],
+                    isCurrentFolder: false,
+                    folderPath: normalizePath(child.path)
+                });
+            }
+        }
+
+        // Surface each folder's folder note at the top of its own group, so the current
+        // folder's note ends up at the top of the list and every subfolder note sits above
+        // that subfolder's other files. Only reorders notes already visible in the list
+        // (respects "hide folder note in list"); it never re-adds a hidden note.
+        if (selectionType === ItemType.FOLDER && listConfig.folderNoteSettings?.enableFolderNotes) {
+            for (const group of folderGroups.values()) {
+                const folder = group.isCurrentFolder
+                    ? selectedFolder
+                    : group.folderPath
+                      ? app.vault.getFolderByPath(group.folderPath)
+                      : null;
+                if (!(folder instanceof TFolder)) {
+                    continue;
+                }
+                const folderNote = getFolderNote(folder, listConfig.folderNoteSettings);
+                if (!folderNote) {
+                    continue;
+                }
+                const noteIndex = group.files.findIndex(file => file.path === folderNote.path);
+                if (noteIndex > 0) {
+                    group.files.splice(noteIndex, 1);
+                    group.files.unshift(folderNote);
+                }
+            }
+        }
+
         const orderedGroups = Array.from(folderGroups.entries())
             .map(([key, group]) => ({ key, ...group }))
             .sort((left, right) => {
@@ -563,7 +611,9 @@ export function buildListItems({
             ((listConfig.showCurrentFolderFilesAtBottom && (pinnedFiles.length > 0 || childFolderGroups.length > 0)) ||
                 (!listConfig.showCurrentFolderFilesAtBottom && pinnedFiles.length > 0));
         const renderFolderGroup = (group: (typeof orderedGroups)[number]): void => {
-            if (group.files.length === 0) {
+            // Empty current-folder group has nothing to render; empty child folders
+            // still render a header so empty subfolders appear in the list.
+            if (group.isCurrentFolder && group.files.length === 0) {
                 return;
             }
 
