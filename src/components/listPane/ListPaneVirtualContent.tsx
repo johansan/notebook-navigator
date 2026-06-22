@@ -424,6 +424,10 @@ export function getHoveredFilePathAtPointer(
     return getHoveredFilePathFromTarget(target);
 }
 
+function isFileListItem(item: ListPaneItem | undefined): item is ListPaneItem & { type: typeof ListPaneItemType.FILE; data: TFile } {
+    return item?.type === ListPaneItemType.FILE && item.data instanceof TFile;
+}
+
 export function ListPaneVirtualContent({
     listItems,
     rowVirtualizer,
@@ -803,6 +807,12 @@ export function ListPaneVirtualContent({
             settings.unfinishedTaskBackgroundColor
         ]
     );
+    const isFileVisuallySelected = useCallback(
+        (file: TFile): boolean => {
+            return isFileSelected(file) || (isFolderNavigation && lastSelectedFilePath === file.path);
+        },
+        [isFileSelected, isFolderNavigation, lastSelectedFilePath]
+    );
 
     const virtualItems = rowVirtualizer.getVirtualItems();
     const scrollOffset = rowVirtualizer.scrollOffset ?? 0;
@@ -863,22 +873,26 @@ export function ListPaneVirtualContent({
                                 return null;
                             }
 
-                            let isSelected = false;
-                            if (item.type === ListPaneItemType.FILE && item.data instanceof TFile) {
-                                isSelected = isFileSelected(item.data);
-                                if (!isSelected && isFolderNavigation && lastSelectedFilePath) {
-                                    isSelected = item.data.path === lastSelectedFilePath;
-                                }
-                            }
-
                             const nextItem = getItemAt(listItems, virtualItem.index + 1);
                             const previousItem = getItemAt(listItems, virtualItem.index - 1);
-                            const isFileRow = item.type === ListPaneItemType.FILE && item.data instanceof TFile;
+                            const isFileRow = isFileListItem(item);
+                            const isSelected = isFileRow && isFileVisuallySelected(item.data);
+                            const isPreviousFileSelected = isFileListItem(previousItem) && isFileVisuallySelected(previousItem.data);
+                            const isNextFileSelected = isFileListItem(nextItem) && isFileVisuallySelected(nextItem.data);
                             const hasCustomBackground = hasFileCustomBackground(item);
-                            const hasPreviousCustomBackground = hasCustomBackground && hasFileCustomBackground(previousItem);
-                            const hasNextCustomBackground = isFileRow && hasFileCustomBackground(nextItem);
+                            const previousHasCustomBackground = isFileRow && hasFileCustomBackground(previousItem);
+                            const nextHasCustomBackground = isFileRow && hasFileCustomBackground(nextItem);
+                            const hasPreviousCustomBackground = hasCustomBackground && previousHasCustomBackground;
+                            const hasNextCustomBackground = isFileRow && nextHasCustomBackground;
+                            const hasFilledBackground = isFileRow && (isSelected || hasCustomBackground);
+                            const hasPreviousFilledBackground =
+                                hasFilledBackground &&
+                                isFileListItem(previousItem) &&
+                                (isPreviousFileSelected || previousHasCustomBackground);
+                            const hasNextFilledBackground =
+                                hasFilledBackground && isFileListItem(nextItem) && (isNextFileSelected || nextHasCustomBackground);
                             const isLastFile =
-                                item.type === ListPaneItemType.FILE &&
+                                isFileRow &&
                                 (virtualItem.index === listItems.length - 1 ||
                                     (nextItem &&
                                         (nextItem.type === ListPaneItemType.HEADER ||
@@ -886,16 +900,8 @@ export function ListPaneVirtualContent({
                                             nextItem.type === ListPaneItemType.TOP_SPACER ||
                                             nextItem.type === ListPaneItemType.BOTTOM_SPACER)));
 
-                            const hasSelectedAbove =
-                                item.type === ListPaneItemType.FILE &&
-                                previousItem?.type === ListPaneItemType.FILE &&
-                                previousItem.data instanceof TFile &&
-                                isFileSelected(previousItem.data);
-                            const hasSelectedBelow =
-                                item.type === ListPaneItemType.FILE &&
-                                nextItem?.type === ListPaneItemType.FILE &&
-                                nextItem.data instanceof TFile &&
-                                isFileSelected(nextItem.data);
+                            const hasSelectedAbove = isFileRow && isPreviousFileSelected;
+                            const hasSelectedBelow = isFileRow && isNextFileSelected;
 
                             const groupHeaderLabel =
                                 item.type === ListPaneItemType.FILE ? (dateGroupLabelByIndex[virtualItem.index] ?? null) : null;
@@ -910,12 +916,8 @@ export function ListPaneVirtualContent({
                                 shouldHideCollapsedHeaderSeparator(headerModel) || shouldHideManualSortGoalHeaderSeparator(headerModel);
                             const hideFileSeparator =
                                 item.type === ListPaneItemType.FILE &&
-                                ((isSelected && !hasSelectedBelow) ||
-                                    (!isSelected &&
-                                        nextItem?.type === ListPaneItemType.FILE &&
-                                        nextItem.data instanceof TFile &&
-                                        isFileSelected(nextItem.data)));
-                            const hideHeaderSeparator = firstFileAfterHeader !== null && isFileSelected(firstFileAfterHeader);
+                                ((isSelected && !hasSelectedBelow) || (!isSelected && isNextFileSelected));
+                            const hideHeaderSeparator = firstFileAfterHeader !== null && isFileVisuallySelected(firstFileAfterHeader);
                             const hideSeparator = hideFileSeparator || hideHeaderSeparator;
 
                             const virtualItemStyle: VirtualRowStyle = {
@@ -937,6 +939,15 @@ export function ListPaneVirtualContent({
                             }
                             if (hideSeparator) {
                                 virtualItemClasses.push('nn-hide-separator-selection');
+                            }
+                            if (hasFilledBackground) {
+                                virtualItemClasses.push('nn-virtual-file-item-has-filled-background');
+                            }
+                            if (hasPreviousFilledBackground) {
+                                virtualItemClasses.push('nn-virtual-file-item-has-filled-background-previous');
+                            }
+                            if (hasNextFilledBackground) {
+                                virtualItemClasses.push('nn-virtual-file-item-has-filled-background-next');
                             }
                             if (hasCustomBackground) {
                                 virtualItemClasses.push('nn-virtual-file-item-has-custom-background');

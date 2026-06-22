@@ -119,16 +119,13 @@
     z-index: 2;
 }
 
-.nn-virtual-file-item-has-custom-background::after,
-.nn-virtual-file-item-has-custom-background-next::after {
-    display: none;
-}
-
+.nn-virtual-file-item-has-filled-background-previous > .nn-file,
 .nn-virtual-file-item-has-custom-background-previous > .nn-file.nn-has-custom-background {
     --nn-file-top-left-radius: 0;
     --nn-file-top-right-radius: 0;
 }
 
+.nn-virtual-file-item-has-filled-background-next > .nn-file,
 .nn-virtual-file-item-has-custom-background-next > .nn-file.nn-has-custom-background {
     --nn-file-bottom-left-radius: 0;
     --nn-file-bottom-right-radius: 0;
@@ -196,7 +193,11 @@
 
 /* Hide separator when flagged by renderer (selection) or context menu */
 .nn-virtual-file-item.nn-hide-separator-selection::after,
-.nn-virtual-file-item.nn-hide-separator-context-menu::after {
+.nn-virtual-file-item.nn-hide-separator-context-menu::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-filled-background::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-filled-background-next::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-custom-background::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-custom-background-next::after {
     display: none;
 }
 
@@ -324,17 +325,13 @@
     display: none;
 }
 
-.nn-manual-sort-row-hide-separator::after,
-.nn-manual-sort-row-has-custom-background::after,
-.nn-manual-sort-row-has-custom-background-next::after {
-    display: none;
-}
-
+.nn-manual-sort-row-has-filled-background-previous .nn-file,
 .nn-manual-sort-row-has-custom-background-previous .nn-file.nn-has-custom-background {
     --nn-file-top-left-radius: 0;
     --nn-file-top-right-radius: 0;
 }
 
+.nn-manual-sort-row-has-filled-background-next .nn-file,
 .nn-manual-sort-row-has-custom-background-next .nn-file.nn-has-custom-background {
     --nn-file-bottom-left-radius: 0;
     --nn-file-bottom-right-radius: 0;
@@ -361,6 +358,14 @@
     background-color: var(--nn-theme-list-separator-color);
     z-index: 100;
     pointer-events: none;
+}
+
+.nn-manual-sort-row.nn-manual-sort-row-hide-separator::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-filled-background::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-filled-background-next::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-custom-background::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-custom-background-next::after {
+    display: none;
 }
 
 .nn-manual-sort-file {

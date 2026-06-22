@@ -3711,16 +3711,13 @@ button.nn-navigation-calendar-day {
     z-index: 2;
 }
 
-.nn-virtual-file-item-has-custom-background::after,
-.nn-virtual-file-item-has-custom-background-next::after {
-    display: none;
-}
-
+.nn-virtual-file-item-has-filled-background-previous > .nn-file,
 .nn-virtual-file-item-has-custom-background-previous > .nn-file.nn-has-custom-background {
     --nn-file-top-left-radius: 0;
     --nn-file-top-right-radius: 0;
 }
 
+.nn-virtual-file-item-has-filled-background-next > .nn-file,
 .nn-virtual-file-item-has-custom-background-next > .nn-file.nn-has-custom-background {
     --nn-file-bottom-left-radius: 0;
     --nn-file-bottom-right-radius: 0;
@@ -3788,7 +3785,11 @@ button.nn-navigation-calendar-day {
 
 /* Hide separator when flagged by renderer (selection) or context menu */
 .nn-virtual-file-item.nn-hide-separator-selection::after,
-.nn-virtual-file-item.nn-hide-separator-context-menu::after {
+.nn-virtual-file-item.nn-hide-separator-context-menu::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-filled-background::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-filled-background-next::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-custom-background::after,
+.nn-virtual-file-item.nn-virtual-file-item-has-custom-background-next::after {
     display: none;
 }
 
@@ -3916,17 +3917,13 @@ button.nn-navigation-calendar-day {
     display: none;
 }
 
-.nn-manual-sort-row-hide-separator::after,
-.nn-manual-sort-row-has-custom-background::after,
-.nn-manual-sort-row-has-custom-background-next::after {
-    display: none;
-}
-
+.nn-manual-sort-row-has-filled-background-previous .nn-file,
 .nn-manual-sort-row-has-custom-background-previous .nn-file.nn-has-custom-background {
     --nn-file-top-left-radius: 0;
     --nn-file-top-right-radius: 0;
 }
 
+.nn-manual-sort-row-has-filled-background-next .nn-file,
 .nn-manual-sort-row-has-custom-background-next .nn-file.nn-has-custom-background {
     --nn-file-bottom-left-radius: 0;
     --nn-file-bottom-right-radius: 0;
@@ -3953,6 +3950,14 @@ button.nn-navigation-calendar-day {
     background-color: var(--nn-theme-list-separator-color);
     z-index: 100;
     pointer-events: none;
+}
+
+.nn-manual-sort-row.nn-manual-sort-row-hide-separator::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-filled-background::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-filled-background-next::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-custom-background::after,
+.nn-manual-sort-row.nn-manual-sort-row-has-custom-background-next::after {
+    display: none;
 }
 
 .nn-manual-sort-file {
@@ -4992,7 +4997,10 @@ button.nn-list-group-header-collapse-button .nn-list-group-header-icon {
     bottom: -0.5px;
     /* Pre-composited solid color prevents hairlines by blending alpha with pane background */
     background-color: var(--nn-selected-file-bg-color);
-    border-radius: var(--nn-file-item-border-radius);
+    border-top-left-radius: var(--nn-file-top-left-radius, var(--nn-file-item-border-radius));
+    border-top-right-radius: var(--nn-file-top-right-radius, var(--nn-file-item-border-radius));
+    border-bottom-left-radius: var(--nn-file-bottom-left-radius, var(--nn-file-item-border-radius));
+    border-bottom-right-radius: var(--nn-file-bottom-right-radius, var(--nn-file-item-border-radius));
     box-shadow: inset 0 0 0 var(--nn-theme-file-border-width) var(--nn-selected-file-border-color);
     z-index: 0; /* Below separator lines */
 }

@@ -147,6 +147,9 @@ interface ManualSortRowProps extends ManualSortRowContext {
     hasCustomBackground: boolean;
     hasPreviousCustomBackground: boolean;
     hasNextCustomBackground: boolean;
+    hasFilledBackground: boolean;
+    hasPreviousFilledBackground: boolean;
+    hasNextFilledBackground: boolean;
     header?: ManualSortGroupHeaderData;
     headerWordCount?: number;
     headerTargetWordCount?: number | null;
@@ -163,7 +166,10 @@ function getManualSortRowClassName({
     hideSeparator,
     hasCustomBackground,
     hasPreviousCustomBackground,
-    hasNextCustomBackground
+    hasNextCustomBackground,
+    hasFilledBackground,
+    hasPreviousFilledBackground,
+    hasNextFilledBackground
 }: Pick<
     ManualSortRowProps,
     | 'canReorder'
@@ -173,6 +179,9 @@ function getManualSortRowClassName({
     | 'hasCustomBackground'
     | 'hasPreviousCustomBackground'
     | 'hasNextCustomBackground'
+    | 'hasFilledBackground'
+    | 'hasPreviousFilledBackground'
+    | 'hasNextFilledBackground'
 > & {
     isSorting?: boolean;
 }): string {
@@ -181,6 +190,9 @@ function getManualSortRowClassName({
     if (isSorting) classes.push('nn-manual-sort-row-sorting');
     if (isLastEntry) classes.push('nn-manual-sort-row-last');
     if (hideSeparator) classes.push('nn-manual-sort-row-hide-separator');
+    if (hasFilledBackground) classes.push('nn-manual-sort-row-has-filled-background');
+    if (hasPreviousFilledBackground) classes.push('nn-manual-sort-row-has-filled-background-previous');
+    if (hasNextFilledBackground) classes.push('nn-manual-sort-row-has-filled-background-next');
     if (hasCustomBackground) classes.push('nn-manual-sort-row-has-custom-background');
     if (hasPreviousCustomBackground) classes.push('nn-manual-sort-row-has-custom-background-previous');
     if (hasNextCustomBackground) classes.push('nn-manual-sort-row-has-custom-background-next');
@@ -274,6 +286,9 @@ function SortableManualSortRow(props: ManualSortRowProps) {
         hasCustomBackground,
         hasPreviousCustomBackground,
         hasNextCustomBackground,
+        hasFilledBackground,
+        hasPreviousFilledBackground,
+        hasNextFilledBackground,
         headerFilePath,
         header,
         headerWordCount,
@@ -356,7 +371,10 @@ function SortableManualSortRow(props: ManualSortRowProps) {
                     hideSeparator,
                     hasCustomBackground,
                     hasPreviousCustomBackground,
-                    hasNextCustomBackground
+                    hasNextCustomBackground,
+                    hasFilledBackground,
+                    hasPreviousFilledBackground,
+                    hasNextFilledBackground
                 })}
                 {...(bindRowDrag ? attributes : undefined)}
                 {...(bindRowDrag ? listeners : undefined)}
@@ -368,8 +386,17 @@ function SortableManualSortRow(props: ManualSortRowProps) {
 }
 
 function ManualSortStaticRow(props: ManualSortRowProps) {
-    const { isLastEntry, isDragBlockMember, hideSeparator, hasCustomBackground, hasPreviousCustomBackground, hasNextCustomBackground } =
-        props;
+    const {
+        isLastEntry,
+        isDragBlockMember,
+        hideSeparator,
+        hasCustomBackground,
+        hasPreviousCustomBackground,
+        hasNextCustomBackground,
+        hasFilledBackground,
+        hasPreviousFilledBackground,
+        hasNextFilledBackground
+    } = props;
 
     return (
         <div
@@ -380,7 +407,10 @@ function ManualSortStaticRow(props: ManualSortRowProps) {
                 hideSeparator,
                 hasCustomBackground,
                 hasPreviousCustomBackground,
-                hasNextCustomBackground
+                hasNextCustomBackground,
+                hasFilledBackground,
+                hasPreviousFilledBackground,
+                hasNextFilledBackground
             })}
         >
             <ManualSortRowContent {...props} canReorder={false} />
@@ -511,9 +541,17 @@ function ManualSortGroup({
             const isLastEntry = !nextEntry;
             const isSelected = selectedFiles.has(entry.file.path);
             const isNextSelected = nextEntry ? selectedFiles.has(nextEntry.file.path) : false;
+            const isPreviousSelected = previousEntry ? selectedFiles.has(previousEntry.file.path) : false;
             const entryHasCustomBackground = hasFileBackground(entry);
-            const previousEntryHasCustomBackground = entryHasCustomBackground && hasFileBackground(previousEntry);
-            const nextEntryHasCustomBackground = hasFileBackground(nextEntry);
+            const previousEntryHasBackground = hasFileBackground(previousEntry);
+            const nextEntryHasBackground = hasFileBackground(nextEntry);
+            const previousEntryHasCustomBackground = entryHasCustomBackground && previousEntryHasBackground;
+            const nextEntryHasCustomBackground = nextEntryHasBackground;
+            const entryHasFilledBackground = isSelected || entryHasCustomBackground;
+            const previousEntryHasFilledBackground =
+                entryHasFilledBackground && Boolean(previousEntry && (isPreviousSelected || previousEntryHasBackground));
+            const nextEntryHasFilledBackground =
+                entryHasFilledBackground && Boolean(nextEntry && (isNextSelected || nextEntryHasBackground));
             const rowProps: ManualSortRowProps = {
                 ...rowContext,
                 entry,
@@ -527,6 +565,9 @@ function ManualSortGroup({
                 hasCustomBackground: entryHasCustomBackground,
                 hasPreviousCustomBackground: previousEntryHasCustomBackground,
                 hasNextCustomBackground: nextEntryHasCustomBackground,
+                hasFilledBackground: entryHasFilledBackground,
+                hasPreviousFilledBackground: previousEntryHasFilledBackground,
+                hasNextFilledBackground: nextEntryHasFilledBackground,
                 headerFilePath: row.headerFilePath,
                 header: row.header,
                 headerWordCount: row.headerWordCount,
