@@ -50,7 +50,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@tanstack/react-virtual": "^3.14.2",
+    "@tanstack/react-virtual": "^3.14.3",
     "emoji-regex-xs": "^2.0.1",
     "emojilib": "^4.0.3",
     "react": "^18.3.1",
