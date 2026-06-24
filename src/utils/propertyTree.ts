@@ -23,7 +23,7 @@ import type { NotebookNavigatorSettings } from '../settings/types';
 import type { IPropertyTreeProvider } from '../interfaces/IPropertyTreeProvider';
 import { isPathInExcludedFolder } from './fileFilters';
 import { getCachedCommaSeparatedList } from './commaSeparatedListUtils';
-import { normalizePropertyTreeValuePath, resolvePropertyDisplayText } from './propertyUtils';
+import { isPropertyLinkMarkupValue, normalizePropertyTreeValuePath, resolvePropertyDisplayText } from './propertyUtils';
 import { casefold } from './recordUtils';
 import { naturalCompare } from './sortUtils';
 import { isRecord } from './typeGuards';
@@ -398,6 +398,14 @@ function sortPropertyTreeNodes(tree: Map<string, PropertyTreeNode>): Map<string,
         sortedTree.set(node.key, node);
     });
     return sortedTree;
+}
+
+function shouldReplaceAssignmentValue(currentValue: string | undefined, candidateValue: string): boolean {
+    if (!currentValue) {
+        return true;
+    }
+
+    return !isPropertyLinkMarkupValue(currentValue) && isPropertyLinkMarkupValue(candidateValue);
 }
 
 function getConfiguredPropertyKeySet(propertyFields: string): ReadonlySet<string> {
@@ -898,10 +906,13 @@ function registerPropertyTreeEntry(
             valuePath: normalizedValuePath,
             name: displayValuePath,
             displayPath: displayValuePath,
+            assignmentValue: propertyEntry.value,
             children: new Map(),
             notesWithValue: new Set()
         };
         keyNode.children.set(nodeId, valueNode);
+    } else if (shouldReplaceAssignmentValue(valueNode.assignmentValue, propertyEntry.value)) {
+        valueNode.assignmentValue = propertyEntry.value;
     }
 
     valueNode.notesWithValue.add(path);

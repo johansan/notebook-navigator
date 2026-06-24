@@ -57,6 +57,7 @@ import { TagTreeService } from './TagTreeService';
 import type { PropertyTreeService } from './PropertyTreeService';
 import { CommandQueueService } from './CommandQueueService';
 import { showNotice } from '../utils/noticeUtils';
+import { isPropertyLinkMarkupValue } from '../utils/propertyUtils';
 import {
     getDirectPropertyKeyNoteCount,
     normalizePropertyNodeId,
@@ -71,6 +72,7 @@ import { EXCALIDRAW_PLUGIN_ID, TLDRAW_PLUGIN_ID } from '../constants/pluginIds';
 import { createDrawingWithPlugin, DrawingType, getDrawingFilePath, getDrawingTemplate } from '../utils/drawingFileUtils';
 import { resolveFolderDisplayName } from '../utils/folderDisplayName';
 import { normalizeTagPath } from '../utils/tagUtils';
+import type { PropertyTreeNode } from '../types/storage';
 import { FolderPathSettingsSync } from './fileSystem/FolderPathSettingsSync';
 import { FileMoveService } from './fileSystem/FileMoveService';
 import { FileDeletionService, type FileTrashResult } from './fileSystem/FileDeletionService';
@@ -351,6 +353,40 @@ export class FileSystemOperations {
         return null;
     }
 
+    private resolvePropertyNodeAssignmentText(
+        targetNode: PropertyTreeNode | null,
+        requestedValuePath: string | null,
+        normalizedValuePath: string | null
+    ): string | null {
+        if (!normalizedValuePath) {
+            return null;
+        }
+
+        const assignmentValue = targetNode?.kind === 'value' ? targetNode.assignmentValue?.trim() : undefined;
+        if (assignmentValue && normalizePropertyTreeValuePath(assignmentValue) === normalizedValuePath) {
+            return assignmentValue;
+        }
+
+        const displayValue = targetNode?.kind === 'value' ? targetNode.name.trim() : '';
+        if (displayValue && normalizePropertyTreeValuePath(displayValue) === normalizedValuePath) {
+            return displayValue;
+        }
+
+        if (requestedValuePath && normalizePropertyTreeValuePath(requestedValuePath) === normalizedValuePath) {
+            return requestedValuePath;
+        }
+
+        return normalizedValuePath;
+    }
+
+    private shouldKeepCurrentPropertyString(currentValue: string, desiredValue: string, normalizedDesiredValue: string): boolean {
+        if (normalizePropertyTreeValuePath(currentValue) !== normalizedDesiredValue) {
+            return false;
+        }
+
+        return !isPropertyLinkMarkupValue(desiredValue) || isPropertyLinkMarkupValue(currentValue);
+    }
+
     /**
      * Resolves a property node id into a normalized frontmatter assignment.
      */
@@ -382,11 +418,7 @@ export class FileSystemOperations {
         const nodeKind: 'key' | 'value' = targetNode?.kind === 'value' || parsedNode.valuePath ? 'value' : 'key';
         const requestedValuePath = requestedNode.valuePath?.trim() ?? null;
         const desiredValue: string | null =
-            nodeKind === 'key'
-                ? null
-                : targetNode && targetNode.kind === 'value' && targetNode.name.trim().length > 0
-                  ? targetNode.name.trim()
-                  : requestedValuePath || parsedNode.valuePath || null;
+            nodeKind === 'key' ? null : this.resolvePropertyNodeAssignmentText(targetNode, requestedValuePath, parsedNode.valuePath);
         const normalizedDesiredValue = desiredValue ? normalizePropertyTreeValuePath(desiredValue) : null;
         if (nodeKind === 'value' && !normalizedDesiredValue) {
             return null;
@@ -798,7 +830,7 @@ export class FileSystemOperations {
                     }
 
                     if (typeof currentValue === 'string') {
-                        if (normalizePropertyTreeValuePath(currentValue) === normalizedDesiredValue) {
+                        if (this.shouldKeepCurrentPropertyString(currentValue, desiredValue, normalizedDesiredValue)) {
                             return;
                         }
                         frontmatter[targetPropertyKey] = desiredValue;
@@ -810,7 +842,7 @@ export class FileSystemOperations {
                         const isSingleMatch =
                             currentValue.length === 1 &&
                             typeof currentValue[0] === 'string' &&
-                            normalizePropertyTreeValuePath(currentValue[0]) === normalizedDesiredValue;
+                            this.shouldKeepCurrentPropertyString(currentValue[0], desiredValue, normalizedDesiredValue);
                         if (isSingleMatch) {
                             return;
                         }

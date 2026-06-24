@@ -141,6 +141,7 @@ describe('buildPropertyTreeFromDatabase', () => {
 
         expect(valueNode?.name).toBe('Tech Insights 2026 Week 7');
         expect(valueNode?.displayPath).toBe('Tech Insights 2026 Week 7');
+        expect(valueNode?.assignmentValue).toBe(rawValue);
     });
 
     it('uses markdown-link display text for external value node labels', () => {
@@ -186,6 +187,7 @@ describe('buildPropertyTreeFromDatabase', () => {
         expect(normalizePropertyTreeValuePath(plainValue)).toBe(normalizePropertyTreeValuePath(wikiLinkValue));
         expect(keyNode?.children.size).toBe(1);
         expect(canonicalValueNode?.notesWithValue).toEqual(new Set(['notes/plain.md', 'notes/wikilink.md']));
+        expect(canonicalValueNode?.assignmentValue).toBe(wikiLinkValue);
     });
 
     it('respects included paths, excluded folders, and included property keys', () => {

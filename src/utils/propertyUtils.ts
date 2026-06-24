@@ -321,6 +321,12 @@ export function resolvePropertyDisplayText(rawValue: string): string {
     return parsePropertyLinkTarget(rawValue)?.displayText ?? rawValue.trim();
 }
 
+export function isPropertyLinkMarkupValue(rawValue: string): boolean {
+    const trimmed = rawValue.trim();
+    const linkTarget = parsePropertyLinkTarget(trimmed);
+    return linkTarget !== null && linkTarget.displayText !== trimmed;
+}
+
 export function isSupportedCssColor(value: string): boolean {
     const trimmed = value.trim();
     if (trimmed.length === 0) {

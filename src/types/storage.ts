@@ -50,6 +50,8 @@ export interface PropertyTreeNode {
     name: string;
     /** Canonical display path for UI. Key nodes use the display key, value nodes use the value label. */
     displayPath: string;
+    /** Original frontmatter string written when applying this value node to files. */
+    assignmentValue?: string;
     children: Map<string, PropertyTreeNode>;
     /** Set of file paths that have this exact key/value (key nodes include any value for the key). */
     notesWithValue: Set<string>;
