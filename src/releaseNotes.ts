@@ -40,6 +40,7 @@ export { compareVersions } from './utils/versionUtils';
  * Supported inline formats in both info and list items:
  * - Bold text: **text**
  * - Critical emphasis (red + bold): ==text==
+ * - Inline code: `code`
  * - Markdown link: [label](https://example.com)
  * - Auto-link: https://example.com
  *
@@ -48,7 +49,7 @@ export { compareVersions } from './utils/versionUtils';
  * - Paragraph break: double \n\n or two consecutive <br> markers
  *
  * Not supported:
- * - Italics, headings, inline code, HTML except <br> line break markers
+ * - Italics, headings, fenced code blocks, HTML except <br> line break markers
  *
  * Writing rules:
  * - Use factual, concise statements

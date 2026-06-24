@@ -38,13 +38,14 @@ export class WhatsNewModal extends Modal {
     // Renders limited formatting into a container element.
     // Supports:
     // - **bold**
+    // - `inline code`
     // - ==text== (highlight as red + bold)
     // - [label](https://link)
     // - Auto-link bare http(s) URLs
     // - Line breaks: single \n or <br> becomes <br>
     private renderFormattedText(container: HTMLElement, text: string): void {
         const renderInline = (segment: string, dest: HTMLElement) => {
-            const pattern = /==([\s\S]*?)==|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*|(https?:\/\/[^\s]+)/g;
+            const pattern = /==([\s\S]*?)==|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|(https?:\/\/[^\s]+)/g;
             let lastIndex = 0;
             let match: RegExpExecArray | null;
 
@@ -66,11 +67,14 @@ export class WhatsNewModal extends Modal {
                     a.setAttr('rel', 'noopener noreferrer');
                     a.setAttr('target', '_blank');
                 } else if (match[4]) {
-                    // **bold**
-                    dest.createEl('strong', { text: match[4] });
+                    // `inline code`
+                    dest.createEl('code', { text: match[4] });
                 } else if (match[5]) {
+                    // **bold**
+                    dest.createEl('strong', { text: match[5] });
+                } else if (match[6]) {
                     // Bare URL - strip trailing punctuation that's likely not part of the URL
-                    let url = match[5];
+                    let url = match[6];
                     let trailing = '';
                     const trailingMatch = url.match(/[.,;:!?)]+$/);
                     if (trailingMatch) {

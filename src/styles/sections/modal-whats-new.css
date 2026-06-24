@@ -263,6 +263,15 @@
     font-weight: 600;
 }
 
+.nn-whats-new-info code,
+.nn-whats-new-version li code {
+    color: var(--code-normal);
+    background-color: var(--code-background);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
 /* Support container */
 .nn-whats-new-support {
     margin-top: 0;
