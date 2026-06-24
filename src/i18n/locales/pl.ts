@@ -1206,6 +1206,14 @@ export const STRINGS_PL = {
                 name: 'Ikonki według typu pliku',
                 desc: 'Przypisuje ikonki do plików na podstawie ich rozszerzeń.'
             },
+            fileTypeIconPreset: {
+                name: 'Ustawienie wstępne ikonek plików',
+                desc: 'Wybierz wbudowane ikonki lub ustawienie wstępne pakietu ikonek. Niestandardowe reguły rozszerzeń zastępują to ustawienie wstępne.',
+                options: {
+                    none: 'Wbudowane ikonki'
+                },
+                notInstalledWarning: 'Ten pakiet ikonek nie jest zainstalowany. Zamiast niego są wyświetlane wbudowane ikonki.'
+            },
             fileTypeIconMap: {
                 name: 'Przypisanie ikonek na podstawie typu pliku',
                 desc: 'Pliki z danym rozszerzeniem otrzymują określoną ikonkę. Jedno przypisanie na linię: rozszerzenie=ikonka',

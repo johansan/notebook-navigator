@@ -1205,6 +1205,14 @@ export const STRINGS_DE = {
                 name: 'Symbole nach Dateityp',
                 desc: 'Symbole basierend auf der Dateierweiterung zuweisen.'
             },
+            fileTypeIconPreset: {
+                name: 'Dateisymbol-Voreinstellung',
+                desc: 'Die integrierten Symbole oder eine Symbolpaket-Voreinstellung auswählen. Benutzerdefinierte Erweiterungsregeln überschreiben diese Voreinstellung.',
+                options: {
+                    none: 'Integrierte Symbole'
+                },
+                notInstalledWarning: 'Dieses Symbolpaket ist nicht installiert. Stattdessen werden integrierte Symbole angezeigt.'
+            },
             fileTypeIconMap: {
                 name: 'Dateityp-Symbol-Zuordnung',
                 desc: 'Dateien mit der Erweiterung erhalten das angegebene Symbol. Eine Zuordnung pro Zeile: Erweiterung=Symbol',

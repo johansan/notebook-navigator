@@ -1207,6 +1207,14 @@ export const STRINGS_FR = {
                 name: 'Icônes par type de fichier',
                 desc: 'Attribuer des icônes aux fichiers selon leur extension.'
             },
+            fileTypeIconPreset: {
+                name: "Préréglage d'icônes de fichiers",
+                desc: "Choisissez les icônes intégrées ou un préréglage de pack d'icônes. Les règles d'extension personnalisées remplacent ce préréglage.",
+                options: {
+                    none: 'Icônes intégrées'
+                },
+                notInstalledWarning: "Ce pack d'icônes n'est pas installé. Les icônes intégrées sont affichées à la place."
+            },
             fileTypeIconMap: {
                 name: 'Correspondance type-icône',
                 desc: "Les fichiers avec l'extension obtiennent l'icône spécifiée. Une correspondance par ligne : extension=icône",

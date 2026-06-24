@@ -1190,6 +1190,14 @@ export const STRINGS_ZH_TW = {
                 name: '按檔案類型設定圖示',
                 desc: '根據檔案副檔名指派圖示。'
             },
+            fileTypeIconPreset: {
+                name: '檔案圖示預設',
+                desc: '選擇內建圖示或圖示包預設。自訂副檔名規則會覆寫此預設。',
+                options: {
+                    none: '內建圖示'
+                },
+                notInstalledWarning: '未安裝此圖示包。將改為顯示內建圖示。'
+            },
             fileTypeIconMap: {
                 name: '檔案類型圖示對應',
                 desc: '具有指定副檔名的檔案將取得指定圖示。每行一個對應：副檔名=圖示',

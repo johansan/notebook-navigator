@@ -1201,6 +1201,14 @@ export const STRINGS_TR = {
                 name: 'Dosya türüne göre simgeler',
                 desc: 'Dosyalara uzantılarına göre simge ata.'
             },
+            fileTypeIconPreset: {
+                name: 'Dosya simgesi ön ayarı',
+                desc: 'Yerleşik simgeleri veya bir simge paketi ön ayarını seçin. Özel uzantı kuralları bu ön ayarı geçersiz kılar.',
+                options: {
+                    none: 'Yerleşik simgeler'
+                },
+                notInstalledWarning: 'Bu simge paketi yüklü değil. Bunun yerine yerleşik simgeler gösterilir.'
+            },
             fileTypeIconMap: {
                 name: 'Dosya türü simge eşlemesi',
                 desc: 'Uzantıya sahip dosyalar belirtilen simgeyi alır. Satır başına bir eşleme: uzantı=simge',

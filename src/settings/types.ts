@@ -23,6 +23,7 @@ import type { FolderNoteCreationPreference } from '../types/folderNote';
 import type { KeyboardShortcutConfig } from '../utils/keyboardShortcuts';
 import type { ShortcutEntry } from '../types/shortcuts';
 import type { SearchProvider } from '../types/search';
+import type { FileTypeIconPreset } from '../utils/fileTypeIconPresets';
 
 export type SettingSyncMode = 'local' | 'synced';
 
@@ -691,6 +692,7 @@ export interface NotebookNavigatorSettings {
     fileNameIconMap: Record<string, string>;
     showCategoryIcons: boolean;
     fileTypeIconMap: Record<string, string>;
+    fileTypeIconPreset: FileTypeIconPreset;
     fileNameRows: number;
     useFolderColorForTitles: boolean;
     showFilePreview: boolean;

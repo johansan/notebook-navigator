@@ -42,6 +42,8 @@ import {
     type IconMapParseResult
 } from '../../../utils/iconizeFormat';
 import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../../utils/commaSeparatedListUtils';
+import { EXTERNAL_ICON_PROVIDERS } from '../../../services/icons/external/providerRegistry';
+import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../../utils/fileTypeIconPresets';
 
 function parseFileTypeIconMapText(value: string): IconMapParseResult {
     return parseIconMapText(value, normalizeFileTypeIconMapKey);
@@ -55,6 +57,37 @@ interface ColorSettingAccess {
     getValue: () => string;
     setValue: (value: string) => void;
     defaultValue: string;
+}
+
+interface FileTypeIconPresetOption {
+    label: string;
+    isInstalled: boolean;
+}
+
+function getFileTypeIconPresetOptions(context: SettingsTabContext): Record<string, FileTypeIconPresetOption> {
+    const options: Record<string, FileTypeIconPresetOption> = {
+        none: {
+            label: strings.settings.items.fileTypeIconPreset.options.none,
+            isInstalled: true
+        }
+    };
+
+    FILE_TYPE_ICON_PROVIDER_PRESET_IDS.forEach(providerId => {
+        const config = EXTERNAL_ICON_PROVIDERS[providerId];
+        const isInstalled = context.plugin.isExternalIconProviderInstalled(providerId);
+        options[providerId] = {
+            label: config.name,
+            isInstalled
+        };
+    });
+
+    return options;
+}
+
+function isSelectedFileTypeIconPresetUnavailable(context: SettingsTabContext): boolean {
+    const { plugin } = context;
+    const preset = plugin.settings.fileTypeIconPreset;
+    return isFileTypeIconProviderPreset(preset) && !plugin.isExternalIconProviderInstalled(preset);
 }
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
@@ -319,6 +352,48 @@ export function renderNotesTab(context: SettingsTabContext): void {
             })
         );
     const fileTypeIconMapSettingsEl = createDependentSettingsSection(showCategoryIconsSetting);
+
+    const fileTypeIconPresetSetting = new Setting(fileTypeIconMapSettingsEl)
+        .setName(strings.settings.items.fileTypeIconPreset.name)
+        .setDesc(strings.settings.items.fileTypeIconPreset.desc);
+    const fileTypeIconPresetWarningEl = fileTypeIconPresetSetting.descEl.createDiv({
+        cls: 'setting-item-description nn-setting-hidden nn-setting-warning'
+    });
+    const updateFileTypeIconPresetWarning = () => {
+        const showWarning = isSelectedFileTypeIconPresetUnavailable(context);
+        fileTypeIconPresetWarningEl.setText(showWarning ? strings.settings.items.fileTypeIconPreset.notInstalledWarning : '');
+        setElementVisible(fileTypeIconPresetWarningEl, showWarning);
+    };
+
+    fileTypeIconPresetSetting.addDropdown(dropdown => {
+        const options = getFileTypeIconPresetOptions(context);
+
+        Object.entries(options).forEach(([value, option]) => {
+            dropdown.addOption(value, option.label);
+        });
+
+        Object.entries(options).forEach(([value, option]) => {
+            if (option.isInstalled) {
+                return;
+            }
+
+            const optionEl = Array.from(dropdown.selectEl.options).find(candidate => candidate.value === value);
+            if (optionEl) {
+                optionEl.disabled = true;
+            }
+        });
+
+        dropdown.setValue(plugin.settings.fileTypeIconPreset).onChange(async value => {
+            if (!isFileTypeIconPreset(value)) {
+                return;
+            }
+
+            plugin.settings.fileTypeIconPreset = value;
+            updateFileTypeIconPresetWarning();
+            await plugin.saveSettingsAndUpdate();
+        });
+    });
+    updateFileTypeIconPresetWarning();
 
     const fileTypeIconMapSetting = context.createDebouncedTextAreaSetting(
         fileTypeIconMapSettingsEl,

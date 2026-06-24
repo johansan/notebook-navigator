@@ -1190,6 +1190,14 @@ export const STRINGS_ZH_CN = {
                 name: '按文件类型设置图标',
                 desc: '根据文件扩展名分配图标。'
             },
+            fileTypeIconPreset: {
+                name: '文件图标预设',
+                desc: '选择内置图标或图标包预设。自定义扩展名规则会覆盖此预设。',
+                options: {
+                    none: '内置图标'
+                },
+                notInstalledWarning: '未安装此图标包。将改为显示内置图标。'
+            },
             fileTypeIconMap: {
                 name: '文件类型图标映射',
                 desc: '具有指定扩展名的文件将获得指定图标。每行一个映射：扩展名=图标',

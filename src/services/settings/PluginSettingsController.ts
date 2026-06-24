@@ -99,6 +99,7 @@ import { sanitizeKeyboardShortcuts } from '../../utils/keyboardShortcuts';
 import { isPropertySortOption, pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
 import { isRecord } from '../../utils/typeGuards';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
+import { isFileTypeIconPreset } from '../../utils/fileTypeIconPresets';
 import {
     MAX_PANE_TRANSITION_DURATION_MS,
     MIN_PANE_TRANSITION_DURATION_MS,
@@ -1128,6 +1129,10 @@ export class PluginSettingsController {
 
         if (typeof this.currentSettings.showFilenameMatchIcons !== 'boolean') {
             this.currentSettings.showFilenameMatchIcons = DEFAULT_SETTINGS.showFilenameMatchIcons;
+        }
+
+        if (!isFileTypeIconPreset(this.currentSettings.fileTypeIconPreset)) {
+            this.currentSettings.fileTypeIconPreset = DEFAULT_SETTINGS.fileTypeIconPreset;
         }
 
         this.currentSettings.fileTypeIconMap = normalizeIconMap(

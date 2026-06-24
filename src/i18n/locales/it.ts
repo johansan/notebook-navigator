@@ -1199,6 +1199,14 @@ export const STRINGS_IT = {
                 name: 'Icone per tipo file',
                 desc: 'Assegna icone ai file in base alla loro estensione.'
             },
+            fileTypeIconPreset: {
+                name: 'Preset icone file',
+                desc: 'Scegli le icone integrate o un preset di pacchetto icone. Le regole di estensione personalizzate sostituiscono questo preset.',
+                options: {
+                    none: 'Icone integrate'
+                },
+                notInstalledWarning: 'Questo pacchetto icone non è installato. Vengono mostrate invece le icone integrate.'
+            },
             fileTypeIconMap: {
                 name: 'Mappa icone per tipo',
                 desc: "I file con l'estensione ottengono l'icona specificata. Una mappatura per riga: estensione=icona",

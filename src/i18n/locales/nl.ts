@@ -1205,6 +1205,14 @@ export const STRINGS_NL = {
                 name: 'Pictogrammen op bestandstype',
                 desc: 'Pictogrammen toewijzen aan bestanden op basis van hun extensie.'
             },
+            fileTypeIconPreset: {
+                name: 'Voorinstelling voor bestandspictogrammen',
+                desc: 'Kies de ingebouwde pictogrammen of een voorinstelling voor pictogrampakketten. Aangepaste extensieregels overschrijven deze voorinstelling.',
+                options: {
+                    none: 'Ingebouwde pictogrammen'
+                },
+                notInstalledWarning: 'Dit pictogrampakket is niet geïnstalleerd. In plaats daarvan worden ingebouwde pictogrammen getoond.'
+            },
             fileTypeIconMap: {
                 name: 'Bestandstype-pictogram toewijzing',
                 desc: 'Bestanden met de extensie krijgen het opgegeven pictogram. Eén toewijzing per regel: extensie=pictogram',

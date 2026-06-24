@@ -34,6 +34,8 @@ import {
     type IconMapParseResult
 } from '../../utils/iconizeFormat';
 import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../utils/commaSeparatedListUtils';
+import { EXTERNAL_ICON_PROVIDERS } from '../../services/icons/external/providerRegistry';
+import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../utils/fileTypeIconPresets';
 
 function parseFileTypeIconMapText(value: string): IconMapParseResult {
     return parseIconMapText(value, normalizeFileTypeIconMapKey);
@@ -47,6 +49,11 @@ interface ColorSettingAccess {
     getValue: () => string;
     setValue: (value: string) => void;
     defaultValue: string;
+}
+
+interface FileTypeIconPresetOption {
+    label: string;
+    isInstalled: boolean;
 }
 
 /** Builds native 1.13 setting definitions for note appearance and metadata settings. */
@@ -120,6 +127,13 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 name: strings.settings.items.showCategoryIcons.name,
                 desc: strings.settings.items.showCategoryIcons.desc,
                 visible: () => plugin.settings.showFileIcons
+            }),
+            createRenderDefinition({
+                name: strings.settings.items.fileTypeIconPreset.name,
+                desc: strings.settings.items.fileTypeIconPreset.desc,
+                aliases: Object.values(getFileTypeIconPresetOptions(context)).map(option => option.label),
+                visible: () => plugin.settings.showFileIcons && plugin.settings.showCategoryIcons,
+                render: setting => renderFileTypeIconPresetSetting(setting, context)
             }),
             createRenderDefinition({
                 name: strings.settings.items.fileTypeIconMap.name,
@@ -507,6 +521,77 @@ function renderColorSetting(
     });
 
     renderValue();
+}
+
+function getFileTypeIconPresetOptions(context: SettingsTabContext): Record<string, FileTypeIconPresetOption> {
+    const options: Record<string, FileTypeIconPresetOption> = {
+        none: {
+            label: strings.settings.items.fileTypeIconPreset.options.none,
+            isInstalled: true
+        }
+    };
+
+    FILE_TYPE_ICON_PROVIDER_PRESET_IDS.forEach(providerId => {
+        const config = EXTERNAL_ICON_PROVIDERS[providerId];
+        const isInstalled = context.plugin.isExternalIconProviderInstalled(providerId);
+        options[providerId] = {
+            label: config.name,
+            isInstalled
+        };
+    });
+
+    return options;
+}
+
+function isSelectedFileTypeIconPresetUnavailable(context: SettingsTabContext): boolean {
+    const { plugin } = context;
+    const preset = plugin.settings.fileTypeIconPreset;
+    return isFileTypeIconProviderPreset(preset) && !plugin.isExternalIconProviderInstalled(preset);
+}
+
+function renderFileTypeIconPresetSetting(setting: Setting, context: SettingsTabContext): void {
+    const { plugin } = context;
+    const options = getFileTypeIconPresetOptions(context);
+
+    setting.setName(strings.settings.items.fileTypeIconPreset.name).setDesc(strings.settings.items.fileTypeIconPreset.desc);
+    const warningEl = setting.descEl.createDiv({
+        cls: 'setting-item-description nn-setting-hidden nn-setting-warning'
+    });
+
+    const updateWarning = () => {
+        const showWarning = isSelectedFileTypeIconPresetUnavailable(context);
+        warningEl.setText(showWarning ? strings.settings.items.fileTypeIconPreset.notInstalledWarning : '');
+        warningEl.toggleClass('nn-setting-hidden', !showWarning);
+    };
+
+    setting.addDropdown(dropdown => {
+        Object.entries(options).forEach(([value, option]) => {
+            dropdown.addOption(value, option.label);
+        });
+
+        Object.entries(options).forEach(([value, option]) => {
+            if (option.isInstalled) {
+                return;
+            }
+
+            const optionEl = Array.from(dropdown.selectEl.options).find(candidate => candidate.value === value);
+            if (optionEl) {
+                optionEl.disabled = true;
+            }
+        });
+
+        dropdown.setValue(plugin.settings.fileTypeIconPreset).onChange(async value => {
+            if (!isFileTypeIconPreset(value)) {
+                return;
+            }
+
+            plugin.settings.fileTypeIconPreset = value;
+            updateWarning();
+            await plugin.saveSettingsAndUpdate();
+        });
+    });
+
+    updateWarning();
 }
 
 function renderIconMapSetting(

@@ -22,6 +22,12 @@ import { isRasterImageExtension } from './fileTypeUtils';
 import type { IconId } from '../services/icons/types';
 import { deserializeIconFromFrontmatter } from './iconizeFormat';
 import { casefoldPreservingWhitespace } from './recordUtils';
+import {
+    DEFAULT_FILE_TYPE_ICON_PRESET,
+    getFileTypeIconPresetMap,
+    isFileTypeIconProviderPreset,
+    type FileTypeIconPreset
+} from './fileTypeIconPresets';
 
 export type FileIconFallbackMode = 'none' | 'file';
 
@@ -36,6 +42,8 @@ export interface FileIconResolutionSettings {
     fileNameIconMap: Record<string, string>;
     showCategoryIcons: boolean;
     fileTypeIconMap: Record<string, string>;
+    fileTypeIconPreset: FileTypeIconPreset;
+    externalIconProviders?: Record<string, boolean>;
 }
 
 export interface FileNameIconNeedle {
@@ -131,12 +139,21 @@ export function resolveFileNameMatchIconId(basename: string, iconMap: Record<str
     return resolveFileNameMatchIconIdFromNeedles(basename, needles);
 }
 
-export function resolveFileTypeIconId(fileTypeIconKey: string, iconMap: Record<string, string>): IconId | null {
+export function resolveFileTypeIconId(
+    fileTypeIconKey: string,
+    iconMap: Record<string, string>,
+    fileTypeIconPreset: FileTypeIconPreset = DEFAULT_FILE_TYPE_ICON_PRESET,
+    externalIconProviders?: Record<string, boolean>
+): IconId | null {
     if (!fileTypeIconKey) {
         return null;
     }
 
-    const resolved = iconMap[fileTypeIconKey] ?? BUILT_IN_FILE_TYPE_ICON_MAP[fileTypeIconKey];
+    const presetMap =
+        isFileTypeIconProviderPreset(fileTypeIconPreset) && externalIconProviders && externalIconProviders[fileTypeIconPreset] !== true
+            ? null
+            : getFileTypeIconPresetMap(fileTypeIconPreset);
+    const resolved = iconMap[fileTypeIconKey] ?? presetMap?.[fileTypeIconKey] ?? BUILT_IN_FILE_TYPE_ICON_MAP[fileTypeIconKey];
     if (resolved) {
         const deserialized = deserializeIconFromFrontmatter(resolved);
         return deserialized ?? resolved;
@@ -171,7 +188,12 @@ export function resolveFileIconId(
     const allowCategoryIcons = options.allowCategoryIcons ?? settings.showCategoryIcons;
     if (allowCategoryIcons) {
         const fileTypeIconKey = resolveFileTypeIconKey(file, options.metadataCache);
-        const fileTypeIconId = resolveFileTypeIconId(fileTypeIconKey, settings.fileTypeIconMap);
+        const fileTypeIconId = resolveFileTypeIconId(
+            fileTypeIconKey,
+            settings.fileTypeIconMap,
+            settings.fileTypeIconPreset,
+            settings.externalIconProviders
+        );
         if (fileTypeIconId) {
             return fileTypeIconId;
         }
@@ -193,12 +215,14 @@ export function resolveFileDragIconId(
     file: TFile,
     fileTypeIconMap: Record<string, string>,
     metadataCache?: MetadataCacheLike,
-    preferredIconId?: IconId | null
+    preferredIconId?: IconId | null,
+    fileTypeIconPreset: FileTypeIconPreset = DEFAULT_FILE_TYPE_ICON_PRESET,
+    externalIconProviders?: Record<string, boolean>
 ): IconId {
     if (preferredIconId) {
         return preferredIconId;
     }
 
     const fileTypeIconKey = resolveFileTypeIconKey(file, metadataCache);
-    return resolveFileTypeIconId(fileTypeIconKey, fileTypeIconMap) ?? 'file';
+    return resolveFileTypeIconId(fileTypeIconKey, fileTypeIconMap, fileTypeIconPreset, externalIconProviders) ?? 'file';
 }

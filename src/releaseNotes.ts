@@ -95,6 +95,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-06-23',
         showOnUpdate: true,
         info: 'More optimizations! This release significantly reduces **preview work while typing.** Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
+        new: [
+            '**File icons.** New setting: ==File icon preset== in Notes > Icons by file type. You can now pick default file icons from one of the installed icon packs.'
+        ],
         improved: [
             '**Preview updates.** Notes without task metadata no longer read the full markdown file just to confirm task counts.',
             '**Preview updates.** Word and character counts now only update when a visible count, tooltip, or group header needs them.',

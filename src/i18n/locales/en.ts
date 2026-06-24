@@ -1197,6 +1197,14 @@ export const STRINGS_EN = {
                 name: 'Icons by file type',
                 desc: 'Assign icons to files based on their extension.'
             },
+            fileTypeIconPreset: {
+                name: 'File icon preset',
+                desc: 'Choose the built-in icons or an icon pack preset. Custom extension rules override this preset.',
+                options: {
+                    none: 'Built-in icons'
+                },
+                notInstalledWarning: 'This icon pack is not installed. Built-in icons are shown instead.'
+            },
             fileTypeIconMap: {
                 name: 'File type icon map',
                 desc: 'Files with the extension get the specified icon. One mapping per line: extension=icon',

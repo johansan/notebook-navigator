@@ -1204,6 +1204,14 @@ export const STRINGS_VI = {
                 name: 'Biểu tượng theo loại tệp',
                 desc: 'Gán biểu tượng cho tệp dựa trên phần mở rộng.'
             },
+            fileTypeIconPreset: {
+                name: 'Cài đặt sẵn biểu tượng tệp',
+                desc: 'Chọn biểu tượng tích hợp hoặc cài đặt sẵn của gói biểu tượng. Quy tắc phần mở rộng tùy chỉnh ghi đè cài đặt sẵn này.',
+                options: {
+                    none: 'Biểu tượng tích hợp'
+                },
+                notInstalledWarning: 'Gói biểu tượng này chưa được cài đặt. Biểu tượng tích hợp sẽ được hiển thị thay thế.'
+            },
             fileTypeIconMap: {
                 name: 'Bản đồ biểu tượng loại tệp',
                 desc: 'Tệp có phần mở rộng sẽ nhận biểu tượng được chỉ định. Một ánh xạ mỗi dòng: phần mở rộng=biểu tượng',

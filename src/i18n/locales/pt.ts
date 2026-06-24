@@ -1203,6 +1203,14 @@ export const STRINGS_PT = {
                 name: 'Ícones por tipo de ficheiro',
                 desc: 'Atribuir ícones a ficheiros com base na sua extensão.'
             },
+            fileTypeIconPreset: {
+                name: 'Predefinição de ícones de ficheiro',
+                desc: 'Escolher os ícones integrados ou uma predefinição de pacote de ícones. As regras de extensão personalizadas substituem esta predefinição.',
+                options: {
+                    none: 'Ícones integrados'
+                },
+                notInstalledWarning: 'Este pacote de ícones não está instalado. Em vez disso, são mostrados os ícones integrados.'
+            },
             fileTypeIconMap: {
                 name: 'Mapa de ícones por tipo',
                 desc: 'Os ficheiros com a extensão recebem o ícone especificado. Um mapeamento por linha: extensão=ícone',

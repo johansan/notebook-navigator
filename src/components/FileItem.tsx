@@ -628,7 +628,9 @@ export const FileItem = React.memo(function FileItem({
                 showFilenameMatchIcons: settings.showFilenameMatchIcons,
                 fileNameIconMap: settings.fileNameIconMap,
                 showCategoryIcons: settings.showCategoryIcons,
-                fileTypeIconMap: settings.fileTypeIconMap
+                fileTypeIconMap: settings.fileTypeIconMap,
+                fileTypeIconPreset: settings.fileTypeIconPreset,
+                externalIconProviders: settings.externalIconProviders
             },
             {
                 customIconId: fileIconId ?? folderIconId,
@@ -651,6 +653,8 @@ export const FileItem = React.memo(function FileItem({
         isExternalFile,
         metadataVersion,
         settings.fileNameIconMap,
+        settings.externalIconProviders,
+        settings.fileTypeIconPreset,
         settings.fileTypeIconMap,
         settings.showCategoryIcons,
         settings.showFilenameMatchIcons,
@@ -664,8 +668,23 @@ export const FileItem = React.memo(function FileItem({
     // Icon to use when dragging the file
     const dragIconId = useMemo(() => {
         void metadataVersion;
-        return resolveFileDragIconId(file, settings.fileTypeIconMap, app.metadataCache, effectiveFileIconId);
-    }, [app.metadataCache, effectiveFileIconId, file, metadataVersion, settings.fileTypeIconMap]);
+        return resolveFileDragIconId(
+            file,
+            settings.fileTypeIconMap,
+            app.metadataCache,
+            effectiveFileIconId,
+            settings.fileTypeIconPreset,
+            settings.externalIconProviders
+        );
+    }, [
+        app.metadataCache,
+        effectiveFileIconId,
+        file,
+        metadataVersion,
+        settings.externalIconProviders,
+        settings.fileTypeIconMap,
+        settings.fileTypeIconPreset
+    ]);
 
     // Determines whether to display the file icon based on icon availability
     const shouldShowFileIcon = useMemo(() => {

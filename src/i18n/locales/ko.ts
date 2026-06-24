@@ -1200,6 +1200,14 @@ export const STRINGS_KO = {
                 name: '파일 유형으로 아이콘 설정',
                 desc: '파일 확장자를 기반으로 아이콘을 지정합니다.'
             },
+            fileTypeIconPreset: {
+                name: '파일 아이콘 프리셋',
+                desc: '기본 제공 아이콘 또는 아이콘 팩 프리셋을 선택합니다. 사용자 지정 확장자 규칙은 이 프리셋보다 우선합니다.',
+                options: {
+                    none: '기본 제공 아이콘'
+                },
+                notInstalledWarning: '이 아이콘 팩이 설치되어 있지 않습니다. 대신 기본 제공 아이콘이 표시됩니다.'
+            },
             fileTypeIconMap: {
                 name: '파일 유형 아이콘 맵',
                 desc: '확장자가 있는 파일에 지정된 아이콘이 적용됩니다. 줄당 하나의 매핑: 확장자=아이콘',
