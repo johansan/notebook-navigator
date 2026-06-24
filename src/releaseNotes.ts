@@ -103,6 +103,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Preview updates.** Tag and property lists now refresh only when metadata affects membership or sorting.',
             '**Preview updates.** Calendar titles now refresh only when the configured frontmatter title changes.'
         ],
+        changed: [
+            '**Merge notes.** Source notes are no longer moved to trash by default. Select the option in the merge dialog to move them to trash.'
+        ],
         fixed: [
             '**Manual sort.** Fixed a problem when **Show notes from subfolders / descendants** was turned on. For example, a parent folder could have note `1`, a subfolder with notes `2.0` and `2.1`, and then note `3`. After manually sorting the subfolder notes, the parent folder could show `2.0`, `2.1`, `1`, `3` instead of `1`, `2.0`, `2.1`, `3`. The parent folder now keeps the correct order after sorting notes inside the subfolder.'
         ]

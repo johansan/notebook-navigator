@@ -24,7 +24,7 @@ import { localStorage } from '../utils/localStorage';
 import { normalizeMergeOutputBaseName, type MergeNotesSeparator } from '../utils/noteMerge';
 
 const DEFAULT_MERGE_NOTES_SEPARATOR: MergeNotesSeparator = 'blank-line';
-const DEFAULT_MERGE_NOTES_MOVE_SOURCES_TO_TRASH = true;
+const DEFAULT_MERGE_NOTES_MOVE_SOURCES_TO_TRASH = false;
 
 export interface MergeNotesModalSubmitValue {
     outputName: string;
