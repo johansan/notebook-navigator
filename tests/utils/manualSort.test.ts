@@ -17,9 +17,10 @@
  */
 
 import { describe, expect, it, vi } from 'vitest';
-import type { App, TFile } from 'obsidian';
+import { TFolder, type App, type TFile } from 'obsidian';
 import {
     applyManualSortMarkdownOrder,
+    applyManualSortTargetOrderToPlanningScope,
     areManualSortAssignmentsCached,
     buildManualSortInsertionRankPlan,
     buildManualSortOrderAssignments,
@@ -28,6 +29,7 @@ import {
     getCachedManualSortGroupHeader,
     getCachedManualSortGroupHeaderValue,
     getCachedManualSortRank,
+    getFolderPlanningInsertionIndex,
     getManualSortGroupHeaderPropertyKey,
     isManualSortValueEqual,
     isValidManualSortPropertyKey,
@@ -59,6 +61,26 @@ function createApp(files: readonly (TFile & { frontmatter: Record<string, unknow
         },
         fileManager: { processFrontMatter }
     } as unknown as App;
+}
+
+function createFolder(path: string, parent: TFolder | null = null): TFolder {
+    const folder = new TFolder(path) as TFolder & { children: Array<TFolder | TFile>; parent: TFolder | null };
+    folder.children = [];
+    folder.parent = parent;
+    return folder;
+}
+
+function addChildFolder(parent: TFolder, path: string): TFolder {
+    const folder = createFolder(path, parent);
+    (parent as TFolder & { children: Array<TFolder | TFile> }).children.push(folder);
+    return folder;
+}
+
+function addChildFile(parent: TFolder, path: string): TFile {
+    const file = createTestTFile(path);
+    (file as TFile & { parent: TFolder }).parent = parent;
+    (parent as TFolder & { children: Array<TFolder | TFile> }).children.push(file);
+    return file;
 }
 
 describe('manual sort helpers', () => {
@@ -440,6 +462,56 @@ describe('manual sort helpers', () => {
         expect(plan.assignments).toEqual([{ path: moved.path, value: 1500 }]);
     });
 
+    it('uses parent-scope anchors when a child-folder note moves above a sibling note', () => {
+        const parentFirst = { path: 'notes/1.md', extension: 'md' };
+        const childMoved = { path: 'notes/Folder/2.0.md', extension: 'md' };
+        const childExisting = { path: 'notes/Folder/2.1.md', extension: 'md' };
+        const parentLast = { path: 'notes/3.md', extension: 'md' };
+        const planningFiles = [parentFirst, childExisting, parentLast, childMoved];
+        const previousChildFiles = [childExisting, childMoved];
+        const nextChildFiles = [childMoved, childExisting];
+
+        const nextPlanningFiles = applyManualSortTargetOrderToPlanningScope(planningFiles, previousChildFiles, nextChildFiles);
+        const plan = buildManualSortRankPlan(
+            nextPlanningFiles,
+            new Set([childMoved.path]),
+            new Map([
+                [parentFirst.path, 1000],
+                [childExisting.path, 2000],
+                [parentLast.path, 3000]
+            ])
+        );
+
+        expect(nextPlanningFiles).toEqual([parentFirst, childMoved, childExisting, parentLast]);
+        expect(plan.requiresCompaction).toBe(false);
+        expect(plan.assignments).toEqual([{ path: childMoved.path, value: 1500 }]);
+    });
+
+    it('uses ancestor-scope anchors when a deeply nested note moves above a sibling note', () => {
+        const ancestorFirst = { path: 'notes/1.md', extension: 'md' };
+        const childMoved = { path: 'notes/Folder/Deep/2.0.md', extension: 'md' };
+        const childExisting = { path: 'notes/Folder/Deep/2.1.md', extension: 'md' };
+        const ancestorLast = { path: 'notes/3.md', extension: 'md' };
+        const planningFiles = [ancestorFirst, childExisting, ancestorLast, childMoved];
+        const previousChildFiles = [childExisting, childMoved];
+        const nextChildFiles = [childMoved, childExisting];
+
+        const nextPlanningFiles = applyManualSortTargetOrderToPlanningScope(planningFiles, previousChildFiles, nextChildFiles);
+        const plan = buildManualSortRankPlan(
+            nextPlanningFiles,
+            new Set([childMoved.path]),
+            new Map([
+                [ancestorFirst.path, 1000],
+                [childExisting.path, 2000],
+                [ancestorLast.path, 3000]
+            ])
+        );
+
+        expect(nextPlanningFiles).toEqual([ancestorFirst, childMoved, childExisting, ancestorLast]);
+        expect(plan.requiresCompaction).toBe(false);
+        expect(plan.assignments).toEqual([{ path: childMoved.path, value: 1500 }]);
+    });
+
     it('ranks the needed prefix when the first move starts from an unranked list', () => {
         const first = { path: 'notes/first.md', extension: 'md' };
         const second = { path: 'notes/second.md', extension: 'md' };
@@ -532,6 +604,76 @@ describe('manual sort helpers', () => {
         expect(plan?.files).toEqual([inserted]);
         expect(plan?.assignments).toEqual([{ path: inserted.path, value: 2000 }]);
         expect(plan?.requiresCompaction).toBe(false);
+    });
+
+    it('places a new child-folder note between parent-scope ranked neighbors', () => {
+        const parentFirst = { path: 'notes/1.md', extension: 'md' };
+        const childExisting = { path: 'notes/Folder/2.1.md', extension: 'md' };
+        const inserted = { path: 'notes/Folder/2.0.md', extension: 'md' };
+        const parentLast = { path: 'notes/3.md', extension: 'md' };
+
+        const plan = buildManualSortInsertionRankPlan({
+            files: [childExisting],
+            planningFiles: [parentFirst, childExisting, parentLast],
+            insertedFile: inserted,
+            placement: 'top',
+            selectedPath: null,
+            rankByPath: new Map([
+                [parentFirst.path, 1000],
+                [childExisting.path, 2000],
+                [parentLast.path, 3000]
+            ])
+        });
+
+        expect(plan?.files).toEqual([parentFirst, inserted, childExisting, parentLast]);
+        expect(plan?.assignments).toEqual([{ path: inserted.path, value: 1500 }]);
+        expect(plan?.requiresCompaction).toBe(false);
+    });
+
+    it('places the first child-folder note at the supplied ancestor-scope insertion point', () => {
+        const parentFirst = { path: 'notes/1.md', extension: 'md' };
+        const inserted = { path: 'notes/Folder/2.0.md', extension: 'md' };
+        const parentLast = { path: 'notes/3.md', extension: 'md' };
+
+        const plan = buildManualSortInsertionRankPlan({
+            files: [],
+            planningFiles: [parentFirst, parentLast],
+            planningInsertionIndex: 1,
+            insertedFile: inserted,
+            placement: 'top',
+            selectedPath: null,
+            rankByPath: new Map([
+                [parentFirst.path, 1000],
+                [parentLast.path, 3000]
+            ])
+        });
+
+        expect(plan?.files).toEqual([parentFirst, inserted, parentLast]);
+        expect(plan?.assignments).toEqual([{ path: inserted.path, value: 2000 }]);
+        expect(plan?.requiresCompaction).toBe(false);
+    });
+
+    it('finds a planning insertion point from ancestor folder siblings', () => {
+        const root = createFolder('/');
+        const notes = addChildFolder(root, 'notes');
+        const first = addChildFile(notes, 'notes/1.md');
+        const folder = addChildFolder(notes, 'notes/Folder');
+        const deep = addChildFolder(folder, 'notes/Folder/Deep');
+        const last = addChildFile(notes, 'notes/3.md');
+
+        expect(getFolderPlanningInsertionIndex(deep, [first, last], [first, last])).toBe(1);
+    });
+
+    it('finds a planning insertion point from visible files inside sibling folders', () => {
+        const root = createFolder('/');
+        const notes = addChildFolder(root, 'notes');
+        const beforeFolder = addChildFolder(notes, 'notes/Before');
+        const beforeFile = addChildFile(beforeFolder, 'notes/Before/1.md');
+        const folder = addChildFolder(notes, 'notes/Folder');
+        const afterFolder = addChildFolder(notes, 'notes/After');
+        const afterFile = addChildFile(afterFolder, 'notes/After/3.md');
+
+        expect(getFolderPlanningInsertionIndex(folder, [beforeFile, afterFile], [beforeFile, afterFile])).toBe(1);
     });
 
     it('compacts ranks when a new note is inserted below a selected note without a gap', () => {

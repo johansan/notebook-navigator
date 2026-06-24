@@ -300,6 +300,8 @@ export class FileSystemOperations {
 
         const plan = buildManualSortInsertionRankPlan({
             files: context.files,
+            planningFiles: context.planningFiles,
+            planningInsertionIndex: context.planningInsertionIndex,
             insertedFile: file,
             placement: context.placement,
             selectedPath: context.selectedFilePath,

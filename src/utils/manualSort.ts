@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { App, TFile } from 'obsidian';
+import { TFile, TFolder, type App, type TAbstractFile } from 'obsidian';
 import { strings } from '../i18n';
 import type { ManualSortNewNotePlacement, NotebookNavigatorSettings } from '../settings/types';
 import { getErrorMessage } from './errorUtils';
@@ -97,6 +97,8 @@ export interface ManualSortNewFilePlacementContext {
     targetKey: string;
     propertyKey: string;
     files: readonly TFile[];
+    planningFiles?: readonly TFile[];
+    planningInsertionIndex?: number;
     selectedFilePath: string | null;
     rankByPath: ReadonlyMap<string, number>;
     placement: ManualSortNewNotePlacement;
@@ -104,6 +106,8 @@ export interface ManualSortNewFilePlacementContext {
 
 interface ManualSortInsertionRankPlanOptions<T extends ManualSortFileLike> {
     files: readonly T[];
+    planningFiles?: readonly T[];
+    planningInsertionIndex?: number;
     insertedFile: T;
     placement: ManualSortNewNotePlacement;
     selectedPath: string | null;
@@ -327,6 +331,157 @@ export function buildManualSortOrderAssignments<T extends ManualSortFileLike>(fi
         path: file.path,
         value: (index + 1) * MANUAL_SORT_RANK_STEP
     }));
+}
+
+function getFolderDescendantPrefix(folder: TFolder): string {
+    return folder.path === '/' ? '' : `${folder.path}/`;
+}
+
+function findBoundaryFilePathForTreeItem(
+    item: TAbstractFile,
+    planningBaseFiles: readonly TFile[],
+    planningBasePathSet: ReadonlySet<string>,
+    direction: 'before' | 'after'
+): string | null {
+    if (item instanceof TFile) {
+        return planningBasePathSet.has(item.path) ? item.path : null;
+    }
+
+    if (!(item instanceof TFolder)) {
+        return null;
+    }
+
+    const prefix = getFolderDescendantPrefix(item);
+    if (direction === 'after') {
+        return planningBaseFiles.find(file => file.path.startsWith(prefix))?.path ?? null;
+    }
+
+    for (let index = planningBaseFiles.length - 1; index >= 0; index -= 1) {
+        const file = planningBaseFiles[index];
+        if (file.path.startsWith(prefix)) {
+            return file.path;
+        }
+    }
+
+    return null;
+}
+
+function getFolderPlanningBoundaryPaths(
+    folder: TFolder,
+    planningBaseFiles: readonly TFile[]
+): { beforePath: string | null; afterPath: string | null } {
+    const planningBasePathSet = new Set(planningBaseFiles.map(file => file.path));
+    let beforePath: string | null = null;
+    let afterPath: string | null = null;
+    let currentFolder: TFolder = folder;
+
+    while (currentFolder.parent instanceof TFolder && currentFolder.parent.path !== currentFolder.path) {
+        const siblings = currentFolder.parent.children;
+        const currentIndex = siblings.findIndex(child => child.path === currentFolder.path);
+        if (currentIndex !== -1) {
+            if (!beforePath) {
+                for (let index = currentIndex - 1; index >= 0; index -= 1) {
+                    beforePath = findBoundaryFilePathForTreeItem(siblings[index], planningBaseFiles, planningBasePathSet, 'before');
+                    if (beforePath) {
+                        break;
+                    }
+                }
+            }
+
+            if (!afterPath) {
+                for (let index = currentIndex + 1; index < siblings.length; index += 1) {
+                    afterPath = findBoundaryFilePathForTreeItem(siblings[index], planningBaseFiles, planningBasePathSet, 'after');
+                    if (afterPath) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (beforePath && afterPath) {
+            break;
+        }
+
+        currentFolder = currentFolder.parent;
+    }
+
+    return { beforePath, afterPath };
+}
+
+export function getFolderPlanningInsertionIndex(
+    folder: TFolder | null,
+    planningBaseFiles: readonly TFile[],
+    planningFiles: readonly TFile[]
+): number | undefined {
+    if (!folder) {
+        return undefined;
+    }
+
+    const { beforePath, afterPath } = getFolderPlanningBoundaryPaths(folder, planningBaseFiles);
+    const planningIndexByPath = new Map(planningFiles.map((file, index) => [file.path, index]));
+    const beforeIndex = beforePath ? (planningIndexByPath.get(beforePath) ?? -1) : -1;
+    const afterIndex = afterPath ? (planningIndexByPath.get(afterPath) ?? -1) : -1;
+
+    if (beforeIndex !== -1) {
+        return beforeIndex + 1;
+    }
+    if (afterIndex !== -1) {
+        return afterIndex;
+    }
+
+    return undefined;
+}
+
+export function applyManualSortTargetOrderToPlanningScope<T extends ManualSortFileLike>(
+    planningFiles: readonly T[],
+    previousTargetFiles: readonly T[],
+    nextTargetFiles: readonly T[]
+): T[] {
+    const previousTargetPathSet = new Set(previousTargetFiles.map(file => file.path));
+    if (previousTargetPathSet.size === 0) {
+        return [...planningFiles];
+    }
+
+    const firstTargetIndex = planningFiles.findIndex(file => previousTargetPathSet.has(file.path));
+    if (firstTargetIndex === -1) {
+        return [...planningFiles];
+    }
+
+    let lastTargetIndex = firstTargetIndex;
+    for (let index = planningFiles.length - 1; index > firstTargetIndex; index--) {
+        if (previousTargetPathSet.has(planningFiles[index].path)) {
+            lastTargetIndex = index;
+            break;
+        }
+    }
+
+    const displacedPlanningFiles = planningFiles
+        .slice(firstTargetIndex, lastTargetIndex + 1)
+        .filter(file => !previousTargetPathSet.has(file.path));
+
+    return [
+        ...planningFiles.slice(0, firstTargetIndex),
+        ...nextTargetFiles,
+        ...displacedPlanningFiles,
+        ...planningFiles.slice(lastTargetIndex + 1)
+    ];
+}
+
+function insertManualSortTargetOrderIntoPlanningScope<T extends ManualSortFileLike>(
+    planningFiles: readonly T[],
+    insertionIndex: number,
+    nextTargetFiles: readonly T[]
+): T[] {
+    const targetPathSet = new Set(nextTargetFiles.map(file => file.path));
+    const boundedInsertionIndex = Math.max(0, Math.min(insertionIndex, planningFiles.length));
+    const adjustedInsertionIndex = planningFiles.slice(0, boundedInsertionIndex).filter(file => !targetPathSet.has(file.path)).length;
+    const planningFilesWithoutTarget = planningFiles.filter(file => !targetPathSet.has(file.path));
+
+    return [
+        ...planningFilesWithoutTarget.slice(0, adjustedInsertionIndex),
+        ...nextTargetFiles,
+        ...planningFilesWithoutTarget.slice(adjustedInsertionIndex)
+    ];
 }
 
 export function parseManualSortRank(value: unknown): number | null {
@@ -587,6 +742,8 @@ function resolveBottomInsertion<T extends ManualSortFileLike>(
 
 export function buildManualSortInsertionRankPlan<T extends ManualSortFileLike>({
     files,
+    planningFiles,
+    planningInsertionIndex,
     insertedFile,
     placement,
     selectedPath,
@@ -630,13 +787,29 @@ export function buildManualSortInsertionRankPlan<T extends ManualSortFileLike>({
         lowerRank = bottomInsertion.lowerRank;
     }
 
+    const nextMarkdown = [...markdown.slice(0, insertionIndex), insertedFile, ...markdown.slice(insertionIndex)];
+    const nextTargetFiles = [...nextMarkdown, ...nonMarkdown];
+    if (planningFiles && planningFiles !== files && currentFiles.length > 0) {
+        return buildManualSortRankPlan(
+            applyManualSortTargetOrderToPlanningScope(planningFiles, currentFiles, nextTargetFiles),
+            new Set([insertedFile.path]),
+            rankByPath
+        );
+    }
+    if (planningFiles && planningFiles !== files && currentFiles.length === 0 && planningInsertionIndex !== undefined) {
+        return buildManualSortRankPlan(
+            insertManualSortTargetOrderIntoPlanningScope(planningFiles, planningInsertionIndex, nextTargetFiles),
+            new Set([insertedFile.path]),
+            rankByPath
+        );
+    }
+
     const singleAssignment = buildSingleInsertionAssignment(insertedFile, lowerRank, upperRank);
     if (singleAssignment) {
         return { files: [insertedFile], assignments: singleAssignment, requiresCompaction: false };
     }
 
-    const nextMarkdown = [...markdown.slice(0, insertionIndex), insertedFile, ...markdown.slice(insertionIndex)];
-    return buildManualSortRankPlan([...nextMarkdown, ...nonMarkdown], new Set([insertedFile.path]), rankByPath);
+    return buildManualSortRankPlan(nextTargetFiles, new Set([insertedFile.path]), rankByPath);
 }
 
 function getPreviousRankedIndex<T extends ManualSortFileLike>(
