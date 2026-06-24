@@ -514,7 +514,7 @@ export async function runClearFileContent(
 
 export async function runBatchClearAllFileContent(
     deps: ContentMutationOperationDeps,
-    params: { type: 'preview' | 'featureImage' | 'metadata' | 'tags' | 'characterCount' | 'properties' | 'all' }
+    params: { type: 'preview' | 'featureImage' | 'metadata' | 'tags' | 'wordCount' | 'characterCount' | 'properties' | 'all' }
 ): Promise<void> {
     const { type } = params;
     const transaction = deps.db.transaction([STORE_NAME, FEATURE_IMAGE_STORE_NAME, PREVIEW_STORE_NAME], 'readwrite');
@@ -626,6 +626,14 @@ export async function runBatchClearAllFileContent(
                         hasChanges = true;
                     }
                 }
+                if (type === 'wordCount' || type === 'all') {
+                    const nextWordCount = isMarkdown ? null : 0;
+                    if (updated.wordCount !== nextWordCount) {
+                        updated.wordCount = nextWordCount;
+                        changes.wordCount = nextWordCount;
+                        hasChanges = true;
+                    }
+                }
                 if (type === 'characterCount' || type === 'all') {
                     const nextCharacterCount = isMarkdown ? null : 0;
                     if (
@@ -668,6 +676,7 @@ export async function runBatchClearAllFileContent(
                         changes.previewStatus !== undefined ||
                         changes.featureImageKey === null ||
                         changes.featureImageStatus !== undefined ||
+                        changes.wordCount !== undefined ||
                         changes.characterCountWithSpaces !== undefined ||
                         changes.characterCountWithoutSpaces !== undefined ||
                         changes.properties === null;

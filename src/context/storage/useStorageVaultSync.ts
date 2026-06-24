@@ -31,9 +31,14 @@ import { runAsyncAction } from '../../utils/async';
 import { isMarkdownPath } from '../../utils/fileTypeUtils';
 import { isPropertyFeatureEnabled } from '../../utils/propertyTree';
 import { emitDrawingCompanionImageChange, findDrawingFileForCompanionImage } from '../../utils/drawingFeatureImages';
-import { filterFilesRequiringFileThumbnails, shouldQueueFileThumbnailProvider } from '../storageQueueFilters';
+import {
+    filterFilesRequiringFileThumbnails,
+    filterFilesRequiringMetadataSources,
+    shouldQueueFileThumbnailProvider
+} from '../storageQueueFilters';
 import { getCacheRebuildProgressTypes, getContentWorkTotal, getMetadataDependentTypes } from './storageContentTypes';
 import { finishStartupDiagnostics, isDebugLogPath, recordStartupDiagnostic } from '../../services/diagnostics/DebugLoggingService';
+import { getMarkdownPipelineContentTypes } from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Syncs vault changes into the IndexedDB cache and triggers derived-content generation.
@@ -466,6 +471,21 @@ export function useStorageVaultSync(params: {
 
                 const liveSettings = latestSettingsRef.current;
                 const metadataDependentTypes = getMetadataDependentTypes(liveSettings);
+                const markdownPipelineContentTypes = getMarkdownPipelineContentTypes(liveSettings);
+                const shouldPrefilterTaskOnlyMarkdownPipeline =
+                    metadataDependentTypes.length === 1 &&
+                    metadataDependentTypes[0] === 'markdownPipeline' &&
+                    markdownPipelineContentTypes.length === 1 &&
+                    markdownPipelineContentTypes[0] === 'tasks';
+                const filesToRefresh = shouldPrefilterTaskOnlyMarkdownPipeline
+                    ? filterFilesRequiringMetadataSources(files, metadataDependentTypes, liveSettings, {
+                          app,
+                          conservativeMetadata: true
+                      })
+                    : files;
+                if (filesToRefresh.length === 0) {
+                    return;
+                }
                 let canQueueContentRefresh = true;
 
                 isProcessingMetadataChangeBatch = true;
@@ -474,7 +494,7 @@ export function useStorageVaultSync(params: {
                         // Obsidian's metadata cache can change after initial indexing even when file mtime did
                         // not trigger a "modify" handler in the expected order. Mark files for regeneration so
                         // metadata-dependent providers re-run against the updated cache snapshot.
-                        await markFilesForRegeneration(files);
+                        await markFilesForRegeneration(filesToRefresh, metadataDependentTypes);
                     }
                 } catch (error: unknown) {
                     canQueueContentRefresh = false;
@@ -484,7 +504,7 @@ export function useStorageVaultSync(params: {
                 }
 
                 if (canQueueContentRefresh) {
-                    queueFilesContentRefresh(files);
+                    queueFilesContentRefresh(filesToRefresh);
                 }
 
                 if (pendingMetadataChangedFiles.size > 0 && !stoppedRef.current) {
@@ -639,6 +659,9 @@ export function useStorageVaultSync(params: {
                 return;
             }
             if (!(file instanceof TFile) || file.extension !== 'md' || isDebugLogPath(file.path)) {
+                return;
+            }
+            if (getMetadataDependentTypes(latestSettingsRef.current).length === 0) {
                 return;
             }
 

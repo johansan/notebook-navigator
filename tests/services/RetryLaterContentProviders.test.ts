@@ -394,7 +394,8 @@ describe('Content provider retry-later semantics', () => {
         const settings: NotebookNavigatorSettings = {
             ...DEFAULT_SETTINGS,
             showFilePreview: true,
-            showFeatureImage: true
+            showFeatureImage: true,
+            textCountDisplay: 'words'
         };
 
         const fileData: FileData = {

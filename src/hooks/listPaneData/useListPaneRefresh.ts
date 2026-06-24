@@ -20,7 +20,7 @@ import { useEffect, useRef } from 'react';
 import { TFile } from 'obsidian';
 import { debounce } from 'obsidian';
 import type { App, TFolder } from 'obsidian';
-import type { NotebookNavigatorSettings, PropertySortSecondaryOption, SortOption } from '../../settings/types';
+import type { ListNoteGroupingOption, NotebookNavigatorSettings, PropertySortSecondaryOption, SortOption } from '../../settings/types';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { OperationType, type CommandQueueService } from '../../services/CommandQueueService';
 import { shouldExcludeFileWithMatcher } from '../../utils/fileFilters';
@@ -31,13 +31,18 @@ import { ItemType } from '../../types';
 import type { PropertySelectionNodeId } from '../../utils/propertyTree';
 import { createFrontmatterPropertyExclusionMatcher } from '../../utils/fileFilters';
 import { getCachedManualSortGroupHeader } from '../../utils/manualSort';
+import { DateUtils } from '../../utils/dateUtils';
 
 interface UseListPaneRefreshArgs {
     app: App;
     basePathSet: ReadonlySet<string>;
     commandQueue: CommandQueueService | null;
     customGroupHeaderFilePaths: ReadonlySet<string>;
+    dayKey: string;
+    files: readonly TFile[];
     getDB: () => IndexedDBStorage;
+    groupBy: ListNoteGroupingOption;
+    hasDateSearchFilters: boolean;
     hasManualSortWordCountGroupHeaders: boolean;
     hasTaskSearchFilters: boolean;
     hiddenFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
@@ -56,6 +61,53 @@ interface UseListPaneRefreshArgs {
     sortOption: SortOption;
     propertySortKey: string;
     propertySortSecondary: PropertySortSecondaryOption;
+}
+
+export function getModifiedSortBoundaryRefreshKey(params: {
+    dayKey: string;
+    file: TFile;
+    files: readonly TFile[];
+    groupBy: ListNoteGroupingOption;
+    sortOption: SortOption;
+}): string | null {
+    const { dayKey, file, files, groupBy, sortOption } = params;
+    if (files.length === 0) {
+        return null;
+    }
+
+    let boundaryFile: TFile | undefined;
+    if (sortOption === 'modified-desc') {
+        boundaryFile = files[0];
+    } else if (sortOption === 'modified-asc') {
+        boundaryFile = files[files.length - 1];
+    } else {
+        return null;
+    }
+
+    if (boundaryFile?.path !== file.path) {
+        return null;
+    }
+
+    const dateGroupKey =
+        groupBy === 'date' ? DateUtils.getDateGroupInfo(file.stat.mtime, DateUtils.parseLocalDayKey(dayKey) ?? undefined).key : 'ungrouped';
+
+    return `${sortOption}\u0000${groupBy}\u0000${dateGroupKey}\u0000${files.length}`;
+}
+
+export function shouldSkipModifiedSortBoundaryRefresh(params: {
+    previousBoundaryRefreshKey: string | undefined;
+    boundaryRefreshKey: string | null;
+    hasDateSearchFilters: boolean;
+    showFileDate: boolean;
+    showTooltips: boolean;
+}): boolean {
+    return (
+        !params.hasDateSearchFilters &&
+        !params.showFileDate &&
+        !params.showTooltips &&
+        params.boundaryRefreshKey !== null &&
+        params.previousBoundaryRefreshKey === params.boundaryRefreshKey
+    );
 }
 
 function fileIsWithinSelectedFolder(file: TFile, includeDescendantNotes: boolean, selectedFolder: TFolder | null): boolean {
@@ -82,7 +134,11 @@ export function useListPaneRefresh({
     basePathSet,
     commandQueue,
     customGroupHeaderFilePaths,
+    dayKey,
+    files,
     getDB,
+    groupBy,
+    hasDateSearchFilters,
     hasManualSortWordCountGroupHeaders,
     hasTaskSearchFilters,
     hiddenFilePropertyMatcher,
@@ -106,10 +162,34 @@ export function useListPaneRefresh({
     const operationActiveRef = useRef(false);
     const pendingRefreshRef = useRef(false);
     const pendingImmediateRefreshRef = useRef(false);
+    const modifiedSortBoundaryRefreshKeysRef = useRef<Map<string, string>>(new Map());
 
     useEffect(() => {
         onRefreshRef.current = onRefresh;
     }, [onRefresh]);
+
+    useEffect(() => {
+        modifiedSortBoundaryRefreshKeysRef.current.clear();
+        if (files.length === 0 || (sortOption !== 'modified-desc' && sortOption !== 'modified-asc')) {
+            return;
+        }
+
+        const boundaryFile = sortOption === 'modified-desc' ? files[0] : files[files.length - 1];
+        if (!boundaryFile) {
+            return;
+        }
+
+        const boundaryRefreshKey = getModifiedSortBoundaryRefreshKey({
+            dayKey,
+            file: boundaryFile,
+            files,
+            groupBy,
+            sortOption
+        });
+        if (boundaryRefreshKey !== null) {
+            modifiedSortBoundaryRefreshKeysRef.current.set(boundaryFile.path, boundaryRefreshKey);
+        }
+    }, [dayKey, files, groupBy, sortOption]);
 
     useEffect(() => {
         const runRefresh = () => {
@@ -138,6 +218,10 @@ export function useListPaneRefresh({
             }
 
             scheduleRefresh();
+        };
+
+        const clearModifiedSortBoundaryRefreshKeys = () => {
+            modifiedSortBoundaryRefreshKeysRef.current.clear();
         };
 
         const queueRefresh = (options?: { immediateWhenIdle?: boolean }) => {
@@ -192,17 +276,45 @@ export function useListPaneRefresh({
 
         const vaultEvents = [
             app.vault.on('create', () => {
+                clearModifiedSortBoundaryRefreshKeys();
                 queueRefresh();
             }),
             app.vault.on('delete', () => {
+                clearModifiedSortBoundaryRefreshKeys();
                 queueRefresh({ immediateWhenIdle: hasActiveDeleteOperation() });
             }),
             app.vault.on('rename', () => {
+                clearModifiedSortBoundaryRefreshKeys();
                 queueRefresh();
             }),
             app.vault.on('modify', file => {
                 if (!shouldRefreshOnFileModify || !(file instanceof TFile) || !basePathSet.has(file.path)) {
                     return;
+                }
+
+                const boundaryRefreshKey = getModifiedSortBoundaryRefreshKey({
+                    dayKey,
+                    file,
+                    files,
+                    groupBy,
+                    sortOption
+                });
+                if (boundaryRefreshKey !== null) {
+                    const previousBoundaryRefreshKey = modifiedSortBoundaryRefreshKeysRef.current.get(file.path);
+                    modifiedSortBoundaryRefreshKeysRef.current.set(file.path, boundaryRefreshKey);
+                    if (
+                        shouldSkipModifiedSortBoundaryRefresh({
+                            previousBoundaryRefreshKey,
+                            boundaryRefreshKey,
+                            hasDateSearchFilters,
+                            showFileDate: settings.showFileDate,
+                            showTooltips: settings.showTooltips
+                        })
+                    ) {
+                        return;
+                    }
+                } else {
+                    modifiedSortBoundaryRefreshKeysRef.current.delete(file.path);
                 }
 
                 queueRefresh();
@@ -214,21 +326,47 @@ export function useListPaneRefresh({
                 return;
             }
 
+            const hasHiddenPropertyStateChanged = (): boolean => {
+                if (!hiddenFilePropertyMatcher.hasCriteria || file.extension !== 'md') {
+                    return false;
+                }
+
+                const db = getDB();
+                const record = db.getFile(file.path);
+                const wasExcluded = Boolean(record?.metadata?.hidden);
+                const isCurrentlyExcluded = shouldExcludeFileWithMatcher(file, hiddenFilePropertyMatcher, app);
+                return isCurrentlyExcluded !== wasExcluded;
+            };
+
             if (selectionType === ItemType.TAG && selectedTag) {
                 if (file.extension !== 'md') {
                     return;
                 }
 
-                queueRefresh();
+                if (!showHiddenItems && hasHiddenPropertyStateChanged()) {
+                    queueRefresh();
+                    return;
+                }
+
+                if (shouldRefreshOnMetadataChange && basePathSet.has(file.path)) {
+                    queueRefresh();
+                }
                 return;
             }
 
             if (selectionType === ItemType.PROPERTY && selectedProperty) {
-                if (file.extension !== 'md' || !basePathSet.has(file.path)) {
+                if (file.extension !== 'md') {
                     return;
                 }
 
-                queueRefresh();
+                if (!showHiddenItems && hasHiddenPropertyStateChanged()) {
+                    queueRefresh();
+                    return;
+                }
+
+                if (shouldRefreshOnMetadataChange && basePathSet.has(file.path)) {
+                    queueRefresh();
+                }
                 return;
             }
 
@@ -248,11 +386,7 @@ export function useListPaneRefresh({
             }
 
             if (hiddenFilePropertyMatcher.hasCriteria && file.extension === 'md') {
-                const db = getDB();
-                const record = db.getFile(file.path);
-                const wasExcluded = Boolean(record?.metadata?.hidden);
-                const isCurrentlyExcluded = shouldExcludeFileWithMatcher(file, hiddenFilePropertyMatcher, app);
-                if (isCurrentlyExcluded !== wasExcluded) {
+                if (hasHiddenPropertyStateChanged()) {
                     queueRefresh();
                     return;
                 }
@@ -315,7 +449,7 @@ export function useListPaneRefresh({
                 }
             }
 
-            if (!shouldRefresh && hiddenFilePropertyMatcher.hasCriteria && showHiddenItems) {
+            if (!shouldRefresh && hiddenFilePropertyMatcher.hasCriteria) {
                 shouldRefresh = changes.some(change => change.metadataHiddenChanged === true && basePathSet.has(change.path));
             }
 
@@ -348,7 +482,11 @@ export function useListPaneRefresh({
         basePathSet,
         commandQueue,
         customGroupHeaderFilePaths,
+        dayKey,
+        files,
         getDB,
+        groupBy,
+        hasDateSearchFilters,
         hasManualSortWordCountGroupHeaders,
         hasTaskSearchFilters,
         hiddenFilePropertyMatcher,
@@ -367,6 +505,8 @@ export function useListPaneRefresh({
         propertySortKey,
         propertySortSecondary,
         settings.showFileBackgroundUnfinishedTask,
+        settings.showFileDate,
+        settings.showTooltips,
         settings.useFrontmatterMetadata,
         settings.wordCountTargetProperty,
         showHiddenItems,

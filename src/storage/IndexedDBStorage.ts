@@ -1257,7 +1257,7 @@ export class IndexedDBStorage {
      * @param type - Type of content to clear or 'all'
      */
     async batchClearAllFileContent(
-        type: 'preview' | 'featureImage' | 'metadata' | 'tags' | 'characterCount' | 'properties' | 'all'
+        type: 'preview' | 'featureImage' | 'metadata' | 'tags' | 'wordCount' | 'characterCount' | 'properties' | 'all'
     ): Promise<void> {
         await this.init();
         if (!this.db) throw new Error('Database not initialized');

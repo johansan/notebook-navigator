@@ -64,7 +64,7 @@ function hasCustomGroupingAppearance(settings: NotebookNavigatorSettings): boole
     return appearances.some(collection => Object.values(collection).some(appearance => appearance?.groupBy === 'custom'));
 }
 
-function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSettings): boolean {
+export function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSettings): boolean {
     return showsWordCount(settings.textCountDisplay) || (hasCustomGroupHeaderProperty(settings) && hasCustomGroupingAppearance(settings));
 }
 

@@ -67,7 +67,7 @@ export class ContentProviderRegistry {
      * Handles settings changes by notifying affected providers
      * @param oldSettings - Previous settings
      * @param newSettings - New settings
-     * @returns Content types that were cleared and need regeneration
+     * @returns Content types affected by settings changes and eligible for regeneration
      */
     async handleSettingsChange(
         oldSettings: NotebookNavigatorSettings,
@@ -93,6 +93,9 @@ export class ContentProviderRegistry {
                 // Clear content for this provider after all providers have stopped.
                 const context: ContentProviderClearContext = { oldSettings, newSettings };
                 providersToClear.push({ provider, context });
+            }
+
+            if (hasRelevantChanges || shouldClear) {
                 affectedTypes.push(provider.getContentType());
             }
 

@@ -41,6 +41,8 @@ function createSettings(overrides?: Partial<NotebookNavigatorSettings> & { prope
     const settings = structuredClone(DEFAULT_SETTINGS);
     settings.showFilePreview = false;
     settings.showFeatureImage = false;
+    settings.textCountDisplay = 'both';
+    settings.wordCountTargetProperty = '';
     Object.assign(settings, settingsOverrides);
 
     if (typeof propertyFields === 'string') {
@@ -334,7 +336,7 @@ describe('MarkdownPipelineContentProvider word count', () => {
         expect(result).toBe(2);
     });
 
-    it('counts characters using Obsidian frontmatter slicing even when character counts are hidden', async () => {
+    it('skips character counts when character counts are hidden', async () => {
         const context = createApp();
         const settings = createSettings({ textCountDisplay: 'none' });
         const provider = new TestMarkdownPipelineContentProvider(context.app);
@@ -343,8 +345,8 @@ describe('MarkdownPipelineContentProvider word count', () => {
         setMarkdownContent(context, file, '---\ntitle: Draft\n---\n\nBody');
         const result = await provider.runProcessFile(file, null, settings);
 
-        expect(result.update?.characterCountWithSpaces).toBe(5);
-        expect(result.update?.characterCountWithoutSpaces).toBe(4);
+        expect(result.update?.characterCountWithSpaces).toBeUndefined();
+        expect(result.update?.characterCountWithoutSpaces).toBeUndefined();
     });
 
     it('counts isolated punctuation when Math Alphanumeric Symbols are present', async () => {

@@ -203,6 +203,7 @@ export function Calendar({
     const visibleIndicatorNotePathsRef = useRef<Set<string>>(new Set());
     const visibleFeatureImageNotePathsRef = useRef<Set<string>>(new Set());
     const visibleFrontmatterNotePathsRef = useRef<Set<string>>(new Set());
+    const frontmatterTitlesByPathRef = useRef<ReadonlyMap<string, string>>(new Map());
     const missingFeatureImageRegenerationRef = useRef<Set<string>>(new Set());
     const lastAppliedActiveEditorDateKeyRef = useRef<string | null>(null);
     const shouldSkipInitialActiveEditorRevealRef = useRef(initialStoredCursorDateIso !== null);
@@ -425,15 +426,21 @@ export function Calendar({
     }, [db, hoverTooltipStateRef, settings.calendarShowFeatureImage]);
 
     useEffect(() => {
-        if (!settings.useFrontmatterMetadata) {
+        const frontmatterNameField = settings.frontmatterNameField.trim();
+        if (!settings.useFrontmatterMetadata || frontmatterNameField.length === 0) {
             return;
         }
 
         const offref = app.metadataCache.on('changed', file => {
-            if (!file) {
+            if (!(file instanceof TFile)) {
                 return;
             }
             if (!visibleFrontmatterNotePathsRef.current.has(file.path)) {
+                return;
+            }
+            const previousTitle = frontmatterTitlesByPathRef.current.get(file.path) ?? '';
+            const nextTitle = extractFrontmatterName(app, file, frontmatterNameField).trim();
+            if (previousTitle === nextTitle) {
                 return;
             }
             setMetadataVersion(v => v + 1);
@@ -442,7 +449,7 @@ export function Calendar({
         return () => {
             app.metadataCache.offref(offref);
         };
-    }, [app.metadataCache, settings.useFrontmatterMetadata]);
+    }, [app, app.metadataCache, settings.frontmatterNameField, settings.useFrontmatterMetadata]);
 
     useEffect(() => {
         // Obsidian exposes `window.moment` after startup; in tests (or very early) it may be unavailable.
@@ -980,7 +987,7 @@ export function Calendar({
 
     const frontmatterTitlesByPath = useMemo(() => {
         void metadataVersion;
-        if (!settings.useFrontmatterMetadata) {
+        if (!settings.useFrontmatterMetadata || settings.frontmatterNameField.trim().length === 0) {
             return new Map<string, string>();
         }
 
@@ -1003,6 +1010,7 @@ export function Calendar({
 
         return titles;
     }, [app, metadataVersion, settings.frontmatterNameField, settings.useFrontmatterMetadata, weeks]);
+    frontmatterTitlesByPathRef.current = frontmatterTitlesByPath;
     const featureImageUrls = useCalendarFeatureImages({
         db,
         showFeatureImages: settings.calendarShowFeatureImage,

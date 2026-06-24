@@ -17,11 +17,12 @@
  */
 
 import { App, TFile } from 'obsidian';
+import type { CachedMetadata } from 'obsidian';
 import type { ContentProviderType } from '../interfaces/IContentProvider';
 import type { NotebookNavigatorSettings } from '../settings/types';
+import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstance } from '../storage/fileOperations';
 import { isPdfFile } from '../utils/fileTypeUtils';
-import { hasPropertyFrontmatterFields } from '../utils/propertyUtils';
 import { getActiveHiddenFileProperties } from '../utils/vaultProfiles';
 import { getLocalFeatureImageKey } from '../services/content/FeatureImageContentProvider';
 import { createCaseInsensitiveKeyMatcher } from '../utils/recordUtils';
@@ -30,6 +31,16 @@ import {
     getDrawingSourceProviderIdWithFrontmatter,
     getNonMarkdownDrawingFeatureImageProviderId
 } from '../utils/drawingFeatureImages';
+import {
+    hasMarkdownCharacterCountConsumer,
+    hasMarkdownFeatureImageConsumer,
+    hasMarkdownPipelineContent,
+    hasMarkdownPreviewConsumer,
+    hasMarkdownPropertiesConsumer,
+    hasMarkdownTaskConsumer,
+    hasMarkdownWordCountConsumer
+} from '../utils/markdownPipelineContentTypes';
+import { areMarkdownTaskCountsEqual, countMarkdownTasksFromMetadata, hasMarkdownTaskMetadata } from '../utils/markdownTaskCounts';
 
 type MetadataSourceFilterOptions = {
     /**
@@ -39,6 +50,18 @@ type MetadataSourceFilterOptions = {
     conservativeMetadata?: boolean;
     app?: App;
 };
+
+function shouldQueueStaleMarkdownTaskRefresh(
+    record: Pick<FileData, 'taskTotal' | 'taskUnfinished'>,
+    metadata: CachedMetadata | null
+): boolean {
+    if (!metadata) {
+        return true;
+    }
+
+    const taskCountsFromMetadata = countMarkdownTasksFromMetadata(metadata);
+    return taskCountsFromMetadata === null || !areMarkdownTaskCountsEqual(record, taskCountsFromMetadata);
+}
 
 /**
  * Returns files that need metadata-dependent content providers to run.
@@ -59,12 +82,18 @@ export function filterFilesRequiringMetadataSources(
     const hiddenFileProperties = getActiveHiddenFileProperties(settings);
     const requiresHiddenState = hiddenFileProperties.length > 0;
     const conservativeMetadata = options?.conservativeMetadata ?? false;
-    const propertiesEnabled = hasPropertyFrontmatterFields(settings);
+    const propertiesEnabled = hasMarkdownPropertiesConsumer(settings);
     const needsMarkdownPipeline = types.includes('markdownPipeline');
     const needsTags = types.includes('tags');
     const needsMetadata = types.includes('metadata');
     const app = options?.app;
     const featureImageExcludeMatcher = createCaseInsensitiveKeyMatcher(settings.featureImageExcludeProperties);
+    const markdownPipelineEnabled = hasMarkdownPipelineContent(settings);
+    const previewEnabled = hasMarkdownPreviewConsumer(settings);
+    const featureImageEnabled = hasMarkdownFeatureImageConsumer(settings);
+    const wordCountEnabled = hasMarkdownWordCountConsumer(settings);
+    const characterCountEnabled = hasMarkdownCharacterCountConsumer(settings);
+    const tasksEnabled = hasMarkdownTaskConsumer(settings);
 
     return files.filter(file => {
         const record = records.get(file.path);
@@ -78,12 +107,12 @@ export function filterFilesRequiringMetadataSources(
             return true;
         }
 
-        if (needsMarkdownPipeline && file.extension === 'md') {
-            const needsPreview = settings.showFilePreview && record.previewStatus === 'unprocessed';
-            let needsFeatureImage =
-                settings.showFeatureImage && (record.featureImageKey === null || record.featureImageStatus === 'unprocessed');
-            if (settings.showFeatureImage && !needsFeatureImage && app) {
-                const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter;
+        if (needsMarkdownPipeline && markdownPipelineEnabled && file.extension === 'md') {
+            const needsPreview = previewEnabled && record.previewStatus === 'unprocessed';
+            const cachedMetadata = app?.metadataCache.getFileCache(file) ?? null;
+            let needsFeatureImage = featureImageEnabled && (record.featureImageKey === null || record.featureImageStatus === 'unprocessed');
+            if (featureImageEnabled && !needsFeatureImage && app) {
+                const frontmatter = cachedMetadata?.frontmatter;
                 const featureImageExcluded = featureImageExcludeMatcher.matches(frontmatter);
                 if (!featureImageExcluded) {
                     const drawingProviderId = getDrawingSourceProviderIdWithFrontmatter(file, frontmatter);
@@ -95,20 +124,36 @@ export function filterFilesRequiringMetadataSources(
                 }
             }
             const needsProperties = propertiesEnabled && record.properties === null;
-            const needsWordCount = record.wordCount === null;
-            const needsCharacterCount = record.characterCountWithSpaces === null || record.characterCountWithoutSpaces === null;
-            const needsTasks = record.taskTotal === null || record.taskUnfinished === null;
+            const needsWordCount = wordCountEnabled && record.wordCount === null;
+            const needsCharacterCount =
+                characterCountEnabled && (record.characterCountWithSpaces === null || record.characterCountWithoutSpaces === null);
+            const needsTasks = tasksEnabled && (record.taskTotal === null || record.taskUnfinished === null);
+            const taskCountsFromMetadata = cachedMetadata === null ? null : countMarkdownTasksFromMetadata(cachedMetadata);
+            const hasTaskMetadata = cachedMetadata !== null && hasMarkdownTaskMetadata(cachedMetadata);
+            const hasTaskCountChanges =
+                tasksEnabled &&
+                (taskCountsFromMetadata !== null ? !areMarkdownTaskCountsEqual(record, taskCountsFromMetadata) : hasTaskMetadata);
             const needsRefresh = record.markdownPipelineMtime !== file.stat.mtime;
             if (
-                needsRefresh ||
                 needsPreview ||
                 needsFeatureImage ||
                 needsProperties ||
                 needsWordCount ||
                 needsCharacterCount ||
-                needsTasks
+                needsTasks ||
+                hasTaskCountChanges
             ) {
                 return true;
+            }
+
+            if (needsRefresh) {
+                if (previewEnabled || featureImageEnabled || propertiesEnabled || wordCountEnabled || characterCountEnabled) {
+                    return true;
+                }
+
+                if (tasksEnabled) {
+                    return shouldQueueStaleMarkdownTaskRefresh(record, cachedMetadata);
+                }
             }
         }
 

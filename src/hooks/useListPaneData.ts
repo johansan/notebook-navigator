@@ -152,18 +152,24 @@ export function useListPaneData({
     const hasSearchQuery = trimmedQuery.length > 0;
     const isOmnisearchAvailable = omnisearchService?.isAvailable() ?? false;
     const useOmnisearch = searchProvider === 'omnisearch' && isOmnisearchAvailable && hasSearchQuery;
-    const hasTaskSearchFilters = useMemo(() => {
+    const activeFilterSearchTokens = useMemo(() => {
         if (!trimmedQuery || useOmnisearch) {
-            return false;
+            return null;
         }
 
         const tokens = searchTokens ?? parseFilterSearchTokens(trimmedQuery);
         if (!filterSearchHasActiveCriteria(tokens)) {
-            return false;
+            return null;
         }
 
-        return tokens.requireUnfinishedTasks || tokens.excludeUnfinishedTasks;
+        return tokens;
     }, [trimmedQuery, useOmnisearch, searchTokens]);
+    const hasTaskSearchFilters =
+        activeFilterSearchTokens !== null &&
+        (activeFilterSearchTokens.requireUnfinishedTasks || activeFilterSearchTokens.excludeUnfinishedTasks);
+    const hasDateSearchFilters =
+        activeFilterSearchTokens !== null &&
+        (activeFilterSearchTokens.dateRanges.length > 0 || activeFilterSearchTokens.excludeDateRanges.length > 0);
     const omnisearchPathScope = useMemo(() => {
         if (selectionType !== ItemType.FOLDER || !selectedFolder) {
             return undefined;
@@ -433,7 +439,11 @@ export function useListPaneData({
         basePathSet,
         commandQueue,
         customGroupHeaderFilePaths: customGroupHeaderState.filePaths,
+        dayKey,
+        files,
         getDB,
+        groupBy,
+        hasDateSearchFilters,
         hasManualSortWordCountGroupHeaders: customGroupHeaderState.hasWordCountGroupHeaders,
         hasTaskSearchFilters,
         hiddenFilePropertyMatcher,

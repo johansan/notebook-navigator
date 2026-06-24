@@ -737,9 +737,9 @@ describe('FeatureImageContentProvider scanning', () => {
             metadata: null
         };
 
-        // No feature image update is emitted when the key matches, but word count is still stored.
+        // No content update is emitted when the key matches and hidden counters have no consumer.
         const result = await provider.runProcessFileWithData(noteFile, fileData, settings);
-        expect(result).toEqual({ path: noteFile.path, wordCount: 0 });
+        expect(result).toBeNull();
     });
 
     it('acknowledges mtime mismatch when featureImageKey matches and a thumbnail exists', async () => {
@@ -775,7 +775,7 @@ describe('FeatureImageContentProvider scanning', () => {
 
         const result = await provider.runProcessFileWithData(noteFile, fileData, settings);
 
-        expect(result).toEqual({ path: noteFile.path, wordCount: 0 });
+        expect(result).toBeNull();
     });
 
     it('retries external downloads when the file changed but the featureImageKey did not', async () => {

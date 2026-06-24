@@ -18,6 +18,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App, TFile } from 'obsidian';
+import type { CachedMetadata, ListItemCache } from 'obsidian';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { ContentProviderType } from '../../src/interfaces/IContentProvider';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
@@ -68,6 +69,23 @@ function createFileData(overrides: Partial<FileData>): FileData {
         featureImageKey: null,
         metadata: null,
         ...overrides
+    };
+}
+
+function createTaskItem(line: number, task: string): ListItemCache {
+    return {
+        parent: -line,
+        position: {
+            start: { line, col: 0, offset: line },
+            end: { line, col: 10, offset: line + 10 }
+        },
+        task
+    };
+}
+
+function createTaskMetadata(tasks: string[]): CachedMetadata {
+    return {
+        listItems: tasks.map((task, index) => createTaskItem(index, task))
     };
 }
 
@@ -272,6 +290,120 @@ describe('Storage queue filters', () => {
 
         const types: ContentProviderType[] = ['markdownPipeline'];
         const result = filterFilesRequiringMetadataSources([file], types, settings);
+
+        expect(result).toEqual([file]);
+    });
+
+    it('excludes stale markdown pipeline files when metadata has no task items', () => {
+        const file = new TFile();
+        file.path = 'notes/note.md';
+        file.extension = 'md';
+        file.stat.mtime = 456;
+        const app = new App();
+        app.metadataCache.getFileCache = () => ({ listItems: [] });
+
+        db.setFile(
+            file.path,
+            createFileData({
+                mtime: file.stat.mtime,
+                markdownPipelineMtime: 100,
+                wordCount: 0,
+                taskTotal: 0,
+                taskUnfinished: 0,
+                previewStatus: 'none',
+                featureImageStatus: 'none',
+                featureImageKey: '',
+                properties: []
+            })
+        );
+
+        settings = {
+            ...settings,
+            showFilePreview: false,
+            showFeatureImage: false,
+            showTooltips: false,
+            textCountDisplay: 'none',
+            calendarEnabled: true
+        };
+
+        const types: ContentProviderType[] = ['markdownPipeline'];
+        const result = filterFilesRequiringMetadataSources([file], types, settings, { app });
+
+        expect(result).toEqual([]);
+    });
+
+    it('includes stale markdown pipeline files when metadata contains task items', () => {
+        const file = new TFile();
+        file.path = 'notes/note.md';
+        file.extension = 'md';
+        file.stat.mtime = 456;
+        const app = new App();
+        app.metadataCache.getFileCache = () => createTaskMetadata([' ', 'x']);
+
+        db.setFile(
+            file.path,
+            createFileData({
+                mtime: file.stat.mtime,
+                markdownPipelineMtime: 100,
+                wordCount: 0,
+                taskTotal: 2,
+                taskUnfinished: 1,
+                previewStatus: 'none',
+                featureImageStatus: 'none',
+                featureImageKey: '',
+                properties: []
+            })
+        );
+
+        settings = {
+            ...settings,
+            showFilePreview: false,
+            showFeatureImage: false,
+            showTooltips: false,
+            textCountDisplay: 'none',
+            calendarEnabled: true
+        };
+
+        const types: ContentProviderType[] = ['markdownPipeline'];
+        const result = filterFilesRequiringMetadataSources([file], types, settings, { app });
+
+        expect(result).toEqual([file]);
+    });
+
+    it('includes current markdown pipeline files when metadata contains task items', () => {
+        const file = new TFile();
+        file.path = 'notes/note.md';
+        file.extension = 'md';
+        file.stat.mtime = 456;
+        const app = new App();
+        app.metadataCache.getFileCache = () => createTaskMetadata([' ']);
+
+        db.setFile(
+            file.path,
+            createFileData({
+                mtime: file.stat.mtime,
+                markdownPipelineMtime: file.stat.mtime,
+                wordCount: 0,
+                taskTotal: 0,
+                taskUnfinished: 0,
+                previewStatus: 'none',
+                featureImageStatus: 'none',
+                featureImageKey: '',
+                properties: []
+            })
+        );
+
+        settings = {
+            ...settings,
+            showFilePreview: false,
+            showFeatureImage: false,
+            showTooltips: false,
+            textCountDisplay: 'none',
+            calendarEnabled: true
+        };
+
+        const types: ContentProviderType[] = ['markdownPipeline'];
+        const result = filterFilesRequiringMetadataSources([file], types, settings, { app });
 
         expect(result).toEqual([file]);
     });

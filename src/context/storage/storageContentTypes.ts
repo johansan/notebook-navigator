@@ -19,9 +19,9 @@
 import type { TFile } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import type { ContentProviderType, FileContentType } from '../../interfaces/IContentProvider';
-import { hasPropertyFrontmatterFields } from '../../utils/propertyUtils';
 import { isMarkdownPath } from '../../utils/fileTypeUtils';
 import { getActiveHiddenFileProperties } from '../../utils/vaultProfiles';
+import { getMarkdownPipelineContentTypes, hasMarkdownPipelineContent } from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Returns provider types that require Obsidian's metadata cache to be ready.
@@ -29,8 +29,9 @@ import { getActiveHiddenFileProperties } from '../../utils/vaultProfiles';
 export function getMetadataDependentTypes(settings: NotebookNavigatorSettings): ContentProviderType[] {
     const types: ContentProviderType[] = [];
 
-    // Always include markdownPipeline so text counts, task counters, and properties can be persisted for future consumers.
-    types.push('markdownPipeline');
+    if (hasMarkdownPipelineContent(settings)) {
+        types.push('markdownPipeline');
+    }
     if (settings.showTags) {
         types.push('tags');
     }
@@ -49,20 +50,7 @@ export function getMetadataDependentTypes(settings: NotebookNavigatorSettings): 
 export function getCacheRebuildProgressTypes(settings: NotebookNavigatorSettings): FileContentType[] {
     const types = new Set<FileContentType>();
 
-    types.add('wordCount');
-    types.add('characterCount');
-    types.add('tasks');
-
-    if (settings.showFilePreview) {
-        types.add('preview');
-    }
-    if (settings.showFeatureImage) {
-        types.add('featureImage');
-    }
-
-    if (hasPropertyFrontmatterFields(settings)) {
-        types.add('properties');
-    }
+    getMarkdownPipelineContentTypes(settings).forEach(type => types.add(type));
 
     for (const providerType of getMetadataDependentTypes(settings)) {
         if (providerType === 'tags' || providerType === 'metadata') {
@@ -111,7 +99,7 @@ export function resolveMetadataDependentTypes(
 
     return baseTypes.filter(type => {
         if (type === 'markdownPipeline') {
-            return true;
+            return hasMarkdownPipelineContent(settings);
         }
         if (type === 'tags') {
             return settings.showTags;

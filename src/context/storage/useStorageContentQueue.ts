@@ -22,13 +22,13 @@ import type { ContentProviderType, FileContentType } from '../../interfaces/ICon
 import type { ContentProviderRegistry } from '../../services/content/ContentProviderRegistry';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { getDBInstance } from '../../storage/fileOperations';
-import { hasPropertyFrontmatterFields } from '../../utils/propertyUtils';
 import {
     filterFilesRequiringFileThumbnails,
     filterFilesRequiringMetadataSources,
     shouldQueueFileThumbnailProvider
 } from '../storageQueueFilters';
 import { getMetadataDependentTypes } from './storageContentTypes';
+import { getMarkdownPipelineContentTypes, hasMarkdownPropertiesConsumer } from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Queues files for derived-content generation.
@@ -90,7 +90,7 @@ export function useStorageContentQueue(params: {
             }
 
             const metadataDependentTypes = getMetadataDependentTypes(settings);
-            const hasCustomProperties = hasPropertyFrontmatterFields(settings);
+            const hasCustomProperties = hasMarkdownPropertiesConsumer(settings);
             const contentEnabled =
                 settings.showFilePreview || settings.showFeatureImage || hasCustomProperties || metadataDependentTypes.length > 0;
 
@@ -126,21 +126,12 @@ export function useStorageContentQueue(params: {
                     // no "changed files" but still pending derived content in the database. Fall back to checking
                     // the database for any missing content types.
                     const db = getDBInstance();
-                    const contentTypesToCheck: FileContentType[] = ['wordCount', 'characterCount', 'tasks'];
+                    const contentTypesToCheck: FileContentType[] = getMarkdownPipelineContentTypes(settings);
                     if (metadataDependentTypes.includes('tags')) {
                         contentTypesToCheck.push('tags');
                     }
-                    if (settings.showFilePreview) {
-                        contentTypesToCheck.push('preview');
-                    }
-                    if (settings.showFeatureImage) {
-                        contentTypesToCheck.push('featureImage');
-                    }
                     if (metadataDependentTypes.includes('metadata')) {
                         contentTypesToCheck.push('metadata');
-                    }
-                    if (hasCustomProperties) {
-                        contentTypesToCheck.push('properties');
                     }
 
                     const pathsNeedingContent = db.getFilesNeedingAnyContent(contentTypesToCheck);

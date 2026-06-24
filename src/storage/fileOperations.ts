@@ -19,6 +19,8 @@
 import { TFile } from 'obsidian';
 import { createDefaultFileData, IndexedDBStorage, type FileData } from './IndexedDBStorage';
 import { recordStartupDiagnostic } from '../services/diagnostics/DebugLoggingService';
+import type { ContentProviderType } from '../interfaces/IContentProvider';
+import { getProviderProcessedMtimeField } from './providerMtime';
 
 /**
  * FileOperations - IndexedDB storage access layer and cache management
@@ -355,11 +357,16 @@ export async function recordFileChanges(
  *
  * @param files - Array of Obsidian files to mark for regeneration
  */
-export async function markFilesForRegeneration(files: TFile[]): Promise<void> {
+export async function markFilesForRegeneration(
+    files: TFile[],
+    providers?: readonly ContentProviderType[],
+    dbOverride?: Pick<IndexedDBStorage, 'getFiles' | 'upsertFilesWithPatch'>
+): Promise<void> {
     if (isShutdownInProgress()) return;
-    const db = getDBInstance();
+    const db = dbOverride ?? getDBInstance();
     const paths = files.map(f => f.path);
     const existingData = db.getFiles(paths);
+    const providersToReset = providers && providers.length > 0 ? providers : null;
     // Reset provider processed mtimes without clearing provider output fields.
     const updates: { path: string; create: FileData; patch?: Partial<FileData> }[] = [];
 
@@ -371,12 +378,18 @@ export async function markFilesForRegeneration(files: TFile[]): Promise<void> {
         } else {
             // Force regeneration by resetting provider processed mtimes without clearing existing content fields.
             const patch: Partial<FileData> = {
-                mtime: file.stat.mtime,
-                markdownPipelineMtime: 0,
-                tagsMtime: 0,
-                metadataMtime: 0,
-                fileThumbnailsMtime: 0
+                mtime: file.stat.mtime
             };
+            if (providersToReset) {
+                for (const provider of providersToReset) {
+                    patch[getProviderProcessedMtimeField(provider)] = 0;
+                }
+            } else {
+                patch.markdownPipelineMtime = 0;
+                patch.tagsMtime = 0;
+                patch.metadataMtime = 0;
+                patch.fileThumbnailsMtime = 0;
+            }
             const createdData: FileData = { ...existing, ...patch };
             updates.push({ path: file.path, create: createdData, patch });
         }

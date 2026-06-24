@@ -90,6 +90,20 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.2.1',
+        date: '2026-06-23',
+        showOnUpdate: true,
+        info: 'More optimizations! This release significantly reduces **preview work while typing.** Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
+        improved: [
+            '**Preview updates.** Notes without task metadata no longer read the full markdown file just to confirm task counts.',
+            '**Preview updates.** Word and character counts now only update when a visible count, tooltip, or group header needs them.',
+            '**Preview updates.** Task indicators no longer update after autosave when the number of unfinished tasks did not change.',
+            '**Preview updates.** Modified-date lists now skip refreshes when dates, tooltips, and date filters are inactive and the edited note stays in the same sorted position.',
+            '**Preview updates.** Tag and property lists now refresh only when metadata affects membership or sorting.',
+            '**Preview updates.** Calendar titles now refresh only when the configured frontmatter title changes.'
+        ]
+    },
+    {
         version: '3.2.0',
         date: '2026-06-21',
         showOnUpdate: true,

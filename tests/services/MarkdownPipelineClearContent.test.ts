@@ -99,15 +99,29 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearAllFileContentMock).toHaveBeenCalledWith('properties');
     });
 
-    it('does not clear or regenerate content when text count display changes', async () => {
+    it('clears character counts when character count display is enabled', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ textCountDisplay: 'none' });
         const newSettings = createSettings({ textCountDisplay: 'characters' });
 
         await provider.clearContent({ oldSettings, newSettings });
 
-        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(false);
-        expect(batchClearAllFileContentMock).not.toHaveBeenCalled();
+        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
+        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
+        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('characterCount');
+        expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
+    });
+
+    it('clears word counts when tooltip word count is enabled', async () => {
+        const provider = new MarkdownPipelineContentProvider(new App());
+        const oldSettings = createSettings({ showTooltips: false, showTooltipWordCount: false });
+        const newSettings = createSettings({ showTooltips: true, showTooltipWordCount: true });
+
+        await provider.clearContent({ oldSettings, newSettings });
+
+        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
+        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
+        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('wordCount');
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 });
