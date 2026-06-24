@@ -203,7 +203,7 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
             value: plugin.settings.rootLevelSpacing,
             defaultValue: DEFAULT_SETTINGS.rootLevelSpacing,
             min: 0,
-            max: 6,
+            max: 12,
             step: 1,
             formatValue: formatPixelSliderValue,
             onChange: async value => {

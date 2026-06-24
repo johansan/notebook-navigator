@@ -104,7 +104,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Preview updates.** Task indicators no longer update after autosave when the number of unfinished tasks did not change.',
             '**Preview updates.** Modified-date lists now skip refreshes when dates, tooltips, and date filters are inactive and the edited note stays in the same sorted position.',
             '**Preview updates.** Tag and property lists now refresh only when metadata affects membership or sorting.',
-            '**Preview updates.** Calendar titles now refresh only when the configured frontmatter title changes.'
+            '**Preview updates.** Calendar titles now refresh only when the configured frontmatter title changes.',
+            '**Navigation pane.** Root item spacing now supports values up to `12px`.'
         ],
         changed: [
             '**Merge notes.** Source notes are no longer moved to trash by default. Select the option in the merge dialog to move them to trash.'
