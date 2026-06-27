@@ -199,17 +199,15 @@ export const FolderItem = React.memo(function FolderItem({
         });
     }, [app, effectiveDisplayName, excludedFolders, fileVisibility, folder, isMobile, settings, showHiddenItems, vaultChangeVersion]);
 
-    const dragIconId = useMemo(() => {
-        if (icon) {
-            return icon;
-        }
+    const dragFallbackIconId = useMemo(() => {
         if (isRootFolder) {
             return hasChildren && isExpanded ? 'open-vault' : 'vault';
         }
         return hasChildren && isExpanded
             ? resolveUXIcon(settings.interfaceIcons, 'nav-folder-open')
             : resolveUXIcon(settings.interfaceIcons, 'nav-folder-closed');
-    }, [hasChildren, icon, isExpanded, isRootFolder, settings.interfaceIcons]);
+    }, [hasChildren, isExpanded, isRootFolder, settings.interfaceIcons]);
+    const dragIconId = icon ?? dragFallbackIconId;
     const customBackground = backgroundColor;
 
     // Memoize className to avoid string concatenation on every render
@@ -358,9 +356,11 @@ export const FolderItem = React.memo(function FolderItem({
             data-drag-type="folder"
             // Marks element as draggable for event delegation
             data-draggable={isDraggable ? 'true' : undefined}
-            // Icon to display in drag ghost
+            // Icon to display in drag preview
             data-drag-icon={dragIconId}
-            // Icon color to display in drag ghost
+            // Default icon displayed if the custom drag preview icon is unavailable
+            data-drag-fallback-icon={dragFallbackIconId}
+            // Icon color to display in drag preview
             data-drag-icon-color={customColor || undefined}
             draggable={isDraggable}
             // Drop zone type (folder or tag)

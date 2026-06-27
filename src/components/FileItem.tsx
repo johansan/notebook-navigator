@@ -665,26 +665,26 @@ export const FileItem = React.memo(function FileItem({
         ? (fileColor ?? (settings.useFolderColorForTitles ? folderListColor : undefined))
         : undefined;
     const applyColorToName = Boolean(fileTitleColor);
-    // Icon to use when dragging the file
-    const dragIconId = useMemo(() => {
+    const dragFallbackIconId = useMemo(() => {
         void metadataVersion;
         return resolveFileDragIconId(
             file,
             settings.fileTypeIconMap,
             app.metadataCache,
-            effectiveFileIconId,
+            undefined,
             settings.fileTypeIconPreset,
             settings.externalIconProviders
         );
     }, [
         app.metadataCache,
-        effectiveFileIconId,
         file,
         metadataVersion,
         settings.externalIconProviders,
         settings.fileTypeIconMap,
         settings.fileTypeIconPreset
     ]);
+    // Icon to use when dragging the file
+    const dragIconId = effectiveFileIconId || dragFallbackIconId;
 
     // Determines whether to display the file icon based on icon availability
     const shouldShowFileIcon = useMemo(() => {
@@ -1308,9 +1308,11 @@ export const FileItem = React.memo(function FileItem({
             data-drag-type="file"
             // Marks element as draggable for event delegation
             data-draggable={!isMobile && !disableNativeDrag ? 'true' : undefined}
-            // Icon to display in drag ghost
+            // Icon to display in drag preview
             data-drag-icon={dragIconId}
-            // Icon color to display in drag ghost
+            // Default icon displayed if the custom drag preview icon is unavailable
+            data-drag-fallback-icon={dragFallbackIconId}
+            // Icon color to display in drag preview
             data-drag-icon-color={dragIconColor}
             onClick={handleItemClick}
             onMouseDown={handleMouseDown}

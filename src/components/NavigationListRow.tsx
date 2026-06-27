@@ -47,6 +47,8 @@ export interface NativeDragData {
     path: string;
     type: ItemType;
     icon?: string;
+    fallbackIcon?: string;
+    baseIcon?: string;
     iconColor?: string;
     allowMultiFileDrag?: boolean;
 }
@@ -334,6 +336,8 @@ export function NavigationListRow({
             data-drag-type={nativeDragData?.type}
             data-draggable={isNativeDraggable ? 'true' : undefined}
             data-drag-icon={nativeDragData?.icon}
+            data-drag-fallback-icon={nativeDragData?.fallbackIcon}
+            data-drag-base-icon={nativeDragData?.baseIcon}
             data-drag-icon-color={nativeDragData?.iconColor}
             data-drag-allow-multi-file={nativeDragData?.allowMultiFileDrag === false ? 'false' : undefined}
             data-level={level}

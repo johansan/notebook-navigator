@@ -109,14 +109,13 @@ export const PropertyTreeItem = React.memo(
         const shouldDisplayOperatorIndicator = searchMatch === 'include' && operatorIconName !== null;
         const hasChildren = useMemo(() => propertyNode.children.size > 0, [propertyNode.children.size]);
         const applyColorToName = Boolean(color) && !settings.colorIconOnly;
-        const dragIconId = useMemo(() => {
-            if (icon) {
-                return icon;
-            }
+        const dragFallbackIconId = useMemo(() => {
             return propertyNode.kind === 'value'
                 ? resolveUXIcon(settings.interfaceIcons, 'nav-property-value')
                 : resolveUXIcon(settings.interfaceIcons, 'nav-property');
-        }, [icon, propertyNode.kind, settings.interfaceIcons]);
+        }, [propertyNode.kind, settings.interfaceIcons]);
+        const dragIconId = icon ?? dragFallbackIconId;
+        const dragBaseIconId = propertyNode.kind === 'value' ? 'equal' : 'align-left';
 
         const className = useMemo(() => {
             const classes = ['nn-navitem', 'nn-property'];
@@ -231,9 +230,13 @@ export const PropertyTreeItem = React.memo(
                 data-drag-type="property"
                 // Marks element as draggable for drag handler filtering
                 data-draggable={isDraggable ? 'true' : undefined}
-                // Icon displayed in drag ghost
+                // Icon displayed in drag preview
                 data-drag-icon={dragIconId}
-                // Optional color applied to drag ghost icon
+                // Default icon displayed if the custom drag preview icon is unavailable
+                data-drag-fallback-icon={dragFallbackIconId}
+                // Built-in icon displayed if the configured fallback icon is unavailable
+                data-drag-base-icon={dragBaseIconId}
+                // Optional color applied to drag preview icon
                 data-drag-icon-color={color || undefined}
                 // Enable native drag and drop when not on mobile
                 draggable={isDraggable}

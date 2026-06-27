@@ -57,30 +57,20 @@ body.nn-resizing {
     outline: none;
 }
 
-/* Empty placeholder to hide browser's default drag preview */
-.nn-drag-empty-placeholder {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    left: -9999px;
-    top: -9999px;
-    opacity: 0;
-}
-
-/* Drag ghost element - follows the cursor during drag */
-.nn-drag-ghost {
+/* Offscreen element used as the browser-native drag image */
+.nn-drag-native-preview {
     position: fixed;
+    left: -1000px;
+    top: -1000px;
+    display: inline-flex;
+    padding: 10px 0 0 12px;
     pointer-events: none;
     z-index: 999999;
     opacity: 0.9;
-    will-change: transform;
-    left: 0;
-    top: 0;
-    transform: translate(var(--nn-drag-ghost-x, -1000px), var(--nn-drag-ghost-y, -1000px));
 }
 
-/* Badge shown on drag ghost for multiple files - Apple-style red badge */
-.nn-drag-ghost-badge {
+/* Badge shown in the native drag image for multiple files */
+.nn-drag-preview-badge {
     background-color: #dc3545;
     color: white;
     font-weight: bold;
@@ -95,8 +85,8 @@ body.nn-resizing {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Icon shown on drag ghost for single file/folder - dark circular background */
-.nn-drag-ghost-icon {
+/* Icon shown in the native drag image for single items */
+.nn-drag-preview-icon {
     background-color: #000000; /* Default black for light mode */
     border-radius: 50%;
     display: inline-flex;
@@ -108,12 +98,12 @@ body.nn-resizing {
 }
 
 /* Dark mode: use dark gray background */
-.theme-dark .nn-drag-ghost-icon {
+.theme-dark .nn-drag-preview-icon {
     background-color: var(--background-modifier-border-hover);
 }
 
-/* Style the Lucide icon inside drag ghost - white icon */
-.nn-drag-ghost-icon svg {
+/* Style the Lucide icon inside the drag preview */
+.nn-drag-preview-icon svg {
     width: 16px;
     height: 16px;
     color: #ffffff;

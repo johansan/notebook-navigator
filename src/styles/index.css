@@ -72,7 +72,7 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/state-focus.css';
 /* state-hover.css: desktop hover rules for file rows. */
 @import './sections/state-hover.css';
-/* state-drag-and-drop.css: drag ghost + drop target styling, plus resize user-select suppression and header action layout variants. */
+/* state-drag-and-drop.css: native drag preview and drop target styling, plus resize user-select suppression and header action layout variants. */
 @import './sections/state-drag-and-drop.css';
 /* state-context-menu.css: context menu outlines for active file/nav items. */
 @import './sections/state-context-menu.css';

@@ -18,7 +18,7 @@
 
 // src/hooks/useDragAndDrop.ts
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { TFile, TFolder } from 'obsidian';
+import { setIcon, TFile, TFolder } from 'obsidian';
 import { useSelectionState, useSelectionDispatch } from '../context/SelectionContext';
 import { useServices, useFileSystemOps, useTagOperations } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
@@ -31,13 +31,14 @@ import { SHORTCUT_DRAG_MIME } from '../types/shortcuts';
 import { DragManagerPayload, PROPERTY_DRAG_MIME, TAG_DRAG_MIME, hasDragManager, TIMEOUTS } from '../types/obsidian-extended';
 import { getPathFromDataAttribute } from '../utils/domUtils';
 import { buildFilePathInFolder, generateUniqueFilename } from '../utils/fileCreationUtils';
-import { createDragGhostManager } from '../utils/dragGhost';
+import { setNativeDragPreview } from '../utils/nativeDragPreview';
 import { normalizeTagPathValue } from '../utils/tagPrefixMatcher';
 import { runAsyncAction } from '../utils/async';
 import { extractFilePathsFromDataTransfer } from '../utils/dragData';
 import { FolderMoveError } from '../services/FileSystemService';
 import { getFilesForNavigationSelection } from '../utils/selectionUtils';
 import { expandNavigationTreeItems, getFolderAncestorPaths, getTagAncestorPaths } from '../utils/navigationExpansion';
+import { getIconService } from '../services/icons';
 
 /**
  * Enables drag and drop for files and folders using event delegation.
@@ -61,6 +62,91 @@ interface AutoExpandConfig {
     resolveNode: () => { isValid: boolean; hasChildren: boolean };
     expand: () => void;
 }
+
+const asEmojiIcon = (iconId: string): string | null => {
+    if (iconId.startsWith('emoji:')) {
+        return iconId.slice('emoji:'.length);
+    }
+
+    const emojiRegex = /\p{Extended_Pictographic}/u;
+    return emojiRegex.test(iconId) ? iconId : null;
+};
+
+const isRenderableDragPreviewIcon = (iconId: string): boolean => {
+    if (asEmojiIcon(iconId)) {
+        return true;
+    }
+
+    const normalizedIconId = iconId.startsWith('lucide-') ? iconId.slice('lucide-'.length) : iconId;
+    return getIconService().isValidIcon(normalizedIconId);
+};
+
+const resolveBaseDragPreviewIcon = (itemType: ItemType | null, baseIconId?: string): string | null => {
+    if (baseIconId) {
+        return baseIconId;
+    }
+    if (itemType === ItemType.FOLDER) {
+        return 'folder-closed';
+    }
+    if (itemType === ItemType.TAG) {
+        return 'tags';
+    }
+    if (itemType === ItemType.FILE) {
+        return 'file';
+    }
+    if (itemType === ItemType.PROPERTY) {
+        return 'align-left';
+    }
+    return null;
+};
+
+const resolveDragPreviewIcons = (itemType: ItemType | null, iconId?: string, fallbackIconId?: string, baseIconId?: string): string[] => {
+    const resolvedIcons: string[] = [];
+    if (iconId) {
+        resolvedIcons.push(iconId);
+    }
+    if (fallbackIconId) {
+        resolvedIcons.push(fallbackIconId);
+    }
+
+    const baseIcon = resolveBaseDragPreviewIcon(itemType, baseIconId);
+    if (baseIcon) {
+        resolvedIcons.push(baseIcon);
+    }
+
+    return Array.from(new Set(resolvedIcons));
+};
+
+const renderDragPreviewIcon = (target: HTMLElement, iconId: string): boolean => {
+    if (!isRenderableDragPreviewIcon(iconId)) {
+        return false;
+    }
+
+    target.innerHTML = '';
+    try {
+        getIconService().renderIcon(target, iconId);
+        if (target.childNodes.length > 0 || target.innerHTML.trim() !== '') {
+            return true;
+        }
+    } catch (error) {
+        void error;
+    }
+
+    const emoji = asEmojiIcon(iconId);
+    if (emoji) {
+        target.textContent = emoji;
+        return true;
+    }
+
+    try {
+        setIcon(target, iconId);
+        return target.childNodes.length > 0;
+    } catch (error) {
+        void error;
+    }
+
+    return false;
+};
 
 export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>) {
     const { app, isMobile, tagTreeService, propertyTreeService } = useServices();
@@ -87,7 +173,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const dragTagCanonicalRef = useRef<string | null>(null);
     const suppressClickUntilRef = useRef(0);
     const draggingElementsRef = useRef<Set<HTMLElement>>(new Set());
-    const dragGhostManager = useMemo(() => createDragGhostManager(), []);
     const springLoadedInitialDelayMs = useMemo(() => {
         const delaySeconds = settings.springLoadedFoldersInitialDelay;
         if (!Number.isFinite(delaySeconds)) {
@@ -138,8 +223,8 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
         return element instanceof HTMLElement;
     };
 
-    const isGhostableDragType = (value: string | null): value is ItemType => {
-        return value === ItemType.FILE || value === ItemType.FOLDER || value === ItemType.TAG;
+    const isPreviewableDragType = (value: string | null): value is ItemType => {
+        return value === ItemType.FILE || value === ItemType.FOLDER || value === ItemType.TAG || value === ItemType.PROPERTY;
     };
 
     const markDraggingElement = useCallback((element: HTMLElement) => {
@@ -167,6 +252,50 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             }
         });
     }, [containerRef, markDraggingElement, selectionState.selectedFiles]);
+
+    const showNativeMultiFileDragPreview = useCallback(
+        (event: DragEvent, count: number): boolean => {
+            const ownerDocument = containerRef.current?.ownerDocument ?? activeDocument;
+            const badge = ownerDocument.createElement('div');
+            badge.className = 'nn-drag-preview-badge';
+            badge.textContent = `${count}`;
+            return setNativeDragPreview(event, badge);
+        },
+        [containerRef]
+    );
+
+    const showNativeSingleItemDragPreview = useCallback(
+        (
+            event: DragEvent,
+            itemType: ItemType | null,
+            iconId?: string,
+            iconColor?: string,
+            fallbackIconId?: string,
+            baseIconId?: string
+        ): boolean => {
+            const resolvedIcons = resolveDragPreviewIcons(itemType, iconId, fallbackIconId, baseIconId);
+            if (resolvedIcons.length === 0) {
+                return false;
+            }
+
+            const ownerDocument = containerRef.current?.ownerDocument ?? activeDocument;
+            const iconWrapper = ownerDocument.createElement('div');
+            iconWrapper.className = 'nn-drag-preview-icon';
+            const resolvedIconColor = iconColor ?? '#ffffff';
+            iconWrapper.style.color = resolvedIconColor;
+            iconWrapper.style.setProperty('--icon-color', resolvedIconColor);
+            iconWrapper.style.fill = resolvedIconColor;
+            iconWrapper.style.stroke = resolvedIconColor;
+
+            const didRender = resolvedIcons.some(resolvedIcon => renderDragPreviewIcon(iconWrapper, resolvedIcon));
+            if (!didRender) {
+                return false;
+            }
+
+            return setNativeDragPreview(event, iconWrapper);
+        },
+        [containerRef]
+    );
 
     /**
      * Helper function to get current file list based on selection
@@ -267,24 +396,29 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             const type = draggable.getAttribute('data-drag-type');
             const canonicalTag = draggable.getAttribute('data-drag-canonical');
             const iconIdAttr = draggable.getAttribute('data-drag-icon');
+            const fallbackIconIdAttr = draggable.getAttribute('data-drag-fallback-icon');
+            const baseIconIdAttr = draggable.getAttribute('data-drag-base-icon');
             const iconColorAttr = draggable.getAttribute('data-drag-icon-color');
             const allowMultiFileDrag = draggable.getAttribute('data-drag-allow-multi-file') !== 'false';
             const iconId = iconIdAttr && iconIdAttr.trim().length > 0 ? iconIdAttr : undefined;
+            const fallbackIconId = fallbackIconIdAttr && fallbackIconIdAttr.trim().length > 0 ? fallbackIconIdAttr : undefined;
+            const baseIconId = baseIconIdAttr && baseIconIdAttr.trim().length > 0 ? baseIconIdAttr : undefined;
             const iconColor = iconColorAttr && iconColorAttr.trim().length > 0 ? iconColorAttr : undefined;
             if (!path || !e.dataTransfer) {
                 return;
             }
 
+            const isMultiFileDrag =
+                allowMultiFileDrag &&
+                type === ItemType.FILE &&
+                selectionState.selectedFiles.has(path) &&
+                selectionState.selectedFiles.size > 1;
+
             // Clear any existing drag payload before setting new one
             setDragManagerPayload(null);
 
             // Handle multiple file selection drag
-            if (
-                allowMultiFileDrag &&
-                type === ItemType.FILE &&
-                selectionState.selectedFiles.has(path) &&
-                selectionState.selectedFiles.size > 1
-            ) {
+            if (isMultiFileDrag) {
                 const selectedPaths = Array.from(selectionState.selectedFiles);
                 e.dataTransfer.setData('obsidian/files', JSON.stringify(selectedPaths));
                 e.dataTransfer.effectAllowed = 'all';
@@ -315,14 +449,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
                 markSelectedFileRowsDragging();
 
-                dragGhostManager.hideNativePreview(e);
-                dragGhostManager.showGhost(e, {
-                    itemType: ItemType.FILE,
-                    path,
-                    itemCount: selectedPaths.length,
-                    icon: iconId,
-                    iconColor
-                });
+                showNativeMultiFileDragPreview(e, selectedPaths.length);
                 return;
             }
 
@@ -376,24 +503,19 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             }
 
             markDraggingElement(draggable);
-            const resolvedType = isGhostableDragType(type) ? type : null;
-            dragGhostManager.hideNativePreview(e);
-            dragGhostManager.showGhost(e, {
-                itemType: resolvedType,
-                path,
-                icon: iconId,
-                iconColor
-            });
+            const previewItemType = isPreviewableDragType(type) ? type : null;
+            showNativeSingleItemDragPreview(e, previewItemType, iconId, iconColor, fallbackIconId, baseIconId);
         },
         [
             selectionState,
             app,
-            dragGhostManager,
             getFilesFromPaths,
             setDragManagerPayload,
             clearDraggingElements,
             markDraggingElement,
-            markSelectedFileRowsDragging
+            markSelectedFileRowsDragging,
+            showNativeMultiFileDragPreview,
+            showNativeSingleItemDragPreview
         ]
     );
 
@@ -1127,7 +1249,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
     /**
      * Cleans up drag state and visual feedback when drag ends
-     * Removes CSS classes, hides ghost, and clears drag payload
+     * Removes CSS classes and clears drag payload
      */
     const handleDragEnd = useCallback(() => {
         springLoadedExpandCountRef.current = 0;
@@ -1138,14 +1260,13 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             dragOverElement.current = null;
         }
 
-        dragGhostManager.hideGhost();
         // Clean up drag state and payload when drag ends
         setDragManagerPayload(null);
         clearAutoExpandTimer();
         dragTypeRef.current = null;
         dragTagDisplayRef.current = null;
         dragTagCanonicalRef.current = null;
-    }, [clearDraggingElements, dragGhostManager, clearAutoExpandTimer, setDragManagerPayload]);
+    }, [clearDraggingElements, clearAutoExpandTimer, setDragManagerPayload]);
 
     /**
      * Attaches drag and drop event listeners to container element
@@ -1154,14 +1275,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     useEffect(() => {
         const container = containerRef.current;
         if (!container || isMobile) return;
-        const ownerDocument = container.ownerDocument;
-
-        // Global handler for escape key to clean up ghost on cancel
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && dragGhostManager.hasGhost()) {
-                dragGhostManager.hideGhost();
-            }
-        };
         // Wrap handleDrop to catch async errors properly
         const handleDropListener = (event: DragEvent) => {
             runAsyncAction(() => handleDrop(event));
@@ -1182,7 +1295,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             event.stopImmediatePropagation();
         };
         container.addEventListener('click', handleClickCapture, true);
-        ownerDocument.addEventListener('keydown', handleKeyDown);
 
         return () => {
             container.removeEventListener('dragstart', handleDragStart);
@@ -1191,11 +1303,9 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             container.removeEventListener('drop', handleDropListener);
             container.removeEventListener('dragend', handleDragEnd);
             container.removeEventListener('click', handleClickCapture, true);
-            ownerDocument.removeEventListener('keydown', handleKeyDown);
 
             // Clean up any lingering drag state on unmount
             clearDraggingElements();
-            dragGhostManager.hideGhost();
             setDragManagerPayload(null);
             clearAutoExpandTimer();
             dragTypeRef.current = null;
@@ -1208,7 +1318,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
         handleDrop,
         handleDragEnd,
         isMobile,
-        dragGhostManager,
         clearDraggingElements,
         clearAutoExpandTimer,
         setDragManagerPayload

@@ -29,7 +29,7 @@ import { ISettingsProvider } from '../interfaces/ISettingsProvider';
 import { runAsyncAction } from '../utils/async';
 import { addAsyncEventListener } from '../utils/domEventListeners';
 import { showNotice } from '../utils/noticeUtils';
-import { createDragGhostManager, type DragGhostManager } from '../utils/dragGhost';
+import { setNativeDragPreview } from '../utils/nativeDragPreview';
 import { ConfirmModal } from './ConfirmModal';
 
 const DEFAULT_PICKER_COLOR = '#3b82f6';
@@ -104,7 +104,6 @@ export class ColorPickerSurface {
     private saturation = 0;
     private value = 0;
     private alpha = 255;
-    private dragGhostManager: DragGhostManager;
     private pendingPaletteSwitchHandle: number | null = null;
     private showPreview: boolean;
     private recentInLeftColumn: boolean;
@@ -138,7 +137,6 @@ export class ColorPickerSurface {
         this.recentInLeftColumn = params.recentInLeftColumn ?? false;
         this.onChange = params.onChange;
         this.onCommitRequested = params.onCommitRequested;
-        this.dragGhostManager = createDragGhostManager();
         this.paletteMode = ColorPickerSurface.getLastPaletteMode();
 
         const initialColor = params.initialColor;
@@ -219,7 +217,6 @@ export class ColorPickerSurface {
         this.disposeRecentColorListeners();
         this.disposePointerListeners();
         this.disposeDomListeners();
-        this.dragGhostManager.hideGhost();
         if (this.pendingPaletteSwitchHandle !== null) {
             window.cancelAnimationFrame(this.pendingPaletteSwitchHandle);
             this.pendingPaletteSwitchHandle = null;
@@ -742,7 +739,6 @@ export class ColorPickerSurface {
 
                 event.preventDefault();
                 event.stopPropagation();
-                this.dragGhostManager.hideGhost();
                 this.handleCustomDrop(index, dragData);
             })
         );
@@ -896,19 +892,10 @@ export class ColorPickerSurface {
             transfer.setData('text/plain', color);
             transfer.effectAllowed = 'copyMove';
 
-            this.dragGhostManager.hideNativePreview(event);
-            this.dragGhostManager.showGhost(event, {
-                customElement: this.createDragPreview(color),
-                cursorOffset: { x: 12, y: 12 },
-                itemType: null
-            });
+            setNativeDragPreview(event, this.createDragPreview(color));
 
             this.ensureCustomPaletteVisibleForDrag();
         });
-        const dragEndDispose = addAsyncEventListener(element, 'dragend', () => {
-            this.dragGhostManager.hideGhost();
-        });
-        disposers.push(dragEndDispose);
         disposers.push(dispose);
     }
 
@@ -955,7 +942,7 @@ export class ColorPickerSurface {
 
     private createDragPreview(color: string): HTMLElement {
         const size = 36;
-        const canvas = createEl('canvas');
+        const canvas = this.rootEl.ownerDocument.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
         canvas.className = 'nn-drag-preview';
@@ -1014,7 +1001,6 @@ export class ColorPickerSurface {
         this.renderUserColors();
         this.updatePresetButtonsVisibility();
         this.updateFromHex(normalized, { syncInput: true });
-        this.dragGhostManager.hideGhost();
     }
 
     private handleSwatchDoubleClick(color: string): void {

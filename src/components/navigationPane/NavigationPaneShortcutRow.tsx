@@ -430,6 +430,8 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                                   path: note.path,
                                   type: ItemType.FILE,
                                   icon: item.icon ?? 'lucide-file-text',
+                                  fallbackIcon: 'file-text',
+                                  baseIcon: 'file',
                                   iconColor: item.color,
                                   allowMultiFileDrag: false
                               }

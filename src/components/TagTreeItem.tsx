@@ -189,8 +189,9 @@ export const TagTreeItem = React.memo(
         const tagIcon = icon;
         // Determine whether to apply color to the tag name instead of the icon
         const applyColorToName = Boolean(tagColor) && !settings.colorIconOnly;
-        // Use custom icon or default to tags icon for drag ghost
-        const dragIconId = tagIcon || resolveUXIcon(settings.interfaceIcons, 'nav-tag');
+        const dragFallbackIconId = resolveUXIcon(settings.interfaceIcons, 'nav-tag');
+        // Use custom icon or default to tag icon for drag preview
+        const dragIconId = tagIcon || dragFallbackIconId;
 
         // Memoize className to avoid string concatenation on every render
         const className = useMemo(() => {
@@ -299,9 +300,11 @@ export const TagTreeItem = React.memo(
                 data-drag-type="tag"
                 // Marks element as draggable for drag handler filtering
                 data-draggable={isDraggable ? 'true' : undefined}
-                // Icon displayed in drag ghost
+                // Icon displayed in drag preview
                 data-drag-icon={dragIconId}
-                // Optional color applied to drag ghost icon
+                // Default icon displayed if the custom drag preview icon is unavailable
+                data-drag-fallback-icon={dragFallbackIconId}
+                // Optional color applied to drag preview icon
                 data-drag-icon-color={tagColor || undefined}
                 data-level={level}
                 // Enable native drag and drop when not on mobile and not a virtual tag
