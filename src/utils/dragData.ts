@@ -25,6 +25,19 @@ interface PropertyDragPayload {
     nodeId?: unknown;
 }
 
+type DragPathType = 'file' | 'folder';
+
+interface ExtractFilePathsOptions {
+    getPathType?: (path: string) => DragPathType | null;
+    vaultName?: string;
+}
+
+const OBSIDIAN_FILE_MIME = 'obsidian/file';
+const OBSIDIAN_FILES_MIME = 'obsidian/files';
+const TEXT_URI_LIST_MIME = 'text/uri-list';
+const TEXT_PLAIN_MIME = 'text/plain';
+const OBSIDIAN_OPEN_URI = 'obsidian://open';
+
 // Determines if a value is a non-empty string
 function isNonEmptyString(value: unknown): value is string {
     return typeof value === 'string' && value.length > 0;
@@ -39,6 +52,79 @@ function filterStringArray(values: unknown[]): string[] {
         }
     }
     return filtered;
+}
+
+function getPathType(path: string, options?: ExtractFilePathsOptions): DragPathType | null {
+    return options?.getPathType?.(path) ?? null;
+}
+
+function resolveFilePath(path: string, options?: ExtractFilePathsOptions): string {
+    const exactType = getPathType(path, options);
+    const markdownPath = `${path}.md`;
+    const markdownType = getPathType(markdownPath, options);
+
+    if (exactType === 'file') {
+        return path;
+    }
+    if (markdownType === 'file') {
+        return markdownPath;
+    }
+    if (exactType) {
+        return path;
+    }
+    return path;
+}
+
+function parseObsidianOpenUri(entry: string, options?: ExtractFilePathsOptions): string | null {
+    const trimmed = entry.trim();
+    if (!trimmed || !trimmed.startsWith(OBSIDIAN_OPEN_URI)) {
+        return null;
+    }
+
+    try {
+        const uri = new URL(trimmed);
+        if (uri.protocol !== 'obsidian:' || uri.hostname !== 'open') {
+            return null;
+        }
+
+        const vaultName = uri.searchParams.get('vault');
+        if (options?.vaultName && vaultName !== options.vaultName) {
+            return null;
+        }
+
+        const filePath = uri.searchParams.get('file');
+        if (!isNonEmptyString(filePath)) {
+            return null;
+        }
+
+        return resolveFilePath(filePath, options);
+    } catch {
+        return null;
+    }
+}
+
+function parseObsidianOpenUriPayload(payload: string, options?: ExtractFilePathsOptions): string[] | null {
+    const trimmed = payload.trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    const entries = trimmed
+        .split(/\r?\n|(?=obsidian:\/\/open\?)/)
+        .map(entry => entry.trim())
+        .filter(entry => entry.length > 0 && !entry.startsWith('#'));
+    const paths = entries.map(entry => parseObsidianOpenUri(entry, options)).filter(isNonEmptyString);
+
+    return paths.length > 0 ? paths : null;
+}
+
+export function hasObsidianFileDragType(types: DOMStringList | readonly string[] | null | undefined): boolean {
+    const typeList = Array.from(types ?? []);
+    if (typeList.includes(OBSIDIAN_FILE_MIME) || typeList.includes(OBSIDIAN_FILES_MIME)) {
+        return true;
+    }
+
+    return typeList.length === 2 && typeList.includes(TEXT_URI_LIST_MIME) && typeList.includes(TEXT_PLAIN_MIME);
 }
 
 /**
@@ -67,15 +153,15 @@ function parseObsidianFilesPayload(payload: string): string[] | null {
 }
 
 /**
- * Extracts file paths from a DataTransfer instance by checking the Obsidian-specific
- * payloads for single and multiple files. Returns null when no valid paths are found.
+ * Extracts file paths from a DataTransfer instance by checking Obsidian file payloads.
+ * Returns null when no valid paths are found.
  */
-export function extractFilePathsFromDataTransfer(dataTransfer: DataTransfer | null): string[] | null {
+export function extractFilePathsFromDataTransfer(dataTransfer: DataTransfer | null, options?: ExtractFilePathsOptions): string[] | null {
     if (!dataTransfer) {
         return null;
     }
 
-    const multiPayload = dataTransfer.getData('obsidian/files');
+    const multiPayload = dataTransfer.getData(OBSIDIAN_FILES_MIME);
     if (isNonEmptyString(multiPayload)) {
         const parsed = parseObsidianFilesPayload(multiPayload);
         if (parsed && parsed.length > 0) {
@@ -85,9 +171,25 @@ export function extractFilePathsFromDataTransfer(dataTransfer: DataTransfer | nu
 
     // Desktop builds omit obsidian/files when only one item is dragged, so we must
     // always check the single-item payload even if the multi entry existed.
-    const singlePayload = dataTransfer.getData('obsidian/file');
+    const singlePayload = dataTransfer.getData(OBSIDIAN_FILE_MIME);
     if (isNonEmptyString(singlePayload)) {
         return [singlePayload];
+    }
+
+    const uriListPayload = dataTransfer.getData(TEXT_URI_LIST_MIME);
+    if (isNonEmptyString(uriListPayload)) {
+        const parsed = parseObsidianOpenUriPayload(uriListPayload, options);
+        if (parsed && parsed.length > 0) {
+            return parsed;
+        }
+    }
+
+    const plainTextPayload = dataTransfer.getData(TEXT_PLAIN_MIME);
+    if (isNonEmptyString(plainTextPayload)) {
+        const parsed = parseObsidianOpenUriPayload(plainTextPayload, options);
+        if (parsed && parsed.length > 0) {
+            return parsed;
+        }
     }
 
     return null;

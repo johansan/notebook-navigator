@@ -21,7 +21,12 @@ import { TFile, TFolder, type App } from 'obsidian';
 import { PointerSensor, type DragEndEvent, type DragStartEvent, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { showNotice } from '../../utils/noticeUtils';
-import { extractFilePathsFromDataTransfer, parsePropertyDragPayload, parseTagDragPayload } from '../../utils/dragData';
+import {
+    extractFilePathsFromDataTransfer,
+    hasObsidianFileDragType,
+    parsePropertyDragPayload,
+    parseTagDragPayload
+} from '../../utils/dragData';
 import { runAsyncAction } from '../../utils/async';
 import { PROPERTY_DRAG_MIME, TAG_DRAG_MIME } from '../../types/obsidian-extended';
 import { SHORTCUT_POINTER_CONSTRAINT } from '../../utils/dndConfig';
@@ -162,7 +167,7 @@ export function useNavigationPaneShortcutDnD({
                 return false;
             }
 
-            const hasObsidianFiles = types.includes('obsidian/file') || types.includes('obsidian/files');
+            const hasObsidianFiles = hasObsidianFileDragType(types);
             const hasTagPayload = types.includes(TAG_DRAG_MIME);
             const hasPropertyPayload = types.includes(PROPERTY_DRAG_MIME);
             if (!hasObsidianFiles && !hasTagPayload && !hasPropertyPayload) {
@@ -174,6 +179,20 @@ export function useNavigationPaneShortcutDnD({
             return true;
         },
         [shortcutsExpanded, showShortcuts]
+    );
+
+    const getDragPathType = useCallback(
+        (path: string): 'file' | 'folder' | null => {
+            const target = app.vault.getAbstractFileByPath(path);
+            if (target instanceof TFile) {
+                return 'file';
+            }
+            if (target instanceof TFolder) {
+                return 'folder';
+            }
+            return null;
+        },
+        [app.vault]
     );
 
     const handleShortcutDrop = useCallback(
@@ -224,7 +243,10 @@ export function useNavigationPaneShortcutDnD({
                 }
             }
 
-            const rawPaths = extractFilePathsFromDataTransfer(dataTransfer);
+            const rawPaths = extractFilePathsFromDataTransfer(dataTransfer, {
+                getPathType: getDragPathType,
+                vaultName: app.vault.getName()
+            });
             if (!rawPaths || rawPaths.length === 0) {
                 return false;
             }
@@ -293,6 +315,7 @@ export function useNavigationPaneShortcutDnD({
             addTagShortcut,
             app.vault,
             computeShortcutInsertIndex,
+            getDragPathType,
             hasFolderShortcut,
             hasNoteShortcut,
             showShortcuts,
