@@ -167,6 +167,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const expandedFoldersRef = useRef(expansionState.expandedFolders);
     const expandedTagsRef = useRef(expansionState.expandedTags);
     const dragTypeRef = useRef<DragItemType | null>(null);
+    const dragOverDropEffectRef = useRef<DataTransfer['dropEffect'] | null>(null);
     // Stores display path of dragged tag for rename operations
     const dragTagDisplayRef = useRef<string | null>(null);
     // Stores canonical path of dragged tag for comparison and validation
@@ -695,6 +696,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             if (dragOverElement.current && dragOverElement.current !== dropZone) {
                 dragOverElement.current.classList.remove('nn-drag-over');
                 dragOverElement.current = null;
+                dragOverDropEffectRef.current = null;
                 clearAutoExpandTimer();
             }
 
@@ -702,13 +704,21 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 if (isShortcutDrag && e.dataTransfer) {
                     e.dataTransfer.dropEffect = 'none';
                 }
+                dragOverDropEffectRef.current = null;
                 clearAutoExpandTimer();
+                return;
+            }
+
+            if (dragOverElement.current === dropZone && dragOverDropEffectRef.current && e.dataTransfer) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = dragOverDropEffectRef.current;
                 return;
             }
 
             if (isShortcutDrag) {
                 dropZone.classList.remove('nn-drag-over');
                 dragOverElement.current = null;
+                dragOverDropEffectRef.current = null;
                 clearAutoExpandTimer();
                 if (e.dataTransfer) {
                     e.dataTransfer.dropEffect = 'none';
@@ -719,6 +729,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             if (dragTypeRef.current === ItemType.PROPERTY) {
                 dropZone.classList.remove('nn-drag-over');
                 dragOverElement.current = null;
+                dragOverDropEffectRef.current = null;
                 clearAutoExpandTimer();
                 if (e.dataTransfer) {
                     e.dataTransfer.dropEffect = 'none';
@@ -747,6 +758,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                         if (dragOverElement.current === dropZone) {
                             dropZone.classList.remove('nn-drag-over');
                             dragOverElement.current = null;
+                            dragOverDropEffectRef.current = null;
                         }
                         clearAutoExpandTimer();
                         e.dataTransfer.dropEffect = 'none';
@@ -759,6 +771,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     if (dragOverElement.current === dropZone) {
                         dropZone.classList.remove('nn-drag-over');
                         dragOverElement.current = null;
+                        dragOverDropEffectRef.current = null;
                     }
                     clearAutoExpandTimer();
                     e.dataTransfer.dropEffect = 'none';
@@ -775,6 +788,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                         if (dragOverElement.current === dropZone) {
                             dropZone.classList.remove('nn-drag-over');
                             dragOverElement.current = null;
+                            dragOverDropEffectRef.current = null;
                         }
                         clearAutoExpandTimer();
                         e.dataTransfer.dropEffect = 'none';
@@ -790,6 +804,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                             dropZone.classList.remove('nn-drag-over');
                         }
                         dragOverElement.current = null;
+                        dragOverDropEffectRef.current = null;
                         clearAutoExpandTimer();
                         e.dataTransfer.dropEffect = 'none';
                         return;
@@ -815,6 +830,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                         if (dragOverElement.current === dropZone) {
                             dropZone.classList.remove('nn-drag-over');
                             dragOverElement.current = null;
+                            dragOverDropEffectRef.current = null;
                         }
                         clearAutoExpandTimer();
                         e.dataTransfer.dropEffect = 'none';
@@ -830,8 +846,11 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 return;
             }
 
-            dropZone.classList.add('nn-drag-over');
+            if (dragOverElement.current !== dropZone) {
+                dropZone.classList.add('nn-drag-over');
+            }
             dragOverElement.current = dropZone;
+            dragOverDropEffectRef.current = e.dataTransfer?.dropEffect ?? null;
         },
         [clearAutoExpandTimer, maybeScheduleAutoExpand]
     );
@@ -1007,6 +1026,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     dropZone.classList.remove('nn-drag-over');
                 }
                 dragOverElement.current = null;
+                dragOverDropEffectRef.current = null;
 
                 if (!dropZone && isHTMLElement(e.target)) {
                     const candidate = e.target.closest('[data-drop-zone]');
@@ -1240,6 +1260,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 if (!(relatedTarget instanceof Node) || !dropZone.contains(relatedTarget)) {
                     dropZone.classList.remove('nn-drag-over');
                     dragOverElement.current = null;
+                    dragOverDropEffectRef.current = null;
                     clearAutoExpandTimer();
                 }
             }
@@ -1259,6 +1280,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             dragOverElement.current.classList.remove('nn-drag-over');
             dragOverElement.current = null;
         }
+        dragOverDropEffectRef.current = null;
 
         // Clean up drag state and payload when drag ends
         setDragManagerPayload(null);
@@ -1309,6 +1331,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             setDragManagerPayload(null);
             clearAutoExpandTimer();
             dragTypeRef.current = null;
+            dragOverDropEffectRef.current = null;
         };
     }, [
         containerRef,
