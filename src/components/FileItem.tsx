@@ -675,14 +675,7 @@ export const FileItem = React.memo(function FileItem({
             settings.fileTypeIconPreset,
             settings.externalIconProviders
         );
-    }, [
-        app.metadataCache,
-        file,
-        metadataVersion,
-        settings.externalIconProviders,
-        settings.fileTypeIconMap,
-        settings.fileTypeIconPreset
-    ]);
+    }, [app.metadataCache, file, metadataVersion, settings.externalIconProviders, settings.fileTypeIconMap, settings.fileTypeIconPreset]);
     // Icon to use when dragging the file
     const dragIconId = effectiveFileIconId || dragFallbackIconId;
 
