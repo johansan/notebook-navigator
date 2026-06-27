@@ -997,6 +997,7 @@ export const STRINGS_PT = {
             navigation: {
                 appearance: 'Aparência',
                 banner: 'Banner',
+                collapseItems: 'Recolher itens',
                 dragAndDrop: 'Arrastar e largar',
                 noteCounts: 'Contagens de notas',
                 rainbowColors: 'Cores arco-íris',
@@ -2088,6 +2089,10 @@ export const STRINGS_PT = {
             smartCollapse: {
                 name: 'Manter item selecionado expandido',
                 desc: 'Ao recolher, manter o item selecionado e os seus pais expandidos.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Ignorar raiz do cofre ao recolher',
+                desc: 'Ao recolher todos os itens, deixe a pasta raiz do cofre no estado atual.'
             },
             navIndent: {
                 name: 'Indentação da árvore',

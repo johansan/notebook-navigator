@@ -992,6 +992,7 @@ export const STRINGS_AR = {
             navigation: {
                 appearance: 'المظهر',
                 banner: 'اللافتة',
+                collapseItems: 'طي العناصر',
                 dragAndDrop: 'السحب والإفلات',
                 noteCounts: 'عدد الملاحظات',
                 rainbowColors: 'ألوان قوس قزح',
@@ -2080,6 +2081,10 @@ export const STRINGS_AR = {
             smartCollapse: {
                 name: 'إبقاء العنصر المحدد موسعًا',
                 desc: 'عند الطي، إبقاء العنصر المحدد وآبائه موسعين.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'تخطي جذر الخزنة عند الطي',
+                desc: 'عند طي كل العناصر، اترك مجلد جذر الخزنة في حالته الحالية.'
             },
             navIndent: {
                 name: 'مسافة بادئة الشجرة',

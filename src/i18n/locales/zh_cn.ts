@@ -987,6 +987,7 @@ export const STRINGS_ZH_CN = {
             navigation: {
                 appearance: '外观',
                 banner: '横幅',
+                collapseItems: '折叠项目',
                 dragAndDrop: '拖放',
                 noteCounts: '笔记数',
                 rainbowColors: '彩虹颜色',
@@ -2070,6 +2071,10 @@ export const STRINGS_ZH_CN = {
             smartCollapse: {
                 name: '保持选中项展开',
                 desc: '折叠时，保持选中项及其父级展开。'
+            },
+            excludeVaultRootFromCollapse: {
+                name: '折叠时跳过仓库根目录',
+                desc: '折叠所有项目时，保持仓库根文件夹的当前状态。'
             },
             navIndent: {
                 name: '树形缩进',

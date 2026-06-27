@@ -593,6 +593,7 @@ export interface NotebookNavigatorSettings {
     // Navigation pane tab - Behavior
     collapseBehavior: ItemScope;
     smartCollapse: boolean;
+    excludeVaultRootFromCollapse: boolean;
     collapseOtherBranchesOnExpand: boolean;
     autoSelectFirstFileOnFocusChange: boolean;
     autoExpandNavItems: boolean;

@@ -994,6 +994,7 @@ export const STRINGS_UK = {
             navigation: {
                 appearance: 'Вигляд',
                 banner: 'Банер',
+                collapseItems: 'Згортати елементи',
                 dragAndDrop: 'Перетягування',
                 noteCounts: 'Кількість нотаток',
                 rainbowColors: 'Кольори веселки',
@@ -2083,6 +2084,10 @@ export const STRINGS_UK = {
             smartCollapse: {
                 name: 'Тримати вибраний елемент розгорнутим',
                 desc: 'При згортанні тримати вибраний елемент та його батьків розгорнутими.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Пропускати корінь сховища під час згортання',
+                desc: 'Під час згортання всіх елементів залишати кореневу папку сховища в поточному стані.'
             },
             navIndent: {
                 name: 'Відступ дерева',

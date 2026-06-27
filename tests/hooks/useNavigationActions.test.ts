@@ -17,16 +17,43 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { buildCollapsedExpansionState, getCollapseBehaviorScope } from '../../src/hooks/useNavigationActions';
+import { TFolder } from 'obsidian';
+import {
+    buildCollapsedExpansionState,
+    collectExpandableFolderPaths,
+    getCollapseBehaviorScope,
+    hasCollapsibleFolderExpansion
+} from '../../src/hooks/useNavigationActions';
 import { PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, SHORTCUTS_VIRTUAL_FOLDER_ID, TAGS_ROOT_VIRTUAL_FOLDER_ID } from '../../src/types';
 
 describe('useNavigationActions helpers', () => {
+    function createFolder(path: string, children: TFolder[] = []): TFolder {
+        const folder = new TFolder(path);
+        Object.assign(folder, { children });
+        return folder;
+    }
+
     it('supports a properties-only collapse scope', () => {
         expect(getCollapseBehaviorScope('properties-only')).toEqual({
             affectFolders: false,
             affectTags: false,
             affectProperties: true
         });
+    });
+
+    it('ignores the vault root when deciding whether folders can collapse', () => {
+        expect(hasCollapsibleFolderExpansion(new Set(['/']), true)).toBe(false);
+        expect(hasCollapsibleFolderExpansion(new Set(['/', 'Projects']), true)).toBe(true);
+        expect(hasCollapsibleFolderExpansion(new Set(['/']), false)).toBe(true);
+    });
+
+    it('includes the vault root when expanding all folders', () => {
+        const activeFolder = createFolder('Projects/Active');
+        const projectsFolder = createFolder('Projects', [activeFolder]);
+        const rootFolder = createFolder('/', [projectsFolder]);
+
+        expect(collectExpandableFolderPaths(rootFolder, true)).toEqual(new Set(['/', 'Projects', 'Projects/Active']));
+        expect(collectExpandableFolderPaths(rootFolder, false)).toEqual(new Set(['Projects', 'Projects/Active']));
     });
 
     it('collapses visible root containers to the root rows only', () => {
@@ -71,5 +98,29 @@ describe('useNavigationActions helpers', () => {
         expect(collapsedState.virtualFolders).toEqual(
             new Set([SHORTCUTS_VIRTUAL_FOLDER_ID, TAGS_ROOT_VIRTUAL_FOLDER_ID, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID])
         );
+    });
+
+    it('preserves the expanded vault root when root skipping is enabled', () => {
+        const collapsedState = buildCollapsedExpansionState({
+            behavior: 'all',
+            currentExpandedVirtualFolders: new Set(),
+            selectedFolderParentPaths: ['Projects', '/'],
+            preserveRootFolder: true,
+            rootFolderExpanded: true
+        });
+
+        expect(collapsedState.folders).toEqual(new Set(['Projects', '/']));
+    });
+
+    it('preserves the collapsed vault root when root skipping is enabled', () => {
+        const collapsedState = buildCollapsedExpansionState({
+            behavior: 'all',
+            currentExpandedVirtualFolders: new Set(),
+            selectedFolderParentPaths: ['Projects', '/'],
+            preserveRootFolder: true,
+            rootFolderExpanded: false
+        });
+
+        expect(collapsedState.folders).toEqual(new Set(['Projects']));
     });
 });

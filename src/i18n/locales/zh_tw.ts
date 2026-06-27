@@ -987,6 +987,7 @@ export const STRINGS_ZH_TW = {
             navigation: {
                 appearance: '外觀',
                 banner: '橫幅',
+                collapseItems: '摺疊項目',
                 dragAndDrop: '拖放',
                 noteCounts: '筆記數',
                 rainbowColors: '彩虹顏色',
@@ -2070,6 +2071,10 @@ export const STRINGS_ZH_TW = {
             smartCollapse: {
                 name: '保持選取項展開',
                 desc: '摺疊時，保持選取項及其父級展開。'
+            },
+            excludeVaultRootFromCollapse: {
+                name: '摺疊時略過保險庫根目錄',
+                desc: '摺疊所有項目時，保持保險庫根資料夾的目前狀態。'
             },
             navIndent: {
                 name: '樹狀縮排',

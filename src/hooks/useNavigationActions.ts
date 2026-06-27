@@ -52,7 +52,11 @@ interface CollapseStateForSelectionParams {
     selectedPropertyNodeId?: string | null;
     showAllTagsFolder: boolean;
     showAllPropertiesFolder: boolean;
+    preserveRootFolder?: boolean;
+    rootFolderExpanded?: boolean;
 }
+
+const ROOT_FOLDER_PATH = '/';
 
 export function getCollapseBehaviorScope(behavior: ItemScope): CollapseBehaviorScope {
     switch (behavior) {
@@ -66,6 +70,40 @@ export function getCollapseBehaviorScope(behavior: ItemScope): CollapseBehaviorS
         default:
             return { affectFolders: true, affectTags: true, affectProperties: true };
     }
+}
+
+export function hasCollapsibleFolderExpansion(expandedFolders: ReadonlySet<string>, preserveRootFolder: boolean): boolean {
+    if (!preserveRootFolder) {
+        return expandedFolders.size > 0;
+    }
+
+    for (const path of expandedFolders) {
+        if (path !== ROOT_FOLDER_PATH) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+export function collectExpandableFolderPaths(rootFolder: TFolder, includeRootFolder: boolean): Set<string> {
+    const allFolders = new Set<string>();
+
+    const collectAllFolders = (folder: TFolder) => {
+        folder.children.forEach(child => {
+            if (child instanceof TFolder) {
+                allFolders.add(child.path);
+                collectAllFolders(child);
+            }
+        });
+    };
+
+    if (includeRootFolder) {
+        allFolders.add(rootFolder.path);
+    }
+
+    collectAllFolders(rootFolder);
+    return allFolders;
 }
 
 function setVirtualRootExpansion(
@@ -104,16 +142,27 @@ export function buildCollapsedExpansionState(params: {
     selectedPropertyKeyNodeId?: string | null;
     revealTagsRoot?: boolean;
     revealPropertiesRoot?: boolean;
+    preserveRootFolder?: boolean;
+    rootFolderExpanded?: boolean;
 }): CollapsedExpansionState {
     const scope = getCollapseBehaviorScope(params.behavior);
     const folders = new Set<string>();
     const tags = new Set<string>();
     const properties = new Set<string>();
+    const preserveRootFolder = params.preserveRootFolder === true;
+    const rootFolderExpanded = params.rootFolderExpanded === true;
 
     if (scope.affectFolders && params.selectedFolderParentPaths) {
         for (const path of params.selectedFolderParentPaths) {
+            if (preserveRootFolder && path === ROOT_FOLDER_PATH && !rootFolderExpanded) {
+                continue;
+            }
             folders.add(path);
         }
+    }
+
+    if (scope.affectFolders && preserveRootFolder && rootFolderExpanded) {
+        folders.add(ROOT_FOLDER_PATH);
     }
 
     if (scope.affectTags && params.selectedTagParentPaths) {
@@ -154,7 +203,9 @@ function buildCollapsedExpansionStateForSelection(
         revealTagsRoot: includeSelection ? shouldRevealTagsRoot(params.selectedTag ?? null, params.showAllTagsFolder) : undefined,
         revealPropertiesRoot: includeSelection
             ? shouldRevealPropertiesRoot(params.selectedPropertyNodeId ?? null, params.showAllPropertiesFolder)
-            : undefined
+            : undefined,
+        preserveRootFolder: params.preserveRootFolder,
+        rootFolderExpanded: params.rootFolderExpanded
     });
 }
 
@@ -233,7 +284,8 @@ export function useNavigationActions() {
         const behavior = settings.collapseBehavior;
         const scope = getCollapseBehaviorScope(behavior);
 
-        const hasFoldersExpanded = scope.affectFolders && expansionState.expandedFolders.size > 0;
+        const hasFoldersExpanded =
+            scope.affectFolders && hasCollapsibleFolderExpansion(expansionState.expandedFolders, settings.excludeVaultRootFromCollapse);
         const hasTagsExpanded =
             scope.affectTags &&
             (expansionState.expandedTags.size > 0 ||
@@ -253,7 +305,9 @@ export function useNavigationActions() {
                     selectedTag: selectionState.selectedTag,
                     selectedPropertyNodeId: selectionState.selectedProperty,
                     showAllTagsFolder: settings.showAllTagsFolder,
-                    showAllPropertiesFolder: settings.showAllPropertiesFolder
+                    showAllPropertiesFolder: settings.showAllPropertiesFolder,
+                    preserveRootFolder: settings.excludeVaultRootFromCollapse,
+                    rootFolderExpanded: expansionState.expandedFolders.has(ROOT_FOLDER_PATH)
                 },
                 { includeSelection: true }
             );
@@ -278,6 +332,7 @@ export function useNavigationActions() {
         return hasItemsExpanded;
     }, [
         settings.collapseBehavior,
+        settings.excludeVaultRootFromCollapse,
         settings.showAllPropertiesFolder,
         settings.showAllTagsFolder,
         settings.smartCollapse,
@@ -309,7 +364,9 @@ export function useNavigationActions() {
                         selectedTag: selectionState.selectedTag,
                         selectedPropertyNodeId: selectionState.selectedProperty,
                         showAllTagsFolder: settings.showAllTagsFolder,
-                        showAllPropertiesFolder: settings.showAllPropertiesFolder
+                        showAllPropertiesFolder: settings.showAllPropertiesFolder,
+                        preserveRootFolder: settings.excludeVaultRootFromCollapse,
+                        rootFolderExpanded: expansionState.expandedFolders.has(rootFolder.path)
                     },
                     { includeSelection: true }
                 );
@@ -331,7 +388,9 @@ export function useNavigationActions() {
                     behavior,
                     currentExpandedVirtualFolders: expansionState.expandedVirtualFolders,
                     showAllTagsFolder: settings.showAllTagsFolder,
-                    showAllPropertiesFolder: settings.showAllPropertiesFolder
+                    showAllPropertiesFolder: settings.showAllPropertiesFolder,
+                    preserveRootFolder: settings.excludeVaultRootFromCollapse,
+                    rootFolderExpanded: expansionState.expandedFolders.has(rootFolder.path)
                 });
 
                 if (scope.affectFolders) {
@@ -350,23 +409,10 @@ export function useNavigationActions() {
             }
         } else {
             if (scope.affectFolders) {
-                const allFolders = new Set<string>();
-
-                const collectAllFolders = (folder: TFolder) => {
-                    folder.children.forEach(child => {
-                        if (child instanceof TFolder) {
-                            allFolders.add(child.path);
-                            collectAllFolders(child);
-                        }
-                    });
-                };
-
-                if (settings.showRootFolder) {
-                    allFolders.add(rootFolder.path);
-                }
-
-                collectAllFolders(rootFolder);
-                expansionDispatch({ type: 'SET_EXPANDED_FOLDERS', folders: allFolders });
+                expansionDispatch({
+                    type: 'SET_EXPANDED_FOLDERS',
+                    folders: collectExpandableFolderPaths(rootFolder, settings.showRootFolder)
+                });
             }
 
             if (scope.affectTags || scope.affectProperties) {
@@ -409,8 +455,10 @@ export function useNavigationActions() {
     }, [
         app,
         expansionDispatch,
+        expansionState.expandedFolders,
         expansionState.expandedVirtualFolders,
         settings.collapseBehavior,
+        settings.excludeVaultRootFromCollapse,
         settings.showAllPropertiesFolder,
         settings.showAllTagsFolder,
         settings.showRootFolder,

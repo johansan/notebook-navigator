@@ -92,11 +92,12 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.1',
-        date: '2026-06-23',
+        date: '2026-06-28',
         showOnUpdate: true,
         info: 'More optimizations! This release significantly reduces **preview work while typing** and improves drag and drop performance. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
         new: [
-            '**File icons.** New setting: ==File icon preset== in Notes > Icons by file type. You can now pick default file icons from one of the installed icon packs.'
+            '**File icons.** New setting: ==File icon preset== in Notes > Icons by file type. You can now pick default file icons from one of the installed icon packs.',
+            '**Navigation pane.** New setting ==Skip vault root when collapsing== in Navigation pane > Collapse items. When collapsing all items, the vault root folder keeps its current state.'
         ],
         improved: [
             '**Performance.** Significantly improved drag and drop performance! Drag previews now use browser-native drag images instead of a JavaScript element that follows the pointer.',

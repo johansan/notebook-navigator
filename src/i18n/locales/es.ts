@@ -998,6 +998,7 @@ export const STRINGS_ES = {
             navigation: {
                 appearance: 'Apariencia',
                 banner: 'Banner',
+                collapseItems: 'Contraer elementos',
                 dragAndDrop: 'Arrastrar y soltar',
                 noteCounts: 'Conteos de notas',
                 rainbowColors: 'Colores arcoíris',
@@ -2089,6 +2090,10 @@ export const STRINGS_ES = {
             smartCollapse: {
                 name: 'Mantener elemento seleccionado expandido',
                 desc: 'Al contraer, mantiene el elemento seleccionado y sus elementos principales expandidos.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Omitir raíz de la bóveda al contraer',
+                desc: 'Al contraer todos los elementos, deja la carpeta raíz de la bóveda en su estado actual.'
             },
             navIndent: {
                 name: 'Sangría del árbol',

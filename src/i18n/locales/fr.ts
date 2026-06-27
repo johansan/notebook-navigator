@@ -1001,6 +1001,7 @@ export const STRINGS_FR = {
             navigation: {
                 appearance: 'Apparence',
                 banner: 'Bannière',
+                collapseItems: 'Replier les éléments',
                 dragAndDrop: 'Glisser-déposer',
                 noteCounts: 'Nombre de notes',
                 rainbowColors: 'Couleurs arc-en-ciel',
@@ -2093,6 +2094,10 @@ export const STRINGS_FR = {
             smartCollapse: {
                 name: "Garder l'élément sélectionné déplié",
                 desc: "Lors du repliement, garde l'élément sélectionné et ses parents dépliés."
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Ignorer la racine du coffre lors du repliement',
+                desc: 'Lors du repliement de tous les éléments, garde le dossier racine du coffre dans son état actuel.'
             },
             navIndent: {
                 name: "Indentation de l'arbre",

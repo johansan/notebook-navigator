@@ -1000,6 +1000,7 @@ export const STRINGS_PL = {
             navigation: {
                 appearance: 'Wygląd',
                 banner: 'Baner',
+                collapseItems: 'Zwiń elementy',
                 dragAndDrop: 'Przeciągnij i upuść',
                 noteCounts: 'Liczba notatek',
                 rainbowColors: 'Kolory tęczy',
@@ -2090,6 +2091,10 @@ export const STRINGS_PL = {
             smartCollapse: {
                 name: 'Zachowaj wybrany element rozwinięty',
                 desc: 'Podczas zwijania, zachowaj wybrany element oraz elementy nadrzędne rozwinięte.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Pomiń katalog główny sejfu podczas zwijania',
+                desc: 'Podczas zwijania wszystkich elementów pozostaw folder główny sejfu w bieżącym stanie.'
             },
             navIndent: {
                 name: 'Wcięcie w strukturze',

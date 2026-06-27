@@ -991,6 +991,7 @@ export const STRINGS_EN = {
             navigation: {
                 appearance: 'Appearance',
                 banner: 'Banner',
+                collapseItems: 'Collapse items',
                 dragAndDrop: 'Drag and drop',
                 noteCounts: 'Note counts',
                 rainbowColors: 'Rainbow colors',
@@ -2078,6 +2079,10 @@ export const STRINGS_EN = {
             smartCollapse: {
                 name: 'Keep selected item expanded',
                 desc: 'When collapsing, keep the selected item and its parents expanded.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Skip vault root when collapsing',
+                desc: 'When collapsing all items, leave the vault root folder in its current state.'
             },
             navIndent: {
                 name: 'Tree indentation',

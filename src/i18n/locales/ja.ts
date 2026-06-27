@@ -996,6 +996,7 @@ export const STRINGS_JA = {
             navigation: {
                 appearance: '外観',
                 banner: 'バナー',
+                collapseItems: '項目を折りたたむ',
                 dragAndDrop: 'ドラッグ＆ドロップ',
                 noteCounts: 'ノート数',
                 rainbowColors: 'レインボーカラー',
@@ -2084,6 +2085,10 @@ export const STRINGS_JA = {
             smartCollapse: {
                 name: '選択中の項目を展開したままにする',
                 desc: '折りたたむ時、選択中の項目とその親を展開したままにします。'
+            },
+            excludeVaultRootFromCollapse: {
+                name: '折りたたみ時にボールトのルートをスキップ',
+                desc: 'すべての項目を折りたたむ時、ボールトのルートフォルダを現在の状態のままにします。'
             },
             navIndent: {
                 name: 'ツリーインデント',

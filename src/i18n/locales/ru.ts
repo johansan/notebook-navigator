@@ -994,6 +994,7 @@ export const STRINGS_RU = {
             navigation: {
                 appearance: 'Внешний вид',
                 banner: 'Баннер',
+                collapseItems: 'Сворачивание элементов',
                 dragAndDrop: 'Перетаскивание',
                 noteCounts: 'Количество заметок',
                 rainbowColors: 'Цвета радуги',
@@ -2083,6 +2084,10 @@ export const STRINGS_RU = {
             smartCollapse: {
                 name: 'Сохранять выбранный элемент развёрнутым',
                 desc: 'При сворачивании сохранять выбранный элемент и его родителей развёрнутыми.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Пропускать корень хранилища при сворачивании',
+                desc: 'При сворачивании всех элементов оставлять корневую папку хранилища в текущем состоянии.'
             },
             navIndent: {
                 name: 'Отступ дерева',

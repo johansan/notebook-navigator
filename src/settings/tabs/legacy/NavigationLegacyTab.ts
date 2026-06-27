@@ -65,6 +65,7 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     const createGroup = createSettingGroupFactory(containerEl);
     const behaviorGroup = createGroup(undefined);
+    const collapseGroup = createGroup(strings.settings.groups.navigation.collapseItems);
     const dragAndDropGroup = Platform.isMobile ? null : createGroup(strings.settings.groups.navigation.dragAndDrop);
     const rainbowGroup = createGroup(createRainbowHeading(strings.settings.groups.navigation.rainbowColors));
     const noteCountsGroup = createGroup(strings.settings.groups.navigation.noteCounts);
@@ -428,7 +429,39 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
         refreshNavRainbowControls();
     });
 
-    behaviorGroup.addSetting(setting => {
+    if (!Platform.isMobile) {
+        addToggleSetting(
+            behaviorGroup.addSetting,
+            strings.settings.items.autoSelectFirstFileOnFocusChange.name,
+            strings.settings.items.autoSelectFirstFileOnFocusChange.desc,
+            () => plugin.settings.autoSelectFirstFileOnFocusChange,
+            value => {
+                plugin.settings.autoSelectFirstFileOnFocusChange = value;
+            }
+        );
+    }
+
+    addToggleSetting(
+        behaviorGroup.addSetting,
+        strings.settings.items.autoExpandNavItems.name,
+        strings.settings.items.autoExpandNavItems.desc,
+        () => plugin.settings.autoExpandNavItems,
+        value => {
+            plugin.settings.autoExpandNavItems = value;
+        }
+    );
+
+    addToggleSetting(
+        behaviorGroup.addSetting,
+        strings.settings.items.collapseOtherBranchesOnExpand.name,
+        strings.settings.items.collapseOtherBranchesOnExpand.desc,
+        () => plugin.settings.collapseOtherBranchesOnExpand,
+        value => {
+            plugin.settings.collapseOtherBranchesOnExpand = value;
+        }
+    );
+
+    collapseGroup.addSetting(setting => {
         setting
             .setName(strings.settings.items.collapseBehavior.name)
             .setDesc(strings.settings.items.collapseBehavior.desc)
@@ -450,7 +483,7 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     });
 
     addToggleSetting(
-        behaviorGroup.addSetting,
+        collapseGroup.addSetting,
         strings.settings.items.smartCollapse.name,
         strings.settings.items.smartCollapse.desc,
         () => plugin.settings.smartCollapse,
@@ -460,36 +493,14 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     );
 
     addToggleSetting(
-        behaviorGroup.addSetting,
-        strings.settings.items.collapseOtherBranchesOnExpand.name,
-        strings.settings.items.collapseOtherBranchesOnExpand.desc,
-        () => plugin.settings.collapseOtherBranchesOnExpand,
+        collapseGroup.addSetting,
+        strings.settings.items.excludeVaultRootFromCollapse.name,
+        strings.settings.items.excludeVaultRootFromCollapse.desc,
+        () => plugin.settings.excludeVaultRootFromCollapse,
         value => {
-            plugin.settings.collapseOtherBranchesOnExpand = value;
+            plugin.settings.excludeVaultRootFromCollapse = value;
         }
     );
-
-    addToggleSetting(
-        behaviorGroup.addSetting,
-        strings.settings.items.autoExpandNavItems.name,
-        strings.settings.items.autoExpandNavItems.desc,
-        () => plugin.settings.autoExpandNavItems,
-        value => {
-            plugin.settings.autoExpandNavItems = value;
-        }
-    );
-
-    if (!Platform.isMobile) {
-        addToggleSetting(
-            behaviorGroup.addSetting,
-            strings.settings.items.autoSelectFirstFileOnFocusChange.name,
-            strings.settings.items.autoSelectFirstFileOnFocusChange.desc,
-            () => plugin.settings.autoSelectFirstFileOnFocusChange,
-            value => {
-                plugin.settings.autoSelectFirstFileOnFocusChange = value;
-            }
-        );
-    }
 
     if (dragAndDropGroup) {
         const springLoadedFoldersSetting = dragAndDropGroup.addSetting(setting => {

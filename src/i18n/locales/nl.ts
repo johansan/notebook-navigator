@@ -999,6 +999,7 @@ export const STRINGS_NL = {
             navigation: {
                 appearance: 'Uiterlijk',
                 banner: 'Banner',
+                collapseItems: 'Items inklappen',
                 dragAndDrop: 'Slepen en neerzetten',
                 noteCounts: 'Notitietellingen',
                 rainbowColors: 'Regenboogkleuren',
@@ -2089,6 +2090,10 @@ export const STRINGS_NL = {
             smartCollapse: {
                 name: 'Geselecteerd item uitgeklapt houden',
                 desc: 'Bij het inklappen het geselecteerde item en de bovenliggende items uitgeklapt houden.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Kluisroot overslaan bij inklappen',
+                desc: 'Bij het inklappen van alle items blijft de rootmap van de kluis in de huidige staat.'
             },
             navIndent: {
                 name: 'Structuurinspringing',

@@ -993,6 +993,7 @@ export const STRINGS_IT = {
             navigation: {
                 appearance: 'Aspetto',
                 banner: 'Banner',
+                collapseItems: 'Comprimi elementi',
                 dragAndDrop: 'Trascina e rilascia',
                 noteCounts: 'Conteggi note',
                 rainbowColors: 'Colori arcobaleno',
@@ -2085,6 +2086,10 @@ export const STRINGS_IT = {
             smartCollapse: {
                 name: 'Mantieni elemento selezionato espanso',
                 desc: "Quando comprimi, mantieni l'elemento selezionato e i suoi genitori espansi."
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Ignora la root del vault quando comprimi',
+                desc: 'Quando comprimi tutti gli elementi, lascia la cartella root del vault nello stato corrente.'
             },
             navIndent: {
                 name: 'Indentazione albero',

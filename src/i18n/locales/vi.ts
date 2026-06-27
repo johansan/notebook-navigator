@@ -998,6 +998,7 @@ export const STRINGS_VI = {
             navigation: {
                 appearance: 'Giao diện',
                 banner: 'Banner',
+                collapseItems: 'Thu gọn mục',
                 dragAndDrop: 'Kéo và thả',
                 noteCounts: 'Số lượng ghi chú',
                 rainbowColors: 'Màu cầu vồng',
@@ -2087,6 +2088,10 @@ export const STRINGS_VI = {
             smartCollapse: {
                 name: 'Giữ mục đã chọn mở rộng',
                 desc: 'Khi thu gọn, giữ mục đã chọn và cha của nó mở rộng.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'Bỏ qua thư mục gốc vault khi thu gọn',
+                desc: 'Khi thu gọn tất cả mục, giữ thư mục gốc vault ở trạng thái hiện tại.'
             },
             navIndent: {
                 name: 'Thụt lề cây',

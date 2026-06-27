@@ -997,6 +997,7 @@ export const STRINGS_FA = {
             navigation: {
                 appearance: 'ظاهر',
                 banner: 'بنر',
+                collapseItems: 'جمع کردن آیتم‌ها',
                 dragAndDrop: 'کشیدن و رها کردن',
                 noteCounts: 'تعداد یادداشت‌ها',
                 rainbowColors: 'رنگ‌های رنگین‌کمان',
@@ -2086,6 +2087,10 @@ export const STRINGS_FA = {
             smartCollapse: {
                 name: 'باز نگه داشتن آیتم انتخابی',
                 desc: 'هنگام جمع کردن، آیتم انتخابی و والدین آن را باز نگه دارید.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'نادیده گرفتن ریشه خزانه هنگام جمع کردن',
+                desc: 'هنگام جمع کردن همه آیتم‌ها، پوشه ریشه خزانه را در وضعیت فعلی نگه دارید.'
             },
             navIndent: {
                 name: 'تورفتگی درخت',

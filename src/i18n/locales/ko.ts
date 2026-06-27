@@ -994,6 +994,7 @@ export const STRINGS_KO = {
             navigation: {
                 appearance: '모양',
                 banner: '배너',
+                collapseItems: '항목 접기',
                 dragAndDrop: '끌어서 놓기',
                 noteCounts: '노트 수',
                 rainbowColors: '무지개 색상',
@@ -2082,6 +2083,10 @@ export const STRINGS_KO = {
             smartCollapse: {
                 name: '선택한 항목 펼친 상태 유지',
                 desc: '접을 때 선택한 항목과 상위 항목을 펼친 상태로 유지합니다.'
+            },
+            excludeVaultRootFromCollapse: {
+                name: '접을 때 보관소 루트 건너뛰기',
+                desc: '모든 항목을 접을 때 보관소 루트 폴더를 현재 상태로 둡니다.'
             },
             navIndent: {
                 name: '트리 들여쓰기',

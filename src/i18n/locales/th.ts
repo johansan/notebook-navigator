@@ -990,6 +990,7 @@ export const STRINGS_TH = {
             navigation: {
                 appearance: 'ลักษณะ',
                 banner: 'แบนเนอร์',
+                collapseItems: 'ยุบรายการ',
                 dragAndDrop: 'ลากและวาง',
                 noteCounts: 'จำนวนโน้ต',
                 rainbowColors: 'สีรุ้ง',
@@ -2078,6 +2079,10 @@ export const STRINGS_TH = {
             smartCollapse: {
                 name: 'เก็บรายการที่เลือกไว้ขยาย',
                 desc: 'เมื่อยุบ เก็บรายการที่เลือกและหลักไว้ขยาย'
+            },
+            excludeVaultRootFromCollapse: {
+                name: 'ข้ามรูทห้องนิรภัยเมื่อยุบ',
+                desc: 'เมื่อยุบรายการทั้งหมด ให้คงโฟลเดอร์รูทของห้องนิรภัยไว้ในสถานะปัจจุบัน'
             },
             navIndent: {
                 name: 'การเยื้องต้นไม้',
