@@ -19,6 +19,7 @@
 import type { CSSProperties } from 'react';
 import type { ManualSortGroupHeaderData } from '../../utils/manualSort';
 import { getManualSortGroupHeaderTargetWordCount, shouldShowManualSortGroupHeaderWordCount } from '../../utils/manualSort';
+import { formatTextCount } from '../../utils/wordCountUtils';
 import { ServiceIcon } from '../ServiceIcon';
 
 type ManualSortGroupHeaderStyle = CSSProperties & {
@@ -46,10 +47,10 @@ function formatManualSortGroupHeaderCountText(
     wordCount: number,
     targetWordCount: number | null | undefined
 ): string {
-    const formattedWordCount = getDisplayWordCount(wordCount).toLocaleString();
+    const formattedWordCount = formatTextCount(getDisplayWordCount(wordCount));
     const resolvedTargetWordCount = getManualSortGroupHeaderTargetWordCount(header, targetWordCount);
     if (resolvedTargetWordCount !== null) {
-        return `${formattedWordCount} / ${resolvedTargetWordCount.toLocaleString()}`;
+        return `${formattedWordCount} / ${formatTextCount(resolvedTargetWordCount)}`;
     }
 
     return formattedWordCount;

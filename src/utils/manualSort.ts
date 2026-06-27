@@ -23,6 +23,7 @@ import { getErrorMessage } from './errorUtils';
 import { deserializeIconFromFrontmatterCompat, normalizeCanonicalIconId, serializeIconForFrontmatter } from './iconizeFormat';
 import { casefold, findMatchingRecordKey } from './recordUtils';
 import { isRecord } from './typeGuards';
+import { formatTextCount } from './wordCountUtils';
 
 export const MANUAL_SORT_RANK_STEP = 1000;
 
@@ -649,10 +650,10 @@ export function formatManualSortGroupHeaderLabel(
         return header.title;
     }
 
-    const formattedWordCount = Math.trunc(wordCount).toLocaleString();
+    const formattedWordCount = formatTextCount(wordCount);
     const resolvedTargetWordCount = getManualSortGroupHeaderTargetWordCount(header, targetWordCount);
     if (resolvedTargetWordCount !== null) {
-        return `${header.title} (${formattedWordCount} / ${resolvedTargetWordCount.toLocaleString()})`;
+        return `${header.title} (${formattedWordCount} / ${formatTextCount(resolvedTargetWordCount)})`;
     }
 
     return `${header.title} (${formattedWordCount})`;

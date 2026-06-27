@@ -80,7 +80,7 @@ import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
-import { getWordCountDisplayText } from '../utils/wordCountUtils';
+import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
 
 const FEATURE_IMAGE_MAX_ASPECT_RATIO = 16 / 9;
@@ -94,7 +94,7 @@ function getCharacterCountDisplayText(count: number | null | undefined): string 
         return null;
     }
 
-    return Math.trunc(count).toLocaleString();
+    return formatTextCount(count);
 }
 
 function getTitleCountDisplayText(params: {

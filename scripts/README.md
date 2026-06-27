@@ -2,7 +2,7 @@
 
 Utility scripts for building, releasing, and maintaining the Notebook Navigator plugin.
 
-## build.sh
+## build.sh / build.ps1
 
 The main build script that ensures code quality before deployment.
 
@@ -10,6 +10,10 @@ The main build script that ensures code quality before deployment.
 
 ```bash
 ./scripts/build.sh
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build.ps1
 ```
 
 **Features:**
@@ -20,7 +24,7 @@ The main build script that ensures code quality before deployment.
 - Verifies code formatting with Prettier
 - Builds the plugin using esbuild
 - **Stops immediately if ANY errors or warnings are found**
-- Calls `build-local.sh` if available (for local deployment to Obsidian vault)
+- Calls `build-local.sh` or `build-local.ps1` if available (for local deployment to Obsidian vault)
 
 **Requirements:**
 
@@ -105,14 +109,16 @@ node scripts/mdReleaseNotes.js
 - Outputs formatted release notes ready for GitHub release descriptions
 - Automatically used by the release process
 
-## build-local.sh (Optional)
+## build-local.sh / build-local.ps1 (Optional)
 
 Custom local deployment script (not included in repository).
 
 **Purpose:**
 
 - Deploy built plugin to your local Obsidian vault
-- Automatically called by `build.sh` if present
+- Automatically called by `build.sh` or `build.ps1` if present
+- `build-local.sh` is used on macOS/Linux
+- `build-local.ps1` is used on Windows
 - Add to `.gitignore` to keep vault paths private
 
 **Example:**

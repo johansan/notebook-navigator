@@ -19,6 +19,7 @@
 // Matches Obsidian's current word count tokenization behavior.
 
 import type { App, TFile } from 'obsidian';
+import { getCurrentLanguage } from '../i18n';
 import type { PropertyItem } from '../storage/IndexedDBStorage';
 import { casefold, findMatchingRecordKey } from './recordUtils';
 import { isRecord } from './typeGuards';
@@ -43,10 +44,41 @@ const WORD_PATTERN = new RegExp(
 const CHARACTER_COUNT_WHITESPACE_PATTERN = /\s/u;
 const FRONTMATTER_START_PATTERN = /^---(\r?\n)/g;
 const FRONTMATTER_END_PATTERN = /---(\r?\n|$)/g;
+const textCountFormatters = new Map<string, Intl.NumberFormat>();
 
 export interface CharacterCountResult {
     withSpaces: number;
     withoutSpaces: number;
+}
+
+function normalizeTextCountLocale(locale: string): string {
+    return locale.replace(/_/g, '-');
+}
+
+function getTextCountFormatter(locale: string): Intl.NumberFormat {
+    const normalizedLocale = normalizeTextCountLocale(locale);
+    const cached = textCountFormatters.get(normalizedLocale);
+    if (cached) {
+        return cached;
+    }
+
+    let formatter: Intl.NumberFormat;
+    try {
+        formatter = new Intl.NumberFormat(normalizedLocale || undefined, {
+            maximumFractionDigits: 0
+        });
+    } catch {
+        formatter = new Intl.NumberFormat(undefined, {
+            maximumFractionDigits: 0
+        });
+    }
+
+    textCountFormatters.set(normalizedLocale, formatter);
+    return formatter;
+}
+
+export function formatTextCount(count: number, locale: string = getCurrentLanguage()): string {
+    return getTextCountFormatter(locale).format(Math.trunc(count));
 }
 
 export function countWordsForNoteProperty(content: string, startIndex: number): number {
@@ -173,7 +205,7 @@ function formatWordCountDisplayText(params: {
     }
 
     const displayWordCount = Math.trunc(wordCount);
-    const formattedWordCount = displayWordCount.toLocaleString();
+    const formattedWordCount = formatTextCount(displayWordCount);
     if (targetWordCount === null) {
         return formattedWordCount;
     }
@@ -184,7 +216,7 @@ function formatWordCountDisplayText(params: {
         return `${formattedPercent}%`;
     }
 
-    const formattedTarget = targetWordCount.toLocaleString();
+    const formattedTarget = formatTextCount(targetWordCount);
     return `${formattedWordCount} / ${formattedTarget}`;
 }
 

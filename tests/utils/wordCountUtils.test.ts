@@ -20,6 +20,7 @@ import { describe, expect, it } from 'vitest';
 import { App, TFile } from 'obsidian';
 import {
     countCharactersForNoteProperty,
+    formatTextCount,
     getCachedWordCountTargetFromFrontmatter,
     getObsidianTextCountStartIndex,
     getWordCountDisplayText,
@@ -91,6 +92,11 @@ describe('wordCountUtils', () => {
                 showTargetPercentage: true
             })
         ).toBe('25%');
+    });
+
+    it('formats text counts with the provided locale', () => {
+        expect(formatTextCount(1234, 'en')).toBe('1,234');
+        expect(formatTextCount(1234, 'de')).toBe('1.234');
     });
 
     it('formats word count targets without percentages', () => {

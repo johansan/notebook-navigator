@@ -23,6 +23,7 @@ import { DEFAULT_SETTINGS } from '../../../src/settings/defaultSettings';
 import { useFileItemPills, type UseFileItemPillsParams } from '../../../src/components/fileItem/useFileItemPills';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../../src/utils/propertyTree';
 import { createHiddenTagVisibility, type HiddenTagVisibility } from '../../../src/utils/tagPrefixMatcher';
+import { formatTextCount } from '../../../src/utils/wordCountUtils';
 import type { FileItemPillDecorationModel } from '../../../src/utils/fileItemPillDecoration';
 import type { FileItemPillOrderModel } from '../../../src/utils/fileItemPillOrder';
 import type { TagTreeNode } from '../../../src/types/storage';
@@ -134,12 +135,11 @@ function renderPillRows(
         const state = useFileItemPills({
             ...params,
             wordCountDisplayText:
-                params.wordCountDisplayText ??
-                (typeof params.wordCount === 'number' ? Math.trunc(params.wordCount).toLocaleString() : null),
+                params.wordCountDisplayText ?? (typeof params.wordCount === 'number' ? formatTextCount(params.wordCount) : null),
             characterCount: params.characterCount ?? null,
             characterCountDisplayText:
                 params.characterCountDisplayText ??
-                (typeof params.characterCount === 'number' ? Math.trunc(params.characterCount).toLocaleString() : null),
+                (typeof params.characterCount === 'number' ? formatTextCount(params.characterCount) : null),
             hiddenTagVisibility: params.hiddenTagVisibility ?? createHiddenTagVisibility([], false),
             fileItemPillDecorationModel: params.fileItemPillDecorationModel ?? emptyDecorationModel,
             fileItemPillOrderModel: params.fileItemPillOrderModel ?? emptyOrderModel

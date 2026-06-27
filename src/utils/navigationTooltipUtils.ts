@@ -25,6 +25,7 @@ import { getEffectiveFrontmatterExclusions } from './exclusionUtils';
 import { createFrontmatterPropertyExclusionMatcher, shouldExcludeFileWithMatcher, shouldExcludeFolder } from './fileFilters';
 import type { FileVisibility } from './fileTypeUtils';
 import { shouldDisplayFile } from './fileTypeUtils';
+import { formatTextCount } from './wordCountUtils';
 
 type FileTooltipSettings = Pick<NotebookNavigatorSettings, 'dateFormat' | 'timeFormat' | 'showTooltipPath' | 'showTooltipWordCount'>;
 
@@ -89,7 +90,7 @@ export function buildFileTooltip({
         Number.isFinite(wordCount) &&
         wordCount >= 0
     ) {
-        tooltipLines.push(`${strings.tooltips.wordCount}: ${Math.trunc(wordCount).toLocaleString()}`);
+        tooltipLines.push(`${strings.tooltips.wordCount}: ${formatTextCount(wordCount)}`);
     }
 
     tooltipLines.push('', formatDateLines(createdDate, modifiedDate, sortOption));

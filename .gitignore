@@ -1,5 +1,5 @@
 # vscode
-.vscode 
+.vscode
 
 # Intellij
 *.iml
@@ -29,6 +29,7 @@ GEMINI.md
 
 # Ignore local build script
 scripts/build-local.sh
+scripts/build-local.ps1
 
 # Release lock file
 .release.lock
