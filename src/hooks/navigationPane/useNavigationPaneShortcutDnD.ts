@@ -23,7 +23,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { showNotice } from '../../utils/noticeUtils';
 import {
     extractFilePathsFromDataTransfer,
-    hasObsidianFileDragType,
+    hasPotentialObsidianFileDragType,
     parsePropertyDragPayload,
     parseTagDragPayload
 } from '../../utils/dragData';
@@ -167,7 +167,7 @@ export function useNavigationPaneShortcutDnD({
                 return false;
             }
 
-            const hasObsidianFiles = hasObsidianFileDragType(types);
+            const hasObsidianFiles = hasPotentialObsidianFileDragType(types);
             const hasTagPayload = types.includes(TAG_DRAG_MIME);
             const hasPropertyPayload = types.includes(PROPERTY_DRAG_MIME);
             if (!hasObsidianFiles && !hasTagPayload && !hasPropertyPayload) {

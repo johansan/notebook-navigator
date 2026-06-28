@@ -17,7 +17,11 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { extractFilePathsFromDataTransfer, hasObsidianFileDragType } from '../../src/utils/dragData';
+import {
+    extractFilePathsFromDataTransfer,
+    hasObsidianFileDragType,
+    hasPotentialObsidianFileDragType
+} from '../../src/utils/dragData';
 
 class TestDataTransfer {
     readonly types: string[];
@@ -131,26 +135,37 @@ describe('dragData', () => {
     });
 
     describe('hasObsidianFileDragType', () => {
-        it('recognizes legacy and native file drag types', () => {
+        it('recognizes explicit Obsidian file drag types', () => {
             expect(hasObsidianFileDragType(['obsidian/file'])).toBe(true);
             expect(hasObsidianFileDragType(['obsidian/files'])).toBe(true);
-            expect(hasObsidianFileDragType(['text/plain', 'text/uri-list'])).toBe(true);
         });
 
         it('rejects plain text without URI-list data', () => {
             expect(hasObsidianFileDragType(['text/plain'])).toBe(false);
         });
 
+        it('does not classify URI-only drag types as explicit Obsidian types', () => {
+            expect(hasObsidianFileDragType(['text/plain', 'text/uri-list'])).toBe(false);
+        });
+    });
+
+    describe('hasPotentialObsidianFileDragType', () => {
+        it('recognizes explicit and URI-only Obsidian file drag type signatures', () => {
+            expect(hasPotentialObsidianFileDragType(['obsidian/file'])).toBe(true);
+            expect(hasPotentialObsidianFileDragType(['obsidian/files'])).toBe(true);
+            expect(hasPotentialObsidianFileDragType(['text/plain', 'text/uri-list'])).toBe(true);
+        });
+
         it('does not classify external file drags as Obsidian file drags', () => {
-            expect(hasObsidianFileDragType(['Files', 'text/uri-list'])).toBe(false);
+            expect(hasPotentialObsidianFileDragType(['Files', 'text/uri-list'])).toBe(false);
         });
 
         it('does not classify HTML URL drags as Obsidian file drags', () => {
-            expect(hasObsidianFileDragType(['text/plain', 'text/uri-list', 'text/html'])).toBe(false);
+            expect(hasPotentialObsidianFileDragType(['text/plain', 'text/uri-list', 'text/html'])).toBe(false);
         });
 
         it('does not classify URI drags with extra non-native types as Obsidian file drags', () => {
-            expect(hasObsidianFileDragType(['text/plain', 'text/uri-list', 'DownloadURL'])).toBe(false);
+            expect(hasPotentialObsidianFileDragType(['text/plain', 'text/uri-list', 'DownloadURL'])).toBe(false);
         });
     });
 });

@@ -34,7 +34,7 @@ import { buildFilePathInFolder, generateUniqueFilename } from '../utils/fileCrea
 import { setNativeDragPreview } from '../utils/nativeDragPreview';
 import { normalizeTagPathValue } from '../utils/tagPrefixMatcher';
 import { runAsyncAction } from '../utils/async';
-import { extractFilePathsFromDataTransfer, hasObsidianFileDragType } from '../utils/dragData';
+import { extractFilePathsFromDataTransfer, hasObsidianFileDragType, hasPotentialObsidianFileDragType } from '../utils/dragData';
 import { FolderMoveError } from '../services/FileSystemService';
 import { getFilesForNavigationSelection } from '../utils/selectionUtils';
 import { expandNavigationTreeItems, getFolderAncestorPaths, getTagAncestorPaths } from '../utils/navigationExpansion';
@@ -64,6 +64,31 @@ interface AutoExpandConfig {
     resolveNode: () => { isValid: boolean; hasChildren: boolean };
     expand: () => void;
 }
+
+interface SupportedDropPayloadOptions {
+    hasObsidianData: boolean;
+    hasTagPayload: boolean;
+    isExternalOnly: boolean;
+}
+
+const isSupportedDropPayload = (
+    dropType: string | null,
+    { hasObsidianData, hasTagPayload, isExternalOnly }: SupportedDropPayloadOptions
+): boolean => {
+    if (dropType === 'folder') {
+        return hasObsidianData || isExternalOnly;
+    }
+    if (dropType === 'tag') {
+        return hasTagPayload || hasObsidianData || isExternalOnly;
+    }
+    if (dropType === 'tag-root') {
+        return hasTagPayload;
+    }
+    if (dropType === 'property') {
+        return hasObsidianData;
+    }
+    return false;
+};
 
 const asEmojiIcon = (iconId: string): string | null => {
     if (iconId.startsWith('emoji:')) {
@@ -770,7 +795,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 const allowInternalDrop = dropZone.dataset.allowInternalDrop !== 'false';
                 const allowExternalDrop = dropZone.dataset.allowExternalDrop !== 'false';
                 const typesList = e.dataTransfer.types;
-                const hasObsidianData = hasObsidianFileDragType(typesList);
+                const hasObsidianData = hasPotentialObsidianFileDragType(typesList);
                 const hasTagPayload = Boolean(typesList?.includes(TAG_DRAG_MIME));
                 const hasExternalFiles = Boolean(e.dataTransfer.files && e.dataTransfer.files.length > 0);
                 const isInternalTransfer = hasObsidianData || hasTagPayload;
@@ -793,6 +818,17 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
                 // Block drops that do not meet drop zone permissions
                 if ((isInternalTransfer && !allowInternalDrop) || (isExternalOnly && !allowExternalDrop)) {
+                    if (dragOverElement.current === dropZone) {
+                        dropZone.classList.remove('nn-drag-over');
+                        dragOverElement.current = null;
+                        dragOverDropEffectRef.current = null;
+                    }
+                    clearAutoExpandTimer();
+                    e.dataTransfer.dropEffect = 'none';
+                    return;
+                }
+
+                if (!isSupportedDropPayload(dropType, { hasObsidianData, hasTagPayload, isExternalOnly })) {
                     if (dragOverElement.current === dropZone) {
                         dropZone.classList.remove('nn-drag-over');
                         dragOverElement.current = null;
@@ -1088,7 +1124,11 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 const allowExternalDrop = dropZone.dataset.allowExternalDrop !== 'false';
                 const typesList = e.dataTransfer?.types;
                 const externalFiles = e.dataTransfer?.files ?? null;
-                const hasObsidianData = hasObsidianFileDragType(typesList);
+                const selectedPaths = extractFilePathsFromDataTransfer(e.dataTransfer ?? null, {
+                    getPathType: getDragPathType,
+                    vaultName: app.vault.getName()
+                });
+                const hasObsidianData = hasObsidianFileDragType(typesList) || Boolean(selectedPaths && selectedPaths.length > 0);
                 const hasTagPayload = Boolean(typesList?.includes(TAG_DRAG_MIME));
                 const hasExternalFiles = Boolean(externalFiles && externalFiles.length > 0);
                 const isInternalTransfer = hasObsidianData || hasTagPayload;
@@ -1101,6 +1141,10 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
                 // Block external drops if not allowed
                 if (isExternalOnly && !allowExternalDrop) {
+                    return;
+                }
+
+                if (!isSupportedDropPayload(dropType, { hasObsidianData, hasTagPayload, isExternalOnly })) {
                     return;
                 }
 
@@ -1191,10 +1235,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 }
 
                 // Extract file paths from drag event data for folder move
-                const selectedPaths = extractFilePathsFromDataTransfer(e.dataTransfer ?? null, {
-                    getPathType: getDragPathType,
-                    vaultName: app.vault.getName()
-                });
                 if (selectedPaths && selectedPaths.length > 0) {
                     const filesToMove = getFilesFromPaths(selectedPaths);
                     if (filesToMove.length > 0) {

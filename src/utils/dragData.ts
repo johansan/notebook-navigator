@@ -120,11 +120,15 @@ function parseObsidianOpenUriPayload(payload: string, options?: ExtractFilePaths
 
 export function hasObsidianFileDragType(types: DOMStringList | readonly string[] | null | undefined): boolean {
     const typeList = Array.from(types ?? []);
-    if (typeList.includes(OBSIDIAN_FILE_MIME) || typeList.includes(OBSIDIAN_FILES_MIME)) {
-        return true;
-    }
+    return typeList.includes(OBSIDIAN_FILE_MIME) || typeList.includes(OBSIDIAN_FILES_MIME);
+}
 
-    return typeList.length === 2 && typeList.includes(TEXT_URI_LIST_MIME) && typeList.includes(TEXT_PLAIN_MIME);
+export function hasPotentialObsidianFileDragType(types: DOMStringList | readonly string[] | null | undefined): boolean {
+    const typeList = Array.from(types ?? []);
+    return (
+        hasObsidianFileDragType(typeList) ||
+        (typeList.length === 2 && typeList.includes(TEXT_URI_LIST_MIME) && typeList.includes(TEXT_PLAIN_MIME))
+    );
 }
 
 /**
