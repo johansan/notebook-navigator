@@ -93,7 +93,7 @@ interface ManualSortListContentProps {
     onFileClick: (file: TFile, fileIndex: number | undefined, event: ReactMouseEvent) => void;
     onKeyboardSelect: (file: TFile, options?: { debounceOpen?: boolean }) => void;
     onScheduleKeyboardOpen?: () => void;
-    onCancelKeyboardOpen?: () => void;
+    onScheduleKeyboardOpenForFile?: (file: TFile) => void;
     onCommitKeyboardOpen?: () => void;
     onDone: () => void;
     onReorder: (params: { nextFiles: TFile[]; movedPaths: ReadonlySet<string>; onApplied?: () => void }) => void;
@@ -647,7 +647,7 @@ export function ManualSortListContent({
     onFileClick,
     onKeyboardSelect,
     onScheduleKeyboardOpen,
-    onCancelKeyboardOpen,
+    onScheduleKeyboardOpenForFile,
     onCommitKeyboardOpen,
     onDone,
     onReorder
@@ -792,7 +792,7 @@ export function ManualSortListContent({
         isSaving,
         onKeyboardSelect,
         onScheduleKeyboardOpen,
-        onCancelKeyboardOpen,
+        onScheduleKeyboardOpenForFile,
         onCommitKeyboardOpen,
         onReorder
     });

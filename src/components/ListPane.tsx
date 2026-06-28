@@ -1017,7 +1017,7 @@ export const ListPane = React.memo(
             lastSelectedFilePath,
             isFileSelected,
             scheduleKeyboardSelectionOpen,
-            cancelPendingKeyboardSelectionOpen,
+            scheduleKeyboardSelectionOpenForFile,
             commitPendingKeyboardSelectionOpen
         } = useListPaneSelectionCoordinator({
             rootContainerRef: props.rootContainerRef,
@@ -1540,7 +1540,7 @@ export const ListPane = React.memo(
                     debounceOpen: options?.debounceOpen
                 }),
             onScheduleKeyboardOpen: scheduleKeyboardSelectionOpen,
-            onCancelKeyboardOpen: cancelPendingKeyboardSelectionOpen,
+            onScheduleKeyboardOpenForFile: scheduleKeyboardSelectionOpenForFile,
             onCommitKeyboardOpen: commitPendingKeyboardSelectionOpen,
             onReorderPropertySort: handlePropertyKeyboardReorder
         });
@@ -1632,7 +1632,7 @@ export const ListPane = React.memo(
                             onFileClick={handleManualSortFileClick}
                             onKeyboardSelect={handleManualSortKeyboardSelect}
                             onScheduleKeyboardOpen={scheduleKeyboardSelectionOpen}
-                            onCancelKeyboardOpen={cancelPendingKeyboardSelectionOpen}
+                            onScheduleKeyboardOpenForFile={scheduleKeyboardSelectionOpenForFile}
                             onCommitKeyboardOpen={commitPendingKeyboardSelectionOpen}
                             onDone={handleManualSortDone}
                             onReorder={handleManualSortReorder}

@@ -19,7 +19,18 @@
 import { useCallback, useRef } from 'react';
 import { TFile } from 'obsidian';
 import { useFileSelection, useSelectionDispatch } from '../context/SelectionContext';
+import { useServices } from '../context/ServicesContext';
+import { useSettingsState } from '../context/SettingsContext';
+import { useFileOpener } from './useFileOpener';
 import { findFileIndex, getFilesInRange, mergeFilesIntoSelection } from '../utils/selectionUtils';
+
+interface ShiftArrowSelectionOptions {
+    /**
+     * Overrides how the cursor file is opened.
+     * Used by keyboard navigation to debounce workspace opens while selection changes.
+     */
+    openFile?: (file: TFile) => void;
+}
 
 /**
  * Hook for managing multi-selection operations in file lists
@@ -30,6 +41,10 @@ export function useMultiSelection() {
     const fileSelectionRef = useRef(fileSelection);
     fileSelectionRef.current = fileSelection;
     const selectionDispatch = useSelectionDispatch();
+    const { app } = useServices();
+    const settings = useSettingsState();
+    const workspace = app.workspace;
+    const openFileInWorkspace = useFileOpener();
 
     /**
      * Handle Cmd/Ctrl+Click for toggling individual file selection
@@ -46,6 +61,9 @@ export function useMultiSelection() {
                 return;
             }
 
+            // Get the currently active file in editor
+            const activeFile = workspace.getActiveFile();
+
             // If deselecting, don't move cursor
             if (isDeselecting) {
                 selectionDispatch({ type: 'TOGGLE_FILE_SELECTION', file });
@@ -58,14 +76,24 @@ export function useMultiSelection() {
                     if (firstSelectedFile) {
                         // Move cursor to the first selected file in the list
                         selectionDispatch({ type: 'UPDATE_CURRENT_FILE', file: firstSelectedFile });
+                        // Open that file in editor
+                        openFileInWorkspace(firstSelectedFile);
                     }
+                }
+                // If we're deselecting a file that's open in editor but cursor is elsewhere,
+                // open the file where the cursor is
+                else if (activeFile && activeFile.path === file.path && selectionState.selectedFile) {
+                    openFileInWorkspace(selectionState.selectedFile);
                 }
             } else {
                 // If selecting, update cursor
                 selectionDispatch({ type: 'TOGGLE_WITH_CURSOR', file, anchorIndex: fileIndex });
+
+                // Open the file without changing focus
+                openFileInWorkspace(file);
             }
         },
-        [selectionDispatch]
+        [selectionDispatch, openFileInWorkspace, workspace]
     );
 
     /**
@@ -96,16 +124,21 @@ export function useMultiSelection() {
                 selectedFile: file,
                 lastMovementDirection: selectionChanged ? null : selectionState.lastMovementDirection
             });
+
+            // Open the file without changing focus
+            openFileInWorkspace(file);
         },
-        [selectionDispatch]
+        [selectionDispatch, openFileInWorkspace]
     );
 
     /**
      * Handle Shift+Arrow selection with Apple Notes-style anchor jumping
      * Returns the final index to scroll to, or -1 if no movement occurred
+     *
+     * `options.openFile` overrides how the cursor file is opened. The default is `openFileInWorkspace`.
      */
     const handleShiftArrowSelection = useCallback(
-        (direction: 'up' | 'down', currentIndex: number, files: TFile[]): number => {
+        (direction: 'up' | 'down', currentIndex: number, files: TFile[], options?: ShiftArrowSelectionOptions): number => {
             const selectionState = fileSelectionRef.current;
 
             // Can't extend selection if nothing is selected
@@ -127,6 +160,10 @@ export function useMultiSelection() {
             const nextFile = files[nextIndex];
             let jumpingEnabled = true;
 
+            // Get the currently active file in editor
+            const activeFile = workspace.getActiveFile();
+            let deselectedActiveFile = false;
+
             // STEP 1: Check if we need to deselect current item
             if (selectionState.selectedFiles.has(currentFile.path)) {
                 // Check where we're moving TO
@@ -134,6 +171,11 @@ export function useMultiSelection() {
                     // Moving FROM selected item TO another selected item - deselect current
                     selectedFiles.delete(currentFile.path);
                     jumpingEnabled = false;
+
+                    // Check if we deselected the active file
+                    if (activeFile && activeFile.path === currentFile.path) {
+                        deselectedActiveFile = true;
+                    }
                 }
                 // else: Moving FROM selected item TO unselected item - keep current selected
             }
@@ -169,10 +211,16 @@ export function useMultiSelection() {
             const finalFile = files[finalIndex];
             selectionDispatch({ type: 'APPLY_FILE_SELECTION', selectedFiles, selectedFile: finalFile, lastMovementDirection: direction });
 
+            // Open the file at cursor without changing focus
+            // Always open if we deselected the active file, or if cursor moved to a different file
+            if (!settings.enterToOpenFiles && (deselectedActiveFile || !activeFile || activeFile.path !== finalFile.path)) {
+                (options?.openFile ?? openFileInWorkspace)(finalFile);
+            }
+
             // Return the final index for the caller to handle scrolling
             return finalIndex;
         },
-        [selectionDispatch]
+        [selectionDispatch, openFileInWorkspace, settings.enterToOpenFiles, workspace]
     );
 
     /**

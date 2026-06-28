@@ -66,7 +66,7 @@ interface UseListPaneSelectionCoordinatorResult {
     lastSelectedFilePath: string | null;
     isFileSelected: (file: TFile) => boolean;
     scheduleKeyboardSelectionOpen: () => void;
-    cancelPendingKeyboardSelectionOpen: () => void;
+    scheduleKeyboardSelectionOpenForFile: (file: TFile) => void;
     commitPendingKeyboardSelectionOpen: () => void;
 }
 
@@ -178,6 +178,17 @@ export function useListPaneSelectionCoordinator({
 
         scheduleKeyboardOpen(fileToOpen);
     }, [app, scheduleKeyboardOpen, selectionState, settings.enterToOpenFiles]);
+
+    const scheduleKeyboardSelectionOpenForFile = useCallback(
+        (file: TFile) => {
+            if (settings.enterToOpenFiles) {
+                return;
+            }
+
+            scheduleKeyboardOpen(file);
+        },
+        [scheduleKeyboardOpen, settings.enterToOpenFiles]
+    );
 
     const commitPendingKeyboardSelectionOpen = useCallback(() => {
         if (settings.enterToOpenFiles || !keyboardOpenPendingRef.current) {
@@ -378,14 +389,11 @@ export function useListPaneSelectionCoordinator({
             const isShiftKey = event.shiftKey;
             const isCmdCtrlClick = isCmdCtrlModifierPressed(event);
             const shouldMultiSelect = !isMobile && isMultiSelectModifierPressed(event, settings.multiSelectModifier);
-            const shouldRangeSelect = !isMobile && isShiftKey && fileIndex !== undefined;
             const shouldOpenInNewTab = !isMobile && !shouldMultiSelect && settings.multiSelectModifier === 'optionAlt' && isCmdCtrlClick;
 
             if (shouldMultiSelect) {
-                clearPendingKeyboardOpen();
                 handleMultiSelectClick(file, fileIndex, clickOrderedFiles);
-            } else if (shouldRangeSelect) {
-                clearPendingKeyboardOpen();
+            } else if (!isMobile && isShiftKey && fileIndex !== undefined) {
                 handleRangeSelectClick(file, fileIndex, clickOrderedFiles);
             } else {
                 selectFileFromList(file, {
@@ -407,7 +415,6 @@ export function useListPaneSelectionCoordinator({
         [
             app,
             commandQueue,
-            clearPendingKeyboardOpen,
             handleMultiSelectClick,
             handleRangeSelectClick,
             isMobile,
@@ -539,7 +546,7 @@ export function useListPaneSelectionCoordinator({
         lastSelectedFilePath: lastSelectedFilePathRef.current,
         isFileSelected,
         scheduleKeyboardSelectionOpen,
-        cancelPendingKeyboardSelectionOpen: clearPendingKeyboardOpen,
+        scheduleKeyboardSelectionOpenForFile,
         commitPendingKeyboardSelectionOpen
     };
 }
