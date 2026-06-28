@@ -677,6 +677,7 @@ enum OperationType {
   OPEN_FOLDER_NOTE = 'open-folder-note',
   OPEN_VERSION_HISTORY = 'open-version-history',
   OPEN_IN_NEW_CONTEXT = 'open-in-new-context',
+  OPEN_BACKGROUND_FILE = 'open-background-file',
   OPEN_ACTIVE_FILE = 'open-active-file',
   OPEN_HOMEPAGE = 'open-homepage'
 }
