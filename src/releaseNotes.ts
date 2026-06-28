@@ -94,22 +94,23 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.1',
         date: '2026-06-28',
         showOnUpdate: true,
-        info: 'More optimizations! This release significantly reduces **preview work while typing** and improves drag and drop performance. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
+        info: 'More optimizations! This release significantly reduces **preview work while typing** and improves **drag and drop performance**. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
         new: [
             '**File icons.** New setting: ==File icon preset== in Notes > Icons by file type. You can now pick default file icons from one of the installed icon packs.',
             '**Navigation pane.** New setting ==Skip vault root when collapsing== in Navigation pane > Collapse items. When collapsing all items, the vault root folder keeps its current state.'
         ],
         improved: [
+            '**Navigation pane.** Root item spacing now supports values up to `12px`.',
             '**Performance.** Significantly improved drag and drop performance! Drag previews now use browser-native drag images instead of a JavaScript element that follows the pointer.',
             '**Performance.** Notes without task metadata no longer read the full markdown file just to confirm task counts.',
             '**Performance.** Word and character counts now only update when a visible count, tooltip, or group header needs them.',
             '**Performance.** Task indicators no longer update after autosave when the number of unfinished tasks did not change.',
             '**Performance.** Modified-date lists now skip refreshes when dates, tooltips, and date filters are inactive and the edited note stays in the same sorted position.',
             '**Performance.** Tag and property lists now refresh only when metadata affects membership or sorting.',
-            '**Performance.** Calendar titles now refresh only when the configured frontmatter title changes.',
-            '**Navigation pane.** Root item spacing now supports values up to `12px`.'
+            '**Performance.** Calendar titles now refresh only when the configured frontmatter title changes.'
         ],
         changed: [
+            '**List pane.** Multi-selection no longer opens selected files in the background since this was causing slowdowns on some devices.',
             '**Merge notes.** Source notes are no longer moved to trash by default. Select the option in the merge dialog to move them to trash.'
         ],
         fixed: [
