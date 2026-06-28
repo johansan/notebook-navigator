@@ -20,7 +20,7 @@
  * Central export point for internationalization
  * Dynamically loads the appropriate language based on Obsidian's language setting
  */
-import * as Obsidian from 'obsidian';
+import { getLanguage } from 'obsidian';
 import type { STRINGS_EN } from './locales/en';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unnecessary-type-assertion -- Literal CommonJS requires keep locale modules bundled while deferring locale initialization. */
@@ -87,17 +87,6 @@ const SUPPORTED_LANGUAGES = new Set([
     'zh_tw'
 ]);
 
-const LANGUAGE_ALIASES = new Map<string, string>([
-    ['pt-br', 'pt-BR'],
-    ['zh-cn', 'zh-CN'],
-    ['zh-hans', 'zh-CN'],
-    ['zh-sg', 'zh-CN'],
-    ['zh-tw', 'zh-TW'],
-    ['zh-hant', 'zh-TW'],
-    ['zh-hk', 'zh-TW'],
-    ['zh-mo', 'zh-TW']
-]);
-
 let englishStrings: TranslationStrings | null = null;
 
 function getEnglishStrings(): TranslationStrings {
@@ -161,20 +150,6 @@ function loadLocaleOverrides(locale: string): TranslationStrings | undefined {
 
 const resolvedLanguageCache = new Map<string, TranslationStrings>();
 
-type RuntimeFunction = () => unknown;
-
-function isRuntimeObject(value: unknown): value is object {
-    return (typeof value === 'object' || typeof value === 'function') && value !== null;
-}
-
-function isRuntimeFunction(value: unknown): value is RuntimeFunction {
-    return typeof value === 'function';
-}
-
-function getRuntimeProperty(source: object, property: string): unknown {
-    return Reflect.get(source, property) as unknown;
-}
-
 function getResolvedStrings(locale: string): TranslationStrings {
     if (locale === 'en') {
         return getEnglishStrings();
@@ -195,80 +170,11 @@ function getResolvedStrings(locale: string): TranslationStrings {
     return getEnglishStrings();
 }
 
-function resolveSupportedLanguage(locale: string): string {
-    const normalizedLocale = locale.trim().replace(/_/g, '-');
-    if (!normalizedLocale) {
-        return 'en';
-    }
-
-    if (SUPPORTED_LANGUAGES.has(normalizedLocale)) {
-        return normalizedLocale;
-    }
-
-    const lowercaseLocale = normalizedLocale.toLowerCase();
-    const aliasedLocale = LANGUAGE_ALIASES.get(lowercaseLocale);
-    if (aliasedLocale && SUPPORTED_LANGUAGES.has(aliasedLocale)) {
-        return aliasedLocale;
-    }
-
-    if (SUPPORTED_LANGUAGES.has(lowercaseLocale)) {
-        return lowercaseLocale;
-    }
-
-    const baseLanguage = lowercaseLocale.split('-')[0];
-    return SUPPORTED_LANGUAGES.has(baseLanguage) ? baseLanguage : 'en';
-}
-
-function getStoredLanguage(): string | null {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    try {
-        // eslint-disable-next-line obsidianmd/prefer-get-language -- Fallback path when the runtime getLanguage export is unavailable.
-        const language = window.localStorage.getItem('language')?.trim();
-        return language || null;
-    } catch {
-        return null;
-    }
-}
-
-function getMomentLanguage(): string | null {
-    const maybeMoment = getRuntimeProperty(Obsidian, 'moment');
-    if (!isRuntimeObject(maybeMoment)) {
-        return null;
-    }
-
-    const locale = getRuntimeProperty(maybeMoment, 'locale');
-    if (!isRuntimeFunction(locale)) {
-        return null;
-    }
-
-    const language = locale();
-    return typeof language === 'string' && language.trim() ? language : null;
-}
-
-function getNavigatorLanguage(): string | null {
-    if (typeof navigator === 'undefined') {
-        return null;
-    }
-
-    return navigator.language?.trim() || null;
-}
-
 /**
  * Gets the current language setting from Obsidian
  */
 export function getCurrentLanguage(): string {
-    const getLanguage = getRuntimeProperty(Obsidian, 'getLanguage');
-    if (isRuntimeFunction(getLanguage)) {
-        const language = getLanguage();
-        if (typeof language === 'string' && language) {
-            return language;
-        }
-    }
-
-    return getStoredLanguage() ?? getMomentLanguage() ?? getNavigatorLanguage() ?? 'en';
+    return getLanguage();
 }
 
 /**
@@ -278,7 +184,11 @@ export function getCurrentLanguage(): string {
 function getObsidianLanguage(): string {
     const locale = getCurrentLanguage();
 
-    return resolveSupportedLanguage(locale);
+    if (locale && SUPPORTED_LANGUAGES.has(locale)) {
+        return locale;
+    }
+
+    return 'en';
 }
 
 // Export the appropriate language strings based on Obsidian's setting

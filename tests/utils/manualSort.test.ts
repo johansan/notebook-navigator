@@ -47,6 +47,7 @@ import {
     writeManualSortOrder
 } from '../../src/utils/manualSort';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
+import { formatTextCount } from '../../src/utils/wordCountUtils';
 import { createTestTFile } from './createTestTFile';
 
 function createFile(path: string, frontmatter: Record<string, unknown>): TFile & { frontmatter: Record<string, unknown> } {
@@ -394,7 +395,7 @@ describe('manual sort helpers', () => {
                 { title: 'Draft', showWordCount: true, targetWordCount: null, iconId: null, color: null },
                 1234
             )
-        ).toBe('Draft (1,234)');
+        ).toBe(`Draft (${formatTextCount(1234)})`);
         expect(
             formatManualSortGroupHeaderLabel(
                 { title: 'Draft', showWordCount: false, targetWordCount: 10000, iconId: null, color: null },
@@ -406,21 +407,21 @@ describe('manual sort helpers', () => {
                 { title: 'Draft', showWordCount: true, targetWordCount: 10000, iconId: null, color: null },
                 4123
             )
-        ).toBe('Draft (4,123 / 10,000)');
+        ).toBe(`Draft (${formatTextCount(4123)} / ${formatTextCount(10000)})`);
         expect(
             formatManualSortGroupHeaderLabel(
                 { title: 'Draft', showWordCount: true, targetWordCount: null, iconId: null, color: null },
                 4123,
                 8000
             )
-        ).toBe('Draft (4,123 / 8,000)');
+        ).toBe(`Draft (${formatTextCount(4123)} / ${formatTextCount(8000)})`);
         expect(
             formatManualSortGroupHeaderLabel(
                 { title: 'Draft', showWordCount: true, targetWordCount: 10000, iconId: null, color: null },
                 4123,
                 8000
             )
-        ).toBe('Draft (4,123 / 10,000)');
+        ).toBe(`Draft (${formatTextCount(4123)} / ${formatTextCount(10000)})`);
     });
 
     it('plans a sparse moved-file rank between ranked neighbors', () => {

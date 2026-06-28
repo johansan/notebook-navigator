@@ -337,7 +337,7 @@ describe('useFileItemPills', () => {
         });
 
         expect(markup).toContain('data-show-text-count="true"');
-        expect(markup).toContain('1,234');
+        expect(markup).toContain(formatTextCount(1234));
     });
 
     it('renders character count pill rows for markdown notes when character count is active', () => {
@@ -359,7 +359,7 @@ describe('useFileItemPills', () => {
         });
 
         expect(markup).toContain('data-show-text-count="true"');
-        expect(markup).toContain('2,048');
+        expect(markup).toContain(formatTextCount(2048));
         expect(markup).not.toContain('chars');
         expect(markup).toContain('data-icon-id="type"');
     });

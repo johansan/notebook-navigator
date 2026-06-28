@@ -20,6 +20,7 @@ import { describe, expect, it } from 'vitest';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { buildFileTooltip } from '../../src/utils/navigationTooltipUtils';
+import { formatTextCount } from '../../src/utils/wordCountUtils';
 import { createTestTFile } from './createTestTFile';
 
 function buildSettings(overrides: Partial<NotebookNavigatorSettings>): NotebookNavigatorSettings {
@@ -48,7 +49,7 @@ describe('navigationTooltipUtils', () => {
             wordCount: 1234
         });
 
-        expect(tooltip.split('\n')).toContain('Word count: 1,234');
+        expect(tooltip.split('\n')).toContain(`Word count: ${formatTextCount(1234)}`);
     });
 
     it('omits word count when the tooltip subsetting is off', () => {

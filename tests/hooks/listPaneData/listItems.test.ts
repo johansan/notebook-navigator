@@ -26,6 +26,7 @@ import { FILE_VISIBILITY } from '../../../src/utils/fileTypeUtils';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType, ListPaneItemType, PINNED_SECTION_HEADER_KEY } from '../../../src/types';
 import { buildListGroupCollapseKey } from '../../../src/utils/listGroupCollapse';
+import { formatTextCount } from '../../../src/utils/wordCountUtils';
 
 interface FileMetadataRecord {
     properties: PropertyItem[] | null;
@@ -947,8 +948,8 @@ describe('buildListItems pinned display scope', () => {
         });
 
         expect(getHeaderItems(items)).toEqual([
-            { data: 'Part 1 (1,234 / 3,000)', kind: 'manual-sort-custom' },
-            { data: 'Part 2 (4,123 / 10,000)', kind: 'manual-sort-custom' },
+            { data: `Part 1 (${formatTextCount(1234)} / ${formatTextCount(3000)})`, kind: 'manual-sort-custom' },
+            { data: `Part 2 (${formatTextCount(4123)} / ${formatTextCount(10000)})`, kind: 'manual-sort-custom' },
             { data: 'Part 3', kind: 'manual-sort-custom' }
         ]);
         const manualSortHeaders = items.filter(item => item.type === ListPaneItemType.HEADER && item.headerKind === 'manual-sort-custom');
