@@ -144,10 +144,16 @@ describe('FolderNoteSidebarService', () => {
         const rightSplit = {};
         const companionLeaf = createRightSidebarLeaf({ type: 'empty', state: {} }, rightSplit);
         const folderNote = createTestTFile('Projects/index.md');
-        const executeBackgroundFileOpen = vi.fn(async (_folderNote: unknown, openFile: () => Promise<void>) => {
-            await openFile();
-            return { success: true };
-        });
+        const executeBackgroundFileOpen = vi.fn(
+            async (
+                _folderNote: unknown,
+                openFile: (targetLeaf: WorkspaceLeaf | null) => Promise<void>,
+                options: { getLeaf: () => WorkspaceLeaf | null }
+            ) => {
+                await openFile(options.getLeaf());
+                return { success: true };
+            }
+        );
         const workspace = {
             rootSplit: {},
             leftSplit: {},
@@ -175,7 +181,11 @@ describe('FolderNoteSidebarService', () => {
 
         await service.openFolderNote(folderNote);
 
-        expect(executeBackgroundFileOpen).toHaveBeenCalledWith(folderNote, expect.any(Function));
+        expect(executeBackgroundFileOpen).toHaveBeenCalledTimes(1);
+        const call = executeBackgroundFileOpen.mock.calls[0];
+        expect(call?.[0]).toBe(folderNote);
+        expect(call?.[1]).toEqual(expect.any(Function));
+        expect(call?.[2].getLeaf()).toBe(companionLeaf.leaf);
         expect(companionLeaf.openFile).toHaveBeenCalledWith(folderNote, { active: false });
         expect(workspace.revealLeaf).toHaveBeenCalledWith(companionLeaf.leaf);
     });

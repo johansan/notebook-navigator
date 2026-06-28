@@ -42,9 +42,9 @@ export function useFileOpener() {
             }
 
             const active = options?.active ?? false;
+            const getLeaf = () => options?.leaf ?? app.workspace.getLeaf(false);
 
-            const openFile = async () => {
-                const targetLeaf = options?.leaf ?? app.workspace.getLeaf(false);
+            const openFile = async (targetLeaf: WorkspaceLeaf | null) => {
                 if (!targetLeaf) {
                     return;
                 }
@@ -53,12 +53,12 @@ export function useFileOpener() {
 
             if (commandQueue) {
                 // Use command queue to serialize file operations
-                runAsyncAction(() => commandQueue.executeOpenActiveFile(file, openFile, { active }));
+                runAsyncAction(() => commandQueue.executeOpenActiveFile(file, openFile, { active, getLeaf }));
                 return;
             }
 
             // Open file directly with async error handling
-            runAsyncAction(() => openFile());
+            runAsyncAction(() => openFile(getLeaf()));
         },
         [app.workspace, commandQueue]
     );

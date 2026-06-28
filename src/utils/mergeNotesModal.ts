@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, TFile, TFolder } from 'obsidian';
+import { App, TFile, TFolder, type WorkspaceLeaf } from 'obsidian';
 import { strings } from '../i18n';
 import type { CommandQueueService } from '../services/CommandQueueService';
 import type { FileSystemOperations } from '../services/FileSystemService';
@@ -42,8 +42,9 @@ function haveDifferentParentFolders(files: readonly TFile[]): boolean {
 }
 
 async function openMergedNote(app: App, commandQueue: CommandQueueService | null, file: TFile): Promise<void> {
-    const openFile = async () => {
-        const leaf = app.workspace.getLeaf(false);
+    const getLeaf = () => app.workspace.getLeaf(false);
+
+    const openFile = async (leaf: WorkspaceLeaf | null) => {
         if (!leaf) {
             throw new Error('Unable to open merged note: leaf not available');
         }
@@ -52,7 +53,7 @@ async function openMergedNote(app: App, commandQueue: CommandQueueService | null
     };
 
     if (commandQueue) {
-        const result = await commandQueue.executeOpenActiveFile(file, openFile, { active: true });
+        const result = await commandQueue.executeOpenActiveFile(file, openFile, { active: true, getLeaf });
         if (!result.success) {
             throw result.error ?? new Error('Failed to open merged note.');
         }
@@ -62,7 +63,7 @@ async function openMergedNote(app: App, commandQueue: CommandQueueService | null
         return;
     }
 
-    await openFile();
+    await openFile(getLeaf());
 }
 
 export async function openMergeNotesModal({

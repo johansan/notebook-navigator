@@ -140,16 +140,19 @@ export class FolderNoteSidebarService {
 
         const previousActiveLeaf = this.getActiveLeaf();
         this.suppressSidebarOpen(folderNote.path);
-        const openCompanionFile = async () => {
-            await leaf.openFile(folderNote, { active: false });
+        const openCompanionFile = async (targetLeaf: WorkspaceLeaf | null) => {
+            if (!targetLeaf) {
+                return;
+            }
+            await targetLeaf.openFile(folderNote, { active: false });
         };
         if (this.plugin.commandQueue) {
-            const result = await this.plugin.commandQueue.executeBackgroundFileOpen(folderNote, openCompanionFile);
+            const result = await this.plugin.commandQueue.executeBackgroundFileOpen(folderNote, openCompanionFile, { getLeaf: () => leaf });
             if (!result.success) {
                 return;
             }
         } else {
-            await openCompanionFile();
+            await openCompanionFile(leaf);
         }
         if (requestId !== this.syncRequestId || this.plugin.isShuttingDown()) {
             return;

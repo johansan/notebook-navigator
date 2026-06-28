@@ -18,7 +18,7 @@
 
 import React, { useCallback } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { App, TFile, TFolder } from 'obsidian';
+import type { App, TFile, TFolder, WorkspaceLeaf } from 'obsidian';
 import type { CommandQueueService } from '../../services/CommandQueueService';
 import type { NavigationSelectionState, SelectionAction } from '../../context/SelectionContext';
 import type { UIAction } from '../../context/UIStateContext';
@@ -122,8 +122,9 @@ export function useNavigationPaneShortcutActions({
 
     const openNotePreview = useCallback(
         (note: TFile) => {
-            const openFile = async () => {
-                const leaf = app.workspace.getLeaf(false);
+            const getLeaf = () => app.workspace.getLeaf(false);
+
+            const openFile = async (leaf: WorkspaceLeaf | null) => {
                 if (!leaf) {
                     return;
                 }
@@ -132,11 +133,11 @@ export function useNavigationPaneShortcutActions({
             };
 
             if (commandQueue) {
-                runAsyncAction(() => commandQueue.executeOpenActiveFile(note, openFile, { active: false }));
+                runAsyncAction(() => commandQueue.executeOpenActiveFile(note, openFile, { active: false, getLeaf }));
                 return;
             }
 
-            runAsyncAction(openFile);
+            runAsyncAction(() => openFile(getLeaf()));
         },
         [app.workspace, commandQueue]
     );

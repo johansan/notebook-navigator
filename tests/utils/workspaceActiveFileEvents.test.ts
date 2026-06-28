@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { WorkspaceLeaf } from 'obsidian';
+import type { WorkspaceLeaf } from 'obsidian';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommandQueueService } from '../../src/services/CommandQueueService';
 import { registerActiveFileWorkspaceListeners } from '../../src/utils/workspaceActiveFileEvents';
@@ -150,7 +150,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
         });
 
         workspace.activeLeaf = leaf;
-        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
+        const openTask = commandQueue.executeOpenActiveFile(file, async () => openFilePromise, { active: false, getLeaf: () => leaf });
 
         try {
             await Promise.resolve();
@@ -166,11 +166,11 @@ describe('registerActiveFileWorkspaceListeners', () => {
         }
     });
 
-    it('ignores active-leaf-change events while a preview open is in progress', async () => {
+    it('ignores matching active-leaf-change events while a preview open is in progress', async () => {
         const workspace = new MockWorkspace();
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/day.md');
-        const staleLeaf = createMockLeaf('stale-leaf');
+        const previewLeaf = createMockLeaf('preview-leaf');
         const onChange = vi.fn();
 
         let resolveOpenFile: () => void = () => {
@@ -186,12 +186,15 @@ describe('registerActiveFileWorkspaceListeners', () => {
             onChange
         });
 
-        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
+        const openTask = commandQueue.executeOpenActiveFile(file, async () => openFilePromise, {
+            active: false,
+            getLeaf: () => previewLeaf
+        });
 
         try {
             await Promise.resolve();
 
-            workspace.emitActiveLeafChange(staleLeaf);
+            workspace.emitActiveLeafChange(previewLeaf);
             vi.runAllTimers();
 
             expect(onChange).not.toHaveBeenCalled();
@@ -202,11 +205,11 @@ describe('registerActiveFileWorkspaceListeners', () => {
         }
     });
 
-    it('clears a pending active-leaf-change when a preview file-open arrives', async () => {
+    it('clears a matching pending active-leaf-change when a preview file-open arrives', async () => {
         const workspace = new MockWorkspace();
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/day.md');
-        const staleLeaf = createMockLeaf('stale-leaf');
+        const previewLeaf = createMockLeaf('preview-leaf');
         const onChange = vi.fn();
 
         let resolveOpenFile: () => void = () => {
@@ -222,8 +225,11 @@ describe('registerActiveFileWorkspaceListeners', () => {
             onChange
         });
 
-        workspace.emitActiveLeafChange(staleLeaf);
-        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
+        workspace.emitActiveLeafChange(previewLeaf);
+        const openTask = commandQueue.executeOpenActiveFile(file, async () => openFilePromise, {
+            active: false,
+            getLeaf: () => previewLeaf
+        });
 
         try {
             await Promise.resolve();
@@ -239,12 +245,12 @@ describe('registerActiveFileWorkspaceListeners', () => {
         }
     });
 
-    it('ignores active-leaf-change events while a preview open is still recent', async () => {
+    it('does not clear an unrelated pending active-leaf-change when a preview file-open arrives', async () => {
         const workspace = new MockWorkspace();
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/day.md');
-        const staleLeaf = createMockLeaf('stale-leaf');
-        const settledLeaf = createMockLeaf('settled-leaf');
+        const previewLeaf = createMockLeaf('preview-leaf');
+        const unrelatedLeaf = createMockLeaf('unrelated-leaf');
         const onChange = vi.fn();
 
         const cleanup = registerActiveFileWorkspaceListeners({
@@ -253,20 +259,67 @@ describe('registerActiveFileWorkspaceListeners', () => {
             onChange
         });
 
-        await commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false });
+        const openTask = commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false, getLeaf: () => previewLeaf });
+        await Promise.resolve();
 
-        workspace.emitActiveLeafChange(staleLeaf);
-        vi.runAllTimers();
-
-        expect(onChange).not.toHaveBeenCalled();
-
-        vi.advanceTimersByTime(500);
-        workspace.emitActiveLeafChange(settledLeaf);
+        workspace.emitActiveLeafChange(unrelatedLeaf);
+        workspace.emitFileOpen(file);
         vi.runAllTimers();
 
         expect(onChange).toHaveBeenCalledWith({
             candidateFile: undefined,
-            activeLeaf: settledLeaf
+            activeLeaf: unrelatedLeaf
+        });
+
+        await openTask;
+        cleanup();
+    });
+
+    it('ignores matching active-leaf-change events while a preview marker is still recent', async () => {
+        const workspace = new MockWorkspace();
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/day.md');
+        const previewLeaf = createMockLeaf('preview-leaf');
+        const onChange = vi.fn();
+
+        const cleanup = registerActiveFileWorkspaceListeners({
+            workspace,
+            commandQueue,
+            onChange
+        });
+
+        await commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false, getLeaf: () => previewLeaf });
+
+        workspace.emitActiveLeafChange(previewLeaf);
+        vi.runAllTimers();
+
+        expect(onChange).not.toHaveBeenCalled();
+
+        cleanup();
+    });
+
+    it('stops suppressing preview markers after the fallback timeout', async () => {
+        const workspace = new MockWorkspace();
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/day.md');
+        const previewLeaf = createMockLeaf('preview-leaf');
+        const onChange = vi.fn();
+
+        const cleanup = registerActiveFileWorkspaceListeners({
+            workspace,
+            commandQueue,
+            onChange
+        });
+
+        await commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false, getLeaf: () => previewLeaf });
+        vi.advanceTimersByTime(500);
+
+        workspace.emitActiveLeafChange(previewLeaf);
+        vi.runAllTimers();
+
+        expect(onChange).toHaveBeenCalledWith({
+            candidateFile: undefined,
+            activeLeaf: previewLeaf
         });
 
         cleanup();

@@ -17,6 +17,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { WorkspaceLeaf } from 'obsidian';
 import { CommandQueueService, OperationType } from '../../src/services/CommandQueueService';
 import { createTestTFile } from '../utils/createTestTFile';
 
@@ -31,6 +32,10 @@ function createDeferredVoid(): { promise: Promise<void>; resolve: () => void } {
     return { promise, resolve: resolveFn };
 }
 
+function createMockLeaf(id: string): WorkspaceLeaf {
+    return { id } as unknown as WorkspaceLeaf;
+}
+
 describe('CommandQueueService', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -41,76 +46,110 @@ describe('CommandQueueService', () => {
         vi.useRealTimers();
     });
 
-    it('tracks recent preview opens after completion', async () => {
+    it('creates scoped preview markers inside active-file operations', async () => {
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/test.md');
+        const leaf = createMockLeaf('preview-leaf');
+        const otherLeaf = createMockLeaf('other-leaf');
 
         const openGate = createDeferredVoid();
-        const openFile = vi.fn(async () => openGate.promise);
+        const openFile = vi.fn(async (_targetLeaf: WorkspaceLeaf | null) => openGate.promise);
 
-        const task = commandQueue.executeOpenActiveFile(file, openFile, { active: false });
+        const task = commandQueue.executeOpenActiveFile(file, openFile, { active: false, getLeaf: () => leaf });
         await Promise.resolve();
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(openFile).toHaveBeenCalledWith(leaf);
         expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(true);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, null)).toBe(true);
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, null)).toBe(false);
+        expect(commandQueue.consumeBackgroundActiveLeafChange(otherLeaf)).toBe(false);
+        expect(commandQueue.consumeBackgroundActiveLeafChange(leaf)).toBe(true);
 
         openGate.resolve();
         await task;
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
         expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
-
-        vi.advanceTimersByTime(500);
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
     });
 
-    it('tracks dedicated background file opens without using the active-file queue', async () => {
+    it('creates scoped markers for dedicated background file opens', async () => {
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/sidebar.md');
+        const leaf = createMockLeaf('sidebar-leaf');
 
         const openGate = createDeferredVoid();
-        const openFile = vi.fn(async () => openGate.promise);
+        const openFile = vi.fn(async (_targetLeaf: WorkspaceLeaf | null) => openGate.promise);
 
-        const task = commandQueue.executeBackgroundFileOpen(file, openFile);
+        const task = commandQueue.executeBackgroundFileOpen(file, openFile, { getLeaf: () => leaf });
         await Promise.resolve();
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(openFile).toHaveBeenCalledWith(leaf);
         expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(true);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
+        expect(commandQueue.consumeBackgroundActiveLeafChange(leaf)).toBe(true);
 
         openGate.resolve();
         await task;
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
         expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, null)).toBe(true);
+    });
 
+    it('expires completed preview markers when expected events do not arrive', async () => {
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/stale.md');
+        const leaf = createMockLeaf('stale-leaf');
+
+        await commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false, getLeaf: () => leaf });
         vi.advanceTimersByTime(500);
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
+
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, null)).toBe(false);
+        expect(commandQueue.consumeBackgroundActiveLeafChange(leaf)).toBe(false);
     });
 
     it('does not report active:true opens as background', async () => {
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/test.md');
+        const leaf = createMockLeaf('active-leaf');
 
         const openGate = createDeferredVoid();
-        const openFile = vi.fn(async () => openGate.promise);
+        const openFile = vi.fn(async (_targetLeaf: WorkspaceLeaf | null) => openGate.promise);
 
-        const task = commandQueue.executeOpenActiveFile(file, openFile, { active: true });
+        const task = commandQueue.executeOpenActiveFile(file, openFile, { active: true, getLeaf: () => leaf });
         await Promise.resolve();
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
+        expect(openFile).toHaveBeenCalledWith(leaf);
         expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
-        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, leaf)).toBe(false);
+        expect(commandQueue.consumeBackgroundActiveLeafChange(leaf)).toBe(false);
 
         openGate.resolve();
         await task;
 
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
+        expect(commandQueue.consumeBackgroundFileOpen(file.path, leaf)).toBe(false);
+    });
+
+    it('does not create preview markers for skipped queued opens', async () => {
+        const commandQueue = new CommandQueueService();
+        const skippedFile = createTestTFile('notes/skipped.md');
+        const openedFile = createTestTFile('notes/opened.md');
+        const skippedLeaf = createMockLeaf('skipped-leaf');
+        const openedLeaf = createMockLeaf('opened-leaf');
+        const openGate = createDeferredVoid();
+        const skippedOpenFile = vi.fn(async () => undefined);
+        const openedOpenFile = vi.fn(async (_targetLeaf: WorkspaceLeaf | null) => openGate.promise);
+
+        const skippedTask = commandQueue.executeOpenActiveFile(skippedFile, skippedOpenFile, { active: false, getLeaf: () => skippedLeaf });
+        const openedTask = commandQueue.executeOpenActiveFile(openedFile, openedOpenFile, { active: false, getLeaf: () => openedLeaf });
+
+        await skippedTask;
+        await Promise.resolve();
+
+        expect(skippedOpenFile).not.toHaveBeenCalled();
+        expect(openedOpenFile).toHaveBeenCalledWith(openedLeaf);
+        expect(commandQueue.consumeBackgroundFileOpen(skippedFile.path, skippedLeaf)).toBe(false);
+        expect(commandQueue.consumeBackgroundFileOpen(openedFile.path, openedLeaf)).toBe(true);
+
+        openGate.resolve();
+        await Promise.all([skippedTask, openedTask]);
     });
 
     it('replays active operations to late operation listeners', async () => {

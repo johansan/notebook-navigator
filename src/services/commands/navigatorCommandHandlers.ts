@@ -515,8 +515,9 @@ function openVaultProfilePicker(plugin: NotebookNavigatorPlugin): void {
 }
 
 async function openFileInActiveLeaf(plugin: NotebookNavigatorPlugin, file: TFile): Promise<void> {
-    const openFile = async () => {
-        const leaf = plugin.app.workspace.getLeaf(false);
+    const getLeaf = () => plugin.app.workspace.getLeaf(false);
+
+    const openFile = async (leaf: WorkspaceLeaf | null) => {
         if (!leaf) {
             return;
         }
@@ -524,11 +525,11 @@ async function openFileInActiveLeaf(plugin: NotebookNavigatorPlugin, file: TFile
     };
 
     if (plugin.commandQueue) {
-        await plugin.commandQueue.executeOpenActiveFile(file, openFile, { active: true });
+        await plugin.commandQueue.executeOpenActiveFile(file, openFile, { active: true, getLeaf });
         return;
     }
 
-    await openFile();
+    await openFile(getLeaf());
 }
 
 async function createAndOpenCustomCalendarNote(plugin: NotebookNavigatorPlugin, kind: CalendarNoteKind, date: MomentInstance) {

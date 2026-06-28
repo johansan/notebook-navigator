@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { TFile, WorkspaceLeaf } from 'obsidian';
+import { TFile, type WorkspaceLeaf } from 'obsidian';
 import type { CommandQueueService } from '../services/CommandQueueService';
 import { TIMEOUTS } from '../types/obsidian-extended';
 
@@ -34,7 +34,7 @@ export interface ActiveFileWorkspaceEvent {
 
 interface RegisterActiveFileWorkspaceListenersOptions {
     workspace: WorkspaceActiveFileEventSource;
-    commandQueue?: Pick<CommandQueueService, 'isBackgroundFileOpenInProgressOrRecent' | 'isOpeningActiveFileInBackground'> | null;
+    commandQueue?: Pick<CommandQueueService, 'consumeBackgroundActiveLeafChange' | 'consumeBackgroundFileOpen'> | null;
     onChange: (event: ActiveFileWorkspaceEvent) => void;
 }
 
@@ -59,6 +59,12 @@ export function registerActiveFileWorkspaceListeners({
     const clearPendingActiveLeafChange = () => {
         if (pendingCandidateFile === undefined) {
             clearPendingChange();
+        }
+    };
+
+    const clearPendingBackgroundActiveLeafChange = () => {
+        if (pendingActiveLeaf !== undefined && commandQueue?.consumeBackgroundActiveLeafChange(pendingActiveLeaf) === true) {
+            clearPendingActiveLeafChange();
         }
     };
 
@@ -97,7 +103,7 @@ export function registerActiveFileWorkspaceListeners({
     };
 
     const handleActiveLeafChange = (leaf: WorkspaceLeaf | null) => {
-        if (commandQueue?.isBackgroundFileOpenInProgressOrRecent() === true) {
+        if (commandQueue?.consumeBackgroundActiveLeafChange(leaf) === true) {
             clearPendingActiveLeafChange();
             return;
         }
@@ -106,8 +112,8 @@ export function registerActiveFileWorkspaceListeners({
     };
 
     const handleFileOpen = (file: TFile | null) => {
-        if (file instanceof TFile && commandQueue?.isOpeningActiveFileInBackground(file.path) === true) {
-            clearPendingActiveLeafChange();
+        if (file instanceof TFile && commandQueue?.consumeBackgroundFileOpen(file.path, workspace.activeLeaf) === true) {
+            clearPendingBackgroundActiveLeafChange();
             return;
         }
 

@@ -705,7 +705,16 @@ executeDeleteFiles(files: TFile[], performDelete: () => Promise<void>): Promise<
 executeOpenFolderNote(folderPath: string, openFile: () => Promise<void>): Promise<CommandResult>
 executeOpenVersionHistory(file: TFile, openHistory: () => Promise<void>): Promise<CommandResult>
 executeOpenInNewContext(file: TFile, context: PaneType, openFile: () => Promise<void>): Promise<CommandResult>
-executeOpenActiveFile(file: TFile, openFile: () => Promise<void>): Promise<CommandResult<{ skipped: boolean }>>
+executeBackgroundFileOpen(
+  file: TFile,
+  openFile: (targetLeaf: WorkspaceLeaf | null) => Promise<void>,
+  options?: { getLeaf?: () => WorkspaceLeaf | null }
+): Promise<CommandResult>
+executeOpenActiveFile(
+  file: TFile,
+  openFile: (targetLeaf: WorkspaceLeaf | null) => Promise<void>,
+  options?: { active?: boolean; getLeaf?: () => WorkspaceLeaf | null }
+): Promise<CommandResult<{ skipped: boolean }>>
 executeHomepageOpen(file: TFile, openFile: () => Promise<void>): Promise<CommandResult>
 ```
 
