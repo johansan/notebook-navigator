@@ -41,6 +41,7 @@ export type ExpansionAction =
     | { type: 'TOGGLE_PROPERTY_EXPANDED'; propertyNodeId: string }
     | { type: 'TOGGLE_VIRTUAL_FOLDER_EXPANDED'; folderId: string }
     | { type: 'TOGGLE_LIST_GROUP_COLLAPSED'; collapseKey: string }
+    | { type: 'EXPAND_LIST_GROUP'; collapseKey: string }
     | { type: 'EXPAND_FOLDERS'; folderPaths: string[] }
     | { type: 'EXPAND_TAGS'; tagPaths: string[] }
     | { type: 'EXPAND_PROPERTIES'; propertyNodeIds: string[] }
@@ -139,6 +140,16 @@ function expansionReducer(state: ExpansionState, action: ExpansionAction): Expan
             } else {
                 newCollapsed.add(action.collapseKey);
             }
+            return { ...state, collapsedListGroups: newCollapsed };
+        }
+
+        case 'EXPAND_LIST_GROUP': {
+            if (!state.collapsedListGroups.has(action.collapseKey)) {
+                return state;
+            }
+
+            const newCollapsed = new Set(state.collapsedListGroups);
+            newCollapsed.delete(action.collapseKey);
             return { ...state, collapsedListGroups: newCollapsed };
         }
 

@@ -79,6 +79,8 @@ interface BuildListItemsArgs {
     wordCountTargetProperty?: string;
 }
 
+export type CollapsedListGroupRevealTarget = { type: 'pinned' } | { type: 'list-group'; collapseKey: string };
+
 function splitFolderPath(path: string): string[] {
     return path.split('/').filter(Boolean);
 }
@@ -643,4 +645,29 @@ export function buildOrderedFiles(listItems: ListPaneItem[]): {
     });
 
     return { orderedFiles, orderedFileIndexMap };
+}
+
+export function findCollapsedListGroupRevealTarget(
+    listItems: readonly ListPaneItem[],
+    filePath: string,
+    pinnedGroupExpanded: boolean
+): CollapsedListGroupRevealTarget | null {
+    for (const item of listItems) {
+        if (item.type !== ListPaneItemType.HEADER || !item.groupFilePaths?.includes(filePath)) {
+            continue;
+        }
+
+        if (item.key === PINNED_SECTION_HEADER_KEY) {
+            if (!pinnedGroupExpanded) {
+                return { type: 'pinned' };
+            }
+            continue;
+        }
+
+        if (item.collapseKey && item.isCollapsed === true) {
+            return { type: 'list-group', collapseKey: item.collapseKey };
+        }
+    }
+
+    return null;
 }

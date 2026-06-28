@@ -56,6 +56,7 @@ import { useFileCache } from '../context/StorageContext';
 import { useShortcuts } from '../context/ShortcutsContext';
 import { useListPaneKeyboard } from '../hooks/useListPaneKeyboard';
 import { useListPaneData } from '../hooks/useListPaneData';
+import { findCollapsedListGroupRevealTarget } from '../hooks/listPaneData/listItems';
 import { useListPaneScroll } from '../hooks/useListPaneScroll';
 import { useListPaneTitle } from '../hooks/useListPaneTitle';
 import { useListPaneAppearance } from '../hooks/useListPaneAppearance';
@@ -331,6 +332,7 @@ export const ListPane = React.memo(
         const [manualSortEditState, setManualSortEditState] = useState<ManualSortEditState | null>(null);
         const [propertyKeyboardReorderState, setPropertyKeyboardReorderState] = useState<PropertyKeyboardReorderState | null>(null);
         const hoverSyncFrameRef = useRef<number | null>(null);
+        const pinnedRevealExpansionRef = useRef<string | null>(null);
         const manualSortEditSessionCounterRef = useRef(0);
         const manualSortEditSaveCounterRef = useRef(0);
         const propertyKeyboardReorderSaveCounterRef = useRef(0);
@@ -831,6 +833,54 @@ export const ListPane = React.memo(
             sortedKeys.sort();
             return sortedKeys.join('\u0001');
         }, [visibleListPropertyKeys]);
+
+        useEffect(() => {
+            if (
+                isManualSortEditActive ||
+                !selectionState.isRevealOperation ||
+                selectionState.revealSource !== 'manual' ||
+                !selectedFile ||
+                filePathToIndex.has(selectedFile.path)
+            ) {
+                return;
+            }
+
+            const revealTarget = findCollapsedListGroupRevealTarget(listItems, selectedFile.path, pinnedGroupExpanded);
+            if (!revealTarget) {
+                return;
+            }
+
+            if (revealTarget.type === 'pinned') {
+                if (pinnedRevealExpansionRef.current === pinnedCollapseKey) {
+                    return;
+                }
+
+                pinnedRevealExpansionRef.current = pinnedCollapseKey;
+                runAsyncAction(async () => {
+                    try {
+                        await plugin.togglePinnedGroupCollapsed(pinnedCollapseKey);
+                    } finally {
+                        if (pinnedRevealExpansionRef.current === pinnedCollapseKey) {
+                            pinnedRevealExpansionRef.current = null;
+                        }
+                    }
+                });
+                return;
+            }
+
+            expansionDispatch({ type: 'EXPAND_LIST_GROUP', collapseKey: revealTarget.collapseKey });
+        }, [
+            expansionDispatch,
+            filePathToIndex,
+            isManualSortEditActive,
+            listItems,
+            pinnedCollapseKey,
+            pinnedGroupExpanded,
+            plugin,
+            selectedFile,
+            selectionState.isRevealOperation,
+            selectionState.revealSource
+        ]);
 
         // Use the new scroll hook
         const { rowVirtualizer, scrollContainerRef, scrollContainerRefCallback, handleScrollToTop, scrollToIndexSafely } =

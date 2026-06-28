@@ -21,7 +21,7 @@ import { App, TFile, TFolder } from 'obsidian';
 import { DEFAULT_SETTINGS } from '../../../src/settings/defaultSettings';
 import type { PropertyItem } from '../../../src/storage/IndexedDBStorage';
 import type { IndexedDBStorage } from '../../../src/storage/IndexedDBStorage';
-import { buildListItems, type ListPaneConfig } from '../../../src/hooks/listPaneData/listItems';
+import { buildListItems, findCollapsedListGroupRevealTarget, type ListPaneConfig } from '../../../src/hooks/listPaneData/listItems';
 import { FILE_VISIBILITY } from '../../../src/utils/fileTypeUtils';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType, ListPaneItemType, PINNED_SECTION_HEADER_KEY } from '../../../src/types';
@@ -200,6 +200,7 @@ describe('buildListItems pinned display scope', () => {
             groupBy: 'folder' as const
         };
 
+        const collapseKey = createCollapseKey('folder', 'folder:/Projects');
         const items = buildListItems({
             app,
             dayKey: '2026-03-07',
@@ -210,7 +211,7 @@ describe('buildListItems pinned display scope', () => {
             hiddenFileState: new Map(),
             hiddenTags: [],
             listConfig,
-            collapsedListGroups: new Set([createCollapseKey('folder', 'folder:/Projects')]),
+            collapsedListGroups: new Set([collapseKey]),
             searchMetaMap: new Map(),
             selectedFolder: createFolder('/'),
             selectedTag: null,
@@ -223,6 +224,8 @@ describe('buildListItems pinned display scope', () => {
 
         expect(header?.groupFilePaths).toEqual([first.path, second.path]);
         expect(items.some(item => item.type === ListPaneItemType.FILE)).toBe(false);
+        expect(findCollapsedListGroupRevealTarget(items, second.path, true)).toEqual({ type: 'list-group', collapseKey });
+        expect(findCollapsedListGroupRevealTarget(items, 'Projects/Missing.md', true)).toBeNull();
     });
 
     it('shows selected folder files without a folder header when there are no pinned files', () => {
@@ -1601,5 +1604,7 @@ describe('buildListItems pinned display scope', () => {
 
         expect(items.some(item => item.key === PINNED_SECTION_HEADER_KEY)).toBe(true);
         expect(getFileItems(items)).toEqual([{ path: regularFile.path, isPinned: false }]);
+        expect(findCollapsedListGroupRevealTarget(items, pinnedFile.path, false)).toEqual({ type: 'pinned' });
+        expect(findCollapsedListGroupRevealTarget(items, regularFile.path, false)).toBeNull();
     });
 });
