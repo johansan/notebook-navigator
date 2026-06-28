@@ -25,6 +25,7 @@ import { ConfirmModal } from '../../modals/ConfirmModal';
 import { getSupportedLeaves, type VisibilityPreferences } from '../../types';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { getErrorMessage } from '../../utils/errorUtils';
+import { getDrawingCompanionImagePaths, getDrawingFeatureImageSource } from '../../utils/drawingFeatureImages';
 import { getFolderNoteDetectionSettings, isFolderNote } from '../../utils/folderNoteLookup';
 import { isPrimaryDocumentFile } from '../../utils/fileTypeUtils';
 import { showNotice } from '../../utils/noticeUtils';
@@ -503,7 +504,38 @@ export class FileDeletionService {
         return Array.from(resolved.values()).sort((left, right) => left.path.localeCompare(right.path));
     }
 
-    private getOrphanLinkedAttachments(attachmentCandidates: readonly TFile[], deletedSourcePaths: Set<string>): TFile[] {
+    private getDrawingCompanionAttachmentCandidates(sourceFile: TFile): TFile[] {
+        const source = getDrawingFeatureImageSource(this.app, sourceFile);
+        if (!source?.supportsCompanionImages) {
+            return [];
+        }
+
+        const resolved = new Map<string, TFile>();
+        for (const path of getDrawingCompanionImagePaths(sourceFile, source.providerId)) {
+            const file = this.app.vault.getFileByPath(path);
+            if (!file || !this.isAttachmentFile(file)) {
+                continue;
+            }
+
+            resolved.set(file.path, file);
+        }
+
+        return Array.from(resolved.values()).sort((left, right) => left.path.localeCompare(right.path));
+    }
+
+    private getAttachmentCandidates(sourceFile: TFile): TFile[] {
+        const resolved = new Map<string, TFile>();
+        for (const file of [
+            ...this.getLinkedAttachmentCandidates(sourceFile),
+            ...this.getDrawingCompanionAttachmentCandidates(sourceFile)
+        ]) {
+            resolved.set(file.path, file);
+        }
+
+        return Array.from(resolved.values()).sort((left, right) => left.path.localeCompare(right.path));
+    }
+
+    private getOrphanAttachments(attachmentCandidates: readonly TFile[], deletedSourcePaths: Set<string>): TFile[] {
         if (attachmentCandidates.length === 0) {
             return [];
         }
@@ -557,7 +589,7 @@ export class FileDeletionService {
         }
 
         sourceFiles.forEach(file => {
-            candidatesBySourcePath.set(file.path, this.getLinkedAttachmentCandidates(file));
+            candidatesBySourcePath.set(file.path, this.getAttachmentCandidates(file));
         });
         return candidatesBySourcePath;
     }
@@ -613,13 +645,13 @@ export class FileDeletionService {
         }
 
         try {
-            await this.maybeDeleteOrphanedLinkedAttachments(attachmentCandidates, deletedSourcePaths, setting);
+            await this.maybeDeleteOrphanedAttachments(attachmentCandidates, deletedSourcePaths, setting);
         } catch (error) {
             this.notifyError(strings.fileSystem.errors.deleteAttachments, error);
         }
     }
 
-    private async maybeDeleteOrphanedLinkedAttachments(
+    private async maybeDeleteOrphanedAttachments(
         attachmentCandidates: readonly TFile[],
         deletedSourcePaths: Set<string>,
         setting: DeleteAttachmentsSetting
@@ -628,7 +660,7 @@ export class FileDeletionService {
             return;
         }
 
-        const orphaned = this.getOrphanLinkedAttachments(attachmentCandidates, deletedSourcePaths);
+        const orphaned = this.getOrphanAttachments(attachmentCandidates, deletedSourcePaths);
         if (orphaned.length === 0) {
             return;
         }

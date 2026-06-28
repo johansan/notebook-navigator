@@ -84,6 +84,7 @@ function createContext(setting: NotebookNavigatorSettings['deleteAttachments']) 
     app.metadataCache.getFileCache = (file: TFile) => metadataByPath.get(file.path) ?? null;
     app.metadataCache.getFirstLinkpathDest = (path: string) => filesByPath.get(path) ?? null;
     app.metadataCache.resolvedLinks = {};
+    app.vault.getFileByPath = (path: string) => filesByPath.get(path) ?? null;
     app.fileManager.trashFile = trashFile;
 
     const operations = new FileSystemOperations(
@@ -206,6 +207,41 @@ describe('FileSystemOperations attachment deletion', () => {
         expect(promptDeleteFileAttachmentsMock).not.toHaveBeenCalled();
         expect(trashFile).toHaveBeenCalledTimes(1);
         expect(trashFile).toHaveBeenCalledWith(source);
+    });
+
+    it('prompts for Excalidraw companion previews when deleting the source file', async () => {
+        const { filesByPath, trashFile, operations } = createContext('ask');
+        const source = createTestTFile('Drawings/Sketch.excalidraw.md');
+        const plainPreview = createTestTFile('Drawings/Sketch.excalidraw.png');
+        const darkPreview = createTestTFile('Drawings/Sketch.excalidraw.dark.png');
+        const lightPreview = createTestTFile('Drawings/Sketch.excalidraw.light.png');
+
+        [plainPreview, darkPreview, lightPreview].forEach(file => {
+            filesByPath.set(file.path, file);
+        });
+        promptDeleteFileAttachmentsMock.mockImplementationOnce(async (_app, files) => files);
+
+        await expect(operations.deleteFile(source, false)).resolves.toBeUndefined();
+
+        expect(promptDeleteFileAttachmentsMock).toHaveBeenCalledTimes(1);
+        const promptCall = promptDeleteFileAttachmentsMock.mock.calls[0];
+        if (!promptCall) {
+            throw new Error('Attachment prompt call not found');
+        }
+        expect(promptCall[1].map(file => file.path).sort((a, b) => a.localeCompare(b))).toEqual(
+            [darkPreview.path, lightPreview.path, plainPreview.path].sort((a, b) => a.localeCompare(b))
+        );
+
+        const trashedPaths = trashFile.mock.calls
+            .map(call => call[0])
+            .filter((value): value is TFile => {
+                return value !== null && typeof value === 'object' && 'path' in value && typeof value.path === 'string';
+            })
+            .map(file => file.path)
+            .sort((a, b) => a.localeCompare(b));
+        expect(trashedPaths).toEqual(
+            [darkPreview.path, lightPreview.path, plainPreview.path, source.path].sort((a, b) => a.localeCompare(b))
+        );
     });
 
     it('deduplicates shared attachment candidates in multi-delete', async () => {

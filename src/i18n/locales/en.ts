@@ -2256,7 +2256,7 @@ export const STRINGS_EN = {
             },
             deleteAttachments: {
                 name: 'Delete attachments when deleting files',
-                desc: "Automatically remove attachments linked to the deleted file if they're not used elsewhere",
+                desc: "Automatically remove linked attachments and generated drawing previews if they're not used elsewhere",
                 options: {
                     ask: 'Ask each time',
                     always: 'Always',
