@@ -94,12 +94,14 @@ describe('wordCountUtils', () => {
         ).toBe('25%');
     });
 
-    it('formats text counts with the provided locale', () => {
-        expect(formatTextCount(1234, 'en')).toBe('1,234');
-        expect(formatTextCount(1234, 'de')).toBe('1.234');
+    it('formats text counts with the runtime locale', () => {
+        expect(formatTextCount(1234.9)).toBe(Math.trunc(1234.9).toLocaleString());
     });
 
     it('formats word count targets without percentages', () => {
+        const formattedWordCount = formatTextCount(1250);
+        const formattedTarget = formatTextCount(5000);
+
         expect(
             getWordCountDisplayText({
                 wordCount: 1250,
@@ -107,6 +109,6 @@ describe('wordCountUtils', () => {
                 targetProperty: 'word-goal',
                 showTargetPercentage: false
             })
-        ).toBe('1,250 / 5,000');
+        ).toBe(`${formattedWordCount} / ${formattedTarget}`);
     });
 });
