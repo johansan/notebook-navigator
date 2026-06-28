@@ -17,10 +17,8 @@
  */
 
 import { WorkspaceLeaf } from 'obsidian';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CommandQueueService } from '../../src/services/CommandQueueService';
+import { describe, expect, it } from 'vitest';
 import { isLeafInNavigatorWindow, shouldSkipNavigatorAutoReveal } from '../../src/utils/autoRevealUtils';
-import { createTestTFile } from './createTestTFile';
 
 function createMockLeaf(win: Window): WorkspaceLeaf {
     return {
@@ -29,83 +27,26 @@ function createMockLeaf(win: Window): WorkspaceLeaf {
 }
 
 describe('shouldSkipNavigatorAutoReveal', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-        vi.setSystemTime(0);
+    it('skips auto-reveal when the navigator opens the selected file', () => {
+        expect(
+            shouldSkipNavigatorAutoReveal({
+                hasNavigatorFocus: true,
+                isOpeningVersionHistory: false,
+                isOpeningInNewContext: false,
+                isNavigatorOpeningSelectedFile: true
+            })
+        ).toBe(true);
     });
 
-    afterEach(() => {
-        vi.useRealTimers();
-    });
-
-    it('skips auto-reveal for navigator preview opens (active: false)', async () => {
-        const commandQueue = new CommandQueueService();
-        const file = createTestTFile('notes/note.md');
-
-        let resolveOpenFile: () => void = () => {
-            throw new Error('resolveOpenFile not set');
-        };
-        const openFilePromise = new Promise<void>(resolve => {
-            resolveOpenFile = () => resolve();
-        });
-
-        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
-
-        try {
-            await Promise.resolve();
-
-            expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
-
-            expect(
-                shouldSkipNavigatorAutoReveal({
-                    hasNavigatorFocus: true,
-                    isOpeningVersionHistory: false,
-                    isOpeningInNewContext: false,
-                    isNavigatorOpeningSelectedFile: false,
-                    ignoreNavigatorPreviewOpen: commandQueue.isOpeningActiveFileInBackground(file.path)
-                })
-            ).toBe(true);
-        } finally {
-            resolveOpenFile();
-            await openTask;
-        }
-
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
-        vi.advanceTimersByTime(500);
-        expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
-    });
-
-    it('does not treat active opens as preview opens (active: true)', async () => {
-        const commandQueue = new CommandQueueService();
-        const file = createTestTFile('notes/note.md');
-
-        let resolveOpenFile: () => void = () => {
-            throw new Error('resolveOpenFile not set');
-        };
-        const openFilePromise = new Promise<void>(resolve => {
-            resolveOpenFile = () => resolve();
-        });
-
-        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: true });
-
-        try {
-            await Promise.resolve();
-
-            expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
-
-            expect(
-                shouldSkipNavigatorAutoReveal({
-                    hasNavigatorFocus: true,
-                    isOpeningVersionHistory: false,
-                    isOpeningInNewContext: false,
-                    isNavigatorOpeningSelectedFile: false,
-                    ignoreNavigatorPreviewOpen: commandQueue.isOpeningActiveFileInBackground(file.path)
-                })
-            ).toBe(false);
-        } finally {
-            resolveOpenFile();
-            await openTask;
-        }
+    it('does not skip auto-reveal when the navigator is not focused', () => {
+        expect(
+            shouldSkipNavigatorAutoReveal({
+                hasNavigatorFocus: false,
+                isOpeningVersionHistory: false,
+                isOpeningInNewContext: false,
+                isNavigatorOpeningSelectedFile: true
+            })
+        ).toBe(false);
     });
 
     it('matches active leaves against navigator windows', () => {

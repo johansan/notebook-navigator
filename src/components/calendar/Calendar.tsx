@@ -327,8 +327,8 @@ export function Calendar({
         const cleanup = registerActiveFileWorkspaceListeners({
             workspace: app.workspace,
             commandQueue,
-            onChange: ({ candidateFile, ignoreBackgroundOpen }) => {
-                syncActiveEditorFilePath(ignoreBackgroundOpen ? undefined : candidateFile);
+            onChange: ({ candidateFile }) => {
+                syncActiveEditorFilePath(candidateFile);
             }
         });
 

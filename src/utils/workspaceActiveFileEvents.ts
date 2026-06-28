@@ -30,7 +30,6 @@ interface WorkspaceActiveFileEventSource {
 export interface ActiveFileWorkspaceEvent {
     candidateFile?: TFile | null;
     activeLeaf?: WorkspaceLeaf | null;
-    ignoreBackgroundOpen: boolean;
 }
 
 interface RegisterActiveFileWorkspaceListenersOptions {
@@ -47,7 +46,6 @@ export function registerActiveFileWorkspaceListeners({
     let pendingSyncTimer: number | null = null;
     let pendingCandidateFile: TFile | null | undefined = undefined;
     let pendingActiveLeaf: WorkspaceLeaf | null | undefined = undefined;
-    let pendingIgnoreBackgroundOpen: boolean | undefined = undefined;
 
     const clearPendingChange = () => {
         if (pendingSyncTimer !== null && typeof window !== 'undefined') {
@@ -56,7 +54,6 @@ export function registerActiveFileWorkspaceListeners({
         pendingSyncTimer = null;
         pendingCandidateFile = undefined;
         pendingActiveLeaf = undefined;
-        pendingIgnoreBackgroundOpen = undefined;
     };
 
     const clearPendingActiveLeafChange = () => {
@@ -65,10 +62,9 @@ export function registerActiveFileWorkspaceListeners({
         }
     };
 
-    const scheduleChange = (candidateFile?: TFile | null, ignoreBackgroundOpen?: boolean, activeLeaf?: WorkspaceLeaf | null) => {
+    const scheduleChange = (candidateFile?: TFile | null, activeLeaf?: WorkspaceLeaf | null) => {
         if (candidateFile !== undefined) {
             pendingCandidateFile = candidateFile;
-            pendingIgnoreBackgroundOpen = ignoreBackgroundOpen ?? false;
         }
         if (activeLeaf !== undefined) {
             pendingActiveLeaf = activeLeaf;
@@ -77,8 +73,7 @@ export function registerActiveFileWorkspaceListeners({
         if (typeof window === 'undefined') {
             onChange({
                 candidateFile,
-                activeLeaf: activeLeaf ?? workspace.activeLeaf,
-                ignoreBackgroundOpen: ignoreBackgroundOpen === true
+                activeLeaf: activeLeaf ?? workspace.activeLeaf
             });
             return;
         }
@@ -92,14 +87,11 @@ export function registerActiveFileWorkspaceListeners({
             pendingSyncTimer = null;
             const file = pendingCandidateFile;
             const leaf = pendingActiveLeaf ?? workspace.activeLeaf;
-            const ignore = pendingIgnoreBackgroundOpen;
             pendingCandidateFile = undefined;
             pendingActiveLeaf = undefined;
-            pendingIgnoreBackgroundOpen = undefined;
             onChange({
                 candidateFile: file,
-                activeLeaf: leaf,
-                ignoreBackgroundOpen: ignore === true
+                activeLeaf: leaf
             });
         }, TIMEOUTS.YIELD_TO_EVENT_LOOP);
     };
@@ -110,7 +102,7 @@ export function registerActiveFileWorkspaceListeners({
             return;
         }
 
-        scheduleChange(undefined, undefined, leaf);
+        scheduleChange(undefined, leaf);
     };
 
     const handleFileOpen = (file: TFile | null) => {
@@ -119,7 +111,7 @@ export function registerActiveFileWorkspaceListeners({
             return;
         }
 
-        scheduleChange(file, false, workspace.activeLeaf);
+        scheduleChange(file, workspace.activeLeaf);
     };
 
     const activeLeafChangeRef = workspace.on('active-leaf-change', handleActiveLeafChange);

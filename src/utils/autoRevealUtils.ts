@@ -23,7 +23,6 @@ interface ShouldSkipNavigatorAutoRevealParams {
     isOpeningVersionHistory: boolean;
     isOpeningInNewContext: boolean;
     isNavigatorOpeningSelectedFile: boolean;
-    ignoreNavigatorPreviewOpen: boolean;
 }
 
 /**
@@ -34,8 +33,7 @@ export function shouldSkipNavigatorAutoReveal({
     hasNavigatorFocus,
     isOpeningVersionHistory,
     isOpeningInNewContext,
-    isNavigatorOpeningSelectedFile,
-    ignoreNavigatorPreviewOpen
+    isNavigatorOpeningSelectedFile
 }: ShouldSkipNavigatorAutoRevealParams): boolean {
     if (!hasNavigatorFocus) {
         return false;
@@ -45,7 +43,7 @@ export function shouldSkipNavigatorAutoReveal({
         return false;
     }
 
-    return isNavigatorOpeningSelectedFile || ignoreNavigatorPreviewOpen;
+    return isNavigatorOpeningSelectedFile;
 }
 
 export function isLeafInNavigatorWindow(leaf: WorkspaceLeaf | null, navigatorLeaves: WorkspaceLeaf[]): boolean {

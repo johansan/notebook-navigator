@@ -957,22 +957,15 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
          * Detects if the active file has changed and triggers reveal if needed.
          * This is the single entry point for both file-open and active-leaf-change events.
          */
-        const detectActiveFileChange = (
-            candidateFile?: TFile | null,
-            options?: { ignoreNavigatorPreviewOpen?: boolean; activeLeaf?: WorkspaceLeaf | null }
-        ) => {
-            const ignoreNavigatorPreviewOpen = options?.ignoreNavigatorPreviewOpen ?? false;
+        const detectActiveFileChange = (candidateFile?: TFile | null, options?: { activeLeaf?: WorkspaceLeaf | null }) => {
             // Get the currently active file view
             const view = app.workspace.getActiveViewOfType(FileView);
             const activeViewFile = view?.file instanceof TFile ? view.file : null;
             const activeLeaf = options?.activeLeaf ?? view?.leaf ?? null;
             // Prefer the file from the event payload (file-open), falling back to the active view file.
-            // Background opens are ignored so preview and companion-sidebar opens do not become active reveals.
+            // The shared workspace listener suppresses background opens before this handler runs.
             // This handles cases where the active view is not updated yet when events fire.
-            if (ignoreNavigatorPreviewOpen && candidateFile instanceof TFile && activeViewFile?.path === candidateFile.path) {
-                return;
-            }
-            const file = !ignoreNavigatorPreviewOpen && candidateFile instanceof TFile ? candidateFile : activeViewFile;
+            const file = candidateFile instanceof TFile ? candidateFile : activeViewFile;
             if (!file) {
                 return;
             }
@@ -1023,8 +1016,7 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                 hasNavigatorFocus,
                 isOpeningVersionHistory,
                 isOpeningInNewContext,
-                isNavigatorOpeningSelectedFile,
-                ignoreNavigatorPreviewOpen
+                isNavigatorOpeningSelectedFile
             });
 
             if (shouldSkipNavigatorAutoRevealForFile) {
@@ -1045,8 +1037,8 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
         const cleanup = registerActiveFileWorkspaceListeners({
             workspace: app.workspace,
             commandQueue,
-            onChange: ({ candidateFile, activeLeaf, ignoreBackgroundOpen }) => {
-                detectActiveFileChange(candidateFile, { ignoreNavigatorPreviewOpen: ignoreBackgroundOpen, activeLeaf });
+            onChange: ({ candidateFile, activeLeaf }) => {
+                detectActiveFileChange(candidateFile, { activeLeaf });
             }
         });
 

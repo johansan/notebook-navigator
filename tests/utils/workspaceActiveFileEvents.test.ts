@@ -99,8 +99,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith({
             candidateFile: file,
-            activeLeaf: leaf,
-            ignoreBackgroundOpen: false
+            activeLeaf: leaf
         });
 
         cleanup();
@@ -124,8 +123,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
 
         expect(onChange).toHaveBeenCalledWith({
             candidateFile: file,
-            activeLeaf: leaf,
-            ignoreBackgroundOpen: false
+            activeLeaf: leaf
         });
 
         cleanup();
@@ -268,8 +266,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
 
         expect(onChange).toHaveBeenCalledWith({
             candidateFile: undefined,
-            activeLeaf: settledLeaf,
-            ignoreBackgroundOpen: false
+            activeLeaf: settledLeaf
         });
 
         cleanup();
