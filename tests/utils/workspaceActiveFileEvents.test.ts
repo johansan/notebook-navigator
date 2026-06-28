@@ -131,7 +131,7 @@ describe('registerActiveFileWorkspaceListeners', () => {
         cleanup();
     });
 
-    it('marks preview opens as background opens', async () => {
+    it('ignores preview file-open events', async () => {
         const workspace = new MockWorkspace();
         const commandQueue = new CommandQueueService();
         const file = createTestTFile('notes/day.md');
@@ -160,16 +160,118 @@ describe('registerActiveFileWorkspaceListeners', () => {
             workspace.emitFileOpen(file);
             vi.runAllTimers();
 
-            expect(onChange).toHaveBeenCalledTimes(1);
-            expect(onChange).toHaveBeenCalledWith({
-                candidateFile: file,
-                activeLeaf: leaf,
-                ignoreBackgroundOpen: true
-            });
+            expect(onChange).not.toHaveBeenCalled();
         } finally {
             resolveOpenFile();
             await openTask;
             cleanup();
         }
+    });
+
+    it('ignores active-leaf-change events while a preview open is in progress', async () => {
+        const workspace = new MockWorkspace();
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/day.md');
+        const staleLeaf = createMockLeaf('stale-leaf');
+        const onChange = vi.fn();
+
+        let resolveOpenFile: () => void = () => {
+            throw new Error('resolveOpenFile not set');
+        };
+        const openFilePromise = new Promise<void>(resolve => {
+            resolveOpenFile = resolve;
+        });
+
+        const cleanup = registerActiveFileWorkspaceListeners({
+            workspace,
+            commandQueue,
+            onChange
+        });
+
+        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
+
+        try {
+            await Promise.resolve();
+
+            workspace.emitActiveLeafChange(staleLeaf);
+            vi.runAllTimers();
+
+            expect(onChange).not.toHaveBeenCalled();
+        } finally {
+            resolveOpenFile();
+            await openTask;
+            cleanup();
+        }
+    });
+
+    it('clears a pending active-leaf-change when a preview file-open arrives', async () => {
+        const workspace = new MockWorkspace();
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/day.md');
+        const staleLeaf = createMockLeaf('stale-leaf');
+        const onChange = vi.fn();
+
+        let resolveOpenFile: () => void = () => {
+            throw new Error('resolveOpenFile not set');
+        };
+        const openFilePromise = new Promise<void>(resolve => {
+            resolveOpenFile = resolve;
+        });
+
+        const cleanup = registerActiveFileWorkspaceListeners({
+            workspace,
+            commandQueue,
+            onChange
+        });
+
+        workspace.emitActiveLeafChange(staleLeaf);
+        const openTask = commandQueue.executeOpenActiveFile(file, () => openFilePromise, { active: false });
+
+        try {
+            await Promise.resolve();
+
+            workspace.emitFileOpen(file);
+            vi.runAllTimers();
+
+            expect(onChange).not.toHaveBeenCalled();
+        } finally {
+            resolveOpenFile();
+            await openTask;
+            cleanup();
+        }
+    });
+
+    it('ignores active-leaf-change events while a preview open is still recent', async () => {
+        const workspace = new MockWorkspace();
+        const commandQueue = new CommandQueueService();
+        const file = createTestTFile('notes/day.md');
+        const staleLeaf = createMockLeaf('stale-leaf');
+        const settledLeaf = createMockLeaf('settled-leaf');
+        const onChange = vi.fn();
+
+        const cleanup = registerActiveFileWorkspaceListeners({
+            workspace,
+            commandQueue,
+            onChange
+        });
+
+        await commandQueue.executeOpenActiveFile(file, async () => undefined, { active: false });
+
+        workspace.emitActiveLeafChange(staleLeaf);
+        vi.runAllTimers();
+
+        expect(onChange).not.toHaveBeenCalled();
+
+        vi.advanceTimersByTime(500);
+        workspace.emitActiveLeafChange(settledLeaf);
+        vi.runAllTimers();
+
+        expect(onChange).toHaveBeenCalledWith({
+            candidateFile: undefined,
+            activeLeaf: settledLeaf,
+            ignoreBackgroundOpen: false
+        });
+
+        cleanup();
     });
 });

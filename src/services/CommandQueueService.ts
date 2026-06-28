@@ -162,6 +162,11 @@ export class CommandQueueService {
         }
     }
 
+    private hasRecentBackgroundOpen(now: number): boolean {
+        this.cleanupRecentBackgroundOpens(now);
+        return this.recentBackgroundOpenByPath.size > 0;
+    }
+
     /**
      * Generate a unique operation ID
      */
@@ -318,6 +323,30 @@ export class CommandQueueService {
         }
 
         return false;
+    }
+
+    /**
+     * Check if any background file open is currently in progress.
+     */
+    isBackgroundFileOpenInProgress(): boolean {
+        for (const operation of this.activeOperations.values()) {
+            if (operation.type === OperationType.OPEN_BACKGROUND_FILE) {
+                return true;
+            }
+
+            if (operation.type === OperationType.OPEN_ACTIVE_FILE && operation.active === false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a background file open is currently settling or recently completed.
+     */
+    isBackgroundFileOpenInProgressOrRecent(): boolean {
+        return this.isBackgroundFileOpenInProgress() || this.hasRecentBackgroundOpen(Date.now());
     }
 
     /**

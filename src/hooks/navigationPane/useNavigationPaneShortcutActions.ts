@@ -120,6 +120,27 @@ export function useNavigationPaneShortcutActions({
         window.setTimeout(release, 0);
     }, [setActiveShortcut]);
 
+    const openNotePreview = useCallback(
+        (note: TFile) => {
+            const openFile = async () => {
+                const leaf = app.workspace.getLeaf(false);
+                if (!leaf) {
+                    return;
+                }
+
+                await leaf.openFile(note, { active: false });
+            };
+
+            if (commandQueue) {
+                runAsyncAction(() => commandQueue.executeOpenActiveFile(note, openFile, { active: false }));
+                return;
+            }
+
+            runAsyncAction(openFile);
+        },
+        [app.workspace, commandQueue]
+    );
+
     const handleShortcutFolderActivate = useCallback(
         (folder: TFolder, shortcutKey: string) => {
             setActiveShortcut(shortcutKey);
@@ -217,10 +238,7 @@ export function useNavigationPaneShortcutActions({
                 onRevealFile(note);
             }
 
-            const leaf = app.workspace.getLeaf(false);
-            if (leaf) {
-                runAsyncAction(() => leaf.openFile(note, { active: false }));
-            }
+            openNotePreview(note);
             if (isMobile && app.workspace.leftSplit) {
                 app.workspace.leftSplit.collapse();
             }
@@ -234,6 +252,7 @@ export function useNavigationPaneShortcutActions({
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
+            openNotePreview,
             scheduleShortcutRelease,
             selectionType,
             setActiveShortcut,
@@ -264,10 +283,7 @@ export function useNavigationPaneShortcutActions({
                 onRevealFile(note);
             }
 
-            const leaf = app.workspace.getLeaf(false);
-            if (leaf) {
-                runAsyncAction(() => leaf.openFile(note, { active: false }));
-            }
+            openNotePreview(note);
             if (isMobile && app.workspace.leftSplit) {
                 app.workspace.leftSplit.collapse();
             }
@@ -280,6 +296,7 @@ export function useNavigationPaneShortcutActions({
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
+            openNotePreview,
             selectionType,
             uiDispatch,
             uiState.currentSinglePaneView,

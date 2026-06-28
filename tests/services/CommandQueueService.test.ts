@@ -52,14 +52,19 @@ describe('CommandQueueService', () => {
         await Promise.resolve();
 
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
 
         openGate.resolve();
         await task;
 
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
 
         vi.advanceTimersByTime(500);
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
     });
 
     it('tracks dedicated background file opens without using the active-file queue', async () => {
@@ -73,14 +78,19 @@ describe('CommandQueueService', () => {
         await Promise.resolve();
 
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
 
         openGate.resolve();
         await task;
 
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(true);
+        expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(true);
 
         vi.advanceTimersByTime(500);
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
     });
 
     it('does not report active:true opens as background', async () => {
@@ -94,6 +104,8 @@ describe('CommandQueueService', () => {
         await Promise.resolve();
 
         expect(commandQueue.isOpeningActiveFileInBackground(file.path)).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgress()).toBe(false);
+        expect(commandQueue.isBackgroundFileOpenInProgressOrRecent()).toBe(false);
 
         openGate.resolve();
         await task;

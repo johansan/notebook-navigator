@@ -35,7 +35,7 @@ export interface ActiveFileWorkspaceEvent {
 
 interface RegisterActiveFileWorkspaceListenersOptions {
     workspace: WorkspaceActiveFileEventSource;
-    commandQueue?: Pick<CommandQueueService, 'isOpeningActiveFileInBackground'> | null;
+    commandQueue?: Pick<CommandQueueService, 'isBackgroundFileOpenInProgressOrRecent' | 'isOpeningActiveFileInBackground'> | null;
     onChange: (event: ActiveFileWorkspaceEvent) => void;
 }
 
@@ -48,6 +48,22 @@ export function registerActiveFileWorkspaceListeners({
     let pendingCandidateFile: TFile | null | undefined = undefined;
     let pendingActiveLeaf: WorkspaceLeaf | null | undefined = undefined;
     let pendingIgnoreBackgroundOpen: boolean | undefined = undefined;
+
+    const clearPendingChange = () => {
+        if (pendingSyncTimer !== null && typeof window !== 'undefined') {
+            window.clearTimeout(pendingSyncTimer);
+        }
+        pendingSyncTimer = null;
+        pendingCandidateFile = undefined;
+        pendingActiveLeaf = undefined;
+        pendingIgnoreBackgroundOpen = undefined;
+    };
+
+    const clearPendingActiveLeafChange = () => {
+        if (pendingCandidateFile === undefined) {
+            clearPendingChange();
+        }
+    };
 
     const scheduleChange = (candidateFile?: TFile | null, ignoreBackgroundOpen?: boolean, activeLeaf?: WorkspaceLeaf | null) => {
         if (candidateFile !== undefined) {
@@ -89,21 +105,28 @@ export function registerActiveFileWorkspaceListeners({
     };
 
     const handleActiveLeafChange = (leaf: WorkspaceLeaf | null) => {
+        if (commandQueue?.isBackgroundFileOpenInProgressOrRecent() === true) {
+            clearPendingActiveLeafChange();
+            return;
+        }
+
         scheduleChange(undefined, undefined, leaf);
     };
 
     const handleFileOpen = (file: TFile | null) => {
-        const ignoreBackgroundOpen = file instanceof TFile && commandQueue?.isOpeningActiveFileInBackground(file.path) === true;
-        scheduleChange(file, ignoreBackgroundOpen, workspace.activeLeaf);
+        if (file instanceof TFile && commandQueue?.isOpeningActiveFileInBackground(file.path) === true) {
+            clearPendingActiveLeafChange();
+            return;
+        }
+
+        scheduleChange(file, false, workspace.activeLeaf);
     };
 
     const activeLeafChangeRef = workspace.on('active-leaf-change', handleActiveLeafChange);
     const fileOpenRef = workspace.on('file-open', handleFileOpen);
 
     return () => {
-        if (pendingSyncTimer !== null) {
-            window.clearTimeout(pendingSyncTimer);
-        }
+        clearPendingChange();
         workspace.offref(activeLeafChangeRef);
         workspace.offref(fileOpenRef);
     };
