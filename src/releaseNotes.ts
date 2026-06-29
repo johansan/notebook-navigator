@@ -92,10 +92,11 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.1',
-        date: '2026-06-28',
+        date: '2026-06-29',
         showOnUpdate: true,
-        info: 'More optimizations! This release significantly reduces **preview work while typing** and improves drag and drop performance. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
+        info: 'You can now rename files, tags and properties inline using Enter (macOS) or F2 (Windows and Linux)! And we got more optimizations! This release significantly reduces **preview work while typing** and improves drag and drop performance. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
         new: [
+            '**Inline rename.** Rename files, folders, tags, and properties inline with Enter on macOS or F2 on Windows/Linux. The keyboard command is customizable with the `pane:rename` action.',
             '**File icons.** New setting: ==File icon preset== in Notes > Icons by file type. You can now pick default file icons from one of the installed icon packs.',
             '**Navigation pane.** New setting ==Skip vault root when collapsing== in Navigation pane > Collapse items. When collapsing all items, the vault root folder keeps its current state.'
         ],
@@ -115,7 +116,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         fixed: [
             '**Manual sort.** Fixed a problem with manual sort when **Show notes from subfolders / descendants** was enabled. For example, a parent folder could have note `1`, a subfolder with notes `2.0` and `2.1`, and then note `3`. After manually sorting the subfolder notes, the parent folder could show `2.0`, `2.1`, `1`, `3` instead of `1`, `2.0`, `2.1`, `3`. The parent folder now keeps the correct order after sorting notes inside the subfolder.',
             '**Properties.** Fixed property value assignment writing the display label instead of the original frontmatter link value. Values such as `[[Mini-Tasks]]` now keep the `Mini-Tasks` label while assigning writes `[[Mini-Tasks]]`.',
-            '**List pane.** Fixed file selection sometimes jumping back to the previous note when Obsidian updated a note\'s modified date while opening another note.',
+            "**List pane.** Fixed file selection sometimes jumping back to the previous note when Obsidian updated a note's modified date while opening another note.",
             '**List pane.** Fixed Reveal file not scrolling to notes inside collapsed list groups or the collapsed pinned section.'
         ]
     },

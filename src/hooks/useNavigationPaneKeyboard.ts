@@ -93,13 +93,21 @@ interface UseNavigationPaneKeyboardProps {
     containerRef: React.RefObject<HTMLDivElement | null>;
     /** Combined navigation index map */
     pathToIndex: Map<string, number>;
+    /** Starts inline rename for the current item when available */
+    onStartRename?: () => boolean;
 }
 
 /**
  * Hook for keyboard navigation in the navigation pane.
  * Handles folder/tag-specific keyboard interactions.
  */
-export function useNavigationPaneKeyboard({ items, virtualizer, containerRef, pathToIndex }: UseNavigationPaneKeyboardProps) {
+export function useNavigationPaneKeyboard({
+    items,
+    virtualizer,
+    containerRef,
+    pathToIndex,
+    onStartRename
+}: UseNavigationPaneKeyboardProps) {
     const { app, commandQueue, isMobile, plugin } = useServices();
     const fileSystemOps = useFileSystemOps();
     const settings = useSettingsState();
@@ -246,6 +254,11 @@ export function useNavigationPaneKeyboard({ items, virtualizer, containerRef, pa
             let shouldScrollToTop = false;
 
             if (isShiftTab(e)) {
+                e.preventDefault();
+                return;
+            }
+
+            if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.PANE_RENAME) && onStartRename?.()) {
                 e.preventDefault();
                 return;
             }
@@ -560,7 +573,8 @@ export function useNavigationPaneKeyboard({ items, virtualizer, containerRef, pa
             fileSystemOps,
             virtualizer,
             includeDescendantNotes,
-            showHiddenItems
+            showHiddenItems,
+            onStartRename
         ]
     );
 

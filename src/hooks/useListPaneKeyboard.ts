@@ -83,6 +83,8 @@ interface UseListPaneKeyboardProps {
     onCommitKeyboardOpen?: () => void;
     /** Reorder the selected property-sorted file block */
     onReorderPropertySort?: (direction: 'up' | 'down') => boolean;
+    /** Starts inline rename for the current file when available */
+    onStartRename?: () => boolean;
 }
 
 /**
@@ -102,7 +104,8 @@ export function useListPaneKeyboard({
     onScheduleKeyboardOpen,
     onScheduleKeyboardOpenForFile,
     onCommitKeyboardOpen,
-    onReorderPropertySort
+    onReorderPropertySort,
+    onStartRename
 }: UseListPaneKeyboardProps) {
     const { app, commandQueue, isMobile, tagTreeService, propertyTreeService } = useServices();
     const openFileInWorkspace = useFileOpener();
@@ -277,6 +280,11 @@ export function useListPaneKeyboard({
 
                 return targetIndex;
             };
+
+            if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.PANE_RENAME) && onStartRename?.()) {
+                e.preventDefault();
+                return;
+            }
 
             if (settings.enterToOpenFiles && isEnterKey(e)) {
                 const selectedFile = resolvePrimarySelectedFile(app, currentFileSelection);
@@ -574,6 +582,7 @@ export function useListPaneKeyboard({
             onScheduleKeyboardOpen,
             onScheduleKeyboardOpenForFile,
             onReorderPropertySort,
+            onStartRename,
             scrollToIndexSafely
         ]
     );

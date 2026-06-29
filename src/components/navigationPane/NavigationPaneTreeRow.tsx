@@ -34,6 +34,7 @@ import { VirtualFolderComponent, type VirtualFolderTrailingAction } from '../Vir
 import type { NavigationPaneRowProps } from './NavigationPaneItemRenderer.types';
 import { getNavigationItemSearchMatch, isNavigationItemSelected } from './navigationPaneItemState';
 import { getNavigationItemRenderKey } from '../../utils/navigationIndex';
+import { strings } from '../../i18n';
 
 export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }: NavigationPaneRowProps) {
     const {
@@ -56,6 +57,7 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
         shortcuts,
         tree,
         searchHighlights,
+        inlineRename,
         onSectionContextMenu
     } = context;
 
@@ -66,6 +68,8 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
             const indentGuideLevels = indentGuideLevelsByKey.get(getNavigationItemRenderKey(item));
             const shouldHideFolderSeparatorActions =
                 shouldPinShortcuts && firstInlineFolderPath !== null && folderPath === firstInlineFolderPath;
+            const renameTarget =
+                inlineRename.target?.type === 'folder' && inlineRename.target.id === folderPath ? inlineRename.target : null;
 
             return (
                 <FolderItem
@@ -100,6 +104,17 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
                     excludedFolders={item.parsedExcludedFolders || []}
                     vaultChangeVersion={vaultChangeVersion}
                     disableNavigationSeparatorActions={shouldHideFolderSeparatorActions}
+                    inlineRename={
+                        renameTarget
+                            ? {
+                                  initialValue: renameTarget.initialValue,
+                                  ariaLabel: strings.contextMenu.folder.renameFolder,
+                                  onCommit: value => inlineRename.commit(renameTarget, value),
+                                  onCancel: inlineRename.cancel,
+                                  onRestoreFocus: inlineRename.restoreFocus
+                              }
+                            : undefined
+                    }
                 />
             );
         }
@@ -224,6 +239,8 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
             const indentGuideLevels = indentGuideLevelsByKey.get(getNavigationItemRenderKey(item));
             const searchMatch = getNavigationItemSearchMatch(item, searchHighlights);
             const inclusionOperator = searchMatch === 'include' ? searchHighlights.getTagInclusionOperator(tagNode.path) : undefined;
+            const renameTarget =
+                inlineRename.target?.type === 'tag' && inlineRename.target.id === tagNode.path ? inlineRename.target : null;
 
             return (
                 <TagTreeItem
@@ -256,6 +273,17 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
                     }}
                     countInfo={item.noteCount ?? tagCounts.get(tagNode.path)}
                     showFileCount={settings.showNoteCount}
+                    inlineRename={
+                        renameTarget
+                            ? {
+                                  initialValue: renameTarget.initialValue,
+                                  ariaLabel: strings.modals.tagOperation.confirmRename,
+                                  onCommit: value => inlineRename.commit(renameTarget, value),
+                                  onCancel: inlineRename.cancel,
+                                  onRestoreFocus: inlineRename.restoreFocus
+                              }
+                            : undefined
+                    }
                 />
             );
         }
@@ -267,6 +295,8 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
             const searchMatch = getNavigationItemSearchMatch(item, searchHighlights);
             const inclusionOperator =
                 searchMatch === 'include' ? searchHighlights.getPropertyInclusionOperator(propertyNode.id) : undefined;
+            const renameTarget =
+                inlineRename.target?.type === 'property' && inlineRename.target.id === propertyNode.id ? inlineRename.target : null;
 
             return (
                 <PropertyTreeItem
@@ -298,6 +328,17 @@ export function NavigationPaneTreeRow({ item, context, adjacentFilledClassName }
                     isDraggable={!isMobile}
                     countInfo={propertyCounts.get(propertyNode.id)}
                     showFileCount={settings.showNoteCount}
+                    inlineRename={
+                        renameTarget
+                            ? {
+                                  initialValue: renameTarget.initialValue,
+                                  ariaLabel: strings.contextMenu.property.renameKey,
+                                  onCommit: value => inlineRename.commit(renameTarget, value),
+                                  onCancel: inlineRename.cancel,
+                                  onRestoreFocus: inlineRename.restoreFocus
+                              }
+                            : undefined
+                    }
                 />
             );
         }

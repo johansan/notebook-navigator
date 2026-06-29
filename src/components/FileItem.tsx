@@ -82,6 +82,7 @@ import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
+import { InlineRenameInput } from './InlineRenameInput';
 
 const FEATURE_IMAGE_MAX_ASPECT_RATIO = 16 / 9;
 
@@ -184,6 +185,11 @@ interface FileItemProps {
     getSolidBackground: (color?: string | null) => string | undefined;
     disableNativeDrag?: boolean;
     manualSortDisabled?: boolean;
+    inlineRename?: {
+        onCommit: (file: TFile, value: string) => Promise<boolean>;
+        onCancel: () => void;
+        onRestoreFocus: () => void;
+    };
 }
 
 export interface FileItemStorageHelpers {
@@ -403,10 +409,11 @@ export const FileItem = React.memo(function FileItem({
     fileItemPillOrderModel,
     getSolidBackground,
     disableNativeDrag = false,
-    manualSortDisabled = false
+    manualSortDisabled = false,
+    inlineRename
 }: FileItemProps) {
     // === Hooks (all hooks together at the top) ===
-    const { app, isMobile, plugin, commandQueue, tagOperations } = useServices();
+    const { app, isMobile, plugin, commandQueue, fileSystemOps, tagOperations } = useServices();
     const settings = useSettingsState();
     const metadataService = useMetadataService();
     const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
@@ -720,7 +727,39 @@ export const FileItem = React.memo(function FileItem({
     );
     const shouldShowCountInTitle = settings.textCountPlacement === 'title' && titleCountDisplayText !== null;
 
+    const renameInputOptions = useMemo(
+        () => (inlineRename ? fileSystemOps.getFileDisplayNameRenameInput(file) : null),
+        [file, fileSystemOps, inlineRename]
+    );
     const fileTitleElement = useMemo(() => {
+        if (inlineRename && renameInputOptions) {
+            return (
+                <div
+                    className="nn-file-name nn-file-name--inline-renaming"
+                    data-has-color={applyColorToName ? 'true' : 'false'}
+                    data-title-rows={appearanceSettings.titleRows}
+                    style={
+                        {
+                            '--filename-rows': appearanceSettings.titleRows,
+                            ...(applyColorToName ? { '--nn-file-name-custom-color': fileTitleColor } : {})
+                        } as React.CSSProperties
+                    }
+                >
+                    <InlineRenameInput
+                        initialValue={renameInputOptions.initialValue}
+                        ariaLabel={file.extension === 'md' ? strings.contextMenu.file.renameNote : strings.contextMenu.file.renameFile}
+                        onCommit={value => inlineRename.onCommit(file, value)}
+                        onCancel={inlineRename.onCancel}
+                        onRestoreFocus={inlineRename.onRestoreFocus}
+                        inputFilter={renameInputOptions.inputFilter}
+                        onInputChange={renameInputOptions.onInputChange}
+                        className="nn-file-inline-rename"
+                    />
+                    {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
+                </div>
+            );
+        }
+
         return (
             <div
                 className="nn-file-name"
@@ -744,6 +783,9 @@ export const FileItem = React.memo(function FileItem({
         fileTitleColor,
         applyColorToName,
         highlightedName,
+        inlineRename,
+        file,
+        renameInputOptions,
         shouldShowCountInTitle,
         titleCountDisplayText
     ]);

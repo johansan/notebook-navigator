@@ -143,6 +143,10 @@ interface ListPaneVirtualContentProps {
     fileItemStorage: FileItemStorageHelpers;
     noteShortcutKeysByPath: ReadonlyMap<string, string>;
     onToggleNoteShortcut: (file: TFile, shortcutKey: string | undefined) => Promise<void>;
+    inlineRenameFilePath: string | null;
+    onFileRenameCommit: (file: TFile, value: string) => Promise<boolean>;
+    onFileRenameCancel: () => void;
+    onFileRenameRestoreFocus: () => void;
     onNavigateToFolder: (folderPath: string, options?: NavigateToFolderOptions) => void;
     folderDecorationModel: FolderDecorationModel;
     fileItemPillDecorationModel: FileItemPillDecorationModel;
@@ -465,6 +469,10 @@ export function ListPaneVirtualContent({
     fileItemStorage,
     noteShortcutKeysByPath,
     onToggleNoteShortcut,
+    inlineRenameFilePath,
+    onFileRenameCommit,
+    onFileRenameCancel,
+    onFileRenameRestoreFocus,
     onNavigateToFolder,
     folderDecorationModel,
     fileItemPillDecorationModel,
@@ -909,6 +917,10 @@ export function ListPaneVirtualContent({
                                 item.type === ListPaneItemType.FILE && item.data instanceof TFile
                                     ? noteShortcutKeysByPath.get(item.data.path)
                                     : undefined;
+                            const isInlineRenaming =
+                                item.type === ListPaneItemType.FILE &&
+                                item.data instanceof TFile &&
+                                item.data.path === inlineRenameFilePath;
 
                             const headerModel = headerModelByIndex.get(virtualItem.index) ?? null;
                             const firstFileAfterHeader = headerModel ? getFirstFileAfterHeader(listItems, virtualItem.index) : null;
@@ -990,7 +1002,9 @@ export function ListPaneVirtualContent({
                                             isSelected={isSelected}
                                             hasSelectedAbove={hasSelectedAbove}
                                             hasSelectedBelow={hasSelectedBelow}
-                                            showQuickActionsPanel={!suppressRowHover && hoveredFilePath === item.data.path}
+                                            showQuickActionsPanel={
+                                                !isInlineRenaming && !suppressRowHover && hoveredFilePath === item.data.path
+                                            }
                                             onFileClick={onFileClick}
                                             fileIndex={item.fileIndex}
                                             selectionType={selectionType}
@@ -1018,6 +1032,15 @@ export function ListPaneVirtualContent({
                                             fileItemPillDecorationModel={fileItemPillDecorationModel}
                                             fileItemPillOrderModel={fileItemPillOrderModel}
                                             getSolidBackground={getSolidBackground}
+                                            inlineRename={
+                                                isInlineRenaming
+                                                    ? {
+                                                          onCommit: onFileRenameCommit,
+                                                          onCancel: onFileRenameCancel,
+                                                          onRestoreFocus: onFileRenameRestoreFocus
+                                                      }
+                                                    : undefined
+                                            }
                                         />
                                     ) : null}
                                 </div>

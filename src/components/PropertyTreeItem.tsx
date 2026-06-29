@@ -30,6 +30,7 @@ import type { InclusionOperator } from '../utils/filterSearch';
 import { resolveUXIcon } from '../utils/uxIcons';
 import { IndentGuideColumns } from './IndentGuideColumns';
 import { ObsidianIcon } from './ObsidianIcon';
+import { InlineRenameInput, type InlineRenameControl } from './InlineRenameInput';
 
 interface PropertyTreeItemProps {
     propertyNode: PropertyTreeNode;
@@ -49,6 +50,7 @@ interface PropertyTreeItemProps {
     searchMatch?: 'include' | 'exclude';
     inclusionOperator?: InclusionOperator;
     isDraggable: boolean;
+    inlineRename?: InlineRenameControl;
 }
 
 export const PropertyTreeItem = React.memo(
@@ -70,7 +72,8 @@ export const PropertyTreeItem = React.memo(
             icon,
             searchMatch,
             inclusionOperator,
-            isDraggable
+            isDraggable,
+            inlineRename
         },
         ref
     ) {
@@ -260,9 +263,13 @@ export const PropertyTreeItem = React.memo(
                         tabIndex={-1}
                     />
                     {settings.showPropertyIcons && <span className="nn-navitem-icon" ref={iconRef} style={color ? { color } : undefined} />}
-                    <span className={propertyNameClassName} style={applyColorToName ? { color } : undefined}>
-                        {propertyNode.name}
-                    </span>
+                    {inlineRename ? (
+                        <InlineRenameInput {...inlineRename} className="nn-navitem-inline-rename" />
+                    ) : (
+                        <span className={propertyNameClassName} style={applyColorToName ? { color } : undefined}>
+                            {propertyNode.name}
+                        </span>
+                    )}
                     <span className="nn-navitem-spacer nn-navitem-spacer--leader" />
                     {shouldDisplayOperatorIndicator ? (
                         <span className="nn-navitem-count nn-navitem-operator-indicator" data-operator={inclusionOperator}>

@@ -235,40 +235,80 @@ export class PropertyOperations {
             sampleFiles: usage.sample,
             initialValue: keyNode.name,
             onSubmit: async newKey => {
-                const trimmed = newKey.trim();
-                if (!trimmed || trimmed.includes('\n') || trimmed.includes('\r')) {
-                    showNotice(strings.modals.propertyOperation.invalidKeyName, { variant: 'warning' });
-                    return false;
-                }
-
-                const newKeyNormalized = casefold(trimmed);
-                if (!newKeyNormalized) {
-                    showNotice(strings.modals.propertyOperation.invalidKeyName, { variant: 'warning' });
-                    return false;
-                }
-
-                const conflictSnapshot = await conflictSnapshotPromise;
-                const conflictPaths = this.collectRenameConflictPathsFromSnapshot(normalizedKey, newKeyNormalized, conflictSnapshot);
-                if (conflictPaths.size > 0) {
-                    const shouldContinue = await this.confirmRenameConflicts({
-                        oldKeyDisplay: keyNode.name,
-                        newKeyDisplay: trimmed,
-                        conflictPaths
-                    });
-                    if (!shouldContinue) {
-                        return false;
-                    }
-                }
-
-                return await this.runPropertyKeyRename({
-                    oldKeyNormalized: normalizedKey,
-                    oldKeyDisplay: keyNode.name,
-                    newKeyDisplay: trimmed,
-                    affectedPaths
+                return this.submitPropertyKeyRename({
+                    normalizedKey,
+                    keyNodeName: keyNode.name,
+                    newKey,
+                    affectedPaths,
+                    conflictSnapshotPromise
                 });
             }
         });
         modal.open();
+    }
+
+    async renamePropertyKey(normalizedKey: string, newKey: string): Promise<boolean> {
+        const propertyTree = this.getPropertyTreeService();
+        if (!propertyTree) {
+            showNotice(strings.fileSystem.notifications.propertyOperationsNotAvailable, { variant: 'warning' });
+            return false;
+        }
+
+        const keyNode = propertyTree.getKeyNode(normalizedKey);
+        if (!keyNode) {
+            showNotice(strings.fileSystem.notifications.propertyOperationsNotAvailable, { variant: 'warning' });
+            return false;
+        }
+
+        const affectedPaths = this.collectPropertyKeyPathsFromVault(normalizedKey);
+        const conflictSnapshotPromise = Promise.resolve().then(() => this.collectRenameConflictSnapshot(normalizedKey, affectedPaths));
+        return this.submitPropertyKeyRename({
+            normalizedKey,
+            keyNodeName: keyNode.name,
+            newKey,
+            affectedPaths,
+            conflictSnapshotPromise
+        });
+    }
+
+    private async submitPropertyKeyRename(params: {
+        normalizedKey: string;
+        keyNodeName: string;
+        newKey: string;
+        affectedPaths: Set<string>;
+        conflictSnapshotPromise: Promise<RenameConflictSnapshot>;
+    }): Promise<boolean> {
+        const trimmed = params.newKey.trim();
+        if (!trimmed || trimmed.includes('\n') || trimmed.includes('\r')) {
+            showNotice(strings.modals.propertyOperation.invalidKeyName, { variant: 'warning' });
+            return false;
+        }
+
+        const newKeyNormalized = casefold(trimmed);
+        if (!newKeyNormalized) {
+            showNotice(strings.modals.propertyOperation.invalidKeyName, { variant: 'warning' });
+            return false;
+        }
+
+        const conflictSnapshot = await params.conflictSnapshotPromise;
+        const conflictPaths = this.collectRenameConflictPathsFromSnapshot(params.normalizedKey, newKeyNormalized, conflictSnapshot);
+        if (conflictPaths.size > 0) {
+            const shouldContinue = await this.confirmRenameConflicts({
+                oldKeyDisplay: params.keyNodeName,
+                newKeyDisplay: trimmed,
+                conflictPaths
+            });
+            if (!shouldContinue) {
+                return false;
+            }
+        }
+
+        return await this.runPropertyKeyRename({
+            oldKeyNormalized: params.normalizedKey,
+            oldKeyDisplay: params.keyNodeName,
+            newKeyDisplay: trimmed,
+            affectedPaths: params.affectedPaths
+        });
     }
 
     async promptDeletePropertyKey(normalizedKey: string): Promise<void> {

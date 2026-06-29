@@ -66,6 +66,7 @@ import { useActiveProfile } from '../context/SettingsContext';
 import { resolveUXIcon } from '../utils/uxIcons';
 import { ItemType, type CSSPropertiesWithVars } from '../types';
 import { buildFolderTooltip } from '../utils/navigationTooltipUtils';
+import { InlineRenameInput, type InlineRenameControl } from './InlineRenameInput';
 
 interface FolderItemProps {
     folder: TFolder;
@@ -89,6 +90,7 @@ interface FolderItemProps {
     vaultChangeVersion: number;
     disableContextMenu?: boolean;
     disableNavigationSeparatorActions?: boolean;
+    inlineRename?: InlineRenameControl;
 }
 
 /**
@@ -126,9 +128,10 @@ export const FolderItem = React.memo(function FolderItem({
     excludedFolders,
     vaultChangeVersion,
     disableContextMenu,
-    disableNavigationSeparatorActions
+    disableNavigationSeparatorActions,
+    inlineRename
 }: FolderItemProps) {
-    const { app, isMobile } = useServices();
+    const { app, fileSystemOps, isMobile } = useServices();
     const settings = useSettingsState();
     const { fileVisibility } = useActiveProfile();
     const uxPreferences = useUXPreferences();
@@ -226,6 +229,10 @@ export const FolderItem = React.memo(function FolderItem({
         if (applyColorToName) classes.push('nn-has-custom-color');
         return classes.join(' ');
     }, [applyColorToName, hasFolderNote]);
+    const renameInputOptions = useMemo(
+        () => (inlineRename ? fileSystemOps.getFolderDisplayNameRenameInput(folder) : null),
+        [fileSystemOps, folder, inlineRename]
+    );
 
     // Stable event handlers
     const handleDoubleClick = useCallback(() => {
@@ -388,14 +395,18 @@ export const FolderItem = React.memo(function FolderItem({
                 {shouldShowFolderIcon && (
                     <span className="nn-navitem-icon" ref={iconRef} style={customColor ? { color: customColor } : undefined}></span>
                 )}
-                <span
-                    className={folderNameClassName}
-                    style={applyColorToName ? { color: customColor } : undefined}
-                    onClick={handleNameClick}
-                    onMouseDown={handleNameMouseDown}
-                >
-                    {effectiveDisplayName}
-                </span>
+                {inlineRename && renameInputOptions ? (
+                    <InlineRenameInput {...inlineRename} {...renameInputOptions} className="nn-navitem-inline-rename" />
+                ) : (
+                    <span
+                        className={folderNameClassName}
+                        style={applyColorToName ? { color: customColor } : undefined}
+                        onClick={handleNameClick}
+                        onMouseDown={handleNameMouseDown}
+                    >
+                        {effectiveDisplayName}
+                    </span>
+                )}
                 <span className="nn-navitem-spacer nn-navitem-spacer--leader" />
                 {shouldDisplayCount && <span className="nn-navitem-count">{noteCountLabel}</span>}
             </div>

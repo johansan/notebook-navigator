@@ -64,6 +64,7 @@ import { getTotalNoteCount } from '../utils/tagTree';
 import { resolveUXIcon } from '../utils/uxIcons';
 import { IndentGuideColumns } from './IndentGuideColumns';
 import { ObsidianIcon } from './ObsidianIcon';
+import { InlineRenameInput, type InlineRenameControl } from './InlineRenameInput';
 
 /**
  * Props for the TagTreeItem component
@@ -105,6 +106,7 @@ interface TagTreeItemProps {
     inclusionOperator?: InclusionOperator;
     /** Enables drag and drop for tag reordering */
     isDraggable: boolean;
+    inlineRename?: InlineRenameControl;
 }
 
 /**
@@ -132,7 +134,8 @@ export const TagTreeItem = React.memo(
             icon,
             searchMatch,
             inclusionOperator,
-            isDraggable
+            isDraggable,
+            inlineRename
         },
         ref
     ) {
@@ -326,9 +329,13 @@ export const TagTreeItem = React.memo(
                     {settings.showTagIcons && (
                         <span className="nn-navitem-icon" ref={iconRef} style={tagColor ? { color: tagColor } : undefined} />
                     )}
-                    <span className={tagNameClassName} style={applyColorToName ? { color: tagColor } : undefined}>
-                        {tagNode.name}
-                    </span>
+                    {inlineRename ? (
+                        <InlineRenameInput {...inlineRename} className="nn-navitem-inline-rename" />
+                    ) : (
+                        <span className={tagNameClassName} style={applyColorToName ? { color: tagColor } : undefined}>
+                            {tagNode.name}
+                        </span>
+                    )}
                     <span className="nn-navitem-spacer nn-navitem-spacer--leader" />
                     {shouldDisplayOperatorIndicator ? (
                         <span className="nn-navitem-count nn-navitem-operator-indicator" data-operator={inclusionOperator}>

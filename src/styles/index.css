@@ -62,6 +62,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/list-file-thumbnails.css';
 /* list-group-headers.css: list group headers (`.nn-list-group-header*`) plus skeleton view layout during load. */
 @import './sections/list-group-headers.css';
+/* inline-rename.css: inline rename input sizing in navigation and list rows. */
+@import './sections/inline-rename.css';
 /* ui-empty-state.css: empty state layout for the list pane (`.nn-empty-state`, `.nn-empty-message`). */
 @import './sections/ui-empty-state.css';
 

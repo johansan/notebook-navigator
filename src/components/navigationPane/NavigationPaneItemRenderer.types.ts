@@ -28,6 +28,19 @@ import type { NavigationSectionId } from '../../types';
 import type { NavigationPaneShortcutRenderState } from '../../hooks/navigationPane/navigationPaneShortcutTypes';
 import type { NavigationPaneTreeInteractionsResult } from '../../hooks/navigationPane/useNavigationPaneTreeInteractions';
 import type { NavigationSearchHighlightsResult } from '../../hooks/navigationPane/useNavigationSearchHighlights';
+import type { InlineRenameControl } from '../InlineRenameInput';
+
+export type NavigationInlineRenameTarget =
+    | { type: 'folder'; id: string; initialValue: string }
+    | { type: 'tag'; id: string; initialValue: string; displayPath: string }
+    | { type: 'property'; id: string; initialValue: string; normalizedKey: string };
+
+export interface NavigationInlineRenameController {
+    target: NavigationInlineRenameTarget | null;
+    commit: (target: NavigationInlineRenameTarget, value: string) => Promise<boolean>;
+    cancel: () => void;
+    restoreFocus: () => void;
+}
 
 export interface NavigationPaneExpansionStateSnapshot {
     expandedFolders: Set<string>;
@@ -63,12 +76,15 @@ export interface NavigationPaneRowContext {
     shortcuts: NavigationPaneShortcutRenderState;
     tree: NavigationPaneTreeInteractionsResult;
     searchHighlights: NavigationSearchHighlightsResult;
+    inlineRename: NavigationInlineRenameController;
     onSectionContextMenu: (
         event: React.MouseEvent<HTMLDivElement>,
         sectionId: NavigationSectionId,
         options?: { allowSeparator?: boolean }
     ) => void;
 }
+
+export type NavigationRowInlineRenameControl = InlineRenameControl;
 
 export interface NavigationPaneRowProps {
     item: CombinedNavigationItem;

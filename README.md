@@ -89,24 +89,25 @@ Notebook Navigator runs locally, but some features make documented HTTP requests
 
 ## 5 Keyboard shortcuts
 
-| Key                                         | Action                                                                                                                                      |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| ↑/↓                                         | Navigate up/down in current pane                                                                                                            |
-| ←                                           | In navigation pane: collapse or go to parent<br>In list pane: switch to navigation pane                                                     |
-| →                                           | In navigation pane: expand or switch to list pane<br>In list pane: switch to editor                                                         |
-| Tab                                         | In navigation pane: switch to list pane<br>In list pane: switch to editor<br>In search field: switch to list pane                           |
-| Shift+Tab                                   | In list pane: switch to navigation pane<br>In search field: switch to navigation pane                                                       |
-| Enter                                       | In navigation pane: open folder note<br>In list pane: open selected file (when enabled in settings)<br>In search field: switch to list pane |
-| Escape                                      | In search field: close search and focus list pane                                                                                           |
-| PageUp/PageDown                             | Scroll up/down in navigation pane and list pane                                                                                             |
-| Home/End                                    | Jump to first/last item in current pane                                                                                                     |
-| Delete (Windows/Linux)<br>Backspace (macOS) | Delete selected item                                                                                                                        |
-| Cmd/Ctrl+A                                  | Select all notes in current folder                                                                                                          |
-| Cmd/Ctrl+Click                              | Toggle notes selection                                                                                                                      |
-| Shift+Click                                 | Select a range of notes                                                                                                                     |
-| Shift+Home/End                              | Select from current position to first/last item                                                                                             |
-| Shift+↑/↓                                   | Extend selection up/down                                                                                                                    |
-| Cmd/Ctrl+↑/↓                                | Rearrange selected files up/down in manual sort mode                                                                                        |
+| Key                                         | Action                                                                                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| ↑/↓                                         | Navigate up/down in current pane                                                                                                        |
+| ←                                           | In navigation pane: collapse or go to parent<br>In list pane: switch to navigation pane                                                 |
+| →                                           | In navigation pane: expand or switch to list pane<br>In list pane: switch to editor                                                     |
+| Tab                                         | In navigation pane: switch to list pane<br>In list pane: switch to editor<br>In search field: switch to list pane                       |
+| Shift+Tab                                   | In list pane: switch to navigation pane<br>In search field: switch to navigation pane                                                   |
+| Enter (macOS)<br>F2 (Windows/Linux)         | Rename item inline in navigation pane or list pane                                                                                      |
+| Enter                                       | Windows/Linux: open folder note in navigation pane or selected file in list pane (when enabled)<br>In search field: switch to list pane |
+| Escape                                      | In search field: close search and focus list pane                                                                                       |
+| PageUp/PageDown                             | Scroll up/down in navigation pane and list pane                                                                                         |
+| Home/End                                    | Jump to first/last item in current pane                                                                                                 |
+| Delete (Windows/Linux)<br>Backspace (macOS) | Delete selected item                                                                                                                    |
+| Cmd/Ctrl+A                                  | Select all notes in current folder                                                                                                      |
+| Cmd/Ctrl+Click                              | Toggle notes selection                                                                                                                  |
+| Shift+Click                                 | Select a range of notes                                                                                                                 |
+| Shift+Home/End                              | Select from current position to first/last item                                                                                         |
+| Shift+↑/↓                                   | Extend selection up/down                                                                                                                |
+| Cmd/Ctrl+↑/↓                                | Rearrange selected files up/down in manual sort mode                                                                                    |
 
 **Note:** All keyboard shortcuts can be customized. See [section 8 - Custom hotkeys](#8-custom-hotkeys) for details on adding VIM-style navigation (h,j,k,l), alternate keys, and modifier combinations.
 
@@ -242,28 +243,29 @@ Add multiple bindings per action to support alternate keys, like the `ArrowUp` a
 
 ### 8.2 Available actions
 
-| Action                            | Default key(s)       |
-| --------------------------------- | -------------------- |
-| `pane:move-up`                    | ArrowUp              |
-| `pane:move-down`                  | ArrowDown            |
-| `pane:page-up`                    | PageUp               |
-| `pane:page-down`                  | PageDown             |
-| `pane:home`                       | Home                 |
-| `pane:end`                        | End                  |
-| `pane:delete-selected`            | Delete, Backspace    |
-| `navigation:collapse-or-parent`   | ArrowLeft            |
-| `navigation:expand-or-focus-list` | ArrowRight           |
-| `navigation:focus-list`           | Tab                  |
-| `list:focus-navigation`           | ArrowLeft, Shift+Tab |
-| `list:focus-editor`               | ArrowRight, Tab      |
-| `list:select-all`                 | Mod+A                |
-| `list:extend-selection-up`        | Shift+ArrowUp        |
-| `list:extend-selection-down`      | Shift+ArrowDown      |
-| `list:range-to-start`             | Shift+Home           |
-| `list:range-to-end`               | Shift+End            |
-| `search:focus-list`               | Tab, Enter           |
-| `search:focus-navigation`         | Shift+Tab            |
-| `search:close`                    | Escape               |
+| Action                            | Default key(s)                    |
+| --------------------------------- | --------------------------------- |
+| `pane:move-up`                    | ArrowUp                           |
+| `pane:move-down`                  | ArrowDown                         |
+| `pane:page-up`                    | PageUp                            |
+| `pane:page-down`                  | PageDown                          |
+| `pane:home`                       | Home                              |
+| `pane:end`                        | End                               |
+| `pane:rename`                     | Enter (macOS), F2 (Windows/Linux) |
+| `pane:delete-selected`            | Delete, Backspace                 |
+| `navigation:collapse-or-parent`   | ArrowLeft                         |
+| `navigation:expand-or-focus-list` | ArrowRight                        |
+| `navigation:focus-list`           | Tab                               |
+| `list:focus-navigation`           | ArrowLeft, Shift+Tab              |
+| `list:focus-editor`               | ArrowRight, Tab                   |
+| `list:select-all`                 | Mod+A                             |
+| `list:extend-selection-up`        | Shift+ArrowUp                     |
+| `list:extend-selection-down`      | Shift+ArrowDown                   |
+| `list:range-to-start`             | Shift+Home                        |
+| `list:range-to-end`               | Shift+End                         |
+| `search:focus-list`               | Tab, Enter                        |
+| `search:focus-navigation`         | Shift+Tab                         |
+| `search:close`                    | Escape                            |
 
 <br/>
 

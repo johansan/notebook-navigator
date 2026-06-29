@@ -94,26 +94,52 @@ export class TagRenameWorkflow {
             sampleFiles: usage.sample,
             initialValue: this.getInitialInputValue(initialValue, displayPath),
             onSubmit: async newName => {
-                const trimmedName = newName.startsWith('#') ? newName.slice(1) : newName;
-                if (!this.fileMutations.isValidTagName(trimmedName)) {
-                    showNotice(strings.modals.tagOperation.invalidTagName, { variant: 'warning' });
-                    return false;
-                }
-                const newDescriptor = new TagDescriptor(trimmedName);
-                if (isDescendantRename(oldTagDescriptor, newDescriptor)) {
-                    showNotice(strings.modals.tagOperation.descendantRenameError, { variant: 'warning' });
-                    return false;
-                }
-
-                const shouldContinue = await confirmInlineTagParsingRisk(this.app, trimmedName);
-                if (!shouldContinue) {
-                    return false;
-                }
-
-                return this.runTagRename(displayPath, trimmedName, presetTargets ?? null);
+                return this.submitRename(displayPath, oldTagDescriptor, newName, presetTargets);
             }
         });
         modal.open();
+    }
+
+    /**
+     * Renames a tag from an already-collected target path.
+     */
+    async renameTag(tagPath: string, newTagPath: string): Promise<boolean> {
+        const displayPath = this.resolveDisplayTagPathInternal(tagPath);
+        const oldTagDescriptor = new TagDescriptor(displayPath);
+        const presetTargets = collectRenameFiles(this.app, oldTagDescriptor);
+        const usage = buildUsageSummary(this.app, presetTargets);
+
+        if (usage.total === 0) {
+            showNotice(`#${displayPath}: ${strings.listPane.emptyStateNoNotes}`, { variant: 'warning' });
+            return false;
+        }
+
+        return this.submitRename(displayPath, oldTagDescriptor, newTagPath, presetTargets);
+    }
+
+    private async submitRename(
+        displayPath: string,
+        oldTagDescriptor: TagDescriptor,
+        newName: string,
+        presetTargets: RenameFile[]
+    ): Promise<boolean> {
+        const trimmedName = (newName.startsWith('#') ? newName.slice(1) : newName).trim();
+        if (!this.fileMutations.isValidTagName(trimmedName)) {
+            showNotice(strings.modals.tagOperation.invalidTagName, { variant: 'warning' });
+            return false;
+        }
+        const newDescriptor = new TagDescriptor(trimmedName);
+        if (isDescendantRename(oldTagDescriptor, newDescriptor)) {
+            showNotice(strings.modals.tagOperation.descendantRenameError, { variant: 'warning' });
+            return false;
+        }
+
+        const shouldContinue = await confirmInlineTagParsingRisk(this.app, trimmedName);
+        if (!shouldContinue) {
+            return false;
+        }
+
+        return this.runTagRename(displayPath, trimmedName, presetTargets);
     }
 
     /**

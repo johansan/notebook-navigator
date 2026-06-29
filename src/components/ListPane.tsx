@@ -329,6 +329,7 @@ export const ListPane = React.memo(
         const [calendarWeekCount, setCalendarWeekCount] = useState<number>(() => settings.calendarWeeksToShow);
         const [isListScrolling, setIsListScrolling] = useState(false);
         const [hoveredFilePath, setHoveredFilePath] = useState<string | null>(null);
+        const [inlineRenameFilePath, setInlineRenameFilePath] = useState<string | null>(null);
         const [manualSortEditState, setManualSortEditState] = useState<ManualSortEditState | null>(null);
         const [propertyKeyboardReorderState, setPropertyKeyboardReorderState] = useState<PropertyKeyboardReorderState | null>(null);
         const hoverSyncFrameRef = useRef<number | null>(null);
@@ -912,6 +913,22 @@ export const ListPane = React.memo(
                 onScrollContainerVisibilityChange: handleScrollContainerVisibilityChange
             });
 
+        const restoreListPaneFocus = React.useCallback(() => {
+            const restore = () => {
+                const target = scrollContainerRef.current ?? props.rootContainerRef.current;
+                if (target) {
+                    focusElementPreventScroll(target);
+                }
+            };
+
+            if (typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(restore);
+                return;
+            }
+
+            window.setTimeout(restore, 0);
+        }, [props.rootContainerRef, scrollContainerRef]);
+
         const prevCalendarOverlayVisibleRef = useRef<boolean>(shouldRenderCalendarOverlay);
         const prevCalendarWeekCountRef = useRef<number>(calendarWeekCount);
 
@@ -1481,6 +1498,44 @@ export const ListPane = React.memo(
             scrollToIndexSafely(index, 'auto');
         }, [filePathToIndex, propertyKeyboardReorderState?.order, scrollToIndexSafely]);
 
+        useEffect(() => {
+            if (!inlineRenameFilePath || filePathToIndex.has(inlineRenameFilePath)) {
+                return;
+            }
+
+            setInlineRenameFilePath(null);
+        }, [filePathToIndex, inlineRenameFilePath]);
+
+        const handleStartFileInlineRename = React.useCallback((): boolean => {
+            if (!selectedFile) {
+                return false;
+            }
+
+            const index = filePathToIndex.get(selectedFile.path);
+            if (index === undefined) {
+                return false;
+            }
+
+            setInlineRenameFilePath(selectedFile.path);
+            scrollToIndexSafely(index, 'auto');
+            return true;
+        }, [filePathToIndex, scrollToIndexSafely, selectedFile]);
+
+        const handleFileRenameCommit = React.useCallback(
+            async (file: TFile, value: string): Promise<boolean> => {
+                const shouldClose = await fileSystemOps.renameFileDisplayName(file, value);
+                if (shouldClose) {
+                    setInlineRenameFilePath(null);
+                }
+                return shouldClose;
+            },
+            [fileSystemOps]
+        );
+
+        const handleFileRenameCancel = React.useCallback(() => {
+            setInlineRenameFilePath(null);
+        }, []);
+
         // Expose the virtualizer instance and file lookup method via the ref
         useImperativeHandle(
             ref,
@@ -1542,7 +1597,8 @@ export const ListPane = React.memo(
             onScheduleKeyboardOpen: scheduleKeyboardSelectionOpen,
             onScheduleKeyboardOpenForFile: scheduleKeyboardSelectionOpenForFile,
             onCommitKeyboardOpen: commitPendingKeyboardSelectionOpen,
-            onReorderPropertySort: handlePropertyKeyboardReorder
+            onReorderPropertySort: handlePropertyKeyboardReorder,
+            onStartRename: handleStartFileInlineRename
         });
 
         // Determine if we're showing empty state
@@ -1675,6 +1731,10 @@ export const ListPane = React.memo(
                             fileItemStorage={fileItemStorage}
                             noteShortcutKeysByPath={noteShortcutKeysByPath}
                             onToggleNoteShortcut={toggleNoteShortcut}
+                            inlineRenameFilePath={inlineRenameFilePath}
+                            onFileRenameCommit={handleFileRenameCommit}
+                            onFileRenameCancel={handleFileRenameCancel}
+                            onFileRenameRestoreFocus={restoreListPaneFocus}
                             onNavigateToFolder={onNavigateToFolder}
                             folderDecorationModel={folderDecorationModel}
                             fileItemPillDecorationModel={fileItemPillDecorationModel}

@@ -29,6 +29,7 @@ export const KeyboardShortcutAction = {
     PANE_PAGE_DOWN: 'pane:page-down',
     PANE_HOME: 'pane:home',
     PANE_END: 'pane:end',
+    PANE_RENAME: 'pane:rename',
     NAV_COLLAPSE_OR_PARENT: 'navigation:collapse-or-parent',
     NAV_EXPAND_OR_FOCUS_LIST: 'navigation:expand-or-focus-list',
     NAV_FOCUS_LIST: 'navigation:focus-list',
@@ -55,46 +56,49 @@ export type KeyboardShortcutConfig = Record<KeyboardShortcutAction, Hotkey[]>;
 /**
  * Default keyboard shortcuts for all actions
  */
-const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutConfig = {
-    [KeyboardShortcutAction.PANE_MOVE_UP]: [{ modifiers: [], key: 'ArrowUp' }],
-    [KeyboardShortcutAction.PANE_MOVE_DOWN]: [{ modifiers: [], key: 'ArrowDown' }],
-    [KeyboardShortcutAction.PANE_PAGE_UP]: [{ modifiers: [], key: 'PageUp' }],
-    [KeyboardShortcutAction.PANE_PAGE_DOWN]: [{ modifiers: [], key: 'PageDown' }],
-    [KeyboardShortcutAction.PANE_HOME]: [{ modifiers: [], key: 'Home' }],
-    [KeyboardShortcutAction.PANE_END]: [{ modifiers: [], key: 'End' }],
-    [KeyboardShortcutAction.NAV_COLLAPSE_OR_PARENT]: [{ modifiers: [], key: 'ArrowLeft' }],
-    [KeyboardShortcutAction.NAV_EXPAND_OR_FOCUS_LIST]: [{ modifiers: [], key: 'ArrowRight' }],
-    [KeyboardShortcutAction.NAV_FOCUS_LIST]: [{ modifiers: [], key: 'Tab' }],
-    [KeyboardShortcutAction.DELETE_SELECTED]: [
-        { modifiers: [], key: 'Delete' },
-        { modifiers: [], key: 'Backspace' }
-    ],
-    [KeyboardShortcutAction.LIST_FOCUS_NAVIGATION]: [
-        { modifiers: [], key: 'ArrowLeft' },
-        { modifiers: ['Shift'], key: 'Tab' }
-    ],
-    [KeyboardShortcutAction.LIST_FOCUS_EDITOR]: [
-        { modifiers: [], key: 'ArrowRight' },
-        { modifiers: [], key: 'Tab' }
-    ],
-    [KeyboardShortcutAction.LIST_SELECT_ALL]: [{ modifiers: ['Mod'], key: 'A' }],
-    [KeyboardShortcutAction.LIST_EXTEND_SELECTION_UP]: [{ modifiers: ['Shift'], key: 'ArrowUp' }],
-    [KeyboardShortcutAction.LIST_EXTEND_SELECTION_DOWN]: [{ modifiers: ['Shift'], key: 'ArrowDown' }],
-    [KeyboardShortcutAction.LIST_RANGE_TO_START]: [{ modifiers: ['Shift'], key: 'Home' }],
-    [KeyboardShortcutAction.LIST_RANGE_TO_END]: [{ modifiers: ['Shift'], key: 'End' }],
-    [KeyboardShortcutAction.SEARCH_FOCUS_LIST]: [
-        { modifiers: [], key: 'Tab' },
-        { modifiers: [], key: 'Enter' }
-    ],
-    [KeyboardShortcutAction.SEARCH_FOCUS_NAVIGATION]: [{ modifiers: ['Shift'], key: 'Tab' }],
-    [KeyboardShortcutAction.SEARCH_CLOSE]: [{ modifiers: [], key: 'Escape' }]
-};
+function createDefaultKeyboardShortcuts(): KeyboardShortcutConfig {
+    return {
+        [KeyboardShortcutAction.PANE_MOVE_UP]: [{ modifiers: [], key: 'ArrowUp' }],
+        [KeyboardShortcutAction.PANE_MOVE_DOWN]: [{ modifiers: [], key: 'ArrowDown' }],
+        [KeyboardShortcutAction.PANE_PAGE_UP]: [{ modifiers: [], key: 'PageUp' }],
+        [KeyboardShortcutAction.PANE_PAGE_DOWN]: [{ modifiers: [], key: 'PageDown' }],
+        [KeyboardShortcutAction.PANE_HOME]: [{ modifiers: [], key: 'Home' }],
+        [KeyboardShortcutAction.PANE_END]: [{ modifiers: [], key: 'End' }],
+        [KeyboardShortcutAction.PANE_RENAME]: [{ modifiers: [], key: Platform.isMacOS ? 'Enter' : 'F2' }],
+        [KeyboardShortcutAction.NAV_COLLAPSE_OR_PARENT]: [{ modifiers: [], key: 'ArrowLeft' }],
+        [KeyboardShortcutAction.NAV_EXPAND_OR_FOCUS_LIST]: [{ modifiers: [], key: 'ArrowRight' }],
+        [KeyboardShortcutAction.NAV_FOCUS_LIST]: [{ modifiers: [], key: 'Tab' }],
+        [KeyboardShortcutAction.DELETE_SELECTED]: [
+            { modifiers: [], key: 'Delete' },
+            { modifiers: [], key: 'Backspace' }
+        ],
+        [KeyboardShortcutAction.LIST_FOCUS_NAVIGATION]: [
+            { modifiers: [], key: 'ArrowLeft' },
+            { modifiers: ['Shift'], key: 'Tab' }
+        ],
+        [KeyboardShortcutAction.LIST_FOCUS_EDITOR]: [
+            { modifiers: [], key: 'ArrowRight' },
+            { modifiers: [], key: 'Tab' }
+        ],
+        [KeyboardShortcutAction.LIST_SELECT_ALL]: [{ modifiers: ['Mod'], key: 'A' }],
+        [KeyboardShortcutAction.LIST_EXTEND_SELECTION_UP]: [{ modifiers: ['Shift'], key: 'ArrowUp' }],
+        [KeyboardShortcutAction.LIST_EXTEND_SELECTION_DOWN]: [{ modifiers: ['Shift'], key: 'ArrowDown' }],
+        [KeyboardShortcutAction.LIST_RANGE_TO_START]: [{ modifiers: ['Shift'], key: 'Home' }],
+        [KeyboardShortcutAction.LIST_RANGE_TO_END]: [{ modifiers: ['Shift'], key: 'End' }],
+        [KeyboardShortcutAction.SEARCH_FOCUS_LIST]: [
+            { modifiers: [], key: 'Tab' },
+            { modifiers: [], key: 'Enter' }
+        ],
+        [KeyboardShortcutAction.SEARCH_FOCUS_NAVIGATION]: [{ modifiers: ['Shift'], key: 'Tab' }],
+        [KeyboardShortcutAction.SEARCH_CLOSE]: [{ modifiers: [], key: 'Escape' }]
+    };
+}
 
 /**
  * Returns a deep clone of the default keyboard shortcut configuration
  */
 export function getDefaultKeyboardShortcuts(): KeyboardShortcutConfig {
-    return cloneKeyboardShortcutConfig(DEFAULT_KEYBOARD_SHORTCUTS);
+    return cloneKeyboardShortcutConfig(createDefaultKeyboardShortcuts());
 }
 
 /**

@@ -17,11 +17,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-    extractFilePathsFromDataTransfer,
-    hasObsidianFileDragType,
-    hasPotentialObsidianFileDragType
-} from '../../src/utils/dragData';
+import { extractFilePathsFromDataTransfer, hasObsidianFileDragType, hasPotentialObsidianFileDragType } from '../../src/utils/dragData';
 
 class TestDataTransfer {
     readonly types: string[];

@@ -1,0 +1,58 @@
+/* Source: src/styles/sections/inline-rename.css */
+
+/* ========================================================================
+   Inline Rename Styles
+   ======================================================================== */
+
+.nn-inline-rename-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 6px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    font: inherit;
+    line-height: normal;
+}
+
+.nn-inline-rename-input:focus {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: -2px;
+}
+
+.nn-inline-rename-input:disabled {
+    opacity: 0.75;
+}
+
+.nn-navitem-inline-rename {
+    height: calc(var(--nn-setting-nav-item-height) - 8px);
+    font-size: var(--nn-setting-nav-font-size);
+    font-weight: var(--nn-theme-navitem-name-font-weight);
+}
+
+.notebook-navigator-mobile .nn-navitem-inline-rename {
+    height: calc(var(--nn-setting-nav-item-height-mobile) - 10px);
+}
+
+.nn-file-name--inline-renaming {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-height: none;
+    overflow: visible;
+    white-space: nowrap;
+    word-break: normal;
+}
+
+.nn-file-name--inline-renaming .nn-file-ext-suffix {
+    flex-shrink: 0;
+}
+
+.nn-file-inline-rename {
+    height: var(--nn-file-title-line-height);
+    font-size: var(--nn-file-name-size-mobile, var(--nn-file-name-size));
+    font-weight: var(--nn-theme-file-name-font-weight);
+}

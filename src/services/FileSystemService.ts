@@ -43,6 +43,7 @@ import {
     stripForbiddenNameCharactersWindows,
     stripLeadingPeriods
 } from '../utils/fileNameUtils';
+import { getCachedCommaSeparatedList } from '../utils/commaSeparatedListUtils';
 import { resolveFolderNoteName, shouldRenameFolderNoteWithFolderName } from '../utils/folderNoteName';
 import {
     getFolderNote,
@@ -51,7 +52,7 @@ import {
     isSupportedFolderNoteExtension,
     resolveFolderNoteNameForFolder
 } from '../utils/folderNoteLookup';
-import { executeCommand, isPluginInstalled } from '../utils/typeGuards';
+import { executeCommand, isPluginInstalled, isRecord } from '../utils/typeGuards';
 import { getErrorMessage } from '../utils/errorUtils';
 import { TagTreeService } from './TagTreeService';
 import type { PropertyTreeService } from './PropertyTreeService';
@@ -65,7 +66,7 @@ import {
     parsePropertyNodeId
 } from '../utils/propertyTree';
 import type { ISettingsProvider } from '../interfaces/ISettingsProvider';
-import { casefold } from '../utils/recordUtils';
+import { casefold, findMatchingRecordKey } from '../utils/recordUtils';
 import type { MetadataService } from './MetadataService';
 import { ensureVaultProfiles, getActiveVaultProfile } from '../utils/vaultProfiles';
 import { EXCALIDRAW_PLUGIN_ID, TLDRAW_PLUGIN_ID } from '../constants/pluginIds';
@@ -119,6 +120,18 @@ interface ResolvedPropertyNodeAssignment {
     normalizedDesiredValue: string | null;
     writeValue: boolean | string;
     writeValueKind: PropertyNodeAssignmentValueKind;
+}
+
+interface DisplayNameRenameInputOptions {
+    initialValue: string;
+    inputFilter?: (value: string) => string;
+    onInputChange?: (context: { rawValue: string; filteredValue: string }) => void;
+}
+
+interface FrontmatterDisplayNameTarget {
+    field: string;
+    initialValue: string;
+    storedValue: string | null;
 }
 
 interface ElectronShell {
@@ -488,6 +501,140 @@ export class FileSystemOperations {
      */
     private filterNameInputFinal(value: string): string {
         return this.filterNameInputLive(value).trim();
+    }
+
+    getFileDisplayNameRenameInput(file: TFile): DisplayNameRenameInputOptions {
+        const target = this.resolveFrontmatterDisplayNameTarget(file, this.getFileRenameDefaultValue(file));
+        if (target) {
+            return { initialValue: target.initialValue };
+        }
+
+        return {
+            initialValue: this.getFileRenameDefaultValue(file),
+            ...this.getNameInputModalOptions()
+        };
+    }
+
+    getFolderDisplayNameRenameInput(folder: TFolder): DisplayNameRenameInputOptions {
+        const target = this.resolveFolderFrontmatterDisplayNameTarget(folder);
+        if (target) {
+            return { initialValue: target.target.initialValue };
+        }
+
+        if (folder.path === '/') {
+            return { initialValue: this.settingsProvider.settings.customVaultName || this.app.vault.getName() };
+        }
+
+        return {
+            initialValue: folder.name,
+            ...this.getNameInputModalOptions()
+        };
+    }
+
+    private getFileRenameDefaultValue(file: TFile): string {
+        return isExcalidrawFile(file) ? stripExcalidrawSuffix(file.basename) : file.basename;
+    }
+
+    private resolveConfiguredFrontmatterNameField(): string | null {
+        const settings = this.settingsProvider.settings;
+        if (!settings.useFrontmatterMetadata) {
+            return null;
+        }
+
+        const fields = getCachedCommaSeparatedList(settings.frontmatterNameField);
+        return fields[0] ?? null;
+    }
+
+    private extractFrontmatterDisplayNameValue(value: unknown): string | null {
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            return trimmed.length > 0 ? trimmed : null;
+        }
+
+        if (Array.isArray(value)) {
+            for (const entry of value) {
+                if (typeof entry !== 'string') {
+                    continue;
+                }
+                const trimmed = entry.trim();
+                if (trimmed.length > 0) {
+                    return trimmed;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private resolveFrontmatterDisplayNameTarget(file: TFile | null, fallbackInitialValue?: string): FrontmatterDisplayNameTarget | null {
+        if (!file || file.extension !== 'md') {
+            return null;
+        }
+
+        const fallbackField = this.resolveConfiguredFrontmatterNameField();
+        if (!fallbackField) {
+            return null;
+        }
+
+        const frontmatterValue: unknown = this.app.metadataCache.getFileCache(file)?.frontmatter;
+        const frontmatter = isRecord(frontmatterValue) ? frontmatterValue : null;
+        const fields = getCachedCommaSeparatedList(this.settingsProvider.settings.frontmatterNameField);
+        let firstExistingField: string | null = null;
+
+        for (const field of fields) {
+            const matchingField = findMatchingRecordKey(frontmatter, field);
+            if (!matchingField) {
+                continue;
+            }
+
+            firstExistingField = firstExistingField ?? matchingField;
+            const displayName = this.extractFrontmatterDisplayNameValue(frontmatter?.[matchingField]);
+            if (displayName) {
+                return { field: matchingField, initialValue: displayName, storedValue: displayName };
+            }
+        }
+
+        return { field: firstExistingField ?? fallbackField, initialValue: fallbackInitialValue ?? '', storedValue: null };
+    }
+
+    private resolveFolderFrontmatterDisplayNameTarget(folder: TFolder): { file: TFile; target: FrontmatterDisplayNameTarget } | null {
+        const settings = this.settingsProvider.settings;
+        if (!settings.useFrontmatterMetadata || !settings.enableFolderNotes) {
+            return null;
+        }
+
+        const folderNote = getFolderNote(folder, getFolderNoteDetectionSettings(settings));
+        if (!folderNote || folderNote.extension !== 'md') {
+            return null;
+        }
+
+        const fallbackName = folder.path === '/' ? this.settingsProvider.settings.customVaultName || this.app.vault.getName() : folder.name;
+        const target = this.resolveFrontmatterDisplayNameTarget(folderNote, fallbackName);
+        return target ? { file: folderNote, target } : null;
+    }
+
+    private async writeFrontmatterDisplayName(file: TFile, target: FrontmatterDisplayNameTarget, value: string): Promise<void> {
+        const nextValue = value.trim();
+        await this.app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
+            const targetField = findMatchingRecordKey(frontmatter, target.field) ?? target.field;
+            if (nextValue.length > 0) {
+                frontmatter[targetField] = nextValue;
+                return;
+            }
+
+            if (Reflect.has(frontmatter, targetField)) {
+                delete frontmatter[targetField];
+            }
+        });
+    }
+
+    private hasFrontmatterDisplayNameChange(target: FrontmatterDisplayNameTarget, value: string): boolean {
+        const nextValue = value.trim();
+        if (target.storedValue !== null) {
+            return nextValue !== target.storedValue;
+        }
+
+        return nextValue.length > 0 && nextValue !== target.initialValue.trim();
     }
 
     /**
@@ -902,55 +1049,102 @@ export class FileSystemOperations {
             strings.modals.fileSystem.renameFolderTitle,
             strings.modals.fileSystem.renamePrompt,
             async newName => {
-                const filteredName = this.filterNameInputFinal(newName);
-                if (!filteredName || filteredName === folder.name) {
-                    return;
-                }
-
-                try {
-                    const previousFolderPath = folder.path;
-                    const folderNoteNamingSettings =
-                        settings?.enableFolderNotes && shouldRenameFolderNoteWithFolderName(settings) ? settings : null;
-
-                    let folderNote: TFile | null = null;
-                    let renamedFolderNoteFileName: string | null = null;
-                    if (folderNoteNamingSettings) {
-                        folderNote = getFolderNote(folder, folderNoteNamingSettings);
-                    }
-
-                    if (folderNote && folderNoteNamingSettings) {
-                        const newFolderNoteBaseName = resolveFolderNoteName(filteredName, folderNoteNamingSettings);
-                        renamedFolderNoteFileName = this.getFolderNoteFileName(newFolderNoteBaseName, folderNote);
-                        const conflictPath = buildPathInFolder(folder.path, renamedFolderNoteFileName);
-                        const conflict = this.app.vault.getFileByPath(conflictPath);
-                        if (conflict) {
-                            showNotice(strings.fileSystem.errors.renameFolderNoteConflict.replace('{name}', renamedFolderNoteFileName), {
-                                variant: 'warning'
-                            });
-                            return;
-                        }
-                    }
-
-                    const parentPath = folder.parent?.path ?? '/';
-                    const newFolderPath = buildPathInFolder(parentPath, filteredName);
-
-                    // Rename the folder (moves contents including the folder note)
-                    await this.app.fileManager.renameFile(folder, newFolderPath);
-                    await this.folderPathSettingsSync.syncHiddenFolderPathChange(previousFolderPath, newFolderPath);
-
-                    // Rename folder note when naming is tied to the folder name.
-                    if (folderNote && renamedFolderNoteFileName !== null) {
-                        const newNotePath = buildPathInFolder(newFolderPath, renamedFolderNoteFileName);
-                        await this.app.fileManager.renameFile(folderNote, newNotePath);
-                    }
-                } catch (error) {
-                    this.notifyError(strings.fileSystem.errors.renameFolder, error);
-                }
+                await this.renameFolderToName(folder, newName, settings);
             },
             folder.name,
             nameInputOptions
         );
         modal.open();
+    }
+
+    /**
+     * Renames a folder from an already-collected name.
+     * Returns false only when the rename attempted and failed.
+     */
+    async renameFolderToName(folder: TFolder, newName: string, settings?: NotebookNavigatorSettings): Promise<boolean> {
+        const filteredName = this.filterNameInputFinal(newName);
+        if (!filteredName || filteredName === folder.name) {
+            return true;
+        }
+
+        try {
+            const previousFolderPath = folder.path;
+            const folderNoteNamingSettings =
+                settings?.enableFolderNotes && shouldRenameFolderNoteWithFolderName(settings) ? settings : null;
+
+            let folderNote: TFile | null = null;
+            let renamedFolderNoteFileName: string | null = null;
+            if (folderNoteNamingSettings) {
+                folderNote = getFolderNote(folder, folderNoteNamingSettings);
+            }
+
+            if (folderNote && folderNoteNamingSettings) {
+                const newFolderNoteBaseName = resolveFolderNoteName(filteredName, folderNoteNamingSettings);
+                renamedFolderNoteFileName = this.getFolderNoteFileName(newFolderNoteBaseName, folderNote);
+                const conflictPath = buildPathInFolder(folder.path, renamedFolderNoteFileName);
+                const conflict = this.app.vault.getFileByPath(conflictPath);
+                if (conflict) {
+                    showNotice(strings.fileSystem.errors.renameFolderNoteConflict.replace('{name}', renamedFolderNoteFileName), {
+                        variant: 'warning'
+                    });
+                    return false;
+                }
+            }
+
+            const parentPath = folder.parent?.path ?? '/';
+            const newFolderPath = buildPathInFolder(parentPath, filteredName);
+
+            await this.app.fileManager.renameFile(folder, newFolderPath);
+            await this.folderPathSettingsSync.syncHiddenFolderPathChange(previousFolderPath, newFolderPath);
+
+            if (folderNote && renamedFolderNoteFileName !== null) {
+                const newNotePath = buildPathInFolder(newFolderPath, renamedFolderNoteFileName);
+                await this.app.fileManager.renameFile(folderNote, newNotePath);
+            }
+            return true;
+        } catch (error) {
+            this.notifyError(strings.fileSystem.errors.renameFolder, error);
+            return false;
+        }
+    }
+
+    async renameFolderDisplayName(folder: TFolder, value: string, settings?: NotebookNavigatorSettings): Promise<boolean> {
+        const frontmatterTarget = this.resolveFolderFrontmatterDisplayNameTarget(folder);
+        if (frontmatterTarget) {
+            if (!this.hasFrontmatterDisplayNameChange(frontmatterTarget.target, value)) {
+                return true;
+            }
+
+            try {
+                await this.writeFrontmatterDisplayName(frontmatterTarget.file, frontmatterTarget.target, value);
+                return true;
+            } catch (error) {
+                this.notifyError(strings.fileSystem.errors.renameFolder, error);
+                return false;
+            }
+        }
+
+        if (folder.path === '/') {
+            const trimmed = value.trim();
+            const vaultName = this.app.vault.getName();
+            const isUnchanged =
+                this.settingsProvider.settings.customVaultName === trimmed ||
+                (!this.settingsProvider.settings.customVaultName && trimmed === vaultName);
+            if (!isUnchanged) {
+                const previousCustomVaultName = this.settingsProvider.settings.customVaultName;
+                try {
+                    this.settingsProvider.settings.customVaultName = trimmed;
+                    await this.settingsProvider.saveSettingsAndUpdate();
+                } catch (error) {
+                    this.settingsProvider.settings.customVaultName = previousCustomVaultName;
+                    this.notifyError(strings.fileSystem.errors.renameFolder, error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return this.renameFolderToName(folder, value, settings);
     }
 
     /**
@@ -960,12 +1154,7 @@ export class FileSystemOperations {
      * @param file - The file to rename
      */
     async renameFile(file: TFile): Promise<void> {
-        // Check if file is Excalidraw to handle composite extension
-        const isExcalidraw = isExcalidrawFile(file);
-        const extension = file.extension;
-        const extensionSuffix = extension ? `.${extension}` : '';
-        // Strip .excalidraw suffix from default value for Excalidraw files
-        const defaultValue = isExcalidraw ? stripExcalidrawSuffix(file.basename) : file.basename;
+        const defaultValue = this.getFileRenameDefaultValue(file);
         const nameInputOptions = this.getNameInputModalOptions();
 
         const modal = new InputModal(
@@ -973,62 +1162,88 @@ export class FileSystemOperations {
             strings.modals.fileSystem.renameFileTitle,
             strings.modals.fileSystem.renamePrompt,
             async rawInput => {
-                const trimmedInput = this.filterNameInputFinal(rawInput);
-                if (!trimmedInput) {
-                    return;
-                }
-
-                let finalFileName: string;
-
-                if (isExcalidraw) {
-                    // Process Excalidraw files to ensure .excalidraw suffix is preserved
-                    let workingName = trimmedInput;
-                    const lowerWorking = workingName.toLowerCase();
-
-                    // Remove file extension if user included it
-                    if (extensionSuffix && lowerWorking.endsWith(extensionSuffix.toLowerCase())) {
-                        workingName = workingName.slice(0, -extensionSuffix.length);
-                    }
-
-                    // Remove .excalidraw suffix if user included it
-                    workingName = stripExcalidrawSuffix(workingName);
-
-                    if (!workingName) {
-                        return;
-                    }
-
-                    // Reconstruct filename with .excalidraw suffix
-                    finalFileName = `${workingName}${EXCALIDRAW_BASENAME_SUFFIX}${extensionSuffix}`;
-                } else {
-                    // Preserve original extension for all other files
-                    let workingName = trimmedInput;
-                    if (extensionSuffix && workingName.toLowerCase().endsWith(extensionSuffix.toLowerCase())) {
-                        workingName = workingName.slice(0, -extensionSuffix.length);
-                    }
-                    workingName = workingName.replace(/\.+$/u, '');
-                    if (!workingName) {
-                        return;
-                    }
-                    finalFileName = extensionSuffix ? `${workingName}${extensionSuffix}` : workingName;
-                }
-
-                // Skip rename if name unchanged
-                if (!finalFileName || finalFileName === file.name) {
-                    return;
-                }
-
-                try {
-                    const parentPath = file.parent?.path ?? '/';
-                    const newPath = buildPathInFolder(parentPath, finalFileName);
-                    await this.app.fileManager.renameFile(file, newPath);
-                } catch (error) {
-                    this.notifyError(strings.fileSystem.errors.renameFile, error);
-                }
+                await this.renameFileToName(file, rawInput);
             },
             defaultValue,
             nameInputOptions
         );
         modal.open();
+    }
+
+    async renameFileDisplayName(file: TFile, rawInput: string): Promise<boolean> {
+        const target = this.resolveFrontmatterDisplayNameTarget(file, this.getFileRenameDefaultValue(file));
+        if (!target) {
+            return this.renameFileToName(file, rawInput);
+        }
+
+        if (!this.hasFrontmatterDisplayNameChange(target, rawInput)) {
+            return true;
+        }
+
+        try {
+            await this.writeFrontmatterDisplayName(file, target, rawInput);
+            return true;
+        } catch (error) {
+            this.notifyError(strings.fileSystem.errors.renameFile, error);
+            return false;
+        }
+    }
+
+    /**
+     * Renames a file from an already-collected name while preserving its extension.
+     * Returns false only when the rename attempted and failed.
+     */
+    async renameFileToName(file: TFile, rawInput: string): Promise<boolean> {
+        const isExcalidraw = isExcalidrawFile(file);
+        const extension = file.extension;
+        const extensionSuffix = extension ? `.${extension}` : '';
+        const trimmedInput = this.filterNameInputFinal(rawInput);
+        if (!trimmedInput) {
+            return true;
+        }
+
+        let finalFileName: string;
+
+        if (isExcalidraw) {
+            let workingName = trimmedInput;
+            const lowerWorking = workingName.toLowerCase();
+
+            if (extensionSuffix && lowerWorking.endsWith(extensionSuffix.toLowerCase())) {
+                workingName = workingName.slice(0, -extensionSuffix.length);
+            }
+
+            workingName = stripExcalidrawSuffix(workingName);
+
+            if (!workingName) {
+                return true;
+            }
+
+            finalFileName = `${workingName}${EXCALIDRAW_BASENAME_SUFFIX}${extensionSuffix}`;
+        } else {
+            let workingName = trimmedInput;
+            if (extensionSuffix && workingName.toLowerCase().endsWith(extensionSuffix.toLowerCase())) {
+                workingName = workingName.slice(0, -extensionSuffix.length);
+            }
+            workingName = workingName.replace(/\.+$/u, '');
+            if (!workingName) {
+                return true;
+            }
+            finalFileName = extensionSuffix ? `${workingName}${extensionSuffix}` : workingName;
+        }
+
+        if (!finalFileName || finalFileName === file.name) {
+            return true;
+        }
+
+        try {
+            const parentPath = file.parent?.path ?? '/';
+            const newPath = buildPathInFolder(parentPath, finalFileName);
+            await this.app.fileManager.renameFile(file, newPath);
+            return true;
+        } catch (error) {
+            this.notifyError(strings.fileSystem.errors.renameFile, error);
+            return false;
+        }
     }
 
     async deleteFolder(folder: TFolder, confirmBeforeDelete: boolean, onSuccess?: () => void): Promise<void> {

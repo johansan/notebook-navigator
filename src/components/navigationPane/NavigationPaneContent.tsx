@@ -19,7 +19,7 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Platform, TFile } from 'obsidian';
+import { Platform, TFile, TFolder } from 'obsidian';
 import { Virtualizer } from '@tanstack/react-virtual';
 import { useExpansionDispatch, useExpansionState } from '../../context/ExpansionContext';
 import { useNavigationSelection, useSelectionDispatch } from '../../context/SelectionContext';
@@ -44,9 +44,12 @@ import type { InclusionOperator } from '../../utils/filterSearch';
 import {
     IOS_FLOATING_TOOLBAR_HEIGHT_PX,
     ItemType,
+    NavigationPaneItemType,
     NavigationSectionId,
     NAVIGATION_PANE_DIMENSIONS,
     TAGS_ROOT_VIRTUAL_FOLDER_ID,
+    TAGGED_TAG_ID,
+    UNTAGGED_TAG_ID,
     type CSSPropertiesWithVars
 } from '../../types';
 import { STORAGE_KEYS } from '../../types';
@@ -76,14 +79,26 @@ import { verticalAxisOnly } from '../../utils/dndConfig';
 import type { CombinedNavigationItem } from '../../types/virtualization';
 import { NavigationPaneItemRenderer } from './NavigationPaneItemRenderer';
 import { NavigationPaneLayout } from './NavigationPaneLayout';
-import type { NavigationPaneRowContext } from './NavigationPaneItemRenderer.types';
+import type { NavigationInlineRenameTarget, NavigationPaneRowContext } from './NavigationPaneItemRenderer.types';
 import { isNavigationItemFilled } from './navigationPaneItemState';
 import type { NavigationRainbowState } from '../../hooks/useNavigationRainbowState';
 import type { NavigationPaneSourceState } from '../../hooks/navigationPane/data/useNavigationPaneSourceState';
 import type { NavigationPaneTreeSectionsResult } from '../../hooks/navigationPane/data/useNavigationPaneTreeSections';
 import type { FolderDecorationModel } from '../../utils/folderDecoration';
+import { focusElementPreventScroll } from '../../utils/domUtils';
 
 const EMPTY_INDENT_GUIDE_MAP = new Map<string, number[]>();
+
+function getPathLeaf(path: string): string {
+    const slashIndex = path.lastIndexOf('/');
+    return slashIndex >= 0 ? path.slice(slashIndex + 1) : path;
+}
+
+function replacePathLeaf(path: string, nextLeaf: string): string {
+    const trimmedLeaf = nextLeaf.trim();
+    const slashIndex = path.lastIndexOf('/');
+    return slashIndex >= 0 ? `${path.slice(0, slashIndex)}/${trimmedLeaf}` : trimmedLeaf;
+}
 
 export interface NavigationPaneHandle {
     getIndexOfPath: (itemType: ItemType, path: string) => number;
@@ -116,7 +131,7 @@ interface NavigationPaneProps {
 
 export const NavigationPane = React.memo(
     forwardRef<NavigationPaneHandle, NavigationPaneProps>(function NavigationPane(props, ref) {
-        const { app, isMobile, plugin, propertyTreeService } = useServices();
+        const { app, isMobile, plugin, fileSystemOps, propertyTreeService, tagOperations, propertyOperations } = useServices();
         const commandQueue = useCommandQueue();
         const metadataService = useMetadataService();
         const expansionState = useExpansionState();
@@ -314,6 +329,7 @@ export const NavigationPane = React.memo(
         const [foldersSectionExpanded, setFoldersSectionExpanded] = useState(true);
         const [tagsSectionExpanded, setTagsSectionExpanded] = useState(true);
         const [propertiesSectionExpanded, setPropertiesSectionExpanded] = useState(true);
+        const [inlineRenameTarget, setInlineRenameTarget] = useState<NavigationInlineRenameTarget | null>(null);
         const handleToggleFoldersSection = useCallback(() => {
             setFoldersSectionExpanded(prev => !prev);
         }, []);
@@ -619,6 +635,22 @@ export const NavigationPane = React.memo(
             scrollPaddingEnd
         });
 
+        const restoreNavigationPaneFocus = useCallback(() => {
+            const restore = () => {
+                const target = scrollContainerRef.current ?? navigationPaneRef.current ?? props.rootContainerRef.current;
+                if (target) {
+                    focusElementPreventScroll(target);
+                }
+            };
+
+            if (typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(restore);
+                return;
+            }
+
+            window.setTimeout(restore, 0);
+        }, [props.rootContainerRef, scrollContainerRef]);
+
         useEffect(() => {
             if (isRootReorderMode) {
                 return;
@@ -733,6 +765,124 @@ export const NavigationPane = React.memo(
             selectionState.selectionType
         ]);
 
+        const buildRenameTarget = useCallback(
+            (item: CombinedNavigationItem): NavigationInlineRenameTarget | null => {
+                if (item.type === NavigationPaneItemType.FOLDER) {
+                    if (!(item.data instanceof TFolder)) {
+                        return null;
+                    }
+                    const folder = item.data;
+                    return {
+                        type: 'folder',
+                        id: folder.path,
+                        initialValue: fileSystemOps.getFolderDisplayNameRenameInput(folder).initialValue
+                    };
+                }
+
+                if (item.type === NavigationPaneItemType.TAG) {
+                    const tagNode = item.data;
+                    if (tagNode.path === TAGGED_TAG_ID || tagNode.path === UNTAGGED_TAG_ID) {
+                        return null;
+                    }
+                    return {
+                        type: 'tag',
+                        id: tagNode.path,
+                        displayPath: tagNode.displayPath,
+                        initialValue: getPathLeaf(tagNode.displayPath)
+                    };
+                }
+
+                if (item.type === NavigationPaneItemType.PROPERTY_KEY) {
+                    const propertyNode = item.data;
+                    if (propertyNode.kind !== 'key' || propertyNode.notesWithValue.size === 0) {
+                        return null;
+                    }
+                    return {
+                        type: 'property',
+                        id: propertyNode.id,
+                        normalizedKey: propertyNode.key,
+                        initialValue: propertyNode.name
+                    };
+                }
+
+                return null;
+            },
+            [fileSystemOps]
+        );
+
+        const handleStartInlineRename = useCallback((): boolean => {
+            const item = getSelectedRenderedItem();
+            if (!item) {
+                return false;
+            }
+
+            const target = buildRenameTarget(item);
+            if (!target) {
+                return false;
+            }
+
+            setInlineRenameTarget(target);
+            return true;
+        }, [buildRenameTarget, getSelectedRenderedItem]);
+
+        const handleCancelInlineRename = useCallback(() => {
+            setInlineRenameTarget(null);
+        }, []);
+
+        const handleCommitInlineRename = useCallback(
+            async (target: NavigationInlineRenameTarget, value: string): Promise<boolean> => {
+                const trimmed = value.trim();
+
+                if (target.type === 'folder') {
+                    const folder = target.id === '/' ? app.vault.getRoot() : app.vault.getFolderByPath(target.id);
+                    if (!(folder instanceof TFolder)) {
+                        setInlineRenameTarget(null);
+                        return true;
+                    }
+                    const shouldClose = await fileSystemOps.renameFolderDisplayName(folder, value, settings);
+                    if (shouldClose) {
+                        setInlineRenameTarget(null);
+                    }
+                    return shouldClose;
+                }
+
+                if (target.type === 'tag') {
+                    if (!tagOperations) {
+                        return false;
+                    }
+                    if (trimmed === target.initialValue.trim()) {
+                        setInlineRenameTarget(null);
+                        return true;
+                    }
+                    const shouldClose = await tagOperations.renameTag(target.id, replacePathLeaf(target.displayPath, trimmed));
+                    if (shouldClose) {
+                        setInlineRenameTarget(null);
+                    }
+                    return shouldClose;
+                }
+
+                if (!propertyOperations) {
+                    return false;
+                }
+                if (trimmed === target.initialValue.trim()) {
+                    setInlineRenameTarget(null);
+                    return true;
+                }
+                const shouldClose = await propertyOperations.renamePropertyKey(target.normalizedKey, value);
+                if (shouldClose) {
+                    setInlineRenameTarget(null);
+                }
+                return shouldClose;
+            },
+            [app.vault, fileSystemOps, propertyOperations, settings, tagOperations]
+        );
+
+        useEffect(() => {
+            if (isRootReorderMode) {
+                setInlineRenameTarget(null);
+            }
+        }, [isRootReorderMode]);
+
         const triggerSelectedItemCollapse = useCallback((): boolean => {
             const item = getSelectedRenderedItem();
             if (!item) {
@@ -769,7 +919,8 @@ export const NavigationPane = React.memo(
             items: keyboardItems,
             virtualizer: rowVirtualizer,
             containerRef: props.rootContainerRef,
-            pathToIndex: keyboardPathToIndex
+            pathToIndex: keyboardPathToIndex,
+            onStartRename: handleStartInlineRename
         });
 
         const navigationPaneStyle = useMemo<CSSPropertiesWithVars>(() => {
@@ -852,6 +1003,12 @@ export const NavigationPane = React.memo(
                 shortcuts,
                 tree,
                 searchHighlights,
+                inlineRename: {
+                    target: inlineRenameTarget,
+                    commit: handleCommitInlineRename,
+                    cancel: handleCancelInlineRename,
+                    restoreFocus: restoreNavigationPaneFocus
+                },
                 onSectionContextMenu: handleSectionContextMenu
             }),
             [
@@ -868,7 +1025,10 @@ export const NavigationPane = React.memo(
                 getFileWordCount,
                 getSolidBackground,
                 handleSectionContextMenu,
+                handleCancelInlineRename,
+                handleCommitInlineRename,
                 indentGuideLevelsByKey,
+                inlineRenameTarget,
                 isMobile,
                 propertyCounts,
                 searchHighlights,
@@ -879,6 +1039,7 @@ export const NavigationPane = React.memo(
                 tagCounts,
                 tree,
                 uiState.pinShortcuts,
+                restoreNavigationPaneFocus,
                 vaultChangeVersion
             ]
         );

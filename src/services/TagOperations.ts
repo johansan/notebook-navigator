@@ -110,6 +110,13 @@ export class TagOperations {
         await this.openRenameModal(tagPath);
     }
 
+    async renameTag(tagPath: string, newTagPath: string): Promise<boolean> {
+        if (tagPath === TAGGED_TAG_ID || tagPath === UNTAGGED_TAG_ID) {
+            return false;
+        }
+        return this.renameWorkflow.renameTag(tagPath, newTagPath);
+    }
+
     /**
      * Promotes a nested tag to root level
      * Renames "parent/child" to just "child"
