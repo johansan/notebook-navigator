@@ -2268,7 +2268,7 @@ export const STRINGS_ES = {
             },
             deleteAttachments: {
                 name: 'Eliminar adjuntos al eliminar archivos',
-                desc: 'Eliminar automáticamente los adjuntos vinculados al archivo eliminado si no se usan en otro lugar',
+                desc: 'Eliminar automáticamente los adjuntos vinculados y las vistas previas de dibujos generadas si no se usan en otro lugar',
                 options: {
                     ask: 'Preguntar cada vez',
                     always: 'Siempre',

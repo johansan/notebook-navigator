@@ -2266,7 +2266,7 @@ export const STRINGS_PT = {
             },
             deleteAttachments: {
                 name: 'Eliminar anexos ao eliminar ficheiros',
-                desc: 'Remover automaticamente os anexos associados ao ficheiro eliminado se não forem utilizados noutro local',
+                desc: 'Remover automaticamente os anexos associados e as pré-visualizações de desenhos geradas se não forem utilizados noutro local',
                 options: {
                     ask: 'Perguntar sempre',
                     always: 'Sempre',

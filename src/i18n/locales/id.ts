@@ -2264,7 +2264,7 @@ export const STRINGS_ID = {
             },
             deleteAttachments: {
                 name: 'Hapus lampiran saat menghapus file',
-                desc: 'Otomatis menghapus lampiran yang terkait dengan file yang dihapus jika tidak digunakan di tempat lain',
+                desc: 'Otomatis menghapus lampiran tertaut dan pratinjau gambar yang dihasilkan jika tidak digunakan di tempat lain',
                 options: {
                     ask: 'Tanya setiap kali',
                     always: 'Selalu',

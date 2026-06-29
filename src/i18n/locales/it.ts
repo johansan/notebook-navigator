@@ -2263,7 +2263,7 @@ export const STRINGS_IT = {
             },
             deleteAttachments: {
                 name: 'Elimina allegati quando si eliminano i file',
-                desc: 'Rimuovi automaticamente gli allegati collegati al file eliminato se non sono utilizzati altrove',
+                desc: 'Rimuovi automaticamente gli allegati collegati e le anteprime dei disegni generate se non sono utilizzati altrove',
                 options: {
                     ask: 'Chiedi ogni volta',
                     always: 'Sempre',

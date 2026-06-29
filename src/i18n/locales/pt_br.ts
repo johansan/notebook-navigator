@@ -2268,7 +2268,7 @@ export const STRINGS_PT_BR = {
             },
             deleteAttachments: {
                 name: 'Excluir anexos ao excluir arquivos',
-                desc: 'Remover automaticamente os anexos vinculados ao arquivo excluído se não forem usados em outro lugar',
+                desc: 'Remover automaticamente os anexos vinculados e as prévias de desenhos geradas se não forem usados em outro lugar',
                 options: {
                     ask: 'Perguntar sempre',
                     always: 'Sempre',

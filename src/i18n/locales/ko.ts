@@ -2260,7 +2260,7 @@ export const STRINGS_KO = {
             },
             deleteAttachments: {
                 name: '파일 삭제 시 첨부 파일 삭제',
-                desc: '삭제된 파일에 연결된 첨부 파일이 다른 곳에서 사용되지 않는 경우 자동으로 제거',
+                desc: '연결된 첨부 파일과 생성된 그림 미리 보기가 다른 곳에서 사용되지 않는 경우 자동으로 제거',
                 options: {
                     ask: '매번 확인',
                     always: '항상',

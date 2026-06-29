@@ -2248,7 +2248,7 @@ export const STRINGS_ZH_TW = {
             },
             deleteAttachments: {
                 name: '刪除檔案時刪除附件',
-                desc: '如果附件未在其他地方使用，則在刪除檔案時自動刪除關聯的附件',
+                desc: '如果未在其他地方使用，則自動刪除關聯的附件和產生的繪圖預覽',
                 options: {
                     ask: '每次詢問',
                     always: '始終',

@@ -2271,7 +2271,7 @@ export const STRINGS_FR = {
             },
             deleteAttachments: {
                 name: 'Supprimer les pièces jointes lors de la suppression de fichiers',
-                desc: 'Supprimer automatiquement les pièces jointes liées au fichier supprimé si elles ne sont pas utilisées ailleurs',
+                desc: "Supprimer automatiquement les pièces jointes liées et les aperçus de dessins générés s'ils ne sont pas utilisés ailleurs",
                 options: {
                     ask: 'Demander à chaque fois',
                     always: 'Toujours',

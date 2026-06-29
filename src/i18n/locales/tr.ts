@@ -2262,7 +2262,7 @@ export const STRINGS_TR = {
             },
             deleteAttachments: {
                 name: 'Dosyaları silerken ekleri sil',
-                desc: 'Silinen dosyaya bağlı ekleri başka bir yerde kullanılmıyorsa otomatik olarak kaldır',
+                desc: 'Bağlı ekleri ve oluşturulan çizim önizlemelerini başka bir yerde kullanılmıyorsa otomatik olarak kaldır',
                 options: {
                     ask: 'Her seferinde sor',
                     always: 'Her zaman',

@@ -2265,7 +2265,7 @@ export const STRINGS_VI = {
             },
             deleteAttachments: {
                 name: 'Xóa tệp đính kèm khi xóa tệp',
-                desc: 'Tự động xóa tệp đính kèm liên kết với tệp đã xóa nếu chúng không được sử dụng ở nơi khác',
+                desc: 'Tự động xóa tệp đính kèm được liên kết và bản xem trước bản vẽ được tạo nếu chúng không được sử dụng ở nơi khác',
                 options: {
                     ask: 'Hỏi mỗi lần',
                     always: 'Luôn luôn',

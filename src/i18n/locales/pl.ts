@@ -2268,7 +2268,7 @@ export const STRINGS_PL = {
             },
             deleteAttachments: {
                 name: 'Usuń załączniki przy usuwaniu plików',
-                desc: 'Automatycznie usuwaj załączniki powiązane z usuniętym plikiem, jeśli nie są używane gdzie indziej',
+                desc: 'Automatycznie usuwaj powiązane załączniki i wygenerowane podglądy rysunków, jeśli nie są używane gdzie indziej',
                 options: {
                     ask: 'Pytaj za każdym razem',
                     always: 'Zawsze',

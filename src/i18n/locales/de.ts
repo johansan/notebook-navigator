@@ -2268,7 +2268,7 @@ export const STRINGS_DE = {
             },
             deleteAttachments: {
                 name: 'Anhänge beim Löschen von Dateien löschen',
-                desc: 'Verknüpfte Anhänge der gelöschten Datei automatisch entfernen, wenn sie nicht anderweitig verwendet werden',
+                desc: 'Verknüpfte Anhänge und generierte Zeichnungsvorschauen automatisch entfernen, wenn sie nicht anderweitig verwendet werden',
                 options: {
                     ask: 'Jedes Mal fragen',
                     always: 'Immer',

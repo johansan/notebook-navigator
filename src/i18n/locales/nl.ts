@@ -2267,7 +2267,7 @@ export const STRINGS_NL = {
             },
             deleteAttachments: {
                 name: 'Bijlagen verwijderen bij het verwijderen van bestanden',
-                desc: 'Automatisch bijlagen verwijderen die gekoppeld zijn aan het verwijderde bestand als ze niet elders worden gebruikt',
+                desc: 'Automatisch gekoppelde bijlagen en gegenereerde tekeningvoorbeelden verwijderen als ze niet elders worden gebruikt',
                 options: {
                     ask: 'Elke keer vragen',
                     always: 'Altijd',
