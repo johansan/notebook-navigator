@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IndexedDBStorage } from '../storage/IndexedDBStorage';
+import { IndexedDBStorage, type FileData } from '../storage/IndexedDBStorage';
 import type { NoteCountInfo } from '../types/noteCounts';
 import { TagTreeNode } from '../types/storage';
 import { isPathInExcludedFolder } from './fileFilters';
@@ -182,13 +182,8 @@ export function buildTagTreeFromDatabase(
     };
 
     // First pass: collect all tags and their file associations
-    db.forEachFile((path, fileData) => {
+    const processFile = (path: string, fileData: FileData) => {
         const isExcluded = excludedPatterns ? isPathInExcludedFolder(path, excludedPatterns) : false;
-
-        // Defense-in-depth: skip files not in the included set (e.g., frontmatter-excluded)
-        if (includedPaths && !includedPaths.has(path)) {
-            return;
-        }
 
         // Process tags from excluded files for hidden root tag tracking
         if (isExcluded) {
@@ -250,7 +245,20 @@ export function buildTagTreeFromDatabase(
         if (path.endsWith('.md') && hasVisibleTagForFile) {
             taggedCount++;
         }
-    });
+    };
+
+    if (includedPaths) {
+        // Single pass over the visible set. The database also holds non-markdown and hidden files that
+        // cannot contribute to the tree, so iterating the included paths skips them entirely.
+        for (const path of includedPaths) {
+            const fileData = db.getFile(path);
+            if (fileData) {
+                processFile(path, fileData);
+            }
+        }
+    } else {
+        db.forEachFile(processFile);
+    }
 
     const tagTree = buildTreeFromTagList(Array.from(allTagsSet), tagFiles);
 

@@ -50,6 +50,7 @@ import { useMetadataCacheQueue } from './storage/useMetadataCacheQueue';
 import { useStorageCacheRebuild } from './storage/useStorageCacheRebuild';
 import { useStorageContentQueue } from './storage/useStorageContentQueue';
 import { useStorageFileQueries } from './storage/useStorageFileQueries';
+import { useTreeRebuildScheduler } from './storage/useTreeRebuildScheduler';
 import { useTagTreeSync } from './storage/useTagTreeSync';
 import { usePropertyTreeSync } from './storage/usePropertyTreeSync';
 import { useStorageVaultSync, type PendingFileFlushBuffer } from './storage/useStorageVaultSync';
@@ -222,13 +223,21 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
 
     const { getVisibleMarkdownFiles, getIndexableFiles } = useStorageFileQueries({ app, latestSettingsRef, showHiddenItems });
 
-    const { rebuildTagTree, scheduleTagTreeRebuild, cancelTagTreeRebuildDebouncer } = useTagTreeSync({
+    // Shared debounced scheduler that runs tag and property tree rebuilds from one visible-file scan.
+    const { tagTreeRebuildFnRef, propertyTreeRebuildFnRef, scheduleTreeRebuild, cancelTreeRebuildDebouncer } = useTreeRebuildScheduler({
+        isStorageReadyRef,
+        stoppedRef,
+        getVisibleMarkdownFiles
+    });
+
+    const { rebuildTagTree, scheduleTagTreeRebuild } = useTagTreeSync({
         app,
         settings,
         showHiddenItems,
         hiddenFolders,
         hiddenTags,
         hiddenFileProperties,
+        hiddenFileTags,
         fileVisibility,
         profileId: profile.id,
         isStorageReady,
@@ -237,10 +246,12 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         stoppedRef,
         setFileData,
         getVisibleMarkdownFiles,
-        tagTreeService: tagTreeService ?? null
+        tagTreeService: tagTreeService ?? null,
+        scheduleTreeRebuild,
+        tagTreeRebuildFnRef
     });
 
-    const { rebuildPropertyTree, schedulePropertyTreeRebuild, cancelPropertyTreeRebuildDebouncer } = usePropertyTreeSync({
+    const { rebuildPropertyTree, schedulePropertyTreeRebuild } = usePropertyTreeSync({
         app,
         settings,
         showHiddenItems,
@@ -256,7 +267,9 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         stoppedRef,
         setFileData,
         getVisibleMarkdownFiles,
-        propertyTreeService: propertyTreeService ?? null
+        propertyTreeService: propertyTreeService ?? null,
+        scheduleTreeRebuild,
+        propertyTreeRebuildFnRef
     });
 
     const { queueMetadataContentWhenReady, disposeMetadataWaitDisposers } = useMetadataCacheQueue({
@@ -279,8 +292,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         contentRegistryRef: contentRegistry,
         pendingSyncTimeoutIdRef: pendingSyncTimeoutId,
         rebuildFileCacheRef,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         disposeMetadataWaitDisposers,
         pendingMetadataWaitPathsRef,
         setFileData,
@@ -535,10 +547,10 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         rebuildPropertyTree,
         scheduleTagTreeRebuild,
         schedulePropertyTreeRebuild,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         startCacheRebuildNotice,
         getIndexableFiles,
+        getVisibleMarkdownFiles,
         queueMetadataContentWhenReady,
         queueIndexableFilesForContentGeneration,
         queueIndexableFilesNeedingContentGeneration,
@@ -607,22 +619,13 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                 }
                 rebuildFileCacheRef.current = null;
                 // Clears any pending rebuild scheduled by UI or database events.
-                cancelTagTreeRebuildDebouncer({ reset: true });
-                cancelPropertyTreeRebuildDebouncer({ reset: true });
+                cancelTreeRebuildDebouncer({ reset: true });
                 // Clean up all tracked metadata wait disposers on shutdown
                 disposeMetadataWaitDisposers();
                 pendingMetadataWaitPathsRef.current.clear();
             }
         };
-    }, [
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
-        resetPendingSettingsChanges,
-        contextValue,
-        disposeMetadataWaitDisposers,
-        app.vault,
-        app.metadataCache
-    ]);
+    }, [cancelTreeRebuildDebouncer, resetPendingSettingsChanges, contextValue, disposeMetadataWaitDisposers, app.vault, app.metadataCache]);
 
     return <StorageContext.Provider value={contextWithControls}>{children}</StorageContext.Provider>;
 }

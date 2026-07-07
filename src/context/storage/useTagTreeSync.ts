@@ -17,16 +17,16 @@
  */
 
 import { useCallback, useEffect, useRef, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
-import { App, debounce, TFile } from 'obsidian';
-import type { Debouncer } from 'obsidian';
-import { TIMEOUTS } from '../../types/obsidian-extended';
+import { App, TFile } from 'obsidian';
 import type { TagTreeService } from '../../services/TagTreeService';
 import { getDBInstance } from '../../storage/fileOperations';
 import type { StorageFileData } from './storageFileData';
 import type { TagTreeNode } from '../../types/storage';
 import { buildTagTreeFromDatabase } from '../../utils/tagTree';
+import { createFileVisibilityChecker } from '../../utils/fileFilters';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import type { FileVisibility } from '../../utils/fileTypeUtils';
+import type { TreeRebuildFn } from './useTreeRebuildScheduler';
 
 /**
  * Builds and maintains the in-memory tag tree derived from the database.
@@ -35,9 +35,10 @@ import type { FileVisibility } from '../../utils/fileTypeUtils';
  * - Counts and tag assignments are consistent with what the storage layer has indexed.
  * - Updates can be driven by database change events from content providers.
  *
- * Rebuilds are debounced because tag-related content updates can arrive in bursts (for example when a large batch
- * of files is processed). The active file path is treated specially: if the active file changes tags, the rebuild
- * is flushed so the UI reflects the change immediately.
+ * Rebuilds run through the shared tree rebuild scheduler (`useTreeRebuildScheduler`) because tag-related
+ * content updates can arrive in bursts (for example when a large batch of files is processed). The active
+ * file path is treated specially: if the active file changes tags, the rebuild is flushed so the UI reflects
+ * the change immediately.
  */
 type ScheduleTagTreeRebuildOptions = {
     // Executes a pending rebuild immediately.
@@ -51,6 +52,7 @@ export function useTagTreeSync(params: {
     hiddenFolders: string[];
     hiddenTags: string[];
     hiddenFileProperties: string[];
+    hiddenFileTags: string[];
     fileVisibility: FileVisibility;
     profileId: string;
     isStorageReady: boolean;
@@ -60,10 +62,11 @@ export function useTagTreeSync(params: {
     setFileData: Dispatch<SetStateAction<StorageFileData>>;
     getVisibleMarkdownFiles: () => TFile[];
     tagTreeService: TagTreeService | null;
+    scheduleTreeRebuild: (kind: 'tags' | 'properties', options?: { flush?: boolean }) => void;
+    tagTreeRebuildFnRef: MutableRefObject<TreeRebuildFn | null>;
 }): {
-    rebuildTagTree: () => Map<string, TagTreeNode>;
+    rebuildTagTree: (getVisibleFiles?: () => TFile[]) => Map<string, TagTreeNode>;
     scheduleTagTreeRebuild: (options?: ScheduleTagTreeRebuildOptions) => void;
-    cancelTagTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
 } {
     const {
         app,
@@ -72,6 +75,7 @@ export function useTagTreeSync(params: {
         hiddenFolders,
         hiddenTags,
         hiddenFileProperties,
+        hiddenFileTags,
         fileVisibility,
         profileId,
         isStorageReady,
@@ -80,7 +84,9 @@ export function useTagTreeSync(params: {
         stoppedRef,
         setFileData,
         getVisibleMarkdownFiles,
-        tagTreeService
+        tagTreeService,
+        scheduleTreeRebuild,
+        tagTreeRebuildFnRef
     } = params;
 
     const hiddenFoldersRef = useRef(hiddenFolders);
@@ -94,64 +100,50 @@ export function useTagTreeSync(params: {
         hiddenTagsRef.current = hiddenTags;
     }, [hiddenTags]);
 
-    // Holds the latest rebuildTagTree implementation for debounced callbacks.
-    const rebuildTagTreeFnRef = useRef<(() => Map<string, TagTreeNode>) | null>(null);
-
-    // Debounces full tag tree rebuilds during bursts of tag updates.
-    const tagTreeRebuildDebouncerRef = useRef<Debouncer<[], void> | null>(null);
-
     // Skips tag tree rebuild effects immediately after storage becomes ready.
     const tagTreeRebuildReadyGateRef = useRef(false);
 
-    // Rebuilds the complete tag tree structure from database contents
-    const rebuildTagTree = useCallback(() => {
-        const db = getDBInstance();
-        // Folder exclusions are handled at the tag-tree level (note counts, untagged counts). When hidden items are
-        // shown, we treat excluded folders as visible for counting and tree construction.
-        const excludedFolderPatterns = showHiddenItems ? [] : hiddenFoldersRef.current;
-        // The database may contain files that are currently hidden by profile settings. The UI tag tree only counts
-        // files that would be visible in the current navigation scope.
-        const includedPaths = new Set(getVisibleMarkdownFiles().map(f => f.path));
-        const { tagTree, tagged, untagged, hiddenRootTags } = buildTagTreeFromDatabase(
-            db,
-            excludedFolderPatterns,
-            includedPaths,
-            hiddenTagsRef.current,
-            showHiddenItems
-        );
+    // Rebuilds the complete tag tree structure from database contents. Accepts an optional visible-file
+    // getter so a scheduler pass can share one vault scan between the tag and property tree rebuilds.
+    const rebuildTagTree = useCallback(
+        (getVisibleFiles?: () => TFile[]) => {
+            const db = getDBInstance();
+            // Folder exclusions are handled at the tag-tree level (note counts, untagged counts). When hidden items are
+            // shown, we treat excluded folders as visible for counting and tree construction.
+            const excludedFolderPatterns = showHiddenItems ? [] : hiddenFoldersRef.current;
+            // The database may contain files that are currently hidden by profile settings. The UI tag tree only counts
+            // files that would be visible in the current navigation scope.
+            const visibleFiles = getVisibleFiles ? getVisibleFiles() : getVisibleMarkdownFiles();
+            const includedPaths = new Set(visibleFiles.map(f => f.path));
+            const { tagTree, tagged, untagged, hiddenRootTags } = buildTagTreeFromDatabase(
+                db,
+                excludedFolderPatterns,
+                includedPaths,
+                hiddenTagsRef.current,
+                showHiddenItems
+            );
 
-        setFileData(previous => ({ ...previous, tagTree, tagged, untagged, hiddenRootTags }));
+            setFileData(previous => ({ ...previous, tagTree, tagged, untagged, hiddenRootTags }));
 
-        // Propagate updated tag trees to the global TagTreeService for cross-component access
-        if (tagTreeService) {
-            tagTreeService.updateTagTree(tagTree, tagged, untagged);
-        }
+            // Propagate updated tag trees to the global TagTreeService for cross-component access
+            if (tagTreeService) {
+                tagTreeService.updateTagTree(tagTree, tagged, untagged);
+            }
 
-        return tagTree;
-    }, [getVisibleMarkdownFiles, setFileData, showHiddenItems, tagTreeService]);
+            return tagTree;
+        },
+        [getVisibleMarkdownFiles, setFileData, showHiddenItems, tagTreeService]
+    );
 
-    // Exposes the latest rebuildTagTree implementation to the debounced scheduler.
-    rebuildTagTreeFnRef.current = rebuildTagTree;
-
-    // Cancels any pending scheduled tag tree rebuild.
-    const cancelTagTreeRebuildDebouncer = useCallback((options?: { reset?: boolean }) => {
-        const debouncer = tagTreeRebuildDebouncerRef.current;
-        if (!debouncer) {
+    // Exposes the latest rebuild implementation to the shared scheduler.
+    tagTreeRebuildFnRef.current = getVisibleFiles => {
+        if (!latestSettingsRef.current.showTags) {
             return;
         }
+        rebuildTagTree(getVisibleFiles);
+    };
 
-        try {
-            debouncer.cancel();
-        } catch {
-            // ignore
-        }
-
-        if (options?.reset) {
-            tagTreeRebuildDebouncerRef.current = null;
-        }
-    }, []);
-
-    // Requests a tag tree rebuild through a shared debouncer.
+    // Requests a tag tree rebuild through the shared scheduler.
     const scheduleTagTreeRebuild = useCallback(
         (options?: ScheduleTagTreeRebuildOptions) => {
             if (stoppedRef.current || !isStorageReadyRef.current) {
@@ -162,36 +154,9 @@ export function useTagTreeSync(params: {
                 return;
             }
 
-            if (!tagTreeRebuildDebouncerRef.current) {
-                tagTreeRebuildDebouncerRef.current = debounce(
-                    () => {
-                        if (stoppedRef.current || !isStorageReadyRef.current) {
-                            return;
-                        }
-
-                        if (!latestSettingsRef.current.showTags) {
-                            return;
-                        }
-
-                        rebuildTagTreeFnRef.current?.();
-                    },
-                    TIMEOUTS.DEBOUNCE_TAG_TREE,
-                    true
-                );
-            }
-
-            tagTreeRebuildDebouncerRef.current();
-
-            if (options?.flush) {
-                try {
-                    // Used when a rebuild should happen on the current tick (for example, the active file changed tags).
-                    tagTreeRebuildDebouncerRef.current.run();
-                } catch {
-                    // ignore
-                }
-            }
+            scheduleTreeRebuild('tags', options);
         },
-        [isStorageReadyRef, latestSettingsRef, stoppedRef]
+        [isStorageReadyRef, latestSettingsRef, scheduleTreeRebuild, stoppedRef]
     );
 
     /**
@@ -233,26 +198,62 @@ export function useTagTreeSync(params: {
             return;
         }
 
+        // When files are hidden by tag, a tag change can flip file visibility in either direction, so every
+        // tag change schedules a rebuild. Otherwise changed files are checked against the current visibility
+        // filters: hidden files are indexed and generate content, but they are not part of the tag tree, so
+        // their tag changes do not require a rebuild. Files in excluded folders still pass the check because
+        // they contribute hidden root tags to the tree.
+        const canSkipHiddenFileChanges = showHiddenItems || hiddenFileTags.length === 0;
+        // A frontmatter-driven hidden flip changes tag tree membership without a tag change, so those
+        // changes always schedule a rebuild and bypass the visibility skip (the checker already sees the
+        // file's new hidden state).
+        const shouldRebuildOnFrontmatterVisibilityChanges = !showHiddenItems && hiddenFileProperties.length > 0;
+
         const db = getDBInstance();
         const unsubscribe = db.onContentChange(changes => {
             if (stoppedRef.current) return;
-            let hasTagChanges = false;
+            let isFileVisible: ((file: TFile) => boolean) | null = null;
+            let hasRelevantChanges = false;
             let shouldFlush = false;
             let activeFilePath: string | null = null;
             let activeFileResolved = false;
 
             for (const change of changes) {
-                if (change.changes.tags === undefined) {
+                const hasFrontmatterVisibilityChange = shouldRebuildOnFrontmatterVisibilityChanges && change.metadataHiddenChanged === true;
+                if (change.changes.tags === undefined && !hasFrontmatterVisibilityChange) {
                     continue;
                 }
-                hasTagChanges = true;
 
                 if (!activeFileResolved) {
                     activeFilePath = app.workspace.getActiveFile()?.path ?? null;
                     activeFileResolved = true;
                 }
+                const isActiveFileChange = activeFilePath !== null && change.path === activeFilePath;
 
-                if (activeFilePath && change.path === activeFilePath) {
+                // Once a rebuild is known to be needed, the only remaining question is whether the active
+                // file itself has a relevant change (it decides the flush), so other files skip the
+                // visibility work.
+                if (hasRelevantChanges && !isActiveFileChange) {
+                    continue;
+                }
+
+                if (canSkipHiddenFileChanges && !hasFrontmatterVisibilityChange) {
+                    const abstract = app.vault.getAbstractFileByPath(change.path);
+                    if (!(abstract instanceof TFile)) {
+                        // Deleted files leave the tree through the vault diff, which schedules its own rebuild.
+                        continue;
+                    }
+                    if (!isFileVisible) {
+                        isFileVisible = createFileVisibilityChecker(app, latestSettingsRef.current, { showHiddenItems });
+                    }
+                    if (!isFileVisible(abstract)) {
+                        continue;
+                    }
+                }
+
+                hasRelevantChanges = true;
+
+                if (isActiveFileChange) {
                     // Flushes the debounce delay when the active file changes tags so the selection + tag tree state
                     // update together in the next render.
                     shouldFlush = true;
@@ -260,13 +261,23 @@ export function useTagTreeSync(params: {
                 }
             }
 
-            if (hasTagChanges) {
+            if (hasRelevantChanges) {
                 scheduleTagTreeRebuild({ flush: shouldFlush });
             }
         });
 
         return unsubscribe;
-    }, [app.workspace, isStorageReady, settings.showTags, scheduleTagTreeRebuild, stoppedRef]);
+    }, [
+        app,
+        hiddenFileProperties,
+        hiddenFileTags,
+        isStorageReady,
+        latestSettingsRef,
+        settings.showTags,
+        scheduleTagTreeRebuild,
+        showHiddenItems,
+        stoppedRef
+    ]);
 
-    return { rebuildTagTree, scheduleTagTreeRebuild, cancelTagTreeRebuildDebouncer };
+    return { rebuildTagTree, scheduleTagTreeRebuild };
 }

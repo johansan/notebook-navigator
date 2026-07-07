@@ -69,6 +69,17 @@ function createFileData(tags: string[] | null): FileData {
     };
 }
 
+function createPathLookupDb(files: MockFile[]): IndexedDBStorage {
+    const byPath = new Map(files.map(({ path, tags }) => [path, createFileData(tags)]));
+
+    return {
+        getFile: (path: string) => byPath.get(path) ?? null,
+        forEachFile: () => {
+            throw new Error('full database scan should not run when included paths are provided');
+        }
+    } as unknown as IndexedDBStorage;
+}
+
 function validateTreeHasNoSelfCycles(tree: Map<string, TagTreeNode>): void {
     const visited = new Set<TagTreeNode>();
 
@@ -296,6 +307,40 @@ describe('tag tree ordering', () => {
         expect(result.tagged).toBe(1);
         expect(result.untagged).toBe(1);
         expect(result.hiddenRootTags.size).toBe(0);
+    });
+});
+
+describe('included paths iteration', () => {
+    it('builds the tree from included paths without a full database scan', () => {
+        const db = createPathLookupDb([
+            { path: 'notes/alpha.md', tags: ['#alpha'] },
+            { path: 'notes/untagged.md', tags: [] },
+            { path: 'notes/other.md', tags: ['#other'] }
+        ]);
+
+        const includedPaths = new Set(['notes/alpha.md', 'notes/untagged.md', 'notes/missing.md']);
+        const result = buildTagTreeFromDatabase(db, undefined, includedPaths);
+
+        expect(Array.from(result.tagTree.keys())).toEqual(['alpha']);
+        expect(result.tagged).toBe(1);
+        expect(result.untagged).toBe(1);
+        expect(result.hiddenRootTags.size).toBe(0);
+    });
+
+    it('records hidden root tags for excluded-folder paths in the included set', () => {
+        const db = createPathLookupDb([
+            { path: 'notes/visible.md', tags: ['#projects', '#shared'] },
+            { path: 'archive/old.md', tags: ['#legacy/reports', '#shared/sub'] }
+        ]);
+
+        const includedPaths = new Set(['notes/visible.md', 'archive/old.md']);
+        const result = buildTagTreeFromDatabase(db, ['archive'], includedPaths);
+
+        expect(Array.from(result.tagTree.keys()).sort()).toEqual(['projects', 'shared']);
+        expect(result.tagged).toBe(1);
+        expect(result.untagged).toBe(0);
+        // Hidden roots that also exist in the visible tree are dropped ('shared'), others remain.
+        expect(Array.from(result.hiddenRootTags.keys())).toEqual(['legacy']);
     });
 });
 

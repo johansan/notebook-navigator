@@ -51,8 +51,7 @@ export function useStorageCacheRebuild(params: {
     contentRegistryRef: MutableRefObject<ContentProviderRegistry | null>;
     pendingSyncTimeoutIdRef: MutableRefObject<number | null>;
     rebuildFileCacheRef: MutableRefObject<ReturnType<typeof debounce> | null>;
-    cancelTagTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
-    cancelPropertyTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
+    cancelTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
     disposeMetadataWaitDisposers: () => void;
     // Map: file path -> pending metadata-dependent wait mask (see `useMetadataCacheQueue`).
     pendingMetadataWaitPathsRef: MutableRefObject<Map<string, number>>;
@@ -73,8 +72,7 @@ export function useStorageCacheRebuild(params: {
         contentRegistryRef,
         pendingSyncTimeoutIdRef,
         rebuildFileCacheRef,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         disposeMetadataWaitDisposers,
         pendingMetadataWaitPathsRef,
         setFileData,
@@ -121,8 +119,7 @@ export function useStorageCacheRebuild(params: {
             }
         }
 
-        cancelTagTreeRebuildDebouncer();
-        cancelPropertyTreeRebuildDebouncer();
+        cancelTreeRebuildDebouncer();
         disposeMetadataWaitDisposers();
         pendingMetadataWaitPathsRef.current.clear();
 
@@ -184,8 +181,7 @@ export function useStorageCacheRebuild(params: {
         stoppedRef.current = previousStopped;
     }, [
         buildFileCacheFnRef,
-        cancelPropertyTreeRebuildDebouncer,
-        cancelTagTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         clearCacheRebuildNotice,
         contentRegistryRef,
         disposeMetadataWaitDisposers,

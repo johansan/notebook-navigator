@@ -97,14 +97,14 @@ export function useStorageVaultSync(params: {
     rebuildFileCacheRef: MutableRefObject<ReturnType<typeof debounce> | null>;
     activeVaultEventRefsRef: MutableRefObject<EventRef[] | null>;
     activeMetadataEventRefRef: MutableRefObject<EventRef | null>;
-    rebuildTagTree: () => Map<string, TagTreeNode>;
+    rebuildTagTree: (getVisibleFiles?: () => TFile[]) => Map<string, TagTreeNode>;
     scheduleTagTreeRebuild: (options?: { flush?: boolean }) => void;
-    cancelTagTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
-    rebuildPropertyTree: () => Map<string, PropertyTreeNode>;
+    rebuildPropertyTree: (getVisibleFiles?: () => TFile[]) => Map<string, PropertyTreeNode>;
     schedulePropertyTreeRebuild: (options?: { flush?: boolean }) => void;
-    cancelPropertyTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
+    cancelTreeRebuildDebouncer: (options?: { reset?: boolean }) => void;
     startCacheRebuildNotice: (total: number, enabledTypes: FileContentType[]) => void;
     getIndexableFiles: () => TFile[];
+    getVisibleMarkdownFiles: () => TFile[];
     queueMetadataContentWhenReady: (
         files: TFile[],
         includeTypes?: ContentProviderType[],
@@ -136,12 +136,12 @@ export function useStorageVaultSync(params: {
         activeMetadataEventRefRef,
         rebuildTagTree,
         scheduleTagTreeRebuild,
-        cancelTagTreeRebuildDebouncer,
         rebuildPropertyTree,
         schedulePropertyTreeRebuild,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         startCacheRebuildNotice,
         getIndexableFiles,
+        getVisibleMarkdownFiles,
         queueMetadataContentWhenReady,
         queueIndexableFilesForContentGeneration,
         queueIndexableFilesNeedingContentGeneration,
@@ -174,11 +174,14 @@ export function useStorageVaultSync(params: {
                         await recordFileChanges([...toAdd, ...toUpdate], cachedFiles, pendingRenameDataRef.current);
                     }
 
+                    // Both tree rebuilds share one visible-file scan.
+                    let visibleFilesForTrees: TFile[] | null = null;
+                    const getVisibleFilesForTrees = () => (visibleFilesForTrees ??= getVisibleMarkdownFiles());
                     const tagTreeStartMs = performance.now();
-                    rebuildTagTree();
+                    rebuildTagTree(getVisibleFilesForTrees);
                     const tagTreeElapsedMs = Math.round(performance.now() - tagTreeStartMs);
                     const propertyTreeStartMs = performance.now();
-                    rebuildPropertyTree();
+                    rebuildPropertyTree(getVisibleFilesForTrees);
                     const propertyTreeElapsedMs = Math.round(performance.now() - propertyTreeStartMs);
 
                     isStorageReadyRef.current = true;
@@ -727,8 +730,7 @@ export function useStorageVaultSync(params: {
             clearPendingMetadataChangeFlushTimer();
 
             // Clears debouncers and pending waits so no background work continues after teardown.
-            cancelTagTreeRebuildDebouncer({ reset: true });
-            cancelPropertyTreeRebuildDebouncer({ reset: true });
+            cancelTreeRebuildDebouncer({ reset: true });
             disposeMetadataWaitDisposers();
         };
     }, [
@@ -737,11 +739,11 @@ export function useStorageVaultSync(params: {
         activeMetadataEventRefRef,
         activeVaultEventRefsRef,
         buildFileCacheFnRef,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         contentRegistryRef,
         disposeMetadataWaitDisposers,
         getIndexableFiles,
+        getVisibleMarkdownFiles,
         hasBuiltInitialCacheRef,
         isFirstLoadRef,
         isIndexedDBReady,
