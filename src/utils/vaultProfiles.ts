@@ -44,7 +44,7 @@ import {
     matchesLiteralPrefix,
     matchesParsedPatternSegments,
     parsePathPattern,
-    rebuildPattern,
+    rebuildRenamedPattern,
     type PathPatternMatcher,
     type ParsedPathPattern
 } from './pathPatternMatcher';
@@ -241,7 +241,6 @@ const isHiddenFolderPathPattern = (pattern: string): boolean => {
 
 export interface HiddenFolderPatternMatch {
     normalizedPrefix: string;
-    rebuildPattern: (nextPrefix: string) => string;
 }
 
 type FolderPatternProfileKey = 'hiddenFolders' | 'descendantExcludedFolders';
@@ -262,21 +261,7 @@ export const getHiddenFolderPatternMatch = (pattern: string): HiddenFolderPatter
     });
     const normalizedPrefix = normalizeHiddenFolderPath(`/${normalizedPrefixSegments.join('/')}`);
 
-    return {
-        normalizedPrefix,
-        rebuildPattern: (nextPrefix: string) => {
-            const normalizedNext = normalizeHiddenFolderPath(nextPrefix);
-            if (!normalizedNext) {
-                return '';
-            }
-
-            const nextSegments = getNormalizedPathSegments(normalizedNext, normalizeHiddenFolderPath);
-            return rebuildPattern(parsed, nextSegments, {
-                addLeadingSlash: true,
-                normalizePattern: normalizeHiddenFolderPath
-            });
-        }
-    };
+    return { normalizedPrefix };
 };
 
 // Creates a clean copy of pattern array, trimming and filtering out empty strings
@@ -1066,7 +1051,12 @@ export function updateHiddenTagPrefixMatches(settings: NotebookNavigatorSettings
                 return pattern;
             }
 
-            const rebuilt = rebuildPattern(parsedPattern, nextSegments, { normalizePattern: normalizeTagPathValue });
+            const rebuilt = rebuildRenamedPattern(parsedPattern, previousSegments, nextSegments, {
+                normalizePattern: normalizeTagPathValue
+            });
+            if (rebuilt === null) {
+                return pattern;
+            }
             if (rebuilt !== pattern) {
                 profileUpdated = true;
             }
@@ -1112,7 +1102,12 @@ export function updateHiddenFileTagPrefixMatches(settings: NotebookNavigatorSett
                 return pattern;
             }
 
-            const rebuilt = rebuildPattern(parsedPattern, nextSegments, { normalizePattern: normalizeTagPathValue });
+            const rebuilt = rebuildRenamedPattern(parsedPattern, previousSegments, nextSegments, {
+                normalizePattern: normalizeTagPathValue
+            });
+            if (rebuilt === null) {
+                return pattern;
+            }
             if (rebuilt !== pattern) {
                 profileUpdated = true;
             }
@@ -1262,10 +1257,15 @@ export function updateHiddenFolderExactMatches(settings: NotebookNavigatorSettin
                     return pattern;
                 }
 
-                const rebuilt = rebuildPattern(parsed, nextSegments, {
+                // previousSegments are casefolded by normalizeHiddenFolderMatchPath; pattern segments keep their original case
+                const rebuilt = rebuildRenamedPattern(parsed, previousSegments, nextSegments, {
                     addLeadingSlash: true,
-                    normalizePattern: normalizeHiddenFolderPath
+                    normalizePattern: normalizeHiddenFolderPath,
+                    normalizeMatchSegment: casefold
                 });
+                if (rebuilt === null) {
+                    return pattern;
+                }
                 if (rebuilt !== parsed.raw) {
                     profileUpdated = true;
                 }

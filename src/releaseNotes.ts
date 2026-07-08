@@ -112,7 +112,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Feature images.** Thumbnails with transparent backgrounds, such as SVG or PNG images, no longer show an outline over transparent areas.'
         ],
         fixed: [
-            '**Drag and drop.** Fixed drag and drop not working on some Windows PCs where the system did not expose drag data during the drag operation.'
+            '**Drag and drop.** Fixed drag and drop not working on some Windows PCs where the system did not expose drag data during the drag operation.',
+            '**Display filters.** Fixed path entries in ==Hide folders== losing path segments when a folder moved to a different folder depth. Hidden tag patterns had the same issue when a tag rename changed depth. Patterns containing `name*` segments are left unchanged when the moved folder or renamed tag does not match them.'
         ]
     },
     {
