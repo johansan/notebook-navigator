@@ -293,62 +293,76 @@ export class FeatureImageBlobStore {
         });
     }
 
-    async moveBlob(db: IDBDatabase, oldPath: string, newPath: string): Promise<void> {
-        // Moves the blob store record (if present) and updates in-memory caches.
-        // The stored record includes `featureImageKey`, allowing callers to validate
-        // the blob against the main store key when rendering.
+    async moveBlobs(db: IDBDatabase, moves: { oldPath: string; newPath: string }[]): Promise<void> {
+        // Replays a rename burst's blob moves in vault event order inside one transaction. Each
+        // move's get is issued after the previous move's put/delete, so a chained rename
+        // (a -> b, b -> c) reads the record written by the preceding move. The stored record
+        // includes `featureImageKey`, allowing callers to validate the blob against the main
+        // store key when rendering.
+        if (moves.length === 0) {
+            return;
+        }
         const transaction = db.transaction([FEATURE_IMAGE_STORE_NAME], 'readwrite');
         const store = transaction.objectStore(FEATURE_IMAGE_STORE_NAME);
-        let hasRecord = false;
-        const op = 'moveFeatureImageBlob';
+        const op = 'moveFeatureImageBlobs';
         let lastRequestError: DOMException | Error | null = null;
+        // Stored-record presence per destination path, resolved in event order so a later move that
+        // re-occupies a path overrides an earlier move's missing-record outcome for that path.
+        const recordFoundByNewPath = new Map<string, boolean>();
 
         await new Promise<void>((resolve, reject) => {
-            const getReq = store.get(oldPath);
-            getReq.onsuccess = () => {
-                const record = getReq.result as FeatureImageBlobRecord | undefined;
-                if (!record) {
+            const processMove = (index: number): void => {
+                if (index >= moves.length) {
                     return;
                 }
-                hasRecord = true;
-                const putReq = store.put(record, newPath);
-                putReq.onerror = () => {
-                    lastRequestError = putReq.error || null;
-                    console.error('[IndexedDB] put failed', {
-                        store: FEATURE_IMAGE_STORE_NAME,
-                        op,
-                        path: newPath,
-                        name: putReq.error?.name,
-                        message: putReq.error?.message
-                    });
+                const { oldPath, newPath } = moves[index];
+                const getReq = store.get(oldPath);
+                getReq.onsuccess = () => {
+                    const record = getReq.result as FeatureImageBlobRecord | undefined;
+                    recordFoundByNewPath.set(newPath, record !== undefined);
+                    if (record) {
+                        const putReq = store.put(record, newPath);
+                        putReq.onerror = () => {
+                            lastRequestError = putReq.error || null;
+                            console.error('[IndexedDB] put failed', {
+                                store: FEATURE_IMAGE_STORE_NAME,
+                                op,
+                                path: newPath,
+                                name: putReq.error?.name,
+                                message: putReq.error?.message
+                            });
+                        };
+                        const deleteReq = store.delete(oldPath);
+                        deleteReq.onerror = () => {
+                            lastRequestError = deleteReq.error || null;
+                            console.error('[IndexedDB] delete failed', {
+                                store: FEATURE_IMAGE_STORE_NAME,
+                                op,
+                                path: oldPath,
+                                name: deleteReq.error?.name,
+                                message: deleteReq.error?.message
+                            });
+                        };
+                    }
+                    processMove(index + 1);
                 };
-                const deleteReq = store.delete(oldPath);
-                deleteReq.onerror = () => {
-                    lastRequestError = deleteReq.error || null;
-                    console.error('[IndexedDB] delete failed', {
+                getReq.onerror = () => {
+                    lastRequestError = getReq.error || null;
+                    console.error('[IndexedDB] get failed', {
                         store: FEATURE_IMAGE_STORE_NAME,
                         op,
                         path: oldPath,
-                        name: deleteReq.error?.name,
-                        message: deleteReq.error?.message
+                        name: getReq.error?.name,
+                        message: getReq.error?.message
                     });
+                    try {
+                        transaction.abort();
+                    } catch (e) {
+                        void e;
+                    }
                 };
             };
-            getReq.onerror = () => {
-                lastRequestError = getReq.error || null;
-                console.error('[IndexedDB] get failed', {
-                    store: FEATURE_IMAGE_STORE_NAME,
-                    op,
-                    path: oldPath,
-                    name: getReq.error?.name,
-                    message: getReq.error?.message
-                });
-                try {
-                    transaction.abort();
-                } catch (e) {
-                    void e;
-                }
-            };
+            processMove(0);
             transaction.oncomplete = () => resolve();
             transaction.onabort = () => {
                 console.error('[IndexedDB] transaction aborted', {
@@ -370,10 +384,14 @@ export class FeatureImageBlobStore {
             };
         });
 
-        if (hasRecord) {
-            this.moveCacheEntry(oldPath, newPath);
-        } else {
-            this.deleteFromCache(oldPath);
+        // Cached thumbnails were already relocated hop by hop at rename-event time (`moveCacheEntry`
+        // via `beginMove`). A path whose final move found no stored record keeps an event-time cache
+        // entry with nothing durable behind it, so drop that entry. A path whose final move found a
+        // record keeps its entry even when an earlier move in the burst targeted it record-less.
+        for (const [path, recordFound] of recordFoundByNewPath) {
+            if (!recordFound) {
+                this.deleteFromCache(path);
+            }
         }
     }
 

@@ -24,7 +24,7 @@ import { isMarkdownPath } from '../utils/fileTypeUtils';
 import { DEFAULT_FEATURE_IMAGE_CACHE_MAX, FEATURE_IMAGE_STORE_NAME, FeatureImageBlobStore } from './FeatureImageBlobStore';
 import { MemoryFileCache } from './MemoryFileCache';
 import { FeatureImageCoordinator } from './indexeddb/featureImageOps';
-import { PreviewTextCoordinator } from './indexeddb/previewTextOps';
+import { PreviewTextCoordinator, type PreviewTextBatchOp } from './indexeddb/previewTextOps';
 import { hydrateCacheFromMainStore } from './indexeddb/cacheHydration';
 import {
     DB_CONTENT_VERSION,
@@ -57,7 +57,7 @@ import {
 } from './indexeddb/contentMutationOperations';
 
 export { createDefaultFileData, METADATA_SENTINEL };
-export type { PropertyItem, PropertyValueKind, FeatureImageStatus, FileContentChange, FileData, PreviewStatus };
+export type { PropertyItem, PropertyValueKind, FeatureImageStatus, FileContentChange, FileData, PreviewStatus, PreviewTextBatchOp };
 
 interface IndexedDBStorageOptions {
     featureImageCacheMaxEntries?: number;
@@ -593,61 +593,6 @@ export class IndexedDBStorage {
     }
 
     /**
-     * Store or update a single file in the database.
-     *
-     * @param path - File path (key)
-     * @param data - File data to store
-     */
-    async setFile(path: string, data: FileData): Promise<void> {
-        await this.init();
-        if (!this.db) throw new Error('Database not initialized');
-
-        const transaction = this.db.transaction([STORE_NAME], 'readwrite');
-        const store = transaction.objectStore(STORE_NAME);
-
-        return new Promise((resolve, reject) => {
-            const op = 'put';
-            let lastRequestError: DOMException | Error | null = null;
-            // Persist the main record without feature image blob data.
-            const sanitized = this.normalizeFileData({ ...data, featureImage: null });
-            const request = store.put(sanitized, path);
-            request.onerror = () => {
-                lastRequestError = request.error || null;
-                console.error('[IndexedDB] put failed', {
-                    store: STORE_NAME,
-                    path,
-                    name: request.error?.name,
-                    message: request.error?.message
-                });
-            };
-            transaction.oncomplete = () => {
-                this.cache.updateFile(path, sanitized);
-                resolve();
-            };
-            transaction.onabort = () => {
-                console.error('[IndexedDB] transaction aborted', {
-                    store: STORE_NAME,
-                    op,
-                    path,
-                    txError: transaction.error?.message,
-                    reqError: lastRequestError?.message
-                });
-                this.rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction aborted');
-            };
-            transaction.onerror = () => {
-                console.error('[IndexedDB] transaction error', {
-                    store: STORE_NAME,
-                    op,
-                    path,
-                    txError: transaction.error?.message,
-                    reqError: lastRequestError?.message
-                });
-                this.rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction error');
-            };
-        });
-    }
-
-    /**
      * Delete a single file from the database by path.
      *
      * @param path - File path to delete
@@ -738,8 +683,12 @@ export class IndexedDBStorage {
     }
 
     /**
-     * Store or update multiple files in the database.
-     * More efficient than multiple setFile calls.
+     * Store or update multiple files in the database in one transaction.
+     *
+     * Does not update the memory cache: callers (the rename flush) seed the memory mirror before
+     * persisting. A completion-time re-stamp could otherwise run after, and overwrite, a cache
+     * reconciliation performed by another store's completion callback (for example the preview
+     * mover's status downgrade for a missing record).
      *
      * @param files - Array of file data with paths to store
      */
@@ -777,7 +726,6 @@ export class IndexedDBStorage {
             });
 
             transaction.oncomplete = () => {
-                this.cache.batchUpdate(sanitizedFiles);
                 resolve();
             };
             transaction.onabort = () => {
@@ -1376,17 +1324,6 @@ export class IndexedDBStorage {
     }
 
     /**
-     * Batch update or add multiple files in the database.
-     * More efficient than multiple setFile calls.
-     * Updates cache after successful database writes.
-     *
-     * @param files - Array of file data with paths to store
-     */
-    async batchUpdate(files: { path: string; data: FileData }[]): Promise<void> {
-        await this.setFiles(files);
-    }
-
-    /**
      * Clear database and reinitialize.
      * Used when vault structure changes significantly.
      */
@@ -1439,10 +1376,6 @@ export class IndexedDBStorage {
         return this.previewTexts.ensurePreviewTextLoaded(path);
     }
 
-    async deletePreviewText(path: string): Promise<void> {
-        await this.previewTexts.deletePreviewText(path);
-    }
-
     /**
      * Get tags from memory cache, returning empty array if none.
      * Helper method for UI components that need tag data.
@@ -1482,17 +1415,17 @@ export class IndexedDBStorage {
     }
 
     /**
-     * Move a feature image blob between paths.
+     * Move a rename burst's feature image blobs in one transaction, replayed in vault event order.
      */
-    async moveFeatureImageBlob(oldPath: string, newPath: string): Promise<void> {
-        await this.featureImages.moveBlob(oldPath, newPath);
+    async moveFeatureImageBlobs(moves: { oldPath: string; newPath: string }[]): Promise<void> {
+        await this.featureImages.moveBlobs(moves);
     }
 
     /**
-     * Move preview text between paths.
+     * Apply a rename burst's preview store moves and deletes in one transaction, replayed in vault event order.
      */
-    async movePreviewText(oldPath: string, newPath: string): Promise<void> {
-        await this.previewTexts.movePreviewText(oldPath, newPath);
+    async movePreviewTexts(ops: PreviewTextBatchOp[]): Promise<void> {
+        await this.previewTexts.movePreviewTexts(ops);
     }
 
     /**

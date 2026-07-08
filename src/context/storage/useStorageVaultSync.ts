@@ -27,6 +27,7 @@ import type { PropertyTreeNode, TagTreeNode } from '../../types/storage';
 import { calculateFileDiff } from '../../storage/diffCalculator';
 import { type FileData as DBFileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance, markFilesForRegeneration, recordFileChanges, removeFilesFromCache } from '../../storage/fileOperations';
+import { createRenameFlushController, excludeReoccupiedRenameTargets, type PendingRenameFlushBuffer } from './renameFlush';
 import { runAsyncAction } from '../../utils/async';
 import { isMarkdownPath } from '../../utils/fileTypeUtils';
 import { isPropertyFeatureEnabled } from '../../utils/propertyTree';
@@ -70,11 +71,14 @@ export interface PendingFileFlushBuffer {
  * - A markdown save fires both `vault.on('modify')` and `metadataCache.on('changed')`. The modify flush records
  *   stat changes and queues non-markdown thumbnails only; markdown content generation is queued by the
  *   metadata-change flush so providers read the metadata cache after Obsidian has indexed the save.
- * - Rename handling preserves existing cached content by seeding the new path with the old record and moving any
- *   stored blobs/text before the next diff runs.
+ * - Rename handling preserves existing cached content by seeding the new path with the old record at event time
+ *   and buffering the move. A zero-delay flush then persists the whole burst's seeded records in one `setFiles`
+ *   call and moves stored blobs/preview text in one batched transaction per store, each replayed in vault event
+ *   order (a folder move with N files runs a handful of transactions instead of ~3N).
  * - The modify/metadata flush buffers are refs owned by `StorageContext`. This effect re-runs on settings changes,
  *   and events buffered but not yet flushed must survive the remount: cleanup clears only the flush timers, and
- *   the mount path reschedules flushes for entries still in the buffers.
+ *   the mount path reschedules flushes for entries still in the buffers. The rename buffer is flushed by cleanup
+ *   instead: its entries seed the plugin-lifetime memory mirror and must not outlive the effect unpersisted.
  * - `latestSettingsRef` is used inside async callbacks to avoid stale closures when settings change mid-queue.
  */
 export function useStorageVaultSync(params: {
@@ -93,6 +97,7 @@ export function useStorageVaultSync(params: {
     pendingRenameDataRef: MutableRefObject<Map<string, DBFileData>>;
     modifyFlushBufferRef: MutableRefObject<PendingFileFlushBuffer>;
     metadataChangeFlushBufferRef: MutableRefObject<PendingFileFlushBuffer>;
+    renameFlushBufferRef: MutableRefObject<PendingRenameFlushBuffer>;
     buildFileCacheFnRef: MutableRefObject<((isInitialLoad?: boolean) => Promise<void>) | null>;
     rebuildFileCacheRef: MutableRefObject<ReturnType<typeof debounce> | null>;
     activeVaultEventRefsRef: MutableRefObject<EventRef[] | null>;
@@ -130,6 +135,7 @@ export function useStorageVaultSync(params: {
         pendingRenameDataRef,
         modifyFlushBufferRef,
         metadataChangeFlushBufferRef,
+        renameFlushBufferRef,
         buildFileCacheFnRef,
         rebuildFileCacheRef,
         activeVaultEventRefsRef,
@@ -281,13 +287,26 @@ export function useStorageVaultSync(params: {
                                 }
 
                                 if (toRemove.length > 0) {
-                                    await removeFilesFromCache(toRemove);
-                                    if (settings.showTags) {
-                                        scheduleTagTreeRebuild();
-                                    }
-                                    if (isPropertyFeatureEnabled(settings)) {
-                                        // Flush rebuild after cache removals so deleted files are reflected in the property tree counts.
-                                        schedulePropertyTreeRebuild({ flush: true });
+                                    // A rename landing after this diff's vault snapshot (during the awaited
+                                    // record update above) can re-occupy a path classified as removed; the
+                                    // rename flush persists a seeded record and moves stored artifacts there
+                                    // ahead of this delete. Skip such paths; the diff rescheduled by the
+                                    // rename handler reconciles them.
+                                    const pathsToRemove = excludeReoccupiedRenameTargets({
+                                        paths: toRemove,
+                                        buffer: renameFlushBufferRef.current,
+                                        pendingRenameData: pendingRenameDataRef.current,
+                                        isPathInVault: path => app.vault.getAbstractFileByPath(path) instanceof TFile
+                                    });
+                                    if (pathsToRemove.length > 0) {
+                                        await removeFilesFromCache(pathsToRemove);
+                                        if (settings.showTags) {
+                                            scheduleTagTreeRebuild();
+                                        }
+                                        if (isPropertyFeatureEnabled(settings)) {
+                                            // Flush rebuild after cache removals so deleted files are reflected in the property tree counts.
+                                            schedulePropertyTreeRebuild({ flush: true });
+                                        }
                                     }
                                 }
                             } catch (error: unknown) {
@@ -370,10 +389,6 @@ export function useStorageVaultSync(params: {
             } catch (error: unknown) {
                 console.error('Failed to queue content refresh for files:', error);
             }
-        };
-
-        const queueFileContentRefresh = (file: TFile) => {
-            queueFilesContentRefresh([file]);
         };
 
         const modifyFlushBuffer = modifyFlushBufferRef.current;
@@ -570,6 +585,25 @@ export function useStorageVaultSync(params: {
             emitDrawingCompanionImageChange(app, imagePath);
         };
 
+        const renameFlushBuffer = renameFlushBufferRef.current;
+
+        const renameFlushController = createRenameFlushController({
+            buffer: renameFlushBuffer,
+            pendingRenameData: pendingRenameDataRef.current,
+            isStopped: () => stoppedRef.current,
+            getStore: () => getDBInstance(),
+            cancelScheduledDiff: () => {
+                if (pendingSyncTimeoutIdRef.current !== null) {
+                    if (typeof window !== 'undefined') {
+                        window.clearTimeout(pendingSyncTimeoutIdRef.current);
+                    }
+                    pendingSyncTimeoutIdRef.current = null;
+                }
+            },
+            queueContentRefresh: files => queueFilesContentRefresh(files),
+            scheduleDiff: () => rebuildFileCache?.()
+        });
+
         const handleRename = (file: TAbstractFile, oldPath: string) => {
             if (file instanceof TFile) {
                 notifyDrawingCompanionChange(oldPath);
@@ -579,10 +613,11 @@ export function useStorageVaultSync(params: {
                     const db = getDBInstance();
                     const existing = db.getFile(oldPath);
                     if (existing) {
-                        // Renames are handled as "seed + move artifacts":
+                        // Renames are handled as "seed + batched move":
                         // - Seed the new path in the in-memory mirror so synchronous reads during the rename window see a consistent record.
-                        // - Persist the seeded record to IndexedDB before any provider writes run for the new path.
-                        // - Move any stored blobs/text keyed by path.
+                        // - Begin blob/preview move markers so reads fall back to the old path until the stores move.
+                        // - Buffer the move in event order; the zero-delay flush persists the burst's seeded records
+                        //   and moves stored blobs/preview text in one batched transaction per store.
                         // - Schedule a diff afterwards to reconcile final state and update mtimes.
                         const wasMarkdown = isMarkdownPath(oldPath);
                         const isMarkdown = isMarkdownPath(file.path);
@@ -600,7 +635,8 @@ export function useStorageVaultSync(params: {
 
                         pendingRenameDataRef.current.set(file.path, seeded);
                         db.seedMemoryFile(file.path, seeded);
-                        if (existing.featureImageStatus === 'has') {
+                        const hasStoredBlob = existing.featureImageStatus === 'has';
+                        if (hasStoredBlob) {
                             // Prevent `getFeatureImageBlob(newPath)` from returning null before the blob store key moves.
                             db.beginFeatureImageBlobMove(oldPath, file.path);
                         }
@@ -608,40 +644,17 @@ export function useStorageVaultSync(params: {
                             // Prevent preview status repairs while the preview store key is moving from oldPath -> newPath.
                             db.beginPreviewTextMove(oldPath, file.path);
                         }
-                        runAsyncAction(async () => {
-                            try {
-                                // Persist the seeded record at `newPath` before content providers run.
-                                //
-                                // Content providers can still run during the rename window (before the next diff reconciles the vault).
-                                // Provider writes fetch the main IndexedDB record for the path first. If the record is missing, the
-                                // provider layer creates a default record, which resets preview/feature-image fields (status/key) and
-                                // also drops any cached preview text for the path.
-                                //
-                                // Keeping a real record in IndexedDB avoids the default-record path and preserves the seeded fields
-                                // until the diff finishes and deletes `oldPath`.
-                                await db.setFile(file.path, { ...seeded, mtime: file.stat.mtime });
-                                const operations: Promise<void>[] = [db.moveFeatureImageBlob(oldPath, file.path)];
-
-                                if (wasMarkdown && isMarkdown) {
-                                    operations.push(db.movePreviewText(oldPath, file.path));
-                                } else if (wasMarkdown) {
-                                    operations.push(
-                                        db.deletePreviewText(oldPath).catch((error: unknown) => {
-                                            console.error('Failed to delete preview text after rename:', {
-                                                oldPath,
-                                                newPath: file.path,
-                                                error
-                                            });
-                                        })
-                                    );
-                                }
-
-                                await Promise.all(operations);
-                                queueFileContentRefresh(file);
-                            } finally {
-                                rebuildFileCache?.();
-                            }
+                        renameFlushBuffer.moves.push({
+                            file,
+                            oldPath,
+                            newPath: file.path,
+                            seeded,
+                            wasMarkdown,
+                            isMarkdown,
+                            hasStoredBlob
                         });
+                        renameFlushController.scheduleFlush();
+                        rebuildFileCache?.();
                         return;
                     }
                 } catch (error: unknown) {
@@ -729,6 +742,12 @@ export function useStorageVaultSync(params: {
             clearPendingModifyFlushTimer();
             clearPendingMetadataChangeFlushTimer();
 
+            // Flush buffered renames now: their seeded memory records must not outlive the effect
+            // unpersisted. A plain view close never remounts this effect, and the next session's diff
+            // would treat the seeded paths as unchanged while deleting the old-path artifacts. On plugin
+            // shutdown `stopAllProcessing` has already emptied the buffer and the flush drops out.
+            renameFlushController.flushNow();
+
             // Clears debouncers and pending waits so no background work continues after teardown.
             cancelTreeRebuildDebouncer({ reset: true });
             disposeMetadataWaitDisposers();
@@ -759,6 +778,7 @@ export function useStorageVaultSync(params: {
         rebuildFileCacheRef,
         rebuildTagTree,
         rebuildPropertyTree,
+        renameFlushBufferRef,
         scheduleTagTreeRebuild,
         schedulePropertyTreeRebuild,
         setIsStorageReady,

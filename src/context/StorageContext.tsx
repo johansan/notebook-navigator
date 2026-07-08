@@ -54,6 +54,7 @@ import { useTreeRebuildScheduler } from './storage/useTreeRebuildScheduler';
 import { useTagTreeSync } from './storage/useTagTreeSync';
 import { usePropertyTreeSync } from './storage/usePropertyTreeSync';
 import { useStorageVaultSync, type PendingFileFlushBuffer } from './storage/useStorageVaultSync';
+import type { PendingRenameFlushBuffer } from './storage/renameFlush';
 import { useStorageSettingsSync } from './storage/useStorageSettingsSync';
 import { METADATA_SENTINEL, type FileData as DBFileData, type IndexedDBStorage } from '../storage/IndexedDBStorage';
 import { getDBInstance } from '../storage/fileOperations';
@@ -189,6 +190,9 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
     // Buffered `metadataCache.changed` events awaiting a debounced flush. This flush is the only content
     // trigger for markdown saves, so buffered entries must survive effect remounts.
     const metadataChangeFlushBufferRef = useRef<PendingFileFlushBuffer>({ files: new Map(), timerId: null, isProcessing: false });
+    // Buffered vault rename events awaiting the zero-delay batched flush. Owned here so buffered
+    // entries survive remounts of the vault-sync effect.
+    const renameFlushBufferRef = useRef<PendingRenameFlushBuffer>({ moves: [], timerId: null });
     const latestSettingsRef = useRef(settings);
     latestSettingsRef.current = settings;
     const activeVaultEventRefs = useRef<EventRef[] | null>(null);
@@ -539,6 +543,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         pendingRenameDataRef,
         modifyFlushBufferRef,
         metadataChangeFlushBufferRef,
+        renameFlushBufferRef,
         buildFileCacheFnRef,
         rebuildFileCacheRef,
         activeVaultEventRefsRef: activeVaultEventRefs,
@@ -599,6 +604,15 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                     }
                     buffer.files.clear();
                 }
+                // Drop buffered renames and their flush timer; the next session's full diff reconciles them
+                const renameBuffer = renameFlushBufferRef.current;
+                if (renameBuffer.timerId !== null) {
+                    if (typeof window !== 'undefined') {
+                        window.clearTimeout(renameBuffer.timerId);
+                    }
+                    renameBuffer.timerId = null;
+                }
+                renameBuffer.moves = [];
                 // Optionally detach event subscriptions and cancel debouncers
                 try {
                     if (activeVaultEventRefs.current) {

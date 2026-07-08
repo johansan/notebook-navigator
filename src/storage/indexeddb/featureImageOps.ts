@@ -101,26 +101,32 @@ export class FeatureImageCoordinator {
         await this.blobs.forEachBlobRecord(db, callback);
     }
 
-    async moveBlob(oldPath: string, newPath: string): Promise<void> {
-        if (oldPath === newPath) {
+    async moveBlobs(moves: { oldPath: string; newPath: string }[]): Promise<void> {
+        // Persists a rename burst's blob store moves in one transaction. Callers begin each move at
+        // rename-event time (`beginMove` relocates the cached thumbnail and records the fallback
+        // marker); this method ends the markers once the batch lands. Markers for a failed batch
+        // keep the old-path fallback alive and expire via `pruneMovesInFlight`.
+        const pendingMoves = moves.filter(move => move.oldPath !== move.newPath);
+        if (pendingMoves.length === 0) {
             return;
         }
-        this.beginMove(oldPath, newPath);
 
         let didMove = false;
         try {
             await this.init();
             const db = this.getDb();
             if (!db) throw new Error('Database not initialized');
-            await this.blobs.moveBlob(db, oldPath, newPath);
+            await this.blobs.moveBlobs(db, pendingMoves);
             didMove = true;
         } catch (error: unknown) {
             if (!this.isClosing()) {
-                console.error('[FeatureImageBlob] Failed to move feature image blob', { oldPath, newPath, error });
+                console.error('[FeatureImageBlob] Failed to move feature image blobs', { moves: pendingMoves, error });
             }
         } finally {
             if (didMove) {
-                this.endMove(oldPath, newPath);
+                for (const move of pendingMoves) {
+                    this.endMove(move.oldPath, move.newPath);
+                }
             }
         }
     }
