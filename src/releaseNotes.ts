@@ -92,17 +92,17 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.3',
-        date: '2026-07-06',
-        showOnUpdate: false,
-        info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs while you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders. Rendering while scrolling is now 15-25% lighter, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately. You should notice these improvements in your daily use, especially if you have a large vault.',
+        date: '2026-07-09',
+        showOnUpdate: true,
+        info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs while you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders.\n\nRendering while scrolling is now 15-25% more efficient, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately.\n\nYou should notice these improvements in your daily use, especially if you have a large vault. Thank you for using Notebook Navigator!',
         new: [
-            '**Calendar.** New setting: ==Show tasks== in Calendar > Appearance. Displays an indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
-            '**Display filters.** New setting: ==Exclude folders from descendants==. Matching folders stay visible, but their notes are omitted when a parent folder shows notes from subfolders. Use it to keep periodic-note folders such as `Daily`, `Weekly`, or `Monthly` out of parent folder lists while the folders remain visible and selectable.',
-            '**Feature images.** SVG images are supported as feature images again. SVG sources are rasterized once into cached thumbnails during content generation instead of rendering live in the list. SVG files that embed bitmap images are skipped. Local `.svg` files shown in the list pane also receive generated thumbnails.',
-            '**Navigation banner.** SVG files can be selected as the navigation banner image.'
+            '**Calendar.** New setting: ==Show tasks== in Calendar > Appearance. You can now hide the indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
+            '**Display filters.** New setting: Display filters > ==Exclude folders from descendants==. You can now exclude folders from showing when "Show files from subfolders" is enabled. Use it to keep periodic-note folders such as `Daily`, `Weekly`, or `Monthly` out of parent folder lists while the folders remain visible and selectable.',
+            '**Feature images.** SVG images are back as feature images again. SVG sources are now rasterized into cached thumbnails during content generation instead of rendering live in the list. SVG files that embed bitmap images are skipped.',
+            '**Navigation banner.** SVG files can now also be selected as the navigation banner image.'
         ],
         improved: [
-            '**Settings.** Importing settings now shows a confirmation dialog with an option to save current settings to a timestamped file in the vault root. Exported settings files use timestamped filenames and record the plugin version. Import rejects JSON that is not a Notebook Navigator export or recognizable legacy settings diff.',
+            '**Settings.** Importing settings now shows a confirmation dialog with an option to save current settings to a timestamped file in the vault root. Exported settings files now use timestamped filenames and record the plugin version. Import rejects JSON that is not a Notebook Navigator export or recognizable legacy settings diff.',
             '**Calendar.** Middle-click on day cells, week numbers, month, quarter and year headers, and the year panel opens the calendar note in a new tab, creating it if needed.',
             '**Feature images.** Thumbnails with transparent backgrounds, such as SVG or PNG images, no longer show an outline over transparent areas.',
             '**Performance.** Reduced list pane rendering work. List rows and pane headers now skip re-rendering when their content is unchanged, file rows mount with fewer React hooks, and formatted dates and date group labels are cached. React rendering work while scrolling is 15-25% lower, and building the file list when switching folders is about 60% faster.',
@@ -114,7 +114,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         ],
         fixed: [
             '**Drag and drop.** Fixed drag and drop not working on some Windows PCs where the system did not expose drag data during the drag operation.',
-            '**Display filters.** Fixed path entries in ==Hide folders== losing path segments when a folder moved to a different folder depth. Hidden tag patterns had the same issue when a tag rename changed depth. Patterns containing `name*` segments are left unchanged when the moved folder or renamed tag does not match them.',
+            '**Display filters.** Fixed entries in Display filters > Hide folders losing path segments when a folder moved to a different folder depth. Hidden tag patterns had the same issue when a tag rename changed depth. Patterns containing `name*` segments are left unchanged when the moved folder or renamed tag does not match them.',
             '**Editor tabs.** Fixed notes pinned in the editor opening again when selected from Notebook Navigator instead of reusing the existing main editor tab.'
         ]
     },
