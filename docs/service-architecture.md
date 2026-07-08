@@ -377,7 +377,6 @@ createNewFileForProperty(
   openInNewTab?: boolean,
   manualSortContext?: ManualSortNewFilePlacementContext | null
 ): Promise<TFile | null>
-renameFolder(folder: TFolder, settings?: NotebookNavigatorSettings): Promise<void>
 renameFolderToName(folder: TFolder, newName: string, settings?: NotebookNavigatorSettings): Promise<boolean>
 renameFolderDisplayName(folder: TFolder, value: string, settings?: NotebookNavigatorSettings): Promise<boolean>
 renameFile(file: TFile): Promise<void>
