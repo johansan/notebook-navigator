@@ -455,6 +455,10 @@ export function getSupportedLeaves(app: App): WorkspaceLeaf[] {
     return SUPPORTED_LEAF_TYPES.flatMap(type => app.workspace.getLeavesOfType(type));
 }
 
+export function isSupportedLeafType(viewType: string): viewType is SupportedLeafType {
+    return SUPPORTED_LEAF_TYPES.includes(viewType as SupportedLeafType);
+}
+
 /**
  * Virtual folder for organizing tags
  * These are not real folders but act like folders in the UI
