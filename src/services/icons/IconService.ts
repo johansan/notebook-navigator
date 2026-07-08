@@ -32,6 +32,9 @@ export class IconService {
     private static readonly FALLBACK_ICON_ID = 'image-off';
     private version = 0;
     private listeners = new Set<() => void>();
+    // Icon id sets per provider used by isValidIcon, rebuilt lazily after provider or asset changes
+    private validIconIds = new Map<string, Set<string>>();
+    private validIconIdsVersion = 0;
 
     private constructor(config: IconServiceConfig = {}) {
         this.config = {
@@ -262,6 +265,15 @@ export class IconService {
     }
 
     /**
+     * Clears the cached icon id sets so the next isValidIcon call rebuilds them from providers.
+     *
+     * Used when a provider's icon list changes before the debounced asset change notification bumps the version.
+     */
+    invalidateIconValidationCache(): void {
+        this.validIconIds.clear();
+    }
+
+    /**
      * Notifies all subscribers when providers change.
      */
     private notifyListeners(): void {
@@ -346,7 +358,17 @@ export class IconService {
             return false;
         }
 
-        const allIcons = provider.getAll();
-        return allIcons.some(icon => icon.id === parsed.identifier);
+        if (this.validIconIdsVersion !== this.version) {
+            this.validIconIds.clear();
+            this.validIconIdsVersion = this.version;
+        }
+
+        let iconIds = this.validIconIds.get(provider.id);
+        if (!iconIds) {
+            iconIds = new Set(provider.getAll().map(icon => icon.id));
+            this.validIconIds.set(provider.id, iconIds);
+        }
+
+        return iconIds.has(parsed.identifier);
     }
 }

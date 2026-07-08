@@ -176,6 +176,7 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                     updateVaultIconListCacheForRename(file, oldPath);
                     invalidateVaultIconSvgCache(oldPath);
                     invalidateVaultIconSvgCache(file.path);
+                    iconService.invalidateIconValidationCache();
                     scheduleIconAssetsChanged();
                 }
 
@@ -218,6 +219,7 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
 
                 updateVaultIconListCacheForCreate(file);
                 invalidateVaultIconSvgCache(file.path);
+                iconService.invalidateIconValidationCache();
                 scheduleIconAssetsChanged();
             });
         })
@@ -269,6 +271,7 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                 if (isVaultIconFile(file)) {
                     updateVaultIconListCacheForDelete(file.path);
                     invalidateVaultIconSvgCache(file.path);
+                    iconService.invalidateIconValidationCache();
                     scheduleIconAssetsChanged();
                 }
             });
