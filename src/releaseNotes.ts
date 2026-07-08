@@ -94,6 +94,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.3',
         date: '2026-07-06',
         showOnUpdate: false,
+        info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs while you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders. Rendering while scrolling is now 15-25% lighter, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately. You should notice these improvements in your daily use, especially if you have a large vault.',
         new: [
             '**Calendar.** New setting: ==Show tasks== in Calendar > Appearance. Displays an indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
             '**Display filters.** New setting: ==Exclude folders from descendants==. Matching folders stay visible, but their notes are omitted when a parent folder shows notes from subfolders. Use it to keep periodic-note folders such as `Daily`, `Weekly`, or `Monthly` out of parent folder lists while the folders remain visible and selectable.',
@@ -101,15 +102,15 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Navigation banner.** SVG files can be selected as the navigation banner image.'
         ],
         improved: [
+            '**Settings.** Importing settings now shows a confirmation dialog with an option to save current settings to a timestamped file in the vault root. Exported settings files use timestamped filenames and record the plugin version. Import rejects JSON that is not a Notebook Navigator export or recognizable legacy settings diff.',
+            '**Calendar.** Middle-click on day cells, week numbers, month, quarter and year headers, and the year panel opens the calendar note in a new tab, creating it if needed.',
+            '**Feature images.** Thumbnails with transparent backgrounds, such as SVG or PNG images, no longer show an outline over transparent areas.',
             '**Performance.** Reduced list pane rendering work. List rows and pane headers now skip re-rendering when their content is unchanged, file rows mount with fewer React hooks, and formatted dates and date group labels are cached. React rendering work while scrolling is 15-25% lower, and building the file list when switching folders is about 60% faster.',
             '**Performance.** Faster startup. Database initialization now completes cache loading before the initial vault scan runs. Previously the scan could see an empty cache, rewrite all file records, and requeue content generation on every start. Storage initialization on warm starts is about 5 times faster, with the largest gains on mobile and in large vaults.',
             '**Performance.** Reduced navigation pane and calendar rendering work. Navigation pane rows now skip re-rendering while scrolling, and selecting, expanding, or renaming an item re-renders only the affected rows instead of all visible rows. Calendar day cells skip re-rendering when their content is unchanged, and formatted day labels are cached.',
             '**Performance.** Reduced content processing while editing notes. Saving a note now generates derived content (preview text, word counts, tasks, feature image) once instead of twice, reducing background processing while typing by 50%.',
             '**Performance.** Reduced database work when renaming or moving folders. File records, thumbnails, and preview texts for all files in a rename or move are now written in one batched database transaction per store instead of three transactions per file.',
-            '**Performance.** Reduced tag and property tree rebuild work on vault changes. Both trees now rebuild in one shared pass with a single file scan, the tag tree reads only visible files instead of every cached record, and changes to files hidden by display filters no longer trigger rebuilds.',
-            '**Settings.** Importing settings now shows a confirmation dialog with an option to save current settings to a timestamped file in the vault root. Exported settings files use timestamped filenames and record the plugin version. Import rejects JSON that is not a Notebook Navigator export or recognizable legacy settings diff.',
-            '**Calendar.** Middle-click on day cells, week numbers, month, quarter and year headers, and the year panel opens the calendar note in a new tab, creating it if needed.',
-            '**Feature images.** Thumbnails with transparent backgrounds, such as SVG or PNG images, no longer show an outline over transparent areas.'
+            '**Performance.** Reduced tag and property tree rebuild work on vault changes. Both trees now rebuild in one shared pass with a single file scan, the tag tree reads only visible files instead of every cached record, and changes to files hidden by display filters no longer trigger rebuilds.'
         ],
         fixed: [
             '**Drag and drop.** Fixed drag and drop not working on some Windows PCs where the system did not expose drag data during the drag operation.',
