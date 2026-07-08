@@ -96,6 +96,7 @@ export function NavigationPaneTreeRow({
                     descendantExcludedFolders={descendantExcludedFolders}
                     vaultChangeVersion={vaultChangeVersion}
                     disableNavigationSeparatorActions={shouldHideFolderSeparatorActions}
+                    onStartInlineRename={inlineRename.startFolder}
                     inlineRename={
                         renameTarget
                             ? {

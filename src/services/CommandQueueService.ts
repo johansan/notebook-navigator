@@ -26,6 +26,7 @@ const BACKGROUND_OPEN_MARKER_TTL_MS = 250;
  */
 export enum OperationType {
     MOVE_FILE = 'move-file',
+    RENAME_FOLDER = 'rename-folder',
     DELETE_FILES = 'delete-files',
     OPEN_FOLDER_NOTE = 'open-folder-note',
     OPEN_VERSION_HISTORY = 'open-version-history',
@@ -51,6 +52,14 @@ interface MoveFileOperation extends BaseOperation {
     type: OperationType.MOVE_FILE;
     files: TFile[];
     targetFolder: TFolder;
+}
+
+/**
+ * Operation for tracking folder renames
+ */
+interface RenameFolderOperation extends BaseOperation {
+    type: OperationType.RENAME_FOLDER;
+    folderPath: string;
 }
 
 /**
@@ -132,6 +141,7 @@ interface BackgroundFileOpenOptions {
 
 type Operation =
     | MoveFileOperation
+    | RenameFolderOperation
     | DeleteFilesOperation
     | OpenFolderNoteOperation
     | OpenVersionHistoryOperation
@@ -320,6 +330,20 @@ export class CommandQueueService {
     }
 
     /**
+     * Check if a folder rename operation is active
+     */
+    isRenamingFolder(): boolean {
+        return this.hasActiveOperation(OperationType.RENAME_FOLDER);
+    }
+
+    /**
+     * Check if Navigator is performing a path-changing operation that should not trigger active-file auto-reveal
+     */
+    isChangingFilePaths(): boolean {
+        return this.isMovingFile() || this.isRenamingFolder();
+    }
+
+    /**
      * Check if deleting files
      */
     isDeletingFiles(): boolean {
@@ -484,6 +508,35 @@ export class CommandQueueService {
             // Always clean up the operation
             this.activeOperations.delete(operationId);
             this.markInactive(OperationType.MOVE_FILE);
+        }
+    }
+
+    /**
+     * Execute a folder rename operation with proper context tracking
+     */
+    async executeRenameFolder(folderPath: string, performRename: () => Promise<void>): Promise<CommandResult<void>> {
+        const operationId = this.generateOperationId();
+        const operation: RenameFolderOperation = {
+            id: operationId,
+            type: OperationType.RENAME_FOLDER,
+            timestamp: Date.now(),
+            folderPath
+        };
+
+        this.activeOperations.set(operationId, operation);
+        this.markActive(OperationType.RENAME_FOLDER);
+
+        try {
+            await performRename();
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                error: error as Error
+            };
+        } finally {
+            this.activeOperations.delete(operationId);
+            this.markInactive(OperationType.RENAME_FOLDER);
         }
     }
 

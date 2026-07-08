@@ -847,6 +847,34 @@ export const NavigationPane = React.memo(
             return true;
         }, [buildRenameTarget, getSelectedRenderedItem]);
 
+        const handleStartFolderInlineRename = useCallback(
+            (folder: TFolder): boolean => {
+                if (isRootReorderMode) {
+                    return false;
+                }
+
+                const index = getNavigationIndex(pathToIndex, ItemType.FOLDER, folder.path);
+                if (index === undefined) {
+                    return false;
+                }
+
+                const item = items[index];
+                if (!item || item.type !== NavigationPaneItemType.FOLDER) {
+                    return false;
+                }
+
+                const target = buildRenameTarget(item);
+                if (!target) {
+                    return false;
+                }
+
+                setInlineRenameTarget(target);
+                requestScroll(folder.path, { align: 'auto', itemType: ItemType.FOLDER });
+                return true;
+            },
+            [buildRenameTarget, isRootReorderMode, items, pathToIndex, requestScroll]
+        );
+
         const handleCancelInlineRename = useCallback(() => {
             setInlineRenameTarget(null);
         }, []);
@@ -1025,6 +1053,7 @@ export const NavigationPane = React.memo(
                 tree,
                 searchHighlights,
                 inlineRename: {
+                    startFolder: handleStartFolderInlineRename,
                     commit: handleCommitInlineRename,
                     cancel: handleCancelInlineRename,
                     restoreFocus: restoreNavigationPaneFocus
@@ -1046,6 +1075,7 @@ export const NavigationPane = React.memo(
                 handleSectionContextMenu,
                 handleCancelInlineRename,
                 handleCommitInlineRename,
+                handleStartFolderInlineRename,
                 indentGuideLevelsByKey,
                 isMobile,
                 propertyCounts,

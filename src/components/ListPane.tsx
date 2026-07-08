@@ -929,6 +929,20 @@ export const ListPane = React.memo(
             window.setTimeout(restore, 0);
         }, [props.rootContainerRef, scrollContainerRef]);
 
+        const handleStartFileInlineRenameForFile = React.useCallback(
+            (file: TFile): boolean => {
+                const index = filePathToIndex.get(file.path);
+                if (index === undefined) {
+                    return false;
+                }
+
+                setInlineRenameFilePath(file.path);
+                scrollToIndexSafely(index, 'auto');
+                return true;
+            },
+            [filePathToIndex, scrollToIndexSafely]
+        );
+
         const prevCalendarOverlayVisibleRef = useRef<boolean>(shouldRenderCalendarOverlay);
         const prevCalendarWeekCountRef = useRef<number>(calendarWeekCount);
 
@@ -1023,7 +1037,14 @@ export const ListPane = React.memo(
         }, [addNoteShortcut, removeShortcut]);
 
         // Attach context menu to empty areas in the list pane for file creation
-        useContextMenu(scrollContainerRef, { type: EMPTY_LIST_MENU_TYPE, item: selectedFolder ?? null, options: { orderedFiles } });
+        useContextMenu(scrollContainerRef, {
+            type: EMPTY_LIST_MENU_TYPE,
+            item: selectedFolder ?? null,
+            options: {
+                orderedFiles,
+                onStartInlineRename: handleStartFileInlineRenameForFile
+            }
+        });
 
         const isCompactMode = appearanceSettings.mode === 'compact';
         const {
@@ -1511,15 +1532,8 @@ export const ListPane = React.memo(
                 return false;
             }
 
-            const index = filePathToIndex.get(selectedFile.path);
-            if (index === undefined) {
-                return false;
-            }
-
-            setInlineRenameFilePath(selectedFile.path);
-            scrollToIndexSafely(index, 'auto');
-            return true;
-        }, [filePathToIndex, scrollToIndexSafely, selectedFile]);
+            return handleStartFileInlineRenameForFile(selectedFile);
+        }, [handleStartFileInlineRenameForFile, selectedFile]);
 
         const handleFileRenameCommit = React.useCallback(
             async (file: TFile, value: string): Promise<boolean> => {

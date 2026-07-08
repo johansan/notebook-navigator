@@ -114,6 +114,7 @@ export interface MenuBuilderParams {
 
 export interface FolderMenuOptions {
     disableNavigationSeparatorActions?: boolean;
+    onStartInlineRename?: (folder: TFolder) => boolean;
 }
 
 export interface TagMenuOptions {
@@ -127,10 +128,12 @@ export interface PropertyMenuOptions {
 export interface FileMenuOptions {
     source?: 'list-pane';
     orderedFiles?: readonly TFile[];
+    onStartInlineRename?: (file: TFile) => boolean;
 }
 
 export interface EmptyListMenuOptions {
     orderedFiles?: readonly TFile[];
+    onStartInlineRename?: (file: TFile) => boolean;
 }
 
 /**

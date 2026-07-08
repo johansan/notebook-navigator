@@ -1045,30 +1045,6 @@ export class FileSystemOperations {
     }
 
     /**
-     * Renames a folder with user-provided name
-     * Shows input modal pre-filled with current name
-     * Validates that new name is different from current
-     * Also renames associated folder note if it exists
-     * @param folder - The folder to rename
-     * @param settings - The plugin settings (optional)
-     */
-    async renameFolder(folder: TFolder, settings?: NotebookNavigatorSettings): Promise<void> {
-        const nameInputOptions = this.getNameInputModalOptions();
-
-        const modal = new InputModal(
-            this.app,
-            strings.modals.fileSystem.renameFolderTitle,
-            strings.modals.fileSystem.renamePrompt,
-            async newName => {
-                await this.renameFolderToName(folder, newName, settings);
-            },
-            folder.name,
-            nameInputOptions
-        );
-        modal.open();
-    }
-
-    /**
      * Renames a folder from an already-collected name.
      * Returns false only when the rename attempted and failed.
      */
@@ -1105,18 +1081,55 @@ export class FileSystemOperations {
             const parentPath = folder.parent?.path ?? '/';
             const newFolderPath = buildPathInFolder(parentPath, filteredName);
 
-            await this.app.fileManager.renameFile(folder, newFolderPath);
-            await this.folderPathSettingsSync.syncHiddenFolderPathChange(previousFolderPath, newFolderPath);
+            const performRename = async (): Promise<void> => {
+                await this.app.fileManager.renameFile(folder, newFolderPath);
+                await this.folderPathSettingsSync.syncHiddenFolderPathChange(previousFolderPath, newFolderPath);
 
-            if (folderNote && renamedFolderNoteFileName !== null) {
-                const newNotePath = buildPathInFolder(newFolderPath, renamedFolderNoteFileName);
-                await this.app.fileManager.renameFile(folderNote, newNotePath);
+                if (folderNote && renamedFolderNoteFileName !== null) {
+                    const newNotePath = buildPathInFolder(newFolderPath, renamedFolderNoteFileName);
+                    await this.app.fileManager.renameFile(folderNote, newNotePath);
+                }
+            };
+
+            const commandQueue = this.getCommandQueue();
+            if (commandQueue) {
+                const result = await commandQueue.executeRenameFolder(previousFolderPath, performRename);
+                if (!result.success) {
+                    throw result.error ?? new Error(strings.common.unknownError);
+                }
+            } else {
+                await performRename();
             }
             return true;
         } catch (error) {
             this.notifyError(strings.fileSystem.errors.renameFolder, error);
             return false;
         }
+    }
+
+    /**
+     * Opens a modal that renames the vault root display name or a folder path.
+     */
+    async renameFolder(folder: TFolder, settings?: NotebookNavigatorSettings): Promise<void> {
+        const isRootFolder = folder.path === '/';
+        const nameInputOptions = isRootFolder ? undefined : this.getNameInputModalOptions();
+
+        const modal = new InputModal(
+            this.app,
+            isRootFolder ? strings.modals.fileSystem.renameVaultTitle : strings.modals.fileSystem.renameFolderTitle,
+            isRootFolder ? strings.modals.fileSystem.renameVaultPrompt : strings.modals.fileSystem.renamePrompt,
+            async newName => {
+                if (isRootFolder) {
+                    await this.renameFolderDisplayName(folder, newName, settings);
+                    return;
+                }
+
+                await this.renameFolderToName(folder, newName, settings);
+            },
+            isRootFolder ? this.settingsProvider.settings.customVaultName : folder.name,
+            nameInputOptions
+        );
+        modal.open();
     }
 
     async renameFolderDisplayName(folder: TFolder, value: string, settings?: NotebookNavigatorSettings): Promise<boolean> {

@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import type { App, TFile } from 'obsidian';
+import type { App, TFile, TFolder } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import type { FileVisibility } from '../../utils/fileTypeUtils';
 import type { NoteCountInfo } from '../../types/noteCounts';
@@ -35,6 +35,7 @@ export type NavigationInlineRenameTarget =
     | { type: 'property'; id: string; initialValue: string; normalizedKey: string };
 
 export interface NavigationInlineRenameActions {
+    startFolder: (folder: TFolder) => boolean;
     commit: (target: NavigationInlineRenameTarget, value: string) => Promise<boolean>;
     cancel: () => void;
     restoreFocus: () => void;
