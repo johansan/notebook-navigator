@@ -79,7 +79,7 @@ describe('recordFileChanges patch-only updates', () => {
         });
         db.setFile(file.path, current);
 
-        // Simulate a stale cachedFiles snapshot (e.g. collected before providers finished writing content).
+        // Simulate a stale existingData snapshot (e.g. collected before providers finished writing content).
         const staleSnapshot = createFileData({
             mtime: 100,
             tags: null,

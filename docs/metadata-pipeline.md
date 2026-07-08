@@ -152,7 +152,8 @@ The file cache is seeded and kept up to date with a diff-based sync:
   - `toAdd`: new paths
   - `toUpdate`: paths whose `file.stat.mtime` changed
   - `toRemove`: cached paths no longer present in the vault
-- `recordFileChanges(files, cachedFiles, ...)` (`src/storage/fileOperations.ts`) updates the database:
+  - `existingData`: cached records for the `toUpdate` paths, consumed by `recordFileChanges`
+- `recordFileChanges(files, existingData, ...)` (`src/storage/fileOperations.ts`) updates the database:
   - New files: create default `FileData` with “unprocessed”/`null` markers for derived content
   - Modified files: patch only `mtime` and leave provider-owned fields intact, so existing derived content remains visible until providers regenerate
 - `removeFilesFromCache(paths)` removes the file record and associated preview/blob store entries.

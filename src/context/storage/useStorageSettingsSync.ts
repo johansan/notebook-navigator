@@ -283,14 +283,14 @@ export function useStorageSettingsSync(params: {
             runAsyncAction(async () => {
                 try {
                     const allFiles = getIndexableFiles();
-                    const { toAdd, toUpdate, toRemove, cachedFiles } = await calculateFileDiff(allFiles);
+                    const { toAdd, toUpdate, toRemove, existingData } = calculateFileDiff(allFiles);
 
                     if (toRemove.length > 0) {
                         await removeFilesFromCache(toRemove);
                     }
 
                     if (toAdd.length > 0 || toUpdate.length > 0) {
-                        await recordFileChanges([...toAdd, ...toUpdate], cachedFiles, pendingRenameDataRef.current);
+                        await recordFileChanges([...toAdd, ...toUpdate], existingData, pendingRenameDataRef.current);
                     }
 
                     if (settings.showTags) {

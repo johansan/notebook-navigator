@@ -169,7 +169,7 @@ export function useStorageVaultSync(params: {
                 try {
                     recordStartupDiagnostic('storage.initialLoad.start', { indexableFileCount: allFiles.length });
                     const diffStartMs = performance.now();
-                    const { toAdd, toUpdate, toRemove, cachedFiles } = await calculateFileDiff(allFiles);
+                    const { toAdd, toUpdate, toRemove, existingData, cachedFileCount } = calculateFileDiff(allFiles);
                     const diffElapsedMs = Math.round(performance.now() - diffStartMs);
 
                     if (toRemove.length > 0) {
@@ -177,7 +177,7 @@ export function useStorageVaultSync(params: {
                     }
 
                     if (toAdd.length > 0 || toUpdate.length > 0) {
-                        await recordFileChanges([...toAdd, ...toUpdate], cachedFiles, pendingRenameDataRef.current);
+                        await recordFileChanges([...toAdd, ...toUpdate], existingData, pendingRenameDataRef.current);
                     }
 
                     // Both tree rebuilds share one visible-file scan.
@@ -236,7 +236,7 @@ export function useStorageVaultSync(params: {
                     finishStartupDiagnostics({
                         status: 'storageReady',
                         indexableFileCount: allFiles.length,
-                        cachedFileCount: cachedFiles.size,
+                        cachedFileCount,
                         diff: {
                             toAdd: toAdd.length,
                             toUpdate: toUpdate.length,
@@ -270,10 +270,10 @@ export function useStorageVaultSync(params: {
                 const processDiff = async () => {
                     if (stoppedRef.current) return;
                     try {
-                        const { toAdd, toUpdate, toRemove, cachedFiles } = await calculateFileDiff(allFiles);
+                        const { toAdd, toUpdate, toRemove, existingData, cachedFileCount } = calculateFileDiff(allFiles);
                         recordStartupDiagnostic('storage.diff.processed', {
                             indexableFileCount: allFiles.length,
-                            cachedFileCount: cachedFiles.size,
+                            cachedFileCount,
                             toAdd: toAdd.length,
                             toUpdate: toUpdate.length,
                             toRemove: toRemove.length
@@ -283,7 +283,7 @@ export function useStorageVaultSync(params: {
                             try {
                                 const filesToUpdate = [...toAdd, ...toUpdate];
                                 if (filesToUpdate.length > 0) {
-                                    await recordFileChanges(filesToUpdate, cachedFiles, pendingRenameDataRef.current);
+                                    await recordFileChanges(filesToUpdate, existingData, pendingRenameDataRef.current);
                                 }
 
                                 if (toRemove.length > 0) {

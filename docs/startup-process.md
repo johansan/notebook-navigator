@@ -265,7 +265,7 @@ tag extraction and markdown pipeline processing:
    - Warm boot: compare against cached data to find new/modified files
 3. Apply the diff:
    - Remove deleted paths via `removeFilesFromCache(toRemove)`.
-   - Upsert new/modified files via `recordFileChanges([...toAdd, ...toUpdate], cachedFiles, pendingRenameData)`.
+   - Upsert new/modified files via `recordFileChanges([...toAdd, ...toUpdate], existingData, pendingRenameData)`.
      - New files use `createDefaultFileData` (provider processed mtimes set to `0`; markdown records initialize `tags`,
        word/character counts, task counters, and `metadata` to `null`; `previewStatus` defaults to `unprocessed` for
        markdown and `none` for non-markdown).
