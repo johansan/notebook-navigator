@@ -50,6 +50,7 @@ export interface FolderNavigationSourceState {
     rootFolderOrderMap: Map<string, number>;
     missingRootFolderPaths: string[];
     fileChangeVersion: number;
+    folderChangeVersion: number;
     folderDisplayVersion: number;
     metadataDecorationVersion: number;
     metadataVisibilityVersion: number;
@@ -134,8 +135,12 @@ export function useFolderNavigationSourceState({
 
     const [folderExclusionVersion, setFolderExclusionVersion] = useState(0);
     const [fileChangeVersion, setFileChangeVersion] = useState(0);
+    const [folderChangeVersion, setFolderChangeVersion] = useState(0);
     const bumpFileChangeVersion = useCallback(() => {
         setFileChangeVersion(value => value + 1);
+    }, []);
+    const handleRootFolderChange = useCallback(() => {
+        setFolderChangeVersion(value => value + 1);
     }, []);
     const handleRootFileChange = useCallback(
         (change: RootFileChangeEvent) => {
@@ -150,7 +155,8 @@ export function useFolderNavigationSourceState({
 
     const { rootFolders, rootLevelFolders, rootFolderOrderMap, missingRootFolderPaths } = useRootFolderOrder({
         settings,
-        onFileChange: handleRootFileChange
+        onFileChange: handleRootFileChange,
+        onFolderChange: handleRootFolderChange
     });
 
     const [folderDisplayVersion, setFolderDisplayVersion] = useState(() => metadataService.getFolderDisplayVersion());
@@ -423,6 +429,7 @@ export function useFolderNavigationSourceState({
             rootFolderOrderMap,
             missingRootFolderPaths,
             fileChangeVersion,
+            folderChangeVersion,
             folderDisplayVersion,
             metadataDecorationVersion,
             metadataVisibilityVersion,
@@ -434,6 +441,7 @@ export function useFolderNavigationSourceState({
         }),
         [
             folderExclusionByFolderNote,
+            folderChangeVersion,
             folderDisplayVersion,
             fileChangeVersion,
             getFolderSortName,

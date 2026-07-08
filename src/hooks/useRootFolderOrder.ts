@@ -51,6 +51,7 @@ export interface RootFileChangeEvent {
 export interface UseRootFolderOrderParams {
     settings: NotebookNavigatorSettings;
     onFileChange?: (change: RootFileChangeEvent) => void; // Callback triggered when files change
+    onFolderChange?: () => void; // Callback triggered when folders are created, deleted, or renamed
 }
 
 /**
@@ -148,7 +149,7 @@ function sortFoldersByOrder(folders: TFolder[], orderMap: Map<string, number>): 
  * Hook that manages the custom ordering of root-level folders.
  * Tracks folder creation, deletion, and renaming to maintain order consistency.
  */
-export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrderParams): RootFolderOrderState {
+export function useRootFolderOrder({ settings, onFileChange, onFolderChange }: UseRootFolderOrderParams): RootFolderOrderState {
     const { app } = useServices();
     const updateSettings = useSettingsUpdate();
     const [rootFolders, setRootFolders] = useState<TFolder[]>([]);
@@ -253,6 +254,13 @@ export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrde
             }
         };
 
+        // Notifies parent component of folder structure changes ahead of the debounced rebuild
+        const notifyFolderChange = () => {
+            if (onFolderChange) {
+                onFolderChange();
+            }
+        };
+
         buildFolders();
 
         const rebuildFolders = debounce(buildFolders, TIMEOUTS.FILE_OPERATION_DELAY, true);
@@ -299,6 +307,7 @@ export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrde
             app.vault.on('create', file => {
                 if (file instanceof TFolder) {
                     handleFolderCreate(file);
+                    notifyFolderChange();
                 }
                 if (file instanceof TFile) {
                     notifyFileChange({ type: 'create', path: file.path });
@@ -307,6 +316,7 @@ export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrde
             app.vault.on('delete', file => {
                 if (file instanceof TFolder) {
                     handleFolderDelete(file);
+                    notifyFolderChange();
                 }
                 if (file instanceof TFile) {
                     notifyFileChange({ type: 'delete', path: file.path });
@@ -315,6 +325,7 @@ export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrde
             app.vault.on('rename', (file, oldPath) => {
                 if (file instanceof TFolder) {
                     handleFolderRename(file, oldPath);
+                    notifyFolderChange();
                 }
                 if (file instanceof TFile) {
                     notifyFileChange({ type: 'rename', path: file.path, oldPath });
@@ -326,7 +337,7 @@ export function useRootFolderOrder({ settings, onFileChange }: UseRootFolderOrde
             events.forEach(eventRef => app.vault.offref(eventRef));
             rebuildFolders.cancel();
         };
-    }, [app, onFileChange, settings.showRootFolder, settings.rootFolderOrder, settings.folderSortOrder, updateSettings]);
+    }, [app, onFileChange, onFolderChange, settings.showRootFolder, settings.rootFolderOrder, settings.folderSortOrder, updateSettings]);
 
     return {
         rootFolders,

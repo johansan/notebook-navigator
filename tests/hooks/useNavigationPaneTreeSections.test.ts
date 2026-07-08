@@ -143,6 +143,7 @@ function createSourceState(params?: {
     return {
         effectiveFrontmatterExclusions: [],
         hiddenFolders: [],
+        descendantExcludedFolders: [],
         hiddenTags: [],
         hiddenFileProperties: [],
         hiddenFileNames: [],
@@ -179,7 +180,8 @@ function createSourceState(params?: {
         getFolderSortName: folder => folder.name,
         folderExclusionByFolderNote: undefined,
         recentNotesHiddenFileMatcher: () => false,
-        fileChangeVersion: 0
+        fileChangeVersion: 0,
+        folderChangeVersion: 0
     };
 }
 

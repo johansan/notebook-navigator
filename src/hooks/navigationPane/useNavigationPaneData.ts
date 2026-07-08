@@ -176,7 +176,8 @@ export function useNavigationPaneData({
         metadataDecorationVersion,
         metadataVisibilityVersion,
         tagDataVersion,
-        fileChangeVersion
+        fileChangeVersion,
+        folderChangeVersion
     } = sourceState;
 
     const {
@@ -258,6 +259,7 @@ export function useNavigationPaneData({
         showHiddenItems,
         folderCountFileNameMatcher,
         fileVisibility,
+        folderChangeVersion,
         vaultChangeVersion: fileChangeVersion,
         metadataVisibilityVersion,
         tagDataVersion

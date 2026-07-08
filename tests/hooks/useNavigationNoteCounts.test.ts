@@ -98,6 +98,7 @@ describe('useNavigationNoteCounts', () => {
                 showHiddenItems: false,
                 folderCountFileNameMatcher: null,
                 fileVisibility: DEFAULT_SETTINGS.vaultProfiles[0].fileVisibility,
+                folderChangeVersion: 0,
                 vaultChangeVersion: 0,
                 metadataVisibilityVersion: 0,
                 tagDataVersion: 0

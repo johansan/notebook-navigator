@@ -56,6 +56,8 @@ export interface UseNavigationNoteCountsParams {
     showHiddenItems: boolean;
     folderCountFileNameMatcher: HiddenFileNameMatcher | null;
     fileVisibility: FileVisibility;
+    /** Bumps on folder create/delete/rename, which do not bump vaultChangeVersion */
+    folderChangeVersion: number;
     vaultChangeVersion: number;
     metadataVisibilityVersion: number;
     tagDataVersion: number;
@@ -80,6 +82,7 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         showHiddenItems,
         folderCountFileNameMatcher,
         fileVisibility,
+        folderChangeVersion,
         vaultChangeVersion,
         metadataVisibilityVersion,
         tagDataVersion
@@ -88,7 +91,9 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
     const lastTagCountsRef = useRef<Map<string, NoteCountInfo>>(new Map());
     const lastPropertyCountsRef = useRef<Map<string, NoteCountInfo>>(new Map());
     const lastFolderCountsRef = useRef<Map<string, NoteCountInfo>>(new Map());
+    const folderCountCacheRef = useRef<{ key: object; counts: Map<string, NoteCountInfo> } | null>(null);
     const hiddenFileTagDataVersion = !showHiddenItems && hiddenFileTags.length > 0 ? tagDataVersion : 0;
+    const hiddenFilePropertyVersion = effectiveFrontmatterExclusions.length > 0 ? metadataVisibilityVersion : 0;
 
     const computedTagCounts = useMemo((): Map<string, NoteCountInfo> | null => {
         if (!isVisible || !settings.showTags || !settings.showNoteCount) {
@@ -234,15 +239,58 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         }
     }, [computedPropertyCounts, propertiesSectionActive, settings.showNoteCount]);
 
-    const computedFolderCounts = useMemo((): Map<string, NoteCountInfo> | null => {
-        void vaultChangeVersion;
-        void metadataVisibilityVersion;
+    // Cache key for computed folder counts. A new object identity marks every cached count as stale.
+    // itemsWithMetadata is not an input: passes triggered by expand/collapse or decoration changes
+    // reuse cached counts. folderChangeVersion covers folder create/delete/rename, which do not bump
+    // vaultChangeVersion.
+    const folderCountCacheKey = useMemo((): object => {
+        void descendantExcludedFolders;
+        void effectiveFrontmatterExclusions;
+        void fileVisibility;
+        void folderChangeVersion;
+        void folderCountFileNameMatcher;
+        void hiddenFilePropertyVersion;
         void hiddenFileTagDataVersion;
+        void hiddenFileTags;
+        void hiddenFolders;
+        void includeDescendantNotes;
+        void settings.enableFolderNotes;
+        void settings.folderNoteName;
+        void settings.folderNoteNamePattern;
+        void settings.hideFolderNoteInList;
+        void showHiddenItems;
+        void vaultChangeVersion;
+        return {};
+    }, [
+        descendantExcludedFolders,
+        effectiveFrontmatterExclusions,
+        fileVisibility,
+        folderChangeVersion,
+        folderCountFileNameMatcher,
+        hiddenFilePropertyVersion,
+        hiddenFileTagDataVersion,
+        hiddenFileTags,
+        hiddenFolders,
+        includeDescendantNotes,
+        settings.enableFolderNotes,
+        settings.folderNoteName,
+        settings.folderNoteNamePattern,
+        settings.hideFolderNoteInList,
+        showHiddenItems,
+        vaultChangeVersion
+    ]);
+
+    const computedFolderCounts = useMemo((): Map<string, NoteCountInfo> | null => {
         if (!isVisible || !settings.showNoteCount) {
             return null;
         }
 
-        const counts = new Map<string, NoteCountInfo>();
+        // Counts persist across passes while folderCountCacheKey is unchanged; folders already in
+        // the cache return from calculateFolderNoteCounts without walking their subtrees.
+        const previousCache = folderCountCacheRef.current;
+        const counts =
+            previousCache !== null && previousCache.key === folderCountCacheKey ? previousCache.counts : new Map<string, NoteCountInfo>();
+        folderCountCacheRef.current = { key: folderCountCacheKey, counts };
 
         const excludedProperties = effectiveFrontmatterExclusions;
         const excludedFileMatcher = createFrontmatterPropertyExclusionMatcher(excludedProperties);
@@ -279,27 +327,26 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
             }
         });
 
-        return counts;
+        // Copied so a pass that adds entries yields a new map identity for downstream consumers
+        return new Map(counts);
     }, [
         app,
         effectiveFrontmatterExclusions,
         descendantExcludedFolders,
         fileVisibility,
+        folderCountCacheKey,
         folderCountFileNameMatcher,
-        hiddenFileTagDataVersion,
         hiddenFileTags,
         hiddenFolders,
         includeDescendantNotes,
         isVisible,
         itemsWithMetadata,
-        metadataVisibilityVersion,
         settings.enableFolderNotes,
         settings.folderNoteName,
         settings.folderNoteNamePattern,
         settings.hideFolderNoteInList,
         settings.showNoteCount,
-        showHiddenItems,
-        vaultChangeVersion
+        showHiddenItems
     ]);
 
     const folderCounts = useMemo(() => {
@@ -311,6 +358,7 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
 
     useEffect(() => {
         if (!settings.showNoteCount) {
+            folderCountCacheRef.current = null;
             lastFolderCountsRef.current = new Map();
             return;
         }
