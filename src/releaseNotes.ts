@@ -94,6 +94,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.3',
         date: '2026-07-09',
         showOnUpdate: true,
+        bannerUrl: true,
         info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs when you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders.\n\nRendering while scrolling is now 15-25% more efficient, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately.\n\nYou should notice these improvements in your daily use, especially if you have a large vault. Thank you for using Notebook Navigator!',
         new: [
             '**Calendar.** New setting: ==Show tasks== in Calendar > Appearance. You can now hide the indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
