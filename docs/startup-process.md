@@ -1,6 +1,6 @@
 # Notebook Navigator Startup Process
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -128,7 +128,7 @@ show progress.
 9. Construct core services and controllers:
    - `WorkspaceCoordinator` and `HomepageController` manage view activation and homepage flow.
    - `FolderNoteSidebarService` manages the right-sidebar companion leaf for folder notes.
-   - `MetadataService`, `TagOperations`, `TagTreeService`, `PropertyTreeService`, and `CommandQueueService`.
+   - `MetadataService`, `TagOperations`, `PropertyOperations`, `TagTreeService`, `PropertyTreeService`, and `CommandQueueService`.
    - `FileSystemOperations` wired with tag tree, property tree, and visibility preferences.
    - `OmnisearchService`, `NotebookNavigatorAPI`, and `ReleaseCheckService`.
    - `ExternalIconProviderController` initializes icon providers and syncs settings.
@@ -174,6 +174,7 @@ companion leaf.
    - `ExpansionProvider` (expanded folders, tags, and properties)
    - `SelectionProvider` (selected items plus rename listeners from the plugin)
    - `UIStateProvider` (pane focus and layout mode)
+   - `InternalDragSessionProvider` (internal drag session state)
 3. `NotebookNavigatorContainer` renders a skeleton until `StorageContext.isStorageReady` is true.
 4. `NotebookNavigatorView.onOpen()` adds platform classes and (on Android) applies font scaling compensation before React renders:
    - Always adds `notebook-navigator`.
@@ -272,9 +273,14 @@ tag extraction and markdown pipeline processing:
      - Modified files patch the stored `mtime` without clearing existing provider outputs. Providers compare their
        processed mtime fields (`markdownPipelineMtime`, `tagsMtime`, `metadataMtime`, `fileThumbnailsMtime`) against
        `file.stat.mtime` to detect stale content.
-4. Rebuild tag and property trees via `rebuildTagTree()` and `rebuildPropertyTree()`.
-5. Mark storage as ready (`setIsStorageReady(true)` and the internal Notebook Navigator API readiness bridge).
-6. Queue content generation:
+4. Reconcile the frontmatter metadata mirror signature (`ensureFrontmatterMetadataCacheMatchesSettings`).
+   - When frontmatter metadata is enabled and the stored settings signature in vault-scoped localStorage does not
+     match the current frontmatter settings, clear stored `metadata` content via `batchClearAllFileContent('metadata')`
+     and persist the new signature so the metadata provider regenerates mirrored metadata.
+   - When frontmatter metadata is disabled, clear the stored signature.
+5. Rebuild tag and property trees via `rebuildTagTree()` and `rebuildPropertyTree()` (both share one visible-file scan).
+6. Mark storage as ready (`setIsStorageReady(true)` and the internal Notebook Navigator API readiness bridge).
+7. Queue content generation:
    - Determine metadata-dependent provider types with `getMetadataDependentTypes(settings)`:
      - Includes `markdownPipeline` for word/character counts, task counters, preview/property/feature image pipelines.
      - Includes `tags` when `showTags` is enabled.
@@ -285,7 +291,10 @@ tag extraction and markdown pipeline processing:
 
 #### Ongoing sync (`isInitialLoad=false`)
 
-- Vault events debounce a cache rebuild.
+- Create, delete, and rename events debounce a cache rebuild.
+- Modify events buffer files and flush after `TIMEOUTS.FILE_OPERATION_DELAY`; the flush records stat changes via
+  `recordFileChanges` and queues content refresh for non-markdown files only. Markdown content generation is queued
+  by the metadata-change flush after Obsidian has indexed the save.
 - Diff processing is deferred with a zero-delay `setTimeout` and uses the same `calculateFileDiff` + `recordFileChanges` /
   `removeFilesFromCache` flow.
 - Renames seed `MemoryFileCache` with the old record, move preview/feature-image artifacts, then schedule a diff to reconcile mtimes.
@@ -308,8 +317,10 @@ graph TD
     C --> D["removeFilesFromCache (toRemove)"]
     C --> E["recordFileChanges (toAdd/toUpdate)"]
 
-    D --> F[rebuildTagTree + rebuildPropertyTree]
-    E --> F
+    D --> FM["ensureFrontmatterMetadataCacheMatchesSettings"]
+    E --> FM
+
+    FM --> F[rebuildTagTree + rebuildPropertyTree]
 
     F --> G[Mark storage ready<br/>notify API]
 
@@ -384,7 +395,7 @@ Content is generated asynchronously in the background by the ContentProviderRegi
 3. **Processing**: Each provider processes files independently
    - TagContentProvider: Extracts tags from Obsidian's metadata cache (`getAllTags(metadata)`)
    - MarkdownPipelineContentProvider: Uses metadata cache for frontmatter/offsets, reads markdown content when needed, runs preview/word count/character count/task/property/feature image processors
-   - FeatureImageContentProvider: Generates or marks feature images for supported non-markdown files (PDF cover thumbnails and raw drawing rows)
+   - FeatureImageContentProvider: Generates or marks feature images for supported non-markdown files (PDF and SVG thumbnails and non-markdown drawing files)
    - MetadataContentProvider: Extracts configured frontmatter fields and hidden state from Obsidian's metadata cache
 
 4. **Database Updates**: Results stored in IndexedDB
@@ -418,7 +429,7 @@ StorageContext and content providers defer heavy work so it does not run directl
 
 - Vault diff processing is deferred with `setTimeout(..., 0)` so bursts of vault events can coalesce.
 - Metadata cache gating batches queue flushes with `setTimeout(..., 0)`.
-- Content providers yield between batches via `requestAnimationFrame` (fallback: `setTimeout(..., 0)`).
+- Content providers yield between batches with `setTimeout(..., 0)` (`yieldToEventLoop`).
 
 ### Debouncing
 
@@ -427,7 +438,9 @@ The plugin uses debouncers in a few specific places where Obsidian emits bursty 
 - Vault syncing uses Obsidian `debounce(..., TIMEOUTS.FILE_OPERATION_DELAY)` to collapse create/delete bursts into one diff.
 - Tag tree rebuilds use Obsidian `debounce(..., TIMEOUTS.DEBOUNCE_TAG_TREE)` because tag updates can arrive in batches.
 - Property tree rebuilds use the same `TIMEOUTS.DEBOUNCE_TAG_TREE` debouncer to batch rapid updates.
-- Content providers use `TIMEOUTS.DEBOUNCE_CONTENT` (a `setTimeout`) to coalesce queueing before starting a processing batch.
+- Modify and metadata-change flush buffers use `window.setTimeout(..., TIMEOUTS.FILE_OPERATION_DELAY)` to batch per-file flushes.
+- Settings changes that affect derived content are collapsed with `TIMEOUTS.DEBOUNCE_CONTENT` (a `setTimeout`) into a single
+  regeneration pass (`useStorageSettingsSync`).
 
 ## Shutdown Process
 
@@ -441,13 +454,12 @@ The plugin uses debouncers in a few specific places where Obsidian emits bursty 
    - Clear queued command operations.
    - Stop content processing in mounted navigator leaves and unmount mounted calendar React roots.
    - Call `shutdownDatabase()` to close IndexedDB and clear in-memory caches.
-3. `preferencesController.dispose()` then disposes `RecentDataManager` and clears recent-data / UX listeners.
+3. `preferencesController.dispose()` then disposes `RecentDataManager` and clears recent-data / UX listeners, and
+   `FolderNoteSidebarService.dispose()` unregisters its settings listener and clears suppression timers.
 4. Clear listener maps to avoid callbacks during teardown:
    - Settings update listeners
    - File rename listeners
-   - Update notice listeners
 5. Dispose long-lived services/controllers and clear remaining references:
-   - `FolderNoteSidebarService.dispose()` unregisters its settings listener and clears suppression timers.
    - `ExternalIconProviderController.dispose()` releases icon provider hooks.
    - `MetadataService.dispose()` tears down metadata watchers.
    - Remaining service refs are nulled after cleanup.
