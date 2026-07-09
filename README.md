@@ -446,13 +446,14 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Custom sort and grouping** - Override sort/group settings per folder or tag
 - **Per-folder/tag appearances** - Title rows, preview rows, compact mode, descendants toggle
 - **Hidden content** - Hidden folders/tags/notes/files with patterns, frontmatter properties, and tag-based filtering per vault profile
+- **Exclude folders from descendants** - Omit folders when collecting notes from subfolders, per vault profile; excluded folders stay visible and show their notes when selected
 - **Color and icon system** - Folder/tag/property/file colors, icon packs, emoji/Lucide icons, frontmatter read/write, icon mapping by file name and file type category
 - **Name warnings** - Warn about forbidden filesystem characters and characters that break Obsidian links when naming files and folders
 
 ### 10.4 File display
 
 - **Note previews** - 1–5 preview lines with optional HTML stripping
-- **Thumbnails** - Featured images plus auto-generated thumbnails stored in the metadata cache
+- **Thumbnails** - Featured images plus auto-generated thumbnails for PDF, SVG, and drawing files stored in the metadata cache
 - **External images** - Optional downloads for external images and YouTube thumbnails
 - **Date grouping** - Group notes by Today, Yesterday, Previous 7 days, Previous 30 days, months, and years when sorted by date
 - **Frontmatter support** - Read note names and timestamps from frontmatter fields
