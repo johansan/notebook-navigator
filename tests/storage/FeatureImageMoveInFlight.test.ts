@@ -81,9 +81,95 @@ describe('IndexedDBStorage feature image moves', () => {
             { path: newPath, expectedKey },
             { path: oldPath, expectedKey }
         ]);
-        expect(featureImageBlobs.cacheMoves).toEqual([
-            { oldPath, newPath },
-            { oldPath, newPath }
+        expect(featureImageBlobs.cacheMoves).toEqual([{ oldPath, newPath }]);
+    });
+
+    it('falls back to the old self-referential key after a generated-thumbnail move', async () => {
+        const oldPath = 'docs/old.pdf';
+        const newPath = 'docs/new.pdf';
+        const oldKey = `f:${oldPath}@123`;
+        const newKey = `f:${newPath}@123`;
+        const blob = new Blob(['thumbnail']);
+
+        const storage = new IndexedDBStorage('test-feature-image-self-reference-moves');
+        const cache = Reflect.get(storage, 'cache') as MemoryFileCache;
+        cache.markInitialized();
+
+        const seeded = createDefaultFileData({ mtime: 1, path: newPath });
+        seeded.featureImageStatus = 'has';
+        seeded.featureImageKey = newKey;
+        storage.seedMemoryFile(newPath, seeded);
+
+        const featureImageBlobs = new TestFeatureImageBlobStore(10);
+        featureImageBlobs.setResponse(newPath, null);
+        featureImageBlobs.setResponse(oldPath, blob);
+
+        storage.init = async () => void 0;
+        Reflect.set(storage, 'db', {} as IDBDatabase);
+        Reflect.set(
+            storage,
+            'featureImages',
+            new FeatureImageCoordinator({
+                getDb: () => Reflect.get(storage, 'db') as IDBDatabase,
+                init: () => storage.init(),
+                isClosing: () => false,
+                blobs: featureImageBlobs
+            })
+        );
+
+        storage.beginFeatureImageBlobMove(oldPath, newPath);
+
+        expect(await storage.getFeatureImageBlob(newPath, newKey)).toBe(blob);
+        expect(featureImageBlobs.reads).toEqual([
+            { path: newPath, expectedKey: newKey },
+            { path: oldPath, expectedKey: oldKey }
+        ]);
+    });
+
+    it('follows chained generated-thumbnail moves before the blob store batch lands', async () => {
+        const oldPath = 'docs/old.pdf';
+        const middlePath = 'docs/mid.pdf';
+        const newPath = 'docs/new.pdf';
+        const oldKey = `f:${oldPath}@123`;
+        const middleKey = `f:${middlePath}@123`;
+        const newKey = `f:${newPath}@123`;
+        const blob = new Blob(['thumbnail']);
+
+        const storage = new IndexedDBStorage('test-feature-image-chained-self-reference-moves');
+        const cache = Reflect.get(storage, 'cache') as MemoryFileCache;
+        cache.markInitialized();
+
+        const seeded = createDefaultFileData({ mtime: 1, path: newPath });
+        seeded.featureImageStatus = 'has';
+        seeded.featureImageKey = newKey;
+        storage.seedMemoryFile(newPath, seeded);
+
+        const featureImageBlobs = new TestFeatureImageBlobStore(10);
+        featureImageBlobs.setResponse(newPath, null);
+        featureImageBlobs.setResponse(middlePath, null);
+        featureImageBlobs.setResponse(oldPath, blob);
+
+        storage.init = async () => void 0;
+        Reflect.set(storage, 'db', {} as IDBDatabase);
+        Reflect.set(
+            storage,
+            'featureImages',
+            new FeatureImageCoordinator({
+                getDb: () => Reflect.get(storage, 'db') as IDBDatabase,
+                init: () => storage.init(),
+                isClosing: () => false,
+                blobs: featureImageBlobs
+            })
+        );
+
+        storage.beginFeatureImageBlobMove(oldPath, middlePath);
+        storage.beginFeatureImageBlobMove(middlePath, newPath);
+
+        expect(await storage.getFeatureImageBlob(newPath, newKey)).toBe(blob);
+        expect(featureImageBlobs.reads).toEqual([
+            { path: newPath, expectedKey: newKey },
+            { path: middlePath, expectedKey: middleKey },
+            { path: oldPath, expectedKey: oldKey }
         ]);
     });
 });

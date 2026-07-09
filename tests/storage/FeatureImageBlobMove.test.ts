@@ -17,7 +17,11 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { FeatureImageBlobStore, type FeatureImageBlobRecord } from '../../src/storage/FeatureImageBlobStore';
+import {
+    FeatureImageBlobStore,
+    remapSelfReferentialFeatureImageKey,
+    type FeatureImageBlobRecord
+} from '../../src/storage/FeatureImageBlobStore';
 import { FeatureImageCoordinator } from '../../src/storage/indexeddb/featureImageOps';
 import { MockIDBDatabase } from './mockIndexedDB';
 
@@ -28,6 +32,15 @@ function makeRecord(key: string, content: string): FeatureImageBlobRecord {
 function asIdb(db: MockIDBDatabase<FeatureImageBlobRecord>): IDBDatabase {
     return db as unknown as IDBDatabase;
 }
+
+describe('remapSelfReferentialFeatureImageKey', () => {
+    it('rewrites only keys that point at the renamed file path', () => {
+        expect(remapSelfReferentialFeatureImageKey('f:docs/a.pdf@123', 'docs/a.pdf', 'docs/b.pdf')).toBe('f:docs/b.pdf@123');
+        expect(remapSelfReferentialFeatureImageKey('f:assets/cover.png@123', 'docs/a.pdf', 'docs/b.pdf')).toBeNull();
+        expect(remapSelfReferentialFeatureImageKey('e:https://example.com/cover.png', 'docs/a.pdf', 'docs/b.pdf')).toBeNull();
+        expect(remapSelfReferentialFeatureImageKey(null, 'docs/a.pdf', 'docs/b.pdf')).toBeNull();
+    });
+});
 
 describe('FeatureImageBlobStore.moveBlobs', () => {
     it('moves independent records in one batch', async () => {
@@ -64,6 +77,22 @@ describe('FeatureImageBlobStore.moveBlobs', () => {
         expect(records.has('notes/a.md')).toBe(false);
         expect(records.has('notes/b.md')).toBe(false);
         expect(records.get('notes/c.md')).toBe(recordA);
+    });
+
+    it('remaps self-referential generated-thumbnail keys through a chained rename', async () => {
+        const recordA = makeRecord('f:notes/a.pdf@123', 'blob-a');
+        const records = new Map<string, FeatureImageBlobRecord>([['notes/a.pdf', recordA]]);
+        const store = new FeatureImageBlobStore(10);
+
+        await store.moveBlobs(asIdb(new MockIDBDatabase(records)), [
+            { oldPath: 'notes/a.pdf', newPath: 'notes/b.pdf' },
+            { oldPath: 'notes/b.pdf', newPath: 'notes/c.pdf' }
+        ]);
+
+        expect(records.has('notes/a.pdf')).toBe(false);
+        expect(records.has('notes/b.pdf')).toBe(false);
+        expect(records.get('notes/c.pdf')?.featureImageKey).toBe('f:notes/c.pdf@123');
+        expect(await store.getBlob(asIdb(new MockIDBDatabase(records)), 'notes/c.pdf', 'f:notes/c.pdf@123')).toBe(recordA.blob);
     });
 
     it('replays a swap through a temporary name', async () => {
@@ -229,10 +258,11 @@ describe('FeatureImageCoordinator rename bursts', () => {
         const { coordinator } = createCoordinator(records, new Set(['notes/b.md']));
 
         coordinator.beginMove('notes/a.md', 'notes/b.md');
-        await coordinator.moveBlobs([{ oldPath: 'notes/a.md', newPath: 'notes/b.md' }]);
+        const moved = await coordinator.moveBlobs([{ oldPath: 'notes/a.md', newPath: 'notes/b.md' }]);
 
         // The aborted batch leaves the record at the old path; the surviving marker serves reads at
         // the new path from the old path until the TTL prunes it.
+        expect(moved).toBe(false);
         expect(records.get('notes/a.md')).toBe(recordA);
         expect(records.has('notes/b.md')).toBe(false);
         expect(await coordinator.getBlob('notes/b.md', 'key-a')).toBe(recordA.blob);

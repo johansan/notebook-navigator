@@ -26,6 +26,7 @@ import type { ContentProviderRegistry } from '../../services/content/ContentProv
 import type { PropertyTreeNode, TagTreeNode } from '../../types/storage';
 import { calculateFileDiff } from '../../storage/diffCalculator';
 import { type FileData as DBFileData } from '../../storage/IndexedDBStorage';
+import { remapSelfReferentialFeatureImageKey } from '../../storage/FeatureImageBlobStore';
 import { getDBInstance, markFilesForRegeneration, recordFileChanges, removeFilesFromCache } from '../../storage/fileOperations';
 import { createRenameFlushController, excludeReoccupiedRenameTargets, type PendingRenameFlushBuffer } from './renameFlush';
 import { runAsyncAction } from '../../utils/async';
@@ -647,9 +648,11 @@ export function useStorageVaultSync(params: {
                                 ? existing.previewStatus
                                 : 'unprocessed'
                             : 'none';
+                        const remappedFeatureImageKey = remapSelfReferentialFeatureImageKey(existing.featureImageKey, oldPath, file.path);
                         const seeded: DBFileData = {
                             ...existing,
                             previewStatus: nextPreviewStatus,
+                            featureImageKey: remappedFeatureImageKey ?? existing.featureImageKey,
                             markdownPipelineMtime: wasMarkdown && isMarkdown ? 0 : existing.markdownPipelineMtime,
                             metadataMtime: wasMarkdown && isMarkdown ? 0 : existing.metadataMtime
                         };

@@ -30,6 +30,23 @@ export interface FeatureImageBlobRecord {
     blob: Blob;
 }
 
+export function remapSelfReferentialFeatureImageKey(
+    featureImageKey: string | null | undefined,
+    oldPath: string,
+    newPath: string
+): string | null {
+    if (!featureImageKey || oldPath === newPath) {
+        return null;
+    }
+
+    const oldKeyPrefix = `f:${oldPath}@`;
+    if (!featureImageKey.startsWith(oldKeyPrefix) || featureImageKey.length === oldKeyPrefix.length) {
+        return null;
+    }
+
+    return `f:${newPath}@${featureImageKey.slice(oldKeyPrefix.length)}`;
+}
+
 export interface FeatureImageChangeSet {
     featureImageKey?: string | null;
     featureImageStatus?: FeatureImageStatus;
@@ -168,11 +185,16 @@ export class FeatureImageBlobStore {
         //
         // Also clears in-flight reads for both paths since the caller is about to
         // update the blob store and/or rebuild the file cache.
-        this.cache.move(oldPath, newPath);
+        const remappedKey = remapSelfReferentialFeatureImageKey(this.getCachedFeatureImageKey(oldPath), oldPath, newPath);
+        this.cache.move(oldPath, newPath, remappedKey ?? undefined);
         this.bumpCacheEpoch(oldPath);
         this.bumpCacheEpoch(newPath);
         this.dropInFlightForPath(oldPath);
         this.dropInFlightForPath(newPath);
+    }
+
+    seedCacheEntry(path: string, featureImageKey: string, blob: Blob): void {
+        this.cache.set(path, { featureImageKey, blob });
     }
 
     async getBlob(db: IDBDatabase, path: string, expectedKey: string): Promise<Blob | null> {
@@ -321,7 +343,9 @@ export class FeatureImageBlobStore {
                     const record = getReq.result as FeatureImageBlobRecord | undefined;
                     recordFoundByNewPath.set(newPath, record !== undefined);
                     if (record) {
-                        const putReq = store.put(record, newPath);
+                        const remappedKey = remapSelfReferentialFeatureImageKey(record.featureImageKey, oldPath, newPath);
+                        const nextRecord = remappedKey === null ? record : { ...record, featureImageKey: remappedKey };
+                        const putReq = store.put(nextRecord, newPath);
                         putReq.onerror = () => {
                             lastRequestError = putReq.error || null;
                             console.error('[IndexedDB] put failed', {
@@ -485,5 +509,9 @@ export class FeatureImageBlobStore {
     private dropInFlightForPath(path: string): void {
         // Drop all in-flight reads for this path (regardless of expectedKey).
         this.inFlight.delete(path);
+    }
+
+    private getCachedFeatureImageKey(path: string): string | null {
+        return this.cache.peek(path)?.featureImageKey ?? null;
     }
 }

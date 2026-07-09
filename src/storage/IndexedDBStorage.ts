@@ -1417,8 +1417,8 @@ export class IndexedDBStorage {
     /**
      * Move a rename burst's feature image blobs in one transaction, replayed in vault event order.
      */
-    async moveFeatureImageBlobs(moves: { oldPath: string; newPath: string }[]): Promise<void> {
-        await this.featureImages.moveBlobs(moves);
+    async moveFeatureImageBlobs(moves: { oldPath: string; newPath: string }[]): Promise<boolean> {
+        return this.featureImages.moveBlobs(moves);
     }
 
     /**

@@ -64,6 +64,7 @@ function createFakeStore(overrides?: Partial<RenameFlushStore>): { store: Rename
         },
         moveFeatureImageBlobs: async moves => {
             calls.blobMoves.push(moves);
+            return true;
         },
         movePreviewTexts: async ops => {
             calls.previewOps.push(ops);
@@ -207,6 +208,46 @@ describe('createRenameFlushController', () => {
         resolvePersist();
         await settle();
         expect(queueContentRefresh).toHaveBeenCalledOnce();
+    });
+
+    it('marks renamed feature images unprocessed when the blob move batch fails', async () => {
+        const { store, calls } = createFakeStore();
+        store.moveFeatureImageBlobs = async moves => {
+            calls.blobMoves.push(moves);
+            return false;
+        };
+        const move = makeMove('old/a.pdf', 'new/a.pdf', { wasMarkdown: false, isMarkdown: false, hasStoredBlob: true, mtime: 1 });
+        move.seeded.featureImageStatus = 'has';
+        move.seeded.featureImageKey = 'f:new/a.pdf@1';
+        move.seeded.fileThumbnailsMtime = 1;
+        const { controller, buffer, queueContentRefresh } = createController({ store });
+        buffer.moves.push(move);
+
+        controller.scheduleFlush();
+        await settle();
+
+        expect(calls.blobMoves).toEqual([[{ oldPath: 'old/a.pdf', newPath: 'new/a.pdf' }]]);
+        expect(calls.setFiles).toHaveLength(2);
+        expect(calls.setFiles[0].records[0]).toMatchObject({
+            path: 'new/a.pdf',
+            data: {
+                featureImageKey: 'f:new/a.pdf@1',
+                featureImageStatus: 'has'
+            }
+        });
+        expect(calls.setFiles[1].records).toEqual([
+            {
+                path: 'new/a.pdf',
+                data: {
+                    ...move.seeded,
+                    featureImage: null,
+                    featureImageKey: null,
+                    featureImageStatus: 'unprocessed'
+                }
+            }
+        ]);
+        expect(calls.seeded).toEqual([{ path: 'new/a.pdf', mtime: 1 }]);
+        expect(queueContentRefresh).toHaveBeenCalledExactlyOnceWith([move.file]);
     });
 
     it('keeps a pending rename entry that a later rename replaced', async () => {
