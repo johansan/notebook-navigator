@@ -42,6 +42,7 @@
 import { createContext, useContext, useState, useRef, ReactNode, useMemo, useCallback, useEffect } from 'react';
 import { App, TFile, debounce, EventRef } from 'obsidian';
 import { ProcessedMetadata, extractMetadata } from '../utils/metadataExtractor';
+import { extractCurrentFrontmatterMetadataFromFileData } from '../utils/frontmatterMetadataCache';
 import { ContentProviderRegistry } from '../services/content/ContentProviderRegistry';
 import { useCacheRebuildNotice } from './storage/useCacheRebuildNotice';
 import { useIndexedDBReady } from './storage/useIndexedDBReady';
@@ -57,7 +58,7 @@ import { useStorageVaultSync, type PendingFileFlushBuffer } from './storage/useS
 import type { PendingRenameFlushBuffer } from './storage/renameFlush';
 import { useStorageSettingsSync } from './storage/useStorageSettingsSync';
 import { METADATA_SENTINEL, type FileData as DBFileData, type IndexedDBStorage } from '../storage/IndexedDBStorage';
-import { getDBInstance } from '../storage/fileOperations';
+import { getDBInstance, getDBInstanceOrNull } from '../storage/fileOperations';
 import type { StorageFileData } from './storage/storageFileData';
 import type { PropertyTreeNode, TagTreeNode } from '../types/storage';
 import { getFileDisplayName as getDisplayName } from '../utils/fileNameUtils';
@@ -345,25 +346,37 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         startCacheRebuildNotice(total, enabledTypes);
     }, [isStorageReady, startCacheRebuildNotice]);
 
-    const getFileDisplayName = useCallback(
-        (file: TFile): string => {
-            if (settings.useFrontmatterMetadata) {
-                const metadata = extractMetadata(app, file, settings);
-                if (metadata.fn) {
-                    return metadata.fn;
-                }
+    const getFrontmatterMetadata = useCallback(
+        (file: TFile): ProcessedMetadata | null => {
+            if (!settings.useFrontmatterMetadata || file.extension !== 'md') {
+                return null;
             }
-            return getDisplayName(file, undefined, settings);
+
+            const db = getDBInstanceOrNull();
+            return (
+                extractCurrentFrontmatterMetadataFromFileData(file, db?.getFile(file.path) ?? null, settings) ??
+                extractMetadata(app, file, settings)
+            );
         },
         [app, settings]
     );
 
+    const getFileDisplayName = useCallback(
+        (file: TFile): string => {
+            const metadata = getFrontmatterMetadata(file);
+            if (metadata?.fn) {
+                return metadata.fn;
+            }
+            return getDisplayName(file, undefined, settings);
+        },
+        [getFrontmatterMetadata, settings]
+    );
+
     const getFileTimestamps = useCallback(
         (file: TFile): { created: number; modified: number } => {
-            const extractedMetadata = settings.useFrontmatterMetadata ? extractMetadata(app, file, settings) : null;
-            return computeFileTimestamps(file, extractedMetadata);
+            return computeFileTimestamps(file, getFrontmatterMetadata(file));
         },
-        [app, settings]
+        [getFrontmatterMetadata]
     );
 
     const getFileCreatedTime = useCallback((file: TFile): number => getFileTimestamps(file).created, [getFileTimestamps]);
@@ -372,7 +385,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
 
     const getFileMetadata = useCallback(
         (file: TFile): { name: string; created: number; modified: number } => {
-            const extractedMetadata = settings.useFrontmatterMetadata ? extractMetadata(app, file, settings) : null;
+            const extractedMetadata = getFrontmatterMetadata(file);
             const timestamps = computeFileTimestamps(file, extractedMetadata);
 
             return {
@@ -381,7 +394,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                 modified: timestamps.modified
             };
         },
-        [app, settings]
+        [getFrontmatterMetadata, settings]
     );
 
     const hasPreview = useCallback((path: string): boolean => getDBInstance().hasPreview(path), []);

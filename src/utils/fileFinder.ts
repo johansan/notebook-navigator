@@ -34,7 +34,8 @@ import {
 import { shouldDisplayFile, FILE_VISIBILITY } from './fileTypeUtils';
 import { getEffectiveListSort, getPropertySortValueFromRecord, isPropertySortOption, sortFiles, type EffectiveListSort } from './sortUtils';
 import { getDBInstanceOrNull } from '../storage/fileOperations';
-import { extractMetadata } from '../utils/metadataExtractor';
+import { extractMetadata, type ProcessedMetadata } from '../utils/metadataExtractor';
+import { extractCurrentFrontmatterMetadataFromFileData } from './frontmatterMetadataCache';
 import { METADATA_SENTINEL } from '../storage/IndexedDBStorage';
 import { getFileDisplayName as getDisplayName } from './fileNameUtils';
 import { getFolderNote, getFolderNoteDetectionSettings } from './folderNoteLookup';
@@ -207,11 +208,18 @@ function sortNavigationFiles(files: TFile[], settings: NotebookNavigatorSettings
         isPropertySort && propertySortKey.length > 0 ? createPropertySortValueGetter(app, propertySortKey) : undefined;
 
     if (settings.useFrontmatterMetadata) {
-        const metadataCache = new Map<string, ReturnType<typeof extractMetadata>>();
+        const db = getDBInstanceOrNull();
+        const metadataCache = new Map<string, ProcessedMetadata>();
         const getCached = (file: TFile) => {
+            if (file.extension !== 'md') {
+                return {};
+            }
+
             let metadata = metadataCache.get(file.path);
             if (!metadata) {
-                metadata = extractMetadata(app, file, settings);
+                metadata =
+                    extractCurrentFrontmatterMetadataFromFileData(file, db?.getFile(file.path) ?? null, settings) ??
+                    extractMetadata(app, file, settings);
                 metadataCache.set(file.path, metadata);
             }
             return metadata;

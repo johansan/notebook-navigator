@@ -40,6 +40,11 @@ import {
 import { getCacheRebuildProgressTypes, getContentWorkTotal, getMetadataDependentTypes } from './storageContentTypes';
 import { finishStartupDiagnostics, isDebugLogPath, recordStartupDiagnostic } from '../../services/diagnostics/DebugLoggingService';
 import { getMarkdownPipelineContentTypes } from '../../utils/markdownPipelineContentTypes';
+import {
+    clearFrontmatterMetadataCacheSignature,
+    isFrontmatterMetadataCacheCurrent,
+    markFrontmatterMetadataCacheCurrent
+} from '../../utils/frontmatterMetadataCache';
 
 /**
  * Buffered vault/metadata events awaiting a debounced flush. The whole buffer (files, timer, processing flag) is
@@ -53,6 +58,21 @@ export interface PendingFileFlushBuffer {
     timerId: number | null;
     /** True while a flush batch is being processed */
     isProcessing: boolean;
+}
+
+async function ensureFrontmatterMetadataCacheMatchesSettings(settings: NotebookNavigatorSettings): Promise<boolean> {
+    if (!settings.useFrontmatterMetadata) {
+        clearFrontmatterMetadataCacheSignature();
+        return false;
+    }
+
+    if (isFrontmatterMetadataCacheCurrent(settings)) {
+        return false;
+    }
+
+    await getDBInstance().batchClearAllFileContent('metadata');
+    markFrontmatterMetadataCacheCurrent(settings);
+    return true;
 }
 
 /**
@@ -179,6 +199,7 @@ export function useStorageVaultSync(params: {
                     if (toAdd.length > 0 || toUpdate.length > 0) {
                         await recordFileChanges([...toAdd, ...toUpdate], existingData, pendingRenameDataRef.current);
                     }
+                    const frontmatterMetadataCacheInvalidated = await ensureFrontmatterMetadataCacheMatchesSettings(settings);
 
                     // Both tree rebuilds share one visible-file scan.
                     let visibleFilesForTrees: TFile[] | null = null;
@@ -197,7 +218,7 @@ export function useStorageVaultSync(params: {
 
                     const metadataDependentTypes = getMetadataDependentTypes(settings);
                     const contentEnabled = metadataDependentTypes.length > 0;
-                    const queuedStartupDetails: Record<string, unknown> = { metadataDependentTypes };
+                    const queuedStartupDetails: Record<string, unknown> = { metadataDependentTypes, frontmatterMetadataCacheInvalidated };
 
                     if (contentRegistryRef.current && contentEnabled) {
                         const markdownFiles: TFile[] = [];

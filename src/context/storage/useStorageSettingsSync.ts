@@ -35,6 +35,11 @@ import {
 import { getPropertyFrontmatterFieldSignature } from '../../utils/propertyUtils';
 import { clearCacheRebuildNoticeState, getCacheRebuildNoticeState, setCacheRebuildNoticeState } from './cacheRebuildNoticeStorage';
 import { getCacheRebuildProgressTypes, getMetadataDependentTypes, haveStringArraysChanged } from './storageContentTypes';
+import {
+    clearFrontmatterMetadataCacheSignature,
+    haveFrontmatterMetadataCacheSettingsChanged,
+    markFrontmatterMetadataCacheCurrent
+} from '../../utils/frontmatterMetadataCache';
 
 /**
  * Reacts to settings/profile changes that affect storage and derived content.
@@ -128,6 +133,13 @@ export function useStorageSettingsSync(params: {
 
             // Provider-level settings may change which files need content and which providers should run.
             const affectedProviders = await registry.handleSettingsChange(oldSettings, newSettings);
+            if (haveFrontmatterMetadataCacheSettingsChanged(oldSettings, newSettings)) {
+                if (newSettings.useFrontmatterMetadata) {
+                    markFrontmatterMetadataCacheCurrent(newSettings);
+                } else {
+                    clearFrontmatterMetadataCacheSignature();
+                }
+            }
 
             const enabledFeatureImages = oldSettings.showFeatureImage !== newSettings.showFeatureImage && newSettings.showFeatureImage;
             const shouldShowIndexNotice = (affectedProviders.length > 0 || enabledFeatureImages) && !stoppedRef.current;

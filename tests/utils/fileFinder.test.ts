@@ -23,17 +23,20 @@ import type { NotebookNavigatorSettings, VaultProfile } from '../../src/settings
 import type { VisibilityPreferences } from '../../src/types';
 import type { ITagTreeProvider } from '../../src/interfaces/ITagTreeProvider';
 import type { TagTreeNode } from '../../src/types/storage';
-import type { PropertyItem } from '../../src/storage/IndexedDBStorage';
+import type { FileData, PropertyItem } from '../../src/storage/IndexedDBStorage';
 import { FILE_VISIBILITY } from '../../src/utils/fileTypeUtils';
 import { getFilesForFolder, getFilesForProperty, getFilesForTag } from '../../src/utils/fileFinder';
+import { markFrontmatterMetadataCacheCurrent } from '../../src/utils/frontmatterMetadataCache';
 import { buildPropertyKeyNodeId } from '../../src/utils/propertyTree';
 import { setActivePropertyFields } from '../../src/utils/vaultProfiles';
 import { createTestTFile } from './createTestTFile';
 
-const fileDataByPath = new Map<string, { tags: readonly string[] | null; properties: PropertyItem[] | null }>();
+type TestFileData = Partial<FileData> & Pick<FileData, 'tags' | 'properties'>;
+
+const fileDataByPath = new Map<string, TestFileData>();
 
 const db = {
-    getFile(path: string): { tags: readonly string[] | null; properties: PropertyItem[] | null } | null {
+    getFile(path: string): TestFileData | null {
         return fileDataByPath.get(path) ?? null;
     }
 };
@@ -107,7 +110,9 @@ function setFileTags(file: TFile, tags: readonly string[]): void {
     const existing = fileDataByPath.get(file.path);
     fileDataByPath.set(file.path, {
         tags: [...tags],
-        properties: existing?.properties ?? null
+        properties: existing?.properties ?? null,
+        metadataMtime: existing?.metadataMtime,
+        metadata: existing?.metadata
     });
 }
 
@@ -115,7 +120,19 @@ function setFileProperties(file: TFile, properties: PropertyItem[]): void {
     const existing = fileDataByPath.get(file.path);
     fileDataByPath.set(file.path, {
         tags: existing?.tags ?? null,
-        properties: [...properties]
+        properties: [...properties],
+        metadataMtime: existing?.metadataMtime,
+        metadata: existing?.metadata
+    });
+}
+
+function setFileMetadata(file: TFile, metadata: NonNullable<FileData['metadata']>): void {
+    const existing = fileDataByPath.get(file.path);
+    fileDataByPath.set(file.path, {
+        tags: existing?.tags ?? null,
+        properties: existing?.properties ?? null,
+        metadataMtime: file.stat.mtime,
+        metadata
     });
 }
 
@@ -135,6 +152,10 @@ function toSortedPaths(files: TFile[]): string[] {
 }
 
 describe('fileFinder getFilesForFolder', () => {
+    beforeEach(() => {
+        fileDataByPath.clear();
+    });
+
     it('honors the Excalidraw rendered preview image hiding setting', () => {
         const drawing = createTestTFile('Drawings/Sketch.excalidraw.md');
         const companionImage = createTestTFile('Drawings/Sketch.excalidraw.png');
@@ -172,6 +193,35 @@ describe('fileFinder getFilesForFolder', () => {
 
         expect(toSortedPaths(getFilesForFolder(rootFolder, settings, visibility, app))).toEqual(['Root.md', 'Work/work.md']);
         expect(toSortedPaths(getFilesForFolder(dailyFolder, settings, visibility, app))).toEqual(['Daily/2026/day.md', 'Daily/today.md']);
+    });
+
+    it('uses fresh mirrored frontmatter metadata when sorting folder results', () => {
+        const first = createTestTFile('Notes/first.md');
+        first.stat.mtime = 10;
+        first.stat.ctime = 200;
+        const second = createTestTFile('Notes/second.md');
+        second.stat.mtime = 20;
+        second.stat.ctime = 100;
+        const folder = createFolder('Notes', [first, second]);
+        const app = createAppWithFiles([first, second]);
+        const settings = {
+            ...createSettings(),
+            useFrontmatterMetadata: true,
+            frontmatterCreatedField: 'created',
+            defaultFolderSort: 'created-asc' as const
+        };
+        setFileMetadata(first, { created: 1000 });
+        setFileMetadata(second, { created: 500 });
+        markFrontmatterMetadataCacheCurrent(settings);
+        const getFileCache = vi.fn(() => {
+            throw new Error('live metadata should not be read when mirrored metadata is fresh');
+        });
+        app.metadataCache.getFileCache = getFileCache;
+
+        const files = getFilesForFolder(folder, settings, { includeDescendantNotes: false, showHiddenItems: false }, app);
+
+        expect(files.map(file => file.path)).toEqual([second.path, first.path]);
+        expect(getFileCache).not.toHaveBeenCalled();
     });
 });
 

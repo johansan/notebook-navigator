@@ -18,7 +18,7 @@
 
 import { App, TFile, CachedMetadata } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../settings/types';
-import { METADATA_SENTINEL } from '../storage/IndexedDBStorage';
+import { METADATA_SENTINEL, type FileData } from '../storage/IndexedDBStorage';
 import { DateUtils } from './dateUtils';
 import { getCachedCommaSeparatedList } from './commaSeparatedListUtils';
 import { deserializeIconFromFrontmatterCompat } from './iconizeFormat';
@@ -47,6 +47,22 @@ export interface ProcessedMetadata {
 export function extractMetadata(app: App, file: TFile, settings: NotebookNavigatorSettings): ProcessedMetadata {
     const metadata = app.metadataCache.getFileCache(file);
     return extractMetadataFromCache(metadata, settings);
+}
+
+export function extractFreshMetadataFromFileData(file: TFile, fileData: FileData | null): ProcessedMetadata | null {
+    if (file.extension !== 'md' || !fileData || fileData.metadata === null || fileData.metadataMtime !== file.stat.mtime) {
+        return null;
+    }
+
+    const metadata = fileData.metadata;
+    const result: ProcessedMetadata = {};
+    if (metadata.name !== undefined) result.fn = metadata.name;
+    if (metadata.created !== undefined) result.fc = metadata.created;
+    if (metadata.modified !== undefined) result.fm = metadata.modified;
+    if (metadata.icon !== undefined) result.icon = metadata.icon;
+    if (metadata.color !== undefined) result.color = metadata.color;
+    if (metadata.background !== undefined) result.background = metadata.background;
+    return result;
 }
 
 export function extractFrontmatterName(app: App, file: TFile, frontmatterNameField: string): string {
