@@ -142,6 +142,7 @@ export interface ListPaneHandle {
     modifySearchWithProperty: (key: string, value: string | null, operator: InclusionOperator, options?: SearchQueryUpdateOptions) => void;
     modifySearchWithDateToken: (dateToken: string, options?: SearchQueryUpdateOptions) => void;
     toggleSearch: () => void;
+    searchWithDescendants: () => void;
     executeSearchShortcut: (params: ExecuteSearchShortcutParams) => Promise<void>;
     getManualSortNewFileContext: () => ManualSortNewFilePlacementContext | null;
 }
@@ -332,6 +333,7 @@ export const ListPane = React.memo(
         const [inlineRenameFilePath, setInlineRenameFilePath] = useState<string | null>(null);
         const [manualSortEditState, setManualSortEditState] = useState<ManualSortEditState | null>(null);
         const [propertyKeyboardReorderState, setPropertyKeyboardReorderState] = useState<PropertyKeyboardReorderState | null>(null);
+        const [forceSearchDescendants, setForceSearchDescendants] = useState(false);
         const hoverSyncFrameRef = useRef<number | null>(null);
         const pinnedRevealExpansionRef = useRef<string | null>(null);
         const manualSortEditSessionCounterRef = useRef(0);
@@ -438,6 +440,9 @@ export const ListPane = React.memo(
 
         const { selectionType, selectedFolder, selectedTag, selectedProperty, selectedFile } = selectionState;
         const selectedFolderPath = selectionType === ItemType.FOLDER ? (selectedFolder?.path ?? null) : null;
+        const shouldForceSearchDescendants =
+            forceSearchDescendants && isSearchActive && selectionType === ItemType.FOLDER && selectedFolderPath === '/';
+        const effectiveIncludeDescendantNotes = includeDescendantNotes || shouldForceSearchDescendants;
         const effectiveSortSpec = getEffectiveListSort(settings, selectionType, selectedFolder, selectedTag, selectedProperty);
         const effectiveSortOption = effectiveSortSpec.option;
         const effectivePropertySortKey = effectiveSortSpec.propertyKey.trim();
@@ -486,6 +491,18 @@ export const ListPane = React.memo(
             },
             [expansionDispatch]
         );
+
+        useEffect(() => {
+            if (!forceSearchDescendants) {
+                return;
+            }
+
+            if (isSearchActive && selectionType === ItemType.FOLDER && selectedFolderPath === '/') {
+                return;
+            }
+
+            setForceSearchDescendants(false);
+        }, [forceSearchDescendants, isSearchActive, selectedFolderPath, selectionType]);
 
         useEffect(() => {
             if (!manualSortEditState || manualSortEditState.selectionKey === manualSortSelectionKey) {
@@ -666,6 +683,7 @@ export const ListPane = React.memo(
                 const sessionId = manualSortEditSessionCounterRef.current + 1;
                 manualSortEditSessionCounterRef.current = sessionId;
                 const selectionKey = manualSortSelectionKey;
+                setForceSearchDescendants(false);
                 closeSearch();
                 if (uiState.singlePane) {
                     uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
@@ -702,7 +720,7 @@ export const ListPane = React.memo(
             // Use debounced value for filtering
             searchQuery: !isManualSortEditActive && isSearchActive ? debouncedSearchQuery : undefined,
             searchTokens: !isManualSortEditActive && isSearchActive ? debouncedSearchTokens : undefined,
-            visibility: { includeDescendantNotes, showHiddenItems },
+            visibility: { includeDescendantNotes: effectiveIncludeDescendantNotes, showHiddenItems },
             propertySortOrderOverride
         });
         const listStartsWithGroupHeader =
@@ -902,7 +920,7 @@ export const ListPane = React.memo(
                 searchQuery: !isManualSortEditActive && isSearchActive ? debouncedSearchQuery : undefined,
                 suppressSearchTopScrollRef,
                 topSpacerHeight: effectiveTopSpacerHeight,
-                includeDescendantNotes,
+                includeDescendantNotes: effectiveIncludeDescendantNotes,
                 groupCollapseStateSignature,
                 visiblePropertyKeys: visibleListPropertyKeys,
                 visiblePropertyKeySignature: visibleListPropertyKeySignature,
@@ -1488,17 +1506,79 @@ export const ListPane = React.memo(
             settings.manualSortNewNotePlacement
         ]);
 
+        const handleSearchToggleWithDefaultScope = React.useCallback(() => {
+            setForceSearchDescendants(false);
+            handleSearchToggle();
+        }, [handleSearchToggle]);
+
+        const closeSearchWithDefaultScope = React.useCallback(() => {
+            setForceSearchDescendants(false);
+            closeSearch();
+        }, [closeSearch]);
+
+        const toggleSearchWithDefaultScope = React.useCallback(() => {
+            setForceSearchDescendants(false);
+            toggleSearch();
+        }, [toggleSearch]);
+
+        const searchWithDescendants = React.useCallback(() => {
+            setForceSearchDescendants(true);
+            toggleSearch();
+        }, [toggleSearch]);
+
+        const handleEmptySearchExit = React.useCallback(() => {
+            setForceSearchDescendants(false);
+        }, []);
+
+        const modifySearchWithTagWithDefaultScope = React.useCallback(
+            (tag: string, operator: InclusionOperator, options?: SearchQueryUpdateOptions) => {
+                setForceSearchDescendants(false);
+                modifySearchWithTag(tag, operator, options);
+            },
+            [modifySearchWithTag]
+        );
+
+        const modifySearchWithPropertyWithDefaultScope = React.useCallback(
+            (key: string, value: string | null, operator: InclusionOperator, options?: SearchQueryUpdateOptions) => {
+                setForceSearchDescendants(false);
+                modifySearchWithProperty(key, value, operator, options);
+            },
+            [modifySearchWithProperty]
+        );
+
+        const modifySearchWithDateTokenWithDefaultScope = React.useCallback(
+            (dateToken: string, options?: SearchQueryUpdateOptions) => {
+                setForceSearchDescendants(false);
+                modifySearchWithDateToken(dateToken, options);
+            },
+            [modifySearchWithDateToken]
+        );
+
+        const executeSearchShortcutWithDefaultScope = React.useCallback(
+            async (params: ExecuteSearchShortcutParams) => {
+                setForceSearchDescendants(false);
+                await executeSearchShortcut(params);
+            },
+            [executeSearchShortcut]
+        );
+
         const listToolbar = useMemo(() => {
             return (
                 <ListToolbar
                     isSearchActive={isSearchActive}
-                    onSearchToggle={handleSearchToggle}
+                    onSearchToggle={handleSearchToggleWithDefaultScope}
                     onManualSortStart={handleManualSortStart}
                     getManualSortNewFileContext={getManualSortNewFileContext}
                     useFloatingLayout={shouldUseFloatingToolbars}
                 />
             );
-        }, [getManualSortNewFileContext, handleManualSortStart, handleSearchToggle, isSearchActive, shouldUseFloatingToolbars]);
+        }, [
+            getManualSortNewFileContext,
+            handleManualSortStart,
+            handleSearchToggleWithDefaultScope,
+            isSearchActive,
+            shouldUseFloatingToolbars
+        ]);
 
         useEffect(() => {
             return fileSystemOps.setManualSortNewFileContextProvider(getManualSortNewFileContext);
@@ -1563,14 +1643,15 @@ export const ListPane = React.memo(
                 // Provide imperative adjacent navigation for command handlers
                 selectAdjacentFile,
                 // Toggle or modify search query to include/exclude a tag with AND/OR operator
-                modifySearchWithTag,
+                modifySearchWithTag: modifySearchWithTagWithDefaultScope,
                 // Toggle or modify search query to include/exclude a property with AND/OR operator
-                modifySearchWithProperty,
+                modifySearchWithProperty: modifySearchWithPropertyWithDefaultScope,
                 // Replace the active search query with a date token
-                modifySearchWithDateToken,
+                modifySearchWithDateToken: modifySearchWithDateTokenWithDefaultScope,
                 // Toggle search mode on/off or focus existing search
-                toggleSearch,
-                executeSearchShortcut,
+                toggleSearch: toggleSearchWithDefaultScope,
+                searchWithDescendants,
+                executeSearchShortcut: executeSearchShortcutWithDefaultScope,
                 getManualSortNewFileContext
             }),
             [
@@ -1578,13 +1659,14 @@ export const ListPane = React.memo(
                 orderedFiles,
                 rowVirtualizer,
                 scrollContainerRef,
-                toggleSearch,
-                executeSearchShortcut,
+                toggleSearchWithDefaultScope,
+                searchWithDescendants,
+                executeSearchShortcutWithDefaultScope,
                 selectFileFromList,
                 selectAdjacentFile,
-                modifySearchWithTag,
-                modifySearchWithProperty,
-                modifySearchWithDateToken,
+                modifySearchWithTagWithDefaultScope,
+                modifySearchWithPropertyWithDefaultScope,
+                modifySearchWithDateTokenWithDefaultScope,
                 getManualSortNewFileContext
             ]
         );
@@ -1636,7 +1718,7 @@ export const ListPane = React.memo(
                     <ListPaneTitleChrome
                         onHeaderClick={handleScrollToTop}
                         isSearchActive={isSearchActive}
-                        onSearchToggle={handleSearchToggle}
+                        onSearchToggle={handleSearchToggleWithDefaultScope}
                         onManualSortStart={handleManualSortStart}
                         getManualSortNewFileContext={getManualSortNewFileContext}
                         actionsDisabled={isManualSortEditActive}
@@ -1652,7 +1734,9 @@ export const ListPane = React.memo(
                                     onSearchQueryChange={setSearchQuery}
                                     shouldFocus={shouldFocusSearch}
                                     onFocusComplete={focusSearchComplete}
-                                    onClose={closeSearch}
+                                    onEmptySearchExit={handleEmptySearchExit}
+                                    isWholeVaultSearch={shouldForceSearchDescendants}
+                                    onClose={closeSearchWithDefaultScope}
                                     onFocusFiles={() => {
                                         // Ensure selection exists when focusing list from search (no editor open)
                                         ensureSelectionForCurrentFilter({ openInEditor: false });
@@ -1686,7 +1770,7 @@ export const ListPane = React.memo(
                             localDayReference={localDayReference}
                             fileIconSize={listMeasurements.fileIconSize}
                             appearanceSettings={effectiveAppearanceSettings}
-                            includeDescendantNotes={includeDescendantNotes}
+                            includeDescendantNotes={effectiveIncludeDescendantNotes}
                             hiddenTagVisibility={hiddenTagVisibility}
                             fileNameIconNeedles={fileNameIconNeedles}
                             visibleListPropertyKeys={visibleListPropertyKeys}
@@ -1732,12 +1816,12 @@ export const ListPane = React.memo(
                             suppressRowHover={isListScrolling}
                             onHoveredFilePathChange={handleHoveredFilePathChange}
                             onFileClick={handleFileItemClick}
-                            onModifySearchWithTag={modifySearchWithTag}
-                            onModifySearchWithProperty={modifySearchWithProperty}
+                            onModifySearchWithTag={modifySearchWithTagWithDefaultScope}
+                            onModifySearchWithProperty={modifySearchWithPropertyWithDefaultScope}
                             localDayReference={localDayReference}
                             fileIconSize={listMeasurements.fileIconSize}
                             appearanceSettings={effectiveAppearanceSettings}
-                            includeDescendantNotes={includeDescendantNotes}
+                            includeDescendantNotes={effectiveIncludeDescendantNotes}
                             hiddenTagVisibility={hiddenTagVisibility}
                             fileNameIconNeedles={fileNameIconNeedles}
                             visibleListPropertyKeys={visibleListPropertyKeys}
@@ -1763,7 +1847,7 @@ export const ListPane = React.memo(
                 </div>
                 {shouldRenderCalendarOverlay ? (
                     <div className="nn-navigation-calendar-overlay">
-                        <Calendar onWeekCountChange={setCalendarWeekCount} onAddDateFilter={modifySearchWithDateToken} />
+                        <Calendar onWeekCountChange={setCalendarWeekCount} onAddDateFilter={modifySearchWithDateTokenWithDefaultScope} />
                     </div>
                 ) : null}
                 {shouldRenderBottomToolbarOutsidePanel && !manualSortEditState ? (

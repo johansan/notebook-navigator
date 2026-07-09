@@ -97,12 +97,13 @@ const RELEASE_NOTES: ReleaseNote[] = [
         bannerUrl: true,
         info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs when you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders.\n\nRendering while scrolling is now 15-25% more efficient, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately.\n\nYou should notice these improvements in your daily use, especially if you have a large vault. Thank you for using Notebook Navigator!',
         new: [
-            '**Calendar.** New setting: ==Show tasks== in Calendar > Appearance. You can now hide the indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
+            '**Calendar.** New setting: Calendar > ==Show tasks==. You can now hide the indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
             '**Display filters.** New setting: Display filters > ==Exclude folders from descendants==. You can now exclude folders from showing when "Show files from subfolders" is enabled. Use it to keep periodic-note folders such as `Daily`, `Weekly`, or `Monthly` out of parent folder lists while the folders remain visible and selectable.',
             '**Feature images.** SVG images are back as feature images again. SVG sources are now rasterized into cached thumbnails during content generation instead of rendering live in the list. SVG files that embed bitmap images are skipped.',
             '**Navigation banner.** SVG files can now also be selected as the navigation banner image.'
         ],
         improved: [
+            '**Search.** The command ´Search in vault root´ was renamed to ==Search whole vault==. It now always includes notes from subfolders without changing the ´Show notes from subfolders´ setting.',
             '**Settings.** Importing settings now shows a confirmation dialog with an option to save current settings to a timestamped file in the vault root. Exported settings files now use timestamped filenames and record the plugin version. Import rejects JSON that is not a Notebook Navigator export or recognizable legacy settings diff.',
             '**Calendar.** Middle-click on day cells, week numbers, month, quarter and year headers, and the year panel opens the calendar note in a new tab, creating it if needed.',
             '**Feature images.** Thumbnails with transparent backgrounds, such as SVG or PNG images, no longer show an outline over transparent areas.',

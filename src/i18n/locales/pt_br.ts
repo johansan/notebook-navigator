@@ -170,6 +170,7 @@ export const STRINGS_PT_BR = {
     // Search input
     searchInput: {
         placeholder: 'Pesquisar...',
+        placeholderVault: 'Pesquisar no cofre...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: 'Limpar pesquisa',
         switchToFilterSearch: 'Mudar para pesquisa por filtro',
@@ -865,7 +866,7 @@ export const STRINGS_PT_BR = {
         openYearlyNote: 'Abrir nota anual',
         revealFile: 'Revelar arquivo',
         search: 'Pesquisar',
-        searchVaultRoot: 'Pesquisar na raiz do cofre',
+        searchVaultRoot: 'Pesquisar em todo o cofre',
         toggleDualPane: 'Alternar layout de painel duplo',
         toggleDualPaneOrientation: 'Alternar orientação do painel duplo', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Alternar calendário',

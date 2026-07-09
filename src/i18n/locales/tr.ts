@@ -169,6 +169,7 @@ export const STRINGS_TR = {
     // Search input
     searchInput: {
         placeholder: 'Ara...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'Kasada ara...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'Aramayı temizle', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'Filtre aramasına geç',
@@ -861,7 +862,7 @@ export const STRINGS_TR = {
         openYearlyNote: 'Yıllık notu aç',
         revealFile: 'Dosyayı göster', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Ara', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'Kasa kökünde ara', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'Tüm kasada ara', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'Çift bölme düzenini aç/kapat', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'Çift bölme yönünü değiştir', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Takvimi aç/kapat', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

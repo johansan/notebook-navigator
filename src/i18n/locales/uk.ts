@@ -170,6 +170,7 @@ export const STRINGS_UK = {
     // Search input
     searchInput: {
         placeholder: 'Пошук...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'Пошук у сховищі...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'Очистити пошук', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'Перемкнути на пошук з фільтром',
@@ -860,7 +861,7 @@ export const STRINGS_UK = {
         openYearlyNote: 'Відкрити щорічну нотатку',
         revealFile: 'Показати файл', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Пошук', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'Пошук у корені сховища', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'Пошук у всьому сховищі', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'Перемкнути подвійну панель', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'Перемкнути орієнтацію подвійної панелі', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Перемкнути календар', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

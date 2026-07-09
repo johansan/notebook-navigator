@@ -171,6 +171,7 @@ export const STRINGS_NL = {
     // Search input
     searchInput: {
         placeholder: 'Zoeken...',
+        placeholderVault: 'Kluis doorzoeken...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: 'Zoekopdracht wissen',
         switchToFilterSearch: 'Overschakelen naar filterzoeken',
@@ -865,7 +866,7 @@ export const STRINGS_NL = {
         openYearlyNote: 'Jaarlijkse notitie openen',
         revealFile: 'Bestand tonen',
         search: 'Zoeken',
-        searchVaultRoot: 'Zoeken in kluisroot',
+        searchVaultRoot: 'Hele kluis doorzoeken',
         toggleDualPane: 'Dubbel paneel in-/uitschakelen',
         toggleDualPaneOrientation: 'Dubbel paneel oriëntatie wisselen', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Kalender in-/uitschakelen',

@@ -36,6 +36,8 @@ interface SearchInputProps {
     onSearchQueryChange: (query: string) => void;
     onClose: () => void;
     onFocusFiles?: () => void;
+    onEmptySearchExit?: () => void;
+    isWholeVaultSearch?: boolean;
     shouldFocus?: boolean;
     onFocusComplete?: () => void;
     /** Root container to scope DOM queries within this navigator instance */
@@ -52,6 +54,8 @@ export function SearchInput({
     onSearchQueryChange,
     onClose,
     onFocusFiles,
+    onEmptySearchExit,
+    isWholeVaultSearch = false,
     shouldFocus,
     onFocusComplete,
     containerRef,
@@ -72,16 +76,32 @@ export function SearchInput({
     const activeProvider = searchProvider ?? settings.searchProvider ?? 'internal';
     const isOmnisearchAvailable = omnisearchService?.isAvailable() ?? false;
     const isOmnisearchActive = activeProvider === 'omnisearch' && isOmnisearchAvailable;
+    const showWholeVaultSearchIcon = isWholeVaultSearch && !isOmnisearchActive;
     const shortcutIconId = useMemo(() => resolveUXIcon(settings.interfaceIcons, 'nav-shortcuts'), [settings.interfaceIcons]);
     const searchIconId = useMemo(
-        () => (isOmnisearchActive ? 'text-search' : resolveUXIcon(settings.interfaceIcons, 'list-search')),
-        [isOmnisearchActive, settings.interfaceIcons]
+        () =>
+            isOmnisearchActive
+                ? 'text-search'
+                : showWholeVaultSearchIcon
+                  ? 'folder-search'
+                  : resolveUXIcon(settings.interfaceIcons, 'list-search'),
+        [isOmnisearchActive, settings.interfaceIcons, showWholeVaultSearchIcon]
     );
-    const placeholderText = isOmnisearchActive ? strings.searchInput.placeholderOmnisearch : strings.searchInput.placeholder;
+    const placeholderText = isOmnisearchActive
+        ? strings.searchInput.placeholderOmnisearch
+        : showWholeVaultSearchIcon
+          ? strings.searchInput.placeholderVault
+          : strings.searchInput.placeholder;
     const hasQuery = searchQuery.trim().length > 0;
     const showShortcutButton = hasQuery && Boolean(onSaveShortcut || (isShortcutSaved && onRemoveShortcut));
     const shortcutButtonDisabled = isShortcutDisabled || (!isShortcutSaved && !onSaveShortcut) || (isShortcutSaved && !onRemoveShortcut);
     const searchContainerClassName = `nn-search-input-container${showShortcutButton ? ' nn-search-input-container--has-shortcut' : ''}`;
+
+    const notifyEmptySearchExit = useCallback(() => {
+        if (!hasQuery) {
+            onEmptySearchExit?.();
+        }
+    }, [hasQuery, onEmptySearchExit]);
 
     const restoreSearchInputFocus = useCallback((selection?: { start: number | null; end: number | null }) => {
         const input = inputRef.current;
@@ -253,6 +273,7 @@ export function SearchInput({
         if (matchesShortcut(nativeEvent, shortcuts, KeyboardShortcutAction.SEARCH_FOCUS_NAVIGATION)) {
             if (!uiState.singlePane && !isMobile) {
                 e.preventDefault();
+                notifyEmptySearchExit();
                 uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
             }
             return;
@@ -260,6 +281,7 @@ export function SearchInput({
 
         if (matchesShortcut(nativeEvent, shortcuts, KeyboardShortcutAction.SEARCH_FOCUS_LIST)) {
             e.preventDefault();
+            notifyEmptySearchExit();
             uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
 
             if (isMobile) {
@@ -341,6 +363,7 @@ export function SearchInput({
                     onChange={e => onSearchQueryChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     onClick={handleSearchClick}
+                    onBlur={notifyEmptySearchExit}
                 />
                 {!hasQuery && settings.showInfoButtons && (
                     <div

@@ -1560,7 +1560,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         }
     });
 
-    // Command to select the vault root folder and open search
+    // Command to select the vault root folder and open search with descendants included
     plugin.addCommand({
         id: 'search-vault',
         name: strings.commands.searchVaultRoot,
@@ -1581,7 +1581,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
 
                 const root = plugin.app.vault.getRoot();
                 view.navigateToFolder(root, { source: 'manual', preserveNavigationFocus: false });
-                view.toggleSearch();
+                view.searchWithDescendants();
             });
 
             return true;

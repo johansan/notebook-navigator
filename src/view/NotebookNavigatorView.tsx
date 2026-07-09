@@ -533,6 +533,13 @@ export class NotebookNavigatorView extends ItemView {
     }
 
     /**
+     * Open or focus search with descendant files included for the current scope.
+     */
+    searchWithDescendants(): void {
+        this.componentHandle?.searchWithDescendants();
+    }
+
+    /**
      * Trigger collapse/expand all
      */
     triggerCollapse(): void {

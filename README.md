@@ -293,7 +293,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Add to shortcuts` Adds or removes the current file, folder, tag, or property from shortcuts
 - `Notebook Navigator: Open shortcut 1-9` Opens shortcut by its position in the shortcuts list
 - `Notebook Navigator: Search` Opens quick search field or focuses it if already open. Search persists between sessions. **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+S` for quick file filtering
-- `Notebook Navigator: Search in vault root` Selects the vault root folder and opens search (requires `Show root folder` enabled)
+- `Notebook Navigator: Search whole vault` Selects the vault root folder and opens search with subfolders included (requires `Show root folder` enabled)
 
 **Selection**
 
@@ -377,7 +377,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 | `notebook-navigator:open-shortcut-8`                | Notebook Navigator: Open shortcut 8                        |
 | `notebook-navigator:open-shortcut-9`                | Notebook Navigator: Open shortcut 9                        |
 | `notebook-navigator:search`                         | Notebook Navigator: Search                                 |
-| `notebook-navigator:search-vault`                   | Notebook Navigator: Search in vault root                   |
+| `notebook-navigator:search-vault`                   | Notebook Navigator: Search whole vault                     |
 | `notebook-navigator:toggle-dual-pane`               | Notebook Navigator: Toggle dual pane layout                |
 | `notebook-navigator:toggle-dual-pane-orientation`   | Notebook Navigator: Toggle dual pane orientation           |
 | `notebook-navigator:toggle-calendar`                | Notebook Navigator: Toggle calendar                        |

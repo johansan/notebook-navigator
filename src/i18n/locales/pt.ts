@@ -169,6 +169,7 @@ export const STRINGS_PT = {
     // Search input
     searchInput: {
         placeholder: 'Pesquisar...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'Pesquisar no cofre...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'Limpar pesquisa', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'Mudar para pesquisa por filtro',
@@ -863,7 +864,7 @@ export const STRINGS_PT = {
         openYearlyNote: 'Abrir nota anual',
         revealFile: 'Revelar ficheiro', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Pesquisar', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'Pesquisar na raiz do cofre', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'Pesquisar em todo o cofre', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'Alternar layout de painel duplo', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'Alternar orientação do painel duplo', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Alternar calendário', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)
