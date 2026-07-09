@@ -110,6 +110,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Performance.** Reduced navigation pane and calendar rendering work. Navigation pane rows now skip re-rendering while scrolling, and selecting, expanding, or renaming an item re-renders only the affected rows instead of all visible rows. Calendar day cells skip re-rendering when their content is unchanged, and formatted day labels are cached.',
             '**Performance.** Reduced content processing while editing notes. Saving a note now generates derived content (preview text, word counts, tasks, feature image) once instead of twice, reducing background processing while typing by 50%.',
             '**Performance.** Reduced database work when renaming or moving folders. File records, thumbnails, and preview texts for all files in a rename or move are now written in one batched database transaction per store instead of three transactions per file.',
+            '**Performance.** Moving, deleting, or syncing many files now causes fewer repeated navigation count updates, reducing repeated UI refreshes during bulk file operations.',
             '**Performance.** Reduced tag and property tree rebuild work on vault changes. Both trees now rebuild in one shared pass with a single file scan, the tag tree reads only visible files instead of every cached record, and changes to files hidden by display filters no longer trigger rebuilds.'
         ],
         fixed: [

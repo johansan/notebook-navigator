@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TFolder, type App, debounce } from 'obsidian';
 
 import type { ActiveProfileState } from '../context/SettingsContext';
@@ -136,21 +136,48 @@ export function useFolderNavigationSourceState({
     const [folderExclusionVersion, setFolderExclusionVersion] = useState(0);
     const [fileChangeVersion, setFileChangeVersion] = useState(0);
     const [folderChangeVersion, setFolderChangeVersion] = useState(0);
-    const bumpFileChangeVersion = useCallback(() => {
-        setFileChangeVersion(value => value + 1);
+
+    // Vault file events can arrive once per file during moves, deletes, and syncs.
+    // The trailing timer collapses each burst; the max-wait timer refreshes during continuous bursts.
+    const fileChangeVersionTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+    const fileChangeVersionMaxWaitTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+    const clearScheduledFileChangeVersionBump = useCallback(() => {
+        if (fileChangeVersionTimerRef.current !== null) {
+            window.clearTimeout(fileChangeVersionTimerRef.current);
+            fileChangeVersionTimerRef.current = null;
+        }
+        if (fileChangeVersionMaxWaitTimerRef.current !== null) {
+            window.clearTimeout(fileChangeVersionMaxWaitTimerRef.current);
+            fileChangeVersionMaxWaitTimerRef.current = null;
+        }
     }, []);
+    const flushFileChangeVersion = useCallback(() => {
+        clearScheduledFileChangeVersionBump();
+        setFileChangeVersion(value => value + 1);
+    }, [clearScheduledFileChangeVersionBump]);
+    const scheduleFileChangeVersionBump = useCallback(() => {
+        if (fileChangeVersionTimerRef.current !== null) {
+            window.clearTimeout(fileChangeVersionTimerRef.current);
+        }
+
+        fileChangeVersionTimerRef.current = window.setTimeout(flushFileChangeVersion, TIMEOUTS.NAVIGATION_FILE_CHANGE_DEBOUNCE);
+        if (fileChangeVersionMaxWaitTimerRef.current === null) {
+            fileChangeVersionMaxWaitTimerRef.current = window.setTimeout(flushFileChangeVersion, TIMEOUTS.NAVIGATION_FILE_CHANGE_MAX_WAIT);
+        }
+    }, [flushFileChangeVersion]);
+    useEffect(() => clearScheduledFileChangeVersionBump, [clearScheduledFileChangeVersionBump]);
     const handleRootFolderChange = useCallback(() => {
         setFolderChangeVersion(value => value + 1);
     }, []);
     const handleRootFileChange = useCallback(
         (change: RootFileChangeEvent) => {
-            bumpFileChangeVersion();
+            scheduleFileChangeVersionBump();
             onFileChange?.(change);
             if (isFolderNoteRelatedPath(change.path) || (change.oldPath !== undefined && isFolderNoteRelatedPath(change.oldPath))) {
                 setFolderExclusionVersion(value => value + 1);
             }
         },
-        [bumpFileChangeVersion, isFolderNoteRelatedPath, onFileChange]
+        [isFolderNoteRelatedPath, onFileChange, scheduleFileChangeVersionBump]
     );
 
     const { rootFolders, rootLevelFolders, rootFolderOrderMap, missingRootFolderPaths } = useRootFolderOrder({
