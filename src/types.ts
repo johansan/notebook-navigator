@@ -283,6 +283,7 @@ export interface LocalStorageKeys {
     fileCacheKey: string;
     databaseSchemaVersionKey: string;
     databaseContentVersionKey: string;
+    frontmatterMetadataCacheSignatureKey: string;
     cacheRebuildNoticeKey: string;
     debugLoggingEnabledKey: string;
     // PDF_CRASH_DIAGNOSTICS: vault-scoped key used by the PDF crash diagnostic flow.
@@ -348,6 +349,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     fileCacheKey: 'notebook-navigator-file-cache',
     databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
     databaseContentVersionKey: 'notebook-navigator-db-content-version',
+    frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
     cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
     debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
     // PDF_CRASH_DIAGNOSTICS: persists the last PDF path being processed on mobile support builds.
@@ -453,6 +455,10 @@ export type SupportedLeafType = (typeof SUPPORTED_FILE_TYPES)[SupportedFileExten
  */
 export function getSupportedLeaves(app: App): WorkspaceLeaf[] {
     return SUPPORTED_LEAF_TYPES.flatMap(type => app.workspace.getLeavesOfType(type));
+}
+
+export function isSupportedLeafType(viewType: string): viewType is SupportedLeafType {
+    return SUPPORTED_LEAF_TYPES.includes(viewType as SupportedLeafType);
 }
 
 /**

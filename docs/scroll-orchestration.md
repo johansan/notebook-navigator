@@ -1,6 +1,6 @@
 # Notebook Navigator Scroll Orchestration
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -171,14 +171,14 @@ spacers).
   bottom-overlap correction when `scrollPaddingEnd` is non-zero. Top alignment is handled by `scrollMargin`.
 - **Selection handling**: The hook watches folder/tag/property selection, pane focus, and visibility. It suppresses auto-scroll
   when a shortcut is active or when `skipAutoScroll` is enabled for shortcut reveals.
-- **Hidden item toggles**: When `showHiddenItems` changes, the current selection is queued with intent
-  `visibilityToggle` and `minIndexVersion = current + 1`.
+- **Hidden item toggles**: When `showHiddenItems` changes while a tag or property is selected, the selection is queued
+  with intent `visibilityToggle` and `minIndexVersion = current + 1`.
 - **Tag/property selection**: Tag and property rows can load after folders, so selection scrolling for these types is handled in a dedicated effect.
 - **Pending execution**: While a visibility toggle is in progress, only `visibilityToggle` requests can execute. After
   running such a scroll, the hook rechecks the index on the next animation frame and queues a follow-up if the index
   moved again.
-- **External entries**: `requestScroll` normalizes the path and queues an `external` intent so reveal flows can drive
-  the navigation pane.
+- **External entries**: `requestScroll` normalizes the path and queues an `external` intent. Callers include reveal
+  flows and the inline folder rename flow in `NavigationPaneContent`, which scrolls the folder row into view.
 - **Mobile drawer**: A `notebook-navigator-visible` event first attempts an immediate scroll for the current selection.
   If the pane is not ready or the row index is not available yet, the hook queues a `mobile-visibility` pending scroll.
 - **Settings changes**: Navigation sizing changes trigger `measure()` and an `auto` scroll to keep the selection within
@@ -227,7 +227,7 @@ spacers).
 ### Toggling Hidden Items
 
 1. `showHiddenItems` flips in UX preferences.
-2. The navigation hook queues the current selection with `intent: 'visibilityToggle'` and
+2. When a tag or property is selected, the navigation hook queues the selection with `intent: 'visibilityToggle'` and
    `minIndexVersion = current + 1`, then waits for the next `pathToIndex` rebuild to advance `indexVersion`.
 3. After the tree rebuild, the pending scroll resolves the selection and runs.
 4. The stabilization check revalidates the index on the next frame and queues another scroll if the index moved again.

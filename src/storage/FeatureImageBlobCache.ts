@@ -80,7 +80,11 @@ export class FeatureImageBlobCache {
         this.entries.delete(path);
     }
 
-    move(oldPath: string, newPath: string): void {
+    peek(path: string): FeatureImageBlobEntry | null {
+        return this.entries.get(path) ?? null;
+    }
+
+    move(oldPath: string, newPath: string, featureImageKey?: string): void {
         // Used when a file is renamed/moved so the thumbnail remains available
         // without requiring an IndexedDB read.
         const entry = this.entries.get(oldPath);
@@ -89,7 +93,7 @@ export class FeatureImageBlobCache {
         }
         // Preserve the entry while updating its cache key (path).
         this.entries.delete(oldPath);
-        this.entries.set(newPath, entry);
+        this.entries.set(newPath, featureImageKey === undefined ? entry : { ...entry, featureImageKey });
         this.evictIfNeeded();
     }
 

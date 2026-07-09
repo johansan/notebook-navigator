@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { FeatureImageBlobStore } from '../FeatureImageBlobStore';
+import { FeatureImageBlobStore, remapSelfReferentialFeatureImageKey } from '../FeatureImageBlobStore';
 
 interface FeatureImageCoordinatorDeps {
     getDb: () => IDBDatabase | null;
@@ -31,7 +31,7 @@ export class FeatureImageCoordinator {
     private readonly isClosing: () => boolean;
     private readonly blobs: FeatureImageBlobStore;
     // Tracks feature image blob store key moves while a rename is in progress: newPath -> { oldPath, startedAt }.
-    // Used so `getFeatureImageBlob(newPath)` can fall back to `oldPath` until the blob record is moved.
+    // Used so `getFeatureImageBlob(newPath)` can follow rename chains until the blob record is moved.
     // (`getBlob(newPath, expectedKey)` provides the same behavior inside this coordinator.)
     private readonly moveInFlight = new Map<string, { oldPath: string; startedAt: number }>();
 
@@ -76,20 +76,38 @@ export class FeatureImageCoordinator {
             return blob;
         }
 
-        const tracked = this.moveInFlight.get(path);
-        const oldPath = tracked?.oldPath ?? '';
-        if (oldPath.length === 0) {
-            return blob;
-        }
-
-        const fallbackBlob = await this.blobs.getBlob(db, oldPath, expectedKey);
+        const fallbackBlob = await this.getMoveFallbackBlob(db, path, expectedKey);
         if (fallbackBlob) {
             // Seed the cache under the new path so subsequent reads are fast.
-            this.blobs.moveCacheEntry(oldPath, path);
+            this.blobs.seedCacheEntry(path, expectedKey, fallbackBlob);
             return fallbackBlob;
         }
 
         return blob;
+    }
+
+    private async getMoveFallbackBlob(db: IDBDatabase, path: string, expectedKey: string): Promise<Blob | null> {
+        const visited = new Set<string>([path]);
+        let currentPath = path;
+        let currentExpectedKey = expectedKey;
+
+        while (true) {
+            const tracked = this.moveInFlight.get(currentPath);
+            const oldPath = tracked?.oldPath ?? '';
+            if (oldPath.length === 0 || visited.has(oldPath)) {
+                return null;
+            }
+
+            const fallbackKey = remapSelfReferentialFeatureImageKey(currentExpectedKey, currentPath, oldPath) ?? currentExpectedKey;
+            const fallbackBlob = await this.blobs.getBlob(db, oldPath, fallbackKey);
+            if (fallbackBlob) {
+                return fallbackBlob;
+            }
+
+            visited.add(oldPath);
+            currentPath = oldPath;
+            currentExpectedKey = fallbackKey;
+        }
     }
 
     async forEachBlobRecord(callback: (path: string, record: { featureImageKey: string; blob: Blob }) => void): Promise<void> {
@@ -101,28 +119,36 @@ export class FeatureImageCoordinator {
         await this.blobs.forEachBlobRecord(db, callback);
     }
 
-    async moveBlob(oldPath: string, newPath: string): Promise<void> {
-        if (oldPath === newPath) {
-            return;
+    async moveBlobs(moves: { oldPath: string; newPath: string }[]): Promise<boolean> {
+        // Persists a rename burst's blob store moves in one transaction. Callers begin each move at
+        // rename-event time (`beginMove` relocates the cached thumbnail and records the fallback
+        // marker); this method ends the markers once the batch lands. Markers for a failed batch
+        // keep the old-path fallback alive and expire via `pruneMovesInFlight`.
+        const pendingMoves = moves.filter(move => move.oldPath !== move.newPath);
+        if (pendingMoves.length === 0) {
+            return true;
         }
-        this.beginMove(oldPath, newPath);
 
         let didMove = false;
         try {
             await this.init();
             const db = this.getDb();
             if (!db) throw new Error('Database not initialized');
-            await this.blobs.moveBlob(db, oldPath, newPath);
+            await this.blobs.moveBlobs(db, pendingMoves);
             didMove = true;
         } catch (error: unknown) {
             if (!this.isClosing()) {
-                console.error('[FeatureImageBlob] Failed to move feature image blob', { oldPath, newPath, error });
+                console.error('[FeatureImageBlob] Failed to move feature image blobs', { moves: pendingMoves, error });
             }
         } finally {
             if (didMove) {
-                this.endMove(oldPath, newPath);
+                for (const move of pendingMoves) {
+                    this.endMove(move.oldPath, move.newPath);
+                }
             }
         }
+
+        return didMove;
     }
 
     async deleteBlob(path: string): Promise<void> {

@@ -33,7 +33,7 @@ import {
     skipMarkdownWhitespace
 } from '../../utils/codeRangeUtils';
 import { PreviewTextUtils } from '../../utils/previewTextUtils';
-import { createCaseInsensitiveKeyMatcher, findMatchingRecordKey } from '../../utils/recordUtils';
+import { createCaseInsensitiveKeyMatcher, findMatchingRecordKey, type CaseInsensitiveKeyMatcher } from '../../utils/recordUtils';
 import { countCharactersForNoteProperty, countWordsForNoteProperty, getObsidianTextCountStartIndex } from '../../utils/wordCountUtils';
 import {
     getDrawingDirectFeatureImageKey,
@@ -50,8 +50,9 @@ import {
     hasMarkdownWordCountConsumer
 } from '../../utils/markdownPipelineContentTypes';
 import { areMarkdownTaskCountsEqual, countMarkdownTasksFromMetadata, type MarkdownTaskCounts } from '../../utils/markdownTaskCounts';
+import { isGeneratedThumbnailFile } from '../../utils/fileTypeUtils';
 import type { ContentProviderProcessResult } from './BaseContentProvider';
-import { findFeatureImageReference, type FeatureImageReference } from './featureImageReferenceResolver';
+import { findFeatureImageReference, hasSvgUrlPathExtension, type FeatureImageReference } from './featureImageReferenceResolver';
 import { FeatureImageContentProvider } from './FeatureImageContentProvider';
 
 type MarkdownPipelineContext = {
@@ -409,6 +410,8 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
     protected readonly PARALLEL_LIMIT: number = LIMITS.contentProvider.parallelLimit;
     private readonly readFailureAttemptsByPath = new Map<string, number>();
     private readonly emptyFrontmatterRetryCounts = new Map<string, number>();
+    private featureImageExcludeMatcherKeys: string[] = [];
+    private featureImageExcludeMatcher: CaseInsensitiveKeyMatcher | null = null;
 
     private readonly processors: MarkdownPipelineProcessor[] = [
         {
@@ -554,6 +557,15 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         this.readFailureAttemptsByPath.delete(path);
     }
 
+    private getFeatureImageExcludeMatcher(keys: string[]): CaseInsensitiveKeyMatcher {
+        if (!this.featureImageExcludeMatcher || !areStringArraysEqual(this.featureImageExcludeMatcherKeys, keys)) {
+            this.featureImageExcludeMatcherKeys = [...keys];
+            this.featureImageExcludeMatcher = createCaseInsensitiveKeyMatcher(keys);
+        }
+
+        return this.featureImageExcludeMatcher;
+    }
+
     shouldRegenerate(oldSettings: NotebookNavigatorSettings, newSettings: NotebookNavigatorSettings): boolean {
         const { shouldClearPreview, shouldClearProperties, shouldClearFeatureImage, shouldClearWordCounts, shouldClearCharacterCounts } =
             getMarkdownPipelineClearFlags({
@@ -638,7 +650,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             (fileData.featureImageKey === null || fileData.featureImageStatus === 'unprocessed');
         if (hasMarkdownFeatureImageConsumer(settings) && !needsFeatureImage) {
             const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
-            const featureImageExcluded = createCaseInsensitiveKeyMatcher(settings.featureImageExcludeProperties).matches(frontmatter);
+            const featureImageExcluded = this.getFeatureImageExcludeMatcher(settings.featureImageExcludeProperties).matches(frontmatter);
             if (!featureImageExcluded) {
                 const drawingProviderId = getDrawingSourceProviderIdWithFrontmatter(file, frontmatter);
                 const expectedDrawingFeatureImageKey = drawingProviderId ? getDrawingDirectFeatureImageKey(file, drawingProviderId) : null;
@@ -706,7 +718,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                 return { update: null, processed: false };
             }
         }
-        const featureImageExcludeMatcher = createCaseInsensitiveKeyMatcher(settings.featureImageExcludeProperties);
+        const featureImageExcludeMatcher = this.getFeatureImageExcludeMatcher(settings.featureImageExcludeProperties);
         const featureImageExcluded = featureImageEnabled && frontmatter !== null && featureImageExcludeMatcher.matches(frontmatter);
         const needsWordCount = wordCountEnabled && (!fileData || fileModified || fileData.wordCount === null);
         const needsWordCountContent = needsWordCount && !isDrawing;
@@ -1298,6 +1310,20 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         const hasStableThumbnail = params.fileData?.featureImageKey === featureImageKey && params.fileData.featureImageStatus === 'has';
 
         if (hasStableThumbnail) {
+            return null;
+        }
+
+        // Local keys include the source mtime and external keys include the URL, so a rejected
+        // generated thumbnail (PDF cover, rasterized SVG) is not re-attempted on every note edit.
+        const isGeneratedThumbnailSource =
+            (reference.kind === 'local' && isGeneratedThumbnailFile(reference.file)) ||
+            (reference.kind === 'external' && hasSvgUrlPathExtension(reference.url));
+        const hasRejectedThumbnailMarker =
+            isGeneratedThumbnailSource &&
+            params.fileData?.featureImageKey === featureImageKey &&
+            params.fileData.featureImageStatus === 'none';
+
+        if (hasRejectedThumbnailMarker) {
             return null;
         }
 

@@ -168,6 +168,7 @@ export const STRINGS_ES = {
     // Search input
     searchInput: {
         placeholder: 'Buscar...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'Buscar en la bóveda...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'Borrar búsqueda', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'Cambiar a búsqueda por filtro',
@@ -671,6 +672,7 @@ export const STRINGS_ES = {
         },
         navigationBanner: {
             placeholder: 'Buscar imágenes...',
+            svgMissingDimensions: 'El archivo SVG seleccionado no define ancho, alto ni viewBox.',
             instructions: {
                 navigate: 'para navegar',
                 select: 'para establecer banner',
@@ -863,7 +865,7 @@ export const STRINGS_ES = {
         openYearlyNote: 'Abrir nota anual',
         revealFile: 'Revelar archivo', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Buscar', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'Buscar en la raíz de la bóveda', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'Buscar en toda la bóveda', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'Alternar diseño de doble panel', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'Alternar orientación del doble panel', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Alternar calendario', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

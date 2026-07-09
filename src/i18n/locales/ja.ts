@@ -168,6 +168,7 @@ export const STRINGS_JA = {
     // Search input
     searchInput: {
         placeholder: '検索...', // Placeholder text for search input (English: Search...)
+        placeholderVault: '保管庫を検索...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: '検索をクリア', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'フィルター検索に切り替え',
@@ -669,6 +670,7 @@ export const STRINGS_JA = {
         },
         navigationBanner: {
             placeholder: '画像を検索...',
+            svgMissingDimensions: '選択したSVGファイルには幅、高さ、またはviewBoxが定義されていません。',
             instructions: {
                 navigate: 'でナビゲート',
                 select: 'でバナーを設定',
@@ -861,7 +863,7 @@ export const STRINGS_JA = {
         openYearlyNote: '年間ノートを開く',
         revealFile: 'ファイルを表示', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: '検索', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: '保管庫のルートで検索', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: '保管庫全体を検索', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'デュアルペインレイアウトを切り替え', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'デュアルペインの向きを切り替え', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'カレンダーの切り替え', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

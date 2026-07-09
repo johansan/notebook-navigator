@@ -406,41 +406,33 @@ describe('FeatureImageContentProvider scanning', () => {
         }
     });
 
-    it('skips local SVG feature image embeds and continues scanning', () => {
-        const { app, resolvedFiles, getFirstLinkpathDest } = createApp();
+    it('resolves local SVG feature image embeds', () => {
+        const { app, resolvedFiles } = createApp();
         const settings = createSettings();
         const noteFile = createFile('notes/note.md');
 
         const svgFile = createFile('images/logo.svg');
-        const imageFile = createFile('images/hero.png');
         resolvedFiles.set('logo.svg', svgFile);
         resolvedFiles.set(svgFile.path, svgFile);
-        resolvedFiles.set('hero', imageFile);
-        resolvedFiles.set(imageFile.path, imageFile);
 
-        const result = resolveReference(app, noteFile, '![[logo.svg]]\n![[hero]]', settings);
+        const result = resolveReference(app, noteFile, '![[logo.svg]]', settings);
 
         expect(result?.kind).toBe('local');
         if (result?.kind === 'local') {
-            expect(result.file.path).toBe(imageFile.path);
+            expect(result.file.path).toBe(svgFile.path);
         }
-        expect(getFirstLinkpathDest.mock.calls.some(call => call[0] === 'logo.svg')).toBe(false);
     });
 
-    it('skips external SVG feature image URLs and continues scanning', () => {
-        const { app, resolvedFiles } = createApp();
+    it('resolves external SVG feature image URLs', () => {
+        const { app } = createApp();
         const settings = createSettings({ downloadExternalFeatureImages: true });
         const noteFile = createFile('notes/note.md');
 
-        const imageFile = createFile('images/hero.png');
-        resolvedFiles.set('hero', imageFile);
-        resolvedFiles.set(imageFile.path, imageFile);
+        const result = resolveReference(app, noteFile, '![](https://example.com/icons/logo.svg?token=abc)', settings);
 
-        const result = resolveReference(app, noteFile, '![](https://example.com/icons/logo.svg?token=abc)\n![[hero]]', settings);
-
-        expect(result?.kind).toBe('local');
-        if (result?.kind === 'local') {
-            expect(result.file.path).toBe(imageFile.path);
+        expect(result?.kind).toBe('external');
+        if (result?.kind === 'external') {
+            expect(result.url).toBe('https://example.com/icons/logo.svg?token=abc');
         }
     });
 
@@ -930,22 +922,162 @@ describe('FeatureImageContentProvider scanning', () => {
         expect(result?.featureImage?.size).toBe(0);
     });
 
-    it('skips extensionless external SVG responses before downloading the body', async () => {
+    it('stores the rejected SVG key without falling back to later embeds', async () => {
+        const context = createApp();
+        const { app, resolvedFiles } = context;
+        const provider = new TestFeatureImageContentProvider(app);
+        const settings = createSettings();
+        const noteFile = createFile('notes/note.md');
+        const svgFile = createFile('images/diagram.svg');
+        svgFile.stat.mtime = 111;
+        const pngFile = createFile('images/cover.png');
+        pngFile.stat.mtime = 222;
+        resolvedFiles.set('diagram.svg', svgFile);
+        resolvedFiles.set(svgFile.path, svgFile);
+        resolvedFiles.set('cover.png', pngFile);
+        resolvedFiles.set(pngFile.path, pngFile);
+
+        setMarkdownContent(context, noteFile, '![[diagram.svg]]\n![[cover.png]]');
+
+        const result = await provider.runProcessFile(noteFile, settings);
+
+        // Rasterization requires DOM APIs unavailable in the node test environment, so the SVG is
+        // rejected and the empty marker is stored under its key; later embeds are not consulted.
+        expect(result?.featureImageKey).toBe(provider.buildKey({ kind: 'local', file: svgFile }));
+        expect(result?.featureImage).toBeInstanceOf(Blob);
+        expect(result?.featureImage?.size).toBe(0);
+    });
+
+    it('stores the rejected frontmatter SVG key without falling back to body embeds', async () => {
+        const context = createApp();
+        const { app, resolvedFiles } = context;
+        const provider = new TestFeatureImageContentProvider(app);
+        const settings = createSettings();
+        const noteFile = createFile('notes/note.md');
+        const svgFile = createFile('images/diagram.svg');
+        svgFile.stat.mtime = 111;
+        const pngFile = createFile('images/cover.png');
+        pngFile.stat.mtime = 222;
+        resolvedFiles.set('diagram.svg', svgFile);
+        resolvedFiles.set(svgFile.path, svgFile);
+        resolvedFiles.set('cover.png', pngFile);
+        resolvedFiles.set(pngFile.path, pngFile);
+
+        setMarkdownContent(context, noteFile, '---\nthumbnail: "[[diagram.svg]]"\n---\n![[cover.png]]');
+
+        const result = await provider.runProcessFile(noteFile, settings);
+
+        expect(result?.featureImageKey).toBe(provider.buildKey({ kind: 'local', file: svgFile }));
+        expect(result?.featureImage).toBeInstanceOf(Blob);
+        expect(result?.featureImage?.size).toBe(0);
+    });
+
+    it('stores the rejected SVG key when no other images are referenced', async () => {
+        const context = createApp();
+        const { app, resolvedFiles } = context;
+        const provider = new TestFeatureImageContentProvider(app);
+        const settings = createSettings();
+        const noteFile = createFile('notes/note.md');
+        const svgFile = createFile('images/diagram.svg');
+        svgFile.stat.mtime = 111;
+        resolvedFiles.set('diagram.svg', svgFile);
+        resolvedFiles.set(svgFile.path, svgFile);
+
+        setMarkdownContent(context, noteFile, '![[diagram.svg]]');
+
+        const result = await provider.runProcessFile(noteFile, settings);
+
+        expect(result?.featureImageKey).toBe(provider.buildKey({ kind: 'local', file: svgFile }));
+        expect(result?.featureImage).toBeInstanceOf(Blob);
+        expect(result?.featureImage?.size).toBe(0);
+    });
+
+    it('processes standalone SVG files with the local source key', async () => {
+        const context = createApp();
+        const { app } = context;
+        const provider = new TestNonMarkdownFeatureImageContentProvider(app);
+        const settings = createSettings();
+        const svgFile = createFile('images/logo.svg');
+        svgFile.stat.mtime = 4242;
+
+        expect(provider.shouldProcess(null, svgFile, settings)).toBe(true);
+
+        const result = await provider.runProcessFile(svgFile, settings);
+
+        // Rasterization requires DOM APIs unavailable in the node test environment,
+        // so the empty processed marker is stored under the mtime-based local key.
+        expect(result?.featureImageKey).toBe(`f:${svgFile.path}@${svgFile.stat.mtime}`);
+        expect(result?.featureImage).toBeInstanceOf(Blob);
+        expect(result?.featureImage?.size).toBe(0);
+    });
+
+    it('downloads extensionless external SVG responses after successful HEAD preflight', async () => {
         const context = createApp();
         const { app } = context;
         const provider = new TestFeatureImageContentProvider(app);
         const settings = createSettings({ downloadExternalFeatureImages: true });
         const noteFile = createFile('notes/note.md');
 
-        requestUrlMock.mockResolvedValue({
-            status: 200,
-            headers: { 'content-type': 'image/svg+xml', 'content-length': '1024' }
+        requestUrlMock.mockImplementation(async (request: { method?: string }) => {
+            if (request.method === 'HEAD') {
+                return {
+                    status: 200,
+                    headers: { 'content-type': 'image/svg+xml', 'content-length': '1024' }
+                };
+            }
+
+            return {
+                status: 200,
+                headers: { 'content-type': 'image/svg+xml' },
+                arrayBuffer: new ArrayBuffer(0)
+            };
         });
 
         setMarkdownContent(context, noteFile, '![](https://example.com/render?id=cover)');
 
         const result = await provider.runProcessFile(noteFile, settings);
 
+        // Rasterization requires DOM APIs unavailable in the node test environment,
+        // so the result is the empty processed marker with the external key.
+        expect(result?.featureImageKey).toBe('e:https://example.com/render?id=cover');
+        expect(result?.featureImage).toBeInstanceOf(Blob);
+        expect(result?.featureImage?.size).toBe(0);
+        expect(requestUrlMock).toHaveBeenCalledTimes(2);
+        expect(requestUrlMock).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                url: 'https://example.com/render?id=cover',
+                method: 'HEAD'
+            })
+        );
+        expect(requestUrlMock).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                url: 'https://example.com/render?id=cover',
+                method: 'GET'
+            })
+        );
+    });
+
+    it('skips oversized external SVG responses before downloading the body', async () => {
+        const context = createApp();
+        const { app } = context;
+        const provider = new TestFeatureImageContentProvider(app);
+        const settings = createSettings({ downloadExternalFeatureImages: true });
+        const noteFile = createFile('notes/note.md');
+
+        requestUrlMock.mockImplementation(async () => {
+            return {
+                status: 200,
+                headers: { 'content-type': 'image/svg+xml', 'content-length': '3000000' }
+            };
+        });
+
+        setMarkdownContent(context, noteFile, '![](https://example.com/render?id=cover)');
+
+        const result = await provider.runProcessFile(noteFile, settings);
+
+        // The reported length exceeds the SVG source cap, so only the HEAD request runs.
         expect(result?.featureImageKey).toBe('e:https://example.com/render?id=cover');
         expect(result?.featureImage).toBeInstanceOf(Blob);
         expect(result?.featureImage?.size).toBe(0);

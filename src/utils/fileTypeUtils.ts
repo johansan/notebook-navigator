@@ -95,7 +95,7 @@ function getSupportedExtensions(app: App): Set<string> {
 
 /**
  * Common raster image extensions that can be displayed as generated thumbnails or direct previews.
- * SVG files are excluded from thumbnail/direct-preview image helpers.
+ * SVG files are excluded from raster helpers; they are rasterized into generated thumbnails instead.
  */
 const SUPPORTED_RASTER_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'avif', 'heic', 'heif', 'bmp'] as const;
 const RASTER_IMAGE_EXTENSIONS = new Set<string>(SUPPORTED_RASTER_IMAGE_EXTENSIONS);
@@ -175,12 +175,29 @@ export function isRasterImageFile(file: TFile): boolean {
     return isRasterImageExtension(file.extension);
 }
 
+/**
+ * Check if a file is an SVG image that can be rasterized into a generated thumbnail.
+ */
+export function isSvgFile(file: TFile): boolean {
+    if (!file?.extension) {
+        return false;
+    }
+    return isSvgExtension(file.extension);
+}
+
 // Checks if a TFile is a PDF document
 export function isPdfFile(file: TFile): boolean {
     if (!file?.extension) {
         return false;
     }
     return isPdfExtension(file.extension);
+}
+
+/**
+ * Check if a file's feature image is a thumbnail generated from the file contents (PDF cover pages and rasterized SVG files).
+ */
+export function isGeneratedThumbnailFile(file: TFile): boolean {
+    return isPdfFile(file) || isSvgFile(file);
 }
 
 export function isMarkdownPath(path: string): boolean {

@@ -19,8 +19,10 @@
 import { App, TFile } from 'obsidian';
 import { BaseSuggestModal } from './BaseSuggestModal';
 import { strings } from '../i18n';
+import { decodeSvgSourceText, svgSourceDefinesDimensions } from '../services/content/thumbnail/svgFeatureImage';
 import { naturalCompare } from '../utils/sortUtils';
-import { isRasterImageFile } from '../utils/fileTypeUtils';
+import { isRasterImageFile, isSvgFile } from '../utils/fileTypeUtils';
+import { showNotice } from '../utils/noticeUtils';
 
 /**
  * Modal for selecting the navigation banner image.
@@ -28,18 +30,33 @@ import { isRasterImageFile } from '../utils/fileTypeUtils';
  */
 export class NavigationBannerModal extends BaseSuggestModal<TFile> {
     constructor(app: App, onChoose: (file: TFile) => void) {
-        super(app, onChoose, strings.modals.navigationBanner.placeholder, {
-            navigate: strings.modals.navigationBanner.instructions.navigate,
-            action: strings.modals.navigationBanner.instructions.select,
-            dismiss: strings.modals.navigationBanner.instructions.dismiss
-        });
+        super(
+            app,
+            async file => {
+                // The banner renders in an img element, which needs declared SVG dimensions for its aspect ratio.
+                if (isSvgFile(file)) {
+                    const buffer = await app.vault.adapter.readBinary(file.path);
+                    if (!svgSourceDefinesDimensions(decodeSvgSourceText(buffer))) {
+                        showNotice(strings.modals.navigationBanner.svgMissingDimensions, { variant: 'warning' });
+                        return;
+                    }
+                }
+                onChoose(file);
+            },
+            strings.modals.navigationBanner.placeholder,
+            {
+                navigate: strings.modals.navigationBanner.instructions.navigate,
+                action: strings.modals.navigationBanner.instructions.select,
+                dismiss: strings.modals.navigationBanner.instructions.dismiss
+            }
+        );
     }
 
     /**
      * Get all image files available in the vault, sorted by path.
      */
     getItems(): TFile[] {
-        const files = this.app.vault.getFiles().filter(file => isRasterImageFile(file));
+        const files = this.app.vault.getFiles().filter(file => isRasterImageFile(file) || isSvgFile(file));
         files.sort((first, second) => naturalCompare(first.path, second.path));
         return files;
     }

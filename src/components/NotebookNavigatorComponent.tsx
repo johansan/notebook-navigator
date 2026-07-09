@@ -164,6 +164,7 @@ export interface NotebookNavigatorHandle {
     removeTagFromSelectedFiles: () => Promise<void>;
     removeAllTagsFromSelectedFiles: () => Promise<void>;
     toggleSearch: () => void;
+    searchWithDescendants: () => void;
     triggerCollapse: () => void;
     triggerSelectedItemCollapse: () => boolean;
     stopContentProcessing: () => void;
@@ -1284,6 +1285,9 @@ export const NotebookNavigatorComponent = React.memo(
                 },
                 toggleSearch: () => {
                     listPaneRef.current?.toggleSearch();
+                },
+                searchWithDescendants: () => {
+                    listPaneRef.current?.searchWithDescendants();
                 },
                 triggerCollapse: () => {
                     handleExpandCollapseAll();

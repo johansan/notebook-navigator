@@ -30,6 +30,18 @@ interface PreviewTextCoordinatorDeps {
     emitChanges: (changes: FileContentChange[]) => void;
 }
 
+/**
+ * One preview store change from a rename event. `move` transfers stored text between paths;
+ * `delete` drops the stored text for a path (rename from markdown to a non-markdown extension).
+ */
+export type PreviewTextBatchOp = { type: 'move'; oldPath: string; newPath: string } | { type: 'delete'; path: string };
+
+/**
+ * Final preview store state a rename burst leaves at one path, resolved in event order.
+ * `vacated` marks a move source no later op re-occupied; like `deleted`, its stored text is gone.
+ */
+type PreviewMoveOutcome = { type: 'moved'; text: string } | { type: 'missing' } | { type: 'deleted' } | { type: 'vacated' };
+
 export class PreviewTextCoordinator {
     private readonly cache: MemoryFileCache;
     private readonly getDb: () => IDBDatabase | null;
@@ -154,54 +166,223 @@ export class PreviewTextCoordinator {
         this.emitChanges([{ path: newPath, changes, changeType: 'content' }]);
     }
 
-    async deletePreviewText(path: string): Promise<void> {
-        await this.init();
-        const db = this.getDb();
-        if (!db) throw new Error('Database not initialized');
-
-        if (this.cache.isReady()) {
-            this.cache.updateFileContent(path, { previewText: '' });
+    /**
+     * Applies a rename burst's preview store changes in vault event order inside one transaction.
+     *
+     * Ops are replayed serially: each move's get is issued after the previous op's put/delete, so a
+     * chained rename (a -> b, b -> c) reads the text written by the preceding move, and a delete for
+     * a vacated markdown path runs before a later move re-occupies that path. `delete` ops cover
+     * renames from markdown to a non-markdown extension.
+     */
+    async movePreviewTexts(ops: PreviewTextBatchOp[]): Promise<void> {
+        const pendingOps = ops.filter(batchOp => batchOp.type === 'delete' || batchOp.oldPath !== batchOp.newPath);
+        if (pendingOps.length === 0) {
+            return;
         }
 
-        const transaction = db.transaction([PREVIEW_STORE_NAME], 'readwrite');
-        const store = transaction.objectStore(PREVIEW_STORE_NAME);
+        // Final preview store state per path, recorded in event order across both op types so the
+        // last op for a path wins (covers a later delete of a path an earlier move occupied).
+        const finalStates = new Map<string, PreviewMoveOutcome>();
+        let didMove = false;
+        try {
+            await this.init();
+            const db = this.getDb();
+            if (!db) throw new Error('Database not initialized');
 
-        await new Promise<void>((resolve, reject) => {
-            const op = 'deletePreviewText';
-            let lastRequestError: DOMException | Error | null = null;
+            const transaction = db.transaction([PREVIEW_STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(PREVIEW_STORE_NAME);
 
-            const deleteReq = store.delete(path);
-            deleteReq.onerror = () => {
-                lastRequestError = deleteReq.error || null;
-                console.error('[IndexedDB] delete failed', {
-                    store: PREVIEW_STORE_NAME,
-                    op,
-                    path,
-                    name: deleteReq.error?.name,
-                    message: deleteReq.error?.message
-                });
-            };
+            await new Promise<void>((resolve, reject) => {
+                const op = 'movePreviewTexts';
+                let lastRequestError: DOMException | Error | null = null;
 
-            transaction.oncomplete = () => resolve();
-            transaction.onabort = () => {
-                console.error('[IndexedDB] transaction aborted', {
-                    store: PREVIEW_STORE_NAME,
-                    op,
-                    txError: transaction.error?.message,
-                    reqError: lastRequestError?.message
-                });
-                rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction aborted');
-            };
-            transaction.onerror = () => {
-                console.error('[IndexedDB] transaction error', {
-                    store: PREVIEW_STORE_NAME,
-                    op,
-                    txError: transaction.error?.message,
-                    reqError: lastRequestError?.message
-                });
-                rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction error');
-            };
-        });
+                const processOp = (startIndex: number): void => {
+                    // Delete ops need no result, so a run of them is issued in a loop; only a move
+                    // waits on its get before continuing.
+                    let index = startIndex;
+                    while (index < pendingOps.length) {
+                        const currentOp = pendingOps[index];
+                        if (currentOp.type === 'delete') {
+                            finalStates.set(currentOp.path, { type: 'deleted' });
+                            const deleteReq = store.delete(currentOp.path);
+                            deleteReq.onerror = () => {
+                                lastRequestError = deleteReq.error || null;
+                                console.error('[IndexedDB] delete failed', {
+                                    store: PREVIEW_STORE_NAME,
+                                    op,
+                                    path: currentOp.path,
+                                    name: deleteReq.error?.name,
+                                    message: deleteReq.error?.message
+                                });
+                            };
+                            index += 1;
+                            continue;
+                        }
+
+                        const moveIndex = index;
+                        const getReq = store.get(currentOp.oldPath);
+                        getReq.onsuccess = () => {
+                            // The move vacates its source; a later op that re-occupies the path
+                            // overrides this entry.
+                            finalStates.set(currentOp.oldPath, { type: 'vacated' });
+                            const previewText: unknown = getReq.result;
+                            if (typeof previewText === 'string' && previewText.length > 0) {
+                                finalStates.set(currentOp.newPath, { type: 'moved', text: previewText });
+                                const putReq = store.put(previewText, currentOp.newPath);
+                                putReq.onerror = () => {
+                                    lastRequestError = putReq.error || null;
+                                    console.error('[IndexedDB] put failed', {
+                                        store: PREVIEW_STORE_NAME,
+                                        op,
+                                        path: currentOp.newPath,
+                                        name: putReq.error?.name,
+                                        message: putReq.error?.message
+                                    });
+                                };
+                            } else {
+                                finalStates.set(currentOp.newPath, { type: 'missing' });
+                            }
+                            const deleteReq = store.delete(currentOp.oldPath);
+                            deleteReq.onerror = () => {
+                                lastRequestError = deleteReq.error || null;
+                                console.error('[IndexedDB] delete failed', {
+                                    store: PREVIEW_STORE_NAME,
+                                    op,
+                                    path: currentOp.oldPath,
+                                    name: deleteReq.error?.name,
+                                    message: deleteReq.error?.message
+                                });
+                            };
+                            processOp(moveIndex + 1);
+                        };
+                        getReq.onerror = () => {
+                            lastRequestError = getReq.error || null;
+                            console.error('[IndexedDB] get failed', {
+                                store: PREVIEW_STORE_NAME,
+                                op,
+                                path: currentOp.oldPath,
+                                name: getReq.error?.name,
+                                message: getReq.error?.message
+                            });
+                            try {
+                                transaction.abort();
+                            } catch (e) {
+                                void e;
+                            }
+                        };
+                        return;
+                    }
+                };
+                processOp(0);
+
+                transaction.oncomplete = () => resolve();
+                transaction.onabort = () => {
+                    console.error('[IndexedDB] transaction aborted', {
+                        store: PREVIEW_STORE_NAME,
+                        op,
+                        txError: transaction.error?.message,
+                        reqError: lastRequestError?.message
+                    });
+                    rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction aborted');
+                };
+                transaction.onerror = () => {
+                    console.error('[IndexedDB] transaction error', {
+                        store: PREVIEW_STORE_NAME,
+                        op,
+                        txError: transaction.error?.message,
+                        reqError: lastRequestError?.message
+                    });
+                    rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction error');
+                };
+            });
+            didMove = true;
+
+            // The store is consistent from here: end the move markers and unblock loads that were
+            // queued during the rename window now, before the cache reconciliation and the status
+            // repair below. The repair awaits a second transaction, and a load queued during that
+            // wait (for example for a path whose reconciled text was evicted from the LRU) is
+            // legitimate and must not be cancelled.
+            for (const currentOp of pendingOps) {
+                if (currentOp.type !== 'move') {
+                    continue;
+                }
+                this.endMove(currentOp.oldPath, currentOp.newPath);
+                this.previewLoadQueue.delete(currentOp.newPath);
+                // Unblock any `ensurePreviewTextLoaded(newPath)` call queued during the rename window.
+                this.previewLoadDeferred.get(currentOp.newPath)?.resolve();
+            }
+
+            if (this.cache.isReady()) {
+                const changes: FileContentChange[] = [];
+                const statusRepairs: { path: string; previewStatus: PreviewStatus }[] = [];
+                for (const [path, finalState] of finalStates) {
+                    if (finalState.type === 'deleted' || finalState.type === 'vacated') {
+                        // Mirror the store state: the path's text is gone (deleted, or moved away with
+                        // no later op re-occupying the path). The following diff removes the record.
+                        this.cache.updateFileContent(path, { previewText: '' });
+                        continue;
+                    }
+                    if (finalState.type === 'moved') {
+                        const previousPreviewStatus = this.cache.getFile(path)?.previewStatus ?? null;
+                        this.cache.updateFileContent(path, { previewText: finalState.text, previewStatus: 'has' });
+                        const entryChanges: FileContentChange['changes'] = { preview: finalState.text };
+                        if (previousPreviewStatus !== null && previousPreviewStatus !== 'has') {
+                            entryChanges.previewStatus = 'has';
+                        }
+                        changes.push({ path, changes: entryChanges, changeType: 'content' });
+                        // The rename flush persists the seeded records with previewStatus 'has' before
+                        // this mover runs, so a cached 'has' needs no repair transaction; the repair
+                        // covers records whose cached status disagrees with the moved text.
+                        if (previousPreviewStatus !== 'has') {
+                            statusRepairs.push({ path, previewStatus: 'has' });
+                        }
+                        continue;
+                    }
+
+                    const file = this.cache.getFile(path);
+                    if (file && file.previewStatus === 'has') {
+                        const nextPreviewStatus = getDefaultPreviewStatusForPath(path);
+                        this.cache.updateFileContent(path, { previewText: '', previewStatus: nextPreviewStatus });
+                        changes.push({
+                            path,
+                            changes: { preview: null, previewStatus: nextPreviewStatus },
+                            changeType: 'content'
+                        });
+                        statusRepairs.push({ path, previewStatus: nextPreviewStatus });
+                    }
+                }
+
+                if (changes.length > 0) {
+                    this.emitChanges(changes);
+                }
+                if (statusRepairs.length > 0) {
+                    try {
+                        await this.repairPreviewStatusRecords(statusRepairs);
+                    } catch (error: unknown) {
+                        if (!this.isClosing()) {
+                            console.error('[PreviewText] Failed to persist preview status after move', error);
+                        }
+                    }
+                }
+            }
+        } catch (error: unknown) {
+            if (!this.isClosing()) {
+                console.error('[PreviewText] Failed to move preview texts', { ops: pendingOps, error });
+            }
+        } finally {
+            if (!didMove) {
+                // A failed batch keeps the markers alive so the load flush skips the status repair
+                // at the new paths until the TTL prunes them; regeneration heals after the diff.
+                // Loads queued during the rename window still resolve so callers are not left hanging.
+                for (const currentOp of pendingOps) {
+                    if (currentOp.type !== 'move') {
+                        continue;
+                    }
+                    this.previewLoadQueue.delete(currentOp.newPath);
+                    this.previewLoadDeferred.get(currentOp.newPath)?.resolve();
+                }
+            }
+        }
     }
 
     async forEachPreviewTextRecord(callback: (path: string, previewText: string) => void): Promise<void> {
@@ -265,143 +446,6 @@ export class PreviewTextCoordinator {
                 rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction error');
             };
         });
-    }
-
-    async movePreviewText(oldPath: string, newPath: string): Promise<void> {
-        if (oldPath === newPath) {
-            return;
-        }
-        this.beginMove(oldPath, newPath);
-
-        try {
-            await this.init();
-            const db = this.getDb();
-            if (!db) throw new Error('Database not initialized');
-
-            const transaction = db.transaction([PREVIEW_STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(PREVIEW_STORE_NAME);
-
-            const movedPreviewText = await new Promise<string | null>((resolve, reject) => {
-                const op = 'movePreviewText';
-                let lastRequestError: DOMException | Error | null = null;
-                let previewTextMoved: string | null = null;
-
-                const getReq = store.get(oldPath);
-                getReq.onsuccess = () => {
-                    const previewText: unknown = getReq.result;
-                    if (typeof previewText === 'string' && previewText.length > 0) {
-                        previewTextMoved = previewText;
-                        const putReq = store.put(previewText, newPath);
-                        putReq.onerror = () => {
-                            lastRequestError = putReq.error || null;
-                            console.error('[IndexedDB] put failed', {
-                                store: PREVIEW_STORE_NAME,
-                                op,
-                                path: newPath,
-                                name: putReq.error?.name,
-                                message: putReq.error?.message
-                            });
-                        };
-                    }
-
-                    const deleteReq = store.delete(oldPath);
-                    deleteReq.onerror = () => {
-                        lastRequestError = deleteReq.error || null;
-                        console.error('[IndexedDB] delete failed', {
-                            store: PREVIEW_STORE_NAME,
-                            op,
-                            path: oldPath,
-                            name: deleteReq.error?.name,
-                            message: deleteReq.error?.message
-                        });
-                    };
-                };
-                getReq.onerror = () => {
-                    lastRequestError = getReq.error || null;
-                    console.error('[IndexedDB] get failed', {
-                        store: PREVIEW_STORE_NAME,
-                        op,
-                        path: oldPath,
-                        name: getReq.error?.name,
-                        message: getReq.error?.message
-                    });
-                    try {
-                        transaction.abort();
-                    } catch (e) {
-                        void e;
-                    }
-                };
-
-                transaction.oncomplete = () => resolve(previewTextMoved);
-                transaction.onabort = () => {
-                    console.error('[IndexedDB] transaction aborted', {
-                        store: PREVIEW_STORE_NAME,
-                        op,
-                        txError: transaction.error?.message,
-                        reqError: lastRequestError?.message
-                    });
-                    rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction aborted');
-                };
-                transaction.onerror = () => {
-                    console.error('[IndexedDB] transaction error', {
-                        store: PREVIEW_STORE_NAME,
-                        op,
-                        txError: transaction.error?.message,
-                        reqError: lastRequestError?.message
-                    });
-                    rejectWithTransactionError(reject, transaction, lastRequestError, 'Transaction error');
-                };
-            });
-
-            if (this.cache.isReady()) {
-                if (movedPreviewText && movedPreviewText.length > 0) {
-                    const previousPreviewStatus = this.cache.getFile(newPath)?.previewStatus ?? null;
-                    this.cache.updateFileContent(newPath, { previewText: movedPreviewText, previewStatus: 'has' });
-                    const changes: FileContentChange['changes'] = { preview: movedPreviewText };
-                    if (previousPreviewStatus !== null && previousPreviewStatus !== 'has') {
-                        changes.previewStatus = 'has';
-                    }
-                    this.emitChanges([{ path: newPath, changes, changeType: 'content' }]);
-
-                    try {
-                        await this.repairPreviewStatusRecords([{ path: newPath, previewStatus: 'has' }]);
-                    } catch (error: unknown) {
-                        if (!this.isClosing()) {
-                            console.error('[PreviewText] Failed to persist preview status after move', error);
-                        }
-                    }
-                } else {
-                    const file = this.cache.getFile(newPath);
-                    if (file && file.previewStatus === 'has') {
-                        const nextPreviewStatus = getDefaultPreviewStatusForPath(newPath);
-                        this.cache.updateFileContent(newPath, { previewText: '', previewStatus: nextPreviewStatus });
-                        this.emitChanges([
-                            {
-                                path: newPath,
-                                changes: { preview: null, previewStatus: nextPreviewStatus },
-                                changeType: 'content'
-                            }
-                        ]);
-                        try {
-                            await this.repairPreviewStatusRecords([{ path: newPath, previewStatus: nextPreviewStatus }]);
-                        } catch (error: unknown) {
-                            if (!this.isClosing()) {
-                                console.error('[PreviewText] Failed to persist preview status repair after move', error);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (error: unknown) {
-            if (!this.isClosing()) {
-                console.error('[PreviewText] Failed to move preview text', { oldPath, newPath, error });
-            }
-        } finally {
-            this.endMove(oldPath, newPath);
-            this.previewLoadQueue.delete(newPath);
-            // Unblock any `ensurePreviewTextLoaded(newPath)` call that was queued during the rename window.
-            this.previewLoadDeferred.get(newPath)?.resolve();
-        }
     }
 
     close(): void {
@@ -969,7 +1013,7 @@ export class PreviewTextCoordinator {
                 const file = this.cache.getFile(path);
                 if (file && file.previewStatus === 'has') {
                     // During a rename/move, the preview record is keyed by path and may not exist at `newPath` yet.
-                    // Keep `previewStatus` intact and wait for `movePreviewText()` to finish.
+                    // Keep `previewStatus` intact until the batched `movePreviewTexts()` lands or the marker expires.
                     if (this.isMoveInFlight(path)) {
                         this.previewLoadDeferred.get(path)?.resolve();
                         continue;

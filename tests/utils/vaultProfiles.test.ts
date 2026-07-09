@@ -207,6 +207,125 @@ describe('updateHiddenFolderExactMatches', () => {
         expect(didChange).toBe(true);
         expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Areas/*/Archive']);
     });
+
+    it('keeps nested pattern segments when a folder moves into another folder', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Personligt/Dagbok'],
+                descendantExcludedFolders: ['/Personligt/Dagbok']
+            }
+        ];
+
+        const didChange = updateHiddenFolderExactMatches(settings, '/Personligt', '/Musik/Personligt');
+
+        expect(didChange).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Musik/Personligt/Dagbok']);
+        expect(settings.vaultProfiles[0]?.descendantExcludedFolders).toEqual(['/Musik/Personligt/Dagbok']);
+    });
+
+    it('keeps nested pattern segments when a folder moves to the vault root', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                descendantExcludedFolders: ['/Musik/Personligt/Dagbok']
+            }
+        ];
+
+        const didChange = updateHiddenFolderExactMatches(settings, '/Musik/Personligt', '/Personligt');
+
+        expect(didChange).toBe(true);
+        expect(settings.vaultProfiles[0]?.descendantExcludedFolders).toEqual(['/Personligt/Dagbok']);
+    });
+
+    it('does not rewrite a parent pattern when a child folder moves', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Projects']
+            }
+        ];
+
+        expect(updateHiddenFolderExactMatches(settings, '/Projects/Client', '/Areas/Client')).toBe(false);
+        expect(updateHiddenFolderExactMatches(settings, '/Projects/Client', '/Client')).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Projects']);
+    });
+
+    it('keeps mid-segment wildcard alignment when a deeper child moves to a new depth', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Projects/*/Archive']
+            }
+        ];
+
+        const didChange = updateHiddenFolderExactMatches(settings, '/Projects/Client', '/Work/Projects/Client');
+
+        expect(didChange).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Work/Projects/*/Archive']);
+    });
+
+    it('does not rewrite a prefix-segment pattern when the moved folder does not match the prefix', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Projects/Client*/Archive']
+            }
+        ];
+
+        expect(updateHiddenFolderExactMatches(settings, '/Projects/Other', '/Areas/Other')).toBe(false);
+        expect(updateHiddenFolderExactMatches(settings, '/Projects/Other', '/Work/Projects/Other')).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Projects/Client*/Archive']);
+    });
+
+    it('rewrites a prefix-segment pattern when the moved folder matches the prefix', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Projects/Client*/Archive']
+            }
+        ];
+
+        const didChange = updateHiddenFolderExactMatches(settings, '/Projects/clientA', '/Work/Projects/clientA');
+
+        expect(didChange).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Work/Projects/Client*/Archive']);
+    });
+
+    it('does not rewrite a prefix-segment pattern when the new folder name does not match the prefix', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Projects/Client*/Archive']
+            }
+        ];
+
+        const didChange = updateHiddenFolderExactMatches(settings, '/Projects/ClientA', '/Areas/Other');
+
+        expect(didChange).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Projects/Client*/Archive']);
+    });
 });
 
 describe('removeHiddenFolderExactMatches', () => {
@@ -494,6 +613,57 @@ describe('hidden tag pattern updates', () => {
 
         expect(didUpdate).toBe(true);
         expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['areas/*/drafts']);
+    });
+
+    it('keeps nested tag pattern segments when a tag rename changes depth', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenTags: ['projects/secret']
+            }
+        ];
+
+        expect(updateHiddenTagPrefixMatches(settings, 'projects', 'work/projects')).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['work/projects/secret']);
+
+        expect(updateHiddenTagPrefixMatches(settings, 'work/projects', 'projects')).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['projects/secret']);
+    });
+
+    it('only rewrites prefix-segment tag patterns when the renamed tag matches the prefix', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenTags: ['projects/client*/archive']
+            }
+        ];
+
+        expect(updateHiddenTagPrefixMatches(settings, 'projects/other', 'areas/other')).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['projects/client*/archive']);
+
+        expect(updateHiddenTagPrefixMatches(settings, 'projects/clienta', 'work/projects/clienta')).toBe(true);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['work/projects/client*/archive']);
+    });
+
+    it('does not rewrite prefix-segment tag patterns when the new tag name does not match the prefix', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenTags: ['projects/client*/archive']
+            }
+        ];
+
+        expect(updateHiddenTagPrefixMatches(settings, 'projects/clienta', 'areas/other')).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['projects/client*/archive']);
     });
 
     it('removes descendant path rules ending with /* on delete', () => {

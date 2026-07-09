@@ -168,6 +168,7 @@ export const STRINGS_ZH_TW = {
     // Search input
     searchInput: {
         placeholder: '搜尋...',
+        placeholderVault: '搜尋保險庫...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: '清除搜尋',
         switchToFilterSearch: '切換到篩選搜尋',
@@ -664,6 +665,7 @@ export const STRINGS_ZH_TW = {
         },
         navigationBanner: {
             placeholder: '搜尋圖片...',
+            svgMissingDimensions: '所選 SVG 檔案未定義寬度、高度或 viewBox。',
             instructions: {
                 navigate: '導覽',
                 select: '設為橫幅',
@@ -852,7 +854,7 @@ export const STRINGS_ZH_TW = {
         openYearlyNote: '開啟每年筆記',
         revealFile: '定位檔案',
         search: '搜尋',
-        searchVaultRoot: '在保險庫根目錄搜尋',
+        searchVaultRoot: '搜尋整個保險庫',
         toggleDualPane: '切換雙窗格布局',
         toggleDualPaneOrientation: '切換雙窗格方向', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: '切換日曆',

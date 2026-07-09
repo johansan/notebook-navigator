@@ -134,7 +134,11 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
                     menuConfig = {
                         type: ItemType.FILE,
                         item: file,
-                        options: { source: 'list-pane', orderedFiles: menuConfig.options?.orderedFiles }
+                        options: {
+                            source: 'list-pane',
+                            orderedFiles: menuConfig.options?.orderedFiles,
+                            onStartInlineRename: menuConfig.options?.onStartInlineRename
+                        }
                     };
                     menuElement = fileTarget;
                 }

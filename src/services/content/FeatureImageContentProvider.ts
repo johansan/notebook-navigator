@@ -21,13 +21,14 @@ import { type ContentProviderType } from '../../interfaces/IContentProvider';
 import type { FeatureImagePixelSizeSetting, NotebookNavigatorSettings } from '../../settings/types';
 import { FileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance } from '../../storage/fileOperations';
-import { isPdfFile } from '../../utils/fileTypeUtils';
+import { isGeneratedThumbnailFile, isPdfFile } from '../../utils/fileTypeUtils';
 import { getYoutubeThumbnailUrl } from '../../utils/youtubeUtils';
 import { BaseContentProvider, type ContentProviderProcessResult } from './BaseContentProvider';
 import type { ContentReadCache } from './ContentReadCache';
 import { isValidHttpsUrl, type FeatureImageReference } from './featureImageReferenceResolver';
 import { renderPdfCoverThumbnail } from './pdf/pdfCoverThumbnail';
 import { detectImageMimeTypeFromBuffer, getImageDimensionsPairFromBuffer, normalizeImageMimeType } from './thumbnail/imageDimensions';
+import { decodeSvgSourceText, prepareSvgFeatureImageSource } from './thumbnail/svgFeatureImage';
 import { createOnceLogger, createRenderBudgetLimiter, createRenderLimiter } from './thumbnail/thumbnailRuntimeUtils';
 import { LIMITS } from '../../constants/limits';
 import { getDrawingDirectFeatureImageKey, getDrawingFeatureImageSource } from '../../utils/drawingFeatureImages';
@@ -68,12 +69,15 @@ const MAX_LOCAL_IMAGE_BYTES = Platform.isMobile
 const MAX_EXTERNAL_IMAGE_BYTES = Platform.isMobile
     ? LIMITS.thumbnails.featureImage.maxImageBytes.external.mobile
     : LIMITS.thumbnails.featureImage.maxImageBytes.external.desktop;
+// Maximum SVG source size (in bytes) accepted for rasterized thumbnails.
+const MAX_SVG_SOURCE_BYTES = LIMITS.thumbnails.featureImage.svg.maxSourceBytes;
 
 const SUPPORTED_IMAGE_MIME_TYPES = new Set([
     'image/jpeg',
     'image/png',
     'image/gif',
     'image/webp',
+    'image/svg+xml',
     'image/avif',
     'image/heic',
     'image/heif',
@@ -86,6 +90,7 @@ const MIME_TYPE_BY_EXTENSION: Record<string, string> = {
     png: 'image/png',
     gif: 'image/gif',
     webp: 'image/webp',
+    svg: 'image/svg+xml',
     avif: 'image/avif',
     heic: 'image/heic',
     heif: 'image/heif',
@@ -206,8 +211,8 @@ export class FeatureImageContentProvider extends BaseContentProvider {
 
         const fileModified = fileData !== null && fileData.fileThumbnailsMtime !== file.stat.mtime;
 
-        if (isPdfFile(file)) {
-            // PDFs can have generated thumbnails; changes need reprocessing.
+        if (isGeneratedThumbnailFile(file)) {
+            // PDFs and SVGs can have generated thumbnails; changes need reprocessing.
             const expectedKey = this.getFeatureImageKey({ kind: 'local', file });
             return (
                 fileModified ||
@@ -247,12 +252,12 @@ export class FeatureImageContentProvider extends BaseContentProvider {
             return { update: null, processed: true };
         }
 
-        // Generate cover thumbnail for PDF files using the first page
-        if (isPdfFile(job.file)) {
+        // Generate thumbnails for PDF files (first page cover) and SVG files (rasterized vector)
+        if (isGeneratedThumbnailFile(job.file)) {
             const reference: FeatureImageReference = { kind: 'local', file: job.file };
             const featureImageKey = this.getFeatureImageKey(reference);
 
-            // For PDFs, `featureImageKey` is the durable marker for the selected source (it includes the PDF mtime).
+            // `featureImageKey` is the durable marker for the selected source (it includes the file mtime).
             // Forced provider-mtime resets must still re-render thumbnails when `fileThumbnailsMtime` is stale.
             const isUpToDate =
                 fileData &&
@@ -382,6 +387,15 @@ export class FeatureImageContentProvider extends BaseContentProvider {
             this.thumbnailRuntime.logOnce(
                 `featureImage-local-too-large:${MAX_LOCAL_IMAGE_BYTES}`,
                 `[${file.path}] Skipping local image (${file.stat.size} bytes) - file too large`
+            );
+            return null;
+        }
+
+        // SVG sources have a stricter byte cap; checking the file stat avoids reading oversized files into memory.
+        if (mimeType === 'image/svg+xml' && file.stat.size > MAX_SVG_SOURCE_BYTES) {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-svg-too-large:${MAX_SVG_SOURCE_BYTES}:${file.path}`,
+                `[${file.path}] Skipping SVG feature image (${file.stat.size} bytes) - source too large`
             );
             return null;
         }
@@ -600,6 +614,15 @@ export class FeatureImageContentProvider extends BaseContentProvider {
             return null;
         }
 
+        // SVG sources have a stricter byte cap; checking the reported length avoids downloading oversized bodies.
+        if (mimeType === 'image/svg+xml' && contentLength > MAX_SVG_SOURCE_BYTES) {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-svg-too-large:${MAX_SVG_SOURCE_BYTES}:${imageUrl}`,
+                `[${imageUrl}] Skipping SVG feature image (${contentLength} bytes) - source too large`
+            );
+            return null;
+        }
+
         return { mimeType };
     }
 
@@ -685,11 +708,7 @@ export class FeatureImageContentProvider extends BaseContentProvider {
         }
 
         if (effectiveMimeType === 'image/svg+xml') {
-            this.thumbnailRuntime.logOnce(
-                `featureImage-svg-unsupported:${source}`,
-                `[${source}] Skipping SVG feature image - SVG previews are disabled`
-            );
-            return null;
+            return await this.createSvgThumbnailBlob(buffer, source, thumbnailDimensions);
         }
 
         // Extract dimensions from the image header to determine if resizing is needed.
@@ -752,6 +771,56 @@ export class FeatureImageContentProvider extends BaseContentProvider {
                 const { width, height } = this.calculateThumbnailDimensions(sourceWidth, sourceHeight, thumbnailDimensions);
                 return await this.resizeImageToBlob(image, width, height);
             });
+        } finally {
+            releaseDecodeBudget();
+        }
+    }
+
+    /**
+     * Rasterizes a vector-only SVG source into a thumbnail blob.
+     *
+     * The source is validated and sized by `prepareSvgFeatureImageSource()`, then decoded through
+     * an image element because `createImageBitmap()` does not accept SVG blobs in Chromium.
+     * Decoding an SVG in an image element runs in the browser's static image mode, so scripts
+     * do not execute and external resources do not load.
+     */
+    private async createSvgThumbnailBlob(
+        buffer: ArrayBuffer,
+        source: string,
+        thumbnailDimensions: FeatureImageThumbnailDimensions
+    ): Promise<Blob | null> {
+        if (buffer.byteLength > MAX_SVG_SOURCE_BYTES) {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-svg-too-large:${MAX_SVG_SOURCE_BYTES}:${source}`,
+                `[${source}] Skipping SVG feature image (${buffer.byteLength} bytes) - source too large`
+            );
+            return null;
+        }
+
+        const svgText = decodeSvgSourceText(buffer);
+        const prepared = prepareSvgFeatureImageSource({
+            svgText,
+            maxWidth: thumbnailDimensions.width,
+            maxHeight: thumbnailDimensions.height
+        });
+        if (!prepared.source) {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-svg-rejected:${prepared.reason}:${source}`,
+                `[${source}] Skipping SVG feature image - ${prepared.reason}`
+            );
+            return null;
+        }
+
+        const { blob, width, height } = prepared.source;
+        const releaseDecodeBudget = await this.thumbnailRuntime.imageDecodeLimiter.acquire(width * height);
+        try {
+            return await this.withImageFromBlob(blob, async image => await this.resizeSourceToBlob(image, width, height));
+        } catch {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-svg-decode-failed:${source}`,
+                `[${source}] Skipping SVG feature image - decode failed`
+            );
+            return null;
         } finally {
             releaseDecodeBudget();
         }

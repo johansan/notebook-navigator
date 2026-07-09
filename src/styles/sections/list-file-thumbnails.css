@@ -61,6 +61,7 @@
     height: 100%;
 }
 
+/* Inset highlight overlay - masked by the thumbnail image so it only covers opaque pixels */
 .nn-file-thumbnail--inset-highlight::before {
     content: '';
     position: absolute;
@@ -72,6 +73,19 @@
         inset 0 -1px 0 rgba(255, 255, 255, 0.05);
     pointer-events: none;
     z-index: 1;
+    mask-image: var(--nn-file-thumbnail-mask-image, none);
+    mask-repeat: no-repeat;
+}
+
+/* Mask geometry mirrors the img object-fit and object-position per variant */
+.nn-file-thumbnail--square.nn-file-thumbnail--inset-highlight::before {
+    mask-size: cover;
+    mask-position: center top;
+}
+
+.nn-file-thumbnail--natural.nn-file-thumbnail--inset-highlight::before {
+    mask-size: contain;
+    mask-position: center;
 }
 
 .nn-file-thumbnail--square .nn-file-thumbnail-img {

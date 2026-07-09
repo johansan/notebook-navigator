@@ -44,11 +44,13 @@
     --nn-calendar-note-indicator-center-offset: clamp(6px, calc(var(--nn-calendar-day-font-size) * 0.65), 12px);
     --nn-calendar-task-indicator-offset-x: clamp(5px, calc(var(--nn-calendar-day-font-size) * 0.42), 9px);
     --nn-calendar-weekend-corner-radius: 6px;
+    --nn-calendar-cell-radius: 6px;
     --nn-calendar-header-chip-bg: var(--nn-theme-nav-bg);
     --nn-calendar-note-indicator-color: var(--nn-theme-calendar-note-indicator-color);
     --nn-calendar-task-indicator-color: var(--nn-theme-calendar-unfinished-task-indicator-color);
     --nn-calendar-active-editor-border-color: var(--nn-theme-calendar-day-active-border-color);
     --nn-calendar-active-editor-border-width: var(--nn-theme-calendar-day-active-border-width);
+    --nn-calendar-active-editor-gap-color: var(--nn-theme-nav-bg);
 }
 
 .notebook-navigator-mobile :is(.nn-navigation-pane, .nn-list-pane, .nn-single-pane-calendar) {
@@ -170,7 +172,7 @@ button.nn-navigation-calendar-day {
     -webkit-appearance: none;
     appearance: none;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--nn-calendar-cell-radius);
     cursor: pointer;
     box-shadow: none;
     outline: none;
@@ -476,8 +478,9 @@ button.nn-navigation-calendar-year-month {
 .nn-navigation-calendar-year-month.has-feature-image::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: inherit;
+    /* Extends 0.5px past the cell so the highlight ring covers the antialiased edge of the background image. */
+    inset: -0.5px;
+    border-radius: calc(var(--nn-calendar-cell-radius) + 0.5px);
     background:
         linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03) 24%, rgba(255, 255, 255, 0) 48%),
         linear-gradient(
@@ -495,17 +498,14 @@ button.nn-navigation-calendar-year-month {
 .nn-navigation-calendar-active-outline {
     display: none;
     position: absolute;
-    inset: 0;
+    /* Extends 0.5px past the cell so the border covers the antialiased edge of the background image. */
+    inset: -0.5px;
     box-sizing: border-box;
     border: var(--nn-calendar-active-editor-border-width) solid var(--nn-calendar-active-editor-border-color);
-    border-radius: inherit;
+    border-radius: calc(var(--nn-calendar-cell-radius) + 0.5px);
+    box-shadow: inset 0 0 0 1px var(--nn-calendar-active-editor-gap-color);
     pointer-events: none;
     z-index: 2;
-}
-
-.nn-navigation-calendar-day.has-feature-image.is-active-editor-file .nn-navigation-calendar-active-outline,
-.nn-navigation-calendar-year-month.has-feature-image.is-selected-month .nn-navigation-calendar-active-outline {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
 }
 
 .nn-navigation-calendar-year-month-label {
@@ -1093,6 +1093,7 @@ button.nn-navigation-calendar-day {
 
 .nn-calendar-right-sidebar .nn-navigation-calendar {
     --nn-calendar-header-chip-bg: var(--nn-calendar-right-sidebar-bg);
+    --nn-calendar-active-editor-gap-color: var(--nn-calendar-right-sidebar-bg);
     --nn-calendar-header-font-size: 16px;
     --nn-calendar-today-font-size: 13px;
 }

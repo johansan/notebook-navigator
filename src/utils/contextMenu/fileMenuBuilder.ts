@@ -514,7 +514,6 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
             });
         }
 
-        // Rename note
         menu.addItem((item: MenuItem) => {
             const title = isFolderNoteFile
                 ? strings.contextMenu.folder.detachFolderNote
@@ -522,7 +521,14 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
                   ? strings.contextMenu.file.renameNote
                   : strings.contextMenu.file.renameFile;
             const iconId = isFolderNoteFile ? 'lucide-unlink' : 'lucide-pencil';
-            setAsyncOnClick(item.setTitle(title).setIcon(iconId), async () => {
+            const menuItem = item.setTitle(title).setIcon(iconId);
+            const startInlineRename = isFolderNoteFile ? undefined : options?.onStartInlineRename;
+
+            setAsyncOnClick(menuItem, async () => {
+                if (startInlineRename?.(file)) {
+                    return;
+                }
+
                 await fileSystemOps.renameFile(file);
             });
         });

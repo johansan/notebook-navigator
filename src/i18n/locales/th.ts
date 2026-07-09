@@ -169,6 +169,7 @@ export const STRINGS_TH = {
     // Search input
     searchInput: {
         placeholder: 'ค้นหา...',
+        placeholderVault: 'ค้นหาห้องนิรภัย...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: 'ล้างการค้นหา',
         switchToFilterSearch: 'สลับไปใช้การค้นหาแบบกรอง',
@@ -665,6 +666,7 @@ export const STRINGS_TH = {
         },
         navigationBanner: {
             placeholder: 'ค้นหารูปภาพ...',
+            svgMissingDimensions: 'ไฟล์ SVG ที่เลือกไม่ได้กำหนดความกว้าง ความสูง หรือ viewBox',
             instructions: {
                 navigate: 'เพื่อนำทาง',
                 select: 'เพื่อตั้งแบนเนอร์',
@@ -855,7 +857,7 @@ export const STRINGS_TH = {
         openYearlyNote: 'เปิดโน้ตรายปี',
         revealFile: 'แสดงไฟล์',
         search: 'ค้นหา',
-        searchVaultRoot: 'ค้นหาในรูทห้องนิรภัย',
+        searchVaultRoot: 'ค้นหาทั้งห้องนิรภัย',
         toggleDualPane: 'สลับรูปแบบแผงคู่',
         toggleDualPaneOrientation: 'สลับทิศทางแผงคู่', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'สลับปฏิทิน',

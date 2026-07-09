@@ -22,7 +22,7 @@ export const STORE_NAME = 'keyvaluepairs';
 export const PREVIEW_STORE_NAME = 'filePreviews';
 
 export const DB_SCHEMA_VERSION = 3; // IndexedDB structure version
-export const DB_CONTENT_VERSION = 5; // Data format version
+export const DB_CONTENT_VERSION = 6; // Data format version
 
 // Default limits for preview text caching and load batching.
 export const DEFAULT_PREVIEW_TEXT_CACHE_MAX_ENTRIES = LIMITS.storage.previewTextCacheMaxEntriesDefault;

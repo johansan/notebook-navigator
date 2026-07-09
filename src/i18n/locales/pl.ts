@@ -169,6 +169,7 @@ export const STRINGS_PL = {
     // Search input
     searchInput: {
         placeholder: 'Szukaj...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'Szukaj w sejfie...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'Wyczyść wyszukiwanie', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'Przełącz na wyszukiwanie z filtrem',
@@ -673,6 +674,7 @@ export const STRINGS_PL = {
         },
         navigationBanner: {
             placeholder: 'Wyszukaj obrazy...',
+            svgMissingDimensions: 'Wybrany plik SVG nie definiuje szerokości, wysokości ani viewBox.',
             instructions: {
                 navigate: 'aby przejść',
                 select: 'aby ustawić baner',
@@ -865,7 +867,7 @@ export const STRINGS_PL = {
         openYearlyNote: 'Otwórz notatkę roku',
         revealFile: 'Pokaż plik', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Szukaj', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'Szukaj w katalogu głównym sejfu', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'Szukaj w całym sejfie', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'Przełącz układ podwójnego panelu', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'Przełącz orientację podwójnego panelu', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Przełącz kalendarz', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

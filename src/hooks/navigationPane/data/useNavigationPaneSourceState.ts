@@ -99,6 +99,7 @@ export interface NavigationPaneSourceState {
     folderExclusionByFolderNote: ((folder: TFolder) => boolean) | undefined;
     recentNotesHiddenFileMatcher: ReturnType<typeof createFileHiddenMatcher>;
     fileChangeVersion: number;
+    folderChangeVersion: number;
 }
 
 export function useNavigationPaneSourceState({
@@ -139,6 +140,7 @@ export function useNavigationPaneSourceState({
         rootFolderOrderMap,
         missingRootFolderPaths,
         fileChangeVersion,
+        folderChangeVersion,
         metadataDecorationVersion,
         metadataVisibilityVersion,
         tagDataVersion,
@@ -287,7 +289,8 @@ export function useNavigationPaneSourceState({
             getFolderSortName,
             folderExclusionByFolderNote,
             recentNotesHiddenFileMatcher,
-            fileChangeVersion
+            fileChangeVersion,
+            folderChangeVersion
         }),
         [
             effectiveFrontmatterExclusions,
@@ -329,7 +332,8 @@ export function useNavigationPaneSourceState({
             getFolderSortName,
             folderExclusionByFolderNote,
             recentNotesHiddenFileMatcher,
-            fileChangeVersion
+            fileChangeVersion,
+            folderChangeVersion
         ]
     );
 }

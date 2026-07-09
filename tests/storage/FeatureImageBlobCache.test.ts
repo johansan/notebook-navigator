@@ -49,4 +49,15 @@ describe('FeatureImageBlobCache', () => {
         expect(cache.get('path', 'key-2')).toBeNull();
         expect(cache.getEntryCount()).toBe(0);
     });
+
+    it('can update the cached key while moving an entry', () => {
+        const cache = new FeatureImageBlobCache(1);
+        const blob = new Blob(['x']);
+
+        cache.set('docs/old.pdf', { featureImageKey: 'f:docs/old.pdf@123', blob });
+        cache.move('docs/old.pdf', 'docs/new.pdf', 'f:docs/new.pdf@123');
+
+        expect(cache.get('docs/old.pdf', 'f:docs/old.pdf@123')).toBeNull();
+        expect(cache.get('docs/new.pdf', 'f:docs/new.pdf@123')).toBe(blob);
+    });
 });

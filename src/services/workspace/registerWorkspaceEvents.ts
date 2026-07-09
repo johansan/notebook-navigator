@@ -171,11 +171,13 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                     return;
                 }
 
+                const isNavigatorPathChange = plugin.commandQueue?.isChangingFilePaths() ?? false;
                 const didTouchVaultIcon = isVaultIconPath(oldPath) || isVaultIconPath(file.path);
                 if (didTouchVaultIcon) {
                     updateVaultIconListCacheForRename(file, oldPath);
                     invalidateVaultIconSvgCache(oldPath);
                     invalidateVaultIconSvgCache(file.path);
+                    iconService.invalidateIconValidationCache();
                     scheduleIconAssetsChanged();
                 }
 
@@ -192,8 +194,8 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                 // Auto-reveal active file if it was moved to a different folder
                 const movedToDifferentFolder = getParentPath(oldPath) !== getParentPath(file.path);
                 if (movedToDifferentFolder && file === plugin.app.workspace.getActiveFile()) {
-                    // Skip reveal if the move was initiated from within the Navigator
-                    if (!plugin.commandQueue?.isMovingFile()) {
+                    // Skip reveal if the path change was initiated from within the Navigator
+                    if (!isNavigatorPathChange) {
                         await plugin.revealFileInActualFolder(file);
                     }
                 }
@@ -218,6 +220,7 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
 
                 updateVaultIconListCacheForCreate(file);
                 invalidateVaultIconSvgCache(file.path);
+                iconService.invalidateIconValidationCache();
                 scheduleIconAssetsChanged();
             });
         })
@@ -269,6 +272,7 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                 if (isVaultIconFile(file)) {
                     updateVaultIconListCacheForDelete(file.path);
                     invalidateVaultIconSvgCache(file.path);
+                    iconService.invalidateIconValidationCache();
                     scheduleIconAssetsChanged();
                 }
             });

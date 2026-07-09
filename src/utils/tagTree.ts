@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IndexedDBStorage } from '../storage/IndexedDBStorage';
+import { IndexedDBStorage, type FileData } from '../storage/IndexedDBStorage';
 import type { NoteCountInfo } from '../types/noteCounts';
 import { TagTreeNode } from '../types/storage';
 import { isPathInExcludedFolder } from './fileFilters';
@@ -122,6 +122,33 @@ function buildTreeFromTagList(tagPaths: string[], tagFiles: Map<string, Set<stri
     return tree;
 }
 
+interface TagPathForms {
+    canonicalPath: string;
+    normalizedPath: string;
+    lastSegment: string | undefined;
+}
+
+/**
+ * Creates a memo that normalizes each unique tag string once per tree rebuild.
+ * Tags repeat across files, so occurrences after the first reuse the stored forms.
+ */
+function createTagPathFormsMemo(): (tag: string) => TagPathForms {
+    const memo = new Map<string, TagPathForms>();
+    return (tag: string): TagPathForms => {
+        let forms = memo.get(tag);
+        if (!forms) {
+            const canonicalPath = (tag.startsWith('#') ? tag.substring(1) : tag).replace(/^\/+|\/+$/g, '');
+            forms = {
+                canonicalPath,
+                normalizedPath: normalizeTagPathValue(tag),
+                lastSegment: canonicalPath.split('/').pop()
+            };
+            memo.set(tag, forms);
+        }
+        return forms;
+    };
+}
+
 /**
  * Build tag tree from database
  * @param db - IndexedDBStorage instance
@@ -142,6 +169,7 @@ export function buildTagTreeFromDatabase(
     let taggedCount = 0;
 
     const caseMap = new Map<string, string>();
+    const getTagPathForms = createTagPathFormsMemo();
     const hiddenTagVisibility = createHiddenTagVisibility(hiddenTagPatterns, showHiddenItems);
     const shouldFilterHiddenTags = hiddenTagVisibility.shouldFilterHiddenTags;
 
@@ -153,7 +181,7 @@ export function buildTagTreeFromDatabase(
 
     // Records root tags from files in excluded folders for reordering purposes
     const recordHiddenRootTag = (tagValue: string, filePath: string) => {
-        const canonical = (tagValue.startsWith('#') ? tagValue.substring(1) : tagValue).replace(/^\/+|\/+$/g, '');
+        const canonical = getTagPathForms(tagValue).canonicalPath;
         if (canonical.length === 0) {
             return;
         }
@@ -182,13 +210,8 @@ export function buildTagTreeFromDatabase(
     };
 
     // First pass: collect all tags and their file associations
-    db.forEachFile((path, fileData) => {
+    const processFile = (path: string, fileData: FileData) => {
         const isExcluded = excludedPatterns ? isPathInExcludedFolder(path, excludedPatterns) : false;
-
-        // Defense-in-depth: skip files not in the included set (e.g., frontmatter-excluded)
-        if (includedPaths && !includedPaths.has(path)) {
-            return;
-        }
 
         // Process tags from excluded files for hidden root tag tracking
         if (isExcluded) {
@@ -218,13 +241,12 @@ export function buildTagTreeFromDatabase(
 
         // Process each tag
         for (const tag of tags) {
-            const canonicalPath = (tag.startsWith('#') ? tag.substring(1) : tag).replace(/^\/+|\/+$/g, '');
-            const normalizedPath = normalizeTagPathValue(tag);
+            const { canonicalPath, normalizedPath, lastSegment } = getTagPathForms(tag);
             if (canonicalPath.length === 0 || normalizedPath.length === 0) {
                 continue;
             }
 
-            if (!shouldFilterHiddenTags || hiddenTagVisibility.isTagVisible(tag, canonicalPath.split('/').pop())) {
+            if (!shouldFilterHiddenTags || hiddenTagVisibility.isTagVisible(tag, lastSegment)) {
                 hasVisibleTagForFile = true;
             }
 
@@ -250,7 +272,20 @@ export function buildTagTreeFromDatabase(
         if (path.endsWith('.md') && hasVisibleTagForFile) {
             taggedCount++;
         }
-    });
+    };
+
+    if (includedPaths) {
+        // Single pass over the visible set. The database also holds non-markdown and hidden files that
+        // cannot contribute to the tree, so iterating the included paths skips them entirely.
+        for (const path of includedPaths) {
+            const fileData = db.getFile(path);
+            if (fileData) {
+                processFile(path, fileData);
+            }
+        }
+    } else {
+        db.forEachFile(processFile);
+    }
 
     const tagTree = buildTreeFromTagList(Array.from(allTagsSet), tagFiles);
 
@@ -288,6 +323,7 @@ export function buildTagTreeFromFilePaths(
     let taggedCount = 0;
 
     const caseMap = new Map<string, string>();
+    const getTagPathForms = createTagPathFormsMemo();
     const tagFiles = new Map<string, Set<string>>();
     const hiddenTagVisibility = createHiddenTagVisibility(hiddenTagPatterns, showHiddenItems);
     const shouldFilterHiddenTags = hiddenTagVisibility.shouldFilterHiddenTags;
@@ -309,13 +345,12 @@ export function buildTagTreeFromFilePaths(
         let hasVisibleTagForFile = false;
 
         for (const tag of tags) {
-            const canonicalPath = (tag.startsWith('#') ? tag.substring(1) : tag).replace(/^\/+|\/+$/g, '');
-            const normalizedPath = normalizeTagPathValue(tag);
+            const { canonicalPath, normalizedPath, lastSegment } = getTagPathForms(tag);
             if (canonicalPath.length === 0 || normalizedPath.length === 0) {
                 continue;
             }
 
-            if (!shouldFilterHiddenTags || hiddenTagVisibility.isTagVisible(tag, canonicalPath.split('/').pop())) {
+            if (!shouldFilterHiddenTags || hiddenTagVisibility.isTagVisible(tag, lastSegment)) {
                 hasVisibleTagForFile = true;
             }
 

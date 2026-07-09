@@ -85,6 +85,33 @@ export const LIMITS = {
                  */
                 quality: 0.75
             },
+            svg: {
+                /**
+                 * Maximum SVG source size (bytes) accepted for feature image rasterization.
+                 *
+                 * Used by:
+                 * - `FeatureImageContentProvider` before decoding SVG text.
+                 *
+                 * Rationale:
+                 * - SVG sources are parsed with `DOMParser` on the main thread; this bounds one-time parse cost.
+                 * - Vector sources for a small thumbnail rarely need more than a couple of megabytes.
+                 */
+                maxSourceBytes: 2_000_000,
+                /**
+                 * Maximum element count in a parsed SVG accepted for feature image rasterization.
+                 * Applied to both the parsed element count and the painted count after `use` expansion.
+                 *
+                 * Used by:
+                 * - `prepareSvgFeatureImageSource()` during validation.
+                 *
+                 * Rationale:
+                 * - Bounds transient DOM size during validation and the one-time rasterization cost.
+                 * - Nested `use` references multiply painted elements beyond the parsed count, so the
+                 *   expanded count is capped as well.
+                 * - Larger than the vault icon cap (2000) because thumbnails rasterize once instead of rendering live.
+                 */
+                maxElementCount: 10_000
+            },
             externalRequest: {
                 /**
                  * Per-request timeout (ms) for `requestUrl()` fetches for external images.

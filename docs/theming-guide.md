@@ -1,6 +1,6 @@
 # Notebook Navigator Theming Guide
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -76,7 +76,7 @@ Most variables are colors and should resolve to a computed color (some are used 
 | `--nn-theme-calendar-day-today-color`         | `var(--nn-theme-calendar-day-in-month-color)` | Text color for today's date                |
 | `--nn-theme-calendar-day-today-bg`            | `var(--text-selection)`                | Background color for today's date highlight     |
 | `--nn-theme-calendar-day-active-border-color` | `var(--interactive-accent)` | Border color for active calendar outlines |
-| `--nn-theme-calendar-day-active-border-width` | `2px` | Border width for active calendar outlines |
+| `--nn-theme-calendar-day-active-border-width` | `3px` | Border width for active calendar outlines |
 
 ### Navigation pane
 

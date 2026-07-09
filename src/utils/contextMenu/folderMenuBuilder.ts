@@ -24,7 +24,6 @@ import { executeCommand, getInternalPlugin, isFolderAncestor, isPluginInstalled 
 import { getFolderNote, createFolderNote } from '../../utils/folderNotes';
 import { cleanupExclusionPatterns, isFolderInExcludedFolder, shouldExcludeFolderFromDescendants } from '../../utils/fileFilters';
 import { ItemType } from '../../types';
-import { runAsyncAction } from '../async';
 import { addCopyPathSubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { resolveUXIconForMenu } from '../uxIcons';
@@ -550,29 +549,16 @@ export function buildFolderMenu(params: FolderMenuBuilderParams): void {
         }
     }
 
-    // Rename folder
     menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.folder.renameFolder).setIcon('lucide-pencil'), async () => {
-            // Handle root folder rename differently
-            if (folder.path === '/') {
-                const { InputModal } = await import('../../modals/InputModal');
-                const modal = new InputModal(
-                    app,
-                    strings.modals.fileSystem.renameVaultTitle,
-                    strings.modals.fileSystem.renameVaultPrompt,
-                    newName => {
-                        runAsyncAction(async () => {
-                            // Update custom vault name setting (allow empty string)
-                            services.plugin.settings.customVaultName = newName;
-                            await services.plugin.saveSettingsAndUpdate();
-                        });
-                    },
-                    settings.customVaultName
-                );
-                modal.open();
-            } else {
-                await fileSystemOps.renameFolder(folder, settings);
+        const menuItem = item.setTitle(strings.contextMenu.folder.renameFolder).setIcon('lucide-pencil');
+        const startInlineRename = options?.onStartInlineRename;
+
+        setAsyncOnClick(menuItem, async () => {
+            if (startInlineRename?.(folder)) {
+                return;
             }
+
+            await fileSystemOps.renameFolder(folder, settings);
         });
     });
 

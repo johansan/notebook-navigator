@@ -16,9 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, expect, it } from 'vitest';
-import { extractMetadataFromCache } from '../../src/utils/metadataExtractor';
+import { extractFreshMetadataFromFileData, extractMetadataFromCache } from '../../src/utils/metadataExtractor';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
+import { createDefaultFileData, METADATA_SENTINEL, type FileData } from '../../src/storage/IndexedDBStorage';
+import { createTestTFile } from './createTestTFile';
 
 type CachedMetadata = {
     frontmatter?: Record<string, unknown>;
@@ -37,6 +39,89 @@ function createSettings(overrides: Partial<NotebookNavigatorSettings> = {}): Not
         ...overrides
     };
 }
+
+function createFileData(path: string, overrides: Partial<FileData> = {}): FileData {
+    return {
+        ...createDefaultFileData({ path, mtime: 0 }),
+        ...overrides
+    };
+}
+
+describe('extractFreshMetadataFromFileData', () => {
+    it('returns parsed metadata from a fresh file record', () => {
+        const file = createTestTFile('Notes/Cache.md');
+        file.stat.mtime = 123;
+        const fileData = createFileData(file.path, {
+            metadataMtime: 123,
+            metadata: {
+                name: 'Cached title',
+                created: 111,
+                modified: 222,
+                icon: 'lucide:file-text',
+                color: '#ff0000',
+                background: '#ffffff'
+            }
+        });
+
+        expect(extractFreshMetadataFromFileData(file, fileData)).toEqual({
+            fn: 'Cached title',
+            fc: 111,
+            fm: 222,
+            icon: 'lucide:file-text',
+            color: '#ff0000',
+            background: '#ffffff'
+        });
+    });
+
+    it('preserves date sentinel values from a fresh file record', () => {
+        const file = createTestTFile('Notes/Sentinel.md');
+        file.stat.mtime = 123;
+        const fileData = createFileData(file.path, {
+            metadataMtime: 123,
+            metadata: {
+                created: METADATA_SENTINEL.FIELD_NOT_CONFIGURED,
+                modified: METADATA_SENTINEL.PARSE_FAILED
+            }
+        });
+
+        expect(extractFreshMetadataFromFileData(file, fileData)).toEqual({
+            fc: METADATA_SENTINEL.FIELD_NOT_CONFIGURED,
+            fm: METADATA_SENTINEL.PARSE_FAILED
+        });
+    });
+
+    it('returns null when mirrored metadata is missing or stale', () => {
+        const file = createTestTFile('Notes/Stale.md');
+        file.stat.mtime = 123;
+
+        expect(extractFreshMetadataFromFileData(file, createFileData(file.path, { metadataMtime: 123, metadata: null }))).toBeNull();
+        expect(
+            extractFreshMetadataFromFileData(
+                file,
+                createFileData(file.path, {
+                    metadataMtime: 122,
+                    metadata: {
+                        created: 111,
+                        modified: 222
+                    }
+                })
+            )
+        ).toBeNull();
+    });
+
+    it('returns null for non-markdown files', () => {
+        const file = createTestTFile('Notes/Renamed.pdf');
+        file.stat.mtime = 123;
+        const fileData = createFileData(file.path, {
+            metadataMtime: 123,
+            metadata: {
+                name: 'Old markdown title'
+            }
+        });
+
+        expect(extractFreshMetadataFromFileData(file, fileData)).toBeNull();
+    });
+});
 
 describe('extractMetadataFromCache - icon extraction', () => {
     it('normalizes plain emoji values to emoji provider format', () => {

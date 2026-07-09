@@ -168,6 +168,7 @@ export const STRINGS_KO = {
     // Search input
     searchInput: {
         placeholder: '검색...', // Placeholder text for search input (English: Search...)
+        placeholderVault: '보관소 검색...',
         placeholderOmnisearch: 'Omnisearch...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: '검색 지우기', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: '필터 검색으로 전환',
@@ -668,6 +669,7 @@ export const STRINGS_KO = {
         },
         navigationBanner: {
             placeholder: '이미지 검색...',
+            svgMissingDimensions: '선택한 SVG 파일에 너비, 높이 또는 viewBox가 정의되어 있지 않습니다.',
             instructions: {
                 navigate: '이동',
                 select: '배너 설정',
@@ -859,7 +861,7 @@ export const STRINGS_KO = {
         openYearlyNote: '연간 노트 열기',
         revealFile: '파일 표시', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: '검색', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: '보관소 루트에서 검색', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: '보관소 전체 검색', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: '이중 창 레이아웃 전환', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: '이중 창 방향 전환', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: '캘린더 전환', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

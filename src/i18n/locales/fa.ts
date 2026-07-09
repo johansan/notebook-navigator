@@ -169,6 +169,7 @@ export const STRINGS_FA = {
     // Search input
     searchInput: {
         placeholder: 'جستجو...',
+        placeholderVault: 'جستجو در خزانه...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: 'پاک کردن جستجو',
         switchToFilterSearch: 'تغییر به جستجوی فیلتری',
@@ -671,6 +672,7 @@ export const STRINGS_FA = {
         },
         navigationBanner: {
             placeholder: 'جستجوی تصویر...',
+            svgMissingDimensions: 'فایل SVG انتخاب‌شده عرض، ارتفاع یا viewBox تعریف نمی‌کند.',
             instructions: {
                 navigate: 'برای ناوبری',
                 select: 'برای تنظیم بنر',
@@ -862,7 +864,7 @@ export const STRINGS_FA = {
         openYearlyNote: 'باز کردن یادداشت سالانه',
         revealFile: 'نمایش فایل',
         search: 'جستجو',
-        searchVaultRoot: 'جستجو در ریشه خزانه',
+        searchVaultRoot: 'جستجو در کل خزانه',
         toggleDualPane: 'تغییر نمای پنل دوگانه',
         toggleDualPaneOrientation: 'تغییر جهت پنل دوگانه', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'تغییر تقویم',

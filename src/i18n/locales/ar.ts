@@ -169,6 +169,7 @@ export const STRINGS_AR = {
     // Search input
     searchInput: {
         placeholder: 'بحث...', // Placeholder text for search input (English: Search...)
+        placeholderVault: 'البحث في الخزنة...',
         placeholderOmnisearch: 'بحث شامل...', // Placeholder text when Omnisearch provider is active (English: Omnisearch...)
         clearSearch: 'مسح البحث', // Tooltip for clear search button (English: Clear search)
         switchToFilterSearch: 'التبديل إلى البحث بالتصفية',
@@ -667,6 +668,7 @@ export const STRINGS_AR = {
         },
         navigationBanner: {
             placeholder: 'البحث عن صور...',
+            svgMissingDimensions: 'ملف SVG المحدد لا يحدد عرضًا أو ارتفاعًا أو viewBox.',
             instructions: {
                 navigate: 'للتنقل',
                 select: 'لتعيين الشعار',
@@ -857,7 +859,7 @@ export const STRINGS_AR = {
         openYearlyNote: 'فتح الملاحظة السنوية',
         revealFile: 'الكشف عن الملف', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'بحث', // Command palette: Toggle search in the file list (English: Search)
-        searchVaultRoot: 'بحث في جذر الخزنة', // Command palette: Selects the vault root folder and focuses search (English: Search in vault root)
+        searchVaultRoot: 'البحث في الخزنة بالكامل', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
         toggleDualPane: 'تبديل تخطيط اللوحتين', // Command palette: Toggles between single-pane and dual-pane layout (English: Toggle dual pane layout)
         toggleDualPaneOrientation: 'تبديل اتجاه اللوحتين', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'تبديل التقويم', // Command palette: Toggles showing the calendar overlay in the navigation pane (English: Toggle calendar)

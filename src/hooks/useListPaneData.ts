@@ -174,6 +174,9 @@ export function useListPaneData({
         if (selectionType !== ItemType.FOLDER || !selectedFolder) {
             return undefined;
         }
+        if (selectedFolder.path === '/') {
+            return undefined;
+        }
         return selectedFolder.path;
     }, [selectionType, selectedFolder]);
     const { hiddenFolders, descendantExcludedFolders, hiddenFileProperties, hiddenFileNames, hiddenTags, hiddenFileTags, fileVisibility } =

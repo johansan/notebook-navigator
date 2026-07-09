@@ -42,6 +42,7 @@
 import { createContext, useContext, useState, useRef, ReactNode, useMemo, useCallback, useEffect } from 'react';
 import { App, TFile, debounce, EventRef } from 'obsidian';
 import { ProcessedMetadata, extractMetadata } from '../utils/metadataExtractor';
+import { extractCurrentFrontmatterMetadataFromFileData } from '../utils/frontmatterMetadataCache';
 import { ContentProviderRegistry } from '../services/content/ContentProviderRegistry';
 import { useCacheRebuildNotice } from './storage/useCacheRebuildNotice';
 import { useIndexedDBReady } from './storage/useIndexedDBReady';
@@ -50,12 +51,14 @@ import { useMetadataCacheQueue } from './storage/useMetadataCacheQueue';
 import { useStorageCacheRebuild } from './storage/useStorageCacheRebuild';
 import { useStorageContentQueue } from './storage/useStorageContentQueue';
 import { useStorageFileQueries } from './storage/useStorageFileQueries';
+import { useTreeRebuildScheduler } from './storage/useTreeRebuildScheduler';
 import { useTagTreeSync } from './storage/useTagTreeSync';
 import { usePropertyTreeSync } from './storage/usePropertyTreeSync';
-import { useStorageVaultSync } from './storage/useStorageVaultSync';
+import { useStorageVaultSync, type PendingFileFlushBuffer } from './storage/useStorageVaultSync';
+import type { PendingRenameFlushBuffer } from './storage/renameFlush';
 import { useStorageSettingsSync } from './storage/useStorageSettingsSync';
 import { METADATA_SENTINEL, type FileData as DBFileData, type IndexedDBStorage } from '../storage/IndexedDBStorage';
-import { getDBInstance } from '../storage/fileOperations';
+import { getDBInstance, getDBInstanceOrNull } from '../storage/fileOperations';
 import type { StorageFileData } from './storage/storageFileData';
 import type { PropertyTreeNode, TagTreeNode } from '../types/storage';
 import { getFileDisplayName as getDisplayName } from '../utils/fileNameUtils';
@@ -182,6 +185,15 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
     // Map: file path -> pending metadata-dependent wait mask (used by `useMetadataCacheQueue`).
     const pendingMetadataWaitPathsRef = useRef<Map<string, number>>(new Map());
     const pendingRenameDataRef = useRef<Map<string, DBFileData>>(new Map());
+    // Buffered vault `modify` events awaiting a debounced flush. Owned here so buffered entries survive
+    // remounts of the vault-sync effect (it re-runs on settings changes).
+    const modifyFlushBufferRef = useRef<PendingFileFlushBuffer>({ files: new Map(), timerId: null, isProcessing: false });
+    // Buffered `metadataCache.changed` events awaiting a debounced flush. This flush is the only content
+    // trigger for markdown saves, so buffered entries must survive effect remounts.
+    const metadataChangeFlushBufferRef = useRef<PendingFileFlushBuffer>({ files: new Map(), timerId: null, isProcessing: false });
+    // Buffered vault rename events awaiting the zero-delay batched flush. Owned here so buffered
+    // entries survive remounts of the vault-sync effect.
+    const renameFlushBufferRef = useRef<PendingRenameFlushBuffer>({ moves: [], timerId: null });
     const latestSettingsRef = useRef(settings);
     latestSettingsRef.current = settings;
     const activeVaultEventRefs = useRef<EventRef[] | null>(null);
@@ -216,13 +228,21 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
 
     const { getVisibleMarkdownFiles, getIndexableFiles } = useStorageFileQueries({ app, latestSettingsRef, showHiddenItems });
 
-    const { rebuildTagTree, scheduleTagTreeRebuild, cancelTagTreeRebuildDebouncer } = useTagTreeSync({
+    // Shared debounced scheduler that runs tag and property tree rebuilds from one visible-file scan.
+    const { tagTreeRebuildFnRef, propertyTreeRebuildFnRef, scheduleTreeRebuild, cancelTreeRebuildDebouncer } = useTreeRebuildScheduler({
+        isStorageReadyRef,
+        stoppedRef,
+        getVisibleMarkdownFiles
+    });
+
+    const { rebuildTagTree, scheduleTagTreeRebuild } = useTagTreeSync({
         app,
         settings,
         showHiddenItems,
         hiddenFolders,
         hiddenTags,
         hiddenFileProperties,
+        hiddenFileTags,
         fileVisibility,
         profileId: profile.id,
         isStorageReady,
@@ -231,10 +251,12 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         stoppedRef,
         setFileData,
         getVisibleMarkdownFiles,
-        tagTreeService: tagTreeService ?? null
+        tagTreeService: tagTreeService ?? null,
+        scheduleTreeRebuild,
+        tagTreeRebuildFnRef
     });
 
-    const { rebuildPropertyTree, schedulePropertyTreeRebuild, cancelPropertyTreeRebuildDebouncer } = usePropertyTreeSync({
+    const { rebuildPropertyTree, schedulePropertyTreeRebuild } = usePropertyTreeSync({
         app,
         settings,
         showHiddenItems,
@@ -250,7 +272,9 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         stoppedRef,
         setFileData,
         getVisibleMarkdownFiles,
-        propertyTreeService: propertyTreeService ?? null
+        propertyTreeService: propertyTreeService ?? null,
+        scheduleTreeRebuild,
+        propertyTreeRebuildFnRef
     });
 
     const { queueMetadataContentWhenReady, disposeMetadataWaitDisposers } = useMetadataCacheQueue({
@@ -273,8 +297,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         contentRegistryRef: contentRegistry,
         pendingSyncTimeoutIdRef: pendingSyncTimeoutId,
         rebuildFileCacheRef,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         disposeMetadataWaitDisposers,
         pendingMetadataWaitPathsRef,
         setFileData,
@@ -323,25 +346,37 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         startCacheRebuildNotice(total, enabledTypes);
     }, [isStorageReady, startCacheRebuildNotice]);
 
-    const getFileDisplayName = useCallback(
-        (file: TFile): string => {
-            if (settings.useFrontmatterMetadata) {
-                const metadata = extractMetadata(app, file, settings);
-                if (metadata.fn) {
-                    return metadata.fn;
-                }
+    const getFrontmatterMetadata = useCallback(
+        (file: TFile): ProcessedMetadata | null => {
+            if (!settings.useFrontmatterMetadata || file.extension !== 'md') {
+                return null;
             }
-            return getDisplayName(file, undefined, settings);
+
+            const db = getDBInstanceOrNull();
+            return (
+                extractCurrentFrontmatterMetadataFromFileData(file, db?.getFile(file.path) ?? null, settings) ??
+                extractMetadata(app, file, settings)
+            );
         },
         [app, settings]
     );
 
+    const getFileDisplayName = useCallback(
+        (file: TFile): string => {
+            const metadata = getFrontmatterMetadata(file);
+            if (metadata?.fn) {
+                return metadata.fn;
+            }
+            return getDisplayName(file, undefined, settings);
+        },
+        [getFrontmatterMetadata, settings]
+    );
+
     const getFileTimestamps = useCallback(
         (file: TFile): { created: number; modified: number } => {
-            const extractedMetadata = settings.useFrontmatterMetadata ? extractMetadata(app, file, settings) : null;
-            return computeFileTimestamps(file, extractedMetadata);
+            return computeFileTimestamps(file, getFrontmatterMetadata(file));
         },
-        [app, settings]
+        [getFrontmatterMetadata]
     );
 
     const getFileCreatedTime = useCallback((file: TFile): number => getFileTimestamps(file).created, [getFileTimestamps]);
@@ -350,7 +385,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
 
     const getFileMetadata = useCallback(
         (file: TFile): { name: string; created: number; modified: number } => {
-            const extractedMetadata = settings.useFrontmatterMetadata ? extractMetadata(app, file, settings) : null;
+            const extractedMetadata = getFrontmatterMetadata(file);
             const timestamps = computeFileTimestamps(file, extractedMetadata);
 
             return {
@@ -359,7 +394,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                 modified: timestamps.modified
             };
         },
-        [app, settings]
+        [getFrontmatterMetadata, settings]
     );
 
     const hasPreview = useCallback((path: string): boolean => getDBInstance().hasPreview(path), []);
@@ -519,6 +554,9 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         contentRegistryRef: contentRegistry,
         pendingSyncTimeoutIdRef: pendingSyncTimeoutId,
         pendingRenameDataRef,
+        modifyFlushBufferRef,
+        metadataChangeFlushBufferRef,
+        renameFlushBufferRef,
         buildFileCacheFnRef,
         rebuildFileCacheRef,
         activeVaultEventRefsRef: activeVaultEventRefs,
@@ -527,10 +565,10 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         rebuildPropertyTree,
         scheduleTagTreeRebuild,
         schedulePropertyTreeRebuild,
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
+        cancelTreeRebuildDebouncer,
         startCacheRebuildNotice,
         getIndexableFiles,
+        getVisibleMarkdownFiles,
         queueMetadataContentWhenReady,
         queueIndexableFilesForContentGeneration,
         queueIndexableFilesNeedingContentGeneration,
@@ -541,14 +579,13 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
      * Augment context with control methods
      *
      * Adds the stopAllProcessing method to the context value.
-     * This method is called when:
-     * - The view is being closed
-     * - The plugin is being disabled
-     * - A cache rebuild is starting (to stop current operations)
+     * Called during plugin shutdown (main.ts stopNavigatorContentProcessing via the view's
+     * stopContentProcessing handle). Not called on plain view close; cache rebuilds run their
+     * own stop sequence in useStorageCacheRebuild.
      *
      * It ensures clean shutdown by:
      * - Stopping all content providers
-     * - Cancelling pending operations
+     * - Cancelling pending operations and buffered flushes
      * - Detaching event listeners
      * - Preventing any new operations from starting
      */
@@ -570,6 +607,25 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                     }
                     pendingSyncTimeoutId.current = null;
                 }
+                // Drop buffered modify/metadata flushes and their timers
+                for (const buffer of [modifyFlushBufferRef.current, metadataChangeFlushBufferRef.current]) {
+                    if (buffer.timerId !== null) {
+                        if (typeof window !== 'undefined') {
+                            window.clearTimeout(buffer.timerId);
+                        }
+                        buffer.timerId = null;
+                    }
+                    buffer.files.clear();
+                }
+                // Drop buffered renames and their flush timer; the next session's full diff reconciles them
+                const renameBuffer = renameFlushBufferRef.current;
+                if (renameBuffer.timerId !== null) {
+                    if (typeof window !== 'undefined') {
+                        window.clearTimeout(renameBuffer.timerId);
+                    }
+                    renameBuffer.timerId = null;
+                }
+                renameBuffer.moves = [];
                 // Optionally detach event subscriptions and cancel debouncers
                 try {
                     if (activeVaultEventRefs.current) {
@@ -590,22 +646,13 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
                 }
                 rebuildFileCacheRef.current = null;
                 // Clears any pending rebuild scheduled by UI or database events.
-                cancelTagTreeRebuildDebouncer({ reset: true });
-                cancelPropertyTreeRebuildDebouncer({ reset: true });
+                cancelTreeRebuildDebouncer({ reset: true });
                 // Clean up all tracked metadata wait disposers on shutdown
                 disposeMetadataWaitDisposers();
                 pendingMetadataWaitPathsRef.current.clear();
             }
         };
-    }, [
-        cancelTagTreeRebuildDebouncer,
-        cancelPropertyTreeRebuildDebouncer,
-        resetPendingSettingsChanges,
-        contextValue,
-        disposeMetadataWaitDisposers,
-        app.vault,
-        app.metadataCache
-    ]);
+    }, [cancelTreeRebuildDebouncer, resetPendingSettingsChanges, contextValue, disposeMetadataWaitDisposers, app.vault, app.metadataCache]);
 
     return <StorageContext.Provider value={contextWithControls}>{children}</StorageContext.Provider>;
 }

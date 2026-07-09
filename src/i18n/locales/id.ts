@@ -169,6 +169,7 @@ export const STRINGS_ID = {
     // Search input
     searchInput: {
         placeholder: 'Cari...',
+        placeholderVault: 'Cari vault...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: 'Bersihkan pencarian',
         switchToFilterSearch: 'Beralih ke pencarian filter',
@@ -671,6 +672,7 @@ export const STRINGS_ID = {
         },
         navigationBanner: {
             placeholder: 'Cari gambar...',
+            svgMissingDimensions: 'Berkas SVG yang dipilih tidak menentukan lebar, tinggi, atau viewBox.',
             instructions: {
                 navigate: 'untuk navigasi',
                 select: 'untuk mengatur banner',
@@ -862,7 +864,7 @@ export const STRINGS_ID = {
         openYearlyNote: 'Buka catatan tahunan',
         revealFile: 'Tampilkan file',
         search: 'Cari',
-        searchVaultRoot: 'Cari di root vault',
+        searchVaultRoot: 'Cari di seluruh vault',
         toggleDualPane: 'Alihkan tata letak panel ganda',
         toggleDualPaneOrientation: 'Alihkan orientasi panel ganda', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Alihkan kalender',

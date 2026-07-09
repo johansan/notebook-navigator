@@ -92,6 +92,7 @@ interface FolderItemProps {
     vaultChangeVersion: number;
     disableContextMenu?: boolean;
     disableNavigationSeparatorActions?: boolean;
+    onStartInlineRename?: (folder: TFolder) => boolean;
     inlineRename?: InlineRenameControl;
 }
 
@@ -132,6 +133,7 @@ export const FolderItem = React.memo(function FolderItem({
     vaultChangeVersion,
     disableContextMenu,
     disableNavigationSeparatorActions,
+    onStartInlineRename,
     inlineRename
 }: FolderItemProps) {
     const { app, fileSystemOps, isMobile } = useServices();
@@ -362,13 +364,24 @@ export const FolderItem = React.memo(function FolderItem({
         });
     }, [showsHiddenFromParentsIndicator, isMobile, settings.showTooltips, shouldDisplayCount]);
 
+    const folderMenuOptions = useMemo(
+        () =>
+            disableNavigationSeparatorActions || onStartInlineRename
+                ? {
+                      ...(disableNavigationSeparatorActions ? { disableNavigationSeparatorActions: true } : {}),
+                      ...(onStartInlineRename ? { onStartInlineRename } : {})
+                  }
+                : undefined,
+        [disableNavigationSeparatorActions, onStartInlineRename]
+    );
+
     // Enable context menu
     const folderMenuConfig = disableContextMenu
         ? null
         : {
               type: ItemType.FOLDER,
               item: folder,
-              options: disableNavigationSeparatorActions ? { disableNavigationSeparatorActions: true } : undefined
+              options: folderMenuOptions
           };
 
     useContextMenu(folderRef, folderMenuConfig);

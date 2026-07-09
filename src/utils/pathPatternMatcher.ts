@@ -198,28 +198,80 @@ export const matchesLiteralPrefix = (pattern: ParsedPathPattern, candidateSegmen
     return true;
 };
 
-export const rebuildPattern = (
+const renderPatternSegment = (segment: PathPatternSegment): string => {
+    if (segment.type === 'wildcard') {
+        return '*';
+    }
+    if (segment.type === 'prefix') {
+        return `${segment.value}*`;
+    }
+    return segment.value;
+};
+
+/**
+ * Rebuilds a pattern after a path rename of `previousSegments` to `nextSegments`. The caller must
+ * have verified that the pattern's literal prefix matches `previousSegments` for the first
+ * `min(literalPrefixLength, previousSegments.length)` segments.
+ *
+ * When the renamed path is the pattern's literal path or an ancestor of it, the matched segments
+ * are replaced by the full new path and the remaining pattern segments are kept. When the renamed
+ * path descends past the literal prefix, the extra depth must be covered by non-literal segments:
+ * wildcard segments match any name, while prefix segments must match both the previous and the new
+ * tail names of the renamed path (compared after `normalizeMatchSegment` when provided). The new
+ * path must also be deep enough to leave a replacement for the literal prefix; the pattern's tail
+ * is kept as-is.
+ *
+ * Returns null when the rename cannot be applied to the pattern.
+ */
+export const rebuildRenamedPattern = (
     pattern: ParsedPathPattern,
+    previousSegments: string[],
     nextSegments: string[],
-    options: { addLeadingSlash?: boolean; normalizePattern?: (value: string) => string } = {}
-): string => {
-    const rebuiltSegments = pattern.segments.map((segment, index) => {
-        if (index < pattern.literalPrefixLength && segment.type === 'literal') {
-            return nextSegments[index] ?? segment.value;
+    options: {
+        addLeadingSlash?: boolean;
+        normalizePattern?: (value: string) => string;
+        normalizeMatchSegment?: (value: string) => string;
+    } = {}
+): string | null => {
+    let replacedSegmentCount: number;
+    let nextPrefixSegments: string[];
+
+    if (previousSegments.length <= pattern.literalPrefixLength) {
+        replacedSegmentCount = previousSegments.length;
+        nextPrefixSegments = nextSegments;
+    } else {
+        const tailDepth = previousSegments.length - pattern.literalPrefixLength;
+        const absorbedSegments = pattern.segments.slice(pattern.literalPrefixLength, pattern.literalPrefixLength + tailDepth);
+        if (absorbedSegments.length < tailDepth) {
+            return null;
         }
-
-        if (segment.type === 'wildcard') {
-            return '*';
+        if (nextSegments.length <= tailDepth) {
+            return null;
         }
-
-        if (segment.type === 'prefix') {
-            return `${segment.value}*`;
+        const normalizeMatchSegment = options.normalizeMatchSegment ?? ((value: string) => value);
+        const nextTailStart = nextSegments.length - tailDepth;
+        const tailMismatch = absorbedSegments.some((segment, index) => {
+            if (segment.type === 'literal') {
+                return true;
+            }
+            if (segment.type === 'prefix') {
+                const prefixValue = normalizeMatchSegment(segment.value);
+                if (!previousSegments[pattern.literalPrefixLength + index].startsWith(prefixValue)) {
+                    return true;
+                }
+                return !normalizeMatchSegment(nextSegments[nextTailStart + index]).startsWith(prefixValue);
+            }
+            return false;
+        });
+        if (tailMismatch) {
+            return null;
         }
+        replacedSegmentCount = pattern.literalPrefixLength;
+        nextPrefixSegments = nextSegments.slice(0, nextTailStart);
+    }
 
-        return segment.value;
-    });
-
-    const joined = rebuiltSegments.join('/');
+    const suffixSegments = pattern.segments.slice(replacedSegmentCount).map(renderPatternSegment);
+    const joined = [...nextPrefixSegments, ...suffixSegments].join('/');
     const rebuilt = options.addLeadingSlash ? `/${joined}` : joined;
     return options.normalizePattern ? options.normalizePattern(rebuilt) : rebuilt;
 };

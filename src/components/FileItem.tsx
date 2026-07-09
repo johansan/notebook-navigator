@@ -929,11 +929,19 @@ export const FileItem = React.memo(function FileItem({
     }
     const featureImageContainerClassName = featureImageContainerClasses.join(' ');
 
-    const featureImageStyle = useSquareFeatureImage
-        ? undefined
-        : ({
-              '--nn-file-thumbnail-aspect-ratio': featureImageAspectRatio ?? 1
-          } as React.CSSProperties);
+    // The inset highlight overlay uses the thumbnail as a mask so it only covers opaque pixels.
+    const featureImageMaskImage = effectiveFeatureImageUrl ? `url("${effectiveFeatureImageUrl.replace(/[\\"]/g, '\\$&')}")` : null;
+
+    let featureImageStyle: React.CSSProperties | undefined;
+    if (!useSquareFeatureImage) {
+        featureImageStyle = { '--nn-file-thumbnail-aspect-ratio': featureImageAspectRatio ?? 1 } as React.CSSProperties;
+    }
+    if (featureImageMaskImage) {
+        featureImageStyle = {
+            ...featureImageStyle,
+            '--nn-file-thumbnail-mask-image': featureImageMaskImage
+        } as React.CSSProperties;
+    }
 
     const handleFeatureImageLoad = useCallback(() => {
         if (useSquareFeatureImage) {

@@ -178,15 +178,21 @@ describe('getFilteredFiles', () => {
 });
 
 describe('getFilteredIndexableFiles', () => {
-    it('includes markdown, PDF, and raw Tldraw files', () => {
+    it('includes markdown, PDF, SVG, and raw Tldraw files', () => {
         const note = createTestTFile('Notes/A.md');
         const pdf = createTestTFile('Docs/File.pdf');
+        const svg = createTestTFile('Images/Logo.svg');
         const drawing = createTestTFile('Drawings/Sketch.tldr');
         const image = createTestTFile('Images/Cover.png');
-        const app = createAppWithFiles([note, pdf, drawing, image]);
+        const app = createAppWithFiles([note, pdf, svg, drawing, image]);
         const settings = createSettings();
 
-        expect(toPaths(getFilteredIndexableFiles(app, settings))).toEqual(['Notes/A.md', 'Docs/File.pdf', 'Drawings/Sketch.tldr']);
+        expect(toPaths(getFilteredIndexableFiles(app, settings))).toEqual([
+            'Notes/A.md',
+            'Docs/File.pdf',
+            'Images/Logo.svg',
+            'Drawings/Sketch.tldr'
+        ]);
     });
 
     it('includes raw Tldraw files even when the extension is not visible in the UI', () => {

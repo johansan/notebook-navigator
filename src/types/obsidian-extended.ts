@@ -173,6 +173,10 @@ export const TIMEOUTS = {
     DEBOUNCE_KEYBOARD_FILE_OPEN: 500,
     /** Debounce for content processing and tree updates */
     DEBOUNCE_CONTENT: 300,
+    /** Debounce applied after vault file events before refreshing navigation */
+    NAVIGATION_FILE_CHANGE_DEBOUNCE: 100,
+    /** Maximum wait between navigation refreshes during continuous vault file-event bursts */
+    NAVIGATION_FILE_CHANGE_MAX_WAIT: 500,
     /** Debounce for tag tree rebuild requests */
     DEBOUNCE_TAG_TREE: 500,
     /** Debounce for settings text input */

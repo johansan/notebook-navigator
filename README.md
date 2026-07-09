@@ -7,6 +7,8 @@ Visual previews. Full keyboard navigation. Dual-pane layout. Mobile optimized. W
 
 If you love using Notebook Navigator, please consider [☕️ Buying me a coffee](https://buymeacoffee.com/johansan) or [Sponsor on GitHub ❤️](https://github.com/sponsors/johansan).
 
+Coming from another app? Read the switching guides for [Evernote](https://notebooknavigator.com/evernote/), [Apple Notes](https://notebooknavigator.com/apple-notes/), [Bear](https://notebooknavigator.com/bear/), [OneNote](https://notebooknavigator.com/onenote/) and [Day One](https://notebooknavigator.com/day-one/).
+
 <br/>
 
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=Downloads&query=%24%5B%22notebook-navigator%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json) ![Obsidian Compatibility](https://img.shields.io/badge/Obsidian-v1.11.0+-483699?logo=obsidian&style=flat-square) [![Discord](https://img.shields.io/discord/1405458145974943846?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.gg/6eeSUvzEJr)
@@ -89,25 +91,25 @@ Notebook Navigator runs locally, but some features make documented HTTP requests
 
 ## 5 Keyboard shortcuts
 
-| Key                                 | Action                                                                                                                                  |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| ↑/↓                                 | Navigate up/down in current pane                                                                                                        |
-| ←                                   | In navigation pane: collapse or go to parent<br>In list pane: switch to navigation pane                                                 |
-| →                                   | In navigation pane: expand or switch to list pane<br>In list pane: switch to editor                                                     |
-| Tab                                 | In navigation pane: switch to list pane<br>In list pane: switch to editor<br>In search field: switch to list pane                       |
-| Shift+Tab                           | In list pane: switch to navigation pane<br>In search field: switch to navigation pane                                                   |
-| Enter (macOS)<br>F2 (Windows/Linux) | Rename item inline in navigation pane or list pane                                                                                      |
-| Enter                               | Windows/Linux: open folder note in navigation pane or selected file in list pane (when enabled)<br>In search field: switch to list pane |
-| Escape                              | In search field: close search and focus list pane                                                                                       |
-| PageUp/PageDown                     | Scroll up/down in navigation pane and list pane                                                                                         |
-| Home/End                            | Jump to first/last item in current pane                                                                                                 |
-| Delete<br>Backspace                 | Delete selected item                                                                                                                    |
-| Cmd/Ctrl+A                          | Select all notes in current folder                                                                                                      |
-| Cmd/Ctrl+Click                      | Toggle notes selection                                                                                                                  |
-| Shift+Click                         | Select a range of notes                                                                                                                 |
-| Shift+Home/End                      | Select from current position to first/last item                                                                                         |
-| Shift+↑/↓                           | Extend selection up/down                                                                                                                |
-| Cmd/Ctrl+↑/↓                        | Rearrange selected files up/down in manual sort mode                                                                                    |
+| Key                                 | Action                                                                                                                                                                                    |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ↑/↓                                 | Navigate up/down in current pane                                                                                                                                                          |
+| ←                                   | In navigation pane: collapse or go to parent<br>In list pane: switch to navigation pane                                                                                                   |
+| →                                   | In navigation pane: expand or switch to list pane<br>In list pane: switch to editor                                                                                                       |
+| Tab                                 | In navigation pane: switch to list pane<br>In list pane: switch to editor<br>In search field: switch to list pane                                                                         |
+| Shift+Tab                           | In list pane: switch to navigation pane<br>In search field: switch to navigation pane                                                                                                     |
+| Enter (macOS)<br>F2 (Windows/Linux) | Rename item inline in navigation pane or list pane                                                                                                                                        |
+| Enter                               | In navigation pane: open folder note on Windows/Linux by default (when enabled)<br>In list pane: open selected file on all systems (when enabled)<br>In search field: switch to list pane |
+| Escape                              | In search field: close search and focus list pane                                                                                                                                         |
+| PageUp/PageDown                     | Scroll up/down in navigation pane and list pane                                                                                                                                           |
+| Home/End                            | Jump to first/last item in current pane                                                                                                                                                   |
+| Delete<br>Backspace                 | Delete selected item                                                                                                                                                                      |
+| Cmd/Ctrl+A                          | Select all notes in current folder                                                                                                                                                        |
+| Cmd/Ctrl+Click                      | Toggle notes selection                                                                                                                                                                    |
+| Shift+Click                         | Select a range of notes                                                                                                                                                                   |
+| Shift+Home/End                      | Select from current position to first/last item                                                                                                                                           |
+| Shift+↑/↓                           | Extend selection up/down                                                                                                                                                                  |
+| Cmd/Ctrl+↑/↓                        | Rearrange selected files up/down in manual sort mode                                                                                                                                      |
 
 **Note:** All keyboard shortcuts can be customized. See [section 8 - Custom hotkeys](#8-custom-hotkeys) for details on adding VIM-style navigation (h,j,k,l), alternate keys, and modifier combinations.
 
@@ -291,7 +293,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Add to shortcuts` Adds or removes the current file, folder, tag, or property from shortcuts
 - `Notebook Navigator: Open shortcut 1-9` Opens shortcut by its position in the shortcuts list
 - `Notebook Navigator: Search` Opens quick search field or focuses it if already open. Search persists between sessions. **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+S` for quick file filtering
-- `Notebook Navigator: Search in vault root` Selects the vault root folder and opens search (requires `Show root folder` enabled)
+- `Notebook Navigator: Search whole vault` Selects the vault root folder and opens search with subfolders included (requires `Show root folder` enabled)
 
 **Selection**
 
@@ -332,7 +334,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Convert to folder note` Create a folder matching the file name and move the file inside as the folder note
 - `Notebook Navigator: Set as folder note` Rename the active file to its folder note name
 - `Notebook Navigator: Detach folder note` Detach the folder note in the selected folder and rename it
-- `Notebook Navigator: Pin all folder notes` Pin all folder notes in all folders. Command is only visible when folder notes are enabled and at least one unpinned folder note exists
+- `Notebook Navigator: Pin all folder notes` Pin all folder notes in all folders. Command is only visible when folder notes are enabled
 - `Notebook Navigator: Delete files` Delete selected files. Selects next file in current folder
 
 **Tag operations**
@@ -375,7 +377,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 | `notebook-navigator:open-shortcut-8`                | Notebook Navigator: Open shortcut 8                        |
 | `notebook-navigator:open-shortcut-9`                | Notebook Navigator: Open shortcut 9                        |
 | `notebook-navigator:search`                         | Notebook Navigator: Search                                 |
-| `notebook-navigator:search-vault`                   | Notebook Navigator: Search in vault root                   |
+| `notebook-navigator:search-vault`                   | Notebook Navigator: Search whole vault                     |
 | `notebook-navigator:toggle-dual-pane`               | Notebook Navigator: Toggle dual pane layout                |
 | `notebook-navigator:toggle-dual-pane-orientation`   | Notebook Navigator: Toggle dual pane orientation           |
 | `notebook-navigator:toggle-calendar`                | Notebook Navigator: Toggle calendar                        |
@@ -427,7 +429,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 ### 10.2 Navigation
 
 - **Vault profiles** - Multiple filtered views with per-profile hidden folders/tags/notes, file visibility, banner, and shortcuts
-- **Shortcuts** - Notes, folders, tags, and saved searches with pinning and reordering
+- **Shortcuts** - Notes, folders, tags, properties, and saved searches with pinning and reordering
 - **Recent notes/files** - Recent items section stored per vault profile, optionally pinned with shortcuts
 - **Calendar** - Daily notes calendar with day selection, feature image previews, and vertical split support
 - **Folder tree** - Expand/collapse navigation with manual root folder ordering
@@ -444,13 +446,14 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Custom sort and grouping** - Override sort/group settings per folder or tag
 - **Per-folder/tag appearances** - Title rows, preview rows, compact mode, descendants toggle
 - **Hidden content** - Hidden folders/tags/notes/files with patterns, frontmatter properties, and tag-based filtering per vault profile
+- **Exclude folders from descendants** - Omit folders when collecting notes from subfolders, per vault profile; excluded folders stay visible and show their notes when selected
 - **Color and icon system** - Folder/tag/property/file colors, icon packs, emoji/Lucide icons, frontmatter read/write, icon mapping by file name and file type category
 - **Name warnings** - Warn about forbidden filesystem characters and characters that break Obsidian links when naming files and folders
 
 ### 10.4 File display
 
 - **Note previews** - 1–5 preview lines with optional HTML stripping
-- **Thumbnails** - Featured images plus auto-generated thumbnails stored in the metadata cache
+- **Thumbnails** - Featured images plus auto-generated thumbnails for PDF, SVG, and drawing files stored in the metadata cache
 - **External images** - Optional downloads for external images and YouTube thumbnails
 - **Date grouping** - Group notes by Today, Yesterday, Previous 7 days, Previous 30 days, months, and years when sorted by date
 - **Frontmatter support** - Read note names and timestamps from frontmatter fields
