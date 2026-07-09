@@ -205,9 +205,12 @@ export function useStorageVaultSync(params: {
                     // Both tree rebuilds share one visible-file scan.
                     let visibleFilesForTrees: TFile[] | null = null;
                     const getVisibleFilesForTrees = () => (visibleFilesForTrees ??= getVisibleMarkdownFiles());
-                    const tagTreeStartMs = performance.now();
-                    rebuildTagTree(getVisibleFilesForTrees);
-                    const tagTreeElapsedMs = Math.round(performance.now() - tagTreeStartMs);
+                    let tagTreeElapsedMs = 0;
+                    if (settings.showTags) {
+                        const tagTreeStartMs = performance.now();
+                        rebuildTagTree(getVisibleFilesForTrees);
+                        tagTreeElapsedMs = Math.round(performance.now() - tagTreeStartMs);
+                    }
                     const propertyTreeStartMs = performance.now();
                     rebuildPropertyTree(getVisibleFilesForTrees);
                     const propertyTreeElapsedMs = Math.round(performance.now() - propertyTreeStartMs);
@@ -546,7 +549,8 @@ export function useStorageVaultSync(params: {
                 const filesToRefresh = shouldPrefilterTaskOnlyMarkdownPipeline
                     ? filterFilesRequiringMetadataSources(files, metadataDependentTypes, liveSettings, {
                           app,
-                          conservativeMetadata: true
+                          conservativeMetadata: true,
+                          compareCurrentTaskMetadata: true
                       })
                     : files;
                 if (filesToRefresh.length === 0) {

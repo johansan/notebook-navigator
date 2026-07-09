@@ -370,7 +370,7 @@ describe('Storage queue filters', () => {
         expect(result).toEqual([file]);
     });
 
-    it('includes current markdown pipeline files when metadata contains task items', () => {
+    it('excludes current markdown pipeline files when task counters are current even if metadata contains task items', () => {
         const file = new TFile();
         file.path = 'notes/note.md';
         file.extension = 'md';
@@ -405,6 +405,47 @@ describe('Storage queue filters', () => {
         const types: ContentProviderType[] = ['markdownPipeline'];
         const result = filterFilesRequiringMetadataSources([file], types, settings, { app });
 
+        expect(result).toEqual([]);
+    });
+
+    it('includes current markdown pipeline files with task metadata when current task comparison is requested', () => {
+        const file = new TFile();
+        file.path = 'notes/note.md';
+        file.extension = 'md';
+        file.stat.mtime = 456;
+        const app = new App();
+        app.metadataCache.getFileCache = () => createTaskMetadata([' ']);
+
+        db.setFile(
+            file.path,
+            createFileData({
+                mtime: file.stat.mtime,
+                markdownPipelineMtime: file.stat.mtime,
+                wordCount: 0,
+                taskTotal: 0,
+                taskUnfinished: 0,
+                previewStatus: 'none',
+                featureImageStatus: 'none',
+                featureImageKey: '',
+                properties: []
+            })
+        );
+
+        settings = {
+            ...settings,
+            showFilePreview: false,
+            showFeatureImage: false,
+            showTooltips: false,
+            textCountDisplay: 'none',
+            calendarEnabled: true
+        };
+
+        const types: ContentProviderType[] = ['markdownPipeline'];
+        const result = filterFilesRequiringMetadataSources([file], types, settings, {
+            app,
+            compareCurrentTaskMetadata: true
+        });
+
         expect(result).toEqual([file]);
     });
 
@@ -433,12 +474,34 @@ describe('Storage queue filters', () => {
             ]
         };
 
+        const app = new App();
+        app.metadataCache.getFileCache = () => ({ frontmatter: { title: 'Note' } });
+
         const types: ContentProviderType[] = ['metadata'];
         const strictResult = filterFilesRequiringMetadataSources([file], types, settings);
         expect(strictResult).toEqual([]);
 
-        const conservativeResult = filterFilesRequiringMetadataSources([file], types, settings, { conservativeMetadata: true });
-        expect(conservativeResult).toEqual([file]);
+        const conservativeReadyResult = filterFilesRequiringMetadataSources([file], types, settings, {
+            conservativeMetadata: true,
+            app
+        });
+        expect(conservativeReadyResult).toEqual([]);
+
+        app.metadataCache.getFileCache = () => ({ frontmatter: { hide: true } });
+
+        const conservativeChangedResult = filterFilesRequiringMetadataSources([file], types, settings, {
+            conservativeMetadata: true,
+            app
+        });
+        expect(conservativeChangedResult).toEqual([file]);
+
+        app.metadataCache.getFileCache = () => null;
+
+        const conservativeMissingResult = filterFilesRequiringMetadataSources([file], types, settings, {
+            conservativeMetadata: true,
+            app
+        });
+        expect(conservativeMissingResult).toEqual([file]);
     });
 
     it('includes PDF files when fileThumbnailsMtime is reset even if featureImageKey matches', () => {

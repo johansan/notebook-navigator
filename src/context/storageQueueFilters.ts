@@ -22,6 +22,7 @@ import type { ContentProviderType } from '../interfaces/IContentProvider';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstance } from '../storage/fileOperations';
+import { createFrontmatterPropertyExclusionMatcher } from '../utils/fileFilters';
 import { isGeneratedThumbnailFile } from '../utils/fileTypeUtils';
 import { getActiveHiddenFileProperties } from '../utils/vaultProfiles';
 import { getLocalFeatureImageKey } from '../services/content/FeatureImageContentProvider';
@@ -48,6 +49,11 @@ type MetadataSourceFilterOptions = {
      * This avoids false negatives when the provider's hidden-state logic can change without a stat.mtime update.
      */
     conservativeMetadata?: boolean;
+    /**
+     * When true, task metadata is compared even if the markdown pipeline mtime is current.
+     * Used by metadata-change events before provider mtimes are reset.
+     */
+    compareCurrentTaskMetadata?: boolean;
     app?: App;
 };
 
@@ -82,12 +88,14 @@ export function filterFilesRequiringMetadataSources(
     const hiddenFileProperties = getActiveHiddenFileProperties(settings);
     const requiresHiddenState = hiddenFileProperties.length > 0;
     const conservativeMetadata = options?.conservativeMetadata ?? false;
+    const compareCurrentTaskMetadata = options?.compareCurrentTaskMetadata ?? false;
     const propertiesEnabled = hasMarkdownPropertiesConsumer(settings);
     const needsMarkdownPipeline = types.includes('markdownPipeline');
     const needsTags = types.includes('tags');
     const needsMetadata = types.includes('metadata');
     const app = options?.app;
     const featureImageExcludeMatcher = createCaseInsensitiveKeyMatcher(settings.featureImageExcludeProperties);
+    const hiddenFilePropertyMatcher = requiresHiddenState ? createFrontmatterPropertyExclusionMatcher(hiddenFileProperties) : null;
     const markdownPipelineEnabled = hasMarkdownPipelineContent(settings);
     const previewEnabled = hasMarkdownPreviewConsumer(settings);
     const featureImageEnabled = hasMarkdownFeatureImageConsumer(settings);
@@ -108,11 +116,18 @@ export function filterFilesRequiringMetadataSources(
         }
 
         if (needsMarkdownPipeline && markdownPipelineEnabled && file.extension === 'md') {
+            let cachedMetadata: CachedMetadata | null | undefined;
+            const getCachedMetadata = (): CachedMetadata | null => {
+                if (cachedMetadata === undefined) {
+                    cachedMetadata = app?.metadataCache.getFileCache(file) ?? null;
+                }
+                return cachedMetadata;
+            };
+            const needsRefresh = record.markdownPipelineMtime !== file.stat.mtime;
             const needsPreview = previewEnabled && record.previewStatus === 'unprocessed';
-            const cachedMetadata = app?.metadataCache.getFileCache(file) ?? null;
             let needsFeatureImage = featureImageEnabled && (record.featureImageKey === null || record.featureImageStatus === 'unprocessed');
             if (featureImageEnabled && !needsFeatureImage && app) {
-                const frontmatter = cachedMetadata?.frontmatter;
+                const frontmatter = getCachedMetadata()?.frontmatter;
                 const featureImageExcluded = featureImageExcludeMatcher.matches(frontmatter);
                 if (!featureImageExcluded) {
                     const drawingProviderId = getDrawingSourceProviderIdWithFrontmatter(file, frontmatter);
@@ -128,12 +143,14 @@ export function filterFilesRequiringMetadataSources(
             const needsCharacterCount =
                 characterCountEnabled && (record.characterCountWithSpaces === null || record.characterCountWithoutSpaces === null);
             const needsTasks = tasksEnabled && (record.taskTotal === null || record.taskUnfinished === null);
-            const taskCountsFromMetadata = cachedMetadata === null ? null : countMarkdownTasksFromMetadata(cachedMetadata);
-            const hasTaskMetadata = cachedMetadata !== null && hasMarkdownTaskMetadata(cachedMetadata);
-            const hasTaskCountChanges =
-                tasksEnabled &&
-                (taskCountsFromMetadata !== null ? !areMarkdownTaskCountsEqual(record, taskCountsFromMetadata) : hasTaskMetadata);
-            const needsRefresh = record.markdownPipelineMtime !== file.stat.mtime;
+            let hasTaskCountChanges = false;
+            if (tasksEnabled && (needsRefresh || needsTasks || compareCurrentTaskMetadata)) {
+                const metadata = getCachedMetadata();
+                const taskCountsFromMetadata = metadata === null ? null : countMarkdownTasksFromMetadata(metadata);
+                const hasTaskMetadata = metadata !== null && hasMarkdownTaskMetadata(metadata);
+                hasTaskCountChanges =
+                    taskCountsFromMetadata !== null ? !areMarkdownTaskCountsEqual(record, taskCountsFromMetadata) : hasTaskMetadata;
+            }
             if (
                 needsPreview ||
                 needsFeatureImage ||
@@ -152,7 +169,7 @@ export function filterFilesRequiringMetadataSources(
                 }
 
                 if (tasksEnabled) {
-                    return shouldQueueStaleMarkdownTaskRefresh(record, cachedMetadata);
+                    return shouldQueueStaleMarkdownTaskRefresh(record, getCachedMetadata());
                 }
             }
         }
@@ -161,7 +178,17 @@ export function filterFilesRequiringMetadataSources(
         if (needsMetadata && file.extension === 'md') {
             const metadata = record.metadata;
             if (requiresHiddenState && conservativeMetadata) {
-                return true;
+                if (!app) {
+                    return true;
+                }
+                const cachedMetadata = app.metadataCache.getFileCache(file);
+                if (cachedMetadata === null) {
+                    return true;
+                }
+                const hidden = hiddenFilePropertyMatcher?.matches(cachedMetadata.frontmatter) ?? false;
+                if (metadata?.hidden !== hidden) {
+                    return true;
+                }
             }
             if (record.metadataMtime !== file.stat.mtime) {
                 return true;
