@@ -334,7 +334,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Convert to folder note` Create a folder matching the file name and move the file inside as the folder note
 - `Notebook Navigator: Set as folder note` Rename the active file to its folder note name
 - `Notebook Navigator: Detach folder note` Detach the folder note in the selected folder and rename it
-- `Notebook Navigator: Pin all folder notes` Pin all folder notes in all folders. Command is only visible when folder notes are enabled and at least one unpinned folder note exists
+- `Notebook Navigator: Pin all folder notes` Pin all folder notes in all folders. Command is only visible when folder notes are enabled
 - `Notebook Navigator: Delete files` Delete selected files. Selects next file in current folder
 
 **Tag operations**
@@ -429,7 +429,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 ### 10.2 Navigation
 
 - **Vault profiles** - Multiple filtered views with per-profile hidden folders/tags/notes, file visibility, banner, and shortcuts
-- **Shortcuts** - Notes, folders, tags, and saved searches with pinning and reordering
+- **Shortcuts** - Notes, folders, tags, properties, and saved searches with pinning and reordering
 - **Recent notes/files** - Recent items section stored per vault profile, optionally pinned with shortcuts
 - **Calendar** - Daily notes calendar with day selection, feature image previews, and vertical split support
 - **Folder tree** - Expand/collapse navigation with manual root folder ordering
