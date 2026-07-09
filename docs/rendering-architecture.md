@@ -1,6 +1,6 @@
 # Notebook Navigator Rendering Architecture
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -81,7 +81,7 @@ Expensive data shaping lives outside component bodies. Examples:
 
 ### 4. Context-Based State Layers
 
-Nine providers wrap the primary navigator React tree:
+Ten providers wrap the primary navigator React tree:
 
 - `SettingsContext` – persisted plugin settings and mutation helpers
 - `UXPreferencesContext` – runtime-only preferences (search active, include descendant notes, show hidden items, pin
@@ -91,10 +91,11 @@ Nine providers wrap the primary navigator React tree:
   property operations, tag tree service, property tree service, Omnisearch integration, and release check service
 - `ShortcutsContext` – pinned shortcut hydration, add/remove/reorder operations, and lookup maps
 - `StorageContext` – IndexedDB mirror, tag/property trees, synchronous metadata accessors, cache rebuild entry points
-- `ExpansionContext` – expanded folders, tags, properties, shortcuts, recent notes, and virtual folders
+- `ExpansionContext` – expanded folders, tags, properties, and virtual folders, plus collapsed list pane groups
 - `SelectionContext` – selected folder/tag/property/file, multi-selection tracking, reveal targets, and selection dispatchers
 - `UIStateContext` – pane mode (single vs dual), focused pane, current single-pane view, navigation pane width, pinned
   shortcuts toggle
+- `InternalDragContext` – active internal drag payload (files, folder, tag, or property) read by the drag-and-drop hooks
 
 The calendar right-sidebar tree uses `SettingsContext` and `ServicesContext` only.
 
@@ -117,7 +118,7 @@ colors used for background compositing.
 graph TD
     OV["NotebookNavigatorView"] --> SM["React.StrictMode"] --> SP["SettingsProvider"] --> UX["UXPreferencesProvider"] --> RD["RecentDataProvider"];
     RD --> SVC["ServicesProvider"] --> SHC["ShortcutsProvider"] --> ST["StorageProvider"] --> EP["ExpansionProvider"] --> SEL["SelectionProvider"];
-    SEL --> UI["UIStateProvider"] --> NC["NotebookNavigatorContainer"];
+    SEL --> UI["UIStateProvider"] --> IDS["InternalDragSessionProvider"] --> NC["NotebookNavigatorContainer"];
 
     NC -->|isStorageReady=false| SK["SkeletonView"];
     NC -->|isStorageReady=true| NNC["NotebookNavigatorComponent"];
@@ -178,7 +179,7 @@ graph TD
 
 - Creates the React root with `createRoot`, wraps it in `React.StrictMode`, applies mobile/platform classes, and mounts
   the provider stack
-  (`Settings → UXPreferences → RecentData → Services → Shortcuts → Storage → Expansion → Selection → UIState`).
+  (`Settings → UXPreferences → RecentData → Services → Shortcuts → Storage → Expansion → Selection → UIState → InternalDragSession`).
 - Applies Android font compensation to the view container and propagates it to the rendered mobile root.
 - Exposes imperative handlers to the plugin (cache rebuild, reveal actions, folder/tag/property modal navigation, search toggle,
   delete/move operations, shortcut creation).

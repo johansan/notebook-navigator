@@ -1,6 +1,6 @@
 # Notebook Navigator Service Architecture
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -357,7 +357,7 @@ queue integration.
 - Manual sort placement for newly created notes in folder, tag, and property contexts.
 - Batch file moves with modal workflows and selection updates.
 - Canvas/base drawing creation and reveal helpers.
-- Command queue tracking for deletes and moves.
+- Command queue tracking for deletes, moves, and folder renames.
 - System actions such as reveal in explorer, open in default app, and version history.
 
 **Key Methods:**
@@ -736,8 +736,8 @@ Tracks in-flight operations so React code can batch updates and adjust behavior 
 
 **Responsibilities:**
 
-- Records move/delete operations, folder note opens, version history opens, new context opens, background file opens,
-  active file opens, and homepage loads.
+- Records move/delete operations, folder renames, folder note opens, version history opens, new context opens,
+  background file opens, active file opens, and homepage loads.
 - Provides `onOperationChange` subscription for UI hooks.
 - Serializes open-active-file requests and tracks active operation state.
 
@@ -746,6 +746,7 @@ Tracks in-flight operations so React code can batch updates and adjust behavior 
 ```typescript
 enum OperationType {
   MOVE_FILE = 'move-file',
+  RENAME_FOLDER = 'rename-folder',
   DELETE_FILES = 'delete-files',
   OPEN_FOLDER_NOTE = 'open-folder-note',
   OPEN_VERSION_HISTORY = 'open-version-history',
@@ -765,6 +766,8 @@ getActiveOperations(): Operation[]
 clearAllOperations(): void
 
 isMovingFile(): boolean
+isRenamingFolder(): boolean
+isChangingFilePaths(): boolean
 isDeletingFiles(): boolean
 isOpeningFolderNote(): boolean
 isOpeningHomepage(): boolean
@@ -779,6 +782,7 @@ executeMoveFiles(
   targetFolder: TFolder,
   performMove: () => Promise<MoveFilesCommandData>
 ): Promise<CommandResult<MoveFilesCommandData>>
+executeRenameFolder(folderPath: string, performRename: () => Promise<void>): Promise<CommandResult<void>>
 executeDeleteFiles(files: TFile[], performDelete: () => Promise<void>): Promise<CommandResult>
 executeOpenFolderNote(folderPath: string, openFile: () => Promise<void>): Promise<CommandResult>
 executeOpenVersionHistory(file: TFile, openHistory: () => Promise<void>): Promise<CommandResult>
@@ -1176,8 +1180,8 @@ Triggered manually from **Settings → Notebook Navigator → Advanced → Clean
 
 1. User initiates an operation (create, rename, move, delete, duplicate).
 2. `FileSystemOperations` gathers input through modals when required.
-3. `CommandQueueService` wraps operations that coordinate workspace state (moves, deletes, folder note opens, version
-   history opens, new-context opens, background file opens, active file opens, homepage opens).
+3. `CommandQueueService` wraps operations that coordinate workspace state (moves, folder renames, deletes, folder note
+   opens, version history opens, new-context opens, background file opens, active file opens, homepage opens).
 4. Vault mutations execute through `app.fileManager` (rename/move/trash/frontmatter) and `app.vault` (creates/reads).
 5. Selection state updates via helpers from `selectionUtils`.
 6. `StorageContext` observes vault events, records changes into IndexedDB, and rebuilds tag and property trees.
@@ -1207,7 +1211,8 @@ Triggered manually from **Settings → Notebook Navigator → Advanced → Clean
 2. File opens update recent notes via `RecentNotesService.recordFileOpen`.
 3. Vault renames/deletes update metadata (`MetadataService.handle*`), recent note paths, hidden folder exact-match
    settings, and selection context file path tracking.
-4. Active-file auto-reveal after a rename skips moves initiated by the navigator (`CommandQueueService.isMovingFile()`).
+4. Active-file auto-reveal after a rename skips moves and folder renames initiated by the navigator
+   (`CommandQueueService.isChangingFilePaths()`).
 
 ## Service Patterns
 

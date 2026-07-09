@@ -1,6 +1,6 @@
 # Notebook Navigator Storage Architecture
 
-Updated: July 1, 2026
+Updated: July 9, 2026
 
 ## Table of Contents
 
@@ -169,6 +169,7 @@ and cache version/migration markers.
 - Recent data: recent notes (per vault profile) and recent icons.
 - Per-setting local mirrors for sync-mode settings (see "Sync modes and local mirrors" under Settings).
 - Cache version markers: `STORAGE_KEYS.databaseSchemaVersionKey`, `STORAGE_KEYS.databaseContentVersionKey`.
+- Frontmatter metadata cache signature: `STORAGE_KEYS.frontmatterMetadataCacheSignatureKey` (signature of the frontmatter metadata settings that produced the cached `metadata` fields; see `src/utils/frontmatterMetadataCache.ts`).
 - Cache rebuild notice marker: `STORAGE_KEYS.cacheRebuildNoticeKey`.
 - Device-local diagnostics and one-off action preferences.
 - Local storage schema marker: `STORAGE_KEYS.localStorageVersionKey` (`LOCALSTORAGE_VERSION` in `src/utils/localStorage.ts`).
@@ -210,6 +211,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   fileCacheKey: 'notebook-navigator-file-cache',
   databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
   databaseContentVersionKey: 'notebook-navigator-db-content-version',
+  frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
   cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
   debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
   pdfProcessingDiagnosticKey: 'notebook-navigator-pdf-processing-diagnostic',
@@ -238,7 +240,8 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   featureImagePixelSizeKey: 'notebook-navigator-feature-image-pixel-size',
   collapsedListGroupsKey: 'notebook-navigator-collapsed-list-groups',
   mergeNotesSeparatorKey: 'notebook-navigator-merge-notes-separator',
-  mergeNotesMoveSourcesToTrashKey: 'notebook-navigator-merge-notes-move-sources-to-trash'
+  mergeNotesMoveSourcesToTrashKey: 'notebook-navigator-merge-notes-move-sources-to-trash',
+  settingsImportBackupToRootKey: 'notebook-navigator-settings-import-backup-to-root'
 };
 ```
 
@@ -395,15 +398,18 @@ export interface IconAssetRecord {
 5. When a navigator view mounts, `StorageContext` waits for `useIndexedDBReady()` before doing cache work.
 6. If `IndexedDBStorage` marked a pending rebuild notice (schema downgrade, content version mismatch, or IndexedDB open recovery),
    `useStorageVaultSync` starts a rebuild progress notice.
-7. `useStorageVaultSync` diffs indexable vault files (markdown, PDFs allowed by file-visibility settings, and supported
-   non-markdown drawing source files, with hidden-item filters bypassed for indexing)
+7. `useStorageVaultSync` diffs indexable vault files (markdown, PDF and SVG files allowed by file-visibility settings, and
+   supported non-markdown drawing source files, with hidden-item filters bypassed for indexing)
    against the in-memory cache (`calculateFileDiff()`),
    then writes additions/updates/removals to IndexedDB (`recordFileChanges()`, `removeFilesFromCache()`).
-8. Tag and property trees are rebuilt from database records (`buildTagTreeFromDatabase()`, `buildPropertyTreeFromDatabase()`), filtered to currently visible markdown paths.
-9. Content providers queue derived content work (previews, tags, metadata, word/character counts, task counters, properties,
+8. If frontmatter metadata is enabled and the stored frontmatter metadata cache signature
+   (`STORAGE_KEYS.frontmatterMetadataCacheSignatureKey`) does not match the current frontmatter settings, cached `metadata`
+   fields are cleared (`batchClearAllFileContent('metadata')`) and the signature is updated.
+9. Tag and property trees are rebuilt from database records (`buildTagTreeFromDatabase()`, `buildPropertyTreeFromDatabase()`), filtered to currently visible markdown paths.
+10. Content providers queue derived content work (previews, tags, metadata, word/character counts, task counters, properties,
    markdown feature images, and file thumbnails) while the UI renders from the in-memory cache.
-10. Metadata-dependent providers (markdown pipeline, tags, metadata) are queued through `useMetadataCacheQueue` so they only run after `app.metadataCache` has entries for the files.
-11. If rebuild notice state exists in local storage (`STORAGE_KEYS.cacheRebuildNoticeKey`) and there is still pending work, `StorageContext` restores the rebuild progress notice after storage becomes ready.
+11. Metadata-dependent providers (markdown pipeline, tags, metadata) are queued through `useMetadataCacheQueue` so they only run after `app.metadataCache` has entries for the files.
+12. If rebuild notice state exists in local storage (`STORAGE_KEYS.cacheRebuildNoticeKey`) and there is still pending work, `StorageContext` restores the rebuild progress notice after storage becomes ready.
 
 ### File Change (During Session)
 
@@ -424,8 +430,9 @@ export interface IconAssetRecord {
 
 1. The settings UI updates the in-memory settings object and persists to `data.json`.
 2. `SettingsContext` broadcasts updates to the React tree.
-3. `useStorageSettingsSync` debounces changes and handles two categories:
+3. `useStorageSettingsSync` debounces changes and handles these categories:
    - Provider-relevant settings: forwarded to `ContentProviderRegistry.handleSettingsChange()` and used to queue regeneration.
+   - Frontmatter metadata settings: the frontmatter metadata cache signature in local storage is updated to match the new settings, or cleared when frontmatter metadata is disabled.
    - Exclusion settings:
      - Hidden folders / hidden file properties trigger a diff resync so cached file lists and trees reflect the new rules.
      - Hidden file names / hidden file tags trigger tree rebuilds (database records are unchanged).
@@ -509,7 +516,7 @@ Implementation references:
 The database indexes supported files regardless of the current "show hidden items" toggle:
 
 - `getIndexableFiles()` always includes hidden items (so toggling visibility does not require rebuilding IndexedDB).
-- Non-markdown indexing is limited to PDFs allowed by the active file-visibility setting and supported drawing source files.
+- Non-markdown indexing is limited to PDF and SVG files allowed by the active file-visibility setting and supported drawing source files.
 - Tag/property trees and counts are built from the database but filtered to the currently visible markdown set.
 
 ## Storage Selection Guidelines
@@ -603,7 +610,7 @@ When derived content format changes:
 2. Stores are cleared (`IndexedDBStorage.clear()`).
 3. Content providers regenerate derived content for all files during background processing.
 
-Current values: `DB_SCHEMA_VERSION = 3`, `DB_CONTENT_VERSION = 5`.
+Current values: `DB_SCHEMA_VERSION = 3`, `DB_CONTENT_VERSION = 6`.
 
 ### Settings Updates
 
