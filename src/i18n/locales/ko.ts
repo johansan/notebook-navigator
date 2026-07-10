@@ -1160,6 +1160,10 @@ export const STRINGS_KO = {
                 name: '하위 폴더 경로 표시',
                 desc: '목록 창에서 폴더별로 그룹화할 때 폴더 이름만 표시하는 대신 하위 폴더 경로를 표시합니다.'
             },
+            showGroupHeaderItemCounts: {
+                name: '항목 수 표시',
+                desc: '목록 창의 각 그룹 헤더에 항목 수를 표시합니다.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: '폴더 그룹화: 현재 폴더 파일을 하단에 표시',
                 desc: '기본 그룹화가 폴더인 경우 선택한 폴더 바로 아래의 파일을 하위 폴더 그룹 아래로 이동합니다.'

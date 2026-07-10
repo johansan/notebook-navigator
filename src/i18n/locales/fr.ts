@@ -1167,6 +1167,10 @@ export const STRINGS_FR = {
                 name: 'Afficher les chemins des sous-dossiers',
                 desc: 'Lors du regroupement par dossier dans le panneau de liste, afficher les chemins des sous-dossiers au lieu des seuls noms de dossier.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Afficher le nombre d’éléments',
+                desc: 'Affiche le nombre d’éléments dans chaque en-tête de groupe du panneau de liste.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Regroupement par dossier : fichiers du dossier actuel en bas',
                 desc: 'Lorsque le regroupement par défaut est Dossier, déplacer les fichiers directement dans le dossier sélectionné sous les groupes de sous-dossiers.'

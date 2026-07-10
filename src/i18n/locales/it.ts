@@ -1159,6 +1159,10 @@ export const STRINGS_IT = {
                 name: 'Mostra percorsi sottocartelle',
                 desc: 'Quando raggruppi per cartella nel pannello lista, mostra i percorsi delle sottocartelle invece dei soli nomi cartella.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Mostra il numero di elementi',
+                desc: 'Mostra il numero di elementi in ogni intestazione di gruppo del pannello lista.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Raggruppamento per cartella: file della cartella corrente in basso',
                 desc: 'Quando il raggruppamento predefinito è Cartella, sposta i file direttamente nella cartella selezionata sotto i gruppi di sottocartelle.'

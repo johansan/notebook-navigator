@@ -1150,6 +1150,10 @@ export const STRINGS_ZH_CN = {
                 name: '显示子文件夹路径',
                 desc: '在列表窗格中按文件夹分组时，显示子文件夹路径，而不是仅显示文件夹名称。'
             },
+            showGroupHeaderItemCounts: {
+                name: '显示项目计数',
+                desc: '在列表窗格的每个分组标题中显示项目数量。'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: '文件夹分组：当前文件夹文件置底',
                 desc: '当默认分组为文件夹时，将所选文件夹中的直属文件移到子文件夹分组下方。'

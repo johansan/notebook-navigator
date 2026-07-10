@@ -94,6 +94,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.4',
         date: '2026-07-17',
         showOnUpdate: true,
+        new: ['**List pane.** New setting: List pane > Group headers > ==Show item counts==. Disabled by default.'],
         fixed: [
             '**Tags.** Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.'
         ]

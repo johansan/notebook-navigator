@@ -1161,6 +1161,10 @@ export const STRINGS_TR = {
                 name: 'Alt klasör yollarını göster',
                 desc: 'Liste bölmesinde klasöre göre gruplarken, yalnızca klasör adları yerine alt klasör yollarını göster.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Öğe sayılarını göster',
+                desc: 'Liste bölmesindeki her grup başlığında öğe sayısını göster.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Klasör gruplama: geçerli klasör dosyaları altta',
                 desc: 'Varsayılan gruplama Klasör olduğunda, seçili klasörde doğrudan bulunan dosyaları alt klasör gruplarının altına taşı.'

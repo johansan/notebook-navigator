@@ -1157,6 +1157,10 @@ export const STRINGS_EN = {
                 name: 'Show subfolder paths',
                 desc: 'When grouping by folder in the list pane, show subfolder paths instead of only folder names.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Show item counts',
+                desc: 'Display the number of items in each list pane group header.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Folder grouping: current folder files at bottom',
                 desc: 'When Default grouping is Folder, move files directly in the selected folder below subfolder groups.'

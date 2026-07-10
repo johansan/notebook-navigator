@@ -1165,6 +1165,10 @@ export const STRINGS_DE = {
                 name: 'Unterordnerpfade anzeigen',
                 desc: 'Beim Gruppieren nach Ordner im Listenbereich Unterordnerpfade statt nur Ordnernamen anzeigen.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Elementanzahl anzeigen',
+                desc: 'Zeigt die Anzahl der Elemente in jeder Gruppenüberschrift im Listenbereich an.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Ordnergruppierung: Dateien des aktuellen Ordners unten',
                 desc: 'Wenn die Standardgruppierung „Ordner“ ist, Dateien direkt im ausgewählten Ordner unter den Unterordnergruppen anzeigen.'

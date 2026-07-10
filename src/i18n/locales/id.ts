@@ -1163,6 +1163,10 @@ export const STRINGS_ID = {
                 name: 'Tampilkan jalur subfolder',
                 desc: 'Saat mengelompokkan berdasarkan folder di panel daftar, tampilkan jalur subfolder alih-alih hanya nama folder.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Tampilkan jumlah item',
+                desc: 'Tampilkan jumlah item di setiap header grup panel daftar.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Pengelompokan folder: file folder saat ini di bawah',
                 desc: 'Saat pengelompokan default adalah Folder, pindahkan file yang langsung berada di folder yang dipilih ke bawah grup subfolder.'

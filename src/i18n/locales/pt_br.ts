@@ -1165,6 +1165,10 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar caminhos das subpastas',
                 desc: 'Ao agrupar por pasta no painel de lista, exibir caminhos das subpastas em vez de apenas nomes de pastas.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Mostrar contagem de itens',
+                desc: 'Exibe o número de itens em cada cabeçalho de grupo no painel de lista.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Agrupamento por pasta: arquivos da pasta atual embaixo',
                 desc: 'Quando o agrupamento padrão for Pasta, mova os arquivos diretamente na pasta selecionada para baixo dos grupos de subpastas.'

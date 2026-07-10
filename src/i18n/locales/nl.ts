@@ -1165,6 +1165,10 @@ export const STRINGS_NL = {
                 name: 'Submappaden tonen',
                 desc: 'Toont bij groeperen op map in het lijstpaneel submappaden in plaats van alleen mapnamen.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Aantallen items tonen',
+                desc: 'Toont het aantal items in elke groepskop in het lijstpaneel.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Mapgroepering: bestanden van huidige map onderaan',
                 desc: 'Wanneer de standaardgroepering Map is, worden bestanden direct in de geselecteerde map onder submapgroepen geplaatst.'

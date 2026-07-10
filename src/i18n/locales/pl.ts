@@ -1166,6 +1166,10 @@ export const STRINGS_PL = {
                 name: 'Pokaż ścieżki podfolderów',
                 desc: 'Podczas grupowania według folderu w panelu listy pokazuj ścieżki podfolderów zamiast samych nazw folderów.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Pokaż liczbę elementów',
+                desc: 'Wyświetla liczbę elementów w każdym nagłówku grupy w panelu listy.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Grupowanie folderów: pliki bieżącego folderu na dole',
                 desc: 'Gdy domyślne grupowanie to Folder, przenieś pliki znajdujące się bezpośrednio w wybranym folderze pod grupy podfolderów.'

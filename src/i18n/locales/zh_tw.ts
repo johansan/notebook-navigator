@@ -1150,6 +1150,10 @@ export const STRINGS_ZH_TW = {
                 name: '顯示子資料夾路徑',
                 desc: '在列表窗格中按資料夾分組時，顯示子資料夾路徑，而不是僅顯示資料夾名稱。'
             },
+            showGroupHeaderItemCounts: {
+                name: '顯示項目計數',
+                desc: '在列表窗格的每個群組標題中顯示項目數量。'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: '資料夾分組：目前資料夾檔案置底',
                 desc: '當預設分組為資料夾時，將所選資料夾中的直屬檔案移到子資料夾分組下方。'

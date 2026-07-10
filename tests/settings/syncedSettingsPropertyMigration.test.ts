@@ -19,6 +19,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import {
+    applyExistingUserDefaults,
     applyLegacyPropertyFieldsMigration,
     extractLegacyPropertyFields,
     migrateLegacySyncedSettings
@@ -29,6 +30,18 @@ import { STORAGE_KEYS } from '../../src/types';
 function createSettings(): NotebookNavigatorSettings {
     return structuredClone(DEFAULT_SETTINGS);
 }
+
+describe('applyExistingUserDefaults', () => {
+    it('hides group header item counts when the setting is missing', () => {
+        const settings = createSettings();
+        const settingsRecord = settings as unknown as Record<string, unknown>;
+        delete settingsRecord['showGroupHeaderItemCounts'];
+
+        applyExistingUserDefaults({ settings });
+
+        expect(settings.showGroupHeaderItemCounts).toBe(false);
+    });
+});
 
 describe('migrateLegacySyncedSettings property key migration', () => {
     it('migrates legacy customProperty settings keys', () => {

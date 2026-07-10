@@ -1164,6 +1164,10 @@ export const STRINGS_VI = {
                 name: 'Hiện đường dẫn thư mục con',
                 desc: 'Khi nhóm theo thư mục trong ngăn danh sách, hiển thị đường dẫn thư mục con thay vì chỉ tên thư mục.'
             },
+            showGroupHeaderItemCounts: {
+                name: 'Hiện số lượng mục',
+                desc: 'Hiển thị số lượng mục trong mỗi tiêu đề nhóm ở ngăn danh sách.'
+            },
             showCurrentFolderFilesAtBottom: {
                 name: 'Nhóm theo thư mục: tệp trong thư mục hiện tại ở dưới cùng',
                 desc: 'Khi kiểu nhóm mặc định là Thư mục, chuyển các tệp nằm trực tiếp trong thư mục đã chọn xuống dưới các nhóm thư mục con.'
