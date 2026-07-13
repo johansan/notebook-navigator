@@ -94,11 +94,14 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.4',
         date: '2026-07-17',
         showOnUpdate: true,
-        new: ['You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'],
+        new: [
+            'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
+        ],
         improved: [
             'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.'
         ],
         fixed: [
+            'Fixed Cmd/Ctrl-click not opening note shortcuts and recent files in a new tab when Option/Alt was selected as the multi-select modifier.',
             'Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.'
         ]
     },

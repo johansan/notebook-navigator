@@ -30,7 +30,7 @@ import { resolveCanonicalTagPath } from '../../utils/tagUtils';
 import { runAsyncAction } from '../../utils/async';
 import { openFileInContext } from '../../utils/openFileInContext';
 import { getFolderNote, openFolderNoteFile, type FolderNoteOpenContext } from '../../utils/folderNotes';
-import { resolveFolderNoteClickOpenContext } from '../../utils/keyboardOpenContext';
+import { resolveFolderNoteClickOpenContext, shouldOpenNoteClickInNewTab } from '../../utils/keyboardOpenContext';
 import { ItemType } from '../../types';
 import type { NavigateToFolderOptions, RevealPropertyOptions, RevealTagOptions } from '../useNavigatorReveal';
 
@@ -230,7 +230,12 @@ export function useNavigationPaneShortcutActions({
     );
 
     const handleShortcutNoteActivate = useCallback(
-        (note: TFile, shortcutKey: string) => {
+        (note: TFile, shortcutKey: string, event?: React.MouseEvent<HTMLDivElement>) => {
+            if (event && shouldOpenNoteClickInNewTab(event, settings.multiSelectModifier, isMobile)) {
+                runAsyncAction(() => openFileInContext({ app, commandQueue, file: note, context: 'tab' }));
+                return;
+            }
+
             setActiveShortcut(shortcutKey);
             if (selectionType === ItemType.TAG && onRevealShortcutFile) {
                 onRevealShortcutFile(note);
@@ -249,6 +254,7 @@ export function useNavigationPaneShortcutActions({
         },
         [
             app,
+            commandQueue,
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
@@ -256,6 +262,7 @@ export function useNavigationPaneShortcutActions({
             scheduleShortcutRelease,
             selectionType,
             setActiveShortcut,
+            settings.multiSelectModifier,
             uiDispatch,
             uiState.currentSinglePaneView,
             uiState.singlePane
@@ -276,7 +283,12 @@ export function useNavigationPaneShortcutActions({
     );
 
     const handleRecentNoteActivate = useCallback(
-        (note: TFile) => {
+        (note: TFile, event?: React.MouseEvent<HTMLDivElement>) => {
+            if (event && shouldOpenNoteClickInNewTab(event, settings.multiSelectModifier, isMobile)) {
+                runAsyncAction(() => openFileInContext({ app, commandQueue, file: note, context: 'tab' }));
+                return;
+            }
+
             if (selectionType === ItemType.TAG && onRevealShortcutFile) {
                 onRevealShortcutFile(note);
             } else {
@@ -292,12 +304,14 @@ export function useNavigationPaneShortcutActions({
             uiDispatch({ type: 'ACTIVATE_PANE', target: focusPane });
         },
         [
-            app.workspace,
+            app,
+            commandQueue,
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
             openNotePreview,
             selectionType,
+            settings.multiSelectModifier,
             uiDispatch,
             uiState.currentSinglePaneView,
             uiState.singlePane
