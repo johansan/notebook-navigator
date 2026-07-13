@@ -18,7 +18,7 @@
 
 import type { ExpansionAction } from '../context/ExpansionContext';
 import type { SelectionAction, SelectionRevealSource } from '../context/SelectionContext';
-import type { UIAction } from '../context/UIStateContext';
+import type { ContentPane } from '../context/UIStateContext';
 import type { TagTreeNode } from '../types/storage';
 import { ItemType, TAGS_ROOT_VIRTUAL_FOLDER_ID } from '../types';
 import { resolveCanonicalTagPath } from './tagUtils';
@@ -26,10 +26,6 @@ import { isVirtualTagCollectionId } from './virtualTagCollections';
 import { expandNavigationTreeItems } from './navigationExpansion';
 
 type Dispatch<T> = (action: T) => void;
-
-interface FocusPaneOptions {
-    updateSinglePaneView?: boolean;
-}
 
 export interface NavigateToTagOptions {
     skipScroll?: boolean;
@@ -48,37 +44,9 @@ export interface TagNavigationEnvironment {
     collapseOtherBranchesOnExpand?: boolean;
     expansionDispatch: Dispatch<ExpansionAction>;
     selectionDispatch: Dispatch<SelectionAction>;
-    uiState: {
-        singlePane: boolean;
-        currentSinglePaneView: 'navigation' | 'files';
-        focusedPane: 'navigation' | 'files' | 'search';
-    };
-    uiDispatch: Dispatch<UIAction>;
+    activatePane: (target: ContentPane) => void;
     findTagInTree: (tagPath: string) => TagTreeNode | null;
-    focusNavigationPane?: (options?: FocusPaneOptions) => void;
-    focusFilesPane?: (options?: FocusPaneOptions) => void;
     requestScroll?: (path: string, options: { align: 'auto'; itemType: typeof ItemType.TAG }) => void;
-}
-
-function focusPane(env: TagNavigationEnvironment, pane: 'navigation' | 'files', options?: { updateSinglePaneView?: boolean }): void {
-    if (pane === 'navigation') {
-        if (env.focusNavigationPane) {
-            env.focusNavigationPane(options);
-            return;
-        }
-    } else {
-        if (env.focusFilesPane) {
-            env.focusFilesPane(options);
-            return;
-        }
-    }
-
-    if (env.uiState.singlePane && options?.updateSinglePaneView && env.uiState.currentSinglePaneView !== pane) {
-        env.uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: pane });
-    }
-    if (env.uiState.focusedPane !== pane) {
-        env.uiDispatch({ type: 'SET_FOCUSED_PANE', pane });
-    }
 }
 
 function selectTagAndFocus(env: TagNavigationEnvironment, tagPath: string, options?: NavigateToTagOptions): void {
@@ -94,11 +62,7 @@ function selectTagAndFocus(env: TagNavigationEnvironment, tagPath: string, optio
     }
 
     const preserveNavigationFocus = options?.preserveNavigationFocus ?? true;
-    if (env.uiState.singlePane) {
-        focusPane(env, preserveNavigationFocus ? 'navigation' : 'files', { updateSinglePaneView: true });
-    } else {
-        focusPane(env, preserveNavigationFocus ? 'navigation' : 'files');
-    }
+    env.activatePane(preserveNavigationFocus ? 'navigation' : 'files');
 }
 
 function getParentTagPaths(tagPath: string): string[] {

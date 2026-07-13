@@ -97,6 +97,11 @@ Ten providers wrap the primary navigator React tree:
   shortcuts toggle
 - `InternalDragContext` – active internal drag payload (files, folder, tag, or property) read by the drag-and-drop hooks
 
+`UIStateContext` handles pane transitions through `ACTIVATE_PANE`. Activating `navigation` or `files` updates both keyboard
+focus and the current single-pane view to that content pane. Activating `search` assigns keyboard focus to the search input
+and sets the current single-pane view to `files`, where search is rendered. Background search-filter updates, implicit
+auto-reveal, and navigation calls with `skipFocus` do not dispatch pane activation.
+
 The calendar right-sidebar tree uses `SettingsContext` and `ServicesContext` only.
 
 ### 5. Stable Rendering Contracts
@@ -355,7 +360,7 @@ graph TD
 
 **Location**: `src/components/SearchInput.tsx`
 
-- Renders the list pane search field and dispatches `UIStateContext` focus updates for keyboard navigation.
+- Renders the list pane search field and dispatches `UIStateContext` pane activation for keyboard navigation.
 - Initializes `SearchTagInputSuggest` and `SearchDateInputSuggest` when the internal filter-search provider is active,
   and exposes the filter/Omnisearch provider toggle when Omnisearch is available.
 - Handles search keyboard shortcuts using the configured `settings.keyboardShortcuts`.

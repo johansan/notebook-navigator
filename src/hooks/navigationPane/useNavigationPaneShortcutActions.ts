@@ -101,8 +101,7 @@ export function useNavigationPaneShortcutActions({
                 return;
             }
 
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
         },
         [uiDispatch, uiState.singlePane]
     );
@@ -245,7 +244,7 @@ export function useNavigationPaneShortcutActions({
             }
 
             const focusPane = uiState.singlePane ? uiState.currentSinglePaneView : 'files';
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: focusPane });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: focusPane });
             scheduleShortcutRelease();
         },
         [
@@ -290,7 +289,7 @@ export function useNavigationPaneShortcutActions({
             }
 
             const focusPane = uiState.singlePane ? uiState.currentSinglePaneView : 'files';
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: focusPane });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: focusPane });
         },
         [
             app.workspace,
@@ -327,7 +326,7 @@ export function useNavigationPaneShortcutActions({
             onRevealTag(canonicalPath, { skipScroll: settings.skipAutoScroll, source: 'shortcut' });
 
             if (!uiState.singlePane) {
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 const container = rootContainerRef.current;
                 if (container) {
                     container.focus();
@@ -360,7 +359,7 @@ export function useNavigationPaneShortcutActions({
             }
 
             if (!uiState.singlePane) {
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 const container = rootContainerRef.current;
                 if (container) {
                     container.focus();

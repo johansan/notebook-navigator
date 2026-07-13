@@ -240,8 +240,7 @@ describe('useNavigationPaneTreeInteractions', () => {
 
         result.handleFolderNameClick(folder);
 
-        expect(uiDispatch).toHaveBeenCalledWith({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-        expect(uiDispatch).toHaveBeenCalledWith({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        expect(uiDispatch).toHaveBeenCalledWith({ type: 'ACTIVATE_PANE', target: 'files' });
     });
 
     it('keeps the current pane when a non-sidebar folder note is clicked in single-pane mode', () => {
@@ -301,7 +300,6 @@ describe('useNavigationPaneTreeInteractions', () => {
 
         result.handleFolderNameClick(folder);
 
-        expect(uiDispatch).not.toHaveBeenCalledWith({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-        expect(uiDispatch).not.toHaveBeenCalledWith({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        expect(uiDispatch).not.toHaveBeenCalledWith({ type: 'ACTIVATE_PANE', target: 'files' });
     });
 });
