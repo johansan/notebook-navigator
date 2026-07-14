@@ -904,7 +904,8 @@ export const STRINGS_ID = {
         removeTag: 'Hapus tag dari file yang dipilih',
         removeAllTags: 'Hapus semua tag dari file yang dipilih',
         openAllFiles: 'Buka semua file',
-        rebuildCache: 'Bangun ulang cache'
+        rebuildCache: 'Bangun ulang cache',
+        restoreDefaultSettings: 'Pulihkan pengaturan bawaan' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -913,7 +914,17 @@ export const STRINGS_ID = {
         calendarViewName: 'Kalender',
         folderNoteSidebarViewName: 'Catatan folder',
         ribbonTooltip: 'Notebook Navigator',
-        revealInNavigator: 'Tampilkan di Notebook Navigator'
+        revealInNavigator: 'Tampilkan di Notebook Navigator',
+        settingsUnavailableNotice:
+            'Notebook Navigator tidak dapat membaca pengaturannya dan tidak dijalankan. Jika vault Anda sedang disinkronkan, mulai ulang Obsidian setelah sinkronisasi selesai. Untuk memulai ulang dengan pengaturan bawaan, jalankan perintah "Pulihkan pengaturan bawaan".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Pulihkan pengaturan bawaan', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Tindakan ini mengganti file pengaturan Notebook Navigator dengan pengaturan bawaan. Jika vault Anda masih disinkronkan, pengaturan bawaan yang dipulihkan dapat menimpa pengaturan yang tersimpan di perangkat Anda yang lain. File pengaturan yang dapat dibaca disalin terlebih dahulu ke cadangan bertanda waktu di folder plugin.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Pulihkan bawaan', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Pemulihan pengaturan tidak dapat diselesaikan. Preferensi lokal tetap dipertahankan.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Pengaturan bawaan dipulihkan. Mulai ulang Obsidian untuk menyelesaikan.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

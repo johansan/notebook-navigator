@@ -901,7 +901,8 @@ export const STRINGS_UK = {
         removeTag: 'Вилучити тег з вибраних файлів', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Вилучити всі теги з вибраних файлів', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Відкрити всі файли', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Перебудувати кеш' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Перебудувати кеш', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Відновити типові налаштування' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -910,7 +911,17 @@ export const STRINGS_UK = {
         calendarViewName: 'Календар', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Нотатка папки', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Показати в Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Показати в Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator не зміг прочитати свої налаштування і не запустився. Якщо сховище синхронізується, перезапустіть Obsidian після завершення синхронізації. Щоб почати заново з типовими налаштуваннями, виконайте команду «Відновити типові налаштування».', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Відновити типові налаштування', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Це замінить файл налаштувань Notebook Navigator типовими налаштуваннями. Якщо сховище все ще синхронізується, відновлені типові налаштування можуть перезаписати налаштування, збережені на інших ваших пристроях. Читабельний файл налаштувань спочатку копіюється до резервної копії з позначкою часу в теці плагіна.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Відновити типові', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Не вдалося завершити відновлення налаштувань. Локальні параметри збережено.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Типові налаштування відновлено. Перезапустіть Obsidian, щоб завершити.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

@@ -894,7 +894,8 @@ export const STRINGS_ZH_CN = {
         removeTag: '从选定文件移除标签', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: '从选定文件移除所有标签', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: '打开所有文件', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: '重建缓存' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: '重建缓存', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: '恢复默认设置' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -903,7 +904,17 @@ export const STRINGS_ZH_CN = {
         calendarViewName: '日历', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: '文件夹笔记', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: '笔记本导航器', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: '在笔记本导航器中定位' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: '在笔记本导航器中定位', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            '笔记本导航器无法读取其设置,因此未启动。如果仓库正在同步,请在同步完成后重启 Obsidian。要使用默认设置重新开始,请运行命令"恢复默认设置"。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: '恢复默认设置', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                '此操作会将笔记本导航器的设置文件替换为默认设置。如果仓库仍在同步,恢复的默认设置可能会覆盖其他设备上保存的设置。可读取的设置文件会先复制到插件文件夹中带时间戳的备份文件。', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: '恢复默认', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: '无法完成设置恢复。已保留本地偏好设置。', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: '已恢复默认设置。请重启 Obsidian 以完成。' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

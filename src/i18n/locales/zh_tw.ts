@@ -894,7 +894,8 @@ export const STRINGS_ZH_TW = {
         removeTag: '從選定檔案移除標籤',
         removeAllTags: '從選定檔案移除所有標籤',
         openAllFiles: '開啟所有檔案',
-        rebuildCache: '重建快取'
+        rebuildCache: '重建快取',
+        restoreDefaultSettings: '還原預設設定' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -903,7 +904,17 @@ export const STRINGS_ZH_TW = {
         calendarViewName: '日曆',
         folderNoteSidebarViewName: '資料夾筆記',
         ribbonTooltip: '筆記本導覽器',
-        revealInNavigator: '在筆記本導覽器中定位'
+        revealInNavigator: '在筆記本導覽器中定位',
+        settingsUnavailableNotice:
+            '筆記本導覽器無法讀取其設定,因此未啟動。如果儲存庫正在同步,請在同步完成後重新啟動 Obsidian。若要以預設設定重新開始,請執行命令「還原預設設定」。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: '還原預設設定', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                '此操作會將筆記本導覽器的設定檔替換為預設設定。如果儲存庫仍在同步,還原的預設設定可能會覆寫其他裝置上儲存的設定。可讀取的設定檔會先複製到外掛資料夾中帶有時間戳記的備份檔。', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: '還原預設', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: '無法完成設定還原。已保留本機偏好設定。', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: '已還原預設設定。請重新啟動 Obsidian 以完成。' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

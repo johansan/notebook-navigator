@@ -907,7 +907,8 @@ export const STRINGS_PL = {
         removeTag: 'Usuń tag z wybranych plików', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Usuń wszystkie tagi z wybranych plików', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Otwórz wszystkie pliki', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Odbuduj pamięć podręczną' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Odbuduj pamięć podręczną', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Przywróć ustawienia domyślne' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -916,7 +917,17 @@ export const STRINGS_PL = {
         calendarViewName: 'Kalendarz', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Notatka folderu', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Pokaż w Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Pokaż w Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator nie mógł odczytać swoich ustawień i nie został uruchomiony. Jeśli sejf jest synchronizowany, uruchom ponownie Obsidian po zakończeniu synchronizacji. Aby zacząć od nowa z ustawieniami domyślnymi, uruchom polecenie „Przywróć ustawienia domyślne”.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Przywróć ustawienia domyślne', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Ta operacja zastępuje plik ustawień Notebook Navigator ustawieniami domyślnymi. Jeśli sejf jest nadal synchronizowany, przywrócone ustawienia domyślne mogą nadpisać ustawienia zapisane na innych urządzeniach. Czytelny plik ustawień jest najpierw kopiowany do kopii zapasowej ze znacznikiem czasu w folderze wtyczki.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Przywróć domyślne', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Nie udało się dokończyć odzyskiwania ustawień. Lokalne preferencje zostały zachowane.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Przywrócono ustawienia domyślne. Uruchom ponownie Obsidian, aby zakończyć.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

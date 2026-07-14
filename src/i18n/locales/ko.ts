@@ -901,7 +901,8 @@ export const STRINGS_KO = {
         removeTag: '선택한 파일에서 태그 제거', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: '선택한 파일에서 모든 태그 제거', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: '모든 파일 열기', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: '캐시 다시 빌드' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: '캐시 다시 빌드', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: '기본 설정 복원' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -910,7 +911,17 @@ export const STRINGS_KO = {
         calendarViewName: '캘린더', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: '폴더 노트', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Notebook Navigator에서 표시' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Notebook Navigator에서 표시', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator가 설정을 읽을 수 없어 시작되지 않았습니다. 보관소가 동기화 중이라면 동기화가 끝난 후 Obsidian을 다시 시작하세요. 기본 설정으로 새로 시작하려면 "기본 설정 복원" 명령을 실행하세요.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: '기본 설정 복원', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Notebook Navigator 설정 파일을 기본 설정으로 교체합니다. 보관소가 아직 동기화 중이라면 복원된 기본 설정이 다른 기기에 저장된 설정을 덮어쓸 수 있습니다. 읽을 수 있는 설정 파일은 교체 전에 플러그인 폴더의 타임스탬프가 포함된 백업으로 복사됩니다.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: '기본값 복원', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: '설정 복원을 완료할 수 없습니다. 로컬 환경설정은 유지되었습니다.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: '기본 설정이 복원되었습니다. 완료하려면 Obsidian을 다시 시작하세요.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

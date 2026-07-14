@@ -898,7 +898,8 @@ export const STRINGS_EN = {
         removeTag: 'Remove tag from selected files', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Remove all tags from selected files', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Open all files', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Rebuild cache' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Rebuild cache', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Restore default settings' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -907,7 +908,17 @@ export const STRINGS_EN = {
         calendarViewName: 'Calendar', // Name shown in the view header/tab
         folderNoteSidebarViewName: 'Folder note', // Name shown in the folder note sidebar tab
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Reveal in Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Reveal in Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".', // Notice shown when startup is aborted because the settings file is missing or cannot be read
+        settingsRecovery: {
+            confirmTitle: 'Restore default settings', // Title of the confirmation dialog for the settings recovery command
+            confirmMessage:
+                'This replaces the Notebook Navigator settings file with default settings. If your vault is still syncing, the restored defaults can overwrite the settings stored on your other devices. A readable settings file is first copied to a timestamped backup in the plugin folder.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Restore defaults', // Confirm button label in the settings recovery dialog
+            failedNotice: 'Could not complete settings recovery. Local preferences were kept.', // Notice shown when settings recovery cannot be completed
+            completedNotice: 'Default settings restored. Restart Obsidian to finish.' // Notice shown after the settings file was replaced with defaults
+        }
     },
 
     // Tooltips

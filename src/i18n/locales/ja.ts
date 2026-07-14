@@ -903,7 +903,8 @@ export const STRINGS_JA = {
         removeTag: '選択したファイルからタグを削除', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: '選択したファイルからすべてのタグを削除', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'すべてのファイルを開く', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'キャッシュを再構築' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'キャッシュを再構築', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'デフォルト設定を復元' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -912,7 +913,17 @@ export const STRINGS_JA = {
         calendarViewName: 'カレンダー', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'フォルダノート', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'ノートブックナビゲーター', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'ノートブックナビゲーターで表示' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'ノートブックナビゲーターで表示', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'ノートブックナビゲーターは設定を読み込めなかったため起動しませんでした。保管庫が同期中の場合は、同期完了後に Obsidian を再起動してください。デフォルト設定でやり直すには、コマンド「デフォルト設定を復元」を実行してください。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'デフォルト設定を復元', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'ノートブックナビゲーターの設定ファイルをデフォルト設定で置き換えます。保管庫がまだ同期中の場合、復元されたデフォルト設定が他のデバイスに保存されている設定を上書きすることがあります。読み取り可能な設定ファイルは、置き換える前にプラグインフォルダー内の日時付きバックアップにコピーされます。', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'デフォルトを復元', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: '設定の復元を完了できませんでした。ローカル設定は保持されています。', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'デフォルト設定を復元しました。完了するには Obsidian を再起動してください。' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

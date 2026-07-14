@@ -902,7 +902,8 @@ export const STRINGS_TR = {
         removeTag: 'Seçili dosyalardan etiket kaldır', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Seçili dosyalardan tüm etiketleri kaldır', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Tüm dosyaları aç', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Önbelleği yeniden oluştur' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Önbelleği yeniden oluştur', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Varsayılan ayarları geri yükle' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -911,7 +912,17 @@ export const STRINGS_TR = {
         calendarViewName: 'Takvim', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Klasör notu', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: "Notebook Navigator'da göster" // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: "Notebook Navigator'da göster", // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator ayarlarını okuyamadı ve başlatılmadı. Kasanız eşitleniyorsa, eşitleme tamamlandıktan sonra Obsidian uygulamasını yeniden başlatın. Varsayılan ayarlarla yeniden başlamak için "Varsayılan ayarları geri yükle" komutunu çalıştırın.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Varsayılan ayarları geri yükle', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Bu işlem Notebook Navigator ayar dosyasını varsayılan ayarlarla değiştirir. Kasanız hâlâ eşitleniyorsa, geri yüklenen varsayılanlar diğer cihazlarınızda kayıtlı ayarların üzerine yazabilir. Okunabilir bir ayar dosyası önce eklenti klasöründeki zaman damgalı bir yedeğe kopyalanır.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Varsayılanları geri yükle', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Ayar kurtarma tamamlanamadı. Yerel tercihler korundu.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Varsayılan ayarlar geri yüklendi. Bitirmek için Obsidian uygulamasını yeniden başlatın.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

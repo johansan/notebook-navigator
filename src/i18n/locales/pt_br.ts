@@ -906,7 +906,8 @@ export const STRINGS_PT_BR = {
         removeTag: 'Remover tag dos arquivos selecionados',
         removeAllTags: 'Remover todas as tags dos arquivos selecionados',
         openAllFiles: 'Abrir todos os arquivos',
-        rebuildCache: 'Reconstruir cache'
+        rebuildCache: 'Reconstruir cache',
+        restoreDefaultSettings: 'Restaurar configurações padrão' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -915,7 +916,17 @@ export const STRINGS_PT_BR = {
         calendarViewName: 'Calendário',
         folderNoteSidebarViewName: 'Nota de pasta',
         ribbonTooltip: 'Notebook Navigator',
-        revealInNavigator: 'Revelar no Notebook Navigator'
+        revealInNavigator: 'Revelar no Notebook Navigator',
+        settingsUnavailableNotice:
+            'O Notebook Navigator não conseguiu ler suas configurações e não foi iniciado. Se o cofre estiver sincronizando, reinicie o Obsidian após a sincronização terminar. Para recomeçar com as configurações padrão, execute o comando "Restaurar configurações padrão".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Restaurar configurações padrão', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Isto substitui o arquivo de configurações do Notebook Navigator pelas configurações padrão. Se o cofre ainda estiver sincronizando, as configurações padrão restauradas podem sobrescrever as configurações salvas nos seus outros dispositivos. Um arquivo de configurações legível é primeiro copiado para um backup com data e hora na pasta do plugin.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Restaurar padrões', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Não foi possível concluir a recuperação das configurações. As preferências locais foram mantidas.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Configurações padrão restauradas. Reinicie o Obsidian para concluir.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

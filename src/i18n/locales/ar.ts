@@ -899,7 +899,8 @@ export const STRINGS_AR = {
         removeTag: 'إزالة وسم من الملفات المحددة', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'إزالة جميع الوسوم من الملفات المحددة', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'فتح جميع الملفات', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'إعادة بناء الذاكرة المؤقتة' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'إعادة بناء الذاكرة المؤقتة', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'استعادة الإعدادات الافتراضية' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -908,7 +909,17 @@ export const STRINGS_AR = {
         calendarViewName: 'تقويم', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'ملاحظة المجلد', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'متصفح الدفتر', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'الكشف في متصفح الدفتر' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'الكشف في متصفح الدفتر', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'تعذر على متصفح الدفتر قراءة إعداداته ولم يبدأ التشغيل. إذا كان القبو قيد المزامنة، أعد تشغيل Obsidian بعد اكتمال المزامنة. للبدء من جديد بالإعدادات الافتراضية، شغّل الأمر "استعادة الإعدادات الافتراضية".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'استعادة الإعدادات الافتراضية', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'يستبدل هذا ملف إعدادات متصفح الدفتر بالإعدادات الافتراضية. إذا كان القبو لا يزال قيد المزامنة، فقد تحل الإعدادات الافتراضية المستعادة محل الإعدادات المخزنة على أجهزتك الأخرى. يتم أولاً نسخ ملف الإعدادات القابل للقراءة إلى نسخة احتياطية مؤرخة في مجلد الإضافة.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'استعادة الافتراضية', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'تعذر إكمال استعادة الإعدادات. تم الاحتفاظ بالتفضيلات المحلية.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'تمت استعادة الإعدادات الافتراضية. أعد تشغيل Obsidian للإنهاء.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

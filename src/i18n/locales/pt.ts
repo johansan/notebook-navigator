@@ -904,7 +904,8 @@ export const STRINGS_PT = {
         removeTag: 'Remover etiqueta dos ficheiros selecionados', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Remover todas as etiquetas dos ficheiros selecionados', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Abrir todos os ficheiros', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Reconstruir cache' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Reconstruir cache', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Restaurar predefinições' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -913,7 +914,17 @@ export const STRINGS_PT = {
         calendarViewName: 'Calendário', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Nota de pasta', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Revelar no Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Revelar no Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'O Notebook Navigator não conseguiu ler as suas definições e não foi iniciado. Se o cofre estiver a sincronizar, reinicie o Obsidian após a sincronização terminar. Para recomeçar com as predefinições, execute o comando "Restaurar predefinições".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Restaurar predefinições', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Isto substitui o ficheiro de definições do Notebook Navigator pelas predefinições. Se o cofre ainda estiver a sincronizar, as predefinições restauradas podem substituir as definições guardadas nos seus outros dispositivos. Um ficheiro de definições legível é primeiro copiado para uma cópia de segurança com data e hora na pasta do plugin.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Restaurar predefinições', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Não foi possível concluir a recuperação das definições. As preferências locais foram mantidas.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Predefinições restauradas. Reinicie o Obsidian para concluir.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips

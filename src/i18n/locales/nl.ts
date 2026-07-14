@@ -906,7 +906,8 @@ export const STRINGS_NL = {
         removeTag: 'Tag verwijderen van geselecteerde bestanden',
         removeAllTags: 'Alle tags verwijderen van geselecteerde bestanden',
         openAllFiles: 'Alle bestanden openen',
-        rebuildCache: 'Cache opnieuw opbouwen'
+        rebuildCache: 'Cache opnieuw opbouwen',
+        restoreDefaultSettings: 'Standaardinstellingen herstellen' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -915,7 +916,17 @@ export const STRINGS_NL = {
         calendarViewName: 'Kalender',
         folderNoteSidebarViewName: 'Mapnotitie',
         ribbonTooltip: 'Notebook Navigator',
-        revealInNavigator: 'Tonen in Notebook Navigator'
+        revealInNavigator: 'Tonen in Notebook Navigator',
+        settingsUnavailableNotice:
+            'Notebook Navigator kon de instellingen niet lezen en is niet gestart. Als je kluis wordt gesynchroniseerd, herstart Obsidian nadat de synchronisatie is voltooid. Om opnieuw te beginnen met standaardinstellingen, voer je de opdracht "Standaardinstellingen herstellen" uit.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Standaardinstellingen herstellen', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Dit vervangt het instellingenbestand van Notebook Navigator door standaardinstellingen. Als je kluis nog wordt gesynchroniseerd, kunnen de herstelde standaardwaarden de instellingen op je andere apparaten overschrijven. Een leesbaar instellingenbestand wordt eerst gekopieerd naar een back-up met tijdstempel in de pluginmap.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Standaardwaarden herstellen', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Instellingenherstel kon niet worden voltooid. Lokale voorkeuren zijn behouden.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Standaardinstellingen hersteld. Herstart Obsidian om te voltooien.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
