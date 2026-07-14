@@ -108,7 +108,7 @@ export function useNavigationPaneKeyboard({
     pathToIndex,
     onStartRename
 }: UseNavigationPaneKeyboardProps) {
-    const { app, commandQueue, isMobile, plugin } = useServices();
+    const { app, commandQueue, plugin } = useServices();
     const fileSystemOps = useFileSystemOps();
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -394,15 +394,12 @@ export function useNavigationPaneKeyboard({
                     const shouldSwitchPane = !expandedInThisAction;
 
                     if (expandedInThisAction && uiState.singlePane && settings.autoExpandNavItems) {
-                        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                        uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                     } else if (shouldSwitchPane) {
-                        if (uiState.singlePane && !isMobile) {
-                            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
-                        } else {
+                        if (!uiState.singlePane) {
                             selectionDispatch({ type: 'SET_KEYBOARD_NAVIGATION', isKeyboardNavigation: true });
-                            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
                         }
+                        uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
                     }
                 }
             } else if (
@@ -505,15 +502,10 @@ export function useNavigationPaneKeyboard({
                 }
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.NAV_FOCUS_LIST)) {
                 e.preventDefault();
-                if (!isMobile) {
-                    if (uiState.singlePane) {
-                        uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
-                    } else {
-                        selectionDispatch({ type: 'SET_KEYBOARD_NAVIGATION', isKeyboardNavigation: true });
-                        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
-                    }
+                if (!uiState.singlePane) {
+                    selectionDispatch({ type: 'SET_KEYBOARD_NAVIGATION', isKeyboardNavigation: true });
                 }
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.DELETE_SELECTED)) {
                 if (selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder) {
                     e.preventDefault();
@@ -566,7 +558,6 @@ export function useNavigationPaneKeyboard({
             expansionState,
             expansionDispatch,
             uiState.singlePane,
-            isMobile,
             uiDispatch,
             selectionDispatch,
             resolveIndex,

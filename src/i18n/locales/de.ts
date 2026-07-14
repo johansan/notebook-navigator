@@ -906,7 +906,8 @@ export const STRINGS_DE = {
         removeTag: 'Tag von ausgewählten Dateien entfernen', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Alle Tags von ausgewählten Dateien entfernen', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Alle Dateien öffnen', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Cache neu aufbauen' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Cache neu aufbauen', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Standardeinstellungen wiederherstellen' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -915,7 +916,18 @@ export const STRINGS_DE = {
         calendarViewName: 'Kalender', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Ordnernotiz', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'In Notebook Navigator anzeigen' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'In Notebook Navigator anzeigen', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator konnte seine Einstellungen nicht lesen und wurde nicht gestartet. Wenn Ihr Vault synchronisiert wird, starten Sie Obsidian nach Abschluss der Synchronisierung neu. Um mit Standardeinstellungen neu zu beginnen, führen Sie den Befehl „Standardeinstellungen wiederherstellen“ aus.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Standardeinstellungen wiederherstellen', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Dies ersetzt die Einstellungsdatei von Notebook Navigator durch Standardeinstellungen. Wenn Ihr Vault noch synchronisiert wird, können die wiederhergestellten Standardwerte die auf Ihren anderen Geräten gespeicherten Einstellungen überschreiben. Eine lesbare Einstellungsdatei wird zuvor in eine Sicherungsdatei mit Zeitstempel im Plugin-Ordner kopiert.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Standardwerte wiederherstellen', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice:
+                'Die Wiederherstellung der Einstellungen konnte nicht abgeschlossen werden. Lokale Einstellungen wurden beibehalten.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Standardeinstellungen wiederhergestellt. Starten Sie Obsidian neu, um den Vorgang abzuschließen.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1164,6 +1176,10 @@ export const STRINGS_DE = {
             showFolderGroupPaths: {
                 name: 'Unterordnerpfade anzeigen',
                 desc: 'Beim Gruppieren nach Ordner im Listenbereich Unterordnerpfade statt nur Ordnernamen anzeigen.'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'Elementanzahl anzeigen',
+                desc: 'Zeigt die Anzahl der Elemente in jeder Gruppenüberschrift im Listenbereich an.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Ordnergruppierung: Dateien des aktuellen Ordners unten',

@@ -63,7 +63,7 @@ interface FolderGroupHeaderSegment {
     target: FolderGroupHeaderTarget | null;
 }
 
-interface HeaderRenderModel {
+export interface HeaderRenderModel {
     index: number;
     label: string;
     baseLabel: string;
@@ -76,6 +76,7 @@ interface HeaderRenderModel {
     folderGroupHeaderPath: string | null;
     folderGroupHeaderSegments: FolderGroupHeaderSegment[];
     groupFilePaths: string[];
+    itemCount: number | null;
     manualSortHeaderFilePath: string | null;
     manualSortHeader: ManualSortGroupHeaderData | null;
     manualSortHeaderWordCount: number;
@@ -248,7 +249,7 @@ function shouldHideManualSortGoalHeaderSeparator(header: HeaderRenderModel | nul
         : false;
 }
 
-const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
+export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
     header,
     collapseChevronIcons,
     pinnedSectionIcon,
@@ -364,6 +365,7 @@ const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
                     {renderFolderGroupHeaderText()}
                 </>
             )}
+            {header.itemCount !== null ? <span className="nn-list-group-header-item-count">({header.itemCount})</span> : null}
             {header.isCollapsible ? (
                 <button
                     type="button"
@@ -774,6 +776,7 @@ export function ListPaneVirtualContent({
                 folderGroupHeaderPath: item.headerKind === 'folder' ? (headerFolderPath ?? '/') : null,
                 folderGroupHeaderSegments,
                 groupFilePaths: item.groupFilePaths ?? [],
+                itemCount: settings.showGroupHeaderItemCounts ? (item.groupFilePaths?.length ?? 0) : null,
                 manualSortHeaderFilePath: item.headerKind === 'manual-sort-custom' ? (item.manualSortHeaderFilePath ?? null) : null,
                 manualSortHeader,
                 manualSortHeaderWordCount: item.manualSortHeaderWordCount ?? 0,
@@ -798,6 +801,7 @@ export function ListPaneVirtualContent({
         pinnedGroupExpanded,
         settings.colorIconOnly,
         settings.showFolderGroupPaths,
+        settings.showGroupHeaderItemCounts,
         settings.interfaceIcons,
         settings.showFolderIcons
     ]);

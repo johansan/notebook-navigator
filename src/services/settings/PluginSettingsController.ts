@@ -120,6 +120,27 @@ interface PluginSettingsControllerOptions {
     mirrorUXPreferences: (update: Partial<UXPreferences>) => void;
 }
 
+/**
+ * Result of loading persisted settings.
+ * - 'loaded': a stored settings record was read and applied
+ * - 'missing': no settings file exists; current settings are kept
+ * - 'unavailable': the settings file exists but could not be read or parsed; current settings are kept
+ */
+export type SettingsLoadResult = 'loaded' | 'missing' | 'unavailable';
+
+/**
+ * Result of the startup settings load.
+ * - 'first-launch': the settings file stayed missing on a device without prior plugin state; defaults were applied
+ * - 'loaded': a stored settings record was read and applied
+ * - 'unavailable': the settings file could not be established; startup must abort without writing
+ * - 'cancelled': plugin shutdown cancelled the retry before settings were established
+ */
+export type StartupSettingsLoadResult = 'first-launch' | 'loaded' | 'unavailable' | 'cancelled';
+
+// Keep the startup grace period below Obsidian's slow-plugin warning while polling for a settings file from sync.
+const STARTUP_SETTINGS_RETRY_ATTEMPTS = 4;
+const STARTUP_SETTINGS_RETRY_DELAY_MS = 500;
+
 function resolveTaskBackgroundColor(value: unknown, fallback: string): string {
     if (typeof value !== 'string') {
         return fallback;
@@ -172,7 +193,7 @@ function containsLegacyNoneGroupingInStoredData(storedData: Record<string, unkno
 }
 
 export class PluginSettingsController {
-    private currentSettings: NotebookNavigatorSettings = { ...DEFAULT_SETTINGS };
+    private currentSettings: NotebookNavigatorSettings = structuredClone(DEFAULT_SETTINGS);
     private syncModeRegistry: SyncModeRegistry | null = null;
     private shouldPersistDesktopScale = false;
     private shouldPersistMobileScale = false;
@@ -254,9 +275,118 @@ export class PluginSettingsController {
         });
     }
 
-    public async loadSettings(): Promise<boolean> {
+    public async loadSettings(): Promise<SettingsLoadResult>;
+    public async loadSettings(signal: AbortSignal): Promise<SettingsLoadResult | 'cancelled'>;
+    public async loadSettings(signal?: AbortSignal): Promise<SettingsLoadResult | 'cancelled'> {
+        if (signal?.aborted) {
+            return 'cancelled';
+        }
         const rawData: unknown = await this.options.loadData();
-        const storedData: Record<string, unknown> | null = isRecord(rawData) ? rawData : null;
+        if (signal?.aborted) {
+            return 'cancelled';
+        }
+        // Obsidian returns null when data.json does not exist (or contains the literal JSON text `null`) and undefined
+        // when it exists but cannot be read or parsed. Neither result applies anything, so a transient sync failure
+        // cannot reset current settings; loadSettingsAtStartup decides whether a missing file counts as a first launch.
+        if (!isRecord(rawData)) {
+            return rawData === null ? 'missing' : 'unavailable';
+        }
+
+        const needsPersistedCleanup = this.applySettingsRecord(rawData, { isFirstLaunch: false });
+        if (needsPersistedCleanup) {
+            if (signal?.aborted) {
+                return 'cancelled';
+            }
+            await this.options.saveData(this.getPersistableSettings());
+        }
+        return signal?.aborted ? 'cancelled' : 'loaded';
+    }
+
+    /**
+     * Runs the startup settings load with a bounded retry window.
+     * A missing data.json is confirmed as a first launch only when this device has no persisted localStorage version
+     * marker, no attempt observed an unreadable file, and the file stays missing through the retry window. Runtime
+     * enablement uses the same grace period because sync can install the plugin before delivering data.json.
+     * On 'first-launch' the default settings are applied through the settings pipeline without persisting; on
+     * 'unavailable' nothing is applied or written.
+     */
+    public async loadSettingsAtStartup(options: {
+        maxAttempts?: number;
+        retryDelayMs?: number;
+        signal?: AbortSignal;
+    }): Promise<StartupSettingsLoadResult> {
+        const maxAttempts = Math.max(1, options.maxAttempts ?? STARTUP_SETTINGS_RETRY_ATTEMPTS);
+        const retryDelayMs = options.retryDelayMs ?? STARTUP_SETTINGS_RETRY_DELAY_MS;
+        const storedVersion = this.getStoredLocalStorageVersion();
+        const hasRunOnDevice = storedVersion !== null && storedVersion !== undefined;
+        let sawUnavailable = false;
+        let lastResult: SettingsLoadResult = 'missing';
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            if (options.signal?.aborted) {
+                return 'cancelled';
+            }
+            if (attempt > 0) {
+                const completedDelay = await this.waitForRetry(retryDelayMs, options.signal);
+                if (!completedDelay) {
+                    return 'cancelled';
+                }
+            }
+
+            const attemptResult = options.signal ? await this.loadSettings(options.signal) : await this.loadSettings();
+            if (attemptResult === 'cancelled') {
+                return 'cancelled';
+            }
+            lastResult = attemptResult;
+            if (lastResult === 'loaded') {
+                return 'loaded';
+            }
+            if (lastResult === 'unavailable') {
+                sawUnavailable = true;
+                continue;
+            }
+        }
+
+        if (lastResult === 'missing' && !hasRunOnDevice && !sawUnavailable) {
+            this.applySettingsRecord(null, { isFirstLaunch: true });
+            return 'first-launch';
+        }
+
+        return 'unavailable';
+    }
+
+    private async waitForRetry(delayMs: number, signal?: AbortSignal): Promise<boolean> {
+        if (signal?.aborted) {
+            return false;
+        }
+        if (typeof window === 'undefined' || delayMs <= 0) {
+            return true;
+        }
+        return await new Promise<boolean>(resolve => {
+            const complete = (completedDelay: boolean) => {
+                signal?.removeEventListener('abort', onAbort);
+                resolve(completedDelay);
+            };
+            const timeoutId = window.setTimeout(() => complete(true), delayMs);
+            const onAbort = () => {
+                window.clearTimeout(timeoutId);
+                complete(false);
+            };
+            signal?.addEventListener('abort', onAbort, { once: true });
+        });
+    }
+
+    /**
+     * Applies a raw settings record through the full normalization and migration pipeline without persisting.
+     * Pass null with isFirstLaunch to build default settings for a fresh installation. Returns whether legacy
+     * migrations require the cleaned-up settings to be written back to data.json.
+     */
+    public applySettingsRecord(
+        storedData: Record<string, unknown> | null,
+        options: { isFirstLaunch: boolean; preferRecordLocalValues?: boolean }
+    ): boolean {
+        const { isFirstLaunch } = options;
+        const preferRecordValue = options.preferRecordLocalValues ?? false;
         const hadLegacyPropertyFieldsInStoredData = Boolean(
             storedData && Object.prototype.hasOwnProperty.call(storedData, 'propertyFields')
         );
@@ -307,11 +437,12 @@ export class PluginSettingsController {
             !isEnterKeyAction(storedData['cmdCtrlEnterOpenContext'])
         );
         const storedSettings = storedData as Partial<NotebookNavigatorSettings> | null;
-        const isFirstLaunch = storedData === null;
         this.shouldPersistDesktopScale = Boolean(storedData && 'desktopScale' in storedData);
         this.shouldPersistMobileScale = Boolean(storedData && 'mobileScale' in storedData);
 
-        this.currentSettings = { ...DEFAULT_SETTINGS, ...(storedSettings ?? {}) };
+        // Deep-clone the defaults so later in-place normalization (e.g. ensureVaultProfiles) cannot mutate DEFAULT_SETTINGS
+        // through nested references when stored data omits a key.
+        this.currentSettings = { ...structuredClone(DEFAULT_SETTINGS), ...(storedSettings ?? {}) };
         const hadLegacySearchProviderInSettings = Boolean(storedData && 'searchProvider' in storedData);
         const hadLegacyLastAnnouncedReleaseInSettings = Boolean(storedData && 'lastAnnouncedRelease' in storedData);
         const storedSearchProvider = localStorage.get<unknown>(this.options.keys.searchProviderKey);
@@ -451,7 +582,7 @@ export class PluginSettingsController {
                 return;
             }
 
-            const result = entry.resolveOnLoad({ storedData });
+            const result = entry.resolveOnLoad({ storedData, preferRecordValue });
             if (settingId === 'uiScale') {
                 uiScaleMigrated = result.migrated;
             }
@@ -507,7 +638,10 @@ export class PluginSettingsController {
         this.normalizeTaskSettings();
         this.normalizeFileIconMapSettings();
         this.normalizeInterfaceIconsSettings();
-        syncModeRegistry.vaultProfile.resolveOnLoad({ storedData });
+        syncModeRegistry.vaultProfile.resolveOnLoad({ storedData, preferRecordValue });
+        this.normalizeTagSettings();
+        this.normalizePropertySettings();
+        this.normalizeNavigationSeparatorSettings();
         this.refreshMatcherCachesIfNeeded();
 
         const needsPersistedCleanup =
@@ -534,11 +668,7 @@ export class PluginSettingsController {
             migratedMomentFormats ||
             migratedShortcutNegationSyntax;
 
-        if (needsPersistedCleanup) {
-            await this.options.saveData(this.getPersistableSettings());
-        }
-
-        return isFirstLaunch;
+        return needsPersistedCleanup;
     }
 
     public normalizeTagSettings(): void {
@@ -685,6 +815,31 @@ export class PluginSettingsController {
 
     public getPersistableSettings(): NotebookNavigatorSettings {
         const rest = { ...this.currentSettings } as Record<string, unknown>;
+        this.removeNonPersistableSettings(rest);
+
+        const syncModeRegistry = this.getSyncModeRegistry();
+        SYNC_MODE_SETTING_IDS.forEach(settingId => {
+            if (!this.isLocal(settingId)) {
+                return;
+            }
+
+            syncModeRegistry[settingId].deleteFromPersisted(rest);
+        });
+
+        return rest as unknown as NotebookNavigatorSettings;
+    }
+
+    /** Returns the first-launch defaults in their data.json representation without mutating settings or localStorage. */
+    public getPersistableDefaultSettings(): NotebookNavigatorSettings {
+        const defaults = structuredClone(DEFAULT_SETTINGS);
+        // Normalize the cloned defaults the same way the first-launch pipeline does before persisting.
+        ensureVaultProfiles(defaults);
+        const rest = defaults as unknown as Record<string, unknown>;
+        this.removeNonPersistableSettings(rest);
+        return rest as unknown as NotebookNavigatorSettings;
+    }
+
+    private removeNonPersistableSettings(rest: Record<string, unknown>): void {
         delete rest.hiddenTags;
         delete rest.fileVisibility;
         delete rest.recentColors;
@@ -703,17 +858,6 @@ export class PluginSettingsController {
         delete rest.wordCountPlacement;
         delete rest.wordCharacterCountDisplay;
         delete rest.characterCountMode;
-
-        const syncModeRegistry = this.getSyncModeRegistry();
-        SYNC_MODE_SETTING_IDS.forEach(settingId => {
-            if (!this.isLocal(settingId)) {
-                return;
-            }
-
-            syncModeRegistry[settingId].deleteFromPersisted(rest);
-        });
-
-        return rest as unknown as NotebookNavigatorSettings;
     }
 
     public refreshMatcherCachesIfNeeded(): void {

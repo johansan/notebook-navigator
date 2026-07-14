@@ -18,7 +18,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ServiceIcon } from './ServiceIcon';
-import { useUIDispatch, useUIState } from '../context/UIStateContext';
+import { useUIDispatch } from '../context/UIStateContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useServices } from '../context/ServicesContext';
 import { strings } from '../i18n';
@@ -70,7 +70,6 @@ export function SearchInput({
     const dateSuggestRef = useRef<SearchDateInputSuggest | null>(null);
     const { isMobile, omnisearchService, app, tagTreeService, plugin } = useServices();
     const settings = useSettingsState();
-    const uiState = useUIState();
     const uiDispatch = useUIDispatch();
 
     const activeProvider = searchProvider ?? settings.searchProvider ?? 'internal';
@@ -265,27 +264,23 @@ export function SearchInput({
         if (matchesShortcut(nativeEvent, shortcuts, KeyboardShortcutAction.SEARCH_CLOSE)) {
             e.preventDefault();
             onClose();
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
             focusListPane();
             return;
         }
 
         if (matchesShortcut(nativeEvent, shortcuts, KeyboardShortcutAction.SEARCH_FOCUS_NAVIGATION)) {
-            if (!uiState.singlePane && !isMobile) {
-                e.preventDefault();
-                notifyEmptySearchExit();
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
-            }
+            e.preventDefault();
+            notifyEmptySearchExit();
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
             return;
         }
 
         if (matchesShortcut(nativeEvent, shortcuts, KeyboardShortcutAction.SEARCH_FOCUS_LIST)) {
             e.preventDefault();
             notifyEmptySearchExit();
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
 
             if (isMobile) {
-                uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
                 focusListPane();
                 return;
             }
@@ -300,7 +295,7 @@ export function SearchInput({
 
     // Set focus state to search when clicking on search field
     const handleSearchClick = () => {
-        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'search' });
+        uiDispatch({ type: 'ACTIVATE_PANE', target: 'search' });
     };
 
     // Opens the search syntax help modal, closing any active suggest popups first

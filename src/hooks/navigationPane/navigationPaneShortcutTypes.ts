@@ -44,9 +44,9 @@ export interface NavigationPaneShortcutRenderState {
     handleShortcutFolderActivate: (folder: TFolder, shortcutKey: string) => void;
     handleShortcutFolderNoteClick: (folder: TFolder, shortcutKey: string, event: React.MouseEvent<HTMLSpanElement>) => void;
     handleShortcutFolderNoteMouseDown: (folder: TFolder, event: React.MouseEvent<HTMLSpanElement>) => void;
-    handleShortcutNoteActivate: (note: TFile, shortcutKey: string) => void;
+    handleShortcutNoteActivate: (note: TFile, shortcutKey: string, event?: React.MouseEvent<HTMLDivElement>) => void;
     handleShortcutNoteMouseDown: (event: React.MouseEvent<HTMLDivElement>, note: TFile) => void;
-    handleRecentNoteActivate: (note: TFile) => void;
+    handleRecentNoteActivate: (note: TFile, event?: React.MouseEvent<HTMLDivElement>) => void;
     handleShortcutSearchActivate: (shortcutKey: string, searchShortcut: SearchShortcut) => void;
     handleShortcutTagActivate: (tagPath: string, shortcutKey: string) => void;
     handleShortcutPropertyActivate: (propertyNodeId: string, shortcutKey: string) => boolean;

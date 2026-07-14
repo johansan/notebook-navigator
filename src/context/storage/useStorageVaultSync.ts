@@ -326,7 +326,11 @@ export function useStorageVaultSync(params: {
                                     if (pathsToRemove.length > 0) {
                                         await removeFilesFromCache(pathsToRemove);
                                         if (settings.showTags) {
-                                            scheduleTagTreeRebuild();
+                                            // Flush so the rebuild runs in the current task. Cache deletions emit no
+                                            // content-change events, and a settings update reacting to the same delete
+                                            // (for example a root folder order change) reruns this effect, whose
+                                            // cleanup cancels pending debounced rebuilds.
+                                            scheduleTagTreeRebuild({ flush: true });
                                         }
                                         if (isPropertyFeatureEnabled(settings)) {
                                             // Flush rebuild after cache removals so deleted files are reflected in the property tree counts.

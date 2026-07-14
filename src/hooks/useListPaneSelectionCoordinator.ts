@@ -402,7 +402,7 @@ export function useListPaneSelectionCoordinator({
                 });
             }
 
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
 
             if (!shouldMultiSelect && !isShiftKey && shouldOpenInNewTab) {
                 runAsyncAction(() => openFileInContext({ app, commandQueue, file, context: 'tab' }));

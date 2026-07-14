@@ -110,13 +110,29 @@ show progress.
    - Configures per-platform feature-image blob and preview-text cache limits.
    - Preview text strings stay in `filePreviews` and load on demand; the bounded preview-text warmup starts lazily
      after explicit preview loads.
-5. Load settings from `data.json` and run migrations.
-   - Sanitize keyboard shortcuts and migrate legacy fields.
-   - Apply default date/time formats and migrate folder note template settings.
-6. Sync local mirrors, load per-device UX preferences, and normalize settings.
+5. Load settings from `data.json` and run migrations (`loadSettingsAtStartup`).
+   - Classify each read: `loaded` (stored record read and applied through the settings pipeline), `missing` (no
+     `data.json`), or `unavailable` (`data.json` exists but cannot be read or parsed). Non-`loaded` results apply
+     nothing.
+   - Retry non-`loaded` results four times over approximately 1.5 seconds so a sync provider can deliver the file
+     during a bounded startup grace period. A `missing` result is confirmed as a first launch only when the device has
+     no persisted localStorage version marker, no attempt returned `unavailable`, and the file stays missing through
+     the window. Cold startup and runtime enablement use the same grace period because sync can deliver `data.json`
+     after the plugin files.
+   - When startup ends `unavailable`, show a notice, register the `Restore default settings` recovery command, and
+     abort initialization so no code path can overwrite `data.json` with defaults. The command confirms with a
+     dialog, copies a readable `data.json` to a timestamped backup in the plugin folder, writes and verifies defaults,
+     and only then clears plugin localStorage.
+   - External settings reloads (`onExternalSettingsChange`) that arrive before initialization completes are queued
+     and processed once at the end of `onload`. Reloads with a non-`loaded` result keep the current in-memory
+     settings.
+   - The settings pipeline (`applySettingsRecord`) sanitizes keyboard shortcuts, migrates legacy fields, applies
+     default date/time formats, migrates folder note template settings, and normalizes tag, property, and navigation
+     separator settings. Reset and settings import apply raw records through the same pipeline in memory and persist
+     once, without rereading `data.json`.
+6. Sync local mirrors and load per-device UX preferences.
    - Resolve sync-mode local mirrors from vault-scoped localStorage.
    - Load UX preferences from vault-scoped localStorage.
-   - Normalize tag, property, and navigation separator settings.
 7. Handle first-launch setup when no saved data exists.
    - Clear plugin localStorage keys (preserving IndexedDB version markers).
    - Re-seed per-device localStorage mirrors for sync-mode settings and UX preferences.

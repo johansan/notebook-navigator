@@ -152,6 +152,7 @@ const BOOLEAN_SETTING_KEYS = [
     'showSelectedNavigationPills',
     'stickyGroupHeaders',
     'showFolderGroupPaths',
+    'showGroupHeaderItemCounts',
     'showCurrentFolderFilesAtBottom',
     'confirmBeforeManualSort',
     'filterPinnedByFolder',

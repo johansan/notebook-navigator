@@ -67,7 +67,7 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
         }
 
         selectionDispatch({ type: 'SET_SELECTED_FILE', file });
-        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
     };
 
     if (!isVirtualTag) {
