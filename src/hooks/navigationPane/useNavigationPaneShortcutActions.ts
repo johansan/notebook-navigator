@@ -30,7 +30,7 @@ import { resolveCanonicalTagPath } from '../../utils/tagUtils';
 import { runAsyncAction } from '../../utils/async';
 import { openFileInContext } from '../../utils/openFileInContext';
 import { getFolderNote, openFolderNoteFile, type FolderNoteOpenContext } from '../../utils/folderNotes';
-import { resolveFolderNoteClickOpenContext } from '../../utils/keyboardOpenContext';
+import { resolveFolderNoteClickOpenContext, shouldOpenNoteClickInNewTab } from '../../utils/keyboardOpenContext';
 import { ItemType } from '../../types';
 import type { NavigateToFolderOptions, RevealPropertyOptions, RevealTagOptions } from '../useNavigatorReveal';
 
@@ -101,8 +101,7 @@ export function useNavigationPaneShortcutActions({
                 return;
             }
 
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
         },
         [uiDispatch, uiState.singlePane]
     );
@@ -231,7 +230,12 @@ export function useNavigationPaneShortcutActions({
     );
 
     const handleShortcutNoteActivate = useCallback(
-        (note: TFile, shortcutKey: string) => {
+        (note: TFile, shortcutKey: string, event?: React.MouseEvent<HTMLDivElement>) => {
+            if (event && shouldOpenNoteClickInNewTab(event, settings.multiSelectModifier, isMobile)) {
+                runAsyncAction(() => openFileInContext({ app, commandQueue, file: note, context: 'tab' }));
+                return;
+            }
+
             setActiveShortcut(shortcutKey);
             if (selectionType === ItemType.TAG && onRevealShortcutFile) {
                 onRevealShortcutFile(note);
@@ -245,11 +249,12 @@ export function useNavigationPaneShortcutActions({
             }
 
             const focusPane = uiState.singlePane ? uiState.currentSinglePaneView : 'files';
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: focusPane });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: focusPane });
             scheduleShortcutRelease();
         },
         [
             app,
+            commandQueue,
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
@@ -257,6 +262,7 @@ export function useNavigationPaneShortcutActions({
             scheduleShortcutRelease,
             selectionType,
             setActiveShortcut,
+            settings.multiSelectModifier,
             uiDispatch,
             uiState.currentSinglePaneView,
             uiState.singlePane
@@ -277,7 +283,12 @@ export function useNavigationPaneShortcutActions({
     );
 
     const handleRecentNoteActivate = useCallback(
-        (note: TFile) => {
+        (note: TFile, event?: React.MouseEvent<HTMLDivElement>) => {
+            if (event && shouldOpenNoteClickInNewTab(event, settings.multiSelectModifier, isMobile)) {
+                runAsyncAction(() => openFileInContext({ app, commandQueue, file: note, context: 'tab' }));
+                return;
+            }
+
             if (selectionType === ItemType.TAG && onRevealShortcutFile) {
                 onRevealShortcutFile(note);
             } else {
@@ -290,15 +301,17 @@ export function useNavigationPaneShortcutActions({
             }
 
             const focusPane = uiState.singlePane ? uiState.currentSinglePaneView : 'files';
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: focusPane });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: focusPane });
         },
         [
-            app.workspace,
+            app,
+            commandQueue,
             isMobile,
             onRevealFile,
             onRevealShortcutFile,
             openNotePreview,
             selectionType,
+            settings.multiSelectModifier,
             uiDispatch,
             uiState.currentSinglePaneView,
             uiState.singlePane
@@ -327,7 +340,7 @@ export function useNavigationPaneShortcutActions({
             onRevealTag(canonicalPath, { skipScroll: settings.skipAutoScroll, source: 'shortcut' });
 
             if (!uiState.singlePane) {
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 const container = rootContainerRef.current;
                 if (container) {
                     container.focus();
@@ -360,7 +373,7 @@ export function useNavigationPaneShortcutActions({
             }
 
             if (!uiState.singlePane) {
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 const container = rootContainerRef.current;
                 if (container) {
                     container.focus();

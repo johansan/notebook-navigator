@@ -22,7 +22,7 @@ import { useSelectionState } from '../context/SelectionContext';
 import { useServices } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useShortcuts } from '../context/ShortcutsContext';
-import { useUIDispatch, useUIState } from '../context/UIStateContext';
+import { useUIDispatch } from '../context/UIStateContext';
 import { useUXPreferenceActions, useUXPreferences } from '../context/UXPreferencesContext';
 import { strings } from '../i18n';
 import { InputModal } from '../modals/InputModal';
@@ -60,13 +60,7 @@ interface ExecuteSearchShortcutParams {
 }
 
 export interface SearchQueryUpdateOptions {
-    preserveSinglePaneView?: boolean;
     focusSearch?: boolean;
-}
-
-interface ActivateSearchOptions {
-    focusPane?: 'search' | 'files' | null;
-    preserveSinglePaneView?: boolean;
 }
 
 interface UseListPaneSearchParams {
@@ -180,7 +174,6 @@ export function useListPaneSearch({
     const settings = useSettingsState();
     const selectionState = useSelectionState();
     const shortcuts = useShortcuts();
-    const uiState = useUIState();
     const uiDispatch = useUIDispatch();
     const uxPreferences = useUXPreferences();
     const { setSearchActive } = useUXPreferenceActions();
@@ -305,25 +298,21 @@ export function useListPaneSearch({
     }, [activeSearchShortcutStartTarget]);
 
     const activateSearch = useCallback(
-        (options?: ActivateSearchOptions) => {
-            const focusPane = options?.focusPane ?? 'search';
+        (target: 'search' | 'files' | null = 'search') => {
             if (!isSearchActive) {
                 setSearchActive(true);
-                if (uiState.singlePane && options?.preserveSinglePaneView !== true) {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                }
             }
 
-            if (focusPane) {
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: focusPane });
+            if (target) {
+                uiDispatch({ type: 'ACTIVATE_PANE', target });
             }
         },
-        [isSearchActive, setSearchActive, uiDispatch, uiState.singlePane]
+        [isSearchActive, setSearchActive, uiDispatch]
     );
 
     const closeSearch = useCallback(() => {
         setSearchActive(false);
-        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
     }, [setSearchActive, uiDispatch]);
 
     const handleSearchToggle = useCallback(() => {
@@ -415,10 +404,7 @@ export function useListPaneSearch({
             if (shouldFocusSearch) {
                 setShouldFocusSearch(true);
             }
-            activateSearch({
-                focusPane: shouldFocusSearch ? 'search' : null,
-                preserveSinglePaneView: options?.preserveSinglePaneView
-            });
+            activateSearch(shouldFocusSearch ? 'search' : null);
 
             let nextQueryValue: string | null = null;
             setSearchQuery(previousQuery => {
@@ -511,7 +497,7 @@ export function useListPaneSearch({
             const searchInput = scope.querySelector('.nn-search-input');
             if (searchInput instanceof HTMLInputElement) {
                 searchInput.focus();
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'search' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'search' });
             }
         }, 0);
     }, [rootContainerRef, uiDispatch]);
@@ -551,11 +537,7 @@ export function useListPaneSearch({
                 }
             }
 
-            if (uiState.singlePane) {
-                uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-            }
-
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
 
             if (isMobile) {
                 suppressSearchTopScrollRef.current = true;
@@ -592,7 +574,6 @@ export function useListPaneSearch({
             setSearchActive,
             settings.skipAutoScroll,
             uiDispatch,
-            uiState.singlePane,
             waitForMobilePaneTransition,
             waitForNextFrame
         ]

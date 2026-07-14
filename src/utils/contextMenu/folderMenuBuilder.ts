@@ -76,7 +76,7 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
         // Select the newly created file in the list
         selectionDispatch({ type: 'SET_SELECTED_FILE', file });
         // Switch focus to the files pane to show the selection
-        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
     };
 
     menu.addItem((item: MenuItem) => {

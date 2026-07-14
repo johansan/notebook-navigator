@@ -905,7 +905,8 @@ export const STRINGS_VI = {
         removeTag: 'Gỡ thẻ khỏi tệp đã chọn', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Gỡ tất cả thẻ khỏi tệp đã chọn', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Mở tất cả tệp', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Xây dựng lại cache' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Xây dựng lại cache', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Khôi phục cài đặt mặc định' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -914,7 +915,17 @@ export const STRINGS_VI = {
         calendarViewName: 'Lịch', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Ghi chú thư mục', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Hiện trong Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Hiện trong Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator không thể đọc cài đặt và đã không khởi động. Nếu kho của bạn đang đồng bộ, hãy khởi động lại Obsidian sau khi đồng bộ hoàn tất. Để bắt đầu lại với cài đặt mặc định, hãy chạy lệnh "Khôi phục cài đặt mặc định".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Khôi phục cài đặt mặc định', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Thao tác này thay thế tệp cài đặt của Notebook Navigator bằng cài đặt mặc định. Nếu kho của bạn vẫn đang đồng bộ, cài đặt mặc định được khôi phục có thể ghi đè cài đặt lưu trên các thiết bị khác của bạn. Tệp cài đặt đọc được sẽ được sao chép vào bản sao lưu có dấu thời gian trong thư mục plugin trước.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Khôi phục mặc định', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Không thể hoàn tất việc khôi phục cài đặt. Các tùy chọn cục bộ được giữ nguyên.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Đã khôi phục cài đặt mặc định. Khởi động lại Obsidian để hoàn tất.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1163,6 +1174,10 @@ export const STRINGS_VI = {
             showFolderGroupPaths: {
                 name: 'Hiện đường dẫn thư mục con',
                 desc: 'Khi nhóm theo thư mục trong ngăn danh sách, hiển thị đường dẫn thư mục con thay vì chỉ tên thư mục.'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'Hiện số lượng mục',
+                desc: 'Hiển thị số lượng mục trong mỗi tiêu đề nhóm ở ngăn danh sách.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Nhóm theo thư mục: tệp trong thư mục hiện tại ở dưới cùng',

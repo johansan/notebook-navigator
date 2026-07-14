@@ -288,10 +288,7 @@ function unwrapSettingsTransfer(transferData: Record<string, unknown>): Record<s
     return transferSettings;
 }
 
-export function applyModifiedSettingsTransfer(
-    currentSettings: NotebookNavigatorSettings,
-    transferData: unknown
-): NotebookNavigatorSettings {
+export function applyModifiedSettingsTransfer(currentSettings: NotebookNavigatorSettings, transferData: unknown): Record<string, unknown> {
     if (!isRecord(transferData)) {
         throw new Error('Settings import must be a JSON object.');
     }
@@ -312,5 +309,5 @@ export function applyModifiedSettingsTransfer(
         nextSettingsRecord[key] = mergedSnapshot[key];
     });
 
-    return nextSettingsRecord as unknown as NotebookNavigatorSettings;
+    return nextSettingsRecord;
 }

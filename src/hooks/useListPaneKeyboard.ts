@@ -35,7 +35,7 @@ import { useFileSelection, useNavigationSelection, useSelectionDispatch, resolve
 import { useServices, useFileSystemOps } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useUXPreferences } from '../context/UXPreferencesContext';
-import { useUIState, useUIDispatch } from '../context/UIStateContext';
+import { useUIDispatch } from '../context/UIStateContext';
 import { getSupportedLeaves, ListPaneItemType } from '../types';
 import type { ListPaneItem } from '../types/virtualization';
 import { deleteSelectedFiles } from '../utils/deleteOperations';
@@ -121,7 +121,6 @@ export function useListPaneKeyboard({
     const navigationSelectionRef = useRef(navigationSelection);
     navigationSelectionRef.current = navigationSelection;
     const selectionDispatch = useSelectionDispatch();
-    const uiState = useUIState();
     const uiDispatch = useUIDispatch();
     const { handleShiftArrowSelection, selectAll } = useMultiSelection();
 
@@ -476,12 +475,7 @@ export function useListPaneKeyboard({
                 })
             ) {
                 e.preventDefault();
-                if (uiState.singlePane && !isMobile) {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'navigation' });
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
-                } else if (!uiState.singlePane) {
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
-                }
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.DELETE_SELECTED)) {
                 if (currentFileSelection.selectedFile || currentFileSelection.selectedFiles.size > 0) {
                     e.preventDefault();
@@ -577,7 +571,6 @@ export function useListPaneKeyboard({
             pathToIndex,
             app,
             commandQueue,
-            uiState.singlePane,
             uiDispatch,
             fileSystemOps,
             tagTreeService,

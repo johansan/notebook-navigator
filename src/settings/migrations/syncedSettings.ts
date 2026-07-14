@@ -544,6 +544,10 @@ export function applyExistingUserDefaults(params: { settings: NotebookNavigatorS
         settings.showFolderGroupPaths = DEFAULT_SETTINGS.showFolderGroupPaths;
     }
 
+    if (typeof settings.showGroupHeaderItemCounts !== 'boolean') {
+        settings.showGroupHeaderItemCounts = DEFAULT_SETTINGS.showGroupHeaderItemCounts;
+    }
+
     if (typeof settings.showCurrentFolderFilesAtBottom !== 'boolean') {
         settings.showCurrentFolderFilesAtBottom = DEFAULT_SETTINGS.showCurrentFolderFilesAtBottom;
     }

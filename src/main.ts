@@ -74,7 +74,7 @@ import {
     type TagSortOrder
 } from './settings/types';
 import { NOTEBOOK_NAVIGATOR_ICON_ID, NOTEBOOK_NAVIGATOR_ICON_SVG } from './constants/notebookNavigatorIcon';
-import { PluginSettingsController } from './services/settings/PluginSettingsController';
+import { PluginSettingsController, type SettingsLoadResult } from './services/settings/PluginSettingsController';
 import { PluginPreferencesController } from './services/settings/PluginPreferencesController';
 import { clearPendingPdfProcessingDiagnostic, consumePendingPdfProcessingDiagnostic } from './services/content/pdf/pdfCrashDiagnostics';
 import {
@@ -86,6 +86,8 @@ import {
 import { applyModifiedSettingsTransfer, createModifiedSettingsTransfer, createSettingsTransferBaseName } from './settings/transfer';
 import { DEFAULT_SETTINGS } from './settings/defaultSettings';
 import { buildFilePathInFolder, generateUniqueFilename } from './utils/fileCreationUtils';
+import { showNotice } from './utils/noticeUtils';
+import { strings } from './i18n';
 
 interface ObsidianSettingsModal {
     open(): void;
@@ -135,6 +137,12 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
     private updateNoticeListeners = new Map<string, (notice: ReleaseUpdateNotice | null) => void>();
     // Flag indicating plugin is being unloaded to prevent operations during shutdown
     private isUnloading = false;
+    // Set after onload completes with settings; initialization is aborted when loading fails
+    private hasStartedWithSettings = false;
+    // Set when an external settings change arrives before initialization completes; drained at the end of onload
+    private pendingExternalSettingsChange = false;
+    private startupSettingsAbortController: AbortController | null = null;
+    private isRestoringDefaultSettings = false;
     private isHandlingExternalSettingsUpdate = false;
     // Coordinates workspace interactions with the navigator view
     private workspaceCoordinator: WorkspaceCoordinator | null = null;
@@ -239,8 +247,18 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         if (this.isUnloading) {
             return;
         }
+        if (!this.hasStartedWithSettings) {
+            // Queue changes that arrive while onload is still loading settings; processed at the end of onload.
+            // After an aborted startup the flag is never drained; restarting Obsidian is the documented recovery.
+            this.pendingExternalSettingsChange = true;
+            return;
+        }
 
-        await this.loadSettings();
+        const loadResult = await this.loadSettings();
+        if (loadResult !== 'loaded') {
+            // Keep current settings, mirrors, and UI when data.json is missing or unreadable during an external reload
+            return;
+        }
         const includeDescendantNotesChanged = this.preferencesController.syncMirrorsFromSettings();
         this.preferencesController.initializeRecentDataManager();
         this.notifySettingsUpdateWithFullRefresh();
@@ -251,17 +269,12 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
     /**
      * Loads plugin settings from Obsidian's data storage
-     * Returns true if this is the first launch (no saved data)
+     * Returns whether stored settings were loaded, the settings file is missing, or it exists but cannot be read
      */
-    async loadSettings(): Promise<boolean> {
-        const isFirstLaunch = await this.settingsController.loadSettings();
+    async loadSettings(): Promise<SettingsLoadResult> {
+        const result = await this.settingsController.loadSettings();
         this.settings = this.settingsController.settings;
-        return isFirstLaunch;
-    }
-
-    private replaceSettings(settings: NotebookNavigatorSettings): void {
-        this.settings = settings;
-        this.settingsController.settings = settings;
+        return result;
     }
 
     /**
@@ -417,15 +430,33 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             }
         );
 
-        // Load settings and check if this is first launch
-        const isFirstLaunch = await this.loadSettings();
-        recordStartupDiagnostic('settings.loaded', { isFirstLaunch });
+        // Load settings with a short bounded retry window and check if this is first launch.
+        // Runtime enablement uses the same grace period because sync can deliver data.json after the plugin files.
+        const startupSettingsAbortController = new AbortController();
+        this.startupSettingsAbortController = startupSettingsAbortController;
+        const settingsLoadResult = await this.settingsController.loadSettingsAtStartup({
+            signal: startupSettingsAbortController.signal
+        });
+        if (this.startupSettingsAbortController === startupSettingsAbortController) {
+            this.startupSettingsAbortController = null;
+        }
+        if (this.isUnloading || settingsLoadResult === 'cancelled') {
+            return;
+        }
+        this.settings = this.settingsController.settings;
+        recordStartupDiagnostic('settings.loaded', { result: settingsLoadResult });
+        if (settingsLoadResult === 'unavailable') {
+            // data.json could not be read, or is missing on a device that ran the plugin before; stop before any
+            // code path can overwrite it with defaults. The command offers explicit recovery for reinstalls and
+            // permanently damaged settings files.
+            this.registerSettingsRecoveryCommand();
+            showNotice(strings.plugin.settingsUnavailableNotice, { timeout: 30000, variant: 'warning' });
+            return;
+        }
+        const isFirstLaunch = settingsLoadResult === 'first-launch';
         this.preferencesController.syncMirrorsFromSettings();
         const storedLocalStorageVersion = this.settingsController.getStoredLocalStorageVersion();
         this.preferencesController.loadUXPreferences();
-        this.settingsController.normalizeTagSettings();
-        this.settingsController.normalizePropertySettings();
-        this.settingsController.normalizeNavigationSeparatorSettings();
 
         // Handle first launch initialization
         if (isFirstLaunch) {
@@ -622,6 +653,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             });
         });
         recordStartupDiagnostic('onload.complete');
+
+        // Process external settings changes that arrived while onload was still initializing
+        this.hasStartedWithSettings = true;
+        if (this.pendingExternalSettingsChange) {
+            this.pendingExternalSettingsChange = false;
+            runAsyncAction(() => this.onExternalSettingsChange());
+        }
     }
 
     /**
@@ -1092,6 +1130,8 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         }
 
         this.isUnloading = true;
+        this.startupSettingsAbortController?.abort();
+        this.startupSettingsAbortController = null;
 
         try {
             // Ensure recent notes/icons hit disk before the process exits
@@ -1217,20 +1257,15 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             throw new Error('Plugin is unloading');
         }
 
-        this.replaceSettings(applyModifiedSettingsTransfer(this.settings, transferData));
-        this.settingsController.normalizeTagSettings();
-        this.settingsController.normalizePropertySettings();
-        this.settingsController.normalizeNavigationSeparatorSettings();
+        // Apply the merged record through the full settings pipeline in memory, then persist once.
+        // No reread from disk: a transiently unreadable data.json cannot fail an import that already persisted.
+        const mergedRecord = applyModifiedSettingsTransfer(this.settings, transferData);
+        this.settingsController.applySettingsRecord(mergedRecord, { isFirstLaunch: false, preferRecordLocalValues: true });
+        this.settings = this.settingsController.settings;
         this.settingsController.prepareImportedUiScalePersistence();
-        this.settingsController.mirrorAllSyncModeSettingsToLocalStorage();
         await this.settingsController.saveSettings();
-        await this.loadSettings();
-        this.settingsController.normalizeTagSettings();
-        this.settingsController.normalizePropertySettings();
-        this.settingsController.normalizeNavigationSeparatorSettings();
         const includeDescendantNotesChanged = this.preferencesController.syncMirrorsFromSettings();
         this.preferencesController.initializeRecentDataManager();
-        await this.settingsController.saveSettings();
         this.notifySettingsUpdateWithFullRefresh();
 
         if (includeDescendantNotesChanged) {
@@ -1258,15 +1293,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         const preservedSyncModes = sanitizeRecord<SettingSyncMode>(this.settings.syncModes, isSettingSyncMode);
 
-        // Clear local storage first so subsequent loads seed fresh defaults.
+        // Clear local storage first so the settings pipeline reseeds per-device mirrors from defaults.
         this.settingsController.clearAllLocalStorage();
 
-        // Clear persisted settings; loadSettings will repopulate from DEFAULT_SETTINGS.
-        await this.saveData({});
-        await this.loadSettings();
-        this.settingsController.normalizeTagSettings();
-        this.settingsController.normalizePropertySettings();
-        this.settingsController.normalizeNavigationSeparatorSettings();
+        // Build default settings through the full settings pipeline in memory, then persist once.
+        // No disk roundtrip: a transiently unreadable data.json cannot abort the reset halfway.
+        this.settingsController.applySettingsRecord({}, { isFirstLaunch: false });
+        this.settings = this.settingsController.settings;
         this.settings.syncModes = preservedSyncModes;
         await this.saveSettingsAndUpdate();
 
@@ -1282,6 +1315,118 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.preferencesController.initializeRecentDataManager();
         this.onSettingsUpdate();
         this.preferencesController.notifyUXPreferencesUpdate();
+    }
+
+    /**
+     * Registers the recovery command offered when startup aborts because data.json is missing or unreadable.
+     * The command replaces the settings file with defaults after confirmation so reinstalls and permanently
+     * damaged settings files have an explicit way back to a working plugin.
+     */
+    private registerSettingsRecoveryCommand(): void {
+        this.addCommand({
+            id: 'restore-default-settings',
+            name: strings.commands.restoreDefaultSettings,
+            callback: () => {
+                runAsyncAction(async () => {
+                    const { ConfirmModal } = await import('./modals/ConfirmModal');
+                    new ConfirmModal(
+                        this.app,
+                        strings.plugin.settingsRecovery.confirmTitle,
+                        strings.plugin.settingsRecovery.confirmMessage,
+                        () => this.restoreDefaultSettingsFile(),
+                        strings.plugin.settingsRecovery.confirmButton
+                    ).open();
+                });
+            }
+        });
+    }
+
+    /**
+     * Replaces data.json with default settings and resets per-device localStorage state after verifying the write.
+     * A readable settings file is copied to a timestamped backup in the plugin folder before it is overwritten.
+     */
+    private async restoreDefaultSettingsFile(): Promise<void> {
+        if (this.isRestoringDefaultSettings) {
+            return;
+        }
+        this.isRestoringDefaultSettings = true;
+
+        try {
+            await this.restoreDefaultSettingsFileInternal();
+        } finally {
+            this.isRestoringDefaultSettings = false;
+        }
+    }
+
+    private async restoreDefaultSettingsFileInternal(): Promise<void> {
+        const pluginDir = this.manifest.dir;
+        if (!pluginDir) {
+            showNotice(strings.plugin.settingsRecovery.failedNotice, { variant: 'warning' });
+            return;
+        }
+
+        const adapter = this.app.vault.adapter;
+        const dataPath = `${pluginDir}/data.json`;
+        let backupContents: string | null = null;
+        try {
+            if (await adapter.exists(dataPath)) {
+                backupContents = await adapter.read(dataPath);
+            }
+        } catch (error: unknown) {
+            console.error('Failed to read settings file before recovery:', error);
+            showNotice(strings.plugin.settingsRecovery.failedNotice, { variant: 'warning' });
+            return;
+        }
+        if (backupContents !== null) {
+            try {
+                const backupPath = await this.getAvailableSettingsBackupPath(pluginDir);
+                await adapter.write(backupPath, backupContents);
+                const verifiedBackup = await adapter.read(backupPath);
+                if (verifiedBackup !== backupContents) {
+                    throw new Error('Settings backup verification failed');
+                }
+            } catch (error: unknown) {
+                console.error('Failed to back up settings file before recovery:', error);
+                showNotice(strings.plugin.settingsRecovery.failedNotice, { variant: 'warning' });
+                return;
+            }
+        }
+
+        const serializedDefaults = JSON.stringify(this.settingsController.getPersistableDefaultSettings(), null, 2);
+        try {
+            await adapter.write(dataPath, serializedDefaults);
+            const verifiedContents = await adapter.read(dataPath);
+            if (verifiedContents !== serializedDefaults) {
+                throw new Error('Settings file verification failed after recovery write');
+            }
+        } catch (error: unknown) {
+            console.error('Failed to write default settings during recovery:', error);
+            showNotice(strings.plugin.settingsRecovery.failedNotice, { variant: 'warning' });
+            return;
+        }
+
+        this.settingsController.clearAllLocalStorage();
+        this.settingsController.applySettingsRecord(null, { isFirstLaunch: true });
+        this.settings = this.settingsController.settings;
+        this.settingsController.setLocalStorageVersion();
+        if (this.settings.showRootFolder) {
+            localStorage.set(STORAGE_KEYS.expandedFoldersKey, ['/']);
+        }
+        showNotice(strings.plugin.settingsRecovery.completedNotice, { timeout: 10000 });
+    }
+
+    private async getAvailableSettingsBackupPath(pluginDir: string): Promise<string> {
+        const timestamp = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+        const basePath = `${pluginDir}/data-backup-${timestamp}`;
+        let suffix = 0;
+
+        while (true) {
+            const candidate = `${basePath}${suffix === 0 ? '' : `-${suffix}`}.json`;
+            if (!(await this.app.vault.adapter.exists(candidate))) {
+                return candidate;
+            }
+            suffix += 1;
+        }
     }
 
     /**

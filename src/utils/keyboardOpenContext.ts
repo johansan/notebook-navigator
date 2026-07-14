@@ -62,6 +62,19 @@ export function isMultiSelectModifierPressed(event: MultiSelectModifierEventStat
     return isCmdCtrlModifierPressed(event);
 }
 
+export function shouldOpenNoteClickInNewTab(
+    event: MultiSelectModifierEventState,
+    multiSelectModifier: MultiSelectModifier,
+    isMobile: boolean
+): boolean {
+    return (
+        !isMobile &&
+        multiSelectModifier === 'optionAlt' &&
+        !isMultiSelectModifierPressed(event, multiSelectModifier) &&
+        isCmdCtrlModifierPressed(event)
+    );
+}
+
 export function resolveFolderNoteClickOpenContext(
     event: CmdCtrlEventState,
     folderNoteOpenLocation: FolderNoteOpenLocation,

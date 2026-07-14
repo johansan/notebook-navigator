@@ -154,7 +154,7 @@ describe('applyModifiedSettingsTransfer', () => {
             folderSortOrder: 'alpha-desc'
         });
 
-        expect((nextSettings as unknown as Record<string, unknown>).defaultListAppearance).toBeUndefined();
+        expect(nextSettings.defaultListAppearance).toBeUndefined();
         expect(nextSettings.folderSortOrder).toBe('alpha-desc');
     });
 
@@ -167,8 +167,8 @@ describe('applyModifiedSettingsTransfer', () => {
             folderSortOrder: 'alpha-desc'
         });
 
-        expect((nextSettings as unknown as Record<string, unknown>).legacyField).toBeUndefined();
-        expect((nextSettings as unknown as Record<string, unknown>).searchProvider).toBe('omnisearch');
+        expect(nextSettings.legacyField).toBeUndefined();
+        expect(nextSettings.searchProvider).toBe('omnisearch');
         expect(nextSettings.folderSortOrder).toBe('alpha-desc');
     });
 
@@ -192,6 +192,7 @@ describe('applyModifiedSettingsTransfer', () => {
             ]
         });
 
-        expect(nextSettings.vaultProfiles[0]?.navigationBanner).toBeNull();
+        const profiles = nextSettings.vaultProfiles as { navigationBanner: unknown }[];
+        expect(profiles[0]?.navigationBanner).toBeNull();
     });
 });

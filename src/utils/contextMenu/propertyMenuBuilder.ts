@@ -169,7 +169,7 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
         }
 
         selectionDispatch({ type: 'SET_SELECTED_FILE', file });
-        uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+        uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
     };
 
     menu.addItem((item: MenuItem) => {

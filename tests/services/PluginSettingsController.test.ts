@@ -259,14 +259,357 @@ describe('PluginSettingsController.loadSettings', () => {
 
         expect(controller.settings.noteGrouping).toBe('custom');
         expect(controller.settings.folderAppearances.Inbox?.groupBy).toBe('custom');
-        expect(controller.settings.tagAppearances['#work']?.groupBy).toBe('custom');
+        // Tag appearance keys are canonicalized by the settings pipeline, so '#work' is stored as 'work'
+        expect(controller.settings.tagAppearances['work']?.groupBy).toBe('custom');
         expect(controller.settings.propertyAppearances[statusNodeId]?.groupBy).toBe('custom');
         expect(saveData).toHaveBeenCalledTimes(1);
         const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
         expect(savedSettings.noteGrouping).toBe('custom');
         expect((savedSettings.folderAppearances as Record<string, Record<string, unknown>>).Inbox?.groupBy).toBe('custom');
-        expect((savedSettings.tagAppearances as Record<string, Record<string, unknown>>)['#work']?.groupBy).toBe('custom');
+        expect((savedSettings.tagAppearances as Record<string, Record<string, unknown>>)['work']?.groupBy).toBe('custom');
         expect((savedSettings.propertyAppearances as Record<string, Record<string, unknown>>)[statusNodeId]?.groupBy).toBe('custom');
+    });
+});
+
+describe('PluginSettingsController.loadSettings result classification', () => {
+    const createController = (loadData: () => Promise<unknown>) => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const loadDataMock = vi.fn(loadData);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: loadDataMock,
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+        return { controller, saveData, loadDataMock };
+    };
+
+    it('returns missing without applying or saving anything when the settings file does not exist', async () => {
+        const { controller, saveData } = createController(async () => null);
+
+        await expect(controller.loadSettings()).resolves.toBe('missing');
+
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('treats an empty stored record as loaded', async () => {
+        const { controller } = createController(async () => ({}));
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+    });
+
+    it('returns unavailable without saving when the settings file cannot be read', async () => {
+        const { controller, saveData } = createController(async () => undefined);
+
+        await expect(controller.loadSettings()).resolves.toBe('unavailable');
+
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('returns unavailable without saving for non-record settings data', async () => {
+        const { controller, saveData } = createController(async () => ['not', 'a', 'record']);
+
+        await expect(controller.loadSettings()).resolves.toBe('unavailable');
+
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('preserves loaded settings when later loads return missing or unreadable data', async () => {
+        let stored: unknown = { recentNotesCount: 17 };
+        const { controller, saveData } = createController(async () => stored);
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+        expect(controller.settings.recentNotesCount).toBe(17);
+        const saveCallsAfterLoad = saveData.mock.calls.length;
+
+        stored = undefined;
+        await expect(controller.loadSettings()).resolves.toBe('unavailable');
+        expect(controller.settings.recentNotesCount).toBe(17);
+
+        stored = null;
+        await expect(controller.loadSettings()).resolves.toBe('missing');
+        expect(controller.settings.recentNotesCount).toBe(17);
+        expect(saveData.mock.calls.length).toBe(saveCallsAfterLoad);
+    });
+
+    it('replaces settings from the stored record after an unavailable load', async () => {
+        let stored: unknown = { recentNotesCount: 17 };
+        const { controller } = createController(async () => stored);
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        stored = undefined;
+        await expect(controller.loadSettings()).resolves.toBe('unavailable');
+        expect(controller.settings.recentNotesCount).toBe(17);
+
+        stored = { recentNotesCount: 23 };
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+        expect(controller.settings.recentNotesCount).toBe(23);
+    });
+
+    it('preserves first-launch settings when a later load returns missing data', async () => {
+        const { controller, saveData } = createController(async () => null);
+
+        controller.applySettingsRecord(null, { isFirstLaunch: true });
+        controller.settings.recentNotesCount = 25;
+
+        await expect(controller.loadSettings()).resolves.toBe('missing');
+
+        expect(controller.settings.recentNotesCount).toBe(25);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+});
+
+describe('PluginSettingsController.loadSettingsAtStartup', () => {
+    const createController = (loadData: () => Promise<unknown>) => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const loadDataMock = vi.fn(loadData);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: loadDataMock,
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+        return { controller, saveData, loadDataMock };
+    };
+
+    it('uses the retry window before confirming first launch for a missing file', async () => {
+        const { controller, saveData, loadDataMock } = createController(async () => null);
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('first-launch');
+
+        expect(loadDataMock).toHaveBeenCalledTimes(3);
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings.recentNotesCount).toBe(DEFAULT_SETTINGS.recentNotesCount);
+    });
+
+    it('loads a settings file that appears during the retry window', async () => {
+        let attempts = 0;
+        const { controller, saveData, loadDataMock } = createController(async () => {
+            attempts += 1;
+            return attempts < 3 ? null : { recentNotesCount: 17 };
+        });
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 4, retryDelayMs: 0 })).resolves.toBe('loaded');
+
+        expect(loadDataMock).toHaveBeenCalledTimes(3);
+        expect(controller.settings.recentNotesCount).toBe(17);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('confirms first launch without saving when the file stays missing through the retry window', async () => {
+        const { controller, saveData, loadDataMock } = createController(async () => null);
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('first-launch');
+
+        expect(loadDataMock).toHaveBeenCalledTimes(3);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('never confirms first launch after observing an unreadable settings file', async () => {
+        const results: unknown[] = [undefined, null, null];
+        const { controller, saveData } = createController(async () => results.shift());
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('unavailable');
+
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('returns unavailable for a missing file when the device has run the plugin before', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.localStorageVersionKey, 1);
+        const { controller, saveData, loadDataMock } = createController(async () => null);
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('unavailable');
+
+        expect(loadDataMock).toHaveBeenCalledTimes(3);
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('loads a valid record after an unavailable attempt', async () => {
+        const results: unknown[] = [undefined, { recentNotesCount: 23 }];
+        const { controller, saveData, loadDataMock } = createController(async () => results.shift());
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('loaded');
+
+        expect(loadDataMock).toHaveBeenCalledTimes(2);
+        expect(controller.settings.recentNotesCount).toBe(23);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('cancels startup loading without applying defaults or waiting for another attempt', async () => {
+        const { controller, saveData, loadDataMock } = createController(async () => null);
+        const abortController = new AbortController();
+
+        const result = controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 10000, signal: abortController.signal });
+        abortController.abort();
+
+        await expect(result).resolves.toBe('cancelled');
+        expect(loadDataMock).toHaveBeenCalledTimes(1);
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('cancels an in-flight settings read without applying or persisting its result', async () => {
+        let resolveLoad: (value: unknown) => void = () => {};
+        const pendingLoad = new Promise<unknown>(resolve => {
+            resolveLoad = resolve;
+        });
+        const { controller, saveData, loadDataMock } = createController(async () => await pendingLoad);
+        const abortController = new AbortController();
+
+        const result = controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0, signal: abortController.signal });
+        expect(loadDataMock).toHaveBeenCalledTimes(1);
+        abortController.abort();
+        resolveLoad({ recentNotesCount: 23, showWordCount: true });
+
+        await expect(result).resolves.toBe('cancelled');
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+});
+
+describe('PluginSettingsController.applySettingsRecord', () => {
+    const createController = () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const loadDataMock = vi.fn();
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: loadDataMock,
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+        return { controller, saveData, loadDataMock };
+    };
+
+    it('sanitizes malformed values in memory without reading from disk or persisting', () => {
+        const { controller, saveData, loadDataMock } = createController();
+
+        controller.applySettingsRecord(
+            {
+                shiftEnterOpenContext: 'bogus',
+                recentNotesCount: -4,
+                propertySortKey: ['status']
+            },
+            { isFirstLaunch: false }
+        );
+
+        expect(controller.settings.shiftEnterOpenContext).toBe(DEFAULT_SETTINGS.shiftEnterOpenContext);
+        expect(controller.settings.recentNotesCount).toBe(DEFAULT_SETTINGS.recentNotesCount);
+        expect(controller.settings.propertySortKey).toBe(DEFAULT_SETTINGS.propertySortKey);
+        expect(loadDataMock).not.toHaveBeenCalled();
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('applies an empty record as defaults for reset', () => {
+        const { controller, saveData } = createController();
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.recentNotesCount = 40;
+        controller.settings = settings;
+
+        controller.applySettingsRecord({}, { isFirstLaunch: false });
+
+        expect(controller.settings.recentNotesCount).toBe(DEFAULT_SETTINGS.recentNotesCount);
+        expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('uses imported values instead of existing device mirrors for local-mode settings', () => {
+        const { controller } = createController();
+        const syncModes = structuredClone(DEFAULT_SETTINGS.syncModes);
+        syncModes.folderSortOrder = 'local';
+        syncModes.includeDescendantNotes = 'local';
+        syncModes.vaultProfile = 'local';
+        syncModes.dualPane = 'local';
+        syncModes.uiScale = 'local';
+        mockLocalStorageStore.set(STORAGE_KEYS.folderSortOrderKey, 'alpha-asc');
+        mockLocalStorageStore.set(STORAGE_KEYS.uxPreferencesKey, { includeDescendantNotes: false });
+        mockLocalStorageStore.set(STORAGE_KEYS.vaultProfileKey, 'default');
+        mockLocalStorageStore.set(STORAGE_KEYS.dualPaneKey, '0');
+        mockLocalStorageStore.set(STORAGE_KEYS.uiScaleKey, 1.1);
+        const secondaryProfile = structuredClone(DEFAULT_SETTINGS.vaultProfiles[0]);
+        secondaryProfile.id = 'secondary';
+        secondaryProfile.name = 'Secondary';
+
+        controller.applySettingsRecord(
+            {
+                syncModes,
+                vaultProfiles: [structuredClone(DEFAULT_SETTINGS.vaultProfiles[0]), secondaryProfile],
+                vaultProfile: 'secondary',
+                folderSortOrder: 'alpha-desc',
+                includeDescendantNotes: true,
+                dualPane: true,
+                desktopScale: 1.3,
+                mobileScale: 0.9
+            },
+            { isFirstLaunch: false, preferRecordLocalValues: true }
+        );
+
+        expect(controller.settings.folderSortOrder).toBe('alpha-desc');
+        expect(controller.settings.includeDescendantNotes).toBe(true);
+        expect(controller.settings.vaultProfile).toBe('secondary');
+        expect(controller.settings.dualPane).toBe(true);
+        expect(controller.settings.desktopScale).toBe(1.3);
+        expect(controller.settings.mobileScale).toBe(0.9);
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.folderSortOrderKey)).toBe('alpha-desc');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.uxPreferencesKey)).toMatchObject({ includeDescendantNotes: true });
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.vaultProfileKey)).toBe('secondary');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.dualPaneKey)).toBe('1');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.uiScaleKey)).toBe(1.3);
+    });
+
+    it('builds persistable first-launch defaults without changing current settings or local mirrors', () => {
+        const { controller } = createController();
+        const currentSettings = structuredClone(DEFAULT_SETTINGS);
+        currentSettings.recentNotesCount = 40;
+        controller.settings = currentSettings;
+        mockLocalStorageStore.set(STORAGE_KEYS.folderSortOrderKey, 'alpha-desc');
+
+        const persistedDefaults = controller.getPersistableDefaultSettings() as unknown as Record<string, unknown>;
+
+        expect(persistedDefaults.recentNotesCount).toBe(DEFAULT_SETTINGS.recentNotesCount);
+        expect(persistedDefaults.desktopScale).toBe(DEFAULT_SETTINGS.desktopScale);
+        expect(persistedDefaults.mobileScale).toBe(DEFAULT_SETTINGS.mobileScale);
+        expect(controller.settings.recentNotesCount).toBe(40);
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.folderSortOrderKey)).toBe('alpha-desc');
+    });
+
+    it('builds the same persisted defaults as the canonical first-launch pipeline', () => {
+        const { controller } = createController();
+        const persistedDefaults = controller.getPersistableDefaultSettings();
+        const { controller: firstLaunchController } = createController();
+
+        firstLaunchController.applySettingsRecord(null, { isFirstLaunch: true });
+
+        expect(persistedDefaults).toEqual(firstLaunchController.getPersistableSettings());
+    });
+
+    it('does not mutate DEFAULT_SETTINGS through the settings pipeline', () => {
+        const pristineDefaults = structuredClone(DEFAULT_SETTINGS);
+        const { controller } = createController();
+
+        controller.applySettingsRecord(null, { isFirstLaunch: true });
+        controller.settings.vaultProfiles[0].name = 'Edited';
+        controller.settings.vaultProfiles[0].hiddenFolders.push('secret');
+        controller.applySettingsRecord({}, { isFirstLaunch: false });
+        controller.getPersistableDefaultSettings();
+
+        expect(DEFAULT_SETTINGS).toEqual(pristineDefaults);
+    });
+
+    it('produces identical persisted defaults across consecutive resets', () => {
+        const { controller } = createController();
+
+        controller.applySettingsRecord({}, { isFirstLaunch: false });
+        const firstResetSettings = structuredClone(controller.getPersistableSettings());
+
+        controller.settings.vaultProfiles[0].name = 'Edited';
+        controller.settings.vaultProfiles[0].hiddenFolders.push('secret');
+        controller.applySettingsRecord({}, { isFirstLaunch: false });
+
+        expect(controller.getPersistableSettings()).toEqual(firstResetSettings);
     });
 });
 

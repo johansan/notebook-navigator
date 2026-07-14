@@ -218,11 +218,11 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 isExcluded: !isMissing ? item.isExcluded : undefined,
                 isDisabled: isMissing,
                 isMissing,
-                onClick: () => {
+                onClick: (event: React.MouseEvent<HTMLDivElement>) => {
                     if (!note) {
                         return;
                     }
-                    shortcuts.handleShortcutNoteActivate(note, item.key);
+                    shortcuts.handleShortcutNoteActivate(note, item.key, event);
                 },
                 onRemove: () => {
                     runAsyncAction(() => shortcuts.removeShortcut(item.key));
@@ -424,7 +424,7 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                     tooltip={tooltip}
                     level={item.level}
                     type="note"
-                    onClick={() => shortcuts.handleRecentNoteActivate(note)}
+                    onClick={event => shortcuts.handleRecentNoteActivate(note, event)}
                     onMouseDown={event => shortcuts.handleShortcutNoteMouseDown(event, note)}
                     onContextMenu={event => shortcuts.handleRecentFileContextMenu(event, note)}
                     nativeDragData={

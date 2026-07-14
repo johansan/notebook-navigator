@@ -900,7 +900,8 @@ export const STRINGS_IT = {
         removeTag: 'Rimuovi tag dai file selezionati', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Rimuovi tutti i tag dai file selezionati', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Apri tutti i file', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Ricostruisci cache' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Ricostruisci cache', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Ripristina impostazioni predefinite' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -909,7 +910,17 @@ export const STRINGS_IT = {
         calendarViewName: 'Calendario', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Nota cartella', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Notebook Navigator', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Mostra in Notebook Navigator' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Mostra in Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            'Notebook Navigator non è riuscito a leggere le impostazioni e non è stato avviato. Se il tuo vault è in sincronizzazione, riavvia Obsidian al termine della sincronizzazione. Per ricominciare con le impostazioni predefinite, esegui il comando "Ripristina impostazioni predefinite".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Ripristina impostazioni predefinite', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'Questa operazione sostituisce il file delle impostazioni di Notebook Navigator con le impostazioni predefinite. Se il tuo vault è ancora in sincronizzazione, le impostazioni predefinite ripristinate possono sovrascrivere quelle salvate sugli altri tuoi dispositivi. Un file delle impostazioni leggibile viene prima copiato in un backup con data e ora nella cartella del plugin.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Ripristina predefinite', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Impossibile completare il ripristino delle impostazioni. Le preferenze locali sono state mantenute.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Impostazioni predefinite ripristinate. Riavvia Obsidian per completare.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1158,6 +1169,10 @@ export const STRINGS_IT = {
             showFolderGroupPaths: {
                 name: 'Mostra percorsi sottocartelle',
                 desc: 'Quando raggruppi per cartella nel pannello lista, mostra i percorsi delle sottocartelle invece dei soli nomi cartella.'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'Mostra il numero di elementi',
+                desc: 'Mostra il numero di elementi in ogni intestazione di gruppo del pannello lista.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Raggruppamento per cartella: file della cartella corrente in basso',
