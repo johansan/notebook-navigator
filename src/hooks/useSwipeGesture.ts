@@ -152,15 +152,13 @@ export function useMobileSwipeNavigation(containerRef: React.RefObject<HTMLEleme
 
     const handleSwipeRight = useCallback(() => {
         if (!isRTL) {
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'navigation' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
         }
     }, [isRTL, uiDispatch]);
 
     const handleSwipeLeft = useCallback(() => {
         if (isRTL) {
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'navigation' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
         }
     }, [isRTL, uiDispatch]);
 

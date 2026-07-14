@@ -34,10 +34,13 @@ function getStartView(settings: NotebookNavigatorSettings): 'navigation' | 'file
     return settings.startView === 'navigation' ? 'navigation' : 'files';
 }
 
+export type ContentPane = 'navigation' | 'files';
+export type PaneActivationTarget = ContentPane | 'search';
+
 // State interface
-interface UIState {
-    focusedPane: 'navigation' | 'files' | 'search';
-    currentSinglePaneView: 'navigation' | 'files';
+export interface UIState {
+    focusedPane: PaneActivationTarget;
+    currentSinglePaneView: ContentPane;
     paneWidth: number;
     containerWidth: number | null;
     dualPanePreference: boolean;
@@ -50,8 +53,7 @@ interface UIState {
 
 // Action types
 export type UIAction =
-    | { type: 'SET_FOCUSED_PANE'; pane: 'navigation' | 'files' | 'search' }
-    | { type: 'SET_SINGLE_PANE_VIEW'; view: 'navigation' | 'files' }
+    | { type: 'ACTIVATE_PANE'; target: PaneActivationTarget }
     | { type: 'SET_PANE_WIDTH'; width: number }
     | { type: 'SET_CONTAINER_WIDTH'; width: number }
     | { type: 'SET_DUAL_PANE'; value: boolean }
@@ -62,13 +64,15 @@ const UIStateContext = createContext<UIState | null>(null);
 const UIDispatchContext = createContext<React.Dispatch<UIAction> | null>(null);
 
 // Reducer
-function uiStateReducer(state: UIState, action: UIAction): UIState {
+export function uiStateReducer(state: UIState, action: UIAction): UIState {
     switch (action.type) {
-        case 'SET_FOCUSED_PANE':
-            return { ...state, focusedPane: action.pane };
-
-        case 'SET_SINGLE_PANE_VIEW':
-            return { ...state, currentSinglePaneView: action.view };
+        case 'ACTIVATE_PANE': {
+            const visiblePane: ContentPane = action.target === 'search' ? 'files' : action.target;
+            if (state.focusedPane === action.target && state.currentSinglePaneView === visiblePane) {
+                return state;
+            }
+            return { ...state, focusedPane: action.target, currentSinglePaneView: visiblePane };
+        }
 
         case 'SET_PANE_WIDTH':
             if (state.paneWidth === action.width) {
@@ -219,20 +223,6 @@ export function UIStateProvider({ children, isMobile }: UIStateProviderProps) {
 
     // Note: Pane width persistence is handled by useResizablePane hook
     // to avoid duplicate writes during drag operations
-
-    // Keep focused pane aligned with the visible pane on mobile (single-pane mode)
-    // This prevents mismatches where the UI shows one pane while keyboard handlers
-    // think another pane is focused (e.g., after swipe gestures or virtual keyboard actions).
-    useEffect(() => {
-        if (!isMobile) return;
-        const view = state.currentSinglePaneView;
-        const focused = state.focusedPane;
-        if (view === 'navigation' && focused !== 'navigation') {
-            internalDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
-        } else if (view === 'files' && focused === 'navigation') {
-            internalDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
-        }
-    }, [isMobile, state.currentSinglePaneView, state.focusedPane]);
 
     return (
         <UIStateContext.Provider value={stateWithPaneMode}>

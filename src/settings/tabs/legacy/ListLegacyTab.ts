@@ -265,6 +265,16 @@ export function renderListPaneTab(context: SettingsTabContext): void {
         }
     );
 
+    addToggleSetting(
+        groupHeadersGroup.addSetting,
+        strings.settings.items.showGroupHeaderItemCounts.name,
+        strings.settings.items.showGroupHeaderItemCounts.desc,
+        () => plugin.settings.showGroupHeaderItemCounts,
+        value => {
+            plugin.settings.showGroupHeaderItemCounts = value;
+        }
+    );
+
     groupHeadersGroup.addSetting(setting => {
         setting
             .setName(strings.settings.items.manualSortGroupHeaderProperty.name)

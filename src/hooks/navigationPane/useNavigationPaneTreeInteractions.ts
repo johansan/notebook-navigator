@@ -133,8 +133,7 @@ export function useNavigationPaneTreeInteractions({
                 return;
             }
 
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
         },
         [uiDispatch, uiState.singlePane]
     );
@@ -183,7 +182,7 @@ export function useNavigationPaneTreeInteractions({
 
             if (shouldCollapseOnSelect) {
                 handleFolderToggle(folder.path);
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 return;
             }
 
@@ -193,15 +192,14 @@ export function useNavigationPaneTreeInteractions({
 
             if (uiState.singlePane) {
                 if (shouldExpandOnly) {
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                    uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 } else {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+                    uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
                 }
                 return;
             }
 
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
         },
         [
             clearActiveShortcut,
@@ -465,15 +463,14 @@ export function useNavigationPaneTreeInteractions({
         (keepNavigationFocus: boolean) => {
             if (uiState.singlePane) {
                 if (keepNavigationFocus) {
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                    uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 } else {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+                    uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
                 }
                 return;
             }
 
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
         },
         [uiDispatch, uiState.singlePane]
     );
@@ -498,7 +495,7 @@ export function useNavigationPaneTreeInteractions({
             const shouldCollapseOnSelect = settings.autoExpandNavItems && !uiState.singlePane && hasChildren && isExpanded && isSelected;
             if (shouldCollapseOnSelect) {
                 onToggleExpand();
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
                 return;
             }
 

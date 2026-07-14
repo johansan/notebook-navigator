@@ -904,7 +904,8 @@ export const STRINGS_FA = {
         removeTag: 'حذف برچسب از فایل‌های انتخابی',
         removeAllTags: 'حذف همه برچسب‌ها از فایل‌های انتخابی',
         openAllFiles: 'باز کردن همه فایل‌ها',
-        rebuildCache: 'بازسازی کش'
+        rebuildCache: 'بازسازی کش',
+        restoreDefaultSettings: 'بازیابی تنظیمات پیش‌فرض' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -913,7 +914,17 @@ export const STRINGS_FA = {
         calendarViewName: 'تقویم',
         folderNoteSidebarViewName: 'یادداشت پوشه',
         ribbonTooltip: 'Notebook Navigator',
-        revealInNavigator: 'نمایش در Notebook Navigator'
+        revealInNavigator: 'نمایش در Notebook Navigator',
+        settingsUnavailableNotice:
+            'Notebook Navigator نتوانست تنظیمات خود را بخواند و راه‌اندازی نشد. اگر Vault شما در حال همگام‌سازی است، پس از پایان همگام‌سازی Obsidian را دوباره راه‌اندازی کنید. برای شروع دوباره با تنظیمات پیش‌فرض، فرمان «بازیابی تنظیمات پیش‌فرض» را اجرا کنید.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'بازیابی تنظیمات پیش‌فرض', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'این کار فایل تنظیمات Notebook Navigator را با تنظیمات پیش‌فرض جایگزین می‌کند. اگر Vault شما هنوز در حال همگام‌سازی است، تنظیمات پیش‌فرض بازیابی‌شده ممکن است جایگزین تنظیمات ذخیره‌شده در دستگاه‌های دیگر شما شود. فایل تنظیمات قابل خواندن ابتدا در یک نسخه پشتیبان دارای برچسب زمانی در پوشه افزونه کپی می‌شود.', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'بازیابی پیش‌فرض‌ها', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'بازیابی تنظیمات کامل نشد. ترجیحات محلی حفظ شدند.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'تنظیمات پیش‌فرض بازیابی شد. برای پایان کار Obsidian را دوباره راه‌اندازی کنید.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1162,6 +1173,10 @@ export const STRINGS_FA = {
             showFolderGroupPaths: {
                 name: 'نمایش مسیرهای زیرپوشه',
                 desc: 'هنگام گروه‌بندی بر اساس پوشه در پنل لیست، مسیرهای زیرپوشه را به جای فقط نام پوشه‌ها نمایش دهید.'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'نمایش تعداد موارد',
+                desc: 'تعداد موارد را در هر سربرگ گروه در پنل لیست نمایش دهید.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'گروه‌بندی پوشه: فایل‌های پوشه فعلی در پایین',

@@ -4830,6 +4830,12 @@ button.nn-navigation-calendar-day {
     font-weight: var(--nn-theme-navitem-custom-color-name-font-weight);
 }
 
+.nn-list-group-header-item-count {
+    flex: 0 0 auto;
+    font-weight: 400;
+    color: var(--nn-theme-foreground-muted);
+}
+
 .nn-list-group-header-path {
     display: inline-flex;
     align-items: center;

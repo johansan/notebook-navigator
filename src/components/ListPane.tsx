@@ -50,7 +50,7 @@ import { Virtualizer } from '@tanstack/react-virtual';
 import { useSelectionState, useSelectionDispatch } from '../context/SelectionContext';
 import { useServices } from '../context/ServicesContext';
 import { useSettingsState, useActiveProfile, useSettingsDerived } from '../context/SettingsContext';
-import { useUIDispatch, useUIState } from '../context/UIStateContext';
+import { useUIState } from '../context/UIStateContext';
 import { useExpansionDispatch, useExpansionState } from '../context/ExpansionContext';
 import { useFileCache } from '../context/StorageContext';
 import { useShortcuts } from '../context/ShortcutsContext';
@@ -311,7 +311,6 @@ export const ListPane = React.memo(
         const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = useFileCache();
         const { noteShortcutKeysByPath, addNoteShortcut, removeShortcut } = useShortcuts();
         const uiState = useUIState();
-        const uiDispatch = useUIDispatch();
         const isVerticalDualPane = !uiState.singlePane && uiState.effectiveDualPaneOrientation === 'vertical';
         const calendarPlacement = settings.calendarPlacement;
         const shouldRenderCalendarOverlay =
@@ -685,10 +684,6 @@ export const ListPane = React.memo(
                 const selectionKey = manualSortSelectionKey;
                 setForceSearchDescendants(false);
                 closeSearch();
-                if (uiState.singlePane) {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                }
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
                 setManualSortEditState({
                     propertyKey,
                     order: null,
@@ -699,7 +694,7 @@ export const ListPane = React.memo(
                     saveId: 0
                 });
             },
-            [closeSearch, manualSortSelectionKey, uiDispatch, uiState.singlePane]
+            [closeSearch, manualSortSelectionKey]
         );
 
         // Determine if list pane is visible early to optimize

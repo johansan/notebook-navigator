@@ -907,7 +907,8 @@ export const STRINGS_FR = {
         removeTag: 'Supprimer une étiquette des fichiers sélectionnés', // Command palette: Opens a dialog to remove a tag from selected files (English: Remove tag from selected files)
         removeAllTags: 'Supprimer toutes les étiquettes des fichiers sélectionnés', // Command palette: Removes all tags from selected files (English: Remove all tags from selected files)
         openAllFiles: 'Ouvrir tous les fichiers', // Command palette: Opens all files in the current folder or tag (English: Open all files)
-        rebuildCache: 'Reconstruire le cache' // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        rebuildCache: 'Reconstruire le cache', // Command palette: Rebuilds the local Notebook Navigator cache (English: Rebuild cache)
+        restoreDefaultSettings: 'Restaurer les paramètres par défaut' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -916,7 +917,17 @@ export const STRINGS_FR = {
         calendarViewName: 'Calendrier', // Name shown in the view header/tab (English: Calendar)
         folderNoteSidebarViewName: 'Note de dossier', // Name shown in the folder note sidebar tab (English: Folder note)
         ribbonTooltip: 'Navigateur de Carnets', // Tooltip for the ribbon icon in the left sidebar (English: Notebook Navigator)
-        revealInNavigator: 'Révéler dans le Navigateur de Carnets' // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        revealInNavigator: 'Révéler dans le Navigateur de Carnets', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
+        settingsUnavailableNotice:
+            "Le Navigateur de Carnets n'a pas pu lire ses paramètres et ne s'est pas lancé. Si votre coffre est en cours de synchronisation, redémarrez Obsidian une fois la synchronisation terminée. Pour repartir avec les paramètres par défaut, exécutez la commande « Restaurer les paramètres par défaut ».", // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'Restaurer les paramètres par défaut', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                "Ceci remplace le fichier de paramètres du Navigateur de Carnets par les paramètres par défaut. Si votre coffre est encore en cours de synchronisation, les valeurs par défaut restaurées peuvent remplacer les paramètres enregistrés sur vos autres appareils. Un fichier de paramètres lisible est d'abord copié vers une sauvegarde horodatée dans le dossier du plugin.", // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'Restaurer les valeurs par défaut', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'Impossible de terminer la récupération des paramètres. Les préférences locales ont été conservées.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'Paramètres par défaut restaurés. Redémarrez Obsidian pour terminer.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1166,6 +1177,10 @@ export const STRINGS_FR = {
             showFolderGroupPaths: {
                 name: 'Afficher les chemins des sous-dossiers',
                 desc: 'Lors du regroupement par dossier dans le panneau de liste, afficher les chemins des sous-dossiers au lieu des seuls noms de dossier.'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'Afficher le nombre d’éléments',
+                desc: 'Affiche le nombre d’éléments dans chaque en-tête de groupe du panneau de liste.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Regroupement par dossier : fichiers du dossier actuel en bas',

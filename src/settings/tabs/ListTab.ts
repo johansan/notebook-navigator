@@ -108,6 +108,10 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 name: strings.settings.items.showFolderGroupPaths.name,
                 desc: strings.settings.items.showFolderGroupPaths.desc
             }),
+            createToggleDefinition('showGroupHeaderItemCounts', {
+                name: strings.settings.items.showGroupHeaderItemCounts.name,
+                desc: strings.settings.items.showGroupHeaderItemCounts.desc
+            }),
             createRenderDefinition({
                 name: strings.settings.items.manualSortGroupHeaderProperty.name,
                 desc: strings.settings.items.manualSortGroupHeaderProperty.desc,

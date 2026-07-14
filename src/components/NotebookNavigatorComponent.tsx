@@ -23,7 +23,7 @@ import { useExpansionState } from '../context/ExpansionContext';
 import { useSelectionState, useSelectionDispatch, resolvePrimarySelectedFile } from '../context/SelectionContext';
 import { useServices } from '../context/ServicesContext';
 import { useActiveProfile, useSettingsState } from '../context/SettingsContext';
-import { useUIState, useUIDispatch } from '../context/UIStateContext';
+import { useUIState, useUIDispatch, type ContentPane } from '../context/UIStateContext';
 import { useShortcuts } from '../context/ShortcutsContext';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
@@ -336,10 +336,9 @@ export const NotebookNavigatorComponent = React.memo(
 
         const getNavigationSearchUpdateOptions = useCallback((): SearchQueryUpdateOptions => {
             return {
-                preserveSinglePaneView: uiState.singlePane && uiState.currentSinglePaneView === 'navigation',
                 focusSearch: false
             };
-        }, [uiState.currentSinglePaneView, uiState.singlePane]);
+        }, []);
 
         const handleModifySearchWithTag = useCallback(
             (tag: string, operator: InclusionOperator) => {
@@ -456,16 +455,14 @@ export const NotebookNavigatorComponent = React.memo(
                 const raf = window.requestAnimationFrame(() => {
                     setSuppressPaneTransitions(false);
                 });
-                uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
                 return () => {
                     window.cancelAnimationFrame(raf);
                 };
             }
 
             const preferredView = preferredSinglePaneView.current;
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: preferredView });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: preferredView });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: preferredView });
         }, [isMobile, uiDispatch, uiState.dualPane]);
 
         useEffect(() => {
@@ -492,8 +489,7 @@ export const NotebookNavigatorComponent = React.memo(
             if (!uiState.singlePane) {
                 return;
             }
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'navigation' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'navigation' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'navigation' });
         }, [uiDispatch, uiState.singlePane]);
 
         // Restores file list view when drag ends in single pane mode
@@ -506,8 +502,7 @@ export const NotebookNavigatorComponent = React.memo(
                 return;
             }
 
-            uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: 'files' });
-            uiDispatch({ type: 'SET_FOCUSED_PANE', pane: 'files' });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
         }, [uiDispatch, uiState.singlePane, uiState.currentSinglePaneView]);
 
         useDragNavigationPaneActivation({
@@ -533,40 +528,26 @@ export const NotebookNavigatorComponent = React.memo(
         const { handleExpandCollapseAll } = useNavigationActions();
 
         const focusPane = useCallback(
-            (pane: 'files' | 'navigation', options?: { updateSinglePaneView?: boolean }) => {
+            (pane: ContentPane) => {
                 const isOpeningVersionHistory = commandQueue?.isOpeningVersionHistory() || false;
                 const isOpeningInNewContext = commandQueue?.isOpeningInNewContext() || false;
 
-                if (uiState.singlePane && options?.updateSinglePaneView && uiState.currentSinglePaneView !== pane) {
-                    uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: pane });
-                }
-
-                if (uiState.focusedPane !== pane) {
-                    uiDispatch({ type: 'SET_FOCUSED_PANE', pane });
-                }
+                uiDispatch({ type: 'ACTIVATE_PANE', target: pane });
 
                 if (!isOpeningVersionHistory && !isOpeningInNewContext) {
                     containerRef.current?.focus();
                 }
             },
-            [commandQueue, uiDispatch, uiState.singlePane, uiState.currentSinglePaneView, uiState.focusedPane]
+            [commandQueue, uiDispatch]
         );
 
-        const focusNavigationPaneCallback = useCallback(
-            (options?: { updateSinglePaneView?: boolean }) => {
-                const updateSinglePaneView = options?.updateSinglePaneView ?? uiState.singlePane;
-                focusPane('navigation', { updateSinglePaneView });
-            },
-            [focusPane, uiState.singlePane]
-        );
+        const focusNavigationPaneCallback = useCallback(() => {
+            focusPane('navigation');
+        }, [focusPane]);
 
-        const focusFilesPaneCallback = useCallback(
-            (options?: { updateSinglePaneView?: boolean }) => {
-                const updateSinglePaneView = options?.updateSinglePaneView ?? uiState.singlePane;
-                focusPane('files', { updateSinglePaneView });
-            },
-            [focusPane, uiState.singlePane]
-        );
+        const focusFilesPaneCallback = useCallback(() => {
+            focusPane('files');
+        }, [focusPane]);
 
         // Use navigator reveal logic
         const {
@@ -796,8 +777,7 @@ export const NotebookNavigatorComponent = React.memo(
                     return;
                 }
 
-                uiDispatch({ type: 'SET_SINGLE_PANE_VIEW', view: targetView });
-                uiDispatch({ type: 'SET_FOCUSED_PANE', pane: targetView });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: targetView });
             };
 
             container.addEventListener('auxclick', handleAuxClick);

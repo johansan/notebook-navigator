@@ -897,7 +897,8 @@ export const STRINGS_TH = {
         removeTag: 'นำแท็กออกจากไฟล์ที่เลือก',
         removeAllTags: 'นำแท็กทั้งหมดออกจากไฟล์ที่เลือก',
         openAllFiles: 'เปิดไฟล์ทั้งหมด',
-        rebuildCache: 'สร้างแคชใหม่'
+        rebuildCache: 'สร้างแคชใหม่',
+        restoreDefaultSettings: 'กู้คืนการตั้งค่าเริ่มต้น' // Command palette: Replaces the settings file with defaults after startup was aborted (English: Restore default settings)
     },
 
     // Plugin UI
@@ -906,7 +907,17 @@ export const STRINGS_TH = {
         calendarViewName: 'ปฏิทิน',
         folderNoteSidebarViewName: 'โน้ตโฟลเดอร์',
         ribbonTooltip: 'Notebook Navigator',
-        revealInNavigator: 'แสดงใน Notebook Navigator'
+        revealInNavigator: 'แสดงใน Notebook Navigator',
+        settingsUnavailableNotice:
+            'Notebook Navigator ไม่สามารถอ่านการตั้งค่าได้และไม่ได้เริ่มทำงาน หากคลังของคุณกำลังซิงค์อยู่ ให้รีสตาร์ท Obsidian หลังจากการซิงค์เสร็จสิ้น หากต้องการเริ่มใหม่ด้วยการตั้งค่าเริ่มต้น ให้เรียกใช้คำสั่ง "กู้คืนการตั้งค่าเริ่มต้น"', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsRecovery: {
+            confirmTitle: 'กู้คืนการตั้งค่าเริ่มต้น', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
+            confirmMessage:
+                'การดำเนินการนี้จะแทนที่ไฟล์การตั้งค่าของ Notebook Navigator ด้วยการตั้งค่าเริ่มต้น หากคลังของคุณยังซิงค์อยู่ การตั้งค่าเริ่มต้นที่กู้คืนอาจเขียนทับการตั้งค่าที่บันทึกไว้ในอุปกรณ์อื่นของคุณ ไฟล์การตั้งค่าที่อ่านได้จะถูกคัดลอกไปยังข้อมูลสำรองที่มีการประทับเวลาในโฟลเดอร์ปลั๊กอินก่อน', // Body of the confirmation dialog for the settings recovery command
+            confirmButton: 'กู้คืนค่าเริ่มต้น', // Confirm button label in the settings recovery dialog (English: Restore defaults)
+            failedNotice: 'ไม่สามารถกู้คืนการตั้งค่าให้เสร็จสมบูรณ์ได้ การกำหนดลักษณะในเครื่องถูกเก็บไว้', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
+            completedNotice: 'กู้คืนการตั้งค่าเริ่มต้นแล้ว รีสตาร์ท Obsidian เพื่อเสร็จสิ้น' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
+        }
     },
 
     // Tooltips
@@ -1155,6 +1166,10 @@ export const STRINGS_TH = {
             showFolderGroupPaths: {
                 name: 'แสดงเส้นทางโฟลเดอร์ย่อย',
                 desc: 'เมื่อจัดกลุ่มตามโฟลเดอร์ในแผงรายการ ให้แสดงเส้นทางโฟลเดอร์ย่อยแทนการแสดงเฉพาะชื่อโฟลเดอร์'
+            },
+            showGroupHeaderItemCounts: {
+                name: 'แสดงจำนวนรายการ',
+                desc: 'แสดงจำนวนรายการในส่วนหัวแต่ละกลุ่มของแผงรายการ'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'การจัดกลุ่มตามโฟลเดอร์: ไฟล์ในโฟลเดอร์ปัจจุบันอยู่ด้านล่าง',
