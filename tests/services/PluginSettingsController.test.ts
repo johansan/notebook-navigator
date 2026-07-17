@@ -182,6 +182,25 @@ describe('PluginSettingsController.loadSettings', () => {
         expect(savedSettings.useFolderColorForFileTitles).toBeUndefined();
     });
 
+    it('removes the obsolete full parent folder path setting from persisted data', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                showParentFolderFullPath: false
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect((controller.settings as unknown as Record<string, unknown>).showParentFolderFullPath).toBeUndefined();
+        expect(saveData).toHaveBeenCalledTimes(1);
+        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(savedSettings.showParentFolderFullPath).toBeUndefined();
+    });
+
     it('persists cleanup when property sort overrides target unavailable sort keys', async () => {
         const saveData = vi.fn().mockResolvedValue(undefined);
         const statusNodeId = buildPropertyKeyNodeId('status');

@@ -118,6 +118,7 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+    delete mutableSettings.showParentFolderFullPath;
 
     const storedNoteGrouping = storedData ? storedData['noteGrouping'] : undefined;
 
@@ -308,10 +309,6 @@ export function migrateLegacySyncedSettings(params: {
 
     if (typeof settings.showFilePropertiesInCompactMode !== 'boolean') {
         settings.showFilePropertiesInCompactMode = defaultSettings.showFilePropertiesInCompactMode;
-    }
-
-    if (typeof settings.showParentFolderFullPath !== 'boolean') {
-        settings.showParentFolderFullPath = defaultSettings.showParentFolderFullPath;
     }
 
     const previousUseFolderColorForTitles = mutableSettings['useFolderColorForFileTitles'];

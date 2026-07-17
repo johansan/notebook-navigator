@@ -1253,11 +1253,7 @@ export const STRINGS_FR = {
             },
             showParentFolder: {
                 name: 'Afficher le dossier parent',
-                desc: 'Afficher le nom du dossier parent pour les notes dans les sous-dossiers, étiquettes ou propriétés.'
-            },
-            showParentFolderFullPath: {
-                name: 'Afficher le chemin complet',
-                desc: 'Afficher le chemin complet du dossier parent au lieu du nom du dossier uniquement.'
+                desc: 'Afficher le chemin du dossier parent pour les notes dans les sous-dossiers, étiquettes ou propriétés.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clic sur dossier parent ouvre le dossier',

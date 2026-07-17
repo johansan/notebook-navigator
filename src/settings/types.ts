@@ -744,7 +744,6 @@ export interface NotebookNavigatorSettings {
     showFileDate: boolean;
     alphabeticalDateMode: AlphabeticalDateMode;
     showParentFolder: boolean;
-    showParentFolderFullPath: boolean;
     parentFolderClickRevealsFile: boolean;
     showParentFolderColor: boolean;
     showParentFolderIcon: boolean;

@@ -1250,11 +1250,7 @@ export const STRINGS_ES = {
             },
             showParentFolder: {
                 name: 'Mostrar carpeta principal',
-                desc: 'Muestra el nombre de la carpeta principal para las notas en subcarpetas, etiquetas o propiedades.'
-            },
-            showParentFolderFullPath: {
-                name: 'Mostrar ruta completa',
-                desc: 'Mostrar la ruta completa de la carpeta principal en lugar de solo el nombre de la carpeta.'
+                desc: 'Muestra la ruta de la carpeta principal para las notas en subcarpetas, etiquetas o propiedades.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clic en carpeta principal abre carpeta',

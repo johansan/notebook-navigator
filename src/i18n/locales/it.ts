@@ -1245,11 +1245,7 @@ export const STRINGS_IT = {
             },
             showParentFolder: {
                 name: 'Mostra cartella genitore',
-                desc: 'Visualizza il nome della cartella genitore per note in sottocartelle, tag o proprietà.'
-            },
-            showParentFolderFullPath: {
-                name: 'Mostra percorso completo',
-                desc: 'Visualizza il percorso completo della cartella genitore invece del solo nome della cartella.'
+                desc: 'Visualizza il percorso della cartella genitore per note in sottocartelle, tag o proprietà.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Click su cartella genitore apre cartella',

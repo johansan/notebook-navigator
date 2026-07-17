@@ -1243,11 +1243,7 @@ export const STRINGS_EN = {
             },
             showParentFolder: {
                 name: 'Show parent folder',
-                desc: 'Display the parent folder name for notes in subfolders, tags, or properties.'
-            },
-            showParentFolderFullPath: {
-                name: 'Show full path',
-                desc: 'Display the full parent folder path instead of only the folder name.'
+                desc: 'Display the parent folder path for notes in subfolders, tags, or properties.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Click parent folder to go to folder',

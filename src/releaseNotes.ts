@@ -102,6 +102,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
             '**Settings.** Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, for example during file sync. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder. Importing and resetting settings now apply changes in a single write without rereading the settings file.',
             'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.'
         ],
+        changed: [
+            '**List pane.** The parent folder label under notes from subfolders now shows the path to the note instead of only the folder name. The path starts from the folder you have selected: with `Projects` selected, a note in `Projects/Clients/Acme` is labeled `Clients/Acme`. When viewing a tag, a property, or the vault root, the label shows the full path from the vault root. The ==Show full path== setting was removed since the label now always shows the path.'
+        ],
         fixed: [
             'Fixed Cmd/Ctrl-click not opening note shortcuts and recent files in a new tab when Option/Alt was selected as the multi-select modifier.',
             'Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.'

@@ -88,6 +88,34 @@ describe('folderDisplayName', () => {
         expect(resolveFolderDisplayPath({ metadataService, folderPath: 'Archive/2026/May' })).toBe('Archive/2026/May');
     });
 
+    it('omits the selected folder path while preserving descendant display names', () => {
+        const metadataService = createMetadataService({
+            Projects: 'Work',
+            'Projects/Clients': 'Customers',
+            'Projects/Clients/Acme': 'Acme Corp'
+        });
+
+        expect(
+            resolveFolderDisplayPath({
+                metadataService,
+                folderPath: 'Projects/Clients/Acme',
+                baseFolderPath: 'Projects'
+            })
+        ).toBe('Customers/Acme Corp');
+    });
+
+    it('keeps the vault-relative path when the selected folder is the vault root', () => {
+        const metadataService = createMetadataService({});
+
+        expect(
+            resolveFolderDisplayPath({
+                metadataService,
+                folderPath: 'Projects/Clients/Acme',
+                baseFolderPath: '/'
+            })
+        ).toBe('Projects/Clients/Acme');
+    });
+
     it('resolves path segments with paths and display labels', () => {
         const metadataService = createMetadataService({
             Projects: 'Work',

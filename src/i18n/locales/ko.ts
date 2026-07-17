@@ -1246,11 +1246,7 @@ export const STRINGS_KO = {
             },
             showParentFolder: {
                 name: '상위 폴더 표시',
-                desc: '하위 폴더, 태그 또는 속성의 노트에 상위 폴더 이름을 표시합니다.'
-            },
-            showParentFolderFullPath: {
-                name: '전체 경로 표시',
-                desc: '폴더 이름만이 아니라 상위 폴더의 전체 경로를 표시합니다.'
+                desc: '하위 폴더, 태그 또는 속성의 노트에 상위 폴더 경로를 표시합니다.'
             },
             parentFolderClickRevealsFile: {
                 name: '상위 폴더 클릭 시 폴더 열기',

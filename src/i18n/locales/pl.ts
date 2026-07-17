@@ -1252,11 +1252,7 @@ export const STRINGS_PL = {
             },
             showParentFolder: {
                 name: 'Pokaż folder nadrzędny',
-                desc: 'Wyświetla nazwę folderu nadrzędnego dla notatek w podfolderach, tagach lub właściwościach.'
-            },
-            showParentFolderFullPath: {
-                name: 'Pokaż pełną ścieżkę',
-                desc: 'Wyświetla pełną ścieżkę folderu nadrzędnego zamiast tylko nazwy folderu.'
+                desc: 'Wyświetla ścieżkę folderu nadrzędnego dla notatek w podfolderach, tagach lub właściwościach.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Kliknięcie folderu nadrzędnego otwiera folder',

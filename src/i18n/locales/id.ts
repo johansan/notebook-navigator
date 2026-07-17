@@ -1249,11 +1249,7 @@ export const STRINGS_ID = {
             },
             showParentFolder: {
                 name: 'Tampilkan folder induk',
-                desc: 'Tampilkan nama folder induk untuk catatan di subfolder, tag, atau properti.'
-            },
-            showParentFolderFullPath: {
-                name: 'Tampilkan path lengkap',
-                desc: 'Tampilkan path lengkap folder induk alih-alih hanya nama folder.'
+                desc: 'Tampilkan path folder induk untuk catatan di subfolder, tag, atau properti.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Klik folder induk untuk membuka folder',

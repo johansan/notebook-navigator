@@ -1249,11 +1249,7 @@ export const STRINGS_PT = {
             },
             showParentFolder: {
                 name: 'Mostrar pasta pai',
-                desc: 'Exibir o nome da pasta pai para notas em subpastas, etiquetas ou propriedades.'
-            },
-            showParentFolderFullPath: {
-                name: 'Mostrar caminho completo',
-                desc: 'Exibir o caminho completo da pasta pai em vez de apenas o nome da pasta.'
+                desc: 'Exibir o caminho da pasta pai para notas em subpastas, etiquetas ou propriedades.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clicar na pasta pai abre pasta',

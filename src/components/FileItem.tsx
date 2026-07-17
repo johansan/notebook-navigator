@@ -46,7 +46,7 @@ import type { FolderDecorationModel } from '../utils/folderDecoration';
 import type { ListPaneAppearanceSettings } from '../hooks/useListPaneAppearance';
 import { strings } from '../i18n';
 import type { SortOption } from '../settings/types';
-import { type NavigationItemType } from '../types';
+import { ItemType, type NavigationItemType } from '../types';
 import { DateUtils } from '../utils/dateUtils';
 import { runAsyncAction } from '../utils/async';
 import { getTooltipPlacement } from '../utils/domUtils';
@@ -561,7 +561,6 @@ export const FileItem = React.memo(function FileItem({
     const shouldBuildParentFolderMeta = shouldShowParentFolderLine && hasParentFolderSource && parentFolderSource.path !== '/';
     const shouldShowParentFolderIcon = shouldBuildParentFolderMeta && settings.showParentFolderIcon;
     const shouldShowParentFolderColor = shouldBuildParentFolderMeta && settings.showParentFolderColor;
-    const shouldResolveParentFolderDisplayName = shouldBuildParentFolderMeta && !settings.showParentFolderFullPath;
     const canUseFolderFileDecoration = !showFileIconUnfinishedTask;
     const shouldResolveFolderIcon = canUseFolderFileDecoration && settings.useFolderIconForFiles && !fileIconId && hasParentFolderSource;
     const shouldResolveFolderColorForFileDecoration =
@@ -574,13 +573,9 @@ export const FileItem = React.memo(function FileItem({
     const shouldResolveFolderColor = shouldResolveFolderColorForFileDecoration || shouldResolveFolderColorForTitle;
     const parentFolderDisplayData =
         hasParentFolderSource &&
-        (shouldResolveFolderIcon ||
-            shouldResolveFolderColor ||
-            shouldResolveParentFolderDisplayName ||
-            shouldShowParentFolderIcon ||
-            shouldShowParentFolderColor)
+        (shouldResolveFolderIcon || shouldResolveFolderColor || shouldShowParentFolderIcon || shouldShowParentFolderColor)
             ? metadataService.getFolderDisplayData(parentFolderSource.path, {
-                  includeDisplayName: shouldResolveParentFolderDisplayName,
+                  includeDisplayName: false,
                   includeColor: shouldResolveFolderColor || shouldShowParentFolderColor,
                   includeBackgroundColor: shouldShowParentFolderColor,
                   includeIcon: shouldResolveFolderIcon || shouldShowParentFolderIcon,
@@ -871,9 +866,14 @@ export const FileItem = React.memo(function FileItem({
             : { color: undefined, backgroundColor: undefined };
         const parentFolderColor = parentFolderDecorationColors.color;
         const shouldApplyParentFolderColor = Boolean(parentFolderColor);
-        const parentFolderLabel = settings.showParentFolderFullPath
-            ? resolveFolderDisplayPath({ metadataService, folderPath: parentFolderSource.path })
-            : parentFolderDisplayData?.displayName || parentFolderSource.name;
+        // Tag and property selections can retain the last selected folder, but only a folder selection establishes the
+        // path base. Using that stale folder elsewhere would produce a label unrelated to the files in the current view.
+        const baseFolderPath = selectionType === ItemType.FOLDER ? parentFolder : null;
+        const parentFolderLabel = resolveFolderDisplayPath({
+            metadataService,
+            folderPath: parentFolderSource.path,
+            baseFolderPath
+        });
         parentFolderMeta = {
             name: parentFolderLabel,
             iconId: customParentIcon ?? fallbackParentIcon,

@@ -54,6 +54,7 @@ export function resolveFolderDisplayName(params: ResolveFolderDisplayNameParams)
 interface ResolveFolderDisplayPathParams {
     metadataService: Pick<MetadataService, 'getFolderDisplayData'>;
     folderPath: string;
+    baseFolderPath?: string | null;
 }
 
 export interface FolderDisplayPathSegment {
@@ -62,17 +63,26 @@ export interface FolderDisplayPathSegment {
 }
 
 /**
- * Resolves vault-relative folder path segments using folder display names where available.
+ * Resolves folder path segments using folder display names where available.
+ * baseFolderPath must be the vault root or an ancestor of folderPath; its segments are omitted before metadata is
+ * resolved for the visible path.
  */
 export function resolveFolderDisplayPathSegments({
     metadataService,
-    folderPath
+    folderPath,
+    baseFolderPath
 }: ResolveFolderDisplayPathParams): FolderDisplayPathSegment[] {
     const segments = folderPath.split('/').filter(Boolean);
+    const baseDepth = baseFolderPath?.split('/').filter(Boolean).length ?? 0;
+    const displaySegments: FolderDisplayPathSegment[] = [];
     let currentPath = '';
 
-    return segments.map(segment => {
+    segments.forEach((segment, index) => {
         currentPath = currentPath ? `${currentPath}/${segment}` : segment;
+        if (index < baseDepth) {
+            return;
+        }
+
         const metadataDisplayName = metadataService.getFolderDisplayData(currentPath, {
             includeDisplayName: true,
             includeColor: false,
@@ -80,15 +90,18 @@ export function resolveFolderDisplayPathSegments({
             includeIcon: false
         }).displayName;
 
-        return {
+        displaySegments.push({
             path: currentPath,
             label: metadataDisplayName && metadataDisplayName.length > 0 ? metadataDisplayName : segment
-        };
+        });
     });
+
+    return displaySegments;
 }
 
 /**
- * Resolves a vault-relative folder path using folder display names where available.
+ * Resolves a folder path using folder display names where available.
+ * baseFolderPath follows the ancestor contract documented by resolveFolderDisplayPathSegments.
  */
 export function resolveFolderDisplayPath(params: ResolveFolderDisplayPathParams): string {
     return resolveFolderDisplayPathSegments(params)

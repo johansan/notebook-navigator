@@ -1236,11 +1236,7 @@ export const STRINGS_ZH_TW = {
             },
             showParentFolder: {
                 name: '顯示父資料夾',
-                desc: '為子資料夾、標籤或屬性中的筆記顯示父資料夾名稱。'
-            },
-            showParentFolderFullPath: {
-                name: '顯示完整路徑',
-                desc: '顯示父資料夾的完整路徑而非僅顯示資料夾名稱。'
+                desc: '為子資料夾、標籤或屬性中的筆記顯示父資料夾路徑。'
             },
             parentFolderClickRevealsFile: {
                 name: '點按父資料夾開啟資料夾',

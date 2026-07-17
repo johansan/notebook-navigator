@@ -1248,11 +1248,7 @@ export const STRINGS_JA = {
             },
             showParentFolder: {
                 name: '親フォルダを表示',
-                desc: 'サブフォルダ、タグ、またはプロパティ内のノートに親フォルダ名を表示します。'
-            },
-            showParentFolderFullPath: {
-                name: 'フルパスを表示',
-                desc: 'フォルダ名のみではなく親フォルダのフルパスを表示します。'
+                desc: 'サブフォルダ、タグ、またはプロパティ内のノートに親フォルダのパスを表示します。'
             },
             parentFolderClickRevealsFile: {
                 name: '親フォルダクリックでフォルダを開く',
