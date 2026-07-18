@@ -101,7 +101,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         improved: [
             'Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, which can happen with some third party sync services. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder.',
             'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.',
-            'Excalidraw drawings now use configured ==Preview properties== as preview text.'
+            'Excalidraw drawings now show preview text from the frontmatter properties listed in ==Preview properties==.'
         ],
         changed: [
             '**List pane.** The parent folder label under notes from subfolders now shows the path to the note instead of only the folder name. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` is now grouped in `Clients/Acme`. The old ==Show full path== setting was removed since the label now always shows the path.'
