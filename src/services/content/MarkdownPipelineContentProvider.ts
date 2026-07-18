@@ -701,8 +701,10 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         let drawingProviderId = getDrawingSourceProviderIdWithFrontmatter(job.file, frontmatter);
         let isDrawing = drawingProviderId !== null;
         const fileModified = fileData !== null && fileData.markdownPipelineMtime !== job.file.stat.mtime;
-        const needsPreview = previewEnabled && (!fileData || fileModified || fileData.previewStatus === 'unprocessed') && !isDrawing;
-        const needsPreviewPropertyFrontmatter = previewPropertiesEnabled && needsPreview;
+        const needsPreview = previewEnabled && (!fileData || fileModified || fileData.previewStatus === 'unprocessed');
+        const needsPreviewContent = needsPreview && !isDrawing;
+        const supportsPreviewProperties = !isDrawing || drawingProviderId === 'excalidraw';
+        const needsPreviewPropertyFrontmatter = previewPropertiesEnabled && supportsPreviewProperties && needsPreview;
         const needsPropertyFrontmatter = propertiesEnabled && (fileData === null || fileModified || fileData.properties === null);
         const needsFeatureImage =
             featureImageEnabled &&
@@ -747,7 +749,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                 : null;
 
         const needsContent =
-            needsPreview ||
+            needsPreviewContent ||
             needsWordCountContent ||
             needsCharacterCountContent ||
             needsTasksContent ||
@@ -837,7 +839,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                     }
                 }
 
-                if (needsPreview) {
+                if (needsPreviewContent) {
                     const shouldClearPreview = !fileData || fileData.previewStatus !== 'none';
                     if (shouldClearPreview) {
                         update.preview = '';
@@ -947,7 +949,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                 }
             }
 
-            if (needsPreview && shouldFallback) {
+            if (needsPreviewContent && shouldFallback) {
                 const shouldClearPreview = !fileData || fileData.previewStatus !== 'none';
                 if (shouldClearPreview) {
                     update.preview = '';
@@ -1092,9 +1094,15 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
 
     private async processPreview(context: MarkdownPipelineContext): Promise<MarkdownPipelineUpdate | null> {
         try {
-            const previewText = context.isDrawing
-                ? ''
-                : PreviewTextUtils.extractPreviewText(context.content, context.settings, context.frontmatter ?? undefined);
+            // Excalidraw bodies contain serialized scene data, so only frontmatter properties can contribute preview text.
+            let previewText: string;
+            if (context.drawingProviderId === 'excalidraw') {
+                previewText = PreviewTextUtils.extractPreviewText('', context.settings, context.frontmatter ?? undefined);
+            } else if (context.isDrawing) {
+                previewText = '';
+            } else {
+                previewText = PreviewTextUtils.extractPreviewText(context.content, context.settings, context.frontmatter ?? undefined);
+            }
 
             if (!context.fileData) {
                 return { preview: previewText };
