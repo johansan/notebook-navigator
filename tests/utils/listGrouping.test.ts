@@ -18,9 +18,10 @@
 
 import { describe, expect, it } from 'vitest';
 import type { NotebookNavigatorSettings } from '../../src/settings';
+import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { ItemType } from '../../src/types';
 import { buildPropertyKeyNodeId } from '../../src/utils/propertyTree';
-import { resolveEffectiveListGroupingForSort, resolveListGrouping } from '../../src/utils/listGrouping';
+import { hasEffectiveCustomListGrouping, resolveEffectiveListGroupingForSort, resolveListGrouping } from '../../src/utils/listGrouping';
 
 type GroupingSettings = Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
 
@@ -155,5 +156,73 @@ describe('resolveEffectiveListGroupingForSort', () => {
                 isManualSortActive: true
             })
         ).toBe('custom');
+    });
+});
+
+describe('hasEffectiveCustomListGrouping', () => {
+    it('detects custom grouping forced by the default sort', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'date';
+        settings.defaultFolderSort = 'title-asc';
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('detects custom grouping forced by a selection sort override', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'date';
+        settings.defaultFolderSort = 'modified-desc';
+        settings.folderSortOverrides.Projects = 'title-asc';
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('combines a tag appearance with its sort override', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+        settings.defaultFolderSort = 'modified-desc';
+        settings.tagAppearances.reading = { groupBy: 'date' };
+        settings.tagSortOverrides.reading = 'title-asc';
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('detects custom grouping forced by a property sort override', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+        settings.defaultFolderSort = 'modified-desc';
+        settings.propertySortOverrides['property:status:active'] = 'property-asc';
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('detects custom grouping forced by manual sorting', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+        settings.defaultFolderSort = 'property-asc';
+        settings.propertySortKey = settings.manualSortPropertyKey;
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('detects manual sorting in an object override', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+        settings.defaultFolderSort = 'modified-desc';
+        settings.folderSortOverrides.Projects = {
+            option: 'property-desc',
+            propertyKey: settings.manualSortPropertyKey
+        };
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+    });
+
+    it('does not treat alphabetical folder grouping as custom', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+        settings.defaultFolderSort = 'modified-desc';
+        settings.folderSortOverrides.Projects = 'title-asc';
+
+        expect(hasEffectiveCustomListGrouping(settings)).toBe(false);
     });
 });

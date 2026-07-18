@@ -55,6 +55,20 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         batchClearFeatureImageContentMock.mockReset();
     });
 
+    it('declares every list sort setting used by word count consumers', () => {
+        const provider = new MarkdownPipelineContentProvider(new App());
+
+        expect(provider.getRelevantSettings()).toEqual(
+            expect.arrayContaining([
+                'defaultFolderSort',
+                'propertySortKey',
+                'folderSortOverrides',
+                'tagSortOverrides',
+                'propertySortOverrides'
+            ])
+        );
+    });
+
     it('clears persisted properties when property fields are disabled', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ propertyFields: 'status' });
@@ -121,6 +135,26 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
 
         expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
         expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
+        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('wordCount');
+        expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
+    });
+
+    it('clears word counts when sorting activates custom group headers', async () => {
+        const provider = new MarkdownPipelineContentProvider(new App());
+        const oldSettings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc'
+        });
+        const newSettings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc'
+        });
+
+        await provider.clearContent({ oldSettings, newSettings });
+
+        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
         expect(batchClearAllFileContentMock).toHaveBeenCalledWith('wordCount');
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });

@@ -17,8 +17,8 @@
  */
 
 import { ItemType } from '../types';
-import type { ListNoteGroupingOption, NotebookNavigatorSettings, SortOption } from '../settings/types';
-import { getSortField, isDateSortOption } from './sortUtils';
+import type { ListNoteGroupingOption, ListSortOverrideValue, NotebookNavigatorSettings, SortOption } from '../settings/types';
+import { getSortField, isDateSortOption, isManualSortPropertyKey, resolveListSort } from './sortUtils';
 
 interface ResolveListGroupingParams {
     settings: Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
@@ -27,6 +27,8 @@ interface ResolveListGroupingParams {
     tag?: string | null;
     propertyNodeId?: string | null;
 }
+
+const effectiveCustomListGroupingCache = new WeakMap<NotebookNavigatorSettings, boolean>();
 
 export interface ListGroupingResolution {
     defaultGrouping: ListNoteGroupingOption;
@@ -109,6 +111,85 @@ export function resolveListGroupingOverride({
         normalizedOverride: undefined,
         hasCustomOverride: false
     };
+}
+
+function hasEffectiveCustomGroupingForSelection(params: {
+    settings: NotebookNavigatorSettings;
+    selectionType: ItemType;
+    appearances: Record<string, { groupBy?: ListNoteGroupingOption }>;
+    sortOverrides: Record<string, ListSortOverrideValue>;
+}): boolean {
+    const { settings, selectionType, appearances, sortOverrides } = params;
+    const usesCustomGrouping = (groupBy: ListNoteGroupingOption | undefined, sortOverride?: ListSortOverrideValue): boolean => {
+        const grouping = resolveListGroupingOverride({
+            noteGrouping: settings.noteGrouping,
+            selectionType,
+            groupBy
+        }).effectiveGrouping;
+        const sort = resolveListSort(settings, sortOverride);
+
+        return (
+            resolveEffectiveListGroupingForSort({
+                groupBy: grouping,
+                sortOption: sort.option,
+                selectionType,
+                isManualSortActive: isManualSortPropertyKey(settings, sort.propertyKey)
+            }) === 'custom'
+        );
+    };
+
+    if (usesCustomGrouping(undefined)) {
+        return true;
+    }
+
+    for (const key of Object.keys(appearances)) {
+        if (usesCustomGrouping(appearances[key]?.groupBy, sortOverrides[key])) {
+            return true;
+        }
+    }
+
+    for (const key of Object.keys(sortOverrides)) {
+        if (!Object.prototype.hasOwnProperty.call(appearances, key) && usesCustomGrouping(undefined, sortOverrides[key])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Returns whether any configured list context can render custom group headers after sort rules are applied.
+ * The content pipeline is vault-wide, so it must include both the default context and every appearance or sort override.
+ */
+export function hasEffectiveCustomListGrouping(settings: NotebookNavigatorSettings): boolean {
+    const cached = effectiveCustomListGroupingCache.get(settings);
+    if (cached !== undefined) {
+        return cached;
+    }
+
+    // Published settings snapshots keep their identity for the full pipeline pass, so cache the vault-wide scan per snapshot.
+    const hasEffectiveCustomGrouping =
+        hasEffectiveCustomGroupingForSelection({
+            settings,
+            selectionType: ItemType.FOLDER,
+            appearances: settings.folderAppearances,
+            sortOverrides: settings.folderSortOverrides
+        }) ||
+        hasEffectiveCustomGroupingForSelection({
+            settings,
+            selectionType: ItemType.TAG,
+            appearances: settings.tagAppearances,
+            sortOverrides: settings.tagSortOverrides
+        }) ||
+        hasEffectiveCustomGroupingForSelection({
+            settings,
+            selectionType: ItemType.PROPERTY,
+            appearances: settings.propertyAppearances,
+            sortOverrides: settings.propertySortOverrides
+        });
+
+    effectiveCustomListGroupingCache.set(settings, hasEffectiveCustomGrouping);
+    return hasEffectiveCustomGrouping;
 }
 
 /**
