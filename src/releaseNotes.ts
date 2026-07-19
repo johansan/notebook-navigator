@@ -94,7 +94,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.4',
         date: '2026-07-19',
         showOnUpdate: true,
-        info: 'This release changes how Notebook Navigator loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.',
+        videoUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
+        videoClickable: true,
+        info: 'We finally have a new Mastering Notebook Navigator 3 video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value out of it.\nThe main improvement in Notebook Navigator 3.2.4 is how it loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.',
         new: [
             'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
         ],

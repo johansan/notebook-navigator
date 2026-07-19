@@ -17,7 +17,7 @@
  */
 
 import { Modal } from 'obsidian';
-import { getWelcomeVideoUrl, WELCOME_VIDEO_THUMBNAIL_URL } from '../constants/urls';
+import { WELCOME_VIDEO_THUMBNAIL_URL, WELCOME_VIDEO_URL } from '../constants/urls';
 import { strings } from '../i18n';
 import { addAsyncEventListener } from '../utils/domEventListeners';
 
@@ -27,7 +27,6 @@ export class WelcomeModal extends Modal {
 
     onOpen(): void {
         const pluginName = strings.plugin.viewName;
-        const videoUrl = getWelcomeVideoUrl();
 
         this.modalEl.addClass('nn-welcome-modal');
         this.titleEl.setText(strings.modals.welcome.title.replace('{pluginName}', pluginName));
@@ -48,7 +47,7 @@ export class WelcomeModal extends Modal {
         const thumbnailLink = body.createEl('a', {
             cls: 'nn-welcome-thumbnail-link',
             attr: {
-                href: videoUrl,
+                href: WELCOME_VIDEO_URL,
                 target: '_blank',
                 rel: 'noopener noreferrer'
             }
@@ -75,7 +74,7 @@ export class WelcomeModal extends Modal {
         openVideoButton.setAttr('type', 'button');
         this.domDisposers.push(
             addAsyncEventListener(openVideoButton, 'click', () => {
-                window.open(videoUrl);
+                window.open(WELCOME_VIDEO_URL);
                 this.close();
             })
         );
