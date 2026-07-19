@@ -824,6 +824,16 @@ export function renderNotesTab(context: SettingsTabContext): void {
     );
 
     new Setting(parentFolderSettingsEl)
+        .setName(strings.settings.items.showParentFolderFullPath.name)
+        .setDesc(strings.settings.items.showParentFolderFullPath.desc)
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.showParentFolderFullPath).onChange(async value => {
+                plugin.settings.showParentFolderFullPath = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
+    new Setting(parentFolderSettingsEl)
         .setName(strings.settings.items.parentFolderClickRevealsFile.name)
         .setDesc(strings.settings.items.parentFolderClickRevealsFile.desc)
         .addToggle(toggle =>

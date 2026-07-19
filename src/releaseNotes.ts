@@ -104,7 +104,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Excalidraw drawings now show preview text from the frontmatter properties listed in `Preview properties`.'
         ],
         changed: [
-            'The parent folder label under notes from subfolders now shows the path to the note instead of only the folder name. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` is now grouped in `Clients/Acme`. The old ==Show full path== setting was removed since the label now always shows the path.'
+            'The parent folder label with ==Show folder path== enabled now shows the path relative to the selected folder instead of the full path. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` now shows `Clients/Acme`.'
         ],
         fixed: [
             'Calendar notes now follow vault profile visibility, including hidden folders and `Show hidden items` in the right sidebar.',

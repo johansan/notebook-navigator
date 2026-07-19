@@ -1252,7 +1252,11 @@ export const STRINGS_NL = {
             },
             showParentFolder: {
                 name: 'Bovenliggende map tonen',
-                desc: 'Het pad van de bovenliggende map weergeven voor notities in submappen, tags of eigenschappen.'
+                desc: 'De naam van de bovenliggende map weergeven voor notities in submappen, tags of eigenschappen.'
+            },
+            showParentFolderFullPath: {
+                name: 'Mappad tonen',
+                desc: 'Het pad ten opzichte van de geselecteerde map weergeven in plaats van alleen de mapnaam. Tags en eigenschappen tonen het volledige pad.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Klik op bovenliggende map opent map',

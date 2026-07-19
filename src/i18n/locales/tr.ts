@@ -1248,7 +1248,11 @@ export const STRINGS_TR = {
             },
             showParentFolder: {
                 name: 'Üst klasörü göster',
-                desc: 'Alt klasörlerdeki, etiketlerdeki veya özelliklerdeki notlar için üst klasör yolunu görüntüle.'
+                desc: 'Alt klasörlerdeki, etiketlerdeki veya özelliklerdeki notlar için üst klasör adını görüntüle.'
+            },
+            showParentFolderFullPath: {
+                name: 'Klasör yolunu göster',
+                desc: 'Yalnızca klasör adı yerine seçili klasöre göre yolu görüntüle. Etiketler ve özellikler tam yolu gösterir.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Üst klasöre tıklayarak klasörü aç',

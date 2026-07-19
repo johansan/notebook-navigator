@@ -144,6 +144,7 @@ const BOOLEAN_SETTING_KEYS = [
     'enablePropertyExternalLinks',
     'showFileDate',
     'showParentFolder',
+    'showParentFolderFullPath',
     'parentFolderClickRevealsFile',
     'showParentFolderColor',
     'showParentFolderIcon',

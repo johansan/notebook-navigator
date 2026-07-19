@@ -403,9 +403,6 @@ export class PluginSettingsController {
         const hadShowPinnedGroupHeaderInStoredData = Boolean(
             storedData && Object.prototype.hasOwnProperty.call(storedData, 'showPinnedGroupHeader')
         );
-        const hadShowParentFolderFullPathInStoredData = Boolean(
-            storedData && Object.prototype.hasOwnProperty.call(storedData, 'showParentFolderFullPath')
-        );
         const storedInterfaceIcons = storedData?.['interfaceIcons'];
         const hadPinnedSectionIconInStoredData = Boolean(
             isRecord(storedInterfaceIcons) && Object.prototype.hasOwnProperty.call(storedInterfaceIcons, 'pinned-section')
@@ -658,7 +655,6 @@ export class PluginSettingsController {
             hadLegacyFolderColorTitleSettingInStoredData ||
             hadShowPinnedIconInStoredData ||
             hadShowPinnedGroupHeaderInStoredData ||
-            hadShowParentFolderFullPathInStoredData ||
             hadPinnedSectionIconInStoredData ||
             hadInvalidPropertySortKeyInStoredData ||
             hadInvalidManualSortPropertyKeyInStoredData ||

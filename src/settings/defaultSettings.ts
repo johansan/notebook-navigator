@@ -385,6 +385,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // Default to showing modified date when sorting alphabetically
     alphabeticalDateMode: 'modified',
     showParentFolder: true,
+    showParentFolderFullPath: false,
     parentFolderClickRevealsFile: false,
     showParentFolderColor: false,
     showParentFolderIcon: false,

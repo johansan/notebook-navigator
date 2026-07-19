@@ -1237,7 +1237,11 @@ export const STRINGS_ZH_CN = {
             },
             showParentFolder: {
                 name: '显示父文件夹',
-                desc: '为子文件夹、标签或属性中的笔记显示父文件夹路径。'
+                desc: '为子文件夹、标签或属性中的笔记显示父文件夹名称。'
+            },
+            showParentFolderFullPath: {
+                name: '显示文件夹路径',
+                desc: '显示相对于所选文件夹的路径，而不是仅显示文件夹名称。标签和属性显示完整路径。'
             },
             parentFolderClickRevealsFile: {
                 name: '点击父文件夹打开文件夹',

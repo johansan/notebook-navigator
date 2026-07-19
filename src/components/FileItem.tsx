@@ -561,6 +561,7 @@ export const FileItem = React.memo(function FileItem({
     const shouldBuildParentFolderMeta = shouldShowParentFolderLine && hasParentFolderSource && parentFolderSource.path !== '/';
     const shouldShowParentFolderIcon = shouldBuildParentFolderMeta && settings.showParentFolderIcon;
     const shouldShowParentFolderColor = shouldBuildParentFolderMeta && settings.showParentFolderColor;
+    const shouldResolveParentFolderDisplayName = shouldBuildParentFolderMeta && !settings.showParentFolderFullPath;
     const canUseFolderFileDecoration = !showFileIconUnfinishedTask;
     const shouldResolveFolderIcon = canUseFolderFileDecoration && settings.useFolderIconForFiles && !fileIconId && hasParentFolderSource;
     const shouldResolveFolderColorForFileDecoration =
@@ -573,9 +574,13 @@ export const FileItem = React.memo(function FileItem({
     const shouldResolveFolderColor = shouldResolveFolderColorForFileDecoration || shouldResolveFolderColorForTitle;
     const parentFolderDisplayData =
         hasParentFolderSource &&
-        (shouldResolveFolderIcon || shouldResolveFolderColor || shouldShowParentFolderIcon || shouldShowParentFolderColor)
+        (shouldResolveFolderIcon ||
+            shouldResolveFolderColor ||
+            shouldResolveParentFolderDisplayName ||
+            shouldShowParentFolderIcon ||
+            shouldShowParentFolderColor)
             ? metadataService.getFolderDisplayData(parentFolderSource.path, {
-                  includeDisplayName: false,
+                  includeDisplayName: shouldResolveParentFolderDisplayName,
                   includeColor: shouldResolveFolderColor || shouldShowParentFolderColor,
                   includeBackgroundColor: shouldShowParentFolderColor,
                   includeIcon: shouldResolveFolderIcon || shouldShowParentFolderIcon,
@@ -869,11 +874,9 @@ export const FileItem = React.memo(function FileItem({
         // Tag and property selections can retain the last selected folder, but only a folder selection establishes the
         // path base. Using that stale folder elsewhere would produce a label unrelated to the files in the current view.
         const baseFolderPath = selectionType === ItemType.FOLDER ? parentFolder : null;
-        const parentFolderLabel = resolveFolderDisplayPath({
-            metadataService,
-            folderPath: parentFolderSource.path,
-            baseFolderPath
-        });
+        const parentFolderLabel = settings.showParentFolderFullPath
+            ? resolveFolderDisplayPath({ metadataService, folderPath: parentFolderSource.path, baseFolderPath })
+            : parentFolderDisplayData?.displayName || parentFolderSource.name;
         parentFolderMeta = {
             name: parentFolderLabel,
             iconId: customParentIcon ?? fallbackParentIcon,

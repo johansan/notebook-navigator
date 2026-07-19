@@ -1253,7 +1253,11 @@ export const STRINGS_DE = {
             },
             showParentFolder: {
                 name: 'Übergeordneten Ordner anzeigen',
-                desc: 'Den Pfad des übergeordneten Ordners für Notizen in Unterordnern, Tags oder Eigenschaften anzeigen.'
+                desc: 'Den übergeordneten Ordnernamen für Notizen in Unterordnern, Tags oder Eigenschaften anzeigen.'
+            },
+            showParentFolderFullPath: {
+                name: 'Ordnerpfad anzeigen',
+                desc: 'Den Pfad relativ zum ausgewählten Ordner statt nur den Ordnernamen anzeigen. Tags und Eigenschaften zeigen den vollständigen Pfad.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Klick auf übergeordneten Ordner öffnet Ordner',

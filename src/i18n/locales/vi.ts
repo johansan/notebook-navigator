@@ -1251,7 +1251,11 @@ export const STRINGS_VI = {
             },
             showParentFolder: {
                 name: 'Hiện thư mục cha',
-                desc: 'Hiển thị đường dẫn thư mục cha cho ghi chú trong thư mục con, thẻ hoặc thuộc tính.'
+                desc: 'Hiển thị tên thư mục cha cho ghi chú trong thư mục con, thẻ hoặc thuộc tính.'
+            },
+            showParentFolderFullPath: {
+                name: 'Hiện đường dẫn thư mục',
+                desc: 'Hiển thị đường dẫn tương đối với thư mục đã chọn thay vì chỉ tên thư mục. Thẻ và thuộc tính hiển thị đường dẫn đầy đủ.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Nhấn thư mục cha để mở thư mục',

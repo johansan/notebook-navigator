@@ -372,6 +372,11 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 name: strings.settings.items.showParentFolder.name,
                 desc: strings.settings.items.showParentFolder.desc
             }),
+            createToggleDefinition('showParentFolderFullPath', {
+                name: strings.settings.items.showParentFolderFullPath.name,
+                desc: strings.settings.items.showParentFolderFullPath.desc,
+                visible: () => plugin.settings.showParentFolder
+            }),
             createToggleDefinition('parentFolderClickRevealsFile', {
                 name: strings.settings.items.parentFolderClickRevealsFile.name,
                 desc: strings.settings.items.parentFolderClickRevealsFile.desc,

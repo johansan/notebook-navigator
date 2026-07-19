@@ -1247,7 +1247,11 @@ export const STRINGS_KO = {
             },
             showParentFolder: {
                 name: '상위 폴더 표시',
-                desc: '하위 폴더, 태그 또는 속성의 노트에 상위 폴더 경로를 표시합니다.'
+                desc: '하위 폴더, 태그 또는 속성의 노트에 상위 폴더 이름을 표시합니다.'
+            },
+            showParentFolderFullPath: {
+                name: '폴더 경로 표시',
+                desc: '폴더 이름만 표시하는 대신 선택한 폴더를 기준으로 한 상대 경로를 표시합니다. 태그와 속성에서는 전체 경로를 표시합니다.'
             },
             parentFolderClickRevealsFile: {
                 name: '상위 폴더 클릭 시 폴더 열기',

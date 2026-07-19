@@ -459,7 +459,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Frontmatter support** - Read note names and timestamps from frontmatter fields
 - **Note metadata** - Show modification date and tags in the file list
 - **Custom properties** - Display frontmatter properties or word count in file list with per-folder/tag overrides and custom colors
-- **Parent folder display** - Optional parent folder path and icon in file list
+- **Parent folder display** - Optional parent folder name and icon in file list
 - **Compact mode** - Compact display when preview, date, and images are disabled
 - **Clickable tags** - Tags in file list navigate directly to that tag
 
