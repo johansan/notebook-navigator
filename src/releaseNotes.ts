@@ -94,19 +94,18 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.4',
         date: '2026-07-19',
         showOnUpdate: true,
-        videoUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
-        videoClickable: true,
-        info: 'We finally have a new Mastering Notebook Navigator 3 video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value out of it.\nThe main improvement in Notebook Navigator 3.2.4 is how it loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.',
+        youtubeUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
+        info: 'We finally have a new **Mastering Notebook Navigator 3** video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value in it.',
         new: [
             'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
         ],
         improved: [
-            'Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, which can happen with some third party sync services. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder.',
+            'Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, which can happen with some third party sync services. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command `Restore default settings` replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder.',
             'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.',
             'Excalidraw drawings now show preview text from the frontmatter properties listed in `Preview properties`.'
         ],
         changed: [
-            'The parent folder label with ==Show folder path== enabled now shows the path relative to the selected folder instead of the full path. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` now shows `Clients/Acme`.'
+            'In the list pane, the parent folder label with ==Show folder path== enabled now shows the path relative to the selected folder instead of the full path. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` now shows `Clients/Acme`.'
         ],
         fixed: [
             'Fixed freshly downloaded icon packs appearing as square placeholder symbols in the icon picker until Obsidian was restarted.',
