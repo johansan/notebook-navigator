@@ -720,11 +720,11 @@ export const STRINGS_ES = {
         welcome: {
             title: 'Bienvenido a {pluginName}',
             introText:
-                '¡Hola! Antes de comenzar, te recomiendo que veas los primeros cinco minutos del video a continuación para entender cómo funcionan los paneles y el interruptor "Mostrar notas de subcarpetas".',
+                '¡Hola! El video a continuación es un curso completo de una hora en 14 capítulos. Antes de comenzar, te recomiendo que veas los primeros tres capítulos para entender el modelo de paneles: la idea sobre la que se construye todo el plugin.',
             continueText:
-                'Si tienes cinco minutos más, continúa viendo el video para entender los modos de visualización compacta y cómo configurar correctamente los accesos directos y las teclas de acceso rápido importantes.',
+                'Si tienes diez minutos más, continúa con los capítulos sobre la configuración inicial y el flujo de trabajo diario para establecer los ajustes recomendados y las dos teclas de acceso rápido más importantes.',
             thanksText: '¡Muchas gracias por descargar y disfruta!',
-            videoAlt: 'Instalando y dominando Notebook Navigator',
+            videoAlt: 'Dominando Notebook Navigator 3',
             openVideoButton: 'Reproducir video',
             closeButton: 'Quizás más tarde'
         }

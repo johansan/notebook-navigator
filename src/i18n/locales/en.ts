@@ -715,11 +715,11 @@ export const STRINGS_EN = {
         welcome: {
             title: 'Welcome to {pluginName}',
             introText:
-                'Hi there! Before you start, I highly recommend that you watch the first five minutes of the video below to understand how the panes and the toggle "Show notes from subfolders" works.',
+                'Hi there! The video below is a complete one-hour course in 14 chapters. Before you start, I highly recommend that you watch the first three chapters to understand the pane model — the one idea the whole plugin is built on.',
             continueText:
-                'If you have five more minutes then continue watching the video to understand the compact display modes and how to properly set up shortcuts and important hotkeys.',
+                'If you have ten more minutes, continue with the chapters on first-run setup and the everyday loop to set up the recommended settings and the two most important hotkeys.',
             thanksText: 'Thank you so much for downloading, and enjoy!',
-            videoAlt: 'Installing and mastering Notebook Navigator',
+            videoAlt: 'Mastering Notebook Navigator 3',
             openVideoButton: 'Play video',
             closeButton: 'Maybe later'
         }

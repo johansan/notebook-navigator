@@ -721,11 +721,11 @@ export const STRINGS_NL = {
         welcome: {
             title: 'Welkom bij {pluginName}',
             introText:
-                'Hallo! Voordat je begint, raad ik je sterk aan om de eerste vijf minuten van de onderstaande video te bekijken om te begrijpen hoe de panelen en de schakelaar "Notities uit submappen weergeven" werken.',
+                'Hallo! De onderstaande video is een complete cursus van een uur in 14 hoofdstukken. Voordat je begint, raad ik je sterk aan om de eerste drie hoofdstukken te bekijken om het panelenmodel te begrijpen — het ene idee waarop de hele plugin is gebouwd.',
             continueText:
-                'Als je nog vijf minuten hebt, bekijk dan de rest van de video om de compacte weergavemodi te begrijpen en hoe je snelkoppelingen en belangrijke sneltoetsen correct instelt.',
+                'Als je nog tien minuten hebt, ga dan verder met de hoofdstukken over de eerste installatie en de dagelijkse routine om de aanbevolen instellingen en de twee belangrijkste sneltoetsen in te stellen.',
             thanksText: 'Heel erg bedankt voor het downloaden en veel plezier!',
-            videoAlt: 'Notebook Navigator installeren en beheersen',
+            videoAlt: 'Notebook Navigator 3 beheersen',
             openVideoButton: 'Video afspelen',
             closeButton: 'Misschien later'
         }

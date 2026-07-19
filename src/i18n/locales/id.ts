@@ -720,11 +720,11 @@ export const STRINGS_ID = {
         welcome: {
             title: 'Selamat datang di {pluginName}',
             introText:
-                'Halo! Sebelum memulai, saya sangat menyarankan Anda menonton lima menit pertama video di bawah ini untuk memahami cara kerja panel dan tombol "Tampilkan catatan dari subfolder".',
+                'Halo! Video di bawah ini adalah kursus lengkap berdurasi satu jam dalam 14 bab. Sebelum memulai, saya sangat menyarankan Anda menonton tiga bab pertama untuk memahami model panel — gagasan yang menjadi dasar seluruh plugin ini.',
             continueText:
-                'Jika Anda memiliki waktu lima menit lagi, lanjutkan menonton video untuk memahami mode tampilan ringkas dan cara mengatur pintasan dan tombol pintasan penting dengan benar.',
+                'Jika Anda memiliki sepuluh menit lagi, lanjutkan dengan bab tentang penyiapan awal dan alur kerja harian untuk mengatur pengaturan yang disarankan dan dua tombol pintasan terpenting.',
             thanksText: 'Terima kasih banyak telah mengunduh, selamat menggunakan!',
-            videoAlt: 'Menginstal dan menguasai Notebook Navigator',
+            videoAlt: 'Menguasai Notebook Navigator 3',
             openVideoButton: 'Putar video',
             closeButton: 'Mungkin nanti'
         }
