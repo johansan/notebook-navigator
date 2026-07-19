@@ -92,7 +92,7 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.4',
-        date: '2026-07-19',
+        date: '2026-07-20',
         showOnUpdate: true,
         youtubeUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
         info: 'We finally have a new **Mastering Notebook Navigator 3** video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value in it.',
