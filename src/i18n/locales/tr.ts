@@ -719,11 +719,11 @@ export const STRINGS_TR = {
         welcome: {
             title: '{pluginName} uygulamasına hoş geldiniz',
             introText:
-                'Merhaba! Başlamadan önce, panellerin ve "Alt klasörlerden notları göster" düğmesinin nasıl çalıştığını anlamak için aşağıdaki videonun ilk beş dakikasını izlemenizi şiddetle tavsiye ederim.',
+                'Merhaba! Aşağıdaki video 14 bölümden oluşan bir saatlik eksiksiz bir kurstur. Başlamadan önce, tüm eklentinin üzerine kurulduğu panel modelini anlamak için ilk üç bölümü izlemenizi şiddetle tavsiye ederim.',
             continueText:
-                'Beş dakikanız daha varsa, kompakt görüntüleme modlarını ve kısayolları ile önemli kısayol tuşlarını doğru şekilde nasıl ayarlayacağınızı anlamak için videoyu izlemeye devam edin.',
+                'On dakikanız daha varsa, önerilen ayarları ve en önemli iki kısayol tuşunu yapılandırmak için ilk kurulum ve günlük kullanım bölümleriyle devam edin.',
             thanksText: 'İndirdiğiniz için çok teşekkürler, keyifli kullanımlar!',
-            videoAlt: 'Notebook Navigator kurulumu ve ustalaşma',
+            videoAlt: 'Notebook Navigator 3 ustalığı',
             openVideoButton: 'Videoyu oynat',
             closeButton: 'Belki sonra'
         }

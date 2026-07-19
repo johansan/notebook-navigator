@@ -722,11 +722,11 @@ export const STRINGS_PL = {
         welcome: {
             title: 'Witaj w {pluginName}',
             introText:
-                'Cześć! Zanim zaczniesz, gorąco polecam obejrzenie pierwszych pięciu minut poniższego filmu, aby zrozumieć, jak działają panele i przełącznik „Pokaż notatki z podfolderów”.',
+                'Cześć! Poniższy film to kompletny godzinny kurs w 14 rozdziałach. Zanim zaczniesz, gorąco polecam obejrzenie pierwszych trzech rozdziałów, aby zrozumieć model paneli — ideę, na której opiera się cała wtyczka.',
             continueText:
-                'Jeśli masz jeszcze pięć minut, obejrzyj film, aby zrozumieć kompaktowe tryby wyświetlania oraz dowiedzieć się, jak prawidłowo skonfigurować skróty i ważne kombinacje klawiszy.',
+                'Jeśli masz jeszcze dziesięć minut, przejdź do rozdziałów o pierwszej konfiguracji i codziennej pracy, aby skonfigurować zalecane ustawienia i dwa najważniejsze skróty klawiszowe.',
             thanksText: 'Dziękujemy za pobranie i życzymy miłego korzystania!',
-            videoAlt: 'Instalacja i obsługa Notebook Navigator',
+            videoAlt: 'Opanuj Notebook Navigator 3',
             openVideoButton: 'Odtwórz wideo',
             closeButton: 'Może później'
         }

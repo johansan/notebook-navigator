@@ -721,11 +721,11 @@ export const STRINGS_VI = {
         welcome: {
             title: 'Chào mừng đến với {pluginName}',
             introText:
-                'Xin chào! Trước khi bắt đầu, tôi khuyên bạn nên xem năm phút đầu tiên của video bên dưới để hiểu cách hoạt động của các bảng điều khiển và nút chuyển đổi "Hiển thị ghi chú từ thư mục con".',
+                'Xin chào! Video bên dưới là một khóa học hoàn chỉnh dài một giờ gồm 14 chương. Trước khi bắt đầu, tôi khuyên bạn nên xem ba chương đầu tiên để hiểu mô hình bảng điều khiển — ý tưởng nền tảng của toàn bộ plugin.',
             continueText:
-                'Nếu bạn có thêm năm phút nữa, hãy tiếp tục xem video để hiểu các chế độ hiển thị thu gọn và cách thiết lập phím tắt và các phím nóng quan trọng một cách chính xác.',
+                'Nếu bạn có thêm mười phút, hãy tiếp tục với các chương về thiết lập ban đầu và quy trình làm việc hằng ngày để thiết lập các cài đặt được khuyến nghị và hai phím tắt quan trọng nhất.',
             thanksText: 'Cảm ơn bạn rất nhiều vì đã tải xuống, chúc bạn sử dụng vui vẻ!',
-            videoAlt: 'Cài đặt và làm chủ Notebook Navigator',
+            videoAlt: 'Làm chủ Notebook Navigator 3',
             openVideoButton: 'Phát video',
             closeButton: 'Có lẽ sau'
         }

@@ -721,11 +721,11 @@ export const STRINGS_PT_BR = {
         welcome: {
             title: 'Bem-vindo ao {pluginName}',
             introText:
-                'Olá! Antes de começar, recomendo que você assista aos primeiros cinco minutos do vídeo abaixo para entender como funcionam os painéis e o botão "Mostrar notas das subpastas".',
+                'Olá! O vídeo abaixo é um curso completo de uma hora em 14 capítulos. Antes de começar, recomendo que você assista aos três primeiros capítulos para entender o modelo de painéis — a ideia sobre a qual todo o plugin é construído.',
             continueText:
-                'Se você tiver mais cinco minutos, continue assistindo ao vídeo para entender os modos de exibição compacta e como configurar corretamente os atalhos e teclas de atalho importantes.',
+                'Se você tiver mais dez minutos, continue com os capítulos sobre a configuração inicial e a rotina diária para definir as configurações recomendadas e as duas teclas de atalho mais importantes.',
             thanksText: 'Muito obrigado por baixar e aproveite!',
-            videoAlt: 'Instalando e dominando o Notebook Navigator',
+            videoAlt: 'Dominando o Notebook Navigator 3',
             openVideoButton: 'Reproduzir vídeo',
             closeButton: 'Talvez depois'
         }

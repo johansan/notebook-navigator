@@ -711,10 +711,10 @@ export const STRINGS_ZH_TW = {
         },
         welcome: {
             title: '歡迎使用 {pluginName}',
-            introText: '您好！在開始之前，強烈建議您觀看下方影片的前五分鐘，以了解面板和「顯示子資料夾中的筆記」開關是如何運作的。',
-            continueText: '如果您還有五分鐘時間，請繼續觀看影片以了解精簡顯示模式以及如何正確設定捷徑和重要的快速鍵。',
+            introText: '您好！下方影片是一套時長一小時、共 14 章的完整課程。在開始之前，強烈建議您觀看前三章，了解最核心的面板模型。',
+            continueText: '如果您還有十分鐘時間，請繼續觀看初始設定和日常使用兩章，了解建議設定以及兩個最重要的快速鍵。',
             thanksText: '非常感謝您的下載，祝您使用愉快！',
-            videoAlt: '安裝與精通 Notebook Navigator',
+            videoAlt: '精通 Notebook Navigator 3',
             openVideoButton: '播放影片',
             closeButton: '以後再說'
         }

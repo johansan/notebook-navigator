@@ -720,11 +720,11 @@ export const STRINGS_DE = {
         welcome: {
             title: 'Willkommen bei {pluginName}',
             introText:
-                'Hallo! Bevor Sie beginnen, empfehle ich Ihnen, die ersten fünf Minuten des Videos unten anzusehen, um zu verstehen, wie die Bereiche und der Schalter „Notizen aus Unterordnern anzeigen" funktionieren.',
+                'Hallo! Das Video unten ist ein kompletter einstündiger Kurs in 14 Kapiteln. Bevor Sie beginnen, empfehle ich Ihnen, die ersten drei Kapitel anzusehen, um das Modell der zwei Bereiche zu verstehen – die eine Idee, auf der das gesamte Plugin aufbaut.',
             continueText:
-                'Wenn Sie weitere fünf Minuten haben, schauen Sie das Video weiter an, um die kompakten Anzeigemodi und die richtige Einrichtung von Lesezeichen und wichtigen Tastenkombinationen zu verstehen.',
+                'Wenn Sie zehn weitere Minuten haben, machen Sie mit den Kapiteln zur Ersteinrichtung und zum täglichen Arbeitsablauf weiter, um die empfohlenen Einstellungen und die zwei wichtigsten Tastenkombinationen einzurichten.',
             thanksText: 'Vielen Dank fürs Herunterladen und viel Spaß!',
-            videoAlt: 'Notebook Navigator installieren und beherrschen',
+            videoAlt: 'Notebook Navigator 3 meistern',
             openVideoButton: 'Video abspielen',
             closeButton: 'Vielleicht später'
         }
