@@ -17,7 +17,6 @@
  */
 
 import { App, requestUrl } from 'obsidian';
-import type { IconProvider } from '../types';
 import { IconService } from '../IconService';
 import type { ISettingsProvider } from '../../../interfaces/ISettingsProvider';
 import type { NotebookNavigatorSettings } from '../../../settings/types';
@@ -39,6 +38,7 @@ import { compareVersions } from '../../../utils/versionUtils';
 import { BUNDLED_ICON_MANIFESTS } from './bundledManifests';
 import { showNotice } from '../../../utils/noticeUtils';
 import { sanitizeRecord } from '../../../utils/recordUtils';
+import type { BaseFontIconProvider } from '../providers/BaseFontIconProvider';
 
 interface InstallOptions {
     persistSetting?: boolean;
@@ -61,10 +61,9 @@ export class ExternalIconProviderController {
     private readonly downloadTasks = new Map<ExternalIconProviderId, Promise<void>>();
     private readonly installedProviders = new Set<ExternalIconProviderId>();
     private readonly providerVersions = new Map<ExternalIconProviderId, string>();
-    private readonly activeProviders = new Map<
-        ExternalIconProviderId,
-        { provider: IconProvider & { dispose?: () => void }; version: string }
-    >();
+    private readonly activeProviders = new Map<ExternalIconProviderId, { provider: BaseFontIconProvider; version: string }>();
+    // Providers enter this map before font parsing because they must remain disposable across the activation await.
+    private readonly preparingProviders = new Map<ExternalIconProviderId, BaseFontIconProvider>();
     // Track which providers have already shown a failure notice to avoid duplicates
     private readonly failedActivationNoticeProviders = new Set<ExternalIconProviderId>();
     private readonly removalNoticeProviders = new Set<ExternalIconProviderId>();
@@ -74,6 +73,7 @@ export class ExternalIconProviderController {
     private readonly recoveryAttempts = new Map<ExternalIconProviderId, number>();
     private readonly updateNoticeProviders = new Set<ExternalIconProviderId>();
     private isInitialized = false;
+    private isDisposed = false;
 
     constructor(app: App, iconService: IconService, settingsProvider: ISettingsProvider & { settings: NotebookNavigatorSettings }) {
         this.iconService = iconService;
@@ -107,13 +107,16 @@ export class ExternalIconProviderController {
     }
 
     /**
-     * Cleans up resources, disposes active providers, and closes database connection.
+     * Disposes and unregisters active or preparing providers, then closes the database connection.
      */
     dispose(): void {
-        this.activeProviders.forEach(entry => {
-            entry.provider.dispose?.();
-        });
-        this.activeProviders.clear();
+        if (this.isDisposed) {
+            return;
+        }
+        this.isDisposed = true;
+
+        const providerIds = new Set([...this.preparingProviders.keys(), ...this.activeProviders.keys()]);
+        providerIds.forEach(id => this.deactivateProvider(id));
         this.database.close();
         this.isInitialized = false;
     }
@@ -141,39 +144,41 @@ export class ExternalIconProviderController {
             return existingTask;
         }
 
-        const task = this.enqueue(async () => {
-            const config = this.requireProviderConfig(id);
-
-            const manifest = options.manifest ?? (await this.fetchManifest(config));
-            const record = await this.downloadAssets(config, manifest);
-
-            await this.database.put(record);
-            this.installedProviders.add(id);
-            this.providerVersions.set(id, record.version);
-            this.removalNoticeProviders.delete(id);
-
-            if (options.persistSetting !== false) {
-                this.markProviderSetting(id, true);
-            }
-
-            const activated = await this.activateIfEnabled(config, record);
-            // Show success notification if provider activated successfully
-            if (activated && !options.suppressDownloadNotice) {
-                this.showDownloadNotice(config);
-            }
-
-            if (options.persistSetting !== false) {
-                await this.settingsProvider.saveSettingsAndUpdate();
-            } else if (activated) {
-                this.settingsProvider.notifySettingsUpdate();
-            }
-        });
+        const task = this.enqueue(() => this.installProviderWithinQueue(id, options));
 
         this.downloadTasks.set(id, task);
         try {
             await task;
         } finally {
             this.downloadTasks.delete(id);
+        }
+    }
+
+    /** Performs one install inside the controller queue so recovery can reuse it without enqueuing behind itself. */
+    private async installProviderWithinQueue(id: ExternalIconProviderId, options: InstallOptions): Promise<void> {
+        const config = this.requireProviderConfig(id);
+
+        const manifest = options.manifest ?? (await this.fetchManifest(config));
+        const record = await this.downloadAssets(config, manifest);
+
+        await this.database.put(record);
+        this.installedProviders.add(id);
+        this.providerVersions.set(id, record.version);
+        this.removalNoticeProviders.delete(id);
+
+        if (options.persistSetting !== false) {
+            this.markProviderSetting(id, true);
+        }
+
+        const activated = await this.activateIfEnabled(config, record);
+        if (activated && !options.suppressDownloadNotice) {
+            this.showDownloadNotice(config);
+        }
+
+        if (options.persistSetting !== false) {
+            await this.settingsProvider.saveSettingsAndUpdate();
+        } else if (activated) {
+            this.settingsProvider.notifySettingsUpdate();
         }
     }
 
@@ -341,10 +346,17 @@ export class ExternalIconProviderController {
      * Deactivates and unregisters a provider from the IconService.
      */
     private deactivateProvider(id: ExternalIconProviderId): boolean {
+        const preparingProvider = this.preparingProviders.get(id);
         const entry = this.activeProviders.get(id);
         let changed = false;
+        if (preparingProvider) {
+            // Preparation is not cancellable, so disposal makes its eventual completion stale before it can register.
+            preparingProvider.dispose();
+            this.preparingProviders.delete(id);
+            changed = true;
+        }
         if (entry) {
-            entry.provider.dispose?.();
+            entry.provider.dispose();
             this.activeProviders.delete(id);
             changed = true;
         }
@@ -357,7 +369,7 @@ export class ExternalIconProviderController {
      */
     private async activateIfEnabled(config: ExternalIconProviderConfig, record: IconAssetRecord): Promise<boolean> {
         const settings = this.settingsProvider.settings;
-        if (!settings.externalIconProviders || !settings.externalIconProviders[config.id]) {
+        if (this.isDisposed || !settings.externalIconProviders || !settings.externalIconProviders[config.id]) {
             return false;
         }
 
@@ -379,17 +391,56 @@ export class ExternalIconProviderController {
         }
 
         if (!provider.isAvailable()) {
-            provider.dispose?.();
+            provider.dispose();
             // Provider not available - show error and attempt recovery
             this.showActivationFailureNotice(config);
             this.scheduleRecovery(config);
             return false;
         }
 
+        const previousPreparingProvider = this.preparingProviders.get(config.id);
+        if (previousPreparingProvider) {
+            previousPreparingProvider.dispose();
+        }
+        this.preparingProviders.set(config.id, provider);
+
+        const activationDocument = activeDocument;
+        try {
+            // Registration and the success notice must wait until a document has parsed the font. Otherwise valid
+            // metadata can advertise a pack whose glyphs cannot render in any document.
+            await provider.prepare(activationDocument);
+        } catch (error) {
+            provider.dispose();
+            const isCurrentPreparation = this.preparingProviders.get(config.id) === provider;
+            if (!isCurrentPreparation || this.isDisposed || !this.isProviderEnabled(config.id)) {
+                if (isCurrentPreparation) {
+                    this.preparingProviders.delete(config.id);
+                }
+                return false;
+            }
+            this.preparingProviders.delete(config.id);
+            console.error(`[IconProviders] Failed to prepare ${config.id} in the active document:`, error);
+            this.showActivationFailureNotice(config);
+            this.scheduleRecovery(config);
+            return false;
+        }
+
+        // Settings changes and shutdown can run while the font parser is pending. Only the provider that still owns
+        // this activation slot may register after the await; every other completion belongs to stale controller state.
+        const isCurrentPreparation = this.preparingProviders.get(config.id) === provider;
+        if (!isCurrentPreparation || this.isDisposed || !this.isProviderEnabled(config.id)) {
+            if (isCurrentPreparation) {
+                this.preparingProviders.delete(config.id);
+            }
+            provider.dispose();
+            return false;
+        }
+        this.preparingProviders.delete(config.id);
+
         this.iconService.registerProvider(provider);
         const registered = this.iconService.getProvider(config.id);
         if (registered !== provider) {
-            provider.dispose?.();
+            provider.dispose();
             // Registration failed - show error and attempt recovery
             this.showActivationFailureNotice(config);
             this.scheduleRecovery(config);
@@ -404,10 +455,14 @@ export class ExternalIconProviderController {
         return true;
     }
 
+    private isProviderEnabled(id: ExternalIconProviderId): boolean {
+        return !!this.settingsProvider.settings.externalIconProviders?.[id];
+    }
+
     /**
      * Creates a provider instance based on config type.
      */
-    private createProvider(config: ExternalIconProviderConfig, record: IconAssetRecord): (IconProvider & { dispose?: () => void }) | null {
+    private createProvider(config: ExternalIconProviderConfig, record: IconAssetRecord): BaseFontIconProvider | null {
         switch (config.id) {
             case 'bootstrap-icons':
                 return new BootstrapIconProvider({
@@ -628,7 +683,9 @@ export class ExternalIconProviderController {
 
             // Try to reinstall the provider fresh
             try {
-                await this.installProvider(config.id, { persistSetting: false });
+                // This recovery task already owns the queue. Calling the public install method here would enqueue
+                // behind this task while this task waits for it, so recovery performs the install directly.
+                await this.installProviderWithinQueue(config.id, { persistSetting: false });
             } catch (error) {
                 console.error(`[IconProviders] Failed to reinstall provider ${config.id} after activation failure:`, error);
             }
