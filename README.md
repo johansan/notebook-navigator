@@ -283,6 +283,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Toggle left sidebar` Toggles the left sidebar. When opening, sets the left sidebar view to Notebook Navigator (unlike Obsidian's built-in "Toggle left sidebar" command which restores the previous left sidebar view)
 - `Notebook Navigator: Open homepage` Opens the Notebook Navigator view and loads the homepage target configured in settings
 - `Notebook Navigator: Select vault profile` Opens modal to switch between vault profiles
+- `Notebook Navigator: Select vault profile 1-3` Activates a vault profile by its position. Opens the profile selection modal when no profile exists at that position
 - `Notebook Navigator: Reveal file` Reveals current file in navigator. Expands parent folders and scrolls to file. This command is useful if you have the setting `Auto-reveal active note` switched off and want to reveal notes manually. **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+R` to quickly change the selected folder or tag to the current file
 - `Notebook Navigator: Open all files` Opens all notes in the currently selected folder or tag. When opening 15 or more files, shows a confirmation dialog
 - `Notebook Navigator: Navigate to folder` Search dialog to jump to any folder
@@ -347,6 +348,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 **Maintenance**
 
 - `Notebook Navigator: Rebuild cache` Rebuilds the local Notebook Navigator cache. Use this if you experience missing tags, incorrect previews or missing feature images
+- `Notebook Navigator: Restore default settings` Replaces the settings file with verified defaults after saving a timestamped backup. This command is only available when Notebook Navigator cannot read its settings and stops during startup
 
 ### 9.1 Command IDs
 
@@ -411,6 +413,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 | `notebook-navigator:remove-tag`                     | Notebook Navigator: Remove tag from selected files         |
 | `notebook-navigator:remove-all-tags`                | Notebook Navigator: Remove all tags from selected files    |
 | `notebook-navigator:rebuild-cache`                  | Notebook Navigator: Rebuild cache                          |
+| `notebook-navigator:restore-default-settings`       | Notebook Navigator: Restore default settings               |
 
 <br/>
 
