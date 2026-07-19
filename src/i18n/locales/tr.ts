@@ -88,6 +88,7 @@ export const STRINGS_TR = {
     navigationCalendar: {
         ariaLabel: 'Takvim',
         dailyNotesNotEnabled: 'Günlük notlar eklentisi etkin değil.',
+        noteHiddenByProfile: 'Takvim notu geçerli kasa profili tarafından gizleniyor.',
         createDailyNote: {
             title: 'Yeni günlük not',
             message: '{filename} dosyası mevcut değil. Oluşturmak ister misiniz?',

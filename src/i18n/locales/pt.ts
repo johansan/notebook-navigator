@@ -88,6 +88,7 @@ export const STRINGS_PT = {
     navigationCalendar: {
         ariaLabel: 'Calendário',
         dailyNotesNotEnabled: 'O plugin de notas diárias não está ativado.',
+        noteHiddenByProfile: 'A nota do calendário está oculta pelo perfil do cofre atual.',
         createDailyNote: {
             title: 'Nova nota diária',
             message: 'O ficheiro {filename} não existe. Deseja criá-lo?',

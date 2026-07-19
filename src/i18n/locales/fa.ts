@@ -88,6 +88,7 @@ export const STRINGS_FA = {
     navigationCalendar: {
         ariaLabel: 'تقویم',
         dailyNotesNotEnabled: 'افزونه یادداشت روزانه فعال نیست.',
+        noteHiddenByProfile: 'یادداشت تقویم توسط نمایه فعلی خزانه پنهان شده است.',
         createDailyNote: {
             title: 'یادداشت روزانه جدید',
             message: 'فایل {filename} وجود ندارد. آیا می‌خواهید آن را ایجاد کنید؟',

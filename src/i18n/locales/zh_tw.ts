@@ -87,6 +87,7 @@ export const STRINGS_ZH_TW = {
     navigationCalendar: {
         ariaLabel: '導覽日曆',
         dailyNotesNotEnabled: '未啟用每日筆記。請在 Obsidian 設定 → 核心外掛中啟用每日筆記。',
+        noteHiddenByProfile: '日曆筆記已被目前的倉庫設定檔隱藏。',
         createDailyNote: {
             title: '建立每日筆記',
             message: '每日筆記 {filename} 不存在。是否建立？',

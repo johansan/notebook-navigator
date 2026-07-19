@@ -87,6 +87,7 @@ export const STRINGS_JA = {
     navigationCalendar: {
         ariaLabel: 'カレンダー',
         dailyNotesNotEnabled: 'デイリーノートプラグインが有効になっていません。',
+        noteHiddenByProfile: 'カレンダーノートは現在の保管庫プロファイルで非表示になっています。',
         createDailyNote: {
             title: '新規デイリーノート',
             message: 'ファイル {filename} は存在しません。作成しますか？',

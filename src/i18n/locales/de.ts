@@ -87,6 +87,7 @@ export const STRINGS_DE = {
     navigationCalendar: {
         ariaLabel: 'Kalender',
         dailyNotesNotEnabled: 'Das Kernplugin für tägliche Notizen ist nicht aktiviert.',
+        noteHiddenByProfile: 'Die Kalendernotiz ist durch das aktuelle Tresorprofil ausgeblendet.',
         createDailyNote: {
             title: 'Neue tägliche Notiz',
             message: 'Datei {filename} existiert nicht. Möchten Sie sie erstellen?',

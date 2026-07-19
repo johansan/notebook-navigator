@@ -88,6 +88,7 @@ export const STRINGS_AR = {
     navigationCalendar: {
         ariaLabel: 'التقويم',
         dailyNotesNotEnabled: 'إضافة الملاحظات اليومية غير مفعلة.',
+        noteHiddenByProfile: 'ملاحظة التقويم مخفية بواسطة ملف تعريف الخزنة الحالي.',
         createDailyNote: {
             title: 'ملاحظة يومية جديدة',
             message: 'الملف {filename} غير موجود. هل تريد إنشاءه؟',

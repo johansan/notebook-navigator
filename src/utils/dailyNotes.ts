@@ -119,7 +119,7 @@ export function getDailyNoteFilename(date: MomentInstance, settings: DailyNoteSe
     return `${title}.md`;
 }
 
-function getDailyNotePath(date: MomentInstance, settings: DailyNoteSettings): string {
+export function getDailyNotePath(date: MomentInstance, settings: DailyNoteSettings): string {
     // Daily Notes uses `folder` + `format` to build a path; normalizePath handles leading/trailing slashes.
     const formatted = date.format(settings.format);
     const combined = settings.folder ? `${settings.folder}/${formatted}` : formatted;

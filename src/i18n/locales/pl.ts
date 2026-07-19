@@ -88,6 +88,7 @@ export const STRINGS_PL = {
     navigationCalendar: {
         ariaLabel: 'Kalendarz',
         dailyNotesNotEnabled: 'Wbudowana wtyczka Dziennik jest wyłączona.',
+        noteHiddenByProfile: 'Notatka kalendarza jest ukryta przez bieżący profil magazynu.',
         createDailyNote: {
             title: 'Nowy dziennik',
             message: 'Plik {filename} nie istnieje. Czy chcesz go utworzyć?',

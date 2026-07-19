@@ -88,6 +88,7 @@ export const STRINGS_TH = {
     navigationCalendar: {
         ariaLabel: 'ปฏิทิน',
         dailyNotesNotEnabled: 'ปลั๊กอินบันทึกรายวันไม่ได้เปิดใช้งาน',
+        noteHiddenByProfile: 'โน้ตปฏิทินถูกซ่อนโดยโปรไฟล์คลังปัจจุบัน',
         createDailyNote: {
             title: 'บันทึกรายวันใหม่',
             message: 'ไฟล์ {filename} ไม่มีอยู่ คุณต้องการสร้างหรือไม่?',

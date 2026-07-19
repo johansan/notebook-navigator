@@ -87,6 +87,7 @@ export const STRINGS_ZH_CN = {
     navigationCalendar: {
         ariaLabel: '导航日历',
         dailyNotesNotEnabled: '未启用每日笔记。请在 Obsidian 设置 → 核心插件中启用每日笔记。',
+        noteHiddenByProfile: '日历笔记已被当前仓库配置隐藏。',
         createDailyNote: {
             title: '创建每日笔记',
             message: '每日笔记 {filename} 不存在。是否创建？',

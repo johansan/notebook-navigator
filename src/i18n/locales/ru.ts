@@ -88,6 +88,7 @@ export const STRINGS_RU = {
     navigationCalendar: {
         ariaLabel: 'Календарь',
         dailyNotesNotEnabled: 'Плагин ежедневных заметок не включён.',
+        noteHiddenByProfile: 'Заметка календаря скрыта текущим профилем хранилища.',
         createDailyNote: {
             title: 'Новая ежедневная заметка',
             message: 'Файл {filename} не существует. Хотите создать его?',

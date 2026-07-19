@@ -87,6 +87,7 @@ export const STRINGS_KO = {
     navigationCalendar: {
         ariaLabel: '달력',
         dailyNotesNotEnabled: '데일리 노트 코어 플러그인이 활성화되어 있지 않습니다.',
+        noteHiddenByProfile: '캘린더 노트가 현재 보관함 프로필에서 숨겨져 있습니다.',
         createDailyNote: {
             title: '새 데일리 노트',
             message: '파일 {filename}이(가) 존재하지 않습니다. 생성하시겠습니까?',

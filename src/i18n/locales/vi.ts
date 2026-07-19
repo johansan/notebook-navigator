@@ -88,6 +88,7 @@ export const STRINGS_VI = {
     navigationCalendar: {
         ariaLabel: 'Lịch',
         dailyNotesNotEnabled: 'Plugin ghi chú hàng ngày chưa được bật.',
+        noteHiddenByProfile: 'Ghi chú lịch bị ẩn bởi hồ sơ kho hiện tại.',
         createDailyNote: {
             title: 'Ghi chú hàng ngày mới',
             message: 'Tệp {filename} không tồn tại. Bạn có muốn tạo không?',

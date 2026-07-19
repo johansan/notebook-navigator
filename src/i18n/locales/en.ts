@@ -88,6 +88,7 @@ export const STRINGS_EN = {
     navigationCalendar: {
         ariaLabel: 'Calendar',
         dailyNotesNotEnabled: 'Daily notes core plugin is not enabled.',
+        noteHiddenByProfile: 'Calendar note is hidden by the current vault profile.',
         createDailyNote: {
             title: 'New daily note',
             message: 'File {filename} does not exist. Would you like to create it?',

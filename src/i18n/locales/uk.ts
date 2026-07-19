@@ -89,6 +89,7 @@ export const STRINGS_UK = {
     navigationCalendar: {
         ariaLabel: 'Календар',
         dailyNotesNotEnabled: 'Плагін щоденних нотаток не увімкнено.',
+        noteHiddenByProfile: 'Нотатку календаря приховано поточним профілем сховища.',
         createDailyNote: {
             title: 'Нова щоденна нотатка',
             message: 'Файл {filename} не існує. Бажаєте створити його?',

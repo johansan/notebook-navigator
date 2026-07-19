@@ -92,7 +92,7 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.4',
-        date: '2026-07-20',
+        date: '2026-07-19',
         showOnUpdate: true,
         info: 'This release changes how Notebook Navigator loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.',
         new: [
@@ -101,12 +101,13 @@ const RELEASE_NOTES: ReleaseNote[] = [
         improved: [
             'Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, which can happen with some third party sync services. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder.',
             'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.',
-            'Excalidraw drawings now show preview text from the frontmatter properties listed in ==Preview properties==.'
+            'Excalidraw drawings now show preview text from the frontmatter properties listed in `Preview properties`.'
         ],
         changed: [
             'The parent folder label under notes from subfolders now shows the path to the note instead of only the folder name. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` is now grouped in `Clients/Acme`. The old ==Show full path== setting was removed since the label now always shows the path.'
         ],
         fixed: [
+            'Calendar notes now follow vault profile visibility, including hidden folders and `Show hidden items` in the right sidebar.',
             'Fixed Cmd/Ctrl-click not opening note shortcuts and recent files in a new tab when Option/Alt was selected as the multi-select modifier.',
             'Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.',
             'Fixed custom group headers not showing word counts when note word count display was disabled.'

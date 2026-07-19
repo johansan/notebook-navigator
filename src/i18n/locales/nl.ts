@@ -89,6 +89,7 @@ export const STRINGS_NL = {
     navigationCalendar: {
         ariaLabel: 'Kalender',
         dailyNotesNotEnabled: 'De dagelijkse notities plugin is niet ingeschakeld.',
+        noteHiddenByProfile: 'De kalendernotitie is verborgen door het huidige kluisprofiel.',
         createDailyNote: {
             title: 'Nieuwe dagelijkse notitie',
             message: 'Bestand {filename} bestaat niet. Wilt u het aanmaken?',

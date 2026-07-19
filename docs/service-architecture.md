@@ -49,9 +49,9 @@ startup and must be guarded. `IconService` is a global singleton accessed throug
 - Each mounted `NotebookNavigatorView` owns the primary React provider tree. `ServicesContext` provides references to
   plugin singletons, while `StorageProvider` owns view-scoped storage state and background queues.
 - Each mounted `NotebookNavigatorCalendarView` owns a calendar sidebar tree (`SettingsProvider` →
-  `ServicesProvider` → `CalendarRightSidebar`) without `StorageProvider`, selection, or expansion providers. When no
-  navigator storage runtime is active, `CalendarRightSidebar` owns a markdown-only `ContentProviderRegistry` for visible
-  calendar notes.
+  `UXPreferencesProvider` → `ServicesProvider` → `CalendarRightSidebar`) without `StorageProvider`, selection, or
+  expansion providers. When no navigator storage runtime is active, `CalendarRightSidebar` owns a markdown-only
+  `ContentProviderRegistry` for visible calendar notes.
 - The main `ContentProviderRegistry` is created by `StorageProvider` inside navigator view trees (via
   `useInitializeContentProviderRegistry`) and is stopped during teardown.
 - `IndexedDBStorage` is initialized once per vault via `initializeDatabase()` and is accessed through `getDBInstance()`.

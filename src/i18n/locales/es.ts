@@ -87,6 +87,7 @@ export const STRINGS_ES = {
     navigationCalendar: {
         ariaLabel: 'Calendario',
         dailyNotesNotEnabled: 'El complemento principal de notas diarias no está habilitado.',
+        noteHiddenByProfile: 'La nota del calendario está oculta por el perfil de bóveda actual.',
         createDailyNote: {
             title: 'Nueva nota diaria',
             message: 'El archivo {filename} no existe. ¿Deseas crearlo?',

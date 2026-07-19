@@ -88,6 +88,7 @@ export const STRINGS_ID = {
     navigationCalendar: {
         ariaLabel: 'Kalender',
         dailyNotesNotEnabled: 'Plugin catatan harian tidak diaktifkan.',
+        noteHiddenByProfile: 'Catatan kalender disembunyikan oleh profil vault saat ini.',
         createDailyNote: {
             title: 'Catatan harian baru',
             message: 'File {filename} tidak ada. Apakah Anda ingin membuatnya?',

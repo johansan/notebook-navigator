@@ -16,9 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, TFile, normalizePath } from 'obsidian';
+import { normalizePath, type TFile } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { escapeMomentLiteralPath } from '../../utils/calendarCustomNotePatterns';
+import { isPathInExcludedFolder } from '../../utils/fileFilters';
 import {
     buildCustomCalendarFilePathForPattern,
     buildCustomCalendarMomentPattern,
@@ -26,7 +27,7 @@ import {
     resolveCalendarCustomNotePathDate
 } from '../../utils/calendarNotes';
 import type { MomentApi, MomentInstance } from '../../utils/moment';
-import type { CustomCalendarNoteConfig, CustomCalendarNoteKind } from './types';
+import type { CalendarNoteTarget, CustomCalendarNoteConfig, CustomCalendarNoteKind } from './types';
 
 export interface CalendarNotePathResolverContext {
     config: CustomCalendarNoteConfig;
@@ -43,6 +44,14 @@ export interface CalendarNoteRootFolderSettings {
     calendarCustomRootFolder: string;
 }
 
+interface ResolveCalendarNoteTargetOptions {
+    existingFile: TFile | null;
+    targetPath: string | null;
+    hiddenFolders: string[];
+    showHiddenItems: boolean;
+    isExistingFileVisible: (file: TFile) => boolean;
+}
+
 interface ResolveCalendarNotePathOptions {
     kind: CustomCalendarNoteKind;
     date: MomentInstance;
@@ -51,10 +60,6 @@ interface ResolveCalendarNotePathOptions {
     weekLocale: string;
     customCalendarRootFolderSettings: CalendarNoteRootFolderSettings;
     momentApi: MomentApi | null;
-}
-
-interface GetExistingCalendarNoteFileOptions extends ResolveCalendarNotePathOptions {
-    app: App;
 }
 
 interface ParseCalendarNoteDateFromPathOptions extends Omit<ResolveCalendarNotePathOptions, 'date'> {
@@ -199,31 +204,32 @@ export function resolveCalendarNotePath({
     );
 }
 
-export function getExistingCalendarNoteFile({
-    app,
-    kind,
-    date,
-    resolverContext,
-    calendarLocale,
-    weekLocale,
-    customCalendarRootFolderSettings,
-    momentApi
-}: GetExistingCalendarNoteFileOptions): TFile | null {
-    const resolved = resolveCalendarNotePath({
-        kind,
-        date,
-        resolverContext,
-        calendarLocale,
-        weekLocale,
-        customCalendarRootFolderSettings,
-        momentApi
-    });
-    if (!resolved) {
-        return null;
-    }
+/**
+ * Resolves the four calendar target states without discarding an existing hidden file.
+ *
+ * - Existing and visible: both file fields contain the file and actions may open it.
+ * - Existing and hidden: only `existingFile` contains the file and actions are blocked.
+ * - Missing and visible: both file fields are null and actions may create the target.
+ * - Missing and hidden: both file fields are null and actions are blocked because the destination folder is hidden.
+ */
+export function resolveCalendarNoteTarget({
+    existingFile,
+    targetPath,
+    hiddenFolders,
+    showHiddenItems,
+    isExistingFileVisible
+}: ResolveCalendarNoteTargetOptions): CalendarNoteTarget {
+    const isHidden =
+        !showHiddenItems &&
+        ((targetPath !== null && hiddenFolders.length > 0 && isPathInExcludedFolder(targetPath, hiddenFolders)) ||
+            (existingFile !== null && !isExistingFileVisible(existingFile)));
 
-    const existing = app.vault.getAbstractFileByPath(resolved.filePath);
-    return existing instanceof TFile ? existing : null;
+    return {
+        existingFile,
+        visibleFile: isHidden ? null : existingFile,
+        isHidden,
+        targetPath
+    };
 }
 
 export function parseCalendarNoteDateFromPath({
