@@ -20,6 +20,8 @@ import type { App } from 'obsidian';
 import { showsWordCount, type NotebookNavigatorSettings } from '../settings/types';
 import type { PropertyItem } from '../storage/IndexedDBStorage';
 import { formatCommaSeparatedList, getCachedCommaSeparatedList } from './commaSeparatedListUtils';
+import { hasEffectiveCustomListGrouping } from './listGrouping';
+import { getManualSortGroupHeaderPropertyKey } from './manualSort';
 import { casefold } from './recordUtils';
 import { naturalCompare } from './sortUtils';
 import { isRecord } from './typeGuards';
@@ -45,27 +47,11 @@ const EXTERNAL_URI_SCHEME_PATTERN = /^([a-z][a-z0-9+.-]{1,31}):/i;
 const BLOCKED_EXTERNAL_URI_PROTOCOLS = new Set(['data:', 'javascript:', 'vbscript:']);
 const ALLOWED_NON_SLASH_EXTERNAL_URI_PROTOCOLS = new Set(['mailto:', 'sms:', 'tel:']);
 
-function hasCustomGroupHeaderProperty(settings: NotebookNavigatorSettings): boolean {
-    const key = settings.manualSortGroupHeaderProperty.trim();
-    if (!key || key.includes(',')) {
-        return false;
-    }
-
-    const manualSortPropertyKey = settings.manualSortPropertyKey.trim();
-    return !manualSortPropertyKey || casefold(key) !== casefold(manualSortPropertyKey);
-}
-
-function hasCustomGroupingAppearance(settings: NotebookNavigatorSettings): boolean {
-    if (settings.noteGrouping === 'custom') {
-        return true;
-    }
-
-    const appearances = [settings.folderAppearances, settings.tagAppearances, settings.propertyAppearances];
-    return appearances.some(collection => Object.values(collection).some(appearance => appearance?.groupBy === 'custom'));
-}
-
 export function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSettings): boolean {
-    return showsWordCount(settings.textCountDisplay) || (hasCustomGroupHeaderProperty(settings) && hasCustomGroupingAppearance(settings));
+    return (
+        showsWordCount(settings.textCountDisplay) ||
+        (getManualSortGroupHeaderPropertyKey(settings) !== null && hasEffectiveCustomListGrouping(settings))
+    );
 }
 
 export function hasPropertyFrontmatterFields(settings: NotebookNavigatorSettings): boolean {

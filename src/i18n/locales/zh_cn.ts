@@ -87,6 +87,7 @@ export const STRINGS_ZH_CN = {
     navigationCalendar: {
         ariaLabel: '导航日历',
         dailyNotesNotEnabled: '未启用每日笔记。请在 Obsidian 设置 → 核心插件中启用每日笔记。',
+        noteHiddenByProfile: '日历笔记已被当前仓库配置隐藏。',
         createDailyNote: {
             title: '创建每日笔记',
             message: '每日笔记 {filename} 不存在。是否创建？',
@@ -1239,8 +1240,8 @@ export const STRINGS_ZH_CN = {
                 desc: '为子文件夹、标签或属性中的笔记显示父文件夹名称。'
             },
             showParentFolderFullPath: {
-                name: '显示完整路径',
-                desc: '显示父文件夹的完整路径而不仅仅是文件夹名称。'
+                name: '显示文件夹路径',
+                desc: '显示相对于所选文件夹的路径，而不是仅显示文件夹名称。标签和属性显示完整路径。'
             },
             parentFolderClickRevealsFile: {
                 name: '点击父文件夹打开文件夹',

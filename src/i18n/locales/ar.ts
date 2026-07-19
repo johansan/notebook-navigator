@@ -88,6 +88,7 @@ export const STRINGS_AR = {
     navigationCalendar: {
         ariaLabel: 'التقويم',
         dailyNotesNotEnabled: 'إضافة الملاحظات اليومية غير مفعلة.',
+        noteHiddenByProfile: 'ملاحظة التقويم مخفية بواسطة ملف تعريف الخزنة الحالي.',
         createDailyNote: {
             title: 'ملاحظة يومية جديدة',
             message: 'الملف {filename} غير موجود. هل تريد إنشاءه؟',
@@ -1247,8 +1248,8 @@ export const STRINGS_AR = {
                 desc: 'عرض اسم المجلد الأصلي للملاحظات في المجلدات الفرعية أو الوسوم أو الخصائص.'
             },
             showParentFolderFullPath: {
-                name: 'إظهار المسار الكامل',
-                desc: 'عرض المسار الكامل للمجلد الأصلي بدلاً من اسم المجلد فقط.'
+                name: 'إظهار مسار المجلد',
+                desc: 'اعرض المسار نسبةً إلى المجلد المحدد بدلاً من اسم المجلد فقط. تعرض الوسوم والخصائص المسار الكامل.'
             },
             parentFolderClickRevealsFile: {
                 name: 'النقر على المجلد الأصلي يفتح المجلد',

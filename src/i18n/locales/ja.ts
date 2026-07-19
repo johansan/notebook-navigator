@@ -87,6 +87,7 @@ export const STRINGS_JA = {
     navigationCalendar: {
         ariaLabel: 'カレンダー',
         dailyNotesNotEnabled: 'デイリーノートプラグインが有効になっていません。',
+        noteHiddenByProfile: 'カレンダーノートは現在の保管庫プロファイルで非表示になっています。',
         createDailyNote: {
             title: '新規デイリーノート',
             message: 'ファイル {filename} は存在しません。作成しますか？',
@@ -1251,8 +1252,8 @@ export const STRINGS_JA = {
                 desc: 'サブフォルダ、タグ、またはプロパティ内のノートに親フォルダ名を表示します。'
             },
             showParentFolderFullPath: {
-                name: 'フルパスを表示',
-                desc: 'フォルダ名のみではなく親フォルダのフルパスを表示します。'
+                name: 'フォルダパスを表示',
+                desc: 'フォルダ名のみではなく、選択中のフォルダからの相対パスを表示します。タグとプロパティではフルパスを表示します。'
             },
             parentFolderClickRevealsFile: {
                 name: '親フォルダクリックでフォルダを開く',

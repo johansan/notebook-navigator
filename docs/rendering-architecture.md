@@ -102,7 +102,7 @@ focus and the current single-pane view to that content pane. Activating `search`
 and sets the current single-pane view to `files`, where search is rendered. Background search-filter updates, implicit
 auto-reveal, and navigation calls with `skipFocus` do not dispatch pane activation.
 
-The calendar right-sidebar tree uses `SettingsContext` and `ServicesContext` only.
+The calendar right-sidebar tree uses `SettingsContext`, `UXPreferencesContext`, and `ServicesContext` only.
 
 ### 5. Stable Rendering Contracts
 
@@ -137,7 +137,7 @@ graph TD
 
 ```mermaid
 graph TD
-    CV["NotebookNavigatorCalendarView"] --> SM["React.StrictMode"] --> SP["SettingsProvider"] --> SVC["ServicesProvider"] --> CRS["CalendarRightSidebar"];
+    CV["NotebookNavigatorCalendarView"] --> SM["React.StrictMode"] --> SP["SettingsProvider"] --> UX["UXPreferencesProvider"] --> SVC["ServicesProvider"] --> CRS["CalendarRightSidebar"];
     CRS --> CAL["Calendar"];
 ```
 
@@ -196,7 +196,8 @@ graph TD
 
 **Location**: `src/view/NotebookNavigatorCalendarView.tsx`
 
-- Creates a React root for the calendar right-sidebar leaf and mounts `SettingsProvider` + `ServicesProvider`.
+- Creates a React root for the calendar right-sidebar leaf and mounts `SettingsProvider` + `UXPreferencesProvider` +
+  `ServicesProvider`.
 - Renders `CalendarRightSidebar` as the calendar-only UI surface.
 - Registers a settings listener to keep platform-specific container classes in sync.
 - Unregisters listeners, unmounts the React tree, and tears down view container classes on close.
@@ -305,6 +306,8 @@ graph TD
 **Location**: `src/components/calendar/Calendar.tsx`
 
 - Renders the calendar overlay and integrates daily note creation/opening workflows.
+- Separates resolved vault files from profile-visible files so hidden notes supply no indicators or content and hidden
+  destination folders block creation unless hidden items are shown.
 - Calls `onWeekCountChange` so parent panes can update scroll padding and CSS variables for the calendar layout.
 - Delegates presentation to `src/components/calendar/CalendarHeader.tsx`, `src/components/calendar/CalendarGrid.tsx`,
   and `src/components/calendar/CalendarYearPanel.tsx`.

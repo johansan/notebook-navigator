@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Platform } from 'obsidian';
-
 const NOTEBOOK_NAVIGATOR_REPOSITORY = 'johansan/notebook-navigator';
 const NOTEBOOK_NAVIGATOR_RAW_BASE_URL = `https://raw.githubusercontent.com/${NOTEBOOK_NAVIGATOR_REPOSITORY}/main`;
 const NOTEBOOK_NAVIGATOR_CDN_BASE_URL = `https://cdn.jsdelivr.net/gh/${NOTEBOOK_NAVIGATOR_REPOSITORY}@main`;
@@ -30,18 +28,7 @@ export const SUPPORT_BUY_ME_A_COFFEE_URL = 'https://buymeacoffee.com/johansan';
 export const MOMENT_FORMAT_DOCS_URL = 'https://momentjs.com/docs/#/displaying/format/';
 export const ICON_ASSETS_REPOSITORY_URL = `https://github.com/${NOTEBOOK_NAVIGATOR_REPOSITORY}/tree/main/icon-assets`;
 
-const WELCOME_VIDEO_URL = 'https://www.youtube.com/watch?v=BewIlG8wLAM';
-const WELCOME_VIDEO_TIMESTAMP_DESKTOP = 66;
-const WELCOME_VIDEO_TIMESTAMP_MOBILE = 116;
-
-export function getWelcomeVideoUrl(): string {
-    const timestampSeconds = Platform.isMobile ? WELCOME_VIDEO_TIMESTAMP_MOBILE : WELCOME_VIDEO_TIMESTAMP_DESKTOP;
-    return `${WELCOME_VIDEO_URL}&t=${timestampSeconds}s`;
-}
-
-export function getWelcomeVideoBaseUrl(): string {
-    return WELCOME_VIDEO_URL;
-}
+export const WELCOME_VIDEO_URL = 'https://www.youtube.com/watch?v=m2maDNtho7Y';
 export const WELCOME_VIDEO_THUMBNAIL_URL = `${NOTEBOOK_NAVIGATOR_RAW_BASE_URL}/images/youtube-thumbnail.jpg`;
 
 export function getReleaseBannerUrl(bannerUrl: boolean | string | undefined, version: string): string | null {

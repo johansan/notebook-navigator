@@ -92,19 +92,28 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.4',
-        date: '2026-07-17',
+        date: '2026-07-19',
         showOnUpdate: true,
-        info: 'This release changes how Notebook Navigator loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.\n\nSync providers can briefly make the plugin settings file unreadable or make it appear missing while files are being transferred. Notebook Navigator treated every such failure as a first launch and replaced your settings with defaults. The plugin now retries the settings load for a short window and treats a missing settings file as a first launch only on devices where the plugin has never run. If your settings still cannot be read, the plugin shows a notice and stays inactive instead of loading defaults; restart Obsidian once the sync has settled and your settings load normally. For a settings file that is permanently damaged, the new command "Restore default settings" replaces it with verified defaults after confirmation, saving a timestamped copy of a readable old file first. If the settings file becomes unreadable while Obsidian is running, your current settings are kept and nothing is written back to the file.',
+        videoUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
+        videoClickable: true,
+        info: 'We finally have a new Mastering Notebook Navigator 3 video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value out of it.\nThe main improvement in Notebook Navigator 3.2.4 is how it loads its settings, which should resolve the settings resets reported by users syncing their vaults with iCloud and other file sync services.',
         new: [
             'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
         ],
         improved: [
-            '**Settings.** Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, for example during file sync. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder. Importing and resetting settings now apply changes in a single write without rereading the settings file.',
-            'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.'
+            'Settings are no longer reset to defaults when the settings file is temporarily missing or unreadable, which can happen with some third party sync services. Startup retries the settings load for a short window, then shows a notice and keeps the plugin inactive until Obsidian is restarted. The new command ==Restore default settings== replaces a damaged settings file with verified defaults after saving a timestamped copy to the plugin folder.',
+            'If you are using a hardware keyboard with a mobile device, you can now use Tab, Shift+Tab, and the Left and Right arrow keys to move between the navigation and list panes.',
+            'Excalidraw drawings now show preview text from the frontmatter properties listed in `Preview properties`.'
+        ],
+        changed: [
+            'The parent folder label with ==Show folder path== enabled now shows the path relative to the selected folder instead of the full path. For example with the folder `Projects` selected, a note in `Projects/Clients/Acme` now shows `Clients/Acme`.'
         ],
         fixed: [
+            'Fixed freshly downloaded icon packs appearing as square placeholder symbols in the icon picker until Obsidian was restarted.',
+            'Calendar notes now follow vault profile visibility, including hidden folders and `Show hidden items` in the right sidebar.',
             'Fixed Cmd/Ctrl-click not opening note shortcuts and recent files in a new tab when Option/Alt was selected as the multi-select modifier.',
-            'Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.'
+            'Fixed an issue where deleting notes could leave their tags showing in the tag tree. This happened when deleting a folder while a custom root folder order was set.',
+            'Fixed custom group headers not showing word counts when note word count display was disabled.'
         ]
     },
     {

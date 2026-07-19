@@ -18,6 +18,7 @@
 
 import { IconProvider, IconDefinition, ParsedIconId, IconServiceConfig } from './types';
 import { getIconRenderToken, setIconRenderToken } from './providers/providerUtils';
+import { isPromiseLike } from '../../utils/async';
 
 /**
  * Registry for icon providers and icon rendering.
@@ -157,8 +158,10 @@ export class IconService {
         try {
             const result = provider.render(container, parsed.identifier, size);
 
-            if (result instanceof Promise) {
-                void result
+            if (isPromiseLike(result)) {
+                // Promise.resolve adopts promises from popout realms so their completion and rejection stay inside
+                // the service's render-token and fallback handling.
+                void Promise.resolve(result)
                     .then(finalResult => {
                         if (getIconRenderToken(container) !== token) {
                             return;
@@ -314,8 +317,8 @@ export class IconService {
         try {
             const result = fallbackProvider.render(container, IconService.FALLBACK_ICON_ID, size);
 
-            if (result instanceof Promise) {
-                void result
+            if (isPromiseLike(result)) {
+                void Promise.resolve(result)
                     .then(finalResult => {
                         if (token && getIconRenderToken(container) !== token) {
                             return;

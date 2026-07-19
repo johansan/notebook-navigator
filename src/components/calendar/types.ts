@@ -34,11 +34,26 @@ export interface CalendarHoverTooltipState {
     tooltipData: CalendarHoverTooltipData;
 }
 
+/**
+ * Calendar note state keeps the vault result separate from profile visibility.
+ *
+ * - `existingFile` retains an existing hidden file so clicks never attempt to create the same path.
+ * - `visibleFile` is the file the calendar may render, preview, count, or mark as active.
+ * - `isHidden` blocks open and create actions until hidden items are shown.
+ * - `targetPath` identifies the destination even when no file exists, so hidden folders also block creation.
+ */
+export interface CalendarNoteTarget {
+    existingFile: TFile | null;
+    visibleFile: TFile | null;
+    isHidden: boolean;
+    targetPath: string | null;
+}
+
 export interface CalendarDay {
     date: MomentInstance;
     iso: string;
     inMonth: boolean;
-    file: TFile | null;
+    note: CalendarNoteTarget;
 }
 
 export interface CalendarWeek {
@@ -57,16 +72,16 @@ export interface CalendarYearMonthEntry {
     shortLabel: string;
 }
 
-export interface CalendarHeaderPeriodNoteFiles {
-    month: TFile | null;
-    quarter: TFile | null;
-    year: TFile | null;
+export interface CalendarHeaderPeriodNoteTargets {
+    month: CalendarNoteTarget;
+    quarter: CalendarNoteTarget;
+    year: CalendarNoteTarget;
 }
 
 export interface CalendarNoteContextMenuTarget {
     kind: CustomCalendarNoteKind;
     date: MomentInstance;
-    existingFile: TFile | null;
+    note: CalendarNoteTarget;
     canCreate: boolean;
     monthKey?: string | null;
     dayIso?: string | null;

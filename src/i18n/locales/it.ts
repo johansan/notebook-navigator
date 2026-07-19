@@ -88,6 +88,7 @@ export const STRINGS_IT = {
     navigationCalendar: {
         ariaLabel: 'Calendario',
         dailyNotesNotEnabled: 'Il plugin delle note giornaliere non è abilitato.',
+        noteHiddenByProfile: 'La nota del calendario è nascosta dal profilo del vault corrente.',
         createDailyNote: {
             title: 'Nuova nota giornaliera',
             message: 'Il file {filename} non esiste. Vuoi crearlo?',
@@ -1248,8 +1249,8 @@ export const STRINGS_IT = {
                 desc: 'Visualizza il nome della cartella genitore per note in sottocartelle, tag o proprietà.'
             },
             showParentFolderFullPath: {
-                name: 'Mostra percorso completo',
-                desc: 'Visualizza il percorso completo della cartella genitore invece del solo nome della cartella.'
+                name: 'Mostra percorso cartella',
+                desc: 'Mostra il percorso relativo alla cartella selezionata invece del solo nome della cartella. Tag e proprietà mostrano il percorso completo.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Click su cartella genitore apre cartella',

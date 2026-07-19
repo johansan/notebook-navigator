@@ -88,6 +88,7 @@ export const STRINGS_FR = {
     navigationCalendar: {
         ariaLabel: 'Calendrier',
         dailyNotesNotEnabled: "Le plugin de notes quotidiennes n'est pas activé.",
+        noteHiddenByProfile: 'La note du calendrier est masquée par le profil de coffre actuel.',
         createDailyNote: {
             title: 'Nouvelle note quotidienne',
             message: "Le fichier {filename} n'existe pas. Voulez-vous le créer ?",
@@ -1256,8 +1257,8 @@ export const STRINGS_FR = {
                 desc: 'Afficher le nom du dossier parent pour les notes dans les sous-dossiers, étiquettes ou propriétés.'
             },
             showParentFolderFullPath: {
-                name: 'Afficher le chemin complet',
-                desc: 'Afficher le chemin complet du dossier parent au lieu du nom du dossier uniquement.'
+                name: 'Afficher le chemin du dossier',
+                desc: 'Afficher le chemin relatif au dossier sélectionné au lieu du seul nom de dossier. Les étiquettes et propriétés affichent le chemin complet.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clic sur dossier parent ouvre le dossier',

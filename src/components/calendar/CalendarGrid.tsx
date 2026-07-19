@@ -17,12 +17,11 @@
  */
 
 import React from 'react';
-import type { TFile } from 'obsidian';
 import type { CalendarWeekendDays } from '../../settings/types';
 import { DateUtils } from '../../utils/dateUtils';
 import { CalendarDayButton } from './CalendarDayButton';
 import { isWeekendDay } from './calendarUtils';
-import type { CalendarDay, CalendarHoverTooltipData, CalendarWeek } from './types';
+import type { CalendarDay, CalendarHoverTooltipData, CalendarNoteTarget, CalendarWeek } from './types';
 
 const DAY_ARIA_LABEL_CACHE_MAX_ENTRIES = 1024;
 // Formatted day labels keyed by locale and ISO date; format('LL') output is deterministic per key
@@ -94,13 +93,14 @@ const CalendarDayCell = React.memo(function CalendarDayCell({
     const tooltipTitle = hasFrontmatterTitle ? frontmatterTitle : DateUtils.formatDate(dateTimestamp, dateFormat);
     const showDate = hasFrontmatterTitle;
     const tooltipAriaText = hasFrontmatterTitle ? `${ariaLabel}, ${frontmatterTitle}` : ariaLabel;
-    const tooltipEnabled = Boolean(day.file || featureImageUrl);
+    const visibleFile = day.note.visibleFile;
+    const tooltipEnabled = Boolean(visibleFile || featureImageUrl);
     const tooltipData: CalendarHoverTooltipData = {
         imageUrl: featureImageUrl,
         title: tooltipTitle || ariaLabel,
         dateTimestamp,
-        previewPath: day.file?.path ?? null,
-        previewEnabled: Boolean(day.file && day.file.extension === 'md'),
+        previewPath: visibleFile?.path ?? null,
+        previewEnabled: Boolean(visibleFile && visibleFile.extension === 'md'),
         showDate
     };
 
@@ -133,7 +133,7 @@ interface CalendarGridProps {
     trailingSpacerWeekCount: number;
     weeks: CalendarWeek[];
     weekNotesEnabled: boolean;
-    weekNoteFilesByKey: Map<string, TFile | null>;
+    weekNoteTargetsByKey: Map<string, CalendarNoteTarget>;
     weekUnfinishedTaskCountByKey: Map<string, number>;
     displayLocale: string;
     calendarWeekendDays: CalendarWeekendDays;
@@ -150,10 +150,10 @@ interface CalendarGridProps {
     onDayClick: (event: React.MouseEvent<HTMLButtonElement>, day: CalendarDay) => void;
     onDayMouseDown: (event: React.MouseEvent<HTMLButtonElement>, day: CalendarDay) => void;
     onDayContextMenu: (event: React.MouseEvent<HTMLButtonElement>, day: CalendarDay, canCreate: boolean, hasFeatureImage: boolean) => void;
-    onWeekClick: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, weekNoteFile: TFile | null) => void;
-    onWeekMouseDown: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, weekNoteFile: TFile | null) => void;
+    onWeekClick: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, note: CalendarNoteTarget | null) => void;
+    onWeekMouseDown: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, note: CalendarNoteTarget | null) => void;
     onWeekLabelClick: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek) => void;
-    onWeekContextMenu: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, weekNoteFile: TFile | null) => void;
+    onWeekContextMenu: (event: React.MouseEvent<HTMLElement>, week: CalendarWeek, note: CalendarNoteTarget | null) => void;
 }
 
 export const CalendarGrid = React.memo(function CalendarGrid({
@@ -164,7 +164,7 @@ export const CalendarGrid = React.memo(function CalendarGrid({
     trailingSpacerWeekCount,
     weeks,
     weekNotesEnabled,
-    weekNoteFilesByKey,
+    weekNoteTargetsByKey,
     weekUnfinishedTaskCountByKey,
     displayLocale,
     calendarWeekendDays,
@@ -206,7 +206,8 @@ export const CalendarGrid = React.memo(function CalendarGrid({
 
             <div className="nn-navigation-calendar-weeks" data-weeknumbers={showWeekNumbers ? 'true' : undefined}>
                 {weeks.map((week, weekIndex) => {
-                    const weekNoteFile = weekNoteFilesByKey.get(week.key) ?? null;
+                    const weekNoteTarget = weekNoteTargetsByKey.get(week.key) ?? null;
+                    const weekNoteFile = weekNoteTarget?.visibleFile ?? null;
                     const weekHasUnfinishedTasks = (weekUnfinishedTaskCountByKey.get(week.key) ?? 0) > 0;
                     const isActiveEditorWeek = Boolean(weekNoteFile && activeEditorFilePath === weekNoteFile.path);
                     const hasWeekAbove = weekIndex > 0;
@@ -231,9 +232,9 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                                             ]
                                                 .filter(Boolean)
                                                 .join(' ')}
-                                            onMouseDown={event => onWeekMouseDown(event, week, weekNoteFile)}
-                                            onClick={event => onWeekClick(event, week, weekNoteFile)}
-                                            onContextMenu={event => onWeekContextMenu(event, week, weekNoteFile)}
+                                            onMouseDown={event => onWeekMouseDown(event, week, weekNoteTarget)}
+                                            onClick={event => onWeekClick(event, week, weekNoteTarget)}
+                                            onContextMenu={event => onWeekContextMenu(event, week, weekNoteTarget)}
                                         >
                                             <span className="nn-navigation-calendar-active-outline" aria-hidden="true" />
                                             <span className="nn-navigation-calendar-weeknumber-value">{week.weekNumber}</span>
@@ -253,13 +254,15 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                                 </>
                             ) : null}
                             {week.days.map((day, dayIndex) => {
-                                const hasDailyNote = Boolean(day.file);
+                                const visibleFile = day.note.visibleFile;
+                                const hasDailyNote = Boolean(visibleFile);
                                 const dayUnfinishedTaskCount = hasDailyNote ? (unfinishedTaskCountByIso.get(day.iso) ?? 0) : 0;
                                 const hasUnfinishedTasks = dayUnfinishedTaskCount > 0;
-                                const featureImageUrl = featureImageUrls[day.iso] ?? null;
-                                const hasFeatureImageKey = featureImageKeysByIso.has(day.iso);
+                                // Feature-image URLs are released asynchronously, so visibility must gate the rendered value immediately.
+                                const featureImageUrl = visibleFile ? (featureImageUrls[day.iso] ?? null) : null;
+                                const hasFeatureImageKey = Boolean(visibleFile && featureImageKeysByIso.has(day.iso));
                                 const isToday = todayIso === day.iso;
-                                const isActiveEditorDay = Boolean(day.file && activeEditorFilePath === day.file.path);
+                                const isActiveEditorDay = Boolean(visibleFile && activeEditorFilePath === visibleFile.path);
                                 const isWeekend = weekendByIndex[dayIndex] ?? false;
                                 const hasWeekendBefore = isWeekend && dayIndex > 0 && Boolean(weekendByIndex[dayIndex - 1]);
                                 const hasWeekendAfter =
@@ -299,7 +302,7 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                                     .filter(Boolean)
                                     .join(' ');
 
-                                const frontmatterTitle = day.file ? (frontmatterTitlesByPath.get(day.file.path) ?? '') : '';
+                                const frontmatterTitle = visibleFile ? (frontmatterTitlesByPath.get(visibleFile.path) ?? '') : '';
 
                                 return (
                                     <CalendarDayCell

@@ -88,6 +88,7 @@ export const STRINGS_PT_BR = {
     navigationCalendar: {
         ariaLabel: 'Calendário',
         dailyNotesNotEnabled: 'O plugin de notas diárias não está ativado.',
+        noteHiddenByProfile: 'A nota do calendário está oculta pelo perfil do cofre atual.',
         createDailyNote: {
             title: 'Nova nota diária',
             message: 'O arquivo {filename} não existe. Deseja criá-lo?',
@@ -1254,8 +1255,8 @@ export const STRINGS_PT_BR = {
                 desc: 'Exibir o nome da pasta pai para notas em subpastas, tags ou propriedades.'
             },
             showParentFolderFullPath: {
-                name: 'Mostrar caminho completo',
-                desc: 'Exibir o caminho completo da pasta pai em vez de apenas o nome da pasta.'
+                name: 'Mostrar caminho da pasta',
+                desc: 'Exibir o caminho relativo à pasta selecionada em vez de apenas o nome da pasta. Tags e propriedades mostram o caminho completo.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clique na pasta pai abre pasta',

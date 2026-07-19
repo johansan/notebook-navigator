@@ -87,6 +87,7 @@ export const STRINGS_ZH_TW = {
     navigationCalendar: {
         ariaLabel: '導覽日曆',
         dailyNotesNotEnabled: '未啟用每日筆記。請在 Obsidian 設定 → 核心外掛中啟用每日筆記。',
+        noteHiddenByProfile: '日曆筆記已被目前的倉庫設定檔隱藏。',
         createDailyNote: {
             title: '建立每日筆記',
             message: '每日筆記 {filename} 不存在。是否建立？',
@@ -1239,8 +1240,8 @@ export const STRINGS_ZH_TW = {
                 desc: '為子資料夾、標籤或屬性中的筆記顯示父資料夾名稱。'
             },
             showParentFolderFullPath: {
-                name: '顯示完整路徑',
-                desc: '顯示父資料夾的完整路徑而非僅顯示資料夾名稱。'
+                name: '顯示資料夾路徑',
+                desc: '顯示相對於所選資料夾的路徑，而不是僅顯示資料夾名稱。標籤和屬性顯示完整路徑。'
             },
             parentFolderClickRevealsFile: {
                 name: '點按父資料夾開啟資料夾',

@@ -124,6 +124,8 @@ export const CalendarDayButton = React.memo(function CalendarDayButton({
         }
 
         if (!tooltipEnabled) {
+            // The anchor can stay hovered while profile visibility changes, so clear tooltip content that is no longer visible.
+            onHideTooltip(element);
             return;
         }
 
@@ -132,7 +134,7 @@ export const CalendarDayButton = React.memo(function CalendarDayButton({
         }
 
         onShowTooltip(element, tooltipDataMemo);
-    }, [isMobile, onShowTooltip, tooltipDataMemo, tooltipEnabled]);
+    }, [isMobile, onHideTooltip, onShowTooltip, tooltipDataMemo, tooltipEnabled]);
 
     return (
         <button

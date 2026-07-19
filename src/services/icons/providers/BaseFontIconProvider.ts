@@ -18,7 +18,7 @@
 
 import { IconProvider, IconDefinition, IconRenderResult } from '../types';
 import { IconAssetRecord } from '../external/IconAssetDatabase';
-import { resetIconContainer } from './providerUtils';
+import { getIconRenderToken, resetIconContainer } from './providerUtils';
 
 export interface BaseFontIconProviderOptions {
     record: IconAssetRecord;
@@ -30,6 +30,20 @@ interface IconLookupEntry {
     keywords: string[];
 }
 
+interface ManagedFontFaceSet {
+    add: (font: FontFace) => void;
+    delete: (font: FontFace) => boolean;
+    has: (font: FontFace) => boolean;
+}
+
+interface FontDocumentState {
+    fontFace: FontFace;
+    fontSet: ManagedFontFaceSet;
+    ownerWindow: Window;
+    handlePageHide: () => void;
+    ready: Promise<FontFace>;
+}
+
 /**
  * Base class for icon providers that use web fonts.
  */
@@ -38,32 +52,34 @@ export abstract class BaseFontIconProvider implements IconProvider {
     abstract readonly name: string;
 
     private readonly fontFamily: string;
-    private fontFace: FontFace | null = null;
-    private fontLoadPromise: Promise<FontFace> | null = null;
+    private readonly fontData: ArrayBuffer;
     private readonly version: string | null;
+    private readonly documentStates = new Map<Document, FontDocumentState>();
+    private isDisposed = false;
 
     protected iconDefinitions: IconDefinition[] = [];
     protected iconLookup: Map<string, IconLookupEntry> = new Map();
 
     constructor(options: BaseFontIconProviderOptions) {
         this.fontFamily = options.fontFamily;
+        this.fontData = options.record.data;
         this.version = options.record?.version ?? null;
         this.parseMetadata(options.record.metadata);
-        this.ensureFontLoaded(options.record.data);
     }
 
     /**
-     * Cleans up font resources when provider is unregistered.
+     * Removes every document-owned face when the provider is unregistered. Pending parses may finish, but the
+     * disposed-state check prevents them from becoming usable or being reattached afterward.
      */
     dispose(): void {
-        if (this.fontFace) {
-            try {
-                this.removeFontFromDocument(this.fontFace);
-            } catch (error) {
-                console.error(`${this.getLogPrefix()} Failed to delete font face`, error);
-            }
-            this.fontFace = null;
+        if (this.isDisposed) {
+            return;
         }
+        this.isDisposed = true;
+
+        Array.from(this.documentStates.entries()).forEach(([document, state]) => {
+            this.releaseDocumentState(document, state);
+        });
     }
 
     isAvailable(): boolean {
@@ -71,33 +87,51 @@ export abstract class BaseFontIconProvider implements IconProvider {
     }
 
     /**
-     * Renders an icon glyph to the container element.
+     * Loads and registers this provider's font in a specific document.
+     *
+     * Resolves after the document can use the face. Rejects when construction, parsing, registration, or disposal
+     * prevents that document from using it. No glyph is rendered or provider state persisted by this method.
      */
-    render(container: HTMLElement, iconId: string, size?: number): IconRenderResult {
+    async prepare(document: Document): Promise<void> {
+        const state = this.getOrCreateDocumentState(document);
+        await state.ready;
+        if (this.isDisposed || this.documentStates.get(document) !== state) {
+            throw new Error(`${this.getLogPrefix()} Font load completed after its document state was released`);
+        }
+        if (!state.fontSet.has(state.fontFace)) {
+            throw new Error(`${this.getLogPrefix()} Font face is unavailable in the target document`);
+        }
+    }
+
+    /**
+     * Renders an icon after the container's owner document has its own loaded font face.
+     */
+    render(container: HTMLElement, iconId: string, size?: number): IconRenderResult | Promise<IconRenderResult> {
         const icon = this.iconLookup.get(iconId);
         resetIconContainer(container);
         if (!icon) {
             return 'not-found';
         }
 
-        container.addClass('nn-iconfont');
-        container.addClass(this.getCssClass());
-        container.setText(this.unicodeToGlyph(icon.unicode));
-
-        if (size) {
-            container.style.fontSize = `${size}px`;
-            container.style.width = `${size}px`;
-            container.style.height = `${size}px`;
-            container.style.lineHeight = `${size}px`;
-        } else {
-            container.style.removeProperty('font-size');
-            container.style.removeProperty('width');
-            container.style.removeProperty('height');
-            container.style.removeProperty('line-height');
+        const token = getIconRenderToken(container);
+        const state = this.getOrCreateDocumentState(container.ownerDocument);
+        if (state.fontFace.status === 'loaded' && state.fontSet.has(state.fontFace)) {
+            this.renderLoadedIcon(container, icon.unicode, size);
+            return 'rendered';
         }
 
-        this.fontLoadPromise?.catch(() => undefined);
-        return 'rendered';
+        return state.ready.then(() => {
+            if (
+                this.isDisposed ||
+                this.documentStates.get(container.ownerDocument) !== state ||
+                !state.fontSet.has(state.fontFace) ||
+                (token && getIconRenderToken(container) !== token)
+            ) {
+                return 'not-found';
+            }
+            this.renderLoadedIcon(container, icon.unicode, size);
+            return 'rendered';
+        });
     }
 
     /**
@@ -190,25 +224,113 @@ export abstract class BaseFontIconProvider implements IconProvider {
     }
 
     /**
-     * Creates and loads the font face from binary data.
+     * Creates one face with the owner document's constructor because each document has an independent font source.
+     * The state is stored before the promise settles so concurrent icon renders share the same parse operation.
      */
-    private ensureFontLoaded(data: ArrayBuffer): void {
-        if (typeof document === 'undefined' || typeof FontFace === 'undefined') {
-            return;
+    private getOrCreateDocumentState(document: Document): FontDocumentState {
+        if (this.isDisposed) {
+            throw new Error(`${this.getLogPrefix()} Cannot load a disposed font provider`);
         }
 
-        const fontFace = new FontFace(this.fontFamily, data);
-        this.fontLoadPromise = fontFace
-            .load()
+        const existing = this.documentStates.get(document);
+        if (existing) {
+            return existing;
+        }
+
+        const ownerWindow = document.defaultView;
+        const fontFaceConstructor = ownerWindow?.FontFace;
+        const fontSet = document.fonts as unknown as ManagedFontFaceSet | undefined;
+        let fontFace: FontFace;
+
+        try {
+            if (!fontFaceConstructor) {
+                throw new Error('FontFace constructor is unavailable in the target document');
+            }
+            if (typeof fontSet?.add !== 'function') {
+                throw new Error('FontFaceSet.add is unavailable in the target document');
+            }
+            if (typeof fontSet.delete !== 'function' || typeof fontSet.has !== 'function') {
+                throw new Error('FontFaceSet lifecycle methods are unavailable in the target document');
+            }
+
+            fontFace = new fontFaceConstructor(this.fontFamily, this.fontData);
+            fontSet.add(fontFace);
+        } catch (error) {
+            console.error(`${this.getLogPrefix()} Failed to create font face`, error);
+            throw error;
+        }
+
+        let loadPromise: Promise<FontFace>;
+        try {
+            loadPromise = fontFace.load();
+        } catch (error) {
+            fontSet.delete(fontFace);
+            console.error(`${this.getLogPrefix()} Failed to load font`, error);
+            throw error;
+        }
+        const handlePageHide = () => {
+            this.releaseDocumentState(document, state);
+        };
+        const state: FontDocumentState = {
+            fontFace,
+            fontSet,
+            ownerWindow,
+            handlePageHide,
+            ready: loadPromise
+        };
+        this.documentStates.set(document, state);
+        // Popout documents can close while the provider remains active. Releasing their faces here prevents the
+        // provider map from retaining the closed window and its DOM until the pack is disabled.
+        ownerWindow.addEventListener('pagehide', handlePageHide, { once: true });
+
+        state.ready = loadPromise
             .then(loaded => {
-                this.addFontToDocument(loaded);
-                this.fontFace = loaded;
+                if (this.isDisposed || this.documentStates.get(document) !== state) {
+                    state.fontSet.delete(loaded);
+                }
                 return loaded;
             })
             .catch(error => {
+                state.fontSet.delete(fontFace);
                 console.error(`${this.getLogPrefix()} Failed to load font`, error);
                 throw error;
             });
+
+        return state;
+    }
+
+    /**
+     * Removes one document-owned face and listener. The identity check keeps late cleanup from deleting a newer state
+     * created for the same document after pagehide processing.
+     */
+    private releaseDocumentState(document: Document, state: FontDocumentState): void {
+        if (this.documentStates.get(document) === state) {
+            this.documentStates.delete(document);
+        }
+        state.ownerWindow.removeEventListener('pagehide', state.handlePageHide);
+        try {
+            state.fontSet.delete(state.fontFace);
+        } catch (error) {
+            console.error(`${this.getLogPrefix()} Failed to delete font face`, error);
+        }
+    }
+
+    private renderLoadedIcon(container: HTMLElement, unicode: string, size: number | undefined): void {
+        container.addClass('nn-iconfont');
+        container.addClass(this.getCssClass());
+        container.setText(this.unicodeToGlyph(unicode));
+
+        if (size) {
+            container.style.fontSize = `${size}px`;
+            container.style.width = `${size}px`;
+            container.style.height = `${size}px`;
+            container.style.lineHeight = `${size}px`;
+        } else {
+            container.style.removeProperty('font-size');
+            container.style.removeProperty('width');
+            container.style.removeProperty('height');
+            container.style.removeProperty('line-height');
+        }
     }
 
     /**
@@ -220,28 +342,6 @@ export abstract class BaseFontIconProvider implements IconProvider {
         } catch {
             return '';
         }
-    }
-
-    /**
-     * Adds loaded font to the document's font set.
-     */
-    private addFontToDocument(fontFace: FontFace): void {
-        if (typeof document === 'undefined') {
-            return;
-        }
-        const fontSet = activeDocument.fonts as unknown as { add?: (font: FontFace) => void };
-        fontSet.add?.(fontFace);
-    }
-
-    /**
-     * Removes font from the document's font set.
-     */
-    private removeFontFromDocument(fontFace: FontFace): void {
-        if (typeof document === 'undefined') {
-            return;
-        }
-        const fontSet = activeDocument.fonts as unknown as { delete?: (font: FontFace) => void };
-        fontSet.delete?.(fontFace);
     }
 
     /**

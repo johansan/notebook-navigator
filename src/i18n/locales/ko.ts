@@ -87,6 +87,7 @@ export const STRINGS_KO = {
     navigationCalendar: {
         ariaLabel: '달력',
         dailyNotesNotEnabled: '데일리 노트 코어 플러그인이 활성화되어 있지 않습니다.',
+        noteHiddenByProfile: '캘린더 노트가 현재 보관함 프로필에서 숨겨져 있습니다.',
         createDailyNote: {
             title: '새 데일리 노트',
             message: '파일 {filename}이(가) 존재하지 않습니다. 생성하시겠습니까?',
@@ -1249,8 +1250,8 @@ export const STRINGS_KO = {
                 desc: '하위 폴더, 태그 또는 속성의 노트에 상위 폴더 이름을 표시합니다.'
             },
             showParentFolderFullPath: {
-                name: '전체 경로 표시',
-                desc: '폴더 이름만이 아니라 상위 폴더의 전체 경로를 표시합니다.'
+                name: '폴더 경로 표시',
+                desc: '폴더 이름만 표시하는 대신 선택한 폴더를 기준으로 한 상대 경로를 표시합니다. 태그와 속성에서는 전체 경로를 표시합니다.'
             },
             parentFolderClickRevealsFile: {
                 name: '상위 폴더 클릭 시 폴더 열기',

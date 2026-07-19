@@ -87,6 +87,7 @@ export const STRINGS_DE = {
     navigationCalendar: {
         ariaLabel: 'Kalender',
         dailyNotesNotEnabled: 'Das Kernplugin für tägliche Notizen ist nicht aktiviert.',
+        noteHiddenByProfile: 'Die Kalendernotiz ist durch das aktuelle Tresorprofil ausgeblendet.',
         createDailyNote: {
             title: 'Neue tägliche Notiz',
             message: 'Datei {filename} existiert nicht. Möchten Sie sie erstellen?',
@@ -1255,8 +1256,8 @@ export const STRINGS_DE = {
                 desc: 'Den übergeordneten Ordnernamen für Notizen in Unterordnern, Tags oder Eigenschaften anzeigen.'
             },
             showParentFolderFullPath: {
-                name: 'Vollständigen Pfad anzeigen',
-                desc: 'Den vollständigen Pfad des übergeordneten Ordners anstelle nur des Ordnernamens anzeigen.'
+                name: 'Ordnerpfad anzeigen',
+                desc: 'Den Pfad relativ zum ausgewählten Ordner statt nur den Ordnernamen anzeigen. Tags und Eigenschaften zeigen den vollständigen Pfad.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Klick auf übergeordneten Ordner öffnet Ordner',

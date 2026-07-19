@@ -17,7 +17,7 @@
  */
 
 import type { SettingDefinitionGroup } from 'obsidian';
-import { getWelcomeVideoBaseUrl, SUPPORT_BUY_ME_A_COFFEE_URL, SUPPORT_SPONSOR_URL } from '../../constants/urls';
+import { SUPPORT_BUY_ME_A_COFFEE_URL, SUPPORT_SPONSOR_URL, WELCOME_VIDEO_URL } from '../../constants/urls';
 import { strings } from '../../i18n';
 import { runAsyncAction } from '../../utils/async';
 import { createSettingGroupFactory } from '../settingGroups';
@@ -110,7 +110,7 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
                     .setIcon('lucide-play')
                     .setTooltip(strings.modals.welcome.openVideoButton)
                     .onClick(() => {
-                        window.open(getWelcomeVideoBaseUrl());
+                        window.open(WELCOME_VIDEO_URL);
                     });
                 button.buttonEl.addClass('nn-youtube-button');
                 button.buttonEl.setAttr('aria-label', strings.modals.welcome.openVideoButton);
@@ -221,7 +221,7 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
                                 .setIcon('lucide-play')
                                 .setTooltip(strings.modals.welcome.openVideoButton)
                                 .onClick(() => {
-                                    window.open(getWelcomeVideoBaseUrl());
+                                    window.open(WELCOME_VIDEO_URL);
                                 });
                             button.buttonEl.addClass('nn-youtube-button');
                             button.buttonEl.setAttr('aria-label', strings.modals.welcome.openVideoButton);

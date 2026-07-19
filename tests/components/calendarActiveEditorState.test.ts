@@ -23,7 +23,39 @@ import { CalendarGrid } from '../../src/components/calendar/CalendarGrid';
 import { CalendarHeader } from '../../src/components/calendar/CalendarHeader';
 import { CalendarYearPanel } from '../../src/components/calendar/CalendarYearPanel';
 import type { CalendarYearMonthEntry } from '../../src/components/calendar/types';
+import type { MomentInstance, MomentLocaleData } from '../../src/utils/moment';
 import { createTestTFile } from '../utils/createTestTFile';
+
+function createCalendarDayMoment(): MomentInstance {
+    const localeData: MomentLocaleData = {
+        firstDayOfWeek: () => 1,
+        weekdaysMin: () => [],
+        weekdaysShort: () => []
+    };
+    const moment: MomentInstance = {
+        clone: () => moment,
+        format: format => (format === 'LL' ? 'June 14, 2026' : '2026-06-14'),
+        isValid: () => true,
+        locale: () => moment,
+        localeData: () => localeData,
+        startOf: () => moment,
+        endOf: () => moment,
+        add: () => moment,
+        subtract: () => moment,
+        diff: () => 0,
+        week: () => 24,
+        weekYear: () => 2026,
+        isoWeek: () => 24,
+        isoWeekYear: () => 2026,
+        month: () => 5,
+        year: () => 2026,
+        date: () => 14,
+        set: () => moment,
+        get: () => 0,
+        toDate: () => new Date('2026-06-14T00:00:00Z')
+    };
+    return moment;
+}
 
 describe('calendar active editor state', () => {
     it('renders active outlines on month, quarter, and year period buttons', () => {
@@ -71,7 +103,17 @@ describe('calendar active editor state', () => {
                 trailingSpacerWeekCount: 0,
                 weeks: [{ key: 'week-2026-W14', weekNumber: 14, days: [] }],
                 weekNotesEnabled: true,
-                weekNoteFilesByKey: new Map([['week-2026-W14', weekNoteFile]]),
+                weekNoteTargetsByKey: new Map([
+                    [
+                        'week-2026-W14',
+                        {
+                            existingFile: weekNoteFile,
+                            visibleFile: weekNoteFile,
+                            isHidden: false,
+                            targetPath: weekNoteFile.path
+                        }
+                    ]
+                ]),
                 weekUnfinishedTaskCountByKey: new Map(),
                 displayLocale: 'en',
                 calendarWeekendDays: 'sat-sun',
@@ -96,6 +138,67 @@ describe('calendar active editor state', () => {
         );
 
         expect(html).toContain('nn-navigation-calendar-weeknumber-button has-period-note is-active-editor-file');
+    });
+
+    it('does not render a stale feature image for a hidden daily note', () => {
+        const dayFile = createTestTFile('Periodic/2026-06-14.md');
+        const dayIso = '2026-06-14';
+        const html = renderToStaticMarkup(
+            React.createElement(CalendarGrid, {
+                activeEditorFilePath: dayFile.path,
+                showWeekNumbers: false,
+                weekdays: [],
+                weekStartsOn: 1,
+                trailingSpacerWeekCount: 0,
+                weeks: [
+                    {
+                        key: 'week-2026-W24',
+                        weekNumber: 24,
+                        days: [
+                            {
+                                date: createCalendarDayMoment(),
+                                iso: dayIso,
+                                inMonth: true,
+                                note: {
+                                    existingFile: dayFile,
+                                    visibleFile: null,
+                                    isHidden: true,
+                                    targetPath: dayFile.path
+                                }
+                            }
+                        ]
+                    }
+                ],
+                weekNotesEnabled: false,
+                weekNoteTargetsByKey: new Map(),
+                weekUnfinishedTaskCountByKey: new Map(),
+                displayLocale: 'en',
+                calendarWeekendDays: 'sat-sun',
+                todayIso: null,
+                unfinishedTaskCountByIso: new Map([[dayIso, 1]]),
+                featureImageUrls: { [dayIso]: 'blob:stale-calendar-image' },
+                featureImageKeysByIso: new Map([[dayIso, 'cover']]),
+                frontmatterTitlesByPath: new Map([[dayFile.path, 'Hidden title']]),
+                dateFormat: 'YYYY-MM-DD',
+                isMobile: false,
+                canCreateDayNotes: true,
+                onShowTooltip: () => {},
+                onHideTooltip: () => {},
+                onDayClick: () => {},
+                onDayMouseDown: () => {},
+                onDayContextMenu: () => {},
+                onWeekClick: () => {},
+                onWeekMouseDown: () => {},
+                onWeekLabelClick: () => {},
+                onWeekContextMenu: () => {}
+            })
+        );
+
+        expect(html).not.toContain('blob:stale-calendar-image');
+        expect(html).not.toContain('has-feature-image');
+        expect(html).not.toContain('has-daily-note');
+        expect(html).not.toContain('has-unfinished-tasks');
+        expect(html).not.toContain('Hidden title');
     });
 
     it('renders an active outline on the year period button in the year panel', () => {

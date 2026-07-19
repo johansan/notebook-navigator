@@ -88,6 +88,7 @@ export const STRINGS_TR = {
     navigationCalendar: {
         ariaLabel: 'Takvim',
         dailyNotesNotEnabled: 'Günlük notlar eklentisi etkin değil.',
+        noteHiddenByProfile: 'Takvim notu geçerli kasa profili tarafından gizleniyor.',
         createDailyNote: {
             title: 'Yeni günlük not',
             message: '{filename} dosyası mevcut değil. Oluşturmak ister misiniz?',
@@ -1250,8 +1251,8 @@ export const STRINGS_TR = {
                 desc: 'Alt klasörlerdeki, etiketlerdeki veya özelliklerdeki notlar için üst klasör adını görüntüle.'
             },
             showParentFolderFullPath: {
-                name: 'Tam yolu göster',
-                desc: 'Yalnızca klasör adı yerine üst klasörün tam yolunu görüntüler.'
+                name: 'Klasör yolunu göster',
+                desc: 'Yalnızca klasör adı yerine seçili klasöre göre yolu görüntüle. Etiketler ve özellikler tam yolu gösterir.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Üst klasöre tıklayarak klasörü aç',

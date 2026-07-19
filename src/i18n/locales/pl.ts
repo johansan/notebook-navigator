@@ -88,6 +88,7 @@ export const STRINGS_PL = {
     navigationCalendar: {
         ariaLabel: 'Kalendarz',
         dailyNotesNotEnabled: 'Wbudowana wtyczka Dziennik jest wyłączona.',
+        noteHiddenByProfile: 'Notatka kalendarza jest ukryta przez bieżący profil magazynu.',
         createDailyNote: {
             title: 'Nowy dziennik',
             message: 'Plik {filename} nie istnieje. Czy chcesz go utworzyć?',
@@ -1255,8 +1256,8 @@ export const STRINGS_PL = {
                 desc: 'Wyświetla nazwę folderu nadrzędnego dla notatek w podfolderach, tagach lub właściwościach.'
             },
             showParentFolderFullPath: {
-                name: 'Pokaż pełną ścieżkę',
-                desc: 'Wyświetla pełną ścieżkę folderu nadrzędnego zamiast tylko nazwy folderu.'
+                name: 'Pokaż ścieżkę folderu',
+                desc: 'Wyświetla ścieżkę względem wybranego folderu zamiast samej nazwy folderu. Tagi i właściwości pokazują pełną ścieżkę.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Kliknięcie folderu nadrzędnego otwiera folder',

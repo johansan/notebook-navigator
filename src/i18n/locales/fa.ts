@@ -88,6 +88,7 @@ export const STRINGS_FA = {
     navigationCalendar: {
         ariaLabel: 'تقویم',
         dailyNotesNotEnabled: 'افزونه یادداشت روزانه فعال نیست.',
+        noteHiddenByProfile: 'یادداشت تقویم توسط نمایه فعلی خزانه پنهان شده است.',
         createDailyNote: {
             title: 'یادداشت روزانه جدید',
             message: 'فایل {filename} وجود ندارد. آیا می‌خواهید آن را ایجاد کنید؟',
@@ -1252,8 +1253,8 @@ export const STRINGS_FA = {
                 desc: 'نام پوشه والد را برای یادداشت‌ها در زیرپوشه‌ها، برچسب‌ها یا ویژگی‌ها نمایش دهید.'
             },
             showParentFolderFullPath: {
-                name: 'نمایش مسیر کامل',
-                desc: 'مسیر کامل پوشه والد را به جای فقط نام پوشه نمایش دهید.'
+                name: 'نمایش مسیر پوشه',
+                desc: 'مسیر را نسبت به پوشه انتخاب‌شده به جای فقط نام پوشه نمایش دهید. برچسب‌ها و ویژگی‌ها مسیر کامل را نشان می‌دهند.'
             },
             parentFolderClickRevealsFile: {
                 name: 'کلیک روی پوشه والد پوشه را باز می‌کند',

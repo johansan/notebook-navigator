@@ -88,6 +88,7 @@ export const STRINGS_EN = {
     navigationCalendar: {
         ariaLabel: 'Calendar',
         dailyNotesNotEnabled: 'Daily notes core plugin is not enabled.',
+        noteHiddenByProfile: 'Calendar note is hidden by the current vault profile.',
         createDailyNote: {
             title: 'New daily note',
             message: 'File {filename} does not exist. Would you like to create it?',
@@ -1246,8 +1247,8 @@ export const STRINGS_EN = {
                 desc: 'Display the parent folder name for notes in subfolders, tags, or properties.'
             },
             showParentFolderFullPath: {
-                name: 'Show full path',
-                desc: 'Display the full parent folder path instead of only the folder name.'
+                name: 'Show folder path',
+                desc: 'Display the path relative to the selected folder instead of only the folder name. Tags and properties show the full path.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Click parent folder to go to folder',

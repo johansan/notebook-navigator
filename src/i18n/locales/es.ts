@@ -87,6 +87,7 @@ export const STRINGS_ES = {
     navigationCalendar: {
         ariaLabel: 'Calendario',
         dailyNotesNotEnabled: 'El complemento principal de notas diarias no está habilitado.',
+        noteHiddenByProfile: 'La nota del calendario está oculta por el perfil de bóveda actual.',
         createDailyNote: {
             title: 'Nueva nota diaria',
             message: 'El archivo {filename} no existe. ¿Deseas crearlo?',
@@ -1253,8 +1254,8 @@ export const STRINGS_ES = {
                 desc: 'Muestra el nombre de la carpeta principal para las notas en subcarpetas, etiquetas o propiedades.'
             },
             showParentFolderFullPath: {
-                name: 'Mostrar ruta completa',
-                desc: 'Mostrar la ruta completa de la carpeta principal en lugar de solo el nombre de la carpeta.'
+                name: 'Mostrar ruta de carpeta',
+                desc: 'Muestra la ruta relativa a la carpeta seleccionada en lugar de solo el nombre de la carpeta. Las etiquetas y propiedades muestran la ruta completa.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Clic en carpeta principal abre carpeta',

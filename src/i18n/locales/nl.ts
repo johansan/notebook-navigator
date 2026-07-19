@@ -89,6 +89,7 @@ export const STRINGS_NL = {
     navigationCalendar: {
         ariaLabel: 'Kalender',
         dailyNotesNotEnabled: 'De dagelijkse notities plugin is niet ingeschakeld.',
+        noteHiddenByProfile: 'De kalendernotitie is verborgen door het huidige kluisprofiel.',
         createDailyNote: {
             title: 'Nieuwe dagelijkse notitie',
             message: 'Bestand {filename} bestaat niet. Wilt u het aanmaken?',
@@ -1254,8 +1255,8 @@ export const STRINGS_NL = {
                 desc: 'De naam van de bovenliggende map weergeven voor notities in submappen, tags of eigenschappen.'
             },
             showParentFolderFullPath: {
-                name: 'Volledig pad tonen',
-                desc: 'Het volledige pad van de bovenliggende map weergeven in plaats van alleen de mapnaam.'
+                name: 'Mappad tonen',
+                desc: 'Het pad ten opzichte van de geselecteerde map weergeven in plaats van alleen de mapnaam. Tags en eigenschappen tonen het volledige pad.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Klik op bovenliggende map opent map',

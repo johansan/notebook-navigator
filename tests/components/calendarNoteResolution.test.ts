@@ -17,9 +17,14 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { createCalendarNotePathResolverContext, parseCalendarNoteDateFromPath } from '../../src/components/calendar/calendarNoteResolution';
+import {
+    createCalendarNotePathResolverContext,
+    parseCalendarNoteDateFromPath,
+    resolveCalendarNoteTarget
+} from '../../src/components/calendar/calendarNoteResolution';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { MomentApi, MomentInstance, MomentLocaleData } from '../../src/utils/moment';
+import { createTestTFile } from '../utils/createTestTFile';
 
 function createFakeMoment(
     formatMap?: Record<string, string>,
@@ -84,6 +89,77 @@ function createMomentApi(parsedByKey: Record<string, Record<string, string>>): M
 }
 
 describe('calendar note resolution', () => {
+    test('retains an existing note while hiding it from a profile-hidden folder', () => {
+        const existingFile = createTestTFile('Personal/Journal/2026-07-18.md');
+
+        const target = resolveCalendarNoteTarget({
+            existingFile,
+            targetPath: existingFile.path,
+            hiddenFolders: ['/Personal/Journal'],
+            showHiddenItems: false,
+            isExistingFileVisible: () => true
+        });
+
+        expect(target).toEqual({
+            existingFile,
+            visibleFile: null,
+            isHidden: true,
+            targetPath: existingFile.path
+        });
+    });
+
+    test('blocks creation when a missing calendar note targets a profile-hidden folder', () => {
+        const target = resolveCalendarNoteTarget({
+            existingFile: null,
+            targetPath: 'Personal/Journal/2026-07-19.md',
+            hiddenFolders: ['/Personal/Journal'],
+            showHiddenItems: false,
+            isExistingFileVisible: () => true
+        });
+
+        expect(target).toEqual({
+            existingFile: null,
+            visibleFile: null,
+            isHidden: true,
+            targetPath: 'Personal/Journal/2026-07-19.md'
+        });
+    });
+
+    test('shows profile-hidden calendar targets while hidden items are enabled', () => {
+        const existingFile = createTestTFile('Personal/Journal/2026-07-18.md');
+
+        const target = resolveCalendarNoteTarget({
+            existingFile,
+            targetPath: existingFile.path,
+            hiddenFolders: ['/Personal/Journal'],
+            showHiddenItems: true,
+            isExistingFileVisible: () => false
+        });
+
+        expect(target).toEqual({
+            existingFile,
+            visibleFile: existingFile,
+            isHidden: false,
+            targetPath: existingFile.path
+        });
+    });
+
+    test('hides an existing calendar note excluded by another profile file rule', () => {
+        const existingFile = createTestTFile('Journal/2026-07-18.md');
+
+        const target = resolveCalendarNoteTarget({
+            existingFile,
+            targetPath: existingFile.path,
+            hiddenFolders: [],
+            showHiddenItems: false,
+            isExistingFileVisible: () => false
+        });
+
+        expect(target.existingFile).toBe(existingFile);
+        expect(target.visibleFile).toBeNull();
+        expect(target.isHidden).toBe(true);
+    });
+
     test('parses a month note path when it round-trips through the configured pattern', () => {
         const settings = {
             ...DEFAULT_SETTINGS,

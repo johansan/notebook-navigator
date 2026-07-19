@@ -53,6 +53,18 @@ describe('propertyUtils', () => {
         expect(fields).toEqual(['word-goal']);
     });
 
+    it('includes the word count target property when sorting activates custom group headers', () => {
+        const fields = getPropertyFrontmatterFields({
+            ...DEFAULT_SETTINGS,
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            wordCountTargetProperty: 'word-goal'
+        });
+
+        expect(fields).toEqual(['word-goal']);
+    });
+
     it('does not duplicate a configured visible property used as the word count target', () => {
         const defaultProfile = DEFAULT_SETTINGS.vaultProfiles[0];
         if (!defaultProfile) {

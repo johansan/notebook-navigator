@@ -88,6 +88,7 @@ export const STRINGS_VI = {
     navigationCalendar: {
         ariaLabel: 'Lịch',
         dailyNotesNotEnabled: 'Plugin ghi chú hàng ngày chưa được bật.',
+        noteHiddenByProfile: 'Ghi chú lịch bị ẩn bởi hồ sơ kho hiện tại.',
         createDailyNote: {
             title: 'Ghi chú hàng ngày mới',
             message: 'Tệp {filename} không tồn tại. Bạn có muốn tạo không?',
@@ -1253,8 +1254,8 @@ export const STRINGS_VI = {
                 desc: 'Hiển thị tên thư mục cha cho ghi chú trong thư mục con, thẻ hoặc thuộc tính.'
             },
             showParentFolderFullPath: {
-                name: 'Hiện đường dẫn đầy đủ',
-                desc: 'Hiển thị đường dẫn đầy đủ của thư mục cha thay vì chỉ tên thư mục.'
+                name: 'Hiện đường dẫn thư mục',
+                desc: 'Hiển thị đường dẫn tương đối với thư mục đã chọn thay vì chỉ tên thư mục. Thẻ và thuộc tính hiển thị đường dẫn đầy đủ.'
             },
             parentFolderClickRevealsFile: {
                 name: 'Nhấn thư mục cha để mở thư mục',

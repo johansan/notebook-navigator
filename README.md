@@ -32,7 +32,7 @@ Coming from another app? Read the switching guides for [Evernote](https://notebo
 
 Here is the official tutorial for learning and mastering Notebook Navigator:
 
-[![Mastering Notebook Navigator](https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/youtube-thumbnail.jpg)](https://www.youtube.com/watch?v=BewIlG8wLAM)
+[![Mastering Notebook Navigator](https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/youtube-thumbnail.jpg)](https://www.youtube.com/watch?v=m2maDNtho7Y)
 
 The video has subtitles in 21 languages.
 
