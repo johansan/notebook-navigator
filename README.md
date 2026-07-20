@@ -58,10 +58,9 @@ Notebook Navigator runs locally, but some features make documented HTTP requests
 - [9 Commands](#9-commands)
 - [10 Features](#10-features)
 - [11 Network and Diagnostics Disclosure](#11-network-and-diagnostics-disclosure)
-- [12 Star History](#12-star-history)
-- [13 Contact](#13-contact)
-- [14 Questions or issues?](#14-questions-or-issues)
-- [15 License](#15-license)
+- [12 Contact](#12-contact)
+- [13 Questions or issues?](#13-questions-or-issues)
+- [14 License](#14-license)
 
 <br/>
 
@@ -521,13 +520,7 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 
 <br/>
 
-## 12 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=johansan/notebook-navigator&type=date&legend=top-left)](https://www.star-history.com/#johansan/notebook-navigator&type=date&legend=top-left)
-
-<br/>
-
-## 13 Contact
+## 12 Contact
 
 Notebook Navigator is built and maintained by [Johan Sanneblad](https://www.linkedin.com/in/johansan/). Johan has a PhD in Software Development and has worked with innovation development for companies such as Apple, Electronic Arts, Google, Microsoft, Lego, SKF, Volvo Cars, Volvo Group and Yamaha.
 
@@ -535,7 +528,7 @@ Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/johansan/
 
 <br/>
 
-## 14 Questions or issues?
+## 13 Questions or issues?
 
 **[Join our Discord](https://discord.gg/6eeSUvzEJr)** for support and discussions, or open an issue on the
 [GitHub repository](https://github.com/johansan/notebook-navigator).
@@ -544,6 +537,6 @@ Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/johansan/
 
 <br/>
 
-## 15 License
+## 14 License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/johansan/notebook-navigator/blob/main/LICENSE) file for details.
