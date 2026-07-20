@@ -58,10 +58,9 @@ Notebook Navigator runs locally, but some features make documented HTTP requests
 - [9 Commands](#9-commands)
 - [10 Features](#10-features)
 - [11 Network and Diagnostics Disclosure](#11-network-and-diagnostics-disclosure)
-- [12 Star History](#12-star-history)
-- [13 Contact](#13-contact)
-- [14 Questions or issues?](#14-questions-or-issues)
-- [15 License](#15-license)
+- [12 Contact](#12-contact)
+- [13 Questions or issues?](#13-questions-or-issues)
+- [14 License](#14-license)
 
 <br/>
 
@@ -165,11 +164,11 @@ Filters files by display name, alias, tags, properties, dates, folders, extensio
 
 **Properties**
 
-- `.key` - Include notes with property key
+- `.key` - Include notes with a property key that starts with `key`
 - `.key=value` - Include notes where the property value contains `value`
 - `."Reading Status"` - Property key with whitespace (double-quoted)
 - `."Reading Status"="In Progress"` - Keys and values with whitespace must be double-quoted
-- `-.key` - Exclude notes with property key
+- `-.key` - Exclude notes with a property key that starts with `key`
 - `-.key=value` - Exclude notes where the property value contains `value`
 - Cmd/Ctrl+Click a property to add with AND. Cmd/Ctrl+Shift+Click to add with OR
 
@@ -499,7 +498,7 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 ### 11.3 External images, videos, and YouTube thumbnails
 
 - **Feature images (Optional):** Controlled by the "Download external images" setting. Downloads remote images and YouTube thumbnails for feature images and stores them locally in IndexedDB.
-- **Welcome modal (First launch):** Loads a static thumbnail from `https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/youtube-thumbnail.jpg`.
+- **Welcome modal (First launch):** Loads a YouTube thumbnail from `https://img.youtube.com/vi/<id>/...`.
 - **What's new modal (On update / when opened):** Loads release banner images from `https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/version-banners/<id>.jpg` for release notes that include a banner.
 - **What's new modal (On update / when opened):** Loads release videos from `https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/version-banners/<id>.mp4` for release notes that include a video.
 - **What's new modal (When opening a release video):** Opens release videos from `https://cdn.jsdelivr.net/gh/johansan/notebook-navigator@main/images/version-banners/<id>.mp4` so browsers can play the video directly.
@@ -521,13 +520,7 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 
 <br/>
 
-## 12 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=johansan/notebook-navigator&type=date&legend=top-left)](https://www.star-history.com/#johansan/notebook-navigator&type=date&legend=top-left)
-
-<br/>
-
-## 13 Contact
+## 12 Contact
 
 Notebook Navigator is built and maintained by [Johan Sanneblad](https://www.linkedin.com/in/johansan/). Johan has a PhD in Software Development and has worked with innovation development for companies such as Apple, Electronic Arts, Google, Microsoft, Lego, SKF, Volvo Cars, Volvo Group and Yamaha.
 
@@ -535,7 +528,7 @@ Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/johansan/
 
 <br/>
 
-## 14 Questions or issues?
+## 13 Questions or issues?
 
 **[Join our Discord](https://discord.gg/6eeSUvzEJr)** for support and discussions, or open an issue on the
 [GitHub repository](https://github.com/johansan/notebook-navigator).
@@ -544,6 +537,6 @@ Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/johansan/
 
 <br/>
 
-## 15 License
+## 14 License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/johansan/notebook-navigator/blob/main/LICENSE) file for details.

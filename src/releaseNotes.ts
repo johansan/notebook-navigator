@@ -58,6 +58,18 @@ export { compareVersions } from './utils/versionUtils';
  */
 
 /**
+ * Positions the play button over a YouTube thumbnail.
+ */
+export interface YoutubePlayButtonOptions {
+    /** Horizontal center as a percentage of the thumbnail width */
+    x: number;
+    /** Vertical center as a percentage of the thumbnail height */
+    y: number;
+    /** Multiplier applied to the default play button size; defaults to 1 */
+    scale?: number;
+}
+
+/**
  * Represents a single release note entry
  */
 export interface ReleaseNote {
@@ -75,6 +87,8 @@ export interface ReleaseNote {
     videoClickable?: boolean;
     /** Optional YouTube video URL shown above the release notes for this version */
     youtubeUrl?: string;
+    /** Optional play button placement; thumbnails otherwise use a centered button at its default size */
+    youtubePlayButton?: YoutubePlayButtonOptions;
     info?: string; // General information about the release, shown at top without bullets
     new?: string[];
     improved?: string[];
@@ -95,9 +109,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-07-20',
         showOnUpdate: true,
         youtubeUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
+        youtubePlayButton: { x: 80, y: 49, scale: 1.8 },
         info: 'We finally have a new **Mastering Notebook Navigator 3** video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value in it.',
         new: [
-            'Filter search now matches frontmatter aliases in addition to display names. Notes matched through an alias show the alias next to the note name in the search results. Exclusions with `-word` also apply to aliases.',
+            'Filter search now checks frontmatter aliases and all supported frontmatter properties, including properties that are not shown in Notebook Navigator. For example, `kickoff` finds a note with the alias `Project kickoff`, `.stat` finds the `status` property, and `.status=act` finds the value `active`. Matches are highlighted in the note list, and hidden properties are shown next to the note name. Exclusions such as `-kickoff` also check aliases. This change requires a one-time cache rebuild after updating. Sorry about that!',
             'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
         ],
         improved: [

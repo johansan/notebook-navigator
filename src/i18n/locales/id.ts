@@ -212,11 +212,11 @@ export const STRINGS_ID = {
                 properties: {
                     title: 'Properti',
                     items: [
-                        '`.key` Sertakan catatan dengan kunci properti.',
+                        '`.key` Sertakan catatan dengan kunci properti yang dimulai dengan `key`.',
                         '`.key=value` Sertakan catatan yang nilai propertinya mengandung `value`.',
                         '`."Reading Status"` Sertakan catatan dengan kunci properti yang mengandung spasi.',
                         '`."Reading Status"="In Progress"` Kunci dan nilai yang mengandung spasi harus diapit tanda kutip ganda.',
-                        '`-.key` Kecualikan catatan dengan kunci properti.',
+                        '`-.key` Kecualikan catatan dengan kunci properti yang dimulai dengan `key`.',
                         '`-.key=value` Kecualikan catatan yang nilai propertinya mengandung `value`.',
                         'Cmd/Ctrl+Klik properti untuk menambahkan dengan AND. Cmd/Ctrl+Shift+Klik untuk menambahkan dengan OR.'
                     ]
@@ -720,10 +720,10 @@ export const STRINGS_ID = {
         welcome: {
             title: 'Selamat datang di {pluginName}',
             introText:
-                'Halo! Video di bawah ini adalah kursus lengkap berdurasi satu jam dalam 14 bab. Sebelum memulai, saya sangat menyarankan Anda menonton tiga bab pertama untuk memahami model panel — gagasan yang menjadi dasar seluruh plugin ini.',
+                'Halo dan selamat datang di Notebook Navigator, penjelajah file dan kalender yang lebih baik untuk Obsidian. Sebelum memulai, saya sangat menyarankan agar Anda menonton setidaknya tiga bab pertama dari video di bawah ini, Mastering Notebook Navigator. Video tersebut memperkenalkan cara kerja kedua panel dan membantu Anda cepat memahami penggunaannya.',
             continueText:
-                'Jika Anda memiliki sepuluh menit lagi, lanjutkan dengan bab tentang penyiapan awal dan alur kerja harian untuk mengatur pengaturan yang disarankan dan dua tombol pintasan terpenting.',
-            thanksText: 'Terima kasih banyak telah mengunduh, selamat menggunakan!',
+                'Lalu, jika Anda punya waktu sepuluh menit lagi, lanjutkan menonton bab penyiapan awal dan alur penggunaan sehari-hari. Bab-bab tersebut mencakup semua yang Anda perlukan untuk memulai, dan Anda dapat kembali nanti untuk melihat penjelasan yang lebih mendetail. Tautan videonya ada di bagian atas pengaturan Notebook Navigator.',
+            thanksText: 'Selamat menggunakan Notebook Navigator!',
             videoAlt: 'Menguasai Notebook Navigator 3',
             openVideoButton: 'Putar video',
             closeButton: 'Mungkin nanti'

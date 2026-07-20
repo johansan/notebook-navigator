@@ -211,11 +211,11 @@ export const STRINGS_IT = {
                 properties: {
                     title: 'Proprietà',
                     items: [
-                        '`.key` Includi note con chiave di proprietà.',
+                        '`.key` Includi le note con una chiave di proprietà che inizia con `key`.',
                         '`.key=value` Includi note in cui il valore della proprietà contiene `value`.',
                         '`."Reading Status"` Includi note con una chiave di proprietà che contiene spazi.',
                         '`."Reading Status"="In Progress"` Chiavi e valori con spazi devono essere racchiusi tra virgolette doppie.',
-                        '`-.key` Escludi note con chiave di proprietà.',
+                        '`-.key` Escludi le note con una chiave di proprietà che inizia con `key`.',
                         '`-.key=value` Escludi note in cui il valore della proprietà contiene `value`.',
                         'Cmd/Ctrl+Clic su una proprietà per aggiungere con AND. Cmd/Ctrl+Shift+Clic per aggiungere con OR.'
                     ]
@@ -716,10 +716,10 @@ export const STRINGS_IT = {
         welcome: {
             title: 'Benvenuto in {pluginName}',
             introText:
-                "Ciao! Il video qui sotto è un corso completo di un'ora in 14 capitoli. Prima di iniziare, ti consiglio vivamente di guardare i primi tre capitoli per capire il modello a pannelli: l'idea su cui si basa l'intero plugin.",
+                'Ciao e benvenuto in Notebook Navigator, un file browser e calendario migliore per Obsidian. Prima di iniziare, ti consiglio davvero di guardare almeno i primi tre capitoli del video qui sotto, Mastering Notebook Navigator. Ti spiegano come funzionano i due pannelli e ti aiutano a iniziare rapidamente.',
             continueText:
-                'Se hai altri dieci minuti, continua con i capitoli sulla configurazione iniziale e sulla routine quotidiana per configurare le impostazioni consigliate e i due tasti di scelta rapida più importanti.',
-            thanksText: 'Grazie mille per aver scaricato e buon divertimento!',
+                'Poi, se hai altri dieci minuti, continua con i capitoli sulla prima configurazione e sull’uso quotidiano. Troverai tutto ciò che ti serve per iniziare e potrai tornare in seguito per approfondire i dettagli. Troverai un link al video nella parte superiore delle impostazioni di Notebook Navigator.',
+            thanksText: 'Buon divertimento con Notebook Navigator!',
             videoAlt: 'Padroneggiare Notebook Navigator 3',
             openVideoButton: 'Riproduci video',
             closeButton: 'Forse più tardi'

@@ -17,7 +17,7 @@
  */
 
 import { isMarkdownPath } from '../../utils/fileTypeUtils';
-import { isPlainObjectRecordValue } from '../../utils/recordUtils';
+import { casefold, isPlainObjectRecordValue } from '../../utils/recordUtils';
 
 export type FeatureImageStatus = 'unprocessed' | 'none' | 'has';
 export type PreviewStatus = 'unprocessed' | 'none' | 'has';
@@ -69,6 +69,44 @@ export function isPropertyData(value: unknown): value is PropertyItem[] {
         return false;
     }
     return value.every(entry => isPropertyItem(entry));
+}
+
+function buildPropertyValueSignaturesByKey(properties: readonly PropertyItem[] | null): Map<string, string[]> {
+    const signaturesByKey = new Map<string, Set<string>>();
+    properties?.forEach(property => {
+        const normalizedKey = casefold(property.fieldKey.trim());
+        if (!normalizedKey) {
+            return;
+        }
+
+        const signatures = signaturesByKey.get(normalizedKey) ?? new Set<string>();
+        signatures.add(JSON.stringify([property.valueKind ?? 'string', property.value]));
+        signaturesByKey.set(normalizedKey, signatures);
+    });
+
+    return new Map(Array.from(signaturesByKey, ([key, signatures]) => [key, Array.from(signatures).sort()]));
+}
+
+/**
+ * Returns normalized keys whose tree membership changed between two property snapshots. Value order
+ * and duplicates are ignored because property tree nodes store file membership in sets. Callers use
+ * this projection to avoid rebuilding configured property trees after an unrelated hidden property changes.
+ */
+export function getChangedPropertyKeys(previous: readonly PropertyItem[] | null, next: readonly PropertyItem[] | null): string[] {
+    const previousByKey = buildPropertyValueSignaturesByKey(previous);
+    const nextByKey = buildPropertyValueSignaturesByKey(next);
+    const keys = new Set([...previousByKey.keys(), ...nextByKey.keys()]);
+
+    return Array.from(keys)
+        .filter(key => {
+            const previousSignatures = previousByKey.get(key) ?? [];
+            const nextSignatures = nextByKey.get(key) ?? [];
+            return (
+                previousSignatures.length !== nextSignatures.length ||
+                previousSignatures.some((signature, index) => signature !== nextSignatures[index])
+            );
+        })
+        .sort();
 }
 
 // Task counters are stored and updated as a pair.
@@ -236,6 +274,8 @@ export interface FileContentChange {
         properties?: FileData['properties'];
     };
     changeType?: 'metadata' | 'content' | 'both';
+    /** Normalized property keys whose tree membership changed; omitted when the writer cannot provide a projection. */
+    changedPropertyKeys?: string[];
     /** True when metadata.name changes between persisted values */
     metadataNameChanged?: boolean;
     /** True when metadata fields used by navigation/list decorations change between persisted values */

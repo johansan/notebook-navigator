@@ -364,6 +364,9 @@ body {
     background-color: var(--nn-theme-list-search-active-bg);
     color: inherit;
     border-radius: 3px;
+    padding: 0;
+    font-weight: 600;
+    border-bottom: 1px solid currentColor;
 }
 
 /* Resets Obsidian's default view-content padding for cleaner integration */
@@ -4060,6 +4063,33 @@ button.nn-navigation-calendar-day {
     height: 1em;
 }
 
+/* Property evidence appears only while an internal property search is active. */
+.nn-file-property-search-evidence {
+    display: inline;
+    margin-inline-start: 5px;
+    color: var(--nn-theme-foreground-muted);
+    font-size: 0.85em;
+    font-weight: normal;
+    vertical-align: baseline;
+}
+
+.nn-file-property-search-evidence-key {
+    font-weight: 600;
+}
+
+.nn-file-property-search-evidence-icon {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    margin-inline-end: 2px;
+    vertical-align: -0.125em;
+}
+
+.nn-file-property-search-evidence-icon svg {
+    width: 1em;
+    height: 1em;
+}
+
 .nn-file-icon {
     width: var(--nn-file-icon-size-mobile, var(--nn-file-icon-size));
     height: var(--nn-file-icon-size-mobile, var(--nn-file-icon-size));
@@ -5480,6 +5510,33 @@ body.nn-resizing {
     margin-top: 16px;
 }
 
+/* YouTube play overlay shared by modal thumbnail links */
+.nn-youtube-play {
+    position: absolute;
+    top: var(--nn-youtube-play-y, 50%);
+    left: var(--nn-youtube-play-x, 50%);
+    width: 52px;
+    height: 36px;
+    transform: translate(-50%, -50%) scale(var(--nn-youtube-play-scale, 1));
+    border-radius: 8px;
+    background-color: #ff0000;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.nn-youtube-play::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-40%, -50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #ffffff;
+}
+
 .nn-folder-note-type-modal .modal-content {
     padding-top: 16px;
 }
@@ -5910,6 +5967,7 @@ body.nn-resizing {
 }
 
 .nn-welcome-thumbnail-frame {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -5924,6 +5982,16 @@ body.nn-resizing {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.nn-welcome-youtube-play {
+    --nn-youtube-play-x: 80%;
+    --nn-youtube-play-y: 49%;
+    --nn-youtube-play-scale: 1.8;
+}
+
+.nn-welcome-thumbnail-link:hover .nn-welcome-youtube-play {
+    background-color: #cc0000;
 }
 
 .nn-welcome-buttons {
@@ -6160,33 +6228,7 @@ body.nn-resizing {
     font-size: 13px;
 }
 
-.nn-whats-new-youtube-play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 52px;
-    height: 36px;
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
-    background-color: #ff0000;
-    opacity: 0.9;
-    pointer-events: none;
-}
-
-.nn-whats-new-youtube-play::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-40%, -50%);
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 8px 0 8px 14px;
-    border-color: transparent transparent transparent #ffffff;
-}
-
-.nn-whats-new-youtube-link:hover .nn-whats-new-youtube-play {
+.nn-whats-new-youtube-link:hover .nn-youtube-play {
     background-color: #cc0000;
 }
 

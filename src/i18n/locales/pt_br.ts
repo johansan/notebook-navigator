@@ -213,11 +213,11 @@ export const STRINGS_PT_BR = {
                 properties: {
                     title: 'Propriedades',
                     items: [
-                        '`.key` Incluir notas com chave de propriedade.',
+                        '`.key` Incluir notas com uma chave de propriedade que começa com `key`.',
                         '`.key=value` Incluir notas cujo valor de propriedade contenha `value`.',
                         '`."Reading Status"` Incluir notas com uma chave de propriedade que contém espaços.',
                         '`."Reading Status"="In Progress"` Chaves e valores com espaços devem estar entre aspas duplas.',
-                        '`-.key` Excluir notas com chave de propriedade.',
+                        '`-.key` Excluir notas com uma chave de propriedade que começa com `key`.',
                         '`-.key=value` Excluir notas cujo valor de propriedade contenha `value`.',
                         'Cmd/Ctrl+Clique em uma propriedade para adicionar com AND. Cmd/Ctrl+Shift+Clique para adicionar com OR.'
                     ]
@@ -721,10 +721,10 @@ export const STRINGS_PT_BR = {
         welcome: {
             title: 'Bem-vindo ao {pluginName}',
             introText:
-                'Olá! O vídeo abaixo é um curso completo de uma hora em 14 capítulos. Antes de começar, recomendo que você assista aos três primeiros capítulos para entender o modelo de painéis — a ideia sobre a qual todo o plugin é construído.',
+                'Olá e seja bem-vindo ao Notebook Navigator, uma opção melhor de navegador de arquivos e calendário para o Obsidian. Antes de começar, recomendo mesmo que você assista pelo menos aos três primeiros capítulos do vídeo abaixo, Mastering Notebook Navigator. Eles apresentam como os dois painéis funcionam e ajudam você a começar rapidamente.',
             continueText:
-                'Se você tiver mais dez minutos, continue com os capítulos sobre a configuração inicial e a rotina diária para definir as configurações recomendadas e as duas teclas de atalho mais importantes.',
-            thanksText: 'Muito obrigado por baixar e aproveite!',
+                'Depois, se você tiver mais dez minutos, continue assistindo aos capítulos sobre a configuração inicial e a rotina de uso diário. Eles mostram tudo o que você precisa para começar, e você pode voltar mais tarde para ver mais detalhes. Você encontrará um link para o vídeo no topo das configurações do Notebook Navigator.',
+            thanksText: 'Divirta-se usando o Notebook Navigator!',
             videoAlt: 'Dominando o Notebook Navigator 3',
             openVideoButton: 'Reproduzir vídeo',
             closeButton: 'Talvez depois'

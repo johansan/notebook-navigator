@@ -22,6 +22,7 @@ import { useMetadataService, useServices } from '../../context/ServicesContext';
 import { useNavigationSelection } from '../../context/SelectionContext';
 import { useTagNavigation } from '../../hooks/useTagNavigation';
 import type { PropertyItem } from '../../storage/IndexedDBStorage';
+import type { PropertySearchMatch, PropertySearchValueMatch } from '../../types/search';
 import { showsCharacterCount, showsWordCount, type NotebookNavigatorSettings } from '../../settings/types';
 import { runAsyncAction } from '../../utils/async';
 import {
@@ -33,9 +34,17 @@ import {
 } from '../../utils/listPaneMeasurements';
 import { naturalCompare } from '../../utils/sortUtils';
 import { getTagSearchModifierOperator, normalizeTagPath } from '../../utils/tagUtils';
-import { isSupportedCssColor, parsePropertyLinkTarget, type PropertyLinkTarget } from '../../utils/propertyUtils';
-import { casefold } from '../../utils/recordUtils';
+import {
+    buildPropertySearchEvidence,
+    isSupportedCssColor,
+    parsePropertyLinkTarget,
+    resolvePropertyDisplayText,
+    type PropertyLinkTarget,
+    type PropertySearchEvidenceGroup
+} from '../../utils/propertyUtils';
+import { casefold, foldSearchText } from '../../utils/recordUtils';
 import { resolveUXIcon } from '../../utils/uxIcons';
+import { getFoldedSearchHighlightRanges } from '../../utils/searchHighlight';
 import type { InclusionOperator } from '../../utils/filterSearch';
 import {
     buildPropertyKeyNodeId,
@@ -54,6 +63,7 @@ import {
     compareFileItemTagsByNavigationOrder,
     type FileItemPillOrderModel
 } from '../../utils/fileItemPillOrder';
+import { renderTextWithHighlightRanges } from './searchHighlightRendering';
 import { ServiceIcon } from '../ServiceIcon';
 
 type PropertyPill = {
@@ -70,6 +80,7 @@ type PropertyPill = {
     propertySearchValuePath?: string | null;
     canNavigateToProperty?: boolean;
     hasCustomColor?: boolean;
+    searchMatchTerms?: readonly string[];
 };
 
 export interface UseFileItemPillsParams {
@@ -84,6 +95,7 @@ export interface UseFileItemPillsParams {
     settings: NotebookNavigatorSettings;
     visiblePropertyKeys: ReadonlySet<string>;
     visibleNavigationPropertyKeys: ReadonlySet<string>;
+    matchedProperties?: readonly PropertySearchMatch[];
     hiddenTagVisibility: HiddenTagVisibility;
     onModifySearchWithTag?: (tag: string, operator: InclusionOperator) => void;
     onModifySearchWithProperty?: (key: string, value: string | null, operator: InclusionOperator) => void;
@@ -96,6 +108,8 @@ export interface FileItemPillsState {
     shouldShowProperty: boolean;
     shouldShowTextCountProperty: boolean;
     hasVisiblePillRows: boolean;
+    propertySearchEvidenceGroups: readonly PropertySearchEvidenceGroup[];
+    propertySearchEvidenceHiddenGroupCount: number;
     pillRows: React.ReactNode;
 }
 
@@ -103,6 +117,10 @@ type TagPillColorData = { color?: string; background?: string; hasCustomColor: b
 
 const EMPTY_COLOR_MAP = new Map<string, TagPillColorData>();
 const EXTERNAL_PROPERTY_LINK_ICON_ID = 'external-link';
+
+function buildPropertySearchValueIdentity(fieldKey: string, valueKind: PropertyItem['valueKind'], rawValue: string): string {
+    return `${casefold(fieldKey.trim())}\u0000${valueKind ?? ''}\u0000${rawValue}`;
+}
 
 function sortTagsByNavigationOrder(
     tags: string[],
@@ -240,6 +258,7 @@ export function useFileItemPills({
     settings,
     visiblePropertyKeys,
     visibleNavigationPropertyKeys,
+    matchedProperties,
     hiddenTagVisibility,
     onModifySearchWithTag,
     onModifySearchWithProperty,
@@ -537,6 +556,75 @@ export function useFileItemPills({
         return true;
     }, [file.extension, isCompactMode, settings.showFilePropertiesInCompactMode]);
 
+    // The list filter retains only matching clauses for every result. Resolve concrete cached values
+    // here so hidden-property evidence and pill highlights allocate data only for mounted virtual rows.
+    const propertySearchValueMatches = useMemo<PropertySearchValueMatch[]>(() => {
+        if (!matchedProperties || matchedProperties.length === 0 || !properties || properties.length === 0) {
+            return [];
+        }
+
+        const matches: PropertySearchValueMatch[] = [];
+        const seen = new Set<string>();
+        properties.forEach(entry => {
+            const normalizedKey = foldSearchText(entry.fieldKey.trim());
+            if (!normalizedKey) {
+                return;
+            }
+
+            let displayValue: string | null = null;
+            let foldedDisplayValue: string | null = null;
+            matchedProperties.forEach(match => {
+                const { clause } = match;
+                const keyMatches = clause.value === null ? normalizedKey.startsWith(clause.key) : normalizedKey === clause.key;
+                if (!keyMatches) {
+                    return;
+                }
+
+                displayValue ??= resolvePropertyDisplayText(entry.value);
+                if (clause.value !== null) {
+                    foldedDisplayValue ??= foldSearchText(displayValue);
+                    if (!foldedDisplayValue.includes(clause.value)) {
+                        return;
+                    }
+                }
+
+                const identity = `${clause.key}\u0000${clause.value ?? ''}\u0000${normalizedKey}\u0000${entry.valueKind ?? ''}\u0000${entry.value}`;
+                if (seen.has(identity)) {
+                    return;
+                }
+                seen.add(identity);
+                matches.push({
+                    clause,
+                    propertyKey: entry.fieldKey,
+                    rawValue: entry.value,
+                    valueKind: entry.valueKind,
+                    displayValue
+                });
+            });
+        });
+        return matches;
+    }, [matchedProperties, properties]);
+
+    const propertySearchEvidence = useMemo(() => {
+        if (propertySearchValueMatches.length === 0) {
+            return { groups: [], hiddenGroupCount: 0 };
+        }
+
+        const renderedPropertyValues = new Set<string>();
+        if (canShowPropertyPills && settings.showFileProperties) {
+            visibleFrontmatterProperties.forEach(({ entry }) => {
+                renderedPropertyValues.add(buildPropertySearchValueIdentity(entry.fieldKey, entry.valueKind, entry.value));
+            });
+        }
+
+        const evidenceMatches = propertySearchValueMatches.filter(
+            match =>
+                match.clause.value === null ||
+                !renderedPropertyValues.has(buildPropertySearchValueIdentity(match.propertyKey, match.valueKind, match.rawValue))
+        );
+        return buildPropertySearchEvidence(evidenceMatches);
+    }, [canShowPropertyPills, propertySearchValueMatches, settings.showFileProperties, visibleFrontmatterProperties]);
+
     const wordCountPropertyPill = useMemo<PropertyPill | null>(() => {
         if (
             !canShowPropertyPills ||
@@ -602,6 +690,24 @@ export function useFileItemPills({
         [characterCountPropertyPill, wordCountPropertyPill]
     );
 
+    const propertySearchTermsByValue = useMemo(() => {
+        const termsByValue = new Map<string, Set<string>>();
+        propertySearchValueMatches.forEach(match => {
+            if (!match.clause.value) {
+                return;
+            }
+
+            const identity = buildPropertySearchValueIdentity(match.propertyKey, match.valueKind, match.rawValue);
+            let terms = termsByValue.get(identity);
+            if (!terms) {
+                terms = new Set();
+                termsByValue.set(identity, terms);
+            }
+            terms.add(match.clause.value);
+        });
+        return termsByValue;
+    }, [propertySearchValueMatches]);
+
     const propertyPills = useMemo<PropertyPill[]>(() => {
         void propertyColorSignature;
 
@@ -664,7 +770,10 @@ export function useFileItemPills({
                 propertyNodeId,
                 propertySearchKey: propertySearchKey.length > 0 ? propertySearchKey : undefined,
                 propertySearchValuePath,
-                canNavigateToProperty
+                canNavigateToProperty,
+                searchMatchTerms: Array.from(
+                    propertySearchTermsByValue.get(buildPropertySearchValueIdentity(entry.fieldKey, entry.valueKind, entry.value)) ?? []
+                )
             });
         }
 
@@ -708,6 +817,7 @@ export function useFileItemPills({
         fileItemPillOrderModel,
         metadataService,
         propertyColorSignature,
+        propertySearchTermsByValue,
         settings.colorFileProperties,
         settings.prioritizeColoredFileProperties,
         settings.showFileProperties,
@@ -904,6 +1014,8 @@ export function useFileItemPills({
             const hasColor = Boolean(resolvedColorData?.hasColor);
             const hasBackground = Boolean(resolvedColorData?.hasBackground);
             const propertyIconId = propertyPillIcons.get(pill);
+            const highlightRanges = getFoldedSearchHighlightRanges(pill.label, pill.searchMatchTerms ?? []);
+            const label = renderTextWithHighlightRanges(pill.label, highlightRanges);
 
             return (
                 <span
@@ -919,7 +1031,7 @@ export function useFileItemPills({
                     {propertyIconId ? (
                         <ServiceIcon iconId={propertyIconId} className="nn-file-pill-inline-icon" aria-hidden={true} />
                     ) : null}
-                    {pill.label}
+                    {label}
                 </span>
             );
         },
@@ -1018,6 +1130,8 @@ export function useFileItemPills({
         shouldShowProperty,
         shouldShowTextCountProperty,
         hasVisiblePillRows: shouldShowFileTags || shouldShowProperty || shouldShowTextCountProperty,
+        propertySearchEvidenceGroups: propertySearchEvidence.groups,
+        propertySearchEvidenceHiddenGroupCount: propertySearchEvidence.hiddenGroupCount,
         pillRows
     };
 }

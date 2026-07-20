@@ -210,11 +210,11 @@ export const STRINGS_KO = {
                 properties: {
                     title: '속성',
                     items: [
-                        '`.key` 속성 키가 있는 노트를 포함합니다.',
+                        '`.key` `key`로 시작하는 속성 키가 있는 노트를 포함합니다.',
                         '`.key=value` 속성 값에 `value`가 포함된 노트를 포함합니다.',
                         '`."Reading Status"` 공백이 포함된 속성 키가 있는 노트를 포함합니다.',
                         '`."Reading Status"="In Progress"` 공백이 포함된 키와 값은 큰따옴표로 묶어야 합니다.',
-                        '`-.key` 속성 키가 있는 노트를 제외합니다.',
+                        '`-.key` `key`로 시작하는 속성 키가 있는 노트를 제외합니다.',
                         '`-.key=value` 속성 값에 `value`가 포함된 노트를 제외합니다.',
                         'Cmd/Ctrl+클릭으로 속성을 AND로 추가. Cmd/Ctrl+Shift+클릭으로 OR로 추가.'
                     ]
@@ -717,10 +717,10 @@ export const STRINGS_KO = {
         welcome: {
             title: '{pluginName}에 오신 것을 환영합니다',
             introText:
-                '안녕하세요! 아래 비디오는 14개 챕터로 구성된 1시간 분량의 완전한 강좌입니다. 시작하기 전에 처음 세 챕터를 시청하여 플러그인 전체의 기반이 되는 패널 모델을 이해하는 것을 강력히 권장합니다.',
+                '안녕하세요. Obsidian을 위한 더 나은 파일 브라우저이자 캘린더인 Notebook Navigator에 오신 것을 환영합니다. 시작하기 전에 아래의 Mastering Notebook Navigator 영상에서 적어도 처음 세 챕터는 꼭 시청해 보시길 권합니다. 두 패널이 어떻게 작동하는지 소개하고 빠르게 사용을 시작할 수 있도록 안내합니다.',
             continueText:
-                '10분 더 있으시다면 초기 설정과 일상적인 사용 흐름 챕터를 이어서 시청하여 권장 설정과 가장 중요한 두 가지 단축키를 설정해 주세요.',
-            thanksText: '다운로드해 주셔서 감사합니다. 즐겁게 사용하세요!',
+                '10분 정도 더 여유가 있다면 초기 설정과 일상 사용 흐름 챕터도 이어서 시청하세요. 시작에 필요한 내용을 모두 익힌 뒤, 나중에 돌아와 자세한 내용을 더 볼 수 있습니다. 영상 링크는 Notebook Navigator 설정 상단에서도 찾을 수 있습니다.',
+            thanksText: 'Notebook Navigator를 즐겁게 사용하세요!',
             videoAlt: 'Notebook Navigator 3 마스터하기',
             openVideoButton: '비디오 재생',
             closeButton: '나중에'

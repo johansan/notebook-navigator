@@ -76,15 +76,21 @@ export const tagMatchesToken = (tagPath: string, token: string): boolean => {
 };
 
 export const propertyTokenMatches = (propertiesByKey: Map<string, string[]>, token: PropertySearchToken): boolean => {
+    if (token.value === null) {
+        // Key-only filters act as type-ahead searches, while value filters keep exact keys so
+        // `.status=done` cannot silently match another property such as `status-old`.
+        for (const key of propertiesByKey.keys()) {
+            if (key.startsWith(token.key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     const values = propertiesByKey.get(token.key);
     if (!values) {
         return false;
     }
-
-    if (token.value === null) {
-        return true;
-    }
-
     const propertyValue = token.value;
     return values.some(value => value.includes(propertyValue));
 };

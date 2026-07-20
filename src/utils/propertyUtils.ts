@@ -19,13 +19,13 @@
 import type { App } from 'obsidian';
 import { showsWordCount, type NotebookNavigatorSettings } from '../settings/types';
 import type { PropertyItem } from '../storage/IndexedDBStorage';
+import type { PropertySearchValueMatch } from '../types/search';
 import { formatCommaSeparatedList, getCachedCommaSeparatedList } from './commaSeparatedListUtils';
 import { hasEffectiveCustomListGrouping } from './listGrouping';
 import { getManualSortGroupHeaderPropertyKey } from './manualSort';
 import { casefold } from './recordUtils';
 import { naturalCompare } from './sortUtils';
 import { isRecord } from './typeGuards';
-import { getActivePropertyFields } from './vaultProfiles';
 
 type WikiLinkTarget = { kind: 'internal'; target: string; displayText: string };
 type ExternalLinkTarget = { kind: 'external'; target: string; displayText: string };
@@ -41,6 +41,26 @@ interface PropertyKeyAggregate {
     noteCount: number;
 }
 
+export interface PropertySearchEvidenceValue {
+    displayValue: string;
+    foldedTerms: readonly string[];
+}
+
+export interface PropertySearchEvidenceGroup {
+    propertyKey: string;
+    foldedKeyTerms: readonly string[];
+    values: readonly PropertySearchEvidenceValue[];
+    hiddenValueCount: number;
+}
+
+export interface PropertySearchEvidence {
+    groups: readonly PropertySearchEvidenceGroup[];
+    hiddenGroupCount: number;
+}
+
+const MAX_PROPERTY_SEARCH_EVIDENCE_VALUES = 3;
+const MAX_PROPERTY_SEARCH_EVIDENCE_GROUPS = 3;
+
 const EXTERNAL_URI_SCHEME_PATTERN = /^([a-z][a-z0-9+.-]{1,31}):/i;
 // Keep file: out of the blocked set so property pills follow desktop Obsidian's
 // external-link flow, which shows its own warning before opening the target.
@@ -52,29 +72,6 @@ export function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSe
         showsWordCount(settings.textCountDisplay) ||
         (getManualSortGroupHeaderPropertyKey(settings) !== null && hasEffectiveCustomListGrouping(settings))
     );
-}
-
-export function hasPropertyFrontmatterFields(settings: NotebookNavigatorSettings): boolean {
-    if (getActivePropertyFields(settings).trim().length > 0) {
-        return true;
-    }
-
-    return hasWordCountTargetPropertyConsumer(settings) && settings.wordCountTargetProperty.trim().length > 0;
-}
-
-export function getPropertyFrontmatterFields(settings: NotebookNavigatorSettings): string[] {
-    const fields = [...getCachedCommaSeparatedList(getActivePropertyFields(settings))];
-    const wordCountTargetProperty = hasWordCountTargetPropertyConsumer(settings) ? settings.wordCountTargetProperty.trim() : '';
-    const normalizedWordCountTargetProperty = casefold(wordCountTargetProperty);
-    if (normalizedWordCountTargetProperty && !fields.some(field => casefold(field) === normalizedWordCountTargetProperty)) {
-        fields.push(wordCountTargetProperty);
-    }
-
-    return fields;
-}
-
-export function getPropertyFrontmatterFieldSignature(settings: NotebookNavigatorSettings): string {
-    return formatCommaSeparatedList(getPropertyFrontmatterFields(settings));
 }
 
 export function collectVaultPropertyKeys(app: App): PropertyKeySuggestion[] {
@@ -307,6 +304,74 @@ export function resolvePropertyDisplayText(rawValue: string): string {
     return parsePropertyLinkTarget(rawValue)?.displayText ?? rawValue.trim();
 }
 
+/**
+ * Groups concrete positive-clause matches for transient file-row evidence. Multiple clauses can
+ * contribute highlight terms to the same displayed key or value. Values and properties beyond
+ * their caps remain represented by overflow counts, while key-only assignments keep an empty value list.
+ */
+export function buildPropertySearchEvidence(
+    matches: readonly PropertySearchValueMatch[],
+    maxValuesPerProperty: number = MAX_PROPERTY_SEARCH_EVIDENCE_VALUES,
+    maxProperties: number = MAX_PROPERTY_SEARCH_EVIDENCE_GROUPS
+): PropertySearchEvidence {
+    const propertyLimit = Math.max(0, Math.trunc(maxProperties));
+    const groups = new Map<
+        string,
+        { propertyKey: string; foldedKeyTerms: Set<string>; values: Map<string, { displayValue: string; foldedTerms: Set<string> }> }
+    >();
+    const hiddenGroupKeys = new Set<string>();
+
+    matches.forEach(match => {
+        const normalizedKey = casefold(match.propertyKey.trim());
+        if (!normalizedKey) {
+            return;
+        }
+
+        let group = groups.get(normalizedKey);
+        if (!group) {
+            if (groups.size >= propertyLimit) {
+                hiddenGroupKeys.add(normalizedKey);
+                return;
+            }
+            group = { propertyKey: match.propertyKey.trim(), foldedKeyTerms: new Set(), values: new Map() };
+            groups.set(normalizedKey, group);
+        }
+        if (match.clause.value === null) {
+            group.foldedKeyTerms.add(match.clause.key);
+        }
+
+        const displayValue = match.displayValue.trim();
+        if (!displayValue) {
+            return;
+        }
+
+        let value = group.values.get(displayValue);
+        if (!value) {
+            value = { displayValue, foldedTerms: new Set() };
+            group.values.set(displayValue, value);
+        }
+        if (match.clause.value) {
+            value.foldedTerms.add(match.clause.value);
+        }
+    });
+
+    const valueLimit = Math.max(0, Math.trunc(maxValuesPerProperty));
+    const evidenceGroups = Array.from(groups.values()).map(group => {
+        const allValues = Array.from(group.values.values());
+        const values = allValues.slice(0, valueLimit).map(value => ({
+            displayValue: value.displayValue,
+            foldedTerms: Array.from(value.foldedTerms)
+        }));
+        return {
+            propertyKey: group.propertyKey,
+            foldedKeyTerms: Array.from(group.foldedKeyTerms),
+            values,
+            hiddenValueCount: Math.max(0, allValues.length - values.length)
+        };
+    });
+    return { groups: evidenceGroups, hiddenGroupCount: hiddenGroupKeys.size };
+}
+
 export function isPropertyLinkMarkupValue(rawValue: string): boolean {
     const trimmed = rawValue.trim();
     const linkTarget = parsePropertyLinkTarget(trimmed);
@@ -345,8 +410,7 @@ export function clonePropertyItems(values: readonly PropertyItem[] | null): Prop
     return values.map(entry => ({ ...entry }));
 }
 
-// Compares property items by field key + value, preserving order.
-// Order is significant so the UI matches the configured field list and frontmatter value order.
+// Compares property items by field key + value, preserving frontmatter key and array-value order.
 export function arePropertyItemsEqual(first: readonly PropertyItem[] | null, second: readonly PropertyItem[] | null): boolean {
     if (first === second) {
         return true;

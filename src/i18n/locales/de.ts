@@ -211,11 +211,11 @@ export const STRINGS_DE = {
                 properties: {
                     title: 'Eigenschaften',
                     items: [
-                        '`.key` Notizen mit Eigenschaftsschlüssel einschließen.',
+                        '`.key` Notizen mit einem Eigenschaftsschlüssel einschließen, der mit `key` beginnt.',
                         '`.key=value` Notizen einschließen, deren Eigenschaftswert `value` enthält.',
                         '`."Reading Status"` Notizen mit einem Eigenschaftsschlüssel einschließen, der Leerzeichen enthält.',
                         '`."Reading Status"="In Progress"` Schlüssel und Werte mit Leerzeichen müssen in Anführungszeichen stehen.',
-                        '`-.key` Notizen mit Eigenschaftsschlüssel ausschließen.',
+                        '`-.key` Notizen mit einem Eigenschaftsschlüssel ausschließen, der mit `key` beginnt.',
                         '`-.key=value` Notizen ausschließen, deren Eigenschaftswert `value` enthält.',
                         'Cmd/Ctrl+Klick auf eine Eigenschaft zum Hinzufügen mit AND. Cmd/Ctrl+Shift+Klick zum Hinzufügen mit OR.'
                     ]
@@ -720,10 +720,10 @@ export const STRINGS_DE = {
         welcome: {
             title: 'Willkommen bei {pluginName}',
             introText:
-                'Hallo! Das Video unten ist ein kompletter einstündiger Kurs in 14 Kapiteln. Bevor Sie beginnen, empfehle ich Ihnen, die ersten drei Kapitel anzusehen, um das Modell der zwei Bereiche zu verstehen – die eine Idee, auf der das gesamte Plugin aufbaut.',
+                'Hallo und herzlich willkommen bei Notebook Navigator, einem besseren Dateibrowser und Kalender für Obsidian. Bevor Sie loslegen, empfehle ich Ihnen wirklich, mindestens die ersten drei Kapitel des Videos unten, Mastering Notebook Navigator, anzusehen. Dort erfahren Sie, wie die beiden Bereiche funktionieren und wie Sie schnell einsteigen können.',
             continueText:
-                'Wenn Sie zehn weitere Minuten haben, machen Sie mit den Kapiteln zur Ersteinrichtung und zum täglichen Arbeitsablauf weiter, um die empfohlenen Einstellungen und die zwei wichtigsten Tastenkombinationen einzurichten.',
-            thanksText: 'Vielen Dank fürs Herunterladen und viel Spaß!',
+                'Wenn Sie dann noch zehn Minuten Zeit haben, schauen Sie sich auch die Kapitel zur Ersteinrichtung und zum täglichen Ablauf an. Damit haben Sie alles, was Sie für den Einstieg brauchen, und können später zurückkehren, um sich weitere Details anzusehen. Einen Link zum Video finden Sie oben in den Einstellungen von Notebook Navigator.',
+            thanksText: 'Viel Spaß mit Notebook Navigator!',
             videoAlt: 'Notebook Navigator 3 meistern',
             openVideoButton: 'Video abspielen',
             closeButton: 'Vielleicht später'

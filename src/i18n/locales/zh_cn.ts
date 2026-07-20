@@ -210,11 +210,11 @@ export const STRINGS_ZH_CN = {
                 properties: {
                     title: '属性',
                     items: [
-                        '`.key` 包含具有属性键的笔记。',
+                        '`.key` 包含属性键以 `key` 开头的笔记。',
                         '`.key=value` 包含属性值含有 `value` 的笔记。',
                         '`."Reading Status"` 包含属性键包含空格的笔记。',
                         '`."Reading Status"="In Progress"` 包含空格的键和值必须用双引号括起来。',
-                        '`-.key` 排除具有属性键的笔记。',
+                        '`-.key` 排除属性键以 `key` 开头的笔记。',
                         '`-.key=value` 排除属性值含有 `value` 的笔记。',
                         'Cmd/Ctrl+点击属性以 AND 方式添加。Cmd/Ctrl+Shift+点击以 OR 方式添加。'
                     ]
@@ -711,9 +711,11 @@ export const STRINGS_ZH_CN = {
         },
         welcome: {
             title: '欢迎使用 {pluginName}',
-            introText: '您好！下面的视频是一套时长一小时、共 14 章的完整课程。在开始之前，强烈建议您观看前三章，了解最核心的面板模型。',
-            continueText: '如果您还有十分钟时间，请继续观看初始设置和日常使用两章，了解推荐设置以及两个最重要的快捷键。',
-            thanksText: '非常感谢您的下载，祝您使用愉快！',
+            introText:
+                '您好，欢迎使用 Notebook Navigator，一款更好用的 Obsidian 文件浏览器和日历。在开始之前，强烈建议您至少观看下方《Mastering Notebook Navigator》视频的前三章。它会介绍两个面板的工作方式，帮助您快速上手。',
+            continueText:
+                '如果您还有十分钟，请继续观看首次设置和日常使用流程这两个章节。看完后，您就掌握了入门所需的全部内容，以后还可以回来了解更多细节。Notebook Navigator 设置顶部提供了该视频的链接。',
+            thanksText: '祝您使用 Notebook Navigator 愉快！',
             videoAlt: '精通 Notebook Navigator 3',
             openVideoButton: '播放视频',
             closeButton: '以后再说'

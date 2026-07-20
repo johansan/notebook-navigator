@@ -211,11 +211,11 @@ export const STRINGS_EN = {
                 properties: {
                     title: 'Properties',
                     items: [
-                        '`.key` Include notes with property key.',
+                        '`.key` Include notes with a property key that starts with `key`.',
                         '`.key=value` Include notes where the property value contains `value`.',
                         '`."Reading Status"` Include notes with a property key that contains whitespace.',
                         '`."Reading Status"="In Progress"` Keys and values with whitespace must be double-quoted.',
-                        '`-.key` Exclude notes with property key.',
+                        '`-.key` Exclude notes with a property key that starts with `key`.',
                         '`-.key=value` Exclude notes where the property value contains `value`.',
                         'Cmd/Ctrl+Click a property to add with AND. Cmd/Ctrl+Shift+Click to add with OR.'
                     ]
@@ -715,10 +715,10 @@ export const STRINGS_EN = {
         welcome: {
             title: 'Welcome to {pluginName}',
             introText:
-                'Hi there! The video below is a complete one-hour course in 14 chapters. Before you start, I highly recommend that you watch the first three chapters to understand the pane model — the one idea the whole plugin is built on.',
+                'Hello and a warm welcome to Notebook Navigator, a better file browser and calendar for Obsidian. Before you get started I really recommend that you watch at least the first three chapters in the video below, Mastering Notebook Navigator. It gives you an introduction to how the two panes work and how you can get up to speed quickly.',
             continueText:
-                'If you have ten more minutes, continue with the chapters on first-run setup and the everyday loop to set up the recommended settings and the two most important hotkeys.',
-            thanksText: 'Thank you so much for downloading, and enjoy!',
+                'Then if you have another ten minutes, keep watching the first-run setup and everyday loop chapters. This gives you everything to get started, and you can then go back and watch more details later. You will find a link to the video in the top of Notebook Navigator settings.',
+            thanksText: 'Have fun using Notebook Navigator!',
             videoAlt: 'Mastering Notebook Navigator 3',
             openVideoButton: 'Play video',
             closeButton: 'Maybe later'

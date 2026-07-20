@@ -35,7 +35,8 @@ import { PreviewTextUtils } from '../../utils/previewTextUtils';
 import { getCachedFileTags } from '../../utils/tagUtils';
 import { createOmnisearchHighlightQueryTokenContext, sanitizeOmnisearchHighlightTokens } from '../../utils/omnisearchHighlight';
 import { foldSearchText } from '../../utils/recordUtils';
-import { normalizePropertyTreeValuePath } from '../../utils/propertyTree';
+import { resolvePropertyDisplayText } from '../../utils/propertyUtils';
+import { propertyTokenMatches } from '../../utils/filterSearchExpression';
 import {
     createFrontmatterPropertyExclusionMatcher,
     createHiddenFileNameMatcher,
@@ -44,15 +45,15 @@ import {
 } from '../../utils/fileFilters';
 import { createHiddenTagVisibility, normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 import { runAsyncAction } from '../../utils/async';
-import type { AliasSearchMatch, SearchResultMeta } from '../../types/search';
+import type { AliasSearchMatch, PropertySearchMatch, SearchResultMeta } from '../../types/search';
 import type { OmnisearchService } from '../../services/OmnisearchService';
 import type { IndexedDBStorage, FileData } from '../../storage/IndexedDBStorage';
 import { shouldHideDrawingCompanionImageFile } from '../../utils/drawingFeatureImages';
 
-const EMPTY_FILTER_SEARCH_PROPERTIES = new Map<string, string[]>();
 const TAG_PRESENCE_SENTINEL = ['__nn_tag_present__'];
 const EMPTY_HIDDEN_STATE = new Map<string, boolean>();
 const EMPTY_MATCHED_ALIASES = new Map<string, readonly AliasSearchMatch[]>();
+const EMPTY_MATCHED_PROPERTIES = new Map<string, readonly PropertySearchMatch[]>();
 
 export interface OmnisearchListResult {
     query: string;
@@ -85,6 +86,8 @@ export interface FilterListPaneFilesResult {
     files: TFile[];
     /** Contains the aliases that were required to satisfy each included file's internal-search name tokens. */
     matchedAliases: ReadonlyMap<string, readonly AliasSearchMatch[]>;
+    /** Contains positive property clauses satisfied by each result; concrete values are resolved only for rendered rows. */
+    matchedProperties: ReadonlyMap<string, readonly PropertySearchMatch[]>;
 }
 
 interface FilterListPaneFilesArgs {
@@ -117,15 +120,53 @@ function normalizeTagsForFilterSearch(rawTags: readonly string[]): string[] {
     return rawTags.map(tag => foldSearchText(normalizeTagPathValue(tag))).filter((value): value is string => value.length > 0);
 }
 
-function normalizePropertiesForFilterSearch(properties: FileData['properties'] | null): Map<string, string[]> {
+interface FilterSearchPropertyCriteria {
+    keyPrefixes: readonly string[];
+    exactKeys: ReadonlySet<string>;
+}
+
+const EMPTY_FILTER_SEARCH_PROPERTIES = new Map<string, string[]>();
+const EMPTY_FILTER_SEARCH_PROPERTY_CRITERIA: FilterSearchPropertyCriteria = {
+    keyPrefixes: [],
+    exactKeys: new Set()
+};
+
+function buildFilterSearchPropertyCriteria(tokens: FilterSearchTokens): FilterSearchPropertyCriteria {
+    const allClauses = [...tokens.propertyTokens, ...tokens.excludePropertyTokens];
+    if (allClauses.length === 0) {
+        return EMPTY_FILTER_SEARCH_PROPERTY_CRITERIA;
+    }
+
+    return {
+        keyPrefixes: allClauses.filter(clause => clause.value === null).map(clause => clause.key),
+        exactKeys: new Set(allClauses.filter(clause => clause.value !== null).map(clause => clause.key))
+    };
+}
+
+/**
+ * Builds the property projection required by the active clauses. Values for unrelated keys are not
+ * normalized because a vault record now contains every supported frontmatter property.
+ */
+function buildPropertiesForFilterSearch(
+    properties: FileData['properties'] | null,
+    criteria: FilterSearchPropertyCriteria
+): Map<string, string[]> {
     if (!properties || properties.length === 0) {
         return EMPTY_FILTER_SEARCH_PROPERTIES;
     }
 
+    if (criteria.keyPrefixes.length === 0 && criteria.exactKeys.size === 0) {
+        return EMPTY_FILTER_SEARCH_PROPERTIES;
+    }
+
     const normalizedValues = new Map<string, Set<string>>();
+
     properties.forEach(entry => {
         const normalizedKey = foldSearchText(entry.fieldKey.trim());
-        if (!normalizedKey) {
+        if (
+            !normalizedKey ||
+            (!criteria.exactKeys.has(normalizedKey) && !criteria.keyPrefixes.some(prefix => normalizedKey.startsWith(prefix)))
+        ) {
             return;
         }
 
@@ -135,20 +176,35 @@ function normalizePropertiesForFilterSearch(properties: FileData['properties'] |
             normalizedValues.set(normalizedKey, values);
         }
 
-        const normalizedValue = normalizePropertyTreeValuePath(entry.value);
-        if (!normalizedValue) {
+        if (!criteria.exactKeys.has(normalizedKey)) {
+            // Key-only clauses need presence but do not inspect values. Concrete evidence is resolved
+            // only when a virtualized row renders, so result-wide searches retain no value copies.
             return;
         }
 
-        values.add(foldSearchText(normalizedValue));
+        // Search follows the text users see in property pills, so link targets and serialized markup do not
+        // create matches that cannot be represented in result evidence.
+        const displayValue = resolvePropertyDisplayText(entry.value);
+        const foldedDisplayValue = foldSearchText(displayValue);
+        if (foldedDisplayValue) {
+            values.add(foldedDisplayValue);
+        }
     });
 
-    const normalized = new Map<string, string[]>();
+    const valuesByKey = new Map<string, string[]>();
     normalizedValues.forEach((values, key) => {
-        normalized.set(key, Array.from(values));
+        valuesByKey.set(key, Array.from(values));
     });
 
-    return normalized;
+    return valuesByKey;
+}
+
+function collectMatchedProperties(propertiesByKey: Map<string, string[]>, tokens: FilterSearchTokens): readonly PropertySearchMatch[] {
+    if (propertiesByKey.size === 0 || tokens.propertyTokens.length === 0) {
+        return [];
+    }
+
+    return tokens.propertyTokens.filter(clause => propertyTokenMatches(propertiesByKey, clause)).map(clause => ({ clause }));
 }
 
 export function useOmnisearchListResult({
@@ -313,28 +369,29 @@ export function filterListPaneFiles({
     useOmnisearch
 }: FilterListPaneFilesArgs): FilterListPaneFilesResult {
     if (!trimmedQuery) {
-        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES };
+        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
     }
 
     if (useOmnisearch) {
         if (!omnisearchResult || omnisearchResult.query !== trimmedQuery) {
-            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES };
+            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
         }
 
         const omnisearchPaths = new Set(omnisearchResult.files.map(file => file.path));
         if (omnisearchPaths.size === 0) {
-            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES };
+            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
         }
 
         return {
             files: baseFiles.filter(file => omnisearchPaths.has(file.path)),
-            matchedAliases: EMPTY_MATCHED_ALIASES
+            matchedAliases: EMPTY_MATCHED_ALIASES,
+            matchedProperties: EMPTY_MATCHED_PROPERTIES
         };
     }
 
     const tokens = searchTokens ?? parseFilterSearchTokens(trimmedQuery);
     if (!filterSearchHasActiveCriteria(tokens)) {
-        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES };
+        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
     }
 
     const hasDateFilters = tokens.dateRanges.length > 0 || tokens.excludeDateRanges.length > 0;
@@ -349,6 +406,8 @@ export function filterListPaneFiles({
     const db = getDB();
     const emptyTags: string[] = [];
     const matchedAliases = new Map<string, readonly AliasSearchMatch[]>();
+    const matchedProperties = new Map<string, readonly PropertySearchMatch[]>();
+    const propertyCriteria = needsPropertyLookup ? buildFilterSearchPropertyCriteria(tokens) : EMPTY_FILTER_SEARCH_PROPERTY_CRITERIA;
 
     const files = baseFiles.filter(file => {
         const searchableName = searchableNames.get(file.path);
@@ -366,8 +425,11 @@ export function filterListPaneFiles({
             matchOptions.foldedExtension = foldSearchText(file.extension);
         }
 
+        const propertyProjection = needsPropertyLookup
+            ? buildPropertiesForFilterSearch(fileData?.properties ?? null, propertyCriteria)
+            : EMPTY_FILTER_SEARCH_PROPERTIES;
         if (needsPropertyLookup) {
-            matchOptions.propertyValuesByKey = normalizePropertiesForFilterSearch(fileData?.properties ?? null);
+            matchOptions.propertyValuesByKey = propertyProjection;
         }
 
         let foldedTags = emptyTags;
@@ -417,10 +479,17 @@ export function filterListPaneFiles({
             }
         }
 
+        if (fileData && tokens.propertyTokens.length > 0) {
+            const propertyMatches = collectMatchedProperties(propertyProjection, tokens);
+            if (propertyMatches.length > 0) {
+                matchedProperties.set(file.path, propertyMatches);
+            }
+        }
+
         return true;
     });
 
-    return { files, matchedAliases };
+    return { files, matchedAliases, matchedProperties };
 }
 
 export function buildHiddenFileState({

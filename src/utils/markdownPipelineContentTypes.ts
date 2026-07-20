@@ -18,7 +18,7 @@
 
 import type { FileContentType } from '../interfaces/IContentProvider';
 import { showsCharacterCount, type NotebookNavigatorSettings } from '../settings/types';
-import { hasPropertyFrontmatterFields, hasWordCountTargetPropertyConsumer } from './propertyUtils';
+import { hasWordCountTargetPropertyConsumer } from './propertyUtils';
 
 export function hasMarkdownPreviewConsumer(settings: NotebookNavigatorSettings): boolean {
     return settings.showFilePreview;
@@ -40,10 +40,6 @@ export function hasMarkdownTaskConsumer(_settings: NotebookNavigatorSettings): b
     return true;
 }
 
-export function hasMarkdownPropertiesConsumer(settings: NotebookNavigatorSettings): boolean {
-    return hasPropertyFrontmatterFields(settings);
-}
-
 export function getMarkdownPipelineContentTypes(settings: NotebookNavigatorSettings): FileContentType[] {
     const types: FileContentType[] = [];
 
@@ -62,9 +58,7 @@ export function getMarkdownPipelineContentTypes(settings: NotebookNavigatorSetti
     if (hasMarkdownTaskConsumer(settings)) {
         types.push('tasks');
     }
-    if (hasMarkdownPropertiesConsumer(settings)) {
-        types.push('properties');
-    }
+    types.push('properties');
 
     return types;
 }

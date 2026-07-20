@@ -149,7 +149,8 @@ function renderPillRows(
             {
                 'data-show-tags': state.shouldShowFileTags ? 'true' : 'false',
                 'data-show-properties': state.shouldShowProperty ? 'true' : 'false',
-                'data-show-text-count': state.shouldShowTextCountProperty ? 'true' : 'false'
+                'data-show-text-count': state.shouldShowTextCountProperty ? 'true' : 'false',
+                'data-property-search-evidence': JSON.stringify(state.propertySearchEvidenceGroups)
             },
             state.pillRows
         );
@@ -531,6 +532,83 @@ describe('useFileItemPills', () => {
 
         expect(markup).toContain('data-show-properties="true"');
         expect(markup).toContain('4.5');
+    });
+
+    it('highlights the matching substring in an existing visible property pill', () => {
+        const markup = renderPillRows({
+            file: createTestTFile('Notes/Search.md'),
+            isCompactMode: false,
+            tags: [],
+            properties: [{ fieldKey: 'Workflow', value: 'Waiting for review', valueKind: 'string' }],
+            wordCount: null,
+            settings: {
+                ...DEFAULT_SETTINGS,
+                showFileProperties: true
+            },
+            visiblePropertyKeys: new Set<string>(['workflow']),
+            visibleNavigationPropertyKeys: new Set<string>(),
+            matchedProperties: [
+                {
+                    clause: { key: 'workflow', value: 'waiting' }
+                }
+            ]
+        });
+
+        expect(markup).toContain('<mark class="nn-search-highlight">Waiting</mark> for review');
+        expect(markup).toContain('data-property-search-evidence="[]"');
+    });
+
+    it('returns inline evidence when the matching configured pill is hidden by the current property selection', () => {
+        mockSelectionState.selectionType = ItemType.PROPERTY;
+        mockSelectionState.selectedProperty = buildPropertyValueNodeId('status', 'done');
+
+        const markup = renderPillRows({
+            file: createTestTFile('Notes/SelectedSearch.md'),
+            isCompactMode: false,
+            tags: [],
+            properties: [{ fieldKey: 'status', value: 'done', valueKind: 'string' }],
+            wordCount: null,
+            settings: {
+                ...DEFAULT_SETTINGS,
+                showFileProperties: true
+            },
+            visiblePropertyKeys: new Set<string>(['status']),
+            visibleNavigationPropertyKeys: new Set<string>(['status']),
+            matchedProperties: [
+                {
+                    clause: { key: 'status', value: 'done' }
+                }
+            ]
+        });
+
+        expect(markup).toContain('&quot;propertyKey&quot;:&quot;status&quot;');
+        expect(markup).toContain('&quot;displayValue&quot;:&quot;done&quot;');
+        expect(markup).not.toContain('class="nn-file-tag nn-file-property');
+    });
+
+    it('returns key evidence for a visible property matched by a key-only prefix', () => {
+        const markup = renderPillRows({
+            file: createTestTFile('Notes/AliasSearch.md'),
+            isCompactMode: false,
+            tags: [],
+            properties: [{ fieldKey: 'Aliases', value: 'Best project', valueKind: 'string' }],
+            wordCount: null,
+            settings: {
+                ...DEFAULT_SETTINGS,
+                showFileProperties: true
+            },
+            visiblePropertyKeys: new Set<string>(['aliases']),
+            visibleNavigationPropertyKeys: new Set<string>(['aliases']),
+            matchedProperties: [
+                {
+                    clause: { key: 'alias', value: null }
+                }
+            ]
+        });
+
+        expect(markup).toContain('&quot;propertyKey&quot;:&quot;Aliases&quot;');
+        expect(markup).toContain('&quot;foldedKeyTerms&quot;:[&quot;alias&quot;]');
+        expect(markup).toContain('>Best project<');
     });
 
     it('orders property groups by the navigation properties section order', () => {

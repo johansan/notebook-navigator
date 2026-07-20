@@ -23,7 +23,7 @@ import type { NotebookNavigatorSettings } from '../../settings/types';
 import { type PropertyItem, type PropertyValueKind, FileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance } from '../../storage/fileOperations';
 import { areStringArraysEqual } from '../../utils/arrayUtils';
-import { arePropertyItemsEqual, getPropertyFrontmatterFields, getPropertyFrontmatterFieldSignature } from '../../utils/propertyUtils';
+import { arePropertyItemsEqual } from '../../utils/propertyUtils';
 import {
     type FenceMarkerChar,
     isFenceClose,
@@ -33,7 +33,7 @@ import {
     skipMarkdownWhitespace
 } from '../../utils/codeRangeUtils';
 import { PreviewTextUtils } from '../../utils/previewTextUtils';
-import { createCaseInsensitiveKeyMatcher, findMatchingRecordKey, type CaseInsensitiveKeyMatcher } from '../../utils/recordUtils';
+import { createCaseInsensitiveKeyMatcher, type CaseInsensitiveKeyMatcher } from '../../utils/recordUtils';
 import { countCharactersForNoteProperty, countWordsForNoteProperty, getObsidianTextCountStartIndex } from '../../utils/wordCountUtils';
 import {
     getDrawingDirectFeatureImageKey,
@@ -41,11 +41,9 @@ import {
     type DrawingFeatureImageProviderId
 } from '../../utils/drawingFeatureImages';
 import {
-    getMarkdownPipelineContentTypes,
     hasMarkdownCharacterCountConsumer,
     hasMarkdownFeatureImageConsumer,
     hasMarkdownPreviewConsumer,
-    hasMarkdownPropertiesConsumer,
     hasMarkdownTaskConsumer,
     hasMarkdownWordCountConsumer
 } from '../../utils/markdownPipelineContentTypes';
@@ -66,8 +64,6 @@ type MarkdownPipelineContext = {
     isDrawing: boolean;
     drawingProviderId: DrawingFeatureImageProviderId | null;
     fileModified: boolean;
-    propertiesEnabled: boolean;
-    propertyNameFields: readonly string[];
     hasContent: boolean;
     featureImageReference: FeatureImageReference | null;
     featureImageExcluded: boolean;
@@ -129,8 +125,6 @@ export function getMarkdownPipelineClearFlags(
         // Toggling preview clears stale text while the disabled state hides the intermediate empty rows.
         oldSettings.showFilePreview !== newSettings.showFilePreview;
 
-    const shouldClearProperties = getPropertyFrontmatterFieldSignature(oldSettings) !== getPropertyFrontmatterFieldSignature(newSettings);
-
     const featureImagePropertiesChanged = !areStringArraysEqual(oldSettings.featureImageProperties, newSettings.featureImageProperties);
     const featureImageExcludePropertiesChanged = !areStringArraysEqual(
         oldSettings.featureImageExcludeProperties,
@@ -146,7 +140,9 @@ export function getMarkdownPipelineClearFlags(
 
     return {
         shouldClearPreview,
-        shouldClearProperties,
+        // Property visibility no longer changes the vault-wide property cache because every supported
+        // frontmatter value is indexed for internal search.
+        shouldClearProperties: false,
         shouldClearFeatureImage,
         shouldClearWordCounts: !hasMarkdownWordCountConsumer(oldSettings) && hasMarkdownWordCountConsumer(newSettings),
         shouldClearCharacterCounts: !hasMarkdownCharacterCountConsumer(oldSettings) && hasMarkdownCharacterCountConsumer(newSettings)
@@ -340,7 +336,7 @@ type ExtractedPropertyValue = {
     valueKind?: PropertyValueKind;
 };
 
-// Converts frontmatter values into a list of pill strings.
+// Converts frontmatter values into searchable scalar entries.
 // Supports scalars and nested arrays; treats null as unassigned; skips empty strings and non-finite numbers.
 function extractFrontmatterValues(value: unknown): ExtractedPropertyValue[] {
     if (value === null) {
@@ -374,9 +370,9 @@ function extractFrontmatterValues(value: unknown): ExtractedPropertyValue[] {
     return [];
 }
 
-// Builds the property pill list from frontmatter.
-// - `nameFields` produce the pill values (all matching fields are included)
-function resolvePropertyItemsFromFrontmatter(frontmatter: FrontMatterCache | null, nameFields: readonly string[]): PropertyItem[] {
+// Builds the indexed property list from every supported frontmatter value. Visibility is applied later by
+// navigation and list consumers, while internal search keeps access to properties hidden from those surfaces.
+function resolvePropertyItemsFromFrontmatter(frontmatter: FrontMatterCache | null): PropertyItem[] {
     if (!frontmatter) {
         return [];
     }
@@ -385,23 +381,16 @@ function resolvePropertyItemsFromFrontmatter(frontmatter: FrontMatterCache | nul
     // Rendering derives property and property:value colors from `fieldKey` and raw value.
     const entries: PropertyItem[] = [];
 
-    for (let fieldIndex = 0; fieldIndex < nameFields.length; fieldIndex += 1) {
-        const field = nameFields[fieldIndex];
-        const matchingField = findMatchingRecordKey(frontmatter, field);
-        if (!matchingField) {
-            continue;
-        }
-
-        const values = extractFrontmatterValues(frontmatter[matchingField]);
+    Object.keys(frontmatter).forEach(fieldKey => {
+        const values = extractFrontmatterValues(frontmatter[fieldKey]);
         if (values.length === 0) {
-            continue;
+            return;
         }
 
-        for (let valueIndex = 0; valueIndex < values.length; valueIndex += 1) {
-            const value = values[valueIndex];
-            entries.push({ fieldKey: matchingField, value: value.value, valueKind: value.valueKind });
-        }
-    }
+        values.forEach(value => {
+            entries.push({ fieldKey, value: value.value, valueKind: value.valueKind });
+        });
+    });
 
     return entries;
 }
@@ -480,9 +469,6 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         {
             id: 'properties',
             needsProcessing: context => {
-                if (!context.propertiesEnabled || !hasMarkdownPropertiesConsumer(context.settings)) {
-                    return false;
-                }
                 return !context.fileData || context.fileModified || context.fileData.properties === null;
             },
             run: async context => await this.processProperties(context)
@@ -626,26 +612,11 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             return false;
         }
 
-        const contentTypes = getMarkdownPipelineContentTypes(settings);
-        if (contentTypes.length === 0) {
-            return false;
-        }
-
-        const propertiesEnabled = hasMarkdownPropertiesConsumer(settings);
-
         const needsRefresh = fileData !== null && fileData.markdownPipelineMtime !== file.stat.mtime;
         if (!fileData) {
             return true;
         }
         if (needsRefresh) {
-            const onlyNeedsTaskCounts = contentTypes.length === 1 && contentTypes[0] === 'tasks';
-            if (onlyNeedsTaskCounts) {
-                const cachedMetadata = this.app.metadataCache.getFileCache(file);
-                const taskCountsFromMetadata = cachedMetadata ? countMarkdownTasksFromMetadata(cachedMetadata) : null;
-                if (taskCountsFromMetadata !== null && areMarkdownTaskCountsEqual(fileData, taskCountsFromMetadata)) {
-                    return false;
-                }
-            }
             return true;
         }
 
@@ -662,7 +633,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                 needsFeatureImage = expectedDrawingFeatureImageKey !== null && fileData.featureImageKey !== expectedDrawingFeatureImageKey;
             }
         }
-        const needsProperties = propertiesEnabled && fileData.properties === null;
+        const needsProperties = fileData.properties === null;
         const needsWordCount = hasMarkdownWordCountConsumer(settings) && fileData.wordCount === null;
         const needsCharacterCount =
             hasMarkdownCharacterCountConsumer(settings) &&
@@ -681,12 +652,6 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             return { update: null, processed: true };
         }
 
-        if (getMarkdownPipelineContentTypes(settings).length === 0) {
-            return { update: null, processed: true };
-        }
-
-        const propertyNameFields = getPropertyFrontmatterFields(settings);
-        const propertiesEnabled = hasMarkdownPropertiesConsumer(settings) && propertyNameFields.length > 0;
         const previewEnabled = hasMarkdownPreviewConsumer(settings);
         const featureImageEnabled = hasMarkdownFeatureImageConsumer(settings);
         const wordCountEnabled = hasMarkdownWordCountConsumer(settings);
@@ -710,14 +675,16 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         const needsPreviewContent = needsPreview && !isDrawing;
         const supportsPreviewProperties = !isDrawing || drawingProviderId === 'excalidraw';
         const needsPreviewPropertyFrontmatter = previewPropertiesEnabled && supportsPreviewProperties && needsPreview;
-        const needsPropertyFrontmatter = propertiesEnabled && (fileData === null || fileModified || fileData.properties === null);
+        const needsPropertyFrontmatterRetry = fileModified && (fileData?.properties?.length ?? 0) > 0;
         const needsFeatureImage =
             featureImageEnabled &&
             (!fileData || fileModified || fileData.featureImageKey === null || fileData.featureImageStatus === 'unprocessed') &&
             !isDrawing;
         const needsFeatureImageFrontmatter = needsFeatureImage && (featureImagePropertiesEnabled || featureImageExcludePropertiesEnabled);
-        // Delay processing recent files while metadata cache catches up with frontmatter-backed preview/property/image inputs.
-        if (frontmatter === null && (needsPropertyFrontmatter || needsPreviewPropertyFrontmatter || needsFeatureImageFrontmatter)) {
+        // A null frontmatter cache is the stable state for notes without YAML, so an already-empty property
+        // cache proceeds immediately. Existing property values retain the retry window because clearing them
+        // before metadata catches up would temporarily remove search results and property-tree membership.
+        if (frontmatter === null && (needsPropertyFrontmatterRetry || needsPreviewPropertyFrontmatter || needsFeatureImageFrontmatter)) {
             const attempts = this.emptyFrontmatterRetryCounts.get(job.path) ?? 0;
             const isRecent = Date.now() - job.file.stat.mtime <= LIMITS.contentProvider.metadataCache.recentFileWindowMs;
             if (isRecent && attempts < LIMITS.contentProvider.metadataCache.emptyValueRetryLimit) {
@@ -836,12 +803,10 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                     hasSafeUpdate = true;
                 }
 
-                if (propertiesEnabled) {
-                    const nextProperties = resolvePropertyItemsFromFrontmatter(frontmatter, propertyNameFields);
-                    if (!fileData || fileData.properties === null || !arePropertyItemsEqual(fileData.properties, nextProperties)) {
-                        update.properties = nextProperties;
-                        hasSafeUpdate = true;
-                    }
+                const nextProperties = resolvePropertyItemsFromFrontmatter(frontmatter);
+                if (!fileData || fileData.properties === null || !arePropertyItemsEqual(fileData.properties, nextProperties)) {
+                    update.properties = nextProperties;
+                    hasSafeUpdate = true;
                 }
 
                 if (needsPreviewContent) {
@@ -946,12 +911,10 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
                 }
             }
 
-            if (propertiesEnabled) {
-                const nextProperties = resolvePropertyItemsFromFrontmatter(frontmatter, propertyNameFields);
-                if (!fileData || fileData.properties === null || !arePropertyItemsEqual(fileData.properties, nextProperties)) {
-                    update.properties = nextProperties;
-                    hasSafeUpdate = true;
-                }
+            const nextProperties = resolvePropertyItemsFromFrontmatter(frontmatter);
+            if (!fileData || fileData.properties === null || !arePropertyItemsEqual(fileData.properties, nextProperties)) {
+                update.properties = nextProperties;
+                hasSafeUpdate = true;
             }
 
             if (needsPreviewContent && shouldFallback) {
@@ -1033,8 +996,6 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             isDrawing,
             drawingProviderId,
             fileModified,
-            propertiesEnabled,
-            propertyNameFields,
             hasContent,
             featureImageReference: frontmatterFeatureImageReference,
             featureImageExcluded,
@@ -1217,7 +1178,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
 
     private async processProperties(context: MarkdownPipelineContext): Promise<MarkdownPipelineUpdate | null> {
         try {
-            const nextValue = resolvePropertyItemsFromFrontmatter(context.frontmatter, context.propertyNameFields);
+            const nextValue = resolvePropertyItemsFromFrontmatter(context.frontmatter);
 
             if (
                 !context.fileData ||

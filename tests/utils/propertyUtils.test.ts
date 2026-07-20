@@ -17,75 +17,74 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
-import { getPropertyFrontmatterFields } from '../../src/utils/propertyUtils';
+import { buildPropertySearchEvidence, resolvePropertyDisplayText } from '../../src/utils/propertyUtils';
 
 describe('propertyUtils', () => {
-    it('omits the word count target property when nothing consumes it', () => {
-        const fields = getPropertyFrontmatterFields({
-            ...DEFAULT_SETTINGS,
-            textCountDisplay: 'none',
-            noteGrouping: 'date',
-            wordCountTargetProperty: 'word-goal'
-        });
-
-        expect(fields).toEqual([]);
+    it('uses wiki link labels as property display text', () => {
+        expect(resolvePropertyDisplayText('[[Projects/Alpha|Project Alpha]]')).toBe('Project Alpha');
     });
 
-    it('includes the word count target property when word count display is enabled', () => {
-        const fields = getPropertyFrontmatterFields({
-            ...DEFAULT_SETTINGS,
-            textCountDisplay: 'words',
-            wordCountTargetProperty: 'word-goal'
-        });
-
-        expect(fields).toEqual(['word-goal']);
+    it('uses markdown link labels as property display text', () => {
+        expect(resolvePropertyDisplayText('[Project Alpha](https://example.com/projects/alpha)')).toBe('Project Alpha');
     });
 
-    it('includes the word count target property when custom group headers are configured', () => {
-        const fields = getPropertyFrontmatterFields({
-            ...DEFAULT_SETTINGS,
-            textCountDisplay: 'none',
-            noteGrouping: 'custom',
-            wordCountTargetProperty: 'word-goal'
-        });
-
-        expect(fields).toEqual(['word-goal']);
+    it('trims plain property display text', () => {
+        expect(resolvePropertyDisplayText('  Waiting for review  ')).toBe('Waiting for review');
     });
 
-    it('includes the word count target property when sorting activates custom group headers', () => {
-        const fields = getPropertyFrontmatterFields({
-            ...DEFAULT_SETTINGS,
-            textCountDisplay: 'none',
-            noteGrouping: 'date',
-            defaultFolderSort: 'title-asc',
-            wordCountTargetProperty: 'word-goal'
-        });
+    it('groups property search evidence and caps displayed values', () => {
+        const matches = ['Alpha', 'Beta', 'Gamma', 'Delta'].map(displayValue => ({
+            clause: { key: 'status', value: displayValue.toLowerCase() },
+            propertyKey: 'Status',
+            rawValue: displayValue,
+            valueKind: 'string' as const,
+            displayValue
+        }));
 
-        expect(fields).toEqual(['word-goal']);
-    });
-
-    it('does not duplicate a configured visible property used as the word count target', () => {
-        const defaultProfile = DEFAULT_SETTINGS.vaultProfiles[0];
-        if (!defaultProfile) {
-            throw new Error('Default vault profile missing.');
-        }
-
-        const fields = getPropertyFrontmatterFields({
-            ...DEFAULT_SETTINGS,
-            textCountDisplay: 'words',
-            wordCountTargetProperty: 'word-goal',
-            vaultProfiles: [
+        expect(buildPropertySearchEvidence(matches)).toEqual({
+            groups: [
                 {
-                    ...defaultProfile,
-                    propertyKeys: [
-                        { key: 'status', showInNavigation: true, showInList: true, showInFileMenu: false },
-                        { key: 'Word-Goal', showInNavigation: true, showInList: true, showInFileMenu: false }
-                    ]
+                    propertyKey: 'Status',
+                    foldedKeyTerms: [],
+                    values: [
+                        { displayValue: 'Alpha', foldedTerms: ['alpha'] },
+                        { displayValue: 'Beta', foldedTerms: ['beta'] },
+                        { displayValue: 'Gamma', foldedTerms: ['gamma'] }
+                    ],
+                    hiddenValueCount: 1
                 }
-            ]
+            ],
+            hiddenGroupCount: 0
         });
+    });
 
-        expect(fields).toEqual(['status', 'Word-Goal']);
+    it('keeps key-only property evidence without fabricating a value highlight', () => {
+        expect(
+            buildPropertySearchEvidence([
+                {
+                    clause: { key: 'archived', value: null },
+                    propertyKey: 'Archived',
+                    rawValue: '',
+                    displayValue: ''
+                }
+            ])
+        ).toEqual({
+            groups: [{ propertyKey: 'Archived', foldedKeyTerms: ['archived'], values: [], hiddenValueCount: 0 }],
+            hiddenGroupCount: 0
+        });
+    });
+
+    it('caps property groups retained for file-row evidence', () => {
+        const matches = ['Alpha', 'Beta', 'Gamma', 'Delta'].map(propertyKey => ({
+            clause: { key: propertyKey.toLowerCase(), value: null },
+            propertyKey,
+            rawValue: 'value',
+            displayValue: 'value'
+        }));
+
+        expect(buildPropertySearchEvidence(matches)).toMatchObject({
+            groups: [{ propertyKey: 'Alpha' }, { propertyKey: 'Beta' }, { propertyKey: 'Gamma' }],
+            hiddenGroupCount: 1
+        });
     });
 });

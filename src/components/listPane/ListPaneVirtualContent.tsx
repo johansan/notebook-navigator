@@ -547,6 +547,7 @@ const ListPaneRow = React.memo(function ListPaneRow({
                     parentFolder={item.parentFolder}
                     isPinned={item.isPinned}
                     matchedAliases={item.matchedAliases}
+                    matchedProperties={item.matchedProperties}
                     searchMeta={item.searchMeta}
                     isHidden={Boolean(item.isHidden)}
                     shortcutKey={shortcutKey}

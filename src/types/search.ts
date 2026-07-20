@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { InclusionOperator } from '../utils/filterSearchTypes';
+import type { InclusionOperator, PropertySearchToken } from '../utils/filterSearchTypes';
+import type { PropertyValueKind } from '../storage/IndexedDBStorage';
 
 /**
  * Search providers supported by Notebook Navigator.
@@ -46,6 +47,22 @@ export interface AliasSearchMatch {
     value: string;
     /** Folded internal-search name terms used to calculate highlights when the virtualized row renders. */
     foldedTerms: readonly string[];
+}
+
+/** Positive property clause satisfied by one internal-search result. */
+export interface PropertySearchMatch {
+    clause: PropertySearchToken;
+}
+
+/**
+ * Identifies one cached property value represented by a matching positive clause. Concrete values
+ * are resolved only for rendered rows so the search result map stays bounded by query complexity.
+ */
+export interface PropertySearchValueMatch extends PropertySearchMatch {
+    propertyKey: string;
+    rawValue: string;
+    valueKind?: PropertyValueKind;
+    displayValue: string;
 }
 
 /**

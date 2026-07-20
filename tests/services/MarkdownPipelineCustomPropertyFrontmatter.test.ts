@@ -87,6 +87,21 @@ describe('MarkdownPipelineContentProvider frontmatter custom properties', () => 
         ]);
     });
 
+    it('indexes supported properties that are not configured for display', async () => {
+        const context = createApp();
+        const settings = createSettings({ propertyFields: 'status' });
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+        const file = createFile('notes/note.md');
+
+        setFrontmatter(context, file, { status: 'Active', workflow: 'Waiting' });
+        const result = await provider.runCustomProperty(file, settings);
+
+        expect(result).toEqual([
+            { fieldKey: 'status', value: 'Active', valueKind: 'string' },
+            { fieldKey: 'workflow', value: 'Waiting', valueKind: 'string' }
+        ]);
+    });
+
     it('flattens list values into multiple pills', async () => {
         const context = createApp();
         const settings = createSettings({ propertyFields: 'status, type' });

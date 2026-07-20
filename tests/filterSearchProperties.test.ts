@@ -118,6 +118,19 @@ describe('filterSearch property evaluation', () => {
         ).toBe(false);
     });
 
+    it('prefix-matches key-only filters while keeping value-filter keys exact', () => {
+        const keyOnlyTokens = parseFilterSearchTokens('.alias');
+        const valueTokens = parseFilterSearchTokens('.alias=best');
+        const properties = new Map<string, string[]>([['aliases', ['best note']]]);
+
+        expect(fileMatchesFilterTokens('note', [], keyOnlyTokens, { hasUnfinishedTasks: false, propertyValuesByKey: properties })).toBe(
+            true
+        );
+        expect(fileMatchesFilterTokens('note', [], valueTokens, { hasUnfinishedTasks: false, propertyValuesByKey: properties })).toBe(
+            false
+        );
+    });
+
     it('matches generated property values by partial author name', () => {
         const fullNameTokens = parseFilterSearchTokens('.author="noam chomsky"');
         const surnameTokens = parseFilterSearchTokens('.author=chomsky');
@@ -271,6 +284,25 @@ describe('updateFilterQueryWithProperty', () => {
 
         const parsed = parseFilterSearchTokens(added.query);
         expect(parsed.propertyTokens).toEqual([{ key: 'path', value: 'c:\\notes\\daily' }]);
+    });
+
+    it('round-trips Markdown-link values through their displayed label', () => {
+        const rawValue = '[Project Alpha](https://example.com/projects/alpha)';
+        const added = updateFilterQueryWithProperty('', 'reference', rawValue, 'AND');
+
+        expect(added.query).toBe('.reference="project alpha"');
+        expect(parseFilterSearchTokens(added.query).propertyTokens).toEqual([{ key: 'reference', value: 'project alpha' }]);
+        expect(parseFilterSearchTokens(`.reference="${rawValue}"`).propertyTokens).toEqual([{ key: 'reference', value: 'project alpha' }]);
+        expect(
+            fileMatchesFilterTokens('note', [], parseFilterSearchTokens(added.query), {
+                hasUnfinishedTasks: false,
+                propertyValuesByKey: new Map([['reference', ['project alpha']]])
+            })
+        ).toBe(true);
+
+        const removed = updateFilterQueryWithProperty(added.query, 'reference', rawValue, 'AND');
+        expect(removed.query).toBe('');
+        expect(removed.action).toBe('removed');
     });
 
     it('appends tokens without connectors in mixed queries', () => {
