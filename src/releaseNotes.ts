@@ -105,7 +105,7 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
-        version: '3.3.0',
+        version: '3.2.4',
         date: '2026-07-20',
         showOnUpdate: true,
         youtubeUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
