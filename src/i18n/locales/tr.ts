@@ -719,10 +719,10 @@ export const STRINGS_TR = {
         welcome: {
             title: '{pluginName} uygulamasına hoş geldiniz',
             introText:
-                'Merhaba! Aşağıdaki video 14 bölümden oluşan bir saatlik eksiksiz bir kurstur. Başlamadan önce, tüm eklentinin üzerine kurulduğu panel modelini anlamak için ilk üç bölümü izlemenizi şiddetle tavsiye ederim.',
+                "Merhaba ve Obsidian için daha iyi bir dosya tarayıcısı ve takvim olan Notebook Navigator'a hoş geldiniz. Başlamadan önce aşağıdaki Mastering Notebook Navigator videosunun en az ilk üç bölümünü izlemenizi gerçekten öneririm. Bu bölümler iki panelin nasıl çalıştığını tanıtır ve hızlıca kullanmaya başlamanıza yardımcı olur.",
             continueText:
-                'On dakikanız daha varsa, önerilen ayarları ve en önemli iki kısayol tuşunu yapılandırmak için ilk kurulum ve günlük kullanım bölümleriyle devam edin.',
-            thanksText: 'İndirdiğiniz için çok teşekkürler, keyifli kullanımlar!',
+                'Ardından on dakikanız daha varsa ilk kurulum ve günlük kullanım döngüsü bölümlerini izlemeye devam edin. Bunlar başlamak için ihtiyacınız olan her şeyi sunar; daha fazla ayrıntı için daha sonra geri dönebilirsiniz. Videonun bağlantısını Notebook Navigator ayarlarının üst kısmında bulabilirsiniz.',
+            thanksText: "Notebook Navigator'ı keyifle kullanın!",
             videoAlt: 'Notebook Navigator 3 ustalığı',
             openVideoButton: 'Videoyu oynat',
             closeButton: 'Belki sonra'

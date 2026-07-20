@@ -65,6 +65,33 @@
     margin-top: 16px;
 }
 
+/* YouTube play overlay shared by modal thumbnail links */
+.nn-youtube-play {
+    position: absolute;
+    top: var(--nn-youtube-play-y, 50%);
+    left: var(--nn-youtube-play-x, 50%);
+    width: 52px;
+    height: 36px;
+    transform: translate(-50%, -50%) scale(var(--nn-youtube-play-scale, 1));
+    border-radius: 8px;
+    background-color: #ff0000;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.nn-youtube-play::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-40%, -50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #ffffff;
+}
+
 .nn-folder-note-type-modal .modal-content {
     padding-top: 16px;
 }

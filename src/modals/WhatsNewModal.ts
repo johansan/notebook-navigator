@@ -19,7 +19,7 @@
 import { App, Modal, Platform, setIcon } from 'obsidian';
 import { getReleaseBannerUrl, getReleaseVideoOpenUrl, getReleaseVideoUrl, SUPPORT_BUY_ME_A_COFFEE_URL } from '../constants/urls';
 import { getCurrentLanguage, strings } from '../i18n';
-import { ReleaseNote } from '../releaseNotes';
+import { ReleaseNote, YoutubePlayButtonOptions } from '../releaseNotes';
 import { addAsyncEventListener } from '../utils/domEventListeners';
 import { focusElementPreventScroll } from '../utils/domUtils';
 import { DateUtils } from '../utils/dateUtils';
@@ -179,7 +179,7 @@ export class WhatsNewModal extends Modal {
         }
     }
 
-    private renderYoutubeLink(container: HTMLElement, youtubeUrl: string): void {
+    private renderYoutubeLink(container: HTMLElement, youtubeUrl: string, playButtonOptions?: YoutubePlayButtonOptions): void {
         const link = container.createEl('a', { cls: 'nn-whats-new-youtube-link' });
         link.setAttr('href', youtubeUrl);
         link.setAttr('rel', 'noopener noreferrer');
@@ -189,14 +189,38 @@ export class WhatsNewModal extends Modal {
         const thumbnail = link.createDiv({ cls: 'nn-whats-new-youtube-thumbnail' });
 
         const videoId = getYoutubeVideoId(youtubeUrl);
+        let image: HTMLImageElement | null = null;
         if (videoId) {
-            const image = thumbnail.createEl('img', { cls: 'nn-whats-new-youtube-image' });
+            image = thumbnail.createEl('img', { cls: 'nn-whats-new-youtube-image' });
             image.setAttr('alt', strings.modals.welcome.openVideoButton);
             image.setAttr('loading', 'lazy');
+        } else {
+            thumbnail.createDiv({ cls: 'nn-whats-new-youtube-placeholder', text: strings.modals.welcome.openVideoButton });
+        }
 
+        const playButton = thumbnail.createDiv({ cls: 'nn-youtube-play' });
+        playButton.setAttr('aria-hidden', 'true');
+
+        if (playButtonOptions) {
+            // Thumbnail-relative percentages preserve the intended placement as the modal width changes.
+            playButton.style.setProperty('--nn-youtube-play-x', `${playButtonOptions.x}%`);
+            playButton.style.setProperty('--nn-youtube-play-y', `${playButtonOptions.y}%`);
+            if (playButtonOptions.scale !== undefined) {
+                playButton.style.setProperty('--nn-youtube-play-scale', playButtonOptions.scale.toString());
+            }
+        }
+
+        if (image && videoId) {
             const primaryUrl = getYoutubeThumbnailUrl(videoId, 'maxresdefault.jpg');
             const fallbackUrl = getYoutubeThumbnailUrl(videoId, 'hqdefault.jpg');
 
+            // Keep the overlay hidden until the thumbnail is painted; otherwise it appears over the empty frame during loading.
+            playButton.hidden = true;
+            image.addEventListener('load', () => {
+                playButton.hidden = false;
+            });
+
+            // YouTube does not generate a max-resolution image for every video, so retry once with its standard thumbnail.
             let usedFallback = false;
             image.addEventListener('error', () => {
                 if (usedFallback) {
@@ -207,11 +231,7 @@ export class WhatsNewModal extends Modal {
             });
 
             image.src = primaryUrl;
-        } else {
-            thumbnail.createDiv({ cls: 'nn-whats-new-youtube-placeholder', text: strings.modals.welcome.openVideoButton });
         }
-
-        thumbnail.createDiv({ cls: 'nn-whats-new-youtube-play' }).setAttr('aria-hidden', 'true');
     }
 
     constructor(app: App, releaseNotes: ReleaseNote[], onCloseCallback?: () => void) {
@@ -256,7 +276,7 @@ export class WhatsNewModal extends Modal {
             }
 
             if (note.youtubeUrl) {
-                this.renderYoutubeLink(versionContainer, note.youtubeUrl);
+                this.renderYoutubeLink(versionContainer, note.youtubeUrl, note.youtubePlayButton);
             }
 
             if (note.info) {

@@ -28,6 +28,19 @@ interface CreateElementOptions {
 interface WhatsNewModalFormatter {
     renderFormattedText(container: TestElement, text: string): void;
     renderInfoText(container: TestElement, text: string): void;
+    renderYoutubeLink(container: TestElement, youtubeUrl: string, playButtonOptions?: { x: number; y: number; scale?: number }): void;
+}
+
+class TestStyle {
+    private properties = new Map<string, string>();
+
+    setProperty(name: string, value: string): void {
+        this.properties.set(name, value);
+    }
+
+    getPropertyValue(name: string): string {
+        return this.properties.get(name) ?? '';
+    }
 }
 
 class TestText {
@@ -42,6 +55,10 @@ class TestElement {
     private attributes = new Map<string, string>();
     private children: (TestElement | TestText)[] = [];
     private classes: string[] = [];
+    private eventListeners = new Map<string, (() => void)[]>();
+    readonly style = new TestStyle();
+    hidden = false;
+    src = '';
 
     constructor(readonly tagName = 'div') {}
 
@@ -63,8 +80,42 @@ class TestElement {
         return child;
     }
 
+    createDiv(options: CreateElementOptions = {}): TestElement {
+        const child = new TestElement('div');
+        child.applyOptions(options);
+        this.children.push(child);
+        return child;
+    }
+
     setAttr(name: string, value: string): void {
         this.attributes.set(name, value);
+    }
+
+    addEventListener(type: string, listener: () => void): void {
+        const listeners = this.eventListeners.get(type) ?? [];
+        listeners.push(listener);
+        this.eventListeners.set(type, listeners);
+    }
+
+    dispatch(type: string): void {
+        this.eventListeners.get(type)?.forEach(listener => listener());
+    }
+
+    findByClass(className: string): TestElement | null {
+        if (this.classes.includes(className)) {
+            return this;
+        }
+
+        for (const child of this.children) {
+            if (child instanceof TestElement) {
+                const match = child.findByClass(className);
+                if (match) {
+                    return match;
+                }
+            }
+        }
+
+        return null;
     }
 
     toMarkup(): string {
@@ -137,5 +188,36 @@ describe('WhatsNewModal formatting', () => {
         expect(container.toMarkup()).toBe(
             '<p class="nn-whats-new-info">First paragraph</p><p class="nn-whats-new-info">Second paragraph</p>'
         );
+    });
+});
+
+describe('WhatsNewModal YouTube preview', () => {
+    it('positions and scales the play button relative to the thumbnail', () => {
+        const formatter = createFormatter();
+        const container = new TestElement();
+
+        formatter.renderYoutubeLink(container, 'invalid-url', { x: 80, y: 49, scale: 1.8 });
+
+        const playButton = container.findByClass('nn-youtube-play');
+        expect(playButton).not.toBeNull();
+        expect(playButton?.style.getPropertyValue('--nn-youtube-play-x')).toBe('80%');
+        expect(playButton?.style.getPropertyValue('--nn-youtube-play-y')).toBe('49%');
+        expect(playButton?.style.getPropertyValue('--nn-youtube-play-scale')).toBe('1.8');
+        expect(playButton?.hidden).toBe(false);
+    });
+
+    it('keeps the play button hidden until the thumbnail loads', () => {
+        const formatter = createFormatter();
+        const container = new TestElement();
+
+        formatter.renderYoutubeLink(container, 'https://www.youtube.com/watch?v=video-id');
+
+        const playButton = container.findByClass('nn-youtube-play');
+        const image = container.findByClass('nn-whats-new-youtube-image');
+        expect(playButton?.hidden).toBe(true);
+
+        image?.dispatch('load');
+
+        expect(playButton?.hidden).toBe(false);
     });
 });

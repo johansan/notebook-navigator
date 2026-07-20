@@ -46,6 +46,7 @@
 }
 
 .nn-welcome-thumbnail-frame {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -60,6 +61,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.nn-welcome-youtube-play {
+    --nn-youtube-play-x: 80%;
+    --nn-youtube-play-y: 49%;
+    --nn-youtube-play-scale: 1.8;
+}
+
+.nn-welcome-thumbnail-link:hover .nn-welcome-youtube-play {
+    background-color: #cc0000;
 }
 
 .nn-welcome-buttons {

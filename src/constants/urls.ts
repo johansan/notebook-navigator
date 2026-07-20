@@ -29,7 +29,6 @@ export const MOMENT_FORMAT_DOCS_URL = 'https://momentjs.com/docs/#/displaying/fo
 export const ICON_ASSETS_REPOSITORY_URL = `https://github.com/${NOTEBOOK_NAVIGATOR_REPOSITORY}/tree/main/icon-assets`;
 
 export const WELCOME_VIDEO_URL = 'https://www.youtube.com/watch?v=m2maDNtho7Y';
-export const WELCOME_VIDEO_THUMBNAIL_URL = `${NOTEBOOK_NAVIGATOR_RAW_BASE_URL}/images/youtube-thumbnail.jpg`;
 
 export function getReleaseBannerUrl(bannerUrl: boolean | string | undefined, version: string): string | null {
     if (!bannerUrl) {

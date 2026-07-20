@@ -718,10 +718,10 @@ export const STRINGS_JA = {
         welcome: {
             title: '{pluginName}へようこそ',
             introText:
-                'こんにちは！下のビデオは全14章、約1時間の完全なコースです。始める前に、最初の3章を見て、プラグイン全体の土台となるペインの仕組みを理解することを強くお勧めします。',
+                'こんにちは。Obsidianのファイルブラウザとカレンダーをより使いやすくするNotebook Navigatorへようこそ。使い始める前に、下の動画「Mastering Notebook Navigator」の最初の3章だけでもぜひご覧ください。2つのペインの仕組みが分かり、すぐに使い始められます。',
             continueText:
-                'さらに10分あれば、初期設定と日常の使い方の章に進み、おすすめの設定と特に重要な2つのホットキーを設定してください。',
-            thanksText: 'ダウンロードいただきありがとうございます。お楽しみください！',
+                'さらに10分ほど時間があれば、初回セットアップと日常の使い方の章も続けてご覧ください。使い始めるために必要な内容がひととおり分かり、細かい部分はあとから見直せます。動画へのリンクはNotebook Navigator設定の上部にもあります。',
+            thanksText: 'Notebook Navigatorを楽しんでお使いください！',
             videoAlt: 'Notebook Navigator 3をマスターする',
             openVideoButton: 'ビデオを再生',
             closeButton: 'また今度'

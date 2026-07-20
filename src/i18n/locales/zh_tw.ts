@@ -711,9 +711,11 @@ export const STRINGS_ZH_TW = {
         },
         welcome: {
             title: '歡迎使用 {pluginName}',
-            introText: '您好！下方影片是一套時長一小時、共 14 章的完整課程。在開始之前，強烈建議您觀看前三章，了解最核心的面板模型。',
-            continueText: '如果您還有十分鐘時間，請繼續觀看初始設定和日常使用兩章，了解建議設定以及兩個最重要的快速鍵。',
-            thanksText: '非常感謝您的下載，祝您使用愉快！',
+            introText:
+                '您好，歡迎使用 Notebook Navigator，一款更好用的 Obsidian 檔案瀏覽器和日曆。在開始之前，強烈建議您至少觀看下方《Mastering Notebook Navigator》影片的前三章。影片會介紹兩個面板的運作方式，協助您快速上手。',
+            continueText:
+                '如果您還有十分鐘，請繼續觀看初次設定和日常使用流程這兩個章節。看完後，您就掌握了入門所需的全部內容，之後還可以回來了解更多細節。Notebook Navigator 設定頂部提供了該影片的連結。',
+            thanksText: '祝您使用 Notebook Navigator 愉快！',
             videoAlt: '精通 Notebook Navigator 3',
             openVideoButton: '播放影片',
             closeButton: '以後再說'

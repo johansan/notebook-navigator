@@ -720,10 +720,10 @@ export const STRINGS_ES = {
         welcome: {
             title: 'Bienvenido a {pluginName}',
             introText:
-                '¡Hola! El video a continuación es un curso completo de una hora en 14 capítulos. Antes de comenzar, te recomiendo que veas los primeros tres capítulos para entender el modelo de paneles: la idea sobre la que se construye todo el plugin.',
+                '¡Hola y bienvenido a Notebook Navigator, un mejor explorador de archivos y calendario para Obsidian! Antes de empezar, te recomiendo de verdad que veas al menos los tres primeros capítulos del vídeo de abajo, Mastering Notebook Navigator. Te presentan cómo funcionan los dos paneles y te ayudan a empezar rápidamente.',
             continueText:
-                'Si tienes diez minutos más, continúa con los capítulos sobre la configuración inicial y el flujo de trabajo diario para establecer los ajustes recomendados y las dos teclas de acceso rápido más importantes.',
-            thanksText: '¡Muchas gracias por descargar y disfruta!',
+                'Después, si tienes otros diez minutos, sigue con los capítulos sobre la configuración inicial y el ciclo de uso diario. Con ellos tendrás todo lo necesario para empezar y podrás volver más adelante para ver los detalles. Encontrarás un enlace al vídeo en la parte superior de los ajustes de Notebook Navigator.',
+            thanksText: '¡Que disfrutes usando Notebook Navigator!',
             videoAlt: 'Dominando Notebook Navigator 3',
             openVideoButton: 'Reproducir video',
             closeButton: 'Quizás más tarde'

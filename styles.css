@@ -5510,6 +5510,33 @@ body.nn-resizing {
     margin-top: 16px;
 }
 
+/* YouTube play overlay shared by modal thumbnail links */
+.nn-youtube-play {
+    position: absolute;
+    top: var(--nn-youtube-play-y, 50%);
+    left: var(--nn-youtube-play-x, 50%);
+    width: 52px;
+    height: 36px;
+    transform: translate(-50%, -50%) scale(var(--nn-youtube-play-scale, 1));
+    border-radius: 8px;
+    background-color: #ff0000;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.nn-youtube-play::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-40%, -50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #ffffff;
+}
+
 .nn-folder-note-type-modal .modal-content {
     padding-top: 16px;
 }
@@ -5940,6 +5967,7 @@ body.nn-resizing {
 }
 
 .nn-welcome-thumbnail-frame {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -5954,6 +5982,16 @@ body.nn-resizing {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.nn-welcome-youtube-play {
+    --nn-youtube-play-x: 80%;
+    --nn-youtube-play-y: 49%;
+    --nn-youtube-play-scale: 1.8;
+}
+
+.nn-welcome-thumbnail-link:hover .nn-welcome-youtube-play {
+    background-color: #cc0000;
 }
 
 .nn-welcome-buttons {
@@ -6190,33 +6228,7 @@ body.nn-resizing {
     font-size: 13px;
 }
 
-.nn-whats-new-youtube-play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 52px;
-    height: 36px;
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
-    background-color: #ff0000;
-    opacity: 0.9;
-    pointer-events: none;
-}
-
-.nn-whats-new-youtube-play::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-40%, -50%);
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 8px 0 8px 14px;
-    border-color: transparent transparent transparent #ffffff;
-}
-
-.nn-whats-new-youtube-link:hover .nn-whats-new-youtube-play {
+.nn-whats-new-youtube-link:hover .nn-youtube-play {
     background-color: #cc0000;
 }
 

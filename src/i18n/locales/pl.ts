@@ -722,10 +722,10 @@ export const STRINGS_PL = {
         welcome: {
             title: 'Witaj w {pluginName}',
             introText:
-                'Cześć! Poniższy film to kompletny godzinny kurs w 14 rozdziałach. Zanim zaczniesz, gorąco polecam obejrzenie pierwszych trzech rozdziałów, aby zrozumieć model paneli — ideę, na której opiera się cała wtyczka.',
+                'Cześć i witaj w Notebook Navigator, lepszej przeglądarce plików i kalendarzu dla Obsidian. Zanim zaczniesz, naprawdę polecam obejrzeć co najmniej trzy pierwsze rozdziały poniższego filmu Mastering Notebook Navigator. Poznasz w nich sposób działania dwóch paneli i szybko rozpoczniesz pracę.',
             continueText:
-                'Jeśli masz jeszcze dziesięć minut, przejdź do rozdziałów o pierwszej konfiguracji i codziennej pracy, aby skonfigurować zalecane ustawienia i dwa najważniejsze skróty klawiszowe.',
-            thanksText: 'Dziękujemy za pobranie i życzymy miłego korzystania!',
+                'Jeśli masz jeszcze dziesięć minut, obejrzyj także rozdziały o pierwszej konfiguracji i codziennej pracy. Dowiesz się z nich wszystkiego, czego potrzebujesz na początek, a do szczegółów możesz wrócić później. Łącze do filmu znajdziesz u góry ustawień Notebook Navigator.',
+            thanksText: 'Miłego korzystania z Notebook Navigator!',
             videoAlt: 'Opanuj Notebook Navigator 3',
             openVideoButton: 'Odtwórz wideo',
             closeButton: 'Może później'

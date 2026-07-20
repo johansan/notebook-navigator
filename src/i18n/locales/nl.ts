@@ -721,10 +721,10 @@ export const STRINGS_NL = {
         welcome: {
             title: 'Welkom bij {pluginName}',
             introText:
-                'Hallo! De onderstaande video is een complete cursus van een uur in 14 hoofdstukken. Voordat je begint, raad ik je sterk aan om de eerste drie hoofdstukken te bekijken om het panelenmodel te begrijpen — het ene idee waarop de hele plugin is gebouwd.',
+                'Hallo en van harte welkom bij Notebook Navigator, een betere bestandsbrowser en kalender voor Obsidian. Voordat je begint, raad ik je echt aan om ten minste de eerste drie hoofdstukken van de video hieronder, Mastering Notebook Navigator, te bekijken. Daarin maak je kennis met de werking van de twee panelen en kun je snel aan de slag.',
             continueText:
-                'Als je nog tien minuten hebt, ga dan verder met de hoofdstukken over de eerste installatie en de dagelijkse routine om de aanbevolen instellingen en de twee belangrijkste sneltoetsen in te stellen.',
-            thanksText: 'Heel erg bedankt voor het downloaden en veel plezier!',
+                'Als je daarna nog tien minuten hebt, kijk dan verder naar de hoofdstukken over de eerste configuratie en de dagelijkse routine. Daarmee weet je alles wat je nodig hebt om te beginnen en kun je later terugkomen voor meer details. Bovenaan de instellingen van Notebook Navigator vind je een link naar de video.',
+            thanksText: 'Veel plezier met Notebook Navigator!',
             videoAlt: 'Notebook Navigator 3 beheersen',
             openVideoButton: 'Video afspelen',
             closeButton: 'Misschien later'
