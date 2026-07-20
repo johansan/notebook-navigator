@@ -183,16 +183,16 @@ export const STRINGS_FR = {
         searchHelp: 'Syntaxe de recherche',
         searchHelpTitle: 'Syntaxe de recherche',
         searchHelpModal: {
-            intro: 'Combinez noms de fichiers, propriétés, étiquettes, dates et filtres dans une requête (ex. `meeting .status=active #work @thisweek`). Installez le plugin Omnisearch pour utiliser la recherche plein texte.',
+            intro: 'Combinez noms d’affichage, alias, propriétés, étiquettes, dates et filtres dans une requête (ex. `meeting .status=active #work @thisweek`). Installez le plugin Omnisearch pour utiliser la recherche plein texte.',
             introSwitching:
                 "Basculez entre la recherche par filtre et Omnisearch avec les touches fléchées haut/bas ou en cliquant sur l'icône de recherche.",
             sections: {
                 fileNames: {
-                    title: 'Noms de fichiers',
+                    title: 'Noms de fichiers et alias',
                     items: [
-                        '`word` Trouver les notes avec "word" dans le nom de fichier.',
-                        '`word1 word2` Chaque mot doit correspondre au nom de fichier.',
-                        '`-word` Exclure les notes avec "word" dans le nom de fichier.'
+                        '`word` Trouver les notes avec "word" dans le nom d’affichage ou un alias.',
+                        '`word1 word2` Chaque mot doit être présent dans le nom d’affichage ou dans les alias.',
+                        '`-word` Exclure les notes avec "word" dans le nom d’affichage ou un alias.'
                     ]
                 },
                 tags: {

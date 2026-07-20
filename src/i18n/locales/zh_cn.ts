@@ -182,15 +182,15 @@ export const STRINGS_ZH_CN = {
         searchHelp: '搜索语法',
         searchHelpTitle: '搜索语法',
         searchHelpModal: {
-            intro: '在一个查询中组合文件名、属性、标签、日期和过滤器（例如：`meeting .status=active #work @thisweek`）。安装 Omnisearch 插件以使用全文搜索。',
+            intro: '在一个查询中组合显示名称、别名、属性、标签、日期和过滤器（例如：`meeting .status=active #work @thisweek`）。安装 Omnisearch 插件以使用全文搜索。',
             introSwitching: '使用上/下箭头键或点击搜索图标在过滤搜索和 Omnisearch 之间切换。',
             sections: {
                 fileNames: {
-                    title: '文件名',
+                    title: '文件名和别名',
                     items: [
-                        '`word` 查找文件名中含有 "word" 的笔记。',
-                        '`word1 word2` 每个词都必须匹配文件名。',
-                        '`-word` 排除文件名中含有 "word" 的笔记。'
+                        '`word` 查找显示名称或别名中含有 "word" 的笔记。',
+                        '`word1 word2` 每个词都必须在显示名称或别名中匹配。',
+                        '`-word` 排除显示名称或别名中含有 "word" 的笔记。'
                     ]
                 },
                 tags: {

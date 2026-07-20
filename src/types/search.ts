@@ -42,6 +42,12 @@ export interface SearchResultMeta {
     excerpt?: string;
 }
 
+export interface AliasSearchMatch {
+    value: string;
+    /** Folded internal-search name terms used to calculate highlights when the virtualized row renders. */
+    foldedTerms: readonly string[];
+}
+
 /**
  * Captures navigation-related filters derived from the search query.
  * Used to highlight matching tags and properties inside the navigation tree.

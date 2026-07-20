@@ -183,15 +183,15 @@ export const STRINGS_EN = {
         searchHelp: 'Search syntax',
         searchHelpTitle: 'Search syntax',
         searchHelpModal: {
-            intro: 'Combine file names, properties, tags, dates, and filters in one query (e.g., `meeting .status=active #work @thisweek`). Install the Omnisearch plugin to use full-text search.',
+            intro: 'Combine display names, aliases, properties, tags, dates, and filters in one query (e.g., `meeting .status=active #work @thisweek`). Install the Omnisearch plugin to use full-text search.',
             introSwitching: 'Switch between filter search and Omnisearch using the up/down arrow keys or by clicking the search icon.',
             sections: {
                 fileNames: {
-                    title: 'File names',
+                    title: 'File names and aliases',
                     items: [
-                        '`word` Match notes with "word" in the file name.',
-                        '`word1 word2` Require every word to match the file name.',
-                        '`-word` Exclude notes with "word" in the file name.'
+                        '`word` Match notes with "word" in the display name or an alias.',
+                        '`word1 word2` Require every word to match across the display name and aliases.',
+                        '`-word` Exclude notes with "word" in the display name or an alias.'
                     ]
                 },
                 tags: {

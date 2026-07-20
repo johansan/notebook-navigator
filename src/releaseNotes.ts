@@ -97,6 +97,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         youtubeUrl: 'https://www.youtube.com/watch?v=m2maDNtho7Y',
         info: 'We finally have a new **Mastering Notebook Navigator 3** video! In this one-hour long masterclass I go through everything you need to know about Notebook Navigator in 14 separate chapters. It took some time to record this, and I hope you find value in it.',
         new: [
+            'Filter search now matches frontmatter aliases in addition to display names. Notes matched through an alias show the alias next to the note name in the search results. Exclusions with `-word` also apply to aliases.',
             'You can now show item counts in the list pane group headers using the new setting: List pane > Group headers > ==Show item counts==. Disabled by default.'
         ],
         improved: [

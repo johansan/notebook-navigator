@@ -439,6 +439,29 @@
     font-weight: var(--nn-theme-file-word-count-font-weight);
 }
 
+/* Keep aliases in normal text flow so title clamping can reveal or wrap each value independently. */
+.nn-file-alias-match {
+    display: inline;
+    margin-inline-start: 5px;
+    color: var(--nn-theme-foreground-muted);
+    font-size: 0.85em;
+    font-weight: normal;
+    vertical-align: baseline;
+}
+
+.nn-file-alias-match-icon {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    margin-inline-end: 2px;
+    vertical-align: -0.125em;
+}
+
+.nn-file-alias-match-icon svg {
+    width: 1em;
+    height: 1em;
+}
+
 .nn-file-icon {
     width: var(--nn-file-icon-size-mobile, var(--nn-file-icon-size));
     height: var(--nn-file-icon-size-mobile, var(--nn-file-icon-size));

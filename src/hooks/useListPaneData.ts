@@ -283,7 +283,7 @@ export function useListPaneData({
     const searchableNames = useSearchableNames({ app, baseFiles, getFileDisplayName });
     const filterSettings = useMemo(() => ({ alphabeticalDateMode: settings.alphabeticalDateMode }), [settings.alphabeticalDateMode]);
 
-    const filteredFiles = useMemo(() => {
+    const filterResult = useMemo(() => {
         return filterListPaneFiles({
             app,
             baseFiles,
@@ -310,6 +310,7 @@ export function useListPaneData({
         trimmedQuery,
         useOmnisearch
     ]);
+    const filteredFiles = filterResult.files;
 
     const files = useMemo(() => {
         if (!propertySortOrderOverride || propertySortOrderOverride.length === 0) {
@@ -368,6 +369,7 @@ export function useListPaneData({
             hiddenTags,
             listConfig,
             collapsedListGroups,
+            matchedAliases: filterResult.matchedAliases,
             searchMetaMap,
             selectedFolder,
             selectedTag,
@@ -391,6 +393,7 @@ export function useListPaneData({
         hiddenTags,
         listConfig,
         collapsedListGroups,
+        filterResult.matchedAliases,
         selectedFolder,
         selectedTag,
         selectedProperty,

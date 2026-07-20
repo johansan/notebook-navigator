@@ -182,15 +182,15 @@ export const STRINGS_KO = {
         searchHelp: '검색 구문',
         searchHelpTitle: '검색 구문',
         searchHelpModal: {
-            intro: '파일 이름, 속성, 태그, 날짜, 필터를 하나의 쿼리에서 결합 (예: `meeting .status=active #work @thisweek`). Omnisearch 플러그인을 설치하면 전체 텍스트 검색을 사용할 수 있습니다.',
+            intro: '표시 이름, 별칭, 속성, 태그, 날짜, 필터를 하나의 쿼리에서 결합 (예: `meeting .status=active #work @thisweek`). Omnisearch 플러그인을 설치하면 전체 텍스트 검색을 사용할 수 있습니다.',
             introSwitching: '위/아래 화살표 키 또는 검색 아이콘 클릭으로 필터 검색과 Omnisearch 간에 전환할 수 있습니다.',
             sections: {
                 fileNames: {
-                    title: '파일 이름',
+                    title: '파일 이름과 별칭',
                     items: [
-                        '`word` 파일 이름에 "word"가 포함된 노트 찾기.',
-                        '`word1 word2` 모든 단어가 파일 이름과 일치해야 합니다.',
-                        '`-word` 파일 이름에 "word"가 포함된 노트 제외.'
+                        '`word` 표시 이름 또는 별칭에 "word"가 포함된 노트 찾기.',
+                        '`word1 word2` 모든 단어가 표시 이름 또는 별칭 중 하나와 일치해야 합니다.',
+                        '`-word` 표시 이름 또는 별칭에 "word"가 포함된 노트 제외.'
                     ]
                 },
                 tags: {

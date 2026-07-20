@@ -21,6 +21,8 @@ import {
     parseFilterSearchTokens,
     fileMatchesDateFilterTokens,
     fileMatchesFilterTokens,
+    findFilterSearchNameMatch,
+    getFileFilterSearchMatch,
     updateFilterQueryWithTag
 } from '../../src/utils/filterSearch';
 import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
@@ -689,6 +691,89 @@ describe('fileMatchesFilterTokens', () => {
         const tokens = parseFilterSearchTokens('plat form');
         expect(fileMatchesFilterTokens('platform notes', [], tokens)).toBe(true);
         expect(fileMatchesFilterTokens('note list', [], tokens)).toBe(false);
+    });
+
+    it('matches name tokens against aliases', () => {
+        const tokens = parseFilterSearchTokens('nn');
+
+        expect(
+            fileMatchesFilterTokens('notebook navigator', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['nn']
+            })
+        ).toBe(true);
+    });
+
+    it('returns alias coverage from the file acceptance pass', () => {
+        const tokens = parseFilterSearchTokens('notebook navigator');
+
+        expect(
+            getFileFilterSearchMatch('notebook', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['navigator']
+            })
+        ).toEqual({ matches: true, nameMatch: { aliasIndexes: [0] } });
+    });
+
+    it('requires every name token to match across the display name and aliases', () => {
+        const tokens = parseFilterSearchTokens('notebook navigator');
+
+        expect(
+            fileMatchesFilterTokens('project note', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['notebook navigator']
+            })
+        ).toBe(true);
+        expect(
+            fileMatchesFilterTokens('project note', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['notebook', 'navigator']
+            })
+        ).toBe(true);
+        expect(
+            fileMatchesFilterTokens('notebook', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['navigator']
+            })
+        ).toBe(true);
+    });
+
+    it('reports only the aliases needed to cover tokens missing from the display name', () => {
+        expect(findFilterSearchNameMatch('notebook navigator', ['nn'], ['notebook'])).toEqual({ aliasIndexes: [] });
+        expect(findFilterSearchNameMatch('project note', ['nn', 'notebook navigator'], ['notebook'])).toEqual({
+            aliasIndexes: [1]
+        });
+        expect(findFilterSearchNameMatch('project note', ['notebook', 'navigator'], ['notebook', 'navigator'])).toEqual({
+            aliasIndexes: [0, 1]
+        });
+        expect(findFilterSearchNameMatch('notebook', ['navigator'], ['notebook', 'navigator'])).toEqual({
+            aliasIndexes: [0]
+        });
+        expect(findFilterSearchNameMatch('project note', ['notebook', 'notebook navigator'], ['notebook', 'navigator'])).toEqual({
+            aliasIndexes: [1]
+        });
+        expect(findFilterSearchNameMatch('project note', ['notebook'], ['notebook', 'navigator'])).toBeNull();
+    });
+
+    it('removes aliases made redundant by later coverage choices', () => {
+        expect(
+            findFilterSearchNameMatch(
+                '',
+                ['alpha beta gamma delta', 'alpha beta gamma epsilon', 'delta zeta'],
+                ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta']
+            )
+        ).toEqual({ aliasIndexes: [1, 2] });
+    });
+
+    it('applies name exclusions to aliases', () => {
+        const tokens = parseFilterSearchTokens('notebook -nn');
+
+        expect(
+            fileMatchesFilterTokens('notebook navigator', [], tokens, {
+                hasUnfinishedTasks: false,
+                foldedAliases: ['nn']
+            })
+        ).toBe(false);
     });
 
     it('matches folded name, tag, and folder values', () => {

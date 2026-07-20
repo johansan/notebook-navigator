@@ -17,17 +17,17 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { TFile, TFolder } from 'obsidian';
-import type { App } from 'obsidian';
+import { parseFrontMatterAliases, TFile, TFolder } from 'obsidian';
+import type { App, FrontMatterCache } from 'obsidian';
 import type { NotebookNavigatorSettings, SortOption } from '../../settings/types';
 import type { FilterSearchMatchOptions, FilterSearchTokens } from '../../utils/filterSearch';
 import {
     fileMatchesDateFilterTokens,
-    fileMatchesFilterTokens,
     filterSearchHasActiveCriteria,
     filterSearchNeedsPropertyLookup,
     filterSearchNeedsTagLookup,
     filterSearchRequiresTagsForEveryMatch,
+    getFileFilterSearchMatch,
     parseFilterSearchTokens
 } from '../../utils/filterSearch';
 import { resolveDefaultDateField } from '../../utils/sortUtils';
@@ -44,7 +44,7 @@ import {
 } from '../../utils/fileFilters';
 import { createHiddenTagVisibility, normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 import { runAsyncAction } from '../../utils/async';
-import type { SearchResultMeta } from '../../types/search';
+import type { AliasSearchMatch, SearchResultMeta } from '../../types/search';
 import type { OmnisearchService } from '../../services/OmnisearchService';
 import type { IndexedDBStorage, FileData } from '../../storage/IndexedDBStorage';
 import { shouldHideDrawingCompanionImageFile } from '../../utils/drawingFeatureImages';
@@ -52,6 +52,7 @@ import { shouldHideDrawingCompanionImageFile } from '../../utils/drawingFeatureI
 const EMPTY_FILTER_SEARCH_PROPERTIES = new Map<string, string[]>();
 const TAG_PRESENCE_SENTINEL = ['__nn_tag_present__'];
 const EMPTY_HIDDEN_STATE = new Map<string, boolean>();
+const EMPTY_MATCHED_ALIASES = new Map<string, readonly AliasSearchMatch[]>();
 
 export interface OmnisearchListResult {
     query: string;
@@ -73,6 +74,19 @@ interface UseSearchableNamesArgs {
     getFileDisplayName: (file: TFile) => string;
 }
 
+export interface SearchableNameData {
+    foldedDisplayName: string;
+    /** Original and folded aliases share frontmatter order so a match index resolves to the displayed alias. */
+    aliases: readonly string[];
+    foldedAliases: readonly string[];
+}
+
+export interface FilterListPaneFilesResult {
+    files: TFile[];
+    /** Contains the aliases that were required to satisfy each included file's internal-search name tokens. */
+    matchedAliases: ReadonlyMap<string, readonly AliasSearchMatch[]>;
+}
+
 interface FilterListPaneFilesArgs {
     app: App;
     baseFiles: TFile[];
@@ -80,7 +94,7 @@ interface FilterListPaneFilesArgs {
     getFileTimestamps: (file: TFile) => { created: number; modified: number };
     omnisearchResult: OmnisearchListResult | null;
     searchTokens?: FilterSearchTokens;
-    searchableNames: ReadonlyMap<string, string>;
+    searchableNames: ReadonlyMap<string, SearchableNameData>;
     settings: Pick<NotebookNavigatorSettings, 'alphabeticalDateMode'>;
     sortOption: SortOption;
     trimmedQuery: string;
@@ -212,27 +226,62 @@ export function useOmnisearchListResult({
     return omnisearchResult;
 }
 
-export function useSearchableNames({ app, baseFiles, getFileDisplayName }: UseSearchableNamesArgs): ReadonlyMap<string, string> {
-    const [searchableNames, setSearchableNames] = useState<Map<string, string>>(new Map());
+export function buildSearchableNameData(displayName: string, frontmatter: FrontMatterCache | null): SearchableNameData {
+    const aliases: string[] = [];
+    const foldedAliases: string[] = [];
+
+    for (const alias of parseFrontMatterAliases(frontmatter) ?? []) {
+        const foldedAlias = foldSearchText(alias);
+        if (!foldedAlias) {
+            continue;
+        }
+
+        aliases.push(alias);
+        foldedAliases.push(foldedAlias);
+    }
+
+    return {
+        foldedDisplayName: foldSearchText(displayName),
+        aliases,
+        foldedAliases
+    };
+}
+
+function searchableNameDataEqual(left: SearchableNameData | undefined, right: SearchableNameData): boolean {
+    if (!left || left.foldedDisplayName !== right.foldedDisplayName || left.aliases.length !== right.aliases.length) {
+        return false;
+    }
+
+    return left.aliases.every((alias, index) => alias === right.aliases[index] && left.foldedAliases[index] === right.foldedAliases[index]);
+}
+
+export function useSearchableNames({
+    app,
+    baseFiles,
+    getFileDisplayName
+}: UseSearchableNamesArgs): ReadonlyMap<string, SearchableNameData> {
+    const [searchableNames, setSearchableNames] = useState<Map<string, SearchableNameData>>(new Map());
 
     useEffect(() => {
-        const next = new Map<string, string>();
+        const next = new Map<string, SearchableNameData>();
         baseFiles.forEach(file => {
-            next.set(file.path, foldSearchText(getFileDisplayName(file)));
+            const frontmatter = file.extension === 'md' ? (app.metadataCache.getFileCache(file)?.frontmatter ?? null) : null;
+            next.set(file.path, buildSearchableNameData(getFileDisplayName(file), frontmatter));
         });
         setSearchableNames(next);
-    }, [baseFiles, getFileDisplayName]);
+    }, [app.metadataCache, baseFiles, getFileDisplayName]);
 
     useEffect(() => {
         const basePaths = new Set(baseFiles.map(file => file.path));
-        const offref = app.metadataCache.on('changed', changedFile => {
+        const offref = app.metadataCache.on('changed', (changedFile, _data, cache) => {
             if (!changedFile || !basePaths.has(changedFile.path)) {
                 return;
             }
 
-            const nextName = foldSearchText(getFileDisplayName(changedFile));
+            const frontmatter = changedFile.extension === 'md' ? (cache.frontmatter ?? null) : null;
+            const nextName = buildSearchableNameData(getFileDisplayName(changedFile), frontmatter);
             setSearchableNames(previous => {
-                if (previous.get(changedFile.path) === nextName) {
+                if (searchableNameDataEqual(previous.get(changedFile.path), nextName)) {
                     return previous;
                 }
 
@@ -262,27 +311,30 @@ export function filterListPaneFiles({
     sortOption,
     trimmedQuery,
     useOmnisearch
-}: FilterListPaneFilesArgs): TFile[] {
+}: FilterListPaneFilesArgs): FilterListPaneFilesResult {
     if (!trimmedQuery) {
-        return baseFiles;
+        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES };
     }
 
     if (useOmnisearch) {
         if (!omnisearchResult || omnisearchResult.query !== trimmedQuery) {
-            return [];
+            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES };
         }
 
         const omnisearchPaths = new Set(omnisearchResult.files.map(file => file.path));
         if (omnisearchPaths.size === 0) {
-            return [];
+            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES };
         }
 
-        return baseFiles.filter(file => omnisearchPaths.has(file.path));
+        return {
+            files: baseFiles.filter(file => omnisearchPaths.has(file.path)),
+            matchedAliases: EMPTY_MATCHED_ALIASES
+        };
     }
 
     const tokens = searchTokens ?? parseFilterSearchTokens(trimmedQuery);
     if (!filterSearchHasActiveCriteria(tokens)) {
-        return baseFiles;
+        return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES };
     }
 
     const hasDateFilters = tokens.dateRanges.length > 0 || tokens.excludeDateRanges.length > 0;
@@ -296,80 +348,79 @@ export function filterListPaneFiles({
     const requiresNormalizedTagValues = tokens.mode === 'tag' || tokens.tagTokens.length > 0 || tokens.excludeTagTokens.length > 0;
     const db = getDB();
     const emptyTags: string[] = [];
+    const matchedAliases = new Map<string, readonly AliasSearchMatch[]>();
 
-    return baseFiles.filter(file => {
-        const foldedName = searchableNames.get(file.path) ?? '';
+    const files = baseFiles.filter(file => {
+        const searchableName = searchableNames.get(file.path);
+        const foldedName = searchableName?.foldedDisplayName ?? '';
+        const foldedAliases = searchableName?.foldedAliases ?? emptyTags;
         const fileData = hasTaskFilters || needsTagLookup || needsPropertyLookup ? db.getFile(file.path) : null;
         const hasUnfinishedTasks = hasTaskFilters && typeof fileData?.taskUnfinished === 'number' && fileData.taskUnfinished > 0;
-        const needsMatchOptions = hasTaskFilters || hasFolderFilters || hasExtensionFilters;
-        let matchOptions: FilterSearchMatchOptions | undefined;
+        const matchOptions: FilterSearchMatchOptions = { hasUnfinishedTasks, foldedAliases };
 
-        if (needsMatchOptions) {
-            matchOptions = { hasUnfinishedTasks };
+        if (hasFolderFilters) {
+            matchOptions.foldedFolderPath = foldSearchText(file.parent?.path ?? '');
+        }
 
-            if (hasFolderFilters) {
-                matchOptions.foldedFolderPath = foldSearchText(file.parent?.path ?? '');
-            }
-
-            if (hasExtensionFilters) {
-                matchOptions.foldedExtension = foldSearchText(file.extension);
-            }
+        if (hasExtensionFilters) {
+            matchOptions.foldedExtension = foldSearchText(file.extension);
         }
 
         if (needsPropertyLookup) {
-            const propertyValuesByKey = normalizePropertiesForFilterSearch(fileData?.properties ?? null);
-            if (matchOptions) {
-                matchOptions = { ...matchOptions, propertyValuesByKey };
-            } else {
-                matchOptions = { hasUnfinishedTasks, propertyValuesByKey };
-            }
+            matchOptions.propertyValuesByKey = normalizePropertiesForFilterSearch(fileData?.properties ?? null);
         }
 
-        if (!needsTagLookup) {
-            if (!fileMatchesFilterTokens(foldedName, emptyTags, tokens, matchOptions)) {
+        let foldedTags = emptyTags;
+        if (needsTagLookup) {
+            const rawTags = getCachedFileTags({ app, file, db, fileData });
+            const hasTags = rawTags.length > 0;
+            if (requireTaggedMatches && !hasTags) {
                 return false;
             }
 
-            if (!hasDateFilters) {
-                return true;
+            if (hasTags) {
+                foldedTags = requiresNormalizedTagValues ? normalizeTagsForFilterSearch(rawTags) : TAG_PRESENCE_SENTINEL;
             }
+        }
 
+        const filterMatch = getFileFilterSearchMatch(foldedName, foldedTags, tokens, matchOptions);
+        if (!filterMatch.matches) {
+            return false;
+        }
+
+        if (hasDateFilters) {
             const timestamps = getFileTimestamps(file);
-            return fileMatchesDateFilterTokens(
-                { created: timestamps.created, modified: timestamps.modified, defaultField: defaultDateField },
-                tokens
-            );
+            if (
+                !fileMatchesDateFilterTokens(
+                    { created: timestamps.created, modified: timestamps.modified, defaultField: defaultDateField },
+                    tokens
+                )
+            ) {
+                return false;
+            }
         }
 
-        const rawTags = getCachedFileTags({ app, file, db, fileData });
-        const hasTags = rawTags.length > 0;
-        if (requireTaggedMatches && !hasTags) {
-            return false;
+        if (searchableName && filterMatch.nameMatch && filterMatch.nameMatch.aliasIndexes.length > 0) {
+            const aliasMatches = filterMatch.nameMatch.aliasIndexes.flatMap(aliasIndex => {
+                const alias = searchableName.aliases[aliasIndex];
+                return alias === undefined
+                    ? []
+                    : [
+                          {
+                              value: alias,
+                              foldedTerms: tokens.nameTokens
+                          }
+                      ];
+            });
+            if (aliasMatches.length > 0) {
+                matchedAliases.set(file.path, aliasMatches);
+            }
         }
 
-        let foldedTags: string[];
-        if (!hasTags) {
-            foldedTags = emptyTags;
-        } else if (requiresNormalizedTagValues) {
-            foldedTags = normalizeTagsForFilterSearch(rawTags);
-        } else {
-            foldedTags = TAG_PRESENCE_SENTINEL;
-        }
-
-        if (!fileMatchesFilterTokens(foldedName, foldedTags, tokens, matchOptions)) {
-            return false;
-        }
-
-        if (!hasDateFilters) {
-            return true;
-        }
-
-        const timestamps = getFileTimestamps(file);
-        return fileMatchesDateFilterTokens(
-            { created: timestamps.created, modified: timestamps.modified, defaultField: defaultDateField },
-            tokens
-        );
+        return true;
     });
+
+    return { files, matchedAliases };
 }
 
 export function buildHiddenFileState({
