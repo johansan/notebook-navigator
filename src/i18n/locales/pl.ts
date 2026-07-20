@@ -212,11 +212,11 @@ export const STRINGS_PL = {
                 properties: {
                     title: 'Atrybuty',
                     items: [
-                        '`.key` Uwzględnij notatki z atrybutem.',
+                        '`.key` Uwzględnij notatki z kluczem właściwości zaczynającym się od `key`.',
                         '`.key=value` Uwzględnij notatki, których wartość atrybutu zawiera `value`.',
                         '`."Reading Status"` Uwzględnij notatki z atrybutem zawierającym spacje.',
                         '`."Reading Status"="In Progress"` Atrybuty i ich wartości ze spacjami muszą być w podwójnych cudzysłowach.',
-                        '`-.key` Wyklucz notatki z atrybutem.',
+                        '`-.key` Wyklucz notatki z kluczem właściwości zaczynającym się od `key`.',
                         '`-.key=value` Wyklucz notatki, których wartość atrybutu zawiera `value`.',
                         'Kliknij atrybut z Cmd/Ctrl, aby dodać go operatorem AND. Kliknij atrybut z Cmd/Ctrl+Shift, aby dodać go operatorem OR.'
                     ]

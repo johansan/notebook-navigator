@@ -210,11 +210,11 @@ export const STRINGS_JA = {
                 properties: {
                     title: 'プロパティ',
                     items: [
-                        '`.key` プロパティキーを持つノートを含める。',
+                        '`.key` `key` で始まるプロパティキーを持つノートを含める。',
                         '`.key=value` プロパティ値に `value` を含むノートを含める。',
                         '`."Reading Status"` 空白を含むプロパティキーを持つノートを含める。',
                         '`."Reading Status"="In Progress"` 空白を含むキーと値はダブルクォートで囲む必要があります。',
-                        '`-.key` プロパティキーを持つノートを除外する。',
+                        '`-.key` `key` で始まるプロパティキーを持つノートを除外する。',
                         '`-.key=value` プロパティ値に `value` を含むノートを除外する。',
                         'Cmd/Ctrl+クリックでプロパティをANDで追加。Cmd/Ctrl+Shift+クリックでORで追加。'
                     ]

@@ -22,6 +22,7 @@ import type { DateFilterRange, FilterSearchTokens, FolderFilterToken, InclusionO
 import { EMPTY_SEARCH_NAV_FILTER_STATE, type SearchNavFilterState } from '../types/search';
 import { casefold, foldSearchText, foldSearchTextFromLowercase } from './recordUtils';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId, normalizePropertyTreeValuePath } from './propertyTree';
+import { resolvePropertyDisplayText } from './propertyUtils';
 
 export { DATE_FILTER_RELATIVE_KEYWORDS, fileMatchesDateFilterTokens, parseDateFieldPrefix } from './filterSearchDate';
 export type { FilterMode, FilterSearchTokens, FolderFilterToken, InclusionOperator, PropertySearchToken } from './filterSearchTypes';
@@ -63,6 +64,12 @@ const PROPERTY_FILTER_PREFIX = '.';
 
 const normalizePropertyFilterKey = (value: string): string => {
     return casefold(value.trim());
+};
+
+// Property search evaluates the text rendered by pills, so query values must unwrap link markup
+// to the same label. Otherwise filters generated from Markdown-link property nodes cannot match them.
+const normalizePropertyFilterValue = (value: string): string => {
+    return normalizePropertyTreeValuePath(resolvePropertyDisplayText(value));
 };
 
 const isPropertyFilterCandidate = (token: string): boolean => {
@@ -167,7 +174,7 @@ const parsePropertyFilterToken = (token: string): PropertySearchToken | null => 
         return null;
     }
 
-    const normalizedValue = normalizePropertyTreeValuePath(rawValue);
+    const normalizedValue = normalizePropertyFilterValue(rawValue);
     if (!normalizedValue) {
         return { key: normalizedKey, value: null };
     }
@@ -1218,7 +1225,7 @@ export function updateFilterQueryWithProperty(
 
     let normalizedValue: string | null = null;
     if (typeof value === 'string') {
-        const normalizedCandidate = normalizePropertyTreeValuePath(value);
+        const normalizedCandidate = normalizePropertyFilterValue(value);
         if (!normalizedCandidate) {
             return {
                 query: trimmed,

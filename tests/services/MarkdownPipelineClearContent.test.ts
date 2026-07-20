@@ -69,15 +69,14 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         );
     });
 
-    it('clears persisted properties when property fields are disabled', async () => {
+    it('keeps persisted properties when every display property is disabled', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ propertyFields: 'status' });
         const newSettings = createSettings({ propertyFields: '' });
 
         await provider.clearContent({ oldSettings, newSettings });
 
-        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('properties');
+        expect(batchClearAllFileContentMock).not.toHaveBeenCalled();
     });
 
     it('clears previews when preview is enabled', async () => {
@@ -102,15 +101,14 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearAllFileContentMock).toHaveBeenCalledWith('preview');
     });
 
-    it('clears persisted properties when property fields change while remaining enabled', async () => {
+    it('keeps persisted properties when display property fields change', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ propertyFields: 'status' });
         const newSettings = createSettings({ propertyFields: 'status, type' });
 
         await provider.clearContent({ oldSettings, newSettings });
 
-        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('properties');
+        expect(batchClearAllFileContentMock).not.toHaveBeenCalled();
     });
 
     it('clears character counts when character count display is enabled', async () => {

@@ -20,6 +20,7 @@ import { describe, expect, it } from 'vitest';
 import { TFile } from 'obsidian';
 import {
     getModifiedSortBoundaryRefreshKey,
+    hasPropertySearchContentChange,
     shouldSkipModifiedSortBoundaryRefresh
 } from '../../../src/hooks/listPaneData/useListPaneRefresh';
 
@@ -151,6 +152,25 @@ describe('getModifiedSortBoundaryRefreshKey', () => {
                 showFileDate: false,
                 showTooltips: false
             })
+        ).toBe(false);
+    });
+});
+
+describe('hasPropertySearchContentChange', () => {
+    it('detects property writes inside the unfiltered list scope', () => {
+        const basePathSet = new Set(['notes/in-scope.md']);
+
+        expect(
+            hasPropertySearchContentChange([{ path: 'notes/in-scope.md', changes: { properties: [] }, changeType: 'content' }], basePathSet)
+        ).toBe(true);
+        expect(
+            hasPropertySearchContentChange(
+                [
+                    { path: 'notes/outside.md', changes: { properties: [] }, changeType: 'content' },
+                    { path: 'notes/in-scope.md', changes: { taskUnfinished: 1 }, changeType: 'content' }
+                ],
+                basePathSet
+            )
         ).toBe(false);
     });
 });

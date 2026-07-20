@@ -405,7 +405,7 @@ export interface IconAssetRecord {
 8. If frontmatter metadata is enabled and the stored frontmatter metadata cache signature
    (`STORAGE_KEYS.frontmatterMetadataCacheSignatureKey`) does not match the current frontmatter settings, cached `metadata`
    fields are cleared (`batchClearAllFileContent('metadata')`) and the signature is updated.
-9. Tag and property trees are rebuilt from database records (`buildTagTreeFromDatabase()`, `buildPropertyTreeFromDatabase()`), filtered to currently visible markdown paths.
+9. Tag and property trees are rebuilt from database records (`buildTagTreeFromDatabase()`, `buildPropertyTreeFromDatabase()`), filtered to currently visible markdown paths and configured property-tree keys. The per-file property cache retains other supported frontmatter values for internal search.
 10. Content providers queue derived content work (previews, tags, metadata, word/character counts, task counters, properties,
    markdown feature images, and file thumbnails) while the UI renders from the in-memory cache.
 11. Metadata-dependent providers (markdown pipeline, tags, metadata) are queued through `useMetadataCacheQueue` so they only run after `app.metadataCache` has entries for the files.
@@ -424,7 +424,8 @@ export interface IconAssetRecord {
    selected provider processed mtimes (`markFilesForRegeneration()`) to force reprocessing against the updated metadata cache.
 5. Content providers queue affected files for regeneration as needed (with `useMetadataCacheQueue` gating metadata-dependent types).
 6. Providers write derived content through `IndexedDBStorage`, which updates the in-memory cache and emits change events for UI consumers.
-7. Tag and property trees are rebuilt when affected data or visibility rules change.
+7. Tag and property trees are rebuilt when affected data or visibility rules change. Property change events include the
+   normalized keys whose membership changed, so updates limited to search-only properties do not rebuild the configured tree.
 
 ### Settings Change
 
@@ -610,7 +611,7 @@ When derived content format changes:
 2. Stores are cleared (`IndexedDBStorage.clear()`).
 3. Content providers regenerate derived content for all files during background processing.
 
-Current values: `DB_SCHEMA_VERSION = 3`, `DB_CONTENT_VERSION = 6`.
+Current values: `DB_SCHEMA_VERSION = 3`, `DB_CONTENT_VERSION = 7`.
 
 ### Settings Updates
 

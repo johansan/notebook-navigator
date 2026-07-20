@@ -63,8 +63,9 @@ import {
     shouldShowFileItemParentFolderLine
 } from '../utils/listPaneMeasurements';
 import { getIconService, useIconServiceVersion } from '../services/icons';
-import type { AliasSearchMatch, SearchResultMeta } from '../types/search';
+import type { AliasSearchMatch, PropertySearchMatch, SearchResultMeta } from '../types/search';
 import { mergeRanges, NumericRange } from '../utils/arrayUtils';
+import { casefold } from '../utils/recordUtils';
 import { openAddTagToFilesModal } from '../utils/tagModalHelpers';
 import { resolveUXIcon } from '../utils/uxIcons';
 import type { InclusionOperator } from '../utils/filterSearch';
@@ -77,12 +78,14 @@ import type { FileItemPillOrderModel } from '../utils/fileItemPillOrder';
 import type { HiddenTagVisibility } from '../utils/tagPrefixMatcher';
 import { useFileItemContentState, type FileItemContentDb } from './fileItem/useFileItemContentState';
 import { useFileItemPills } from './fileItem/useFileItemPills';
+import { renderTextWithHighlightRanges } from './fileItem/searchHighlightRendering';
 import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
+import type { PropertySearchEvidenceGroup, PropertySearchEvidenceValue } from '../utils/propertyUtils';
 import { InlineRenameInput } from './InlineRenameInput';
 import { ObsidianIcon } from './ObsidianIcon';
 
@@ -196,6 +199,8 @@ interface FileItemProps {
     searchMeta?: SearchResultMeta;
     /** Aliases that satisfied the active internal filter search */
     matchedAliases?: readonly AliasSearchMatch[];
+    /** Positive property clauses satisfied by the active internal filter search */
+    matchedProperties?: readonly PropertySearchMatch[];
     /** Whether the file is normally hidden (frontmatter or excluded folder) */
     isHidden?: boolean;
     shortcutKey?: string;
@@ -259,27 +264,6 @@ function getMergedHighlightRanges(text: string, query?: string, searchMeta?: Sea
     return mergeRanges(ranges);
 }
 
-function renderTextWithHighlightRanges(text: string, ranges: readonly NumericRange[]): React.ReactNode {
-    if (!text || ranges.length === 0) return text;
-    const parts: React.ReactNode[] = [];
-    let cursor = 0;
-    ranges.forEach((r, i) => {
-        if (r.start > cursor) {
-            parts.push(text.slice(cursor, r.start));
-        }
-        parts.push(
-            <span key={`h-${i}`} className="nn-search-highlight">
-                {text.slice(r.start, r.end)}
-            </span>
-        );
-        cursor = r.end;
-    });
-    if (cursor < text.length) {
-        parts.push(text.slice(cursor));
-    }
-    return <>{parts}</>;
-}
-
 /**
  * Splits text into plain and highlighted parts based on merged ranges.
  */
@@ -291,6 +275,16 @@ function renderAliasSearchMatch(matchedAlias: AliasSearchMatch): React.ReactNode
     // Matched aliases are passed only to virtualized search rows, so resolving folded offsets here skips every offscreen result.
     const ranges = getFoldedSearchHighlightRanges(matchedAlias.value, matchedAlias.foldedTerms);
     return renderTextWithHighlightRanges(matchedAlias.value, ranges);
+}
+
+function renderPropertySearchEvidenceValue(value: PropertySearchEvidenceValue): React.ReactNode {
+    const ranges = getFoldedSearchHighlightRanges(value.displayValue, value.foldedTerms);
+    return renderTextWithHighlightRanges(value.displayValue, ranges);
+}
+
+function renderPropertySearchEvidenceKey(group: PropertySearchEvidenceGroup): React.ReactNode {
+    const ranges = getFoldedSearchHighlightRanges(group.propertyKey, group.foldedKeyTerms);
+    return renderTextWithHighlightRanges(group.propertyKey, ranges);
 }
 
 interface ParentFolderLabelProps {
@@ -406,6 +400,7 @@ export const FileItem = React.memo(function FileItem({
     isPinned = false,
     searchMeta,
     matchedAliases,
+    matchedProperties,
     isHidden = false,
     shortcutKey,
     manualSortDisabled = false,
@@ -459,7 +454,8 @@ export const FileItem = React.memo(function FileItem({
     const shouldLoadProperties =
         isMarkdownFile &&
         ((canShowPropertyPills && settings.showFileProperties && visiblePropertyKeys.size > 0) ||
-            (shouldLoadWordCountForDisplay && settings.wordCountTargetProperty.trim().length > 0));
+            (shouldLoadWordCountForDisplay && settings.wordCountTargetProperty.trim().length > 0) ||
+            (matchedProperties?.length ?? 0) > 0);
     const shouldLoadTaskUnfinished =
         isMarkdownFile &&
         (settings.showFileIconUnfinishedTask || settings.showFileBackgroundUnfinishedTask || (!isMobile && settings.showTooltips));
@@ -499,6 +495,7 @@ export const FileItem = React.memo(function FileItem({
         },
         refreshMetadataVersionOnFeatureImageChange: shouldRefreshMetadataVersionOnFeatureImageChange
     });
+
     const drawingFeatureImage = useDrawingFeatureImage({
         app,
         file,
@@ -714,6 +711,27 @@ export const FileItem = React.memo(function FileItem({
         () => (inlineRename ? fileSystemOps.getFileDisplayNameRenameInput(file) : null),
         [file, fileSystemOps, inlineRename]
     );
+    const propertySearchEvidenceIconId = resolveUXIcon(settings.interfaceIcons, 'nav-property');
+    const { shouldShowFileTags, hasVisiblePillRows, propertySearchEvidenceGroups, propertySearchEvidenceHiddenGroupCount, pillRows } =
+        useFileItemPills({
+            file,
+            isCompactMode,
+            tags,
+            properties,
+            wordCount,
+            characterCount: selectedCharacterCount,
+            wordCountDisplayText,
+            characterCountDisplayText,
+            settings,
+            visiblePropertyKeys,
+            visibleNavigationPropertyKeys,
+            matchedProperties,
+            hiddenTagVisibility,
+            onModifySearchWithTag,
+            onModifySearchWithProperty,
+            fileItemPillDecorationModel,
+            fileItemPillOrderModel
+        });
     const fileTitleElement = (() => {
         if (inlineRename && renameInputOptions) {
             return (
@@ -769,30 +787,35 @@ export const FileItem = React.memo(function FileItem({
                         </span>
                     </span>
                 ) : null}
+                {propertySearchEvidenceGroups.length > 0 ? (
+                    <span className="nn-file-property-search-evidence">
+                        <ServiceIcon
+                            iconId={propertySearchEvidenceIconId}
+                            className="nn-file-property-search-evidence-icon"
+                            aria-hidden={true}
+                        />
+                        {propertySearchEvidenceGroups.map((group, groupIndex) => (
+                            <React.Fragment key={casefold(group.propertyKey)}>
+                                {groupIndex > 0 ? '; ' : null}
+                                <span className="nn-file-property-search-evidence-key">{renderPropertySearchEvidenceKey(group)}</span>
+                                {group.values.length > 0 ? ': ' : null}
+                                {group.values.map((value, valueIndex) => (
+                                    <React.Fragment key={`${value.displayValue}-${valueIndex}`}>
+                                        {valueIndex > 0 ? ', ' : null}
+                                        {renderPropertySearchEvidenceValue(value)}
+                                    </React.Fragment>
+                                ))}
+                                {group.hiddenValueCount > 0 ? ` +${group.hiddenValueCount}` : null}
+                            </React.Fragment>
+                        ))}
+                        {propertySearchEvidenceHiddenGroupCount > 0 ? `; +${propertySearchEvidenceHiddenGroupCount}` : null}
+                    </span>
+                ) : null}
                 {shouldShowCountInTitle ? <span className="nn-file-word-count-suffix"> ({titleCountDisplayText})</span> : null}
                 {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
             </div>
         );
     })();
-
-    const { shouldShowFileTags, hasVisiblePillRows, pillRows } = useFileItemPills({
-        file,
-        isCompactMode,
-        tags,
-        properties,
-        wordCount,
-        characterCount: selectedCharacterCount,
-        wordCountDisplayText,
-        characterCountDisplayText,
-        settings,
-        visiblePropertyKeys,
-        visibleNavigationPropertyKeys,
-        hiddenTagVisibility,
-        onModifySearchWithTag,
-        onModifySearchWithProperty,
-        fileItemPillDecorationModel,
-        fileItemPillOrderModel
-    });
 
     // Format display date based on current sort
     const displayDate = useMemo(() => {

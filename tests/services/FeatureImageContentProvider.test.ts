@@ -721,7 +721,7 @@ describe('FeatureImageContentProvider scanning', () => {
             characterCountWithoutSpaces: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'unprocessed',
             featureImage: null,
             featureImageStatus: 'none',
@@ -757,7 +757,7 @@ describe('FeatureImageContentProvider scanning', () => {
             characterCountWithoutSpaces: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'unprocessed',
             featureImage: null,
             featureImageStatus: 'has',
@@ -767,7 +767,10 @@ describe('FeatureImageContentProvider scanning', () => {
 
         const result = await provider.runProcessFileWithData(noteFile, fileData, settings);
 
-        expect(result).toBeNull();
+        expect(result).toEqual({
+            path: noteFile.path,
+            properties: [{ fieldKey: 'thumbnail', value: 'https://example.com/cover.jpg', valueKind: 'string' }]
+        });
     });
 
     it('retries external downloads when the file changed but the featureImageKey did not', async () => {
@@ -791,7 +794,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: null,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'unprocessed',
             featureImage: null,
             featureImageStatus: 'none',
@@ -828,7 +831,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: null,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'unprocessed',
             featureImage: null,
             featureImageStatus: 'none',
@@ -885,7 +888,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'none',
             featureImage: null,
             featureImageStatus: 'unprocessed',
@@ -1265,7 +1268,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'none',
             featureImage: null,
             featureImageStatus: 'none',
@@ -1299,7 +1302,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'none',
             featureImage: null,
             featureImageStatus: 'none',
@@ -1344,7 +1347,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: null,
             taskTotal: null,
             taskUnfinished: null,
-            properties: null,
+            properties: [],
             previewStatus: 'none',
             featureImage: null,
             featureImageStatus: 'none',
@@ -1377,7 +1380,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: null,
             taskTotal: null,
             taskUnfinished: null,
-            properties: null,
+            properties: [],
             previewStatus: 'none',
             featureImage: null,
             featureImageStatus: 'none',
@@ -1410,7 +1413,7 @@ describe('FeatureImageContentProvider scanning', () => {
             wordCount: 0,
             taskTotal: 0,
             taskUnfinished: 0,
-            properties: null,
+            properties: [],
             previewStatus: 'unprocessed',
             featureImage: null,
             featureImageStatus: 'none',

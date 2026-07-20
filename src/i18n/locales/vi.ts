@@ -211,11 +211,11 @@ export const STRINGS_VI = {
                 properties: {
                     title: 'Thuộc tính',
                     items: [
-                        '`.key` Bao gồm ghi chú có khóa thuộc tính.',
+                        '`.key` Bao gồm ghi chú có khóa thuộc tính bắt đầu bằng `key`.',
                         '`.key=value` Bao gồm ghi chú có giá trị thuộc tính chứa `value`.',
                         '`."Reading Status"` Bao gồm ghi chú có khóa thuộc tính chứa khoảng trắng.',
                         '`."Reading Status"="In Progress"` Khóa và giá trị có khoảng trắng phải được đặt trong dấu ngoặc kép.',
-                        '`-.key` Loại trừ ghi chú có khóa thuộc tính.',
+                        '`-.key` Loại trừ ghi chú có khóa thuộc tính bắt đầu bằng `key`.',
                         '`-.key=value` Loại trừ ghi chú có giá trị thuộc tính chứa `value`.',
                         'Cmd/Ctrl+Nhấp vào thuộc tính để thêm với AND. Cmd/Ctrl+Shift+Nhấp để thêm với OR.'
                     ]

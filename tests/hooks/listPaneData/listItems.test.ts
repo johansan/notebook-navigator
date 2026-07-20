@@ -141,7 +141,7 @@ function getFolderHeaderSegmentItems(
 }
 
 describe('buildListItems pinned display scope', () => {
-    it('attaches matched aliases to their file row', () => {
+    it('attaches internal search evidence to its file row', () => {
         const app = createApp();
         const file = createTestTFile('Notes/Notebook Navigator.md');
         const db = createDb({
@@ -169,6 +169,16 @@ describe('buildListItems pinned display scope', () => {
                     ]
                 ]
             ]),
+            matchedProperties: new Map([
+                [
+                    file.path,
+                    [
+                        {
+                            clause: { key: 'workflow', value: 'waiting' }
+                        }
+                    ]
+                ]
+            ]),
             searchMetaMap: new Map(),
             selectedFolder: null,
             selectedTag: null,
@@ -182,6 +192,11 @@ describe('buildListItems pinned display scope', () => {
             {
                 value: 'NN',
                 foldedTerms: ['nn']
+            }
+        ]);
+        expect(fileItem?.matchedProperties).toEqual([
+            {
+                clause: { key: 'workflow', value: 'waiting' }
             }
         ]);
     });

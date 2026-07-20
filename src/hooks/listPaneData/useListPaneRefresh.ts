@@ -25,7 +25,7 @@ import { TIMEOUTS } from '../../types/obsidian-extended';
 import { OperationType, type CommandQueueService } from '../../services/CommandQueueService';
 import { shouldExcludeFileWithMatcher } from '../../utils/fileFilters';
 import { shouldRefreshOnFileModifyForSort, shouldRefreshOnMetadataChangeForSort } from '../../utils/sortUtils';
-import type { IndexedDBStorage } from '../../storage/IndexedDBStorage';
+import type { FileContentChange, IndexedDBStorage } from '../../storage/IndexedDBStorage';
 import type { IPropertyTreeProvider } from '../../interfaces/IPropertyTreeProvider';
 import { ItemType } from '../../types';
 import type { PropertySelectionNodeId } from '../../utils/propertyTree';
@@ -44,6 +44,7 @@ interface UseListPaneRefreshArgs {
     groupBy: ListNoteGroupingOption;
     hasDateSearchFilters: boolean;
     hasManualSortWordCountGroupHeaders: boolean;
+    hasPropertySearchFilters: boolean;
     hasTaskSearchFilters: boolean;
     hiddenFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
     hiddenFileTags: string[];
@@ -110,6 +111,14 @@ export function shouldSkipModifiedSortBoundaryRefresh(params: {
     );
 }
 
+/**
+ * Property filters read the storage mirror, so a matching cache write must rerun the list filter.
+ * The base-path check includes files currently excluded by the filter because they may enter the result.
+ */
+export function hasPropertySearchContentChange(changes: readonly FileContentChange[], basePathSet: ReadonlySet<string>): boolean {
+    return changes.some(change => change.changes.properties !== undefined && basePathSet.has(change.path));
+}
+
 function fileIsWithinSelectedFolder(file: TFile, includeDescendantNotes: boolean, selectedFolder: TFolder | null): boolean {
     if (!selectedFolder) {
         return false;
@@ -140,6 +149,7 @@ export function useListPaneRefresh({
     groupBy,
     hasDateSearchFilters,
     hasManualSortWordCountGroupHeaders,
+    hasPropertySearchFilters,
     hasTaskSearchFilters,
     hiddenFilePropertyMatcher,
     hiddenFileTags,
@@ -414,7 +424,10 @@ export function useListPaneRefresh({
 
             const hasTagChanges = changes.some(change => change.changes.tags !== undefined);
             const hasPropertyChanges = changes.some(change => change.changes.properties !== undefined);
-            if (hasTagChanges || hasPropertyChanges) {
+            if (hasPropertySearchFilters && hasPropertySearchContentChange(changes, basePathSet)) {
+                shouldRefresh = true;
+            }
+            if (!shouldRefresh && (hasTagChanges || hasPropertyChanges)) {
                 const isTagView = selectionType === ItemType.TAG && selectedTag;
                 const isFolderView = selectionType === ItemType.FOLDER && selectedFolder;
 
@@ -488,6 +501,7 @@ export function useListPaneRefresh({
         groupBy,
         hasDateSearchFilters,
         hasManualSortWordCountGroupHeaders,
+        hasPropertySearchFilters,
         hasTaskSearchFilters,
         hiddenFilePropertyMatcher,
         hiddenFileTags,

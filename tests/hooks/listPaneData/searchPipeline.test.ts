@@ -143,3 +143,168 @@ describe('filterListPaneFiles alias metadata', () => {
         expect(result.matchedAliases.size).toBe(0);
     });
 });
+
+describe('filterListPaneFiles property metadata', () => {
+    it('returns the matching clause for a key-only prefix match', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Project Alpha.md');
+        const searchableName = buildSearchableNameData('Project Alpha', {});
+        const db = {
+            getFile: () => ({
+                properties: [
+                    { fieldKey: 'Aliases', value: 'Best project', valueKind: 'string' },
+                    { fieldKey: 'Aliases', value: 'Navigator', valueKind: 'string' }
+                ]
+            })
+        } as unknown as IndexedDBStorage;
+
+        const result = filterListPaneFiles({
+            app,
+            baseFiles: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            omnisearchResult: null,
+            searchTokens: parseFilterSearchTokens('.alias'),
+            searchableNames: new Map([[file.path, searchableName]]),
+            settings: { alphabeticalDateMode: 'modified' },
+            sortOption: 'alphabetical-asc',
+            trimmedQuery: '.alias',
+            useOmnisearch: false
+        });
+
+        expect(result.files).toEqual([file]);
+        expect(result.matchedProperties.get(file.path)).toEqual([
+            {
+                clause: { key: 'alias', value: null }
+            }
+        ]);
+    });
+
+    it('returns the positive property clause that matched a display value', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Project Alpha.md');
+        const searchableName = buildSearchableNameData('Project Alpha', {});
+        const db = {
+            getFile: () => ({
+                properties: [{ fieldKey: 'Workflow', value: 'Waiting for review', valueKind: 'string' }]
+            })
+        } as unknown as IndexedDBStorage;
+
+        const result = filterListPaneFiles({
+            app,
+            baseFiles: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            omnisearchResult: null,
+            searchTokens: parseFilterSearchTokens('.workflow=waiting'),
+            searchableNames: new Map([[file.path, searchableName]]),
+            settings: { alphabeticalDateMode: 'modified' },
+            sortOption: 'alphabetical-asc',
+            trimmedQuery: '.workflow=waiting',
+            useOmnisearch: false
+        });
+
+        expect(result.files).toEqual([file]);
+        expect(result.matchedProperties.get(file.path)).toEqual([
+            {
+                clause: { key: 'workflow', value: 'waiting' }
+            }
+        ]);
+    });
+
+    it('matches link labels without exposing or searching hidden link targets', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Project Alpha.md');
+        const searchableName = buildSearchableNameData('Project Alpha', {});
+        const db = {
+            getFile: () => ({
+                properties: [
+                    {
+                        fieldKey: 'Reference',
+                        value: '[Project Alpha](https://example.com/projects/alpha)',
+                        valueKind: 'string'
+                    }
+                ]
+            })
+        } as unknown as IndexedDBStorage;
+        const runSearch = (query: string) =>
+            filterListPaneFiles({
+                app,
+                baseFiles: [file],
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                omnisearchResult: null,
+                searchTokens: parseFilterSearchTokens(query),
+                searchableNames: new Map([[file.path, searchableName]]),
+                settings: { alphabeticalDateMode: 'modified' },
+                sortOption: 'alphabetical-asc',
+                trimmedQuery: query,
+                useOmnisearch: false
+            });
+
+        const labelResult = runSearch('.reference=alpha');
+        expect(labelResult.files).toEqual([file]);
+        expect(labelResult.matchedProperties.get(file.path)?.[0]?.clause).toEqual({ key: 'reference', value: 'alpha' });
+        expect(runSearch('.reference=example.com').files).toEqual([]);
+    });
+
+    it('retains only positive OR clauses that actually match the file', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Project Alpha.md');
+        const searchableName = buildSearchableNameData('Project Alpha', {});
+        const db = {
+            getFile: () => ({
+                properties: [
+                    { fieldKey: 'Status', value: 'Started', valueKind: 'string' },
+                    { fieldKey: 'Priority', value: 'Low', valueKind: 'string' }
+                ]
+            })
+        } as unknown as IndexedDBStorage;
+        const query = '.status=started OR .priority=high';
+
+        const result = filterListPaneFiles({
+            app,
+            baseFiles: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            omnisearchResult: null,
+            searchTokens: parseFilterSearchTokens(query),
+            searchableNames: new Map([[file.path, searchableName]]),
+            settings: { alphabeticalDateMode: 'modified' },
+            sortOption: 'alphabetical-asc',
+            trimmedQuery: query,
+            useOmnisearch: false
+        });
+
+        expect(result.files).toEqual([file]);
+        expect(result.matchedProperties.get(file.path)?.map(match => match.clause.key)).toEqual(['status']);
+    });
+
+    it('applies negative key and value clauses through the reduced property projection', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Project Alpha.md');
+        const searchableName = buildSearchableNameData('Project Alpha', {});
+        const db = {
+            getFile: () => ({
+                properties: [{ fieldKey: 'Internal Flag', value: 'Secret', valueKind: 'string' }]
+            })
+        } as unknown as IndexedDBStorage;
+        const runSearch = (query: string) =>
+            filterListPaneFiles({
+                app,
+                baseFiles: [file],
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                omnisearchResult: null,
+                searchTokens: parseFilterSearchTokens(query),
+                searchableNames: new Map([[file.path, searchableName]]),
+                settings: { alphabeticalDateMode: 'modified' },
+                sortOption: 'alphabetical-asc',
+                trimmedQuery: query,
+                useOmnisearch: false
+            });
+
+        expect(runSearch('-.internal').files).toEqual([]);
+        expect(runSearch('-."Internal Flag"=secret').files).toEqual([]);
+    });
+});

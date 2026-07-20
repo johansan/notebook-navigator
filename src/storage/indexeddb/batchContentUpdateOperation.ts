@@ -23,6 +23,7 @@ import { getProviderProcessedMtimeField } from '../providerMtime';
 import { PREVIEW_STORE_NAME, STORE_NAME } from './constants';
 import {
     createDefaultFileData,
+    getChangedPropertyKeys,
     hasMetadataDecorationChanged,
     hasMetadataHiddenChanged,
     hasMetadataNameChanged,
@@ -148,6 +149,7 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                 let metadataHiddenChanged = false;
                 let metadataNameChanged = false;
                 let metadataDecorationChanged = false;
+                let changedPropertyKeys: string[] | undefined;
                 let hasContentChanges = false;
                 const providerField = provider ? getProviderProcessedMtimeField(provider) : null;
                 const shouldApplyProviderContent =
@@ -199,6 +201,7 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                         hasContentChanges = true;
                     }
                     if (guardedUpdate.properties !== undefined) {
+                        changedPropertyKeys = getChangedPropertyKeys(existing.properties, guardedUpdate.properties);
                         newData.properties = guardedUpdate.properties;
                         changes.properties = guardedUpdate.properties;
                         hasContentChanges = true;
@@ -339,6 +342,9 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                         const hasMetadataUpdates = changes.metadata !== undefined || changes.tags !== undefined;
                         const updateType = hasContentUpdates && hasMetadataUpdates ? 'both' : hasContentUpdates ? 'content' : 'metadata';
                         const contentChange: FileContentChange = { path, changes, changeType: updateType };
+                        if (changes.properties !== undefined) {
+                            contentChange.changedPropertyKeys = changedPropertyKeys;
+                        }
                         if (changes.metadata !== undefined) {
                             contentChange.metadataHiddenChanged = metadataHiddenChanged;
                             contentChange.metadataNameChanged = metadataNameChanged;

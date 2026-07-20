@@ -210,11 +210,11 @@ export const STRINGS_KO = {
                 properties: {
                     title: '속성',
                     items: [
-                        '`.key` 속성 키가 있는 노트를 포함합니다.',
+                        '`.key` `key`로 시작하는 속성 키가 있는 노트를 포함합니다.',
                         '`.key=value` 속성 값에 `value`가 포함된 노트를 포함합니다.',
                         '`."Reading Status"` 공백이 포함된 속성 키가 있는 노트를 포함합니다.',
                         '`."Reading Status"="In Progress"` 공백이 포함된 키와 값은 큰따옴표로 묶어야 합니다.',
-                        '`-.key` 속성 키가 있는 노트를 제외합니다.',
+                        '`-.key` `key`로 시작하는 속성 키가 있는 노트를 제외합니다.',
                         '`-.key=value` 속성 값에 `value`가 포함된 노트를 제외합니다.',
                         'Cmd/Ctrl+클릭으로 속성을 AND로 추가. Cmd/Ctrl+Shift+클릭으로 OR로 추가.'
                     ]

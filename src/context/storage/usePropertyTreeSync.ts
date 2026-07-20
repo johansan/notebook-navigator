@@ -33,7 +33,7 @@ import {
 } from '../../utils/propertyTree';
 import { casefold } from '../../utils/recordUtils';
 import type { PropertyTreeNode } from '../../types/storage';
-import { clonePropertyKeys, getActivePropertyFields, getActiveVaultProfile } from '../../utils/vaultProfiles';
+import { clonePropertyKeys, getActivePropertyFields, getActivePropertyKeySet, getActiveVaultProfile } from '../../utils/vaultProfiles';
 
 type SchedulePropertyTreeRebuildOptions = {
     flush?: boolean;
@@ -128,8 +128,6 @@ export function usePropertyTreeSync(params: {
     const isPropertyTreeEnabled = useMemo(() => shouldEnablePropertyTree(settings), [settings]);
     const propertyTreeRebuildReadyGateRef = useRef(false);
     const activePropertyFields = getActivePropertyFields(settings);
-    const previousPropertyFieldsRef = useRef(activePropertyFields);
-    const previousShowPropertiesRef = useRef(settings.showProperties);
 
     useEffect(() => {
         hiddenFoldersRef.current = hiddenFolders;
@@ -207,47 +205,24 @@ export function usePropertyTreeSync(params: {
     );
 
     useEffect(() => {
-        const previousPropertyFields = previousPropertyFieldsRef.current;
-        const previousShowProperties = previousShowPropertiesRef.current;
-        const propertyFieldsChanged = previousPropertyFields !== activePropertyFields;
-        const showPropertiesChanged = previousShowProperties !== settings.showProperties;
-        const commitCurrentSettingsSnapshot = () => {
-            previousPropertyFieldsRef.current = activePropertyFields;
-            previousShowPropertiesRef.current = settings.showProperties;
-        };
-
         if (!isStorageReady) {
             // Resets the ready gate so the next ready transition is ignored.
             propertyTreeRebuildReadyGateRef.current = false;
-            commitCurrentSettingsSnapshot();
             return;
         }
 
         if (!propertyTreeRebuildReadyGateRef.current) {
             // Initial cache build creates the property tree before storage is marked ready.
             propertyTreeRebuildReadyGateRef.current = true;
-            commitCurrentSettingsSnapshot();
             return;
         }
 
         if (!isPropertyTreeEnabled) {
             clearPropertyTree();
-            commitCurrentSettingsSnapshot();
-            return;
-        }
-
-        const visibleMarkdownFileCount = getVisibleMarkdownFiles().length;
-        // Property-field changes are followed by markdown metadata regeneration.
-        // Skip the immediate rebuild here and let the incoming metadata batch trigger it.
-        const shouldDeferPropertyFieldRebuild =
-            propertyFieldsChanged && !showPropertiesChanged && settings.showProperties && visibleMarkdownFileCount > 0;
-        if (shouldDeferPropertyFieldRebuild) {
-            commitCurrentSettingsSnapshot();
             return;
         }
 
         schedulePropertyTreeRebuild();
-        commitCurrentSettingsSnapshot();
     }, [
         showHiddenItems,
         isStorageReady,
@@ -284,8 +259,12 @@ export function usePropertyTreeSync(params: {
             let shouldFlush = false;
             let activeFilePath: string | null = null;
             let activeFileResolved = false;
+            const configuredPropertyKeys = getActivePropertyKeySet(latestSettingsRef.current, 'any');
             for (const change of changes) {
-                const hasPropertyChange = change.changes.properties !== undefined;
+                const changedPropertyKeys = change.changedPropertyKeys;
+                const hasPropertyChange =
+                    change.changes.properties !== undefined &&
+                    (changedPropertyKeys === undefined || changedPropertyKeys.some(key => configuredPropertyKeys.has(key)));
                 const hasTagVisibilityChange = shouldRebuildOnTagVisibilityChanges && change.changes.tags !== undefined;
                 const hasFrontmatterVisibilityChange = shouldRebuildOnFrontmatterVisibilityChanges && change.metadataHiddenChanged === true;
                 if (!hasPropertyChange && !hasTagVisibilityChange && !hasFrontmatterVisibilityChange) {

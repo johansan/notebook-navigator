@@ -214,11 +214,11 @@ export const STRINGS_NL = {
                 properties: {
                     title: 'Eigenschappen',
                     items: [
-                        '`.key` Notities met eigenschapssleutel opnemen.',
+                        '`.key` Notities opnemen met een eigenschapssleutel die begint met `key`.',
                         '`.key=value` Notities opnemen waarvan de eigenschapswaarde `value` bevat.',
                         '`."Reading Status"` Notities opnemen met een eigenschapssleutel die spaties bevat.',
                         '`."Reading Status"="In Progress"` Sleutels en waarden met spaties moeten tussen dubbele aanhalingstekens staan.',
-                        '`-.key` Notities met eigenschapssleutel uitsluiten.',
+                        '`-.key` Notities uitsluiten met een eigenschapssleutel die begint met `key`.',
                         '`-.key=value` Notities uitsluiten waarvan de eigenschapswaarde `value` bevat.',
                         'Cmd/Ctrl+Klik op een eigenschap om toe te voegen met AND. Cmd/Ctrl+Shift+Klik om toe te voegen met OR.'
                     ]

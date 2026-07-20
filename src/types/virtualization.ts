@@ -18,7 +18,7 @@
 
 import { TFile, TFolder } from 'obsidian';
 import { ListPaneItemType, NavigationPaneItemType, VirtualFolder } from '../types';
-import type { AliasSearchMatch, SearchResultMeta } from './search';
+import type { AliasSearchMatch, PropertySearchMatch, SearchResultMeta } from './search';
 import { PropertyTreeNode, TagTreeNode } from '../types/storage';
 import type { SearchShortcut, ShortcutEntry } from '../types/shortcuts';
 import type { NoteCountInfo } from '../types/noteCounts';
@@ -70,6 +70,7 @@ export interface ListPaneItem {
     isPinned?: boolean;
     searchMeta?: SearchResultMeta;
     matchedAliases?: readonly AliasSearchMatch[];
+    matchedProperties?: readonly PropertySearchMatch[];
     // Pre-computed flag indicating if file has tags (for height calculation optimization)
     hasTags?: boolean;
     // Marks files that are normally hidden (frontmatter or excluded folders) but shown via "show hidden items"

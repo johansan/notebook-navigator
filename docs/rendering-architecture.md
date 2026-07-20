@@ -378,8 +378,8 @@ graph TD
 
 **Location**: `src/components/FileItem.tsx`
 
-- Renders file title, matched internal-search aliases, Omnisearch highlights, preview text, feature image, tag pills,
-  parent folder label, and date metadata based on appearance settings and optimization flags.
+- Renders file title, matched internal-search aliases and property evidence, Omnisearch highlights, preview text, feature image,
+  tag/property pills, parent folder label, and date metadata based on appearance settings and optimization flags.
 - Reads pane-owned shared inputs from props and keeps row-local subscriptions limited to cached file content.
 - Subscribes to content updates from `IndexedDBStorage` to refresh preview text, tags, feature image status, custom
   property values, and word counts.

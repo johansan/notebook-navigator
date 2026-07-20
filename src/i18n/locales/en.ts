@@ -211,11 +211,11 @@ export const STRINGS_EN = {
                 properties: {
                     title: 'Properties',
                     items: [
-                        '`.key` Include notes with property key.',
+                        '`.key` Include notes with a property key that starts with `key`.',
                         '`.key=value` Include notes where the property value contains `value`.',
                         '`."Reading Status"` Include notes with a property key that contains whitespace.',
                         '`."Reading Status"="In Progress"` Keys and values with whitespace must be double-quoted.',
-                        '`-.key` Exclude notes with property key.',
+                        '`-.key` Exclude notes with a property key that starts with `key`.',
                         '`-.key=value` Exclude notes where the property value contains `value`.',
                         'Cmd/Ctrl+Click a property to add with AND. Cmd/Ctrl+Shift+Click to add with OR.'
                     ]

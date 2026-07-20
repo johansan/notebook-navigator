@@ -28,7 +28,7 @@ import {
     shouldQueueFileThumbnailProvider
 } from '../storageQueueFilters';
 import { getMetadataDependentTypes } from './storageContentTypes';
-import { getMarkdownPipelineContentTypes, hasMarkdownPropertiesConsumer } from '../../utils/markdownPipelineContentTypes';
+import { getMarkdownPipelineContentTypes } from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Queues files for derived-content generation.
@@ -90,14 +90,6 @@ export function useStorageContentQueue(params: {
             }
 
             const metadataDependentTypes = getMetadataDependentTypes(settings);
-            const hasCustomProperties = hasMarkdownPropertiesConsumer(settings);
-            const contentEnabled =
-                settings.showFilePreview || settings.showFeatureImage || hasCustomProperties || metadataDependentTypes.length > 0;
-
-            // If nothing in settings requires derived content, avoid any work.
-            if (!contentEnabled) {
-                return;
-            }
 
             let filesToProcess: TFile[] = [];
 

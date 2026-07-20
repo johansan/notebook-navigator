@@ -294,7 +294,7 @@ describe('Storage queue filters', () => {
         expect(result).toEqual([file]);
     });
 
-    it('excludes stale markdown pipeline files when metadata has no task items', () => {
+    it('includes stale markdown pipeline files so property metadata can refresh', () => {
         const file = new TFile();
         file.path = 'notes/note.md';
         file.extension = 'md';
@@ -329,7 +329,7 @@ describe('Storage queue filters', () => {
         const types: ContentProviderType[] = ['markdownPipeline'];
         const result = filterFilesRequiringMetadataSources([file], types, settings, { app });
 
-        expect(result).toEqual([]);
+        expect(result).toEqual([file]);
     });
 
     it('includes stale markdown pipeline files when metadata contains task items', () => {

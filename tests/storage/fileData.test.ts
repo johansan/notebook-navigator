@@ -19,10 +19,44 @@
 import { describe, expect, it } from 'vitest';
 import {
     applyFileMetadataPatch,
+    getChangedPropertyKeys,
     hasMetadataDecorationChanged,
     hasMetadataHiddenChanged,
     hasMetadataNameChanged
 } from '../../src/storage/indexeddb/fileData';
+
+describe('getChangedPropertyKeys', () => {
+    it('reports only property keys whose tree membership changed', () => {
+        expect(
+            getChangedPropertyKeys(
+                [
+                    { fieldKey: 'Status', value: 'Open', valueKind: 'string' },
+                    { fieldKey: 'Mood', value: 'Calm', valueKind: 'string' }
+                ],
+                [
+                    { fieldKey: 'status', value: 'Open', valueKind: 'string' },
+                    { fieldKey: 'Mood', value: 'Focused', valueKind: 'string' }
+                ]
+            )
+        ).toEqual(['mood']);
+    });
+
+    it('ignores value ordering and duplicate membership', () => {
+        expect(
+            getChangedPropertyKeys(
+                [
+                    { fieldKey: 'Status', value: 'Open' },
+                    { fieldKey: 'Status', value: 'Closed' }
+                ],
+                [
+                    { fieldKey: 'status', value: 'Closed', valueKind: 'string' },
+                    { fieldKey: 'status', value: 'Open', valueKind: 'string' },
+                    { fieldKey: 'status', value: 'Open', valueKind: 'string' }
+                ]
+            )
+        ).toEqual([]);
+    });
+});
 
 describe('hasMetadataNameChanged', () => {
     it('treats trimmed-equivalent names as unchanged', () => {

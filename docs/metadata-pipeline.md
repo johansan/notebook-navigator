@@ -53,7 +53,7 @@ Each indexed file path has a `FileData` record (`src/storage/indexeddb/fileData.
   - `wordCount`: word count (`null` until generated; markdown only)
   - `characterCountWithSpaces` / `characterCountWithoutSpaces`: character counts (`null` until generated; markdown only)
   - `taskTotal` / `taskUnfinished`: task counters (`null` until generated; markdown only)
-  - `properties`: resolved property pill list (`null` until generated; markdown only)
+  - `properties`: supported scalar frontmatter values used by property search, trees, and pills (`null` until generated; markdown only)
 
 Defaults are set by `createDefaultFileData()` (`src/storage/indexeddb/fileData.ts`, re-exported through
 `src/storage/IndexedDBStorage.ts`):
@@ -330,7 +330,7 @@ Processing boundaries in Notebook Navigator:
   - Word count: markdown files where `wordCount === null` (when word-count tracking is enabled)
   - Character count: markdown files where `characterCountWithSpaces === null` or `characterCountWithoutSpaces === null` (when character-count tracking is enabled)
   - Tasks: markdown files where `taskTotal === null` or `taskUnfinished === null` (always tracked)
-  - Properties: markdown files where `properties === null` (when property tracking is enabled)
+  - Properties: markdown files where `properties === null` (always tracked)
   - Feature image: files where `featureImageKey === null` or `featureImageStatus === 'unprocessed'` (when feature image tracking is enabled)
 - Once the database has been seeded, the notice can complete after two empty polls even if no new queueable work is
   observed in that tick.

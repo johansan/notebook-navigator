@@ -37,7 +37,7 @@ import { ItemType, ListPaneItemType } from '../types';
 import type { VisibilityPreferences } from '../types';
 import type { ListPaneItem } from '../types/virtualization';
 import { createFrontmatterPropertyExclusionMatcher } from '../utils/fileFilters';
-import { parseFilterSearchTokens, filterSearchHasActiveCriteria } from '../utils/filterSearch';
+import { parseFilterSearchTokens, filterSearchHasActiveCriteria, filterSearchNeedsPropertyLookup } from '../utils/filterSearch';
 import type { ListNoteGroupingOption, NotebookNavigatorSettings } from '../settings/types';
 import type { FilterSearchTokens } from '../utils/filterSearch';
 import type { SearchResultMeta } from '../types/search';
@@ -167,6 +167,7 @@ export function useListPaneData({
     const hasTaskSearchFilters =
         activeFilterSearchTokens !== null &&
         (activeFilterSearchTokens.requireUnfinishedTasks || activeFilterSearchTokens.excludeUnfinishedTasks);
+    const hasPropertySearchFilters = activeFilterSearchTokens !== null && filterSearchNeedsPropertyLookup(activeFilterSearchTokens);
     const hasDateSearchFilters =
         activeFilterSearchTokens !== null &&
         (activeFilterSearchTokens.dateRanges.length > 0 || activeFilterSearchTokens.excludeDateRanges.length > 0);
@@ -370,6 +371,7 @@ export function useListPaneData({
             listConfig,
             collapsedListGroups,
             matchedAliases: filterResult.matchedAliases,
+            matchedProperties: filterResult.matchedProperties,
             searchMetaMap,
             selectedFolder,
             selectedTag,
@@ -394,6 +396,7 @@ export function useListPaneData({
         listConfig,
         collapsedListGroups,
         filterResult.matchedAliases,
+        filterResult.matchedProperties,
         selectedFolder,
         selectedTag,
         selectedProperty,
@@ -453,6 +456,7 @@ export function useListPaneData({
         groupBy,
         hasDateSearchFilters,
         hasManualSortWordCountGroupHeaders: customGroupHeaderState.hasWordCountGroupHeaders,
+        hasPropertySearchFilters,
         hasTaskSearchFilters,
         hiddenFilePropertyMatcher,
         hiddenFileTags,

@@ -155,7 +155,7 @@ function createFileData(overrides: Partial<FileData>): FileData {
         characterCountWithoutSpaces: 0,
         taskTotal: null,
         taskUnfinished: null,
-        properties: null,
+        properties: [],
         previewStatus: 'unprocessed',
         featureImage: null,
         featureImageStatus: 'unprocessed',
@@ -179,7 +179,7 @@ function createTaskMetadata(tasks: string[]): CachedMetadata {
 }
 
 describe('MarkdownPipelineContentProvider task counters', () => {
-    it('skips stale task-only processing when metadata has no task items', () => {
+    it('processes stale files with no task items so property metadata can refresh', () => {
         const context = createApp();
         const settings = createSettings();
         const provider = new TestMarkdownPipelineContentProvider(context.app);
@@ -194,10 +194,10 @@ describe('MarkdownPipelineContentProvider task counters', () => {
             taskUnfinished: 0
         });
 
-        expect(provider.shouldProcess(fileData, file, settings)).toBe(false);
+        expect(provider.shouldProcess(fileData, file, settings)).toBe(true);
     });
 
-    it('skips stale task-only processing when metadata has no list items', () => {
+    it('processes stale files with no list items so property metadata can refresh', () => {
         const context = createApp();
         const settings = createSettings();
         const provider = new TestMarkdownPipelineContentProvider(context.app);
@@ -212,7 +212,28 @@ describe('MarkdownPipelineContentProvider task counters', () => {
             taskUnfinished: 0
         });
 
-        expect(provider.shouldProcess(fileData, file, settings)).toBe(false);
+        expect(provider.shouldProcess(fileData, file, settings)).toBe(true);
+    });
+
+    it('processes recent frontmatter-free files without metadata-cache retries', async () => {
+        const context = createApp();
+        const settings = createSettings();
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+        const file = createFile('notes/note.md');
+        file.stat.mtime = Date.now();
+        context.cachedMetadataByPath.set(file.path, { listItems: [] });
+
+        const fileData = createFileData({
+            mtime: file.stat.mtime,
+            markdownPipelineMtime: file.stat.mtime - 1,
+            taskTotal: 0,
+            taskUnfinished: 0,
+            properties: []
+        });
+
+        const result = await provider.runProcessFile(file, fileData, settings);
+
+        expect(result).toEqual({ update: null, processed: true });
     });
 
     it('processes stale task-only files when metadata contains task items', () => {

@@ -212,11 +212,11 @@ export const STRINGS_FR = {
                 properties: {
                     title: 'Propriétés',
                     items: [
-                        '`.key` Inclure les notes avec une clé de propriété.',
+                        '`.key` Inclure les notes dont la clé de propriété commence par `key`.',
                         '`.key=value` Inclure les notes dont la valeur de propriété contient `value`.',
                         '`."Reading Status"` Inclure les notes avec une clé de propriété contenant des espaces.',
                         '`."Reading Status"="In Progress"` Les clés et valeurs contenant des espaces doivent être entre guillemets doubles.',
-                        '`-.key` Exclure les notes avec une clé de propriété.',
+                        '`-.key` Exclure les notes dont la clé de propriété commence par `key`.',
                         '`-.key=value` Exclure les notes dont la valeur de propriété contient `value`.',
                         'Cmd/Ctrl+Clic sur une propriété pour ajouter avec AND. Cmd/Ctrl+Shift+Clic pour ajouter avec OR.'
                     ]

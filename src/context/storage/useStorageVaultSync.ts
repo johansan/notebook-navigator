@@ -33,14 +33,9 @@ import { runAsyncAction } from '../../utils/async';
 import { isMarkdownPath } from '../../utils/fileTypeUtils';
 import { isPropertyFeatureEnabled } from '../../utils/propertyTree';
 import { emitDrawingCompanionImageChange, findDrawingFileForCompanionImage } from '../../utils/drawingFeatureImages';
-import {
-    filterFilesRequiringFileThumbnails,
-    filterFilesRequiringMetadataSources,
-    shouldQueueFileThumbnailProvider
-} from '../storageQueueFilters';
+import { filterFilesRequiringFileThumbnails, shouldQueueFileThumbnailProvider } from '../storageQueueFilters';
 import { getCacheRebuildProgressTypes, getContentWorkTotal, getMetadataDependentTypes } from './storageContentTypes';
 import { finishStartupDiagnostics, isDebugLogPath, recordStartupDiagnostic } from '../../services/diagnostics/DebugLoggingService';
-import { getMarkdownPipelineContentTypes } from '../../utils/markdownPipelineContentTypes';
 import {
     clearFrontmatterMetadataCacheSignature,
     isFrontmatterMetadataCacheCurrent,
@@ -544,22 +539,6 @@ export function useStorageVaultSync(params: {
 
                 const liveSettings = latestSettingsRef.current;
                 const metadataDependentTypes = getMetadataDependentTypes(liveSettings);
-                const markdownPipelineContentTypes = getMarkdownPipelineContentTypes(liveSettings);
-                const shouldPrefilterTaskOnlyMarkdownPipeline =
-                    metadataDependentTypes.length === 1 &&
-                    metadataDependentTypes[0] === 'markdownPipeline' &&
-                    markdownPipelineContentTypes.length === 1 &&
-                    markdownPipelineContentTypes[0] === 'tasks';
-                const filesToRefresh = shouldPrefilterTaskOnlyMarkdownPipeline
-                    ? filterFilesRequiringMetadataSources(files, metadataDependentTypes, liveSettings, {
-                          app,
-                          conservativeMetadata: true,
-                          compareCurrentTaskMetadata: true
-                      })
-                    : files;
-                if (filesToRefresh.length === 0) {
-                    return;
-                }
 
                 metadataChangeFlushBuffer.isProcessing = true;
                 try {
@@ -570,7 +549,7 @@ export function useStorageVaultSync(params: {
                         // The processed-mtime reset also invalidates in-flight provider batches whose
                         // `expectedPreviousMtime` snapshot was non-zero: their guarded writes are dropped after
                         // the reset, so such a batch cannot persist content from a pre-change cache snapshot.
-                        await markFilesForRegeneration(filesToRefresh, metadataDependentTypes);
+                        await markFilesForRegeneration(files, metadataDependentTypes);
                     }
                 } catch (error: unknown) {
                     console.error('Failed to mark files for regeneration:', error);
@@ -580,7 +559,7 @@ export function useStorageVaultSync(params: {
 
                 // Queue even when marking fails: this flush is the only content trigger for markdown saves, and
                 // files whose processed mtimes are already stale still pass the queue filters without the reset.
-                queueFilesContentRefresh(filesToRefresh);
+                queueFilesContentRefresh(files);
 
                 if (metadataChangeFlushBuffer.files.size > 0 && !stoppedRef.current) {
                     scheduleMetadataChangedFilesFlush();
