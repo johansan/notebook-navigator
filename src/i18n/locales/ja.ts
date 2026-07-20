@@ -182,15 +182,15 @@ export const STRINGS_JA = {
         searchHelp: '検索構文',
         searchHelpTitle: '検索構文',
         searchHelpModal: {
-            intro: 'ファイル名、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせ可能（例：`meeting .status=active #work @thisweek`）。Omnisearch プラグインをインストールすると全文検索が使用できます。',
+            intro: '表示名、エイリアス、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせ可能（例：`meeting .status=active #work @thisweek`）。Omnisearch プラグインをインストールすると全文検索が使用できます。',
             introSwitching: '上下矢印キーまたは検索アイコンのクリックで、フィルター検索と Omnisearch を切り替えられます。',
             sections: {
                 fileNames: {
-                    title: 'ファイル名',
+                    title: 'ファイル名とエイリアス',
                     items: [
-                        '`word` ファイル名に「word」を含むノートを検索。',
-                        '`word1 word2` すべての単語がファイル名に一致する必要があります。',
-                        '`-word` ファイル名に「word」を含むノートを除外。'
+                        '`word` 表示名またはエイリアスに「word」を含むノートを検索。',
+                        '`word1 word2` すべての単語が表示名またはエイリアスのいずれかに一致する必要があります。',
+                        '`-word` 表示名またはエイリアスに「word」を含むノートを除外。'
                     ]
                 },
                 tags: {

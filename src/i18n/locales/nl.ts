@@ -185,16 +185,16 @@ export const STRINGS_NL = {
         searchHelp: 'Zoeksyntax',
         searchHelpTitle: 'Zoeksyntax',
         searchHelpModal: {
-            intro: 'Combineer bestandsnamen, eigenschappen, tags, datums en filters in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Installeer de Omnisearch-plugin om zoeken in volledige tekst te gebruiken.',
+            intro: 'Combineer weergavenamen, aliassen, eigenschappen, tags, datums en filters in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Installeer de Omnisearch-plugin om zoeken in volledige tekst te gebruiken.',
             introSwitching:
                 'Schakel tussen filterzoeken en Omnisearch met de pijltoetsen omhoog/omlaag of door op het zoekpictogram te klikken.',
             sections: {
                 fileNames: {
-                    title: 'Bestandsnamen',
+                    title: 'Bestandsnamen en aliassen',
                     items: [
-                        '`word` Notities met "word" in de bestandsnaam vinden.',
-                        '`word1 word2` Elk woord moet overeenkomen met de bestandsnaam.',
-                        '`-word` Notities met "word" in de bestandsnaam uitsluiten.'
+                        '`word` Notities met "word" in de weergavenaam of een alias vinden.',
+                        '`word1 word2` Elk woord moet voorkomen in de weergavenaam of de aliassen.',
+                        '`-word` Notities met "word" in de weergavenaam of een alias uitsluiten.'
                     ]
                 },
                 tags: {

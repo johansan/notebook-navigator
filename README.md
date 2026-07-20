@@ -143,13 +143,13 @@ Notebook Navigator has two search modes: filter search and Omnisearch. Switch be
 
 ### 7.1 Filter search
 
-Filters files by name, tags, properties, dates, folders, extensions, and tasks within the current folder and subfolders. Default search mode.
+Filters files by display name, alias, tags, properties, dates, folders, extensions, and tasks within the current folder and subfolders. Default search mode.
 
-**File names**
+**File names and aliases**
 
-- `word` - Match notes with "word" in the file name
-- `word1 word2` - Require every word to match the file name
-- `-word` - Exclude notes with "word" in the file name
+- `word` - Match notes with "word" in the display name or an alias
+- `word1 word2` - Require every word to match across the display name and aliases
+- `-word` - Exclude notes with "word" in the display name or an alias
 
 **Tags**
 
@@ -468,7 +468,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 
 ### 10.5 Productivity
 
-- **Search** - Filter by file name, tags, properties, dates, folders, extensions, and tasks with AND/OR/exclusions
+- **Search** - Filter by file name, aliases, tags, properties, dates, folders, extensions, and tasks with AND/OR/exclusions
 - **Omnisearch integration** - Full-text search via [Omnisearch](https://github.com/scambier/obsidian-omnisearch)
 - **Drag and drop** - File moves, tagging, shortcut assignment, tag tree reparenting, spring-loaded folders
 - **Context menus** - Create notes/folders/canvases/bases/drawings and run file/tag actions

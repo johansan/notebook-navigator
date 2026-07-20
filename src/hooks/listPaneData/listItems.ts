@@ -38,7 +38,7 @@ import { createHiddenTagVisibility } from '../../utils/tagPrefixMatcher';
 import { getCachedFileTags } from '../../utils/tagUtils';
 import { DateUtils } from '../../utils/dateUtils';
 import { buildListGroupCollapseKey } from '../../utils/listGroupCollapse';
-import type { SearchResultMeta } from '../../types/search';
+import type { AliasSearchMatch, SearchResultMeta } from '../../types/search';
 import type { IndexedDBStorage } from '../../storage/IndexedDBStorage';
 import type { PropertySelectionNodeId } from '../../utils/propertyTree';
 import type { ListPaneFolderPathSegment } from '../../types/virtualization';
@@ -66,6 +66,7 @@ interface BuildListItemsArgs {
     hiddenTags: string[];
     listConfig: ListPaneConfig;
     collapsedListGroups?: ReadonlySet<string>;
+    matchedAliases?: ReadonlyMap<string, readonly AliasSearchMatch[]>;
     searchMetaMap: ReadonlyMap<string, SearchResultMeta>;
     selectedFolder: TFolder | null;
     selectedTag?: string | null;
@@ -115,6 +116,7 @@ export function buildListItems({
     hiddenTags,
     listConfig,
     collapsedListGroups,
+    matchedAliases,
     searchMetaMap,
     selectedFolder,
     selectedTag = null,
@@ -219,7 +221,9 @@ export function buildListItems({
         activeManualSortHeader.item.manualSortHeaderWordCount = activeManualSortHeader.wordCount;
         activeManualSortHeader.item.manualSortHeaderTargetWordCount = activeManualSortHeader.targetWordCount;
     };
-    type FileItemOverrides = Partial<Omit<ListPaneItem, 'type' | 'data' | 'fileIndex' | 'hasTags' | 'isHidden' | 'key' | 'searchMeta'>>;
+    type FileItemOverrides = Partial<
+        Omit<ListPaneItem, 'type' | 'data' | 'fileIndex' | 'hasTags' | 'isHidden' | 'key' | 'matchedAliases' | 'searchMeta'>
+    >;
     const pushFileItem = (file: TFile, overrides: FileItemOverrides = {}) => {
         activeGroupHeaderItem?.groupFilePaths?.push(file.path);
 
@@ -244,6 +248,7 @@ export function buildListItems({
             parentFolder: selectedFolder?.path,
             key: file.path,
             fileIndex: fileIndexCounter++,
+            matchedAliases: matchedAliases?.get(file.path),
             searchMeta: searchMetaMap.get(file.path),
             hasTags: fileHasTags(file),
             isHidden: hiddenFileState.get(file.path) ?? false

@@ -141,6 +141,51 @@ function getFolderHeaderSegmentItems(
 }
 
 describe('buildListItems pinned display scope', () => {
+    it('attaches matched aliases to their file row', () => {
+        const app = createApp();
+        const file = createTestTFile('Notes/Notebook Navigator.md');
+        const db = createDb({
+            [file.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: createListConfig({}),
+            matchedAliases: new Map([
+                [
+                    file.path,
+                    [
+                        {
+                            value: 'NN',
+                            foldedTerms: ['nn']
+                        }
+                    ]
+                ]
+            ]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'alphabetical-asc'
+        });
+
+        const fileItem = items.find(item => item.type === ListPaneItemType.FILE);
+        expect(fileItem?.matchedAliases).toEqual([
+            {
+                value: 'NN',
+                foldedTerms: ['nn']
+            }
+        ]);
+    });
+
     it('adds spacer rows before subsequent fixed-height group headers', () => {
         const app = createApp();
         const todayFile = createTestTFile('notes/today.md');

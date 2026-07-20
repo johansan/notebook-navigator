@@ -182,16 +182,16 @@ export const STRINGS_ES = {
         searchHelp: 'Sintaxis de búsqueda',
         searchHelpTitle: 'Sintaxis de búsqueda',
         searchHelpModal: {
-            intro: 'Combina nombres de archivo, propiedades, etiquetas, fechas y filtros en una consulta (ej. `meeting .status=active #work @thisweek`). Instala el plugin Omnisearch para usar búsqueda de texto completo.',
+            intro: 'Combina nombres para mostrar, alias, propiedades, etiquetas, fechas y filtros en una consulta (ej. `meeting .status=active #work @thisweek`). Instala el plugin Omnisearch para usar búsqueda de texto completo.',
             introSwitching:
                 'Cambia entre búsqueda por filtro y Omnisearch usando las teclas de flecha arriba/abajo o haciendo clic en el icono de búsqueda.',
             sections: {
                 fileNames: {
-                    title: 'Nombres de archivo',
+                    title: 'Nombres de archivo y alias',
                     items: [
-                        '`word` Encontrar notas con "word" en el nombre del archivo.',
-                        '`word1 word2` Cada palabra debe coincidir con el nombre del archivo.',
-                        '`-word` Excluir notas con "word" en el nombre del archivo.'
+                        '`word` Encontrar notas con "word" en el nombre para mostrar o en un alias.',
+                        '`word1 word2` Cada palabra debe encontrarse en el nombre para mostrar o en los alias.',
+                        '`-word` Excluir notas con "word" en el nombre para mostrar o en un alias.'
                     ]
                 },
                 tags: {

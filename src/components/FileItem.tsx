@@ -55,6 +55,7 @@ import { FILE_VISIBILITY, getExtensionSuffix, isRasterImageFile, shouldDisplayFi
 import { resolveFolderDecorationColors } from '../utils/folderDecoration';
 import { resolveFileDragIconId, resolveFileIconId } from '../utils/fileIconUtils';
 import { buildFileTooltip } from '../utils/navigationTooltipUtils';
+import { getFoldedSearchHighlightRanges } from '../utils/searchHighlight';
 import {
     getFileItemLayoutState,
     shouldShowExtensionBadgeThumbnail,
@@ -62,7 +63,7 @@ import {
     shouldShowFileItemParentFolderLine
 } from '../utils/listPaneMeasurements';
 import { getIconService, useIconServiceVersion } from '../services/icons';
-import type { SearchResultMeta } from '../types/search';
+import type { AliasSearchMatch, SearchResultMeta } from '../types/search';
 import { mergeRanges, NumericRange } from '../utils/arrayUtils';
 import { openAddTagToFilesModal } from '../utils/tagModalHelpers';
 import { resolveUXIcon } from '../utils/uxIcons';
@@ -83,6 +84,7 @@ import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
 import { InlineRenameInput } from './InlineRenameInput';
+import { ObsidianIcon } from './ObsidianIcon';
 
 const FEATURE_IMAGE_MAX_ASPECT_RATIO = 16 / 9;
 
@@ -192,6 +194,8 @@ interface FileItemProps {
     isPinned?: boolean;
     /** Search metadata from Omnisearch provider */
     searchMeta?: SearchResultMeta;
+    /** Aliases that satisfied the active internal filter search */
+    matchedAliases?: readonly AliasSearchMatch[];
     /** Whether the file is normally hidden (frontmatter or excluded folder) */
     isHidden?: boolean;
     shortcutKey?: string;
@@ -255,14 +259,8 @@ function getMergedHighlightRanges(text: string, query?: string, searchMeta?: Sea
     return mergeRanges(ranges);
 }
 
-/**
- * Splits text into plain and highlighted parts based on merged ranges.
- */
-function renderHighlightedText(text: string, query?: string, searchMeta?: SearchResultMeta): React.ReactNode {
-    if (!text) return text;
-    const ranges = getMergedHighlightRanges(text, query, searchMeta);
-    if (ranges.length === 0) return text;
-
+function renderTextWithHighlightRanges(text: string, ranges: readonly NumericRange[]): React.ReactNode {
+    if (!text || ranges.length === 0) return text;
     const parts: React.ReactNode[] = [];
     let cursor = 0;
     ranges.forEach((r, i) => {
@@ -280,6 +278,19 @@ function renderHighlightedText(text: string, query?: string, searchMeta?: Search
         parts.push(text.slice(cursor));
     }
     return <>{parts}</>;
+}
+
+/**
+ * Splits text into plain and highlighted parts based on merged ranges.
+ */
+function renderHighlightedText(text: string, query?: string, searchMeta?: SearchResultMeta): React.ReactNode {
+    return renderTextWithHighlightRanges(text, getMergedHighlightRanges(text, query, searchMeta));
+}
+
+function renderAliasSearchMatch(matchedAlias: AliasSearchMatch): React.ReactNode {
+    // Matched aliases are passed only to virtualized search rows, so resolving folded offsets here skips every offscreen result.
+    const ranges = getFoldedSearchHighlightRanges(matchedAlias.value, matchedAlias.foldedTerms);
+    return renderTextWithHighlightRanges(matchedAlias.value, ranges);
 }
 
 interface ParentFolderLabelProps {
@@ -394,6 +405,7 @@ export const FileItem = React.memo(function FileItem({
     parentFolder,
     isPinned = false,
     searchMeta,
+    matchedAliases,
     isHidden = false,
     shortcutKey,
     manualSortDisabled = false,
@@ -744,6 +756,19 @@ export const FileItem = React.memo(function FileItem({
                 }
             >
                 {highlightedName}
+                {matchedAliases && matchedAliases.length > 0 ? (
+                    <span className="nn-file-alias-match">
+                        <ObsidianIcon name="lucide-forward" className="nn-file-alias-match-icon" aria-hidden={true} />
+                        <span>
+                            {matchedAliases.map((matchedAlias, index) => (
+                                <React.Fragment key={`${matchedAlias.value}-${index}`}>
+                                    {index > 0 ? ', ' : null}
+                                    {renderAliasSearchMatch(matchedAlias)}
+                                </React.Fragment>
+                            ))}
+                        </span>
+                    </span>
+                ) : null}
                 {shouldShowCountInTitle ? <span className="nn-file-word-count-suffix"> ({titleCountDisplayText})</span> : null}
                 {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
             </div>

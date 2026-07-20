@@ -182,16 +182,16 @@ export const STRINGS_DE = {
         searchHelp: 'Suchsyntax',
         searchHelpTitle: 'Suchsyntax',
         searchHelpModal: {
-            intro: 'Kombinieren Sie Dateinamen, Eigenschaften, Tags, Daten und Filter in einer Abfrage (z.B. `meeting .status=active #work @thisweek`). Installieren Sie das Omnisearch-Plugin für Volltextsuche.',
+            intro: 'Kombinieren Sie Anzeigenamen, Aliasnamen, Eigenschaften, Tags, Daten und Filter in einer Abfrage (z.B. `meeting .status=active #work @thisweek`). Installieren Sie das Omnisearch-Plugin für Volltextsuche.',
             introSwitching:
                 'Wechseln Sie zwischen Filtersuche und Omnisearch mit den Auf-/Ab-Pfeiltasten oder durch Klicken auf das Suchsymbol.',
             sections: {
                 fileNames: {
-                    title: 'Dateinamen',
+                    title: 'Dateinamen und Aliasnamen',
                     items: [
-                        '`word` Notizen mit "word" im Dateinamen finden.',
-                        '`word1 word2` Jedes Wort muss im Dateinamen vorkommen.',
-                        '`-word` Notizen mit "word" im Dateinamen ausschließen.'
+                        '`word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen finden.',
+                        '`word1 word2` Jedes Wort muss im Anzeigenamen oder in den Aliasnamen vorkommen.',
+                        '`-word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen ausschließen.'
                     ]
                 },
                 tags: {

@@ -183,16 +183,16 @@ export const STRINGS_ID = {
         searchHelp: 'Sintaks pencarian',
         searchHelpTitle: 'Sintaks pencarian',
         searchHelpModal: {
-            intro: 'Gabungkan nama file, properti, tag, tanggal, dan filter dalam satu kueri (contoh: `meeting .status=active #work @thisweek`). Instal plugin Omnisearch untuk menggunakan pencarian teks lengkap.',
+            intro: 'Gabungkan nama tampilan, alias, properti, tag, tanggal, dan filter dalam satu kueri (contoh: `meeting .status=active #work @thisweek`). Instal plugin Omnisearch untuk menggunakan pencarian teks lengkap.',
             introSwitching:
                 'Beralih antara pencarian filter dan Omnisearch menggunakan tombol panah atas/bawah atau dengan mengklik ikon pencarian.',
             sections: {
                 fileNames: {
-                    title: 'Nama file',
+                    title: 'Nama file dan alias',
                     items: [
-                        '`word` Temukan catatan dengan "word" di nama file.',
-                        '`word1 word2` Setiap kata harus cocok dengan nama file.',
-                        '`-word` Kecualikan catatan dengan "word" di nama file.'
+                        '`word` Temukan catatan dengan "word" di nama tampilan atau alias.',
+                        '`word1 word2` Setiap kata harus cocok pada nama tampilan atau alias.',
+                        '`-word` Kecualikan catatan dengan "word" di nama tampilan atau alias.'
                     ]
                 },
                 tags: {

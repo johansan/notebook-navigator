@@ -182,15 +182,15 @@ export const STRINGS_ZH_TW = {
         searchHelp: '搜尋語法',
         searchHelpTitle: '搜尋語法',
         searchHelpModal: {
-            intro: '在一個查詢中組合檔案名稱、屬性、標籤、日期和篩選器（例如：`meeting .status=active #work @thisweek`）。安裝 Omnisearch 外掛程式以使用全文搜尋。',
+            intro: '在一個查詢中組合顯示名稱、別名、屬性、標籤、日期和篩選器（例如：`meeting .status=active #work @thisweek`）。安裝 Omnisearch 外掛程式以使用全文搜尋。',
             introSwitching: '使用上/下箭頭鍵或點擊搜尋圖示在篩選搜尋和 Omnisearch 之間切換。',
             sections: {
                 fileNames: {
-                    title: '檔案名稱',
+                    title: '檔案名稱和別名',
                     items: [
-                        '`word` 尋找檔案名稱中含有 "word" 的筆記。',
-                        '`word1 word2` 每個詞都必須符合檔案名稱。',
-                        '`-word` 排除檔案名稱中含有 "word" 的筆記。'
+                        '`word` 尋找顯示名稱或別名中含有 "word" 的筆記。',
+                        '`word1 word2` 每個詞都必須在顯示名稱或別名中符合。',
+                        '`-word` 排除顯示名稱或別名中含有 "word" 的筆記。'
                     ]
                 },
                 tags: {

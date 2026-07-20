@@ -183,16 +183,16 @@ export const STRINGS_PL = {
         searchHelp: 'Składnia wyszukiwania',
         searchHelpTitle: 'Składnia wyszukiwania',
         searchHelpModal: {
-            intro: 'Połącz nazwy plików, atrybuty, tagi, daty i filtry w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Zainstaluj wtyczkę Omnisearch, aby korzystać z wyszukiwania pełnotekstowego.',
+            intro: 'Połącz nazwy wyświetlane, aliasy, atrybuty, tagi, daty i filtry w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Zainstaluj wtyczkę Omnisearch, aby korzystać z wyszukiwania pełnotekstowego.',
             introSwitching:
                 'Przełączaj się między wyszukiwaniem z filtrem a Omnisearch za pomocą strzałek w górę i w dół lub klikając ikonę wyszukiwania.',
             sections: {
                 fileNames: {
-                    title: 'Nazwy plików',
+                    title: 'Nazwy plików i aliasy',
                     items: [
-                        '`word` Dopasuj notatki ze słowem "word" w nazwie pliku.',
-                        '`word1 word2` Każde słowo musi pasować do nazwy pliku.',
-                        '`-word` Wyklucz notatki zawierające słowo "word" w nazwie pliku.'
+                        '`word` Dopasuj notatki ze słowem "word" w nazwie wyświetlanej lub aliasie.',
+                        '`word1 word2` Każde słowo musi występować w nazwie wyświetlanej lub aliasach.',
+                        '`-word` Wyklucz notatki zawierające słowo "word" w nazwie wyświetlanej lub aliasie.'
                     ]
                 },
                 tags: {

@@ -183,16 +183,16 @@ export const STRINGS_TR = {
         searchHelp: 'Arama sözdizimi',
         searchHelpTitle: 'Arama sözdizimi',
         searchHelpModal: {
-            intro: 'Dosya adlarını, özellikleri, etiketleri, tarihleri ve filtreleri tek bir sorguda birleştirin (örn. `meeting .status=active #work @thisweek`). Tam metin araması kullanmak için Omnisearch eklentisini yükleyin.',
+            intro: 'Görünen adları, takma adları, özellikleri, etiketleri, tarihleri ve filtreleri tek bir sorguda birleştirin (örn. `meeting .status=active #work @thisweek`). Tam metin araması kullanmak için Omnisearch eklentisini yükleyin.',
             introSwitching:
                 'Yukarı/aşağı ok tuşlarını kullanarak veya arama simgesine tıklayarak filtre araması ve Omnisearch arasında geçiş yapın.',
             sections: {
                 fileNames: {
-                    title: 'Dosya adları',
+                    title: 'Dosya adları ve takma adlar',
                     items: [
-                        '`word` Dosya adında "word" olan notları bul.',
-                        '`word1 word2` Her kelime dosya adıyla eşleşmeli.',
-                        '`-word` Dosya adında "word" olan notları hariç tut.'
+                        '`word` Görünen adında veya takma adlarından birinde "word" olan notları bul.',
+                        '`word1 word2` Her kelime görünen ad veya takma adlardan biriyle eşleşmeli.',
+                        '`-word` Görünen adında veya takma adlarından birinde "word" olan notları hariç tut.'
                     ]
                 },
                 tags: {

@@ -183,15 +183,15 @@ export const STRINGS_VI = {
         searchHelp: 'Cú pháp tìm kiếm',
         searchHelpTitle: 'Cú pháp tìm kiếm',
         searchHelpModal: {
-            intro: 'Kết hợp tên tệp, thuộc tính, thẻ, ngày và bộ lọc trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Cài đặt plugin Omnisearch để sử dụng tìm kiếm toàn văn.',
+            intro: 'Kết hợp tên hiển thị, bí danh, thuộc tính, thẻ, ngày và bộ lọc trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Cài đặt plugin Omnisearch để sử dụng tìm kiếm toàn văn.',
             introSwitching: 'Chuyển đổi giữa tìm kiếm bộ lọc và Omnisearch bằng phím mũi tên lên/xuống hoặc nhấp vào biểu tượng tìm kiếm.',
             sections: {
                 fileNames: {
-                    title: 'Tên tệp',
+                    title: 'Tên tệp và bí danh',
                     items: [
-                        '`word` Tìm ghi chú có "word" trong tên tệp.',
-                        '`word1 word2` Mỗi từ phải khớp với tên tệp.',
-                        '`-word` Loại trừ ghi chú có "word" trong tên tệp.'
+                        '`word` Tìm ghi chú có "word" trong tên hiển thị hoặc bí danh.',
+                        '`word1 word2` Mỗi từ phải khớp với tên hiển thị hoặc một trong các bí danh.',
+                        '`-word` Loại trừ ghi chú có "word" trong tên hiển thị hoặc bí danh.'
                     ]
                 },
                 tags: {
