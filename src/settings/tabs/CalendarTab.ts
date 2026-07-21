@@ -47,6 +47,10 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
             createToggleDefinition('calendarConfirmBeforeCreate', {
                 name: strings.settings.items.calendarConfirmBeforeCreate.name,
                 desc: strings.settings.items.calendarConfirmBeforeCreate.desc
+            }),
+            createToggleDefinition('calendarShowHiddenItems', {
+                name: strings.settings.items.calendarShowHiddenItems.name,
+                desc: strings.settings.items.calendarShowHiddenItems.desc
             })
         ]),
         createGroupDefinition(strings.settings.groups.navigation.appearance, [

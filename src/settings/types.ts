@@ -753,6 +753,7 @@ export interface NotebookNavigatorSettings {
     calendarEnabled: boolean;
     calendarPlacement: CalendarPlacement;
     calendarConfirmBeforeCreate: boolean;
+    calendarShowHiddenItems: boolean;
     calendarLocale: string;
     calendarWeekendDays: CalendarWeekendDays;
     calendarMonthHeadingFormat: CalendarMonthHeadingFormat;

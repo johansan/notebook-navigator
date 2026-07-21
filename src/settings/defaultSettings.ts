@@ -394,6 +394,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     calendarEnabled: true,
     calendarPlacement: 'left-sidebar',
     calendarConfirmBeforeCreate: true,
+    calendarShowHiddenItems: false,
     calendarLocale: 'system-default',
     calendarWeekendDays: 'sat-sun',
     calendarMonthHeadingFormat: 'full',

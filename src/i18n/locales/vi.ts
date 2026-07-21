@@ -1522,6 +1522,10 @@ export const STRINGS_VI = {
                 name: 'Xác nhận trước khi tạo',
                 desc: 'Hiển thị hộp thoại xác nhận khi tạo ghi chú hàng ngày mới.'
             },
+            calendarShowHiddenItems: {
+                name: 'Hiện mục ẩn',
+                desc: 'Khi bật, lịch luôn hiển thị tất cả ghi chú lịch, bao gồm cả ghi chú bị ẩn bởi bộ lọc của hồ sơ kho.'
+            },
             calendarIntegrationMode: {
                 name: 'Nguồn ghi chú hàng ngày',
                 desc: 'Nguồn cho ghi chú lịch.',

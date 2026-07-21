@@ -1517,6 +1517,10 @@ export const STRINGS_IT = {
                 name: 'Conferma prima di creare',
                 desc: 'Mostra una finestra di conferma quando si crea una nuova nota giornaliera.'
             },
+            calendarShowHiddenItems: {
+                name: 'Mostra elementi nascosti',
+                desc: 'Quando abilitato, il calendario mostra sempre tutte le note del calendario, incluse le note nascoste dai filtri del profilo del vault.'
+            },
             calendarIntegrationMode: {
                 name: 'Fonte note giornaliere',
                 desc: 'Fonte per le note del calendario.',

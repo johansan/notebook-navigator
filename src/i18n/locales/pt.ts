@@ -1521,6 +1521,10 @@ export const STRINGS_PT = {
                 name: 'Confirmar antes de criar',
                 desc: 'Mostrar uma caixa de diálogo de confirmação ao criar uma nova nota diária.'
             },
+            calendarShowHiddenItems: {
+                name: 'Mostrar itens ocultos',
+                desc: 'Quando ativado, o calendário mostra sempre todas as notas do calendário, incluindo notas ocultas pelos filtros do perfil do cofre.'
+            },
             calendarIntegrationMode: {
                 name: 'Fonte de notas diárias',
                 desc: 'Fonte para notas do calendário.',

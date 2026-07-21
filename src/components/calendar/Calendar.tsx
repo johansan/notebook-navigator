@@ -177,7 +177,12 @@ export function Calendar({
     const { app, commandQueue, fileSystemOps, isMobile, plugin } = useServices();
     const settings = useSettingsState();
     const updateSettings = useSettingsUpdate();
-    const { showHiddenItems } = useUXPreferences();
+    const { showHiddenItems: showHiddenItemsPreference } = useUXPreferences();
+    // calendarShowHiddenItems treats every calendar note as shown so vault profile filters (hidden
+    // folders, file name patterns, tags, and properties) never hide calendar notes or block creating
+    // them in hidden folders. The transient Show hidden items preference has the same effect.
+    // Downstream visibility checks all read this derived flag.
+    const showHiddenItems = settings.calendarShowHiddenItems || showHiddenItemsPreference;
     const activeProfile = getActiveVaultProfile(settings);
     const periodicNotesFolder = activeProfile.periodicNotesFolder;
     const hiddenFolders = activeProfile.hiddenFolders;
