@@ -74,6 +74,8 @@ interface FolderStyleMenuData {
 export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsParams): void {
     const { menu, app, metadataService, folderPath, showFolderIcons, defaultIcon } = params;
     const currentFolderIcon = metadataService.getFolderIcon(folderPath) ?? null;
+    // The vault root keeps its icon when folder icons are disabled, so its icon editor must remain available.
+    const canChangeFolderIcon = showFolderIcons || folderPath === '/';
     const resolvedDefaultIcon =
         defaultIcon ??
         resolveNavigationFolderIcon({
@@ -82,8 +84,6 @@ export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsP
             hasChildren: false,
             isExpanded: false
         });
-    // The root icon remains visible when folder icons are disabled, so its current metadata icon must remain in the preview.
-    const previewDefaultIcon = showFolderIcons || folderPath !== '/' ? resolvedDefaultIcon : (currentFolderIcon ?? resolvedDefaultIcon);
     const folderLabel = resolveFolderDisplayName({
         app,
         metadataService,
@@ -97,8 +97,8 @@ export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsP
             title: folderLabel,
             metadataService,
             initialTab,
-            defaultIcon: showFolderIcons || folderPath === '/' ? previewDefaultIcon : null,
-            icon: showFolderIcons
+            defaultIcon: canChangeFolderIcon ? resolvedDefaultIcon : null,
+            icon: canChangeFolderIcon
                 ? {
                       initial: currentFolderIcon,
                       apply: async iconId => {
@@ -137,7 +137,7 @@ export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsP
         modal.open();
     };
 
-    if (showFolderIcons) {
+    if (canChangeFolderIcon) {
         menu.addItem((item: MenuItem) => {
             setAsyncOnClick(item.setTitle(strings.contextMenu.folder.changeIcon).setIcon('lucide-image'), () => {
                 return openAppearanceModal('icon');
