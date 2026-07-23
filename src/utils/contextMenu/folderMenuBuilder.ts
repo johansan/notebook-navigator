@@ -22,12 +22,22 @@ import { strings } from '../../i18n';
 import { showNotice } from '../noticeUtils';
 import { executeCommand, getInternalPlugin, isFolderAncestor, isPluginInstalled } from '../../utils/typeGuards';
 import { getFolderNote, createFolderNote } from '../../utils/folderNotes';
-import { cleanupExclusionPatterns, isFolderInExcludedFolder, shouldExcludeFolderFromDescendants } from '../../utils/fileFilters';
+import {
+    cleanupExclusionPatterns,
+    hasSubfolders,
+    isFolderInExcludedFolder,
+    shouldExcludeFolderFromDescendants
+} from '../../utils/fileFilters';
 import { ItemType } from '../../types';
 import { addCopyPathSubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
-import { resolveUXIconForMenu } from '../uxIcons';
-import { getActiveVaultProfile, getHiddenFolderPatternMatch, normalizeHiddenFolderPath } from '../../utils/vaultProfiles';
+import { resolveNavigationFolderIcon, resolveUXIconForMenu } from '../uxIcons';
+import {
+    getActiveHiddenFolders,
+    getActiveVaultProfile,
+    getHiddenFolderPatternMatch,
+    normalizeHiddenFolderPath
+} from '../../utils/vaultProfiles';
 import { casefold } from '../../utils/recordUtils';
 import { EXCALIDRAW_PLUGIN_ID, TLDRAW_PLUGIN_ID } from '../../constants/pluginIds';
 import { addFolderStyleChangeActions, addFolderStyleMenu } from './styleMenuBuilder';
@@ -265,7 +275,13 @@ export function buildFolderMenu(params: FolderMenuBuilderParams): void {
         app,
         metadataService,
         folderPath: folder.path,
-        showFolderIcons: settings.showFolderIcons
+        showFolderIcons: settings.showFolderIcons,
+        defaultIcon: resolveNavigationFolderIcon({
+            interfaceIcons: settings.interfaceIcons,
+            isRoot: folder.path === '/',
+            hasChildren: hasSubfolders(folder, getActiveHiddenFolders(settings), services.visibility.showHiddenItems),
+            isExpanded: expandedFolders.has(folder.path)
+        })
     });
 
     addFolderStyleMenu({

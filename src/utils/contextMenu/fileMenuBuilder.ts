@@ -21,7 +21,7 @@ import { FileMenuBuilderParams } from './menuTypes';
 import { strings } from '../../i18n';
 import { getInternalPlugin } from '../../utils/typeGuards';
 import { getFileDisplayName } from '../../utils/fileNameUtils';
-import { getExtensionSuffix, shouldShowExtensionSuffix } from '../../utils/fileTypeUtils';
+import { FILE_VISIBILITY, getExtensionSuffix, shouldDisplayFile, shouldShowExtensionSuffix } from '../../utils/fileTypeUtils';
 import { NavigatorContext } from '../../types';
 import { ShortcutType } from '../../types/shortcuts';
 import { MetadataService } from '../../services/MetadataService';
@@ -45,6 +45,7 @@ import { getEffectiveListSort, isManualSortPropertyKey } from '../sortUtils';
 import { addManualSortGroupHeaderMenuItems } from './manualSortGroupHeaderMenuItems';
 import { addMergeNotesMenuItem } from './mergeNotesMenuItems';
 import { resolveEffectiveListGroupingForSort, resolveListGrouping } from '../listGrouping';
+import { resolveFileIconId } from '../fileIconUtils';
 
 type FileStyleTarget = { type: 'folder'; folderPath: string } | { type: 'files'; files: TFile[] };
 
@@ -668,6 +669,21 @@ function addFileStyleActionsForFileContext(params: FileStyleActionsParams): void
     const fileIcon = metadataService.getFileIcon(file.path);
     const fileColor = metadataService.getFileColor(file.path);
     const fileBackground = metadataService.getFileBackgroundColor(file.path);
+    const folderIcon =
+        settings.useFolderIconForFiles && file.parent
+            ? metadataService.getFolderDisplayData(file.parent.path, { includeIcon: true }).icon
+            : undefined;
+    const isExternalFile = !shouldDisplayFile(file, FILE_VISIBILITY.SUPPORTED, app);
+    // Do not pass temporary row state here because modal previews ignore icons such as the unfinished-task icon.
+    const colorIconPlaceholder =
+        resolveFileIconId(file, settings, {
+            customIconId: folderIcon,
+            metadataCache: app.metadataCache,
+            isExternalFile,
+            allowCategoryIcons: true,
+            fallbackMode: 'file',
+            fileNameForMatch: getFileDisplayName(file)
+        }) ?? 'file';
     const removableStyleAvailability = resolveFileStyleRemovalAvailability(targetFiles, metadataService);
     const { hasRemovableIcon, hasRemovableColor, hasRemovableBackground } = removableStyleAvailability;
     const openAppearanceModal = async (initialTab: 'icon' | 'color' | 'background'): Promise<void> => {
@@ -676,6 +692,7 @@ function addFileStyleActionsForFileContext(params: FileStyleActionsParams): void
             title: file.basename,
             metadataService,
             initialTab,
+            colorIconPlaceholder: settings.showFileIcons ? colorIconPlaceholder : null,
             icon: settings.showFileIcons
                 ? {
                       initial: metadataService.getFileIcon(file.path) ?? null,

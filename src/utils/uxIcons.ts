@@ -153,6 +153,32 @@ export function resolveUXIcon(uxIconMap: Record<string, string> | undefined, ico
     return UX_ICON_DEFAULT_CANONICAL[iconId];
 }
 
+export function resolveNavigationFolderIcon(params: {
+    interfaceIcons: Record<string, string> | undefined;
+    customIcon?: string | null;
+    isRoot: boolean;
+    hasChildren: boolean;
+    isExpanded: boolean;
+}): string {
+    const { interfaceIcons, customIcon, isRoot, hasChildren, isExpanded } = params;
+    if (customIcon) {
+        return customIcon;
+    }
+
+    if (isRoot) {
+        // A configured vault icon remains stable; otherwise the built-in icon reflects the root expansion state.
+        return interfaceIcons?.['nav-folder-root']
+            ? resolveUXIcon(interfaceIcons, 'nav-folder-root')
+            : hasChildren && isExpanded
+              ? 'open-vault'
+              : 'vault';
+    }
+
+    return hasChildren && isExpanded
+        ? resolveUXIcon(interfaceIcons, 'nav-folder-open')
+        : resolveUXIcon(interfaceIcons, 'nav-folder-closed');
+}
+
 function tryResolveLucideMenuIconId(iconId: string): string | null {
     const trimmed = iconId.trim();
     if (!trimmed) {

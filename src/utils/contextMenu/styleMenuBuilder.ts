@@ -19,6 +19,8 @@
 import { App, Menu, MenuItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { MetadataService } from '../../services/MetadataService';
+import { resolveFolderDisplayName } from '../folderDisplayName';
+import { resolveNavigationFolderIcon } from '../uxIcons';
 import { setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { copyStyleToClipboard, getStyleClipboard, hasStyleData, type StyleClipboardData } from './styleClipboard';
 
@@ -54,6 +56,7 @@ interface AddFolderStyleChangeActionsParams {
     metadataService: MetadataService;
     folderPath: string;
     showFolderIcons: boolean;
+    defaultIcon?: string;
 }
 
 interface FolderStyleMenuData {
@@ -69,17 +72,35 @@ interface FolderStyleMenuData {
  * Adds folder icon/color/background actions to a context menu.
  */
 export function addFolderStyleChangeActions(params: AddFolderStyleChangeActionsParams): void {
-    const { menu, app, metadataService, folderPath, showFolderIcons } = params;
-    const folderLabel = folderPath.split('/').pop() || folderPath;
+    const { menu, app, metadataService, folderPath, showFolderIcons, defaultIcon } = params;
+    const currentFolderIcon = metadataService.getFolderIcon(folderPath) ?? null;
+    const resolvedDefaultIcon =
+        defaultIcon ??
+        resolveNavigationFolderIcon({
+            interfaceIcons: metadataService.getSettingsProvider().settings.interfaceIcons,
+            isRoot: folderPath === '/',
+            hasChildren: false,
+            isExpanded: false
+        });
+    // The root icon remains visible when folder icons are disabled, so its current metadata icon must remain in the preview.
+    const previewDefaultIcon = showFolderIcons || folderPath !== '/' ? resolvedDefaultIcon : (currentFolderIcon ?? resolvedDefaultIcon);
+    const folderLabel = resolveFolderDisplayName({
+        app,
+        metadataService,
+        settings: metadataService.getSettingsProvider().settings,
+        folderPath,
+        fallbackName: folderPath.split('/').pop() || folderPath
+    });
     const openAppearanceModal = async (initialTab: 'icon' | 'color' | 'background'): Promise<void> => {
         const { AppearanceModal } = await import('../../modals/AppearanceModal');
         const modal = new AppearanceModal(app, {
             title: folderLabel,
             metadataService,
             initialTab,
+            defaultIcon: showFolderIcons || folderPath === '/' ? previewDefaultIcon : null,
             icon: showFolderIcons
                 ? {
-                      initial: metadataService.getFolderIcon(folderPath) ?? null,
+                      initial: currentFolderIcon,
                       apply: async iconId => {
                           if (iconId === null) {
                               await metadataService.removeFolderIcon(folderPath);
