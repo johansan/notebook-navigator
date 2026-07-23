@@ -1523,6 +1523,10 @@ export const STRINGS_NL = {
                 name: 'Bevestigen voor aanmaken',
                 desc: 'Toon een bevestigingsdialoog bij het aanmaken van een nieuwe dagelijkse notitie.'
             },
+            calendarShowHiddenItems: {
+                name: 'Verborgen items tonen',
+                desc: 'Indien ingeschakeld, toont de kalender altijd alle kalendernotities, inclusief notities die door de filters van het kluisprofiel zijn verborgen.'
+            },
             calendarIntegrationMode: {
                 name: 'Dagelijkse notitie bron',
                 desc: 'Bron voor kalendernotities.',

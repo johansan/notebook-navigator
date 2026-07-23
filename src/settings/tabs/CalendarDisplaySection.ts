@@ -107,6 +107,19 @@ export function renderCalendarDisplaySections(
             })
         );
 
+    topGroup
+        .addSetting(setting => {
+            setting
+                .setName(strings.settings.items.calendarShowHiddenItems.name)
+                .setDesc(strings.settings.items.calendarShowHiddenItems.desc);
+        })
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.calendarShowHiddenItems).onChange(async value => {
+                plugin.settings.calendarShowHiddenItems = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
     const appearanceGroup = createGroup(strings.settings.groups.navigation.appearance);
     const momentApi = getMomentApi();
     const localeOptions = momentApi ? [...momentApi.locales()].sort((a, b) => a.localeCompare(b)) : [];

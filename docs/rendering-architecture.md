@@ -307,7 +307,8 @@ graph TD
 
 - Renders the calendar overlay and integrates daily note creation/opening workflows.
 - Separates resolved vault files from profile-visible files so hidden notes supply no indicators or content and hidden
-  destination folders block creation unless hidden items are shown.
+  destination folders block creation unless hidden items are shown. The `calendarShowHiddenItems` setting
+  disables profile visibility for the calendar, treating every note as shown.
 - Calls `onWeekCountChange` so parent panes can update scroll padding and CSS variables for the calendar layout.
 - Delegates presentation to `src/components/calendar/CalendarHeader.tsx`, `src/components/calendar/CalendarGrid.tsx`,
   and `src/components/calendar/CalendarYearPanel.tsx`.

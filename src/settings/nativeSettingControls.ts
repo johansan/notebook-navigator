@@ -106,6 +106,7 @@ const BOOLEAN_SETTING_KEYS = [
     'pinRecentNotesWithShortcuts',
     'calendarEnabled',
     'calendarConfirmBeforeCreate',
+    'calendarShowHiddenItems',
     'calendarHighlightToday',
     'calendarShowFeatureImage',
     'calendarShowTasks',

@@ -1509,6 +1509,10 @@ export const STRINGS_ZH_TW = {
                 name: '建立前確認',
                 desc: '點按沒有筆記的日期時顯示確認對話方塊。'
             },
+            calendarShowHiddenItems: {
+                name: '顯示隱藏項目',
+                desc: '啟用時，日曆一律顯示所有日曆筆記，包括被倉庫設定檔篩選器隱藏的筆記。'
+            },
             calendarIntegrationMode: {
                 name: '日記來源',
                 desc: '行事曆筆記的來源。',

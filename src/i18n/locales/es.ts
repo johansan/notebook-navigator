@@ -1522,6 +1522,10 @@ export const STRINGS_ES = {
                 name: 'Confirmar antes de crear nueva nota',
                 desc: 'Mostrar un diálogo de confirmación al crear una nueva nota diaria.'
             },
+            calendarShowHiddenItems: {
+                name: 'Mostrar elementos ocultos',
+                desc: 'Cuando está habilitado, el calendario siempre muestra todas las notas del calendario, incluidas las notas ocultas por los filtros del perfil de bóveda.'
+            },
             calendarIntegrationMode: {
                 name: 'Fuente de notas diarias',
                 desc: 'Fuente para notas del calendario.',

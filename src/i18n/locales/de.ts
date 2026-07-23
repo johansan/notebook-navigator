@@ -1524,6 +1524,10 @@ export const STRINGS_DE = {
                 name: 'Vor Erstellung bestätigen',
                 desc: 'Bestätigungsdialog beim Erstellen einer neuen täglichen Notiz anzeigen.'
             },
+            calendarShowHiddenItems: {
+                name: 'Ausgeblendete Elemente anzeigen',
+                desc: 'Wenn aktiviert, zeigt der Kalender immer alle Kalendernotizen, einschließlich Notizen, die durch Filter des Tresorprofils ausgeblendet sind.'
+            },
             calendarIntegrationMode: {
                 name: 'Tagesnotiz-Quelle',
                 desc: 'Quelle für Kalendernotizen.',

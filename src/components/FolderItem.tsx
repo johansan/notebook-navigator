@@ -63,7 +63,7 @@ import { IndentGuideColumns } from './IndentGuideColumns';
 import type { NoteCountInfo } from '../types/noteCounts';
 import { buildNoteCountDisplay, buildSortableNoteCountDisplay } from '../utils/noteCountFormatting';
 import { useActiveProfile } from '../context/SettingsContext';
-import { resolveUXIcon } from '../utils/uxIcons';
+import { resolveNavigationFolderIcon, resolveUXIcon } from '../utils/uxIcons';
 import { ItemType, type CSSPropertiesWithVars } from '../types';
 import { buildFolderTooltip } from '../utils/navigationTooltipUtils';
 import { InlineRenameInput, type InlineRenameControl } from './InlineRenameInput';
@@ -219,12 +219,12 @@ export const FolderItem = React.memo(function FolderItem({
     }, [app, effectiveDisplayName, excludedFolders, fileVisibility, folder, isMobile, settings, showHiddenItems, vaultChangeVersion]);
 
     const dragFallbackIconId = useMemo(() => {
-        if (isRootFolder) {
-            return hasChildren && isExpanded ? 'open-vault' : 'vault';
-        }
-        return hasChildren && isExpanded
-            ? resolveUXIcon(settings.interfaceIcons, 'nav-folder-open')
-            : resolveUXIcon(settings.interfaceIcons, 'nav-folder-closed');
+        return resolveNavigationFolderIcon({
+            interfaceIcons: settings.interfaceIcons,
+            isRoot: isRootFolder,
+            hasChildren,
+            isExpanded
+        });
     }, [hasChildren, isExpanded, isRootFolder, settings.interfaceIcons]);
     const dragIconId = icon ?? dragFallbackIconId;
     const customBackground = backgroundColor;
@@ -331,23 +331,16 @@ export const FolderItem = React.memo(function FolderItem({
     // Update folder icon
     useEffect(() => {
         if (iconRef.current && shouldShowFolderIcon) {
-            const iconService = getIconService();
-
-            if (icon) {
-                // Custom icon is set - always show it, never toggle
-                iconService.renderIcon(iconRef.current, icon);
-            } else if (isRootFolder) {
-                // Root folder - use vault icon (open/closed based on expansion state)
-                const vaultIconName = hasChildren && isExpanded ? 'open-vault' : 'vault';
-                iconService.renderIcon(iconRef.current, vaultIconName);
-            } else {
-                // Default icon - show open folder only if has children AND is expanded
-                const iconName =
-                    hasChildren && isExpanded
-                        ? resolveUXIcon(settings.interfaceIcons, 'nav-folder-open')
-                        : resolveUXIcon(settings.interfaceIcons, 'nav-folder-closed');
-                iconService.renderIcon(iconRef.current, iconName);
-            }
+            getIconService().renderIcon(
+                iconRef.current,
+                resolveNavigationFolderIcon({
+                    interfaceIcons: settings.interfaceIcons,
+                    customIcon: icon,
+                    isRoot: isRootFolder,
+                    hasChildren,
+                    isExpanded
+                })
+            );
         }
     }, [hasChildren, icon, iconVersion, isExpanded, isRootFolder, settings.interfaceIcons, shouldShowFolderIcon]);
 

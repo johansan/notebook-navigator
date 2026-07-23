@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, it, expect } from 'vitest';
-import { normalizeUXIconMapRecord, resolveUXIcon, resolveUXIconForMenu } from '../../src/utils/uxIcons';
+import { normalizeUXIconMapRecord, resolveNavigationFolderIcon, resolveUXIcon, resolveUXIconForMenu } from '../../src/utils/uxIcons';
 
 describe('resolveUXIcon', () => {
     it('returns defaults when no overrides are present', () => {
@@ -42,6 +42,55 @@ describe('resolveUXIconForMenu', () => {
         expect(resolveUXIconForMenu({ 'list-sort-modified': 'icons/custom.svg' }, 'list-sort-modified', 'lucide-calendar')).toBe(
             'lucide-calendar'
         );
+    });
+});
+
+describe('resolveNavigationFolderIcon', () => {
+    it('returns the custom icon before navigation defaults', () => {
+        expect(
+            resolveNavigationFolderIcon({
+                interfaceIcons: { 'nav-folder-open': 'LiFolderHeart' },
+                customIcon: 'star',
+                isRoot: false,
+                hasChildren: true,
+                isExpanded: true
+            })
+        ).toBe('star');
+    });
+
+    it('resolves open and closed folder overrides', () => {
+        const interfaceIcons = {
+            'nav-folder-open': 'LiFolderHeart',
+            'nav-folder-closed': 'LiFolderArchive'
+        };
+
+        expect(
+            resolveNavigationFolderIcon({
+                interfaceIcons,
+                isRoot: false,
+                hasChildren: true,
+                isExpanded: true
+            })
+        ).toBe('folder-heart');
+        expect(
+            resolveNavigationFolderIcon({
+                interfaceIcons,
+                isRoot: false,
+                hasChildren: true,
+                isExpanded: false
+            })
+        ).toBe('folder-archive');
+    });
+
+    it('uses a configured vault icon instead of toggling the built-in root icon', () => {
+        expect(
+            resolveNavigationFolderIcon({
+                interfaceIcons: { 'nav-folder-root': 'LiLandmark' },
+                isRoot: true,
+                hasChildren: true,
+                isExpanded: true
+            })
+        ).toBe('landmark');
     });
 });
 

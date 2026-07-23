@@ -1514,6 +1514,10 @@ export const STRINGS_EN = {
                 name: 'Confirm before creating new note',
                 desc: 'Show a confirmation dialog when creating a new daily note.'
             },
+            calendarShowHiddenItems: {
+                name: 'Show hidden items',
+                desc: 'When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters.'
+            },
             calendarIntegrationMode: {
                 name: 'Daily note source',
                 desc: 'Source for calendar notes.',

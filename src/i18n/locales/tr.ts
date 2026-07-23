@@ -1519,6 +1519,10 @@ export const STRINGS_TR = {
                 name: 'Oluşturmadan önce onayla',
                 desc: 'Yeni bir günlük not oluştururken onay iletişim kutusu göster.'
             },
+            calendarShowHiddenItems: {
+                name: 'Gizli öğeleri göster',
+                desc: 'Etkinleştirildiğinde, takvim her zaman tüm takvim notlarını gösterir; kasa profili filtreleri tarafından gizlenen notlar da buna dahildir.'
+            },
             calendarIntegrationMode: {
                 name: 'Günlük not kaynağı',
                 desc: 'Takvim notları için kaynak.',

@@ -1519,6 +1519,10 @@ export const STRINGS_JA = {
                 name: '作成前に確認',
                 desc: '新しいデイリーノートを作成する際に確認ダイアログを表示します。'
             },
+            calendarShowHiddenItems: {
+                name: '非表示項目を表示',
+                desc: '有効にすると、カレンダーには常にすべてのカレンダーノートが表示され、保管庫プロファイルのフィルターで非表示になっているノートも含まれます。'
+            },
             calendarIntegrationMode: {
                 name: 'デイリーノートのソース',
                 desc: 'カレンダーノートのソース。',

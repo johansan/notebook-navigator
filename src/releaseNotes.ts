@@ -55,6 +55,7 @@ export { compareVersions } from './utils/versionUtils';
  * - Use factual, concise statements
  * - Avoid benefit language and subjective adjectives
  * - Keep to the categories: new, improved, changed, fixed
+ * - Do not start list items with a bold area prefix such as `**Calendar.**` (used in 3.2.3 and earlier)
  */
 
 /**
@@ -104,6 +105,17 @@ export interface ReleaseNote {
  * 2. Categorize features into: new, improved, changed, or fixed arrays
  */
 const RELEASE_NOTES: ReleaseNote[] = [
+    {
+        version: '3.2.5',
+        date: '2026-07-21',
+        showOnUpdate: true,
+        new: [
+            'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.'
+        ],
+        fixed: [
+            'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.'
+        ]
+    },
     {
         version: '3.2.4',
         date: '2026-07-20',

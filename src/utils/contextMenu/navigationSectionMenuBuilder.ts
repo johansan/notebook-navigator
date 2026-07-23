@@ -252,6 +252,7 @@ export function showNavigationSectionContextMenu({
                 title: titleOverride,
                 metadataService,
                 initialTab,
+                defaultIcon: virtualRootMenuConfig ? resolveUXIcon(undefined, virtualRootMenuConfig.uxIconId) : null,
                 icon: virtualRootMenuConfig
                     ? {
                           initial: resolveUXIcon(settingsProvider.settings.interfaceIcons, virtualRootMenuConfig.uxIconId),

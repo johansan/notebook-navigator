@@ -40,6 +40,10 @@ export interface AppearanceModalParams {
     title: string;
     metadataService: MetadataService;
     initialTab?: AppearanceTabId;
+    /** Default icon captured for the preview. */
+    defaultIcon?: string | null;
+    /** Resolved file icon captured for the preview. */
+    colorIconPlaceholder?: string | null;
     icon?: AppearanceIconAspect;
     color?: AppearanceColorAspect;
     background?: AppearanceColorAspect;
@@ -317,19 +321,60 @@ export class AppearanceModal extends Modal {
         this.renderState();
     }
 
+    /**
+     * Modal preview behavior:
+     *
+     * - The modal captures the persistent item state when opened. It does not follow later item events.
+     * - Temporary states, such as unfinished-task icons, are ignored.
+     * - A custom icon takes priority over the default icon.
+     * - Folders, tags, properties, and navigation sections show their normal default icon when no custom icon exists.
+     * - The vault root always shows its current custom or default icon.
+     * - File-type icons remain visible when Icons by file type is enabled.
+     *
+     * For file items in icon-only mode, the resolved file icon is hidden only when all four are true:
+     *
+     * - Apply color to icons only is enabled.
+     * - Icons by file type is disabled.
+     * - No custom color is set.
+     * - No custom icon is set.
+     *
+     * Color display:
+     *
+     * - Apply color to icons only enabled: color applies only to the icon.
+     * - Disabled: color applies to both the icon and text.
+     * - Background color always applies to the whole preview item.
+     * - Clearing a custom icon returns to the applicable default icon.
+     */
     private renderPreview(): void {
+        const settings = this.params.metadataService.getSettingsProvider().settings;
+        const colorIconOnly = settings.colorIconOnly;
+        const showFileIconPlaceholder = colorIconOnly || settings.showCategoryIcons;
+        const hideUnstyledFileIcon =
+            colorIconOnly &&
+            !settings.showCategoryIcons &&
+            !this.stagedColor &&
+            !this.stagedIcon &&
+            Boolean(this.params.colorIconPlaceholder);
+        const previewIcon = hideUnstyledFileIcon
+            ? null
+            : (this.stagedIcon ?? this.params.defaultIcon ?? (showFileIconPlaceholder ? this.params.colorIconPlaceholder : null));
+
         this.previewIconEl.empty();
-        if (this.stagedIcon) {
-            this.iconService.renderIcon(this.previewIconEl, this.stagedIcon);
+        if (previewIcon) {
+            this.iconService.renderIcon(this.previewIconEl, previewIcon);
             this.previewIconEl.removeClass('nn-appearance-preview-icon-empty');
         } else {
             this.previewIconEl.addClass('nn-appearance-preview-icon-empty');
         }
 
+        this.previewItem.style.removeProperty('--nn-preview-fg');
+        this.previewIconEl.style.removeProperty('color');
         if (this.stagedColor) {
-            this.previewItem.style.setProperty('--nn-preview-fg', this.stagedColor);
-        } else {
-            this.previewItem.style.removeProperty('--nn-preview-fg');
+            if (colorIconOnly) {
+                this.previewIconEl.style.setProperty('color', this.stagedColor);
+            } else {
+                this.previewItem.style.setProperty('--nn-preview-fg', this.stagedColor);
+            }
         }
 
         if (this.stagedBackground) {

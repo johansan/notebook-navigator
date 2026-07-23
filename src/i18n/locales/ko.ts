@@ -1517,6 +1517,10 @@ export const STRINGS_KO = {
                 name: '생성 전 확인',
                 desc: '새 데일리 노트를 생성할 때 확인 대화 상자를 표시합니다.'
             },
+            calendarShowHiddenItems: {
+                name: '숨겨진 항목 표시',
+                desc: '활성화하면 캘린더에 항상 모든 캘린더 노트가 표시되며, 보관함 프로필 필터로 숨겨진 노트도 포함됩니다.'
+            },
             calendarIntegrationMode: {
                 name: '데일리 노트 소스',
                 desc: '캘린더 노트 소스.',

@@ -1521,6 +1521,10 @@ export const STRINGS_ID = {
                 name: 'Konfirmasi sebelum membuat',
                 desc: 'Tampilkan dialog konfirmasi saat membuat catatan harian baru.'
             },
+            calendarShowHiddenItems: {
+                name: 'Tampilkan item tersembunyi',
+                desc: 'Saat diaktifkan, kalender selalu menampilkan semua catatan kalender, termasuk catatan yang disembunyikan oleh filter profil vault.'
+            },
             calendarIntegrationMode: {
                 name: 'Sumber catatan harian',
                 desc: 'Sumber untuk catatan kalender.',

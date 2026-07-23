@@ -1509,6 +1509,10 @@ export const STRINGS_ZH_CN = {
                 name: '创建前确认',
                 desc: '点击没有笔记的日期时显示确认对话框。'
             },
+            calendarShowHiddenItems: {
+                name: '显示隐藏项目',
+                desc: '启用时，日历始终显示所有日历笔记，包括被仓库配置过滤器隐藏的笔记。'
+            },
             calendarIntegrationMode: {
                 name: '日记来源',
                 desc: '日历笔记的来源。',

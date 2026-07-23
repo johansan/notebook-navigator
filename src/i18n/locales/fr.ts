@@ -1525,6 +1525,10 @@ export const STRINGS_FR = {
                 name: 'Confirmer avant de créer',
                 desc: "Afficher une boîte de dialogue de confirmation lors de la création d'une nouvelle note quotidienne."
             },
+            calendarShowHiddenItems: {
+                name: 'Afficher les éléments masqués',
+                desc: "Lorsqu'activé, le calendrier affiche toujours toutes les notes du calendrier, y compris les notes masquées par les filtres du profil de coffre."
+            },
             calendarIntegrationMode: {
                 name: 'Source des notes quotidiennes',
                 desc: 'Source pour les notes du calendrier.',

@@ -1524,6 +1524,10 @@ export const STRINGS_PL = {
                 name: 'Potwierdź przed utworzeniem',
                 desc: 'Wyświetla możliwość potwierdzenia podczas tworzenia nowej notatki dziennika.'
             },
+            calendarShowHiddenItems: {
+                name: 'Pokaż ukryte elementy',
+                desc: 'Po włączeniu kalendarz zawsze pokazuje wszystkie notatki kalendarza, w tym notatki ukryte przez filtry profilu magazynu.'
+            },
             calendarIntegrationMode: {
                 name: 'Źródło notatek',
                 desc: 'Źródło notatek kalendarza.',
