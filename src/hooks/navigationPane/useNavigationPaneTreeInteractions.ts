@@ -231,6 +231,12 @@ export function useNavigationPaneTreeInteractions({
                 selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder?.path === folder.path;
             selectionDispatch({ type: 'SET_SELECTED_FOLDER', folder, autoSelectedFile: null });
 
+            // Folder-note name clicks stop before the row click handler, so automatic expansion must run in this branch.
+            const hasChildFolders = folder.children.some(child => child instanceof TFolder);
+            if (settings.autoExpandNavItems && hasChildFolders && !expansionState.expandedFolders.has(folder.path)) {
+                handleFolderToggle(folder.path);
+            }
+
             const openContext = event
                 ? resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier, isMobile)
                 : resolveFolderNoteDefaultOpenContext(settings.folderNoteOpenLocation);
@@ -254,8 +260,10 @@ export function useNavigationPaneTreeInteractions({
         [
             app,
             commandQueue,
+            expansionState.expandedFolders,
             focusListPaneAfterRightSidebarFolderNoteSelection,
             handleFolderClick,
+            handleFolderToggle,
             isMobile,
             openFolderNoteInRightSidebar,
             selectionDispatch,
