@@ -6,7 +6,7 @@ labels: 'bug'
 assignees: ''
 ---
 
-**Important! Before submitting:** There are known issues with other plugins and sync services. Check: [Known issues with plugins, sync and themes](https://github.com/johansan/notebook-navigator/issues/363)
+**Important! Before submitting:** Check the [FAQ](https://github.com/johansan/notebook-navigator/blob/main/FAQ.md) for answers to common questions. There are known issues with other plugins and sync services. Check: [Known issues with plugins, sync and themes](https://github.com/johansan/notebook-navigator/issues/363)
 
 **Security issue?** Do not include exploit details in a public issue. Use GitHub private vulnerability reporting instead.
 
