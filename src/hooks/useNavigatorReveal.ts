@@ -142,7 +142,8 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
     // Auto-reveal state
     const [fileToReveal, setFileToReveal] = useState<TFile | null>(null);
     const [isStartupReveal, setIsStartupReveal] = useState<boolean>(false);
-    const activeFileRef = useRef<string | null>(null);
+    // Obsidian mutates a TFile on rename, so instance identity still distinguishes a new file that later reuses the old path.
+    const activeFileRef = useRef<TFile | null>(null);
     const hasInitializedRef = useRef<boolean>(false);
     const selectedFilePathRef = useRef<string | null>(null);
 
@@ -940,12 +941,12 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             }
 
             // Check if this is actually a different file
-            if (activeFileRef.current === file.path) {
+            if (activeFileRef.current === file) {
                 return; // Same file, no change
             }
 
             // Update the active file reference
-            activeFileRef.current = file.path;
+            activeFileRef.current = file;
 
             // Always reveal newly created files
             if (isRecentlyCreated) {
@@ -1004,7 +1005,7 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                 const split = getLeafSplitLocation(app, activeLeaf);
                 const isIgnoredRightSidebarLeaf = settings.autoRevealIgnoreRightSidebar && split === 'right-sidebar';
                 if (!isIgnoredRightSidebarLeaf && !shouldIgnoreOtherWindowAutoReveal(activeLeaf)) {
-                    activeFileRef.current = activeFile.path;
+                    activeFileRef.current = activeFile;
                     setIsStartupReveal(true);
                     setFileToReveal(activeFile);
                 }
