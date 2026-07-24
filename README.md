@@ -530,6 +530,8 @@ Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/johansan/
 
 ## 13 Questions or issues?
 
+Read the [FAQ](FAQ.md) for answers to common questions.
+
 **[Join our Discord](https://discord.gg/6eeSUvzEJr)** for support and discussions, or open an issue on the
 [GitHub repository](https://github.com/johansan/notebook-navigator).
 

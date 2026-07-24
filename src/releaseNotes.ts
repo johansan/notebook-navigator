@@ -113,7 +113,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.'
         ],
         fixed: [
-            'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.'
+            'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.',
+            'Fixed folder note links not expanding folders when ==Expand on selection== was enabled.',
+            'Fixed auto-reveal keeping a renamed note selected when a new note reused its previous path.',
+            'External files dropped into folders now preserve their original bytes instead of being rewritten as UTF-8.'
         ]
     },
     {
