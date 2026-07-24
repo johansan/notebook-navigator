@@ -107,7 +107,7 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.5',
-        date: '2026-07-21',
+        date: '2026-07-26',
         showOnUpdate: true,
         new: [
             'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.'
@@ -116,6 +116,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.',
             'Fixed folder note links not expanding folders when ==Expand on selection== was enabled.',
             'Fixed auto-reveal keeping a renamed note selected when a new note reused its previous path.',
+            "Fixed Obsidian's `Move current file to another folder` command switching the Navigator folder when ==Auto-reveal active note== was disabled.",
             'External files dropped into folders now preserve their original bytes instead of being rewritten as UTF-8.'
         ]
     },
