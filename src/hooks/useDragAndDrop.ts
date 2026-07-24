@@ -1058,8 +1058,8 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     );
 
     /**
-     * Imports external files dropped from OS into a target folder
-     * Handles both text and binary files with unique name generation
+     * Imports external files dropped from the OS with unique name generation.
+     * Copies the original bytes because decoding text would transcode non-UTF-8 files.
      */
     const handleExternalFileDrop = useCallback(
         async (files: FileList, targetFolder: TFolder) => {
@@ -1087,23 +1087,8 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     const uniqueBaseName = generateUniqueFilename(targetFolder.path, baseName, extension, app);
                     const finalPath = buildFilePathInFolder(targetFolder.path, uniqueBaseName, extension);
 
-                    // Decide text vs binary import
-                    const lowerName = file.name.toLowerCase();
-                    const mime = file.type || '';
-                    const isLikelyText =
-                        extension.toLowerCase() === 'md' ||
-                        mime.startsWith('text/') ||
-                        mime === 'application/json' ||
-                        mime === 'application/xml' ||
-                        /\.(canvas|json|csv|txt|xml|html|css|js|ts)$/i.test(lowerName);
-
-                    if (isLikelyText) {
-                        const content = await file.text();
-                        await app.vault.create(finalPath, content);
-                    } else {
-                        const arrayBuffer = await file.arrayBuffer();
-                        await app.vault.createBinary(finalPath, arrayBuffer);
-                    }
+                    const arrayBuffer = await file.arrayBuffer();
+                    await app.vault.createBinary(finalPath, arrayBuffer);
 
                     importedCount.success++;
                 } catch (error) {
