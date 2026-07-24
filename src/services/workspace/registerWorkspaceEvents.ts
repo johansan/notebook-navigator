@@ -194,8 +194,8 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                 // Auto-reveal active file if it was moved to a different folder
                 const movedToDifferentFolder = getParentPath(oldPath) !== getParentPath(file.path);
                 if (movedToDifferentFolder && file === plugin.app.workspace.getActiveFile()) {
-                    // Skip reveal if the path change was initiated from within the Navigator
-                    if (!isNavigatorPathChange) {
+                    // External moves follow the active file only when active-file auto-reveal is enabled.
+                    if (!isNavigatorPathChange && plugin.settings.autoRevealActiveFile) {
                         await plugin.revealFileInActualFolder(file);
                     }
                 }
