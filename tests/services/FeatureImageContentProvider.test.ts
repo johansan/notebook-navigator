@@ -257,7 +257,7 @@ describe('FeatureImageContentProvider thumbnails', () => {
         imageFile.stat.size = sourceBytes.byteLength;
         app.vault.adapter.readBinary = async () => copyBytesToArrayBuffer(sourceBytes);
 
-        const testWindow = window as Window & {
+        const testWindow = window as Omit<Window, 'createImageBitmap'> & {
             createImageBitmap?: (image: Blob, options?: ImageBitmapOptions) => Promise<ImageBitmap>;
             OffscreenCanvas?: typeof OffscreenCanvas;
         };
