@@ -77,6 +77,7 @@ export interface HeaderRenderModel {
     folderGroupHeaderSegments: FolderGroupHeaderSegment[];
     groupFilePaths: string[];
     itemCount: number | null;
+    totalItemCount: number | null;
     manualSortHeaderFilePath: string | null;
     manualSortHeader: ManualSortGroupHeaderData | null;
     manualSortHeaderWordCount: number;
@@ -365,7 +366,12 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
                     {renderFolderGroupHeaderText()}
                 </>
             )}
-            {header.itemCount !== null ? <span className="nn-list-group-header-item-count">({header.itemCount})</span> : null}
+            {header.itemCount !== null ? (
+                <span className="nn-list-group-header-item-count">
+                    ({header.itemCount}
+                    {header.totalItemCount !== null ? `/${header.totalItemCount}` : ''})
+                </span>
+            ) : null}
             {header.isCollapsible ? (
                 <button
                     type="button"
@@ -779,6 +785,7 @@ export function ListPaneVirtualContent({
                 folderGroupHeaderSegments,
                 groupFilePaths: item.groupFilePaths ?? [],
                 itemCount: settings.showGroupHeaderItemCounts ? (item.groupFilePaths?.length ?? 0) : null,
+                totalItemCount: settings.showGroupHeaderItemCounts ? (item.groupTotalItemCount ?? null) : null,
                 manualSortHeaderFilePath: item.headerKind === 'manual-sort-custom' ? (item.manualSortHeaderFilePath ?? null) : null,
                 manualSortHeader,
                 manualSortHeaderWordCount: item.manualSortHeaderWordCount ?? 0,
