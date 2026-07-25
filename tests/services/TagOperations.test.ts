@@ -118,7 +118,7 @@ function createVaultProfileStub(id: string, shortcuts: ShortcutEntry[]): VaultPr
     });
 }
 
-function createSettingsProvider(settings: NotebookNavigatorSettings): ISettingsProvider & {
+function createSettingsProvider(settings: NotebookNavigatorSettings): Omit<ISettingsProvider, 'saveSettingsAndUpdate'> & {
     saveSettingsAndUpdate: ReturnType<typeof vi.fn>;
 } {
     const saveSettingsAndUpdate = vi.fn().mockResolvedValue(undefined);
