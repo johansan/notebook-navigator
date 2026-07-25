@@ -17,10 +17,11 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { TFile } from 'obsidian';
+import { App, TFile } from 'obsidian';
 import {
     getModifiedSortBoundaryRefreshKey,
     hasPropertySearchContentChange,
+    shouldRefreshForCustomGroupHeaderMetadataChange,
     shouldSkipModifiedSortBoundaryRefresh
 } from '../../../src/hooks/listPaneData/useListPaneRefresh';
 
@@ -171,6 +172,62 @@ describe('hasPropertySearchContentChange', () => {
                 ],
                 basePathSet
             )
+        ).toBe(false);
+    });
+});
+
+describe('shouldRefreshForCustomGroupHeaderMetadataChange', () => {
+    it('detects removal from an owner retained by the search count snapshot', () => {
+        const app = new App();
+        const file = createFile('notes/previous-header.md', 0);
+        app.metadataCache.getFileCache = () => ({ frontmatter: {} });
+
+        expect(
+            shouldRefreshForCustomGroupHeaderMetadataChange({
+                app,
+                basePathSet: new Set([file.path]),
+                cachedCustomGroupHeaderFilePaths: new Set([file.path]),
+                customGroupHeaderFilePaths: new Set(),
+                file,
+                manualSortGroupHeaderPropertyKey: 'group_header',
+                shouldRefreshOnCustomGroupHeaderMetadataChange: true
+            })
+        ).toBe(true);
+    });
+
+    it('detects a newly added header that is absent from the search count snapshot', () => {
+        const app = new App();
+        const file = createFile('notes/new-header.md', 0);
+        app.metadataCache.getFileCache = () => ({ frontmatter: { group_header: 'New group' } });
+
+        expect(
+            shouldRefreshForCustomGroupHeaderMetadataChange({
+                app,
+                basePathSet: new Set([file.path]),
+                cachedCustomGroupHeaderFilePaths: new Set(),
+                customGroupHeaderFilePaths: new Set(),
+                file,
+                manualSortGroupHeaderPropertyKey: 'group_header',
+                shouldRefreshOnCustomGroupHeaderMetadataChange: true
+            })
+        ).toBe(true);
+    });
+
+    it('ignores metadata changes outside the unfiltered list scope', () => {
+        const app = new App();
+        const file = createFile('notes/outside.md', 0);
+        app.metadataCache.getFileCache = () => ({ frontmatter: { group_header: 'Outside group' } });
+
+        expect(
+            shouldRefreshForCustomGroupHeaderMetadataChange({
+                app,
+                basePathSet: new Set(),
+                cachedCustomGroupHeaderFilePaths: new Set([file.path]),
+                customGroupHeaderFilePaths: new Set([file.path]),
+                file,
+                manualSortGroupHeaderPropertyKey: 'group_header',
+                shouldRefreshOnCustomGroupHeaderMetadataChange: true
+            })
         ).toBe(false);
     });
 });

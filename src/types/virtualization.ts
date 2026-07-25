@@ -52,6 +52,9 @@ export interface ListPaneItem {
     manualSortHeaderFilePath?: string | null;
     // File paths belonging to this rendered group. Used by group-header actions even when the group is collapsed.
     groupFilePaths?: string[];
+    // Item count for the same group before list search filtering.
+    // Present only while a non-empty search is active and group header counts are shown.
+    groupTotalItemCount?: number;
     // Whether a manual sort custom header label depends on stored word counts.
     manualSortHeaderShowsWordCount?: boolean;
     // Parsed manual sort custom header display data.

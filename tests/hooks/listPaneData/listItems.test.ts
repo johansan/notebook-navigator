@@ -21,7 +21,12 @@ import { App, TFile, TFolder } from 'obsidian';
 import { DEFAULT_SETTINGS } from '../../../src/settings/defaultSettings';
 import type { PropertyItem } from '../../../src/storage/IndexedDBStorage';
 import type { IndexedDBStorage } from '../../../src/storage/IndexedDBStorage';
-import { buildListItems, findCollapsedListGroupRevealTarget, type ListPaneConfig } from '../../../src/hooks/listPaneData/listItems';
+import {
+    buildListGroupItemCountData,
+    buildListItems,
+    findCollapsedListGroupRevealTarget,
+    type ListPaneConfig
+} from '../../../src/hooks/listPaneData/listItems';
 import { FILE_VISIBILITY } from '../../../src/utils/fileTypeUtils';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType, ListPaneItemType, PINNED_SECTION_HEADER_KEY } from '../../../src/types';
@@ -1131,6 +1136,124 @@ describe('buildListItems pinned display scope', () => {
         });
 
         expect(getHeaderItems(items).map(item => item.kind)).toEqual(['date', 'date']);
+    });
+
+    it('attaches unfiltered group totals to searched date groups', () => {
+        const app = createApp();
+        const todayMatch = createTestTFile('notes/today-match.md');
+        const todayFilteredOut = createTestTFile('notes/today-filtered-out.md');
+        const olderMatch = createTestTFile('notes/older-match.md');
+        const db = createDb({
+            [todayMatch.path]: { tags: null, properties: null },
+            [todayFilteredOut.path]: { tags: null, properties: null },
+            [olderMatch.path]: { tags: null, properties: null }
+        });
+        const timestamps = new Map([
+            [todayMatch.path, new Date(2026, 2, 7).getTime()],
+            [todayFilteredOut.path, new Date(2026, 2, 7).getTime()],
+            [olderMatch.path, new Date(2026, 1, 20).getTime()]
+        ]);
+        const getFileTimestamps = (file: TFile) => {
+            const timestamp = timestamps.get(file.path) ?? 0;
+            return { created: timestamp, modified: timestamp };
+        };
+        const listConfig = { ...createListConfig({}), groupBy: 'date' as const };
+        const commonArgs = {
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            getDB: () => db,
+            getFileTimestamps,
+            hiddenFileState: new Map<string, boolean>(),
+            hiddenTags: [],
+            listConfig,
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'modified-desc' as const
+        };
+        const groupItemCountData = buildListGroupItemCountData({
+            ...commonArgs,
+            files: [todayMatch, todayFilteredOut, olderMatch]
+        });
+
+        const items = buildListItems({
+            ...commonArgs,
+            files: [todayMatch, olderMatch],
+            groupItemCountData
+        });
+        const dateHeaders = items.filter(item => item.type === ListPaneItemType.HEADER && item.headerKind === 'date');
+
+        expect(
+            dateHeaders.map(item => ({
+                visible: item.groupFilePaths?.length,
+                total: item.groupTotalItemCount
+            }))
+        ).toEqual([
+            { visible: 1, total: 2 },
+            { visible: 1, total: 1 }
+        ]);
+    });
+
+    it('retains custom group boundaries when search excludes a header-owning file', () => {
+        const app = createApp();
+        const firstHeaderFile = createTestTFile('notes/first-match.md');
+        const filteredOutHeaderFile = createTestTFile('notes/filtered-out-header.md');
+        const secondGroupMatch = createTestTFile('notes/second-match.md');
+        app.metadataCache.getFileCache = file => ({
+            frontmatter:
+                file.path === firstHeaderFile.path
+                    ? { index: 1000, group_header: 'First group' }
+                    : file.path === filteredOutHeaderFile.path
+                      ? { index: 2000, group_header: 'Second group' }
+                      : { index: 3000 }
+        });
+        const db = createDb({
+            [firstHeaderFile.path]: { tags: null, properties: null },
+            [filteredOutHeaderFile.path]: { tags: null, properties: null },
+            [secondGroupMatch.path]: { tags: null, properties: null }
+        });
+        const commonArgs = {
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map<string, boolean>(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'custom' as const },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'property-asc' as const,
+            propertySortKey: 'index',
+            isManualSortActive: true,
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        };
+        const groupItemCountData = buildListGroupItemCountData({
+            ...commonArgs,
+            files: [firstHeaderFile, filteredOutHeaderFile, secondGroupMatch]
+        });
+
+        const items = buildListItems({
+            ...commonArgs,
+            files: [firstHeaderFile, secondGroupMatch],
+            groupItemCountData
+        });
+        const customHeaders = items.filter(item => item.type === ListPaneItemType.HEADER && item.headerKind === 'manual-sort-custom');
+
+        expect(
+            customHeaders.map(item => ({
+                label: item.data,
+                visiblePaths: item.groupFilePaths,
+                total: item.groupTotalItemCount
+            }))
+        ).toEqual([
+            { label: 'First group', visiblePaths: [firstHeaderFile.path], total: 1 },
+            { label: 'Second group', visiblePaths: [secondGroupMatch.path], total: 2 }
+        ]);
     });
 
     it('keeps collapsed date headers visible and hides their files', () => {

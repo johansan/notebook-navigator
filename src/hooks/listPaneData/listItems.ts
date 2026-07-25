@@ -79,9 +79,26 @@ interface BuildListItemsArgs {
     isManualSortActive?: boolean;
     manualSortGroupHeaderPropertyKey?: string | null;
     wordCountTargetProperty?: string;
+    groupItemCountData?: ListGroupItemCountData;
 }
 
 export type CollapsedListGroupRevealTarget = { type: 'pinned' } | { type: 'list-group'; collapseKey: string };
+
+/**
+ * Search-independent group data built from the unfiltered file sequence.
+ * The member-to-header map preserves custom group boundaries when search excludes the note that owns a header.
+ */
+interface ListGroupItemCountData {
+    groupItemCountByKey: ReadonlyMap<string, number>;
+    manualSortGroupHeaderFileByMemberPath: ReadonlyMap<string, TFile>;
+}
+
+interface BuildListItemsResult extends ListGroupItemCountData {
+    items: ListPaneItem[];
+}
+
+const EMPTY_GROUP_ITEM_COUNT_BY_KEY = new Map<string, number>();
+const EMPTY_MANUAL_SORT_GROUP_HEADER_FILE_BY_MEMBER_PATH = new Map<string, TFile>();
 
 function splitFolderPath(path: string): string[] {
     return path.split('/').filter(Boolean);
@@ -106,31 +123,49 @@ function buildFolderGroupHeaderSegments(folderPath: string, visiblePath: string)
     }));
 }
 
-export function buildListItems({
-    app,
-    dayKey,
-    fileVisibility,
-    files,
-    getDB,
-    getFileTimestamps,
-    hiddenFileState,
-    hiddenTags,
-    listConfig,
-    collapsedListGroups,
-    matchedAliases,
-    matchedProperties,
-    searchMetaMap,
-    selectedFolder,
-    selectedTag = null,
-    selectedProperty = null,
-    selectionType,
-    showHiddenItems,
-    sortOption,
-    propertySortKey = '',
-    isManualSortActive = false,
-    manualSortGroupHeaderPropertyKey = null,
-    wordCountTargetProperty = ''
-}: BuildListItemsArgs): ListPaneItem[] {
+export function buildListItems(args: BuildListItemsArgs): ListPaneItem[] {
+    return buildListItemsInternal(args, true, false).items;
+}
+
+/**
+ * Counts each group without creating file rows or resolving row-only metadata.
+ * The caller can retain this data across search query changes because it depends on the unfiltered file set.
+ */
+export function buildListGroupItemCountData(args: BuildListItemsArgs): ListGroupItemCountData {
+    const { groupItemCountByKey, manualSortGroupHeaderFileByMemberPath } = buildListItemsInternal(args, false, true);
+    return { groupItemCountByKey, manualSortGroupHeaderFileByMemberPath };
+}
+
+function buildListItemsInternal(
+    {
+        app,
+        dayKey,
+        fileVisibility,
+        files,
+        getDB,
+        getFileTimestamps,
+        hiddenFileState,
+        hiddenTags,
+        listConfig,
+        collapsedListGroups,
+        matchedAliases,
+        matchedProperties,
+        searchMetaMap,
+        selectedFolder,
+        selectedTag = null,
+        selectedProperty = null,
+        selectionType,
+        showHiddenItems,
+        sortOption,
+        propertySortKey = '',
+        isManualSortActive = false,
+        manualSortGroupHeaderPropertyKey = null,
+        wordCountTargetProperty = '',
+        groupItemCountData
+    }: BuildListItemsArgs,
+    includeFileItems: boolean,
+    collectGroupItemCounts: boolean
+): BuildListItemsResult {
     const items: ListPaneItem[] = [
         {
             type: ListPaneItemType.TOP_SPACER,
@@ -138,6 +173,8 @@ export function buildListItems({
             key: 'top-spacer'
         }
     ];
+    const groupItemCountByKey = collectGroupItemCounts ? new Map<string, number>() : null;
+    const manualSortGroupHeaderFileByMemberPath = collectGroupItemCounts ? new Map<string, TFile>() : null;
 
     const contextFilter =
         selectionType === ItemType.TAG
@@ -153,7 +190,7 @@ export function buildListItems({
             ? { restrictToFolderPath: selectedFolder.path }
             : undefined;
     const { pinnedFiles, unpinnedFiles } = partitionPinnedFiles(files, listConfig.pinnedNotes, contextFilter, pinnedDisplayScope);
-    const shouldDetectTags = listConfig.showTags && listConfig.showFileTags;
+    const shouldDetectTags = includeFileItems && listConfig.showTags && listConfig.showFileTags;
     const hiddenTagVisibility = shouldDetectTags ? createHiddenTagVisibility(hiddenTags, showHiddenItems) : null;
     const fileHasTags = shouldDetectTags
         ? (file: TFile) => {
@@ -180,6 +217,8 @@ export function buildListItems({
     let activeListGroupCollapsed = false;
     let activeCollapsedHeaderKind: ListPaneItem['headerKind'] | null = null;
     let activeGroupHeaderItem: ListPaneItem | null = null;
+    let activeGroupHeaderKey: string | null = null;
+    let activeManualSortGroupHeaderFile: TFile | null = null;
     let fileIndexCounter = 0;
     const getFileWordCount = (file: TFile): number => {
         return normalizeManualSortGroupHeaderWordCount(db.getFile(file.path)?.wordCount);
@@ -231,8 +270,19 @@ export function buildListItems({
     >;
     const pushFileItem = (file: TFile, overrides: FileItemOverrides = {}) => {
         activeGroupHeaderItem?.groupFilePaths?.push(file.path);
+        if (activeGroupHeaderKey && groupItemCountByKey) {
+            groupItemCountByKey.set(activeGroupHeaderKey, (groupItemCountByKey.get(activeGroupHeaderKey) ?? 0) + 1);
+        }
+        if (activeManualSortGroupHeaderFile && manualSortGroupHeaderFileByMemberPath) {
+            manualSortGroupHeaderFileByMemberPath.set(file.path, activeManualSortGroupHeaderFile);
+        }
 
-        if (activeManualSortHeader && shouldShowManualSortGroupHeaderWordCount(activeManualSortHeader.header) && file.extension === 'md') {
+        if (
+            includeFileItems &&
+            activeManualSortHeader &&
+            shouldShowManualSortGroupHeaderWordCount(activeManualSortHeader.header) &&
+            file.extension === 'md'
+        ) {
             activeManualSortHeader.wordCount += getFileWordCount(file);
             if (activeManualSortHeader.header.targetWordCount === null) {
                 const fileTargetWordCount = getFileWordCountTarget(file);
@@ -243,7 +293,7 @@ export function buildListItems({
             updateActiveManualSortHeaderLabel();
         }
 
-        if (activeListGroupCollapsed) {
+        if (activeListGroupCollapsed || !includeFileItems) {
             return;
         }
 
@@ -279,6 +329,9 @@ export function buildListItems({
         manualSortHeader?: ManualSortGroupHeaderData;
         groupFiles?: readonly TFile[];
     }) => {
+        if (headerKind !== 'manual-sort-custom') {
+            activeManualSortGroupHeaderFile = null;
+        }
         if (activeListGroupCollapsed && activeCollapsedHeaderKind !== 'manual-sort-custom' && headerKind === 'manual-sort-custom') {
             return;
         }
@@ -301,7 +354,8 @@ export function buildListItems({
             headerFolderPath,
             headerFolderSegments,
             manualSortHeaderFilePath,
-            groupFilePaths: groupFiles ? groupFiles.map(file => file.path) : [],
+            groupFilePaths: collectGroupItemCounts ? undefined : groupFiles ? groupFiles.map(file => file.path) : [],
+            groupTotalItemCount: groupItemCountData?.groupItemCountByKey.get(key),
             manualSortHeaderShowsWordCount: manualSortHeader ? shouldShowManualSortGroupHeaderWordCount(manualSortHeader) : undefined,
             manualSortHeader,
             manualSortHeaderWordCount: manualSortHeader ? 0 : undefined,
@@ -312,9 +366,13 @@ export function buildListItems({
             key
         };
         items.push(headerItem);
-        activeGroupHeaderItem = groupFiles ? null : headerItem;
+        activeGroupHeaderItem = groupFiles || collectGroupItemCounts ? null : headerItem;
+        if (groupItemCountByKey) {
+            groupItemCountByKey.set(key, groupFiles?.length ?? 0);
+        }
+        activeGroupHeaderKey = groupFiles || !groupItemCountByKey ? null : key;
         activeManualSortHeader = null;
-        if (headerKind === 'manual-sort-custom' && manualSortHeader) {
+        if (includeFileItems && headerKind === 'manual-sort-custom' && manualSortHeader) {
             activeManualSortHeader = {
                 item: headerItem,
                 header: manualSortHeader,
@@ -324,8 +382,20 @@ export function buildListItems({
             updateActiveManualSortHeaderLabel();
         }
     };
+    const getManualSortGroupHeaderFile = (file: TFile): TFile | null => {
+        if (groupItemCountData) {
+            return groupItemCountData.manualSortGroupHeaderFileByMemberPath.get(file.path) ?? null;
+        }
+        return getManualSortCustomHeaderValue(file) ? file : null;
+    };
     const maybePushManualSortCustomHeader = (file: TFile) => {
-        const header = getManualSortCustomHeaderValue(file);
+        // Search can omit the header-owning note while retaining later members, so the cached owner
+        // determines boundaries instead of the filtered file sequence.
+        const headerFile = getManualSortGroupHeaderFile(file);
+        if (!headerFile || activeManualSortGroupHeaderFile?.path === headerFile.path) {
+            return;
+        }
+        const header = getManualSortCustomHeaderValue(headerFile);
         if (!header) {
             return;
         }
@@ -333,11 +403,12 @@ export function buildListItems({
         pushHeaderItem({
             data: header.title,
             manualSortHeader: header,
-            manualSortHeaderFilePath: file.path,
+            manualSortHeaderFilePath: headerFile.path,
             headerKind: 'manual-sort-custom',
-            collapseKey: createCollapseKey(`manual-sort-custom:${file.path}`),
-            key: `manual-sort-custom-header-${file.path}`
+            collapseKey: createCollapseKey(`manual-sort-custom:${headerFile.path}`),
+            key: `manual-sort-custom-header-${headerFile.path}`
         });
+        activeManualSortGroupHeaderFile = headerFile;
     };
     const pushManualSortAwareFileItem = (file: TFile, overrides: FileItemOverrides = {}) => {
         maybePushManualSortCustomHeader(file);
@@ -380,7 +451,7 @@ export function buildListItems({
 
         const firstSortedFile = sortedFiles[0] ?? null;
         const firstSortedFileHasManualSortCustomHeader =
-            groupingMode === 'custom' && firstSortedFile !== null && getManualSortCustomHeaderValue(firstSortedFile) !== null;
+            groupingMode === 'custom' && firstSortedFile !== null && getManualSortGroupHeaderFile(firstSortedFile) !== null;
         if (pinnedFiles.length > 0 && sortedFiles.length > 0 && !firstSortedFileHasManualSortCustomHeader) {
             const label = fileVisibility === FILE_VISIBILITY.DOCUMENTS ? strings.listPane.notesSection : strings.listPane.filesSection;
             pushHeaderItem({
@@ -620,7 +691,11 @@ export function buildListItems({
         key: 'bottom-spacer'
     });
 
-    return items;
+    return {
+        items,
+        groupItemCountByKey: groupItemCountByKey ?? EMPTY_GROUP_ITEM_COUNT_BY_KEY,
+        manualSortGroupHeaderFileByMemberPath: manualSortGroupHeaderFileByMemberPath ?? EMPTY_MANUAL_SORT_GROUP_HEADER_FILE_BY_MEMBER_PATH
+    };
 }
 
 export function buildFilePathToIndexMap(listItems: ListPaneItem[]): Map<string, number> {
