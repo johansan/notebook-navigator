@@ -135,6 +135,8 @@ export const STRINGS_UK = {
     paneHeader: {
         collapseAllFolders: 'Згорнути елементи', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Розгорнути всі елементи', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Згорнути всі групи списку',
+        expandAllListGroups: 'Розгорнути всі групи списку',
         showCalendar: 'Показати календар',
         hideCalendar: 'Сховати календар',
         newFolder: 'Нова папка', // Tooltip for create new folder button (English: New folder)
@@ -501,6 +503,8 @@ export const STRINGS_UK = {
                 'list-search': 'Пошук',
                 'list-reveal-file': 'Показати файл',
                 'list-descendants': 'Нотатки з підпапок',
+                'list-expand-all': 'Розгорнути всі групи',
+                'list-collapse-all': 'Згорнути всі групи',
                 'list-sort-ascending': 'Порядок сортування: за зростанням',
                 'list-sort-descending': 'Порядок сортування: за спаданням',
                 'list-sort-modified': 'Сортувати за датою зміни',
@@ -895,7 +899,8 @@ export const STRINGS_UK = {
         togglePropertiesBySelection: 'Перемкнути властивості за вибором',
         toggleCompactMode: 'Перемкнути компактний режим', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Перемкнути закріплений розділ',
-        collapseExpand: 'Згорнути / розгорнути всі елементи', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Згорнути / розгорнути всі елементи навігації', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Згорнути / розгорнути всі групи списку',
         collapseExpandSelectedItem: 'Згорнути / розгорнути вибраний елемент',
         addTag: 'Додати тег до вибраних файлів', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Встановити властивість для вибраних файлів', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

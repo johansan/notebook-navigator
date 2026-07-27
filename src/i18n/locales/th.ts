@@ -134,6 +134,8 @@ export const STRINGS_TH = {
     paneHeader: {
         collapseAllFolders: 'ยุบรายการ',
         expandAllFolders: 'ขยายรายการทั้งหมด',
+        collapseAllListGroups: 'ยุบกลุ่มรายการทั้งหมด',
+        expandAllListGroups: 'ขยายกลุ่มรายการทั้งหมด',
         showCalendar: 'แสดงปฏิทิน',
         hideCalendar: 'ซ่อนปฏิทิน',
         newFolder: 'โฟลเดอร์ใหม่',
@@ -497,6 +499,8 @@ export const STRINGS_TH = {
                 'list-search': 'ค้นหา',
                 'list-reveal-file': 'แสดงไฟล์',
                 'list-descendants': 'โน้ตจากโฟลเดอร์ย่อย',
+                'list-expand-all': 'ขยายกลุ่มทั้งหมด',
+                'list-collapse-all': 'ยุบกลุ่มทั้งหมด',
                 'list-sort-ascending': 'ลำดับ: น้อยไปมาก',
                 'list-sort-descending': 'ลำดับ: มากไปน้อย',
                 'list-sort-modified': 'จัดเรียงตามวันที่แก้ไข',
@@ -891,7 +895,8 @@ export const STRINGS_TH = {
         togglePropertiesBySelection: 'สลับคุณสมบัติตามการเลือก',
         toggleCompactMode: 'สลับโหมดกะทัดรัด', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'สลับส่วนที่ปักหมุด',
-        collapseExpand: 'ยุบ / ขยายรายการทั้งหมด',
+        collapseExpand: 'ยุบ / ขยายรายการนำทางทั้งหมด',
+        collapseExpandListGroups: 'ยุบ / ขยายกลุ่มรายการทั้งหมด',
         collapseExpandSelectedItem: 'ยุบ / ขยายรายการที่เลือก',
         addTag: 'เพิ่มแท็กในไฟล์ที่เลือก',
         setProperty: 'ตั้งค่าคุณสมบัติในไฟล์ที่เลือก', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

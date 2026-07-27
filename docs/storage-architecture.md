@@ -164,7 +164,7 @@ and cache version/migration markers.
 
 **Data stored (examples)**:
 
-- Layout and UI state: pane width/height, section order, toolbar visibility, navigation/list sizing, selected and expanded items.
+- Layout and UI state: pane width/height, section order, toolbar visibility, navigation/list sizing, selected and expanded items, collapsed list groups and pinned-section collapse state.
 - UX preferences and toggles (stored under `STORAGE_KEYS.uxPreferencesKey`).
 - Recent data: recent notes (per vault profile) and recent icons.
 - Per-setting local mirrors for sync-mode settings (see "Sync modes and local mirrors" under Settings).
@@ -208,7 +208,6 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   navigationSectionOrderKey: 'notebook-navigator-section-order',
   pinnedShortcutsMaxHeightKey: 'notebook-navigator-pinned-shortcuts-max-height',
   uxPreferencesKey: 'notebook-navigator-ux-preferences',
-  fileCacheKey: 'notebook-navigator-file-cache',
   databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
   databaseContentVersionKey: 'notebook-navigator-db-content-version',
   frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
@@ -239,6 +238,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   featureImageSizeKey: 'notebook-navigator-feature-image-size',
   featureImagePixelSizeKey: 'notebook-navigator-feature-image-pixel-size',
   collapsedListGroupsKey: 'notebook-navigator-collapsed-list-groups',
+  collapsedPinnedContextsKey: 'notebook-navigator-collapsed-pinned-contexts',
   mergeNotesSeparatorKey: 'notebook-navigator-merge-notes-separator',
   mergeNotesMoveSourcesToTrashKey: 'notebook-navigator-merge-notes-move-sources-to-trash',
   settingsImportBackupToRootKey: 'notebook-navigator-settings-import-backup-to-root'
@@ -315,7 +315,6 @@ export interface NotebookNavigatorSettings {
 
   customVaultName: string;
   pinnedNotes: PinnedNotes;
-  collapsedPinnedContexts: CollapsedPinnedContexts;
 
   fileIcons: Record<string, string>;
   fileColors: Record<string, string>;

@@ -43,6 +43,9 @@ interface ListPaneHeaderProps {
     onSearchToggle?: () => void;
     onManualSortStart?: (propertyKey: string) => void;
     getManualSortNewFileContext?: () => ManualSortNewFilePlacementContext | null;
+    canToggleGroupExpansion: boolean;
+    shouldCollapseGroups: boolean;
+    onToggleGroupExpansion: () => boolean;
     actionsDisabled?: boolean;
     desktopTitle: string;
     breadcrumbSegments: BreadcrumbSegment[];
@@ -56,6 +59,9 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     onSearchToggle,
     onManualSortStart,
     getManualSortNewFileContext,
+    canToggleGroupExpansion,
+    shouldCollapseGroups,
+    onToggleGroupExpansion,
     actionsDisabled = false,
     desktopTitle,
     breadcrumbSegments,
@@ -99,6 +105,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     const showBackButton = listToolbarVisibility.back && uiState.singlePane;
     const showSearchButton = listToolbarVisibility.search;
     const showDescendantsButton = listToolbarVisibility.descendants;
+    const showGroupExpansionButton = listToolbarVisibility.groupExpansion;
     const showSortButton = listToolbarVisibility.sort;
     const showAppearanceButton = listToolbarVisibility.appearance;
     const showNewNoteButton = listToolbarVisibility.newNote;
@@ -113,6 +120,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
         showSearchButton ||
         showRevealButton ||
         showDescendantsButton ||
+        showGroupExpansionButton ||
         showSortButton ||
         showAppearanceButton ||
         showNewNoteButton;
@@ -428,6 +436,26 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                             tabIndex={-1}
                         >
                             <ServiceIcon iconId={resolveUXIcon(settings.interfaceIcons, 'list-descendants')} />
+                        </button>
+                    ) : null}
+                    {showGroupExpansionButton ? (
+                        <button
+                            className="nn-icon-button"
+                            aria-label={
+                                shouldCollapseGroups ? strings.paneHeader.collapseAllListGroups : strings.paneHeader.expandAllListGroups
+                            }
+                            onClick={() => {
+                                onToggleGroupExpansion();
+                            }}
+                            disabled={actionsDisabled || !canToggleGroupExpansion}
+                            tabIndex={-1}
+                        >
+                            <ServiceIcon
+                                iconId={resolveUXIcon(
+                                    settings.interfaceIcons,
+                                    shouldCollapseGroups ? 'list-collapse-all' : 'list-expand-all'
+                                )}
+                            />
                         </button>
                     ) : null}
                     {showSortButton ? (

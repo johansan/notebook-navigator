@@ -134,6 +134,8 @@ export const STRINGS_PT_BR = {
     paneHeader: {
         collapseAllFolders: 'Recolher itens',
         expandAllFolders: 'Expandir todos os itens',
+        collapseAllListGroups: 'Recolher todos os grupos da lista',
+        expandAllListGroups: 'Expandir todos os grupos da lista',
         showCalendar: 'Mostrar calendário',
         hideCalendar: 'Ocultar calendário',
         newFolder: 'Nova pasta',
@@ -501,6 +503,8 @@ export const STRINGS_PT_BR = {
                 'list-search': 'Pesquisar',
                 'list-reveal-file': 'Revelar arquivo',
                 'list-descendants': 'Notas de subpastas',
+                'list-expand-all': 'Expandir todos os grupos',
+                'list-collapse-all': 'Recolher todos os grupos',
                 'list-sort-ascending': 'Ordem: crescente',
                 'list-sort-descending': 'Ordem: decrescente',
                 'list-sort-modified': 'Classificar por data de edição',
@@ -900,7 +904,8 @@ export const STRINGS_PT_BR = {
         togglePropertiesBySelection: 'Alternar propriedades por seleção',
         toggleCompactMode: 'Alternar modo compacto', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alternar seção fixada',
-        collapseExpand: 'Recolher / expandir todos os itens',
+        collapseExpand: 'Recolher / expandir todos os itens de navegação',
+        collapseExpandListGroups: 'Recolher / expandir todos os grupos da lista',
         collapseExpandSelectedItem: 'Recolher / expandir o item selecionado',
         addTag: 'Adicionar tag aos arquivos selecionados',
         setProperty: 'Definir propriedade nos arquivos selecionados', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

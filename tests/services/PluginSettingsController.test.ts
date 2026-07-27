@@ -36,6 +36,8 @@ const { mockLocalStorageStore, localStorageInit, localStorageGet, localStorageSe
 
 vi.mock('../../src/utils/localStorage', () => {
     return {
+        LEGACY_STORAGE_KEYS: ['notebook-navigator-file-cache'],
+        LOCALSTORAGE_VERSION: 2,
         localStorage: {
             init: localStorageInit,
             get: localStorageGet,
@@ -142,6 +144,32 @@ describe('PluginSettingsController.prepareImportedUiScalePersistence', () => {
 });
 
 describe('PluginSettingsController.loadSettings', () => {
+    it('merges legacy pinned collapse state into the existing vault-local record', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.collapsedPinnedContextsKey, {
+            'folder:/': true
+        });
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                collapsedPinnedContexts: {
+                    'tag:work': true
+                }
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.collapsedPinnedContextsKey)).toEqual({
+            'folder:/': true,
+            'tag:work': true
+        });
+        expect((controller.settings as unknown as Record<string, unknown>).collapsedPinnedContexts).toBeUndefined();
+        expect((saveData.mock.calls[0][0] as unknown as Record<string, unknown>).collapsedPinnedContexts).toBeUndefined();
+    });
+
     it('migrates legacy folder note new-tab setting to folder note open location', async () => {
         const saveData = vi.fn().mockResolvedValue(undefined);
         const controller = new PluginSettingsController({

@@ -26,7 +26,7 @@ import { MetadataService, type CleanupValidators } from '../../src/services/Meta
 import { createDefaultFileData } from '../../src/storage/indexeddb/fileData';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
 import { setActivePropertyFields } from '../../src/utils/vaultProfiles';
-import { PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../src/types';
+import { PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, type CollapsedPinnedContexts } from '../../src/types';
 
 class TestSettingsProvider implements ISettingsProvider {
     constructor(public settings: NotebookNavigatorSettings) {}
@@ -52,6 +52,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentColors(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 }
 
 function createSettings(): NotebookNavigatorSettings {
@@ -117,9 +127,9 @@ describe('PropertyMetadataService cleanupWithValidators', () => {
         const service = new PropertyMetadataService(app, provider);
         const validators = createValidators([createMarkdownFileWithProperty('Note.md', 'Status', 'ToDo')]);
 
-        const changed = await service.cleanupWithValidators(validators, settings);
+        const changes = await service.cleanupWithValidators(validators, settings);
 
-        expect(changed).toBe(true);
+        expect(changes).toEqual({ settingsChanged: true, localChanged: false });
         expect(settings.propertyColors).toEqual({
             [validKeyNodeId]: '#111111'
         });
@@ -157,9 +167,9 @@ describe('PropertyMetadataService cleanupWithValidators', () => {
         const service = new PropertyMetadataService(app, provider);
         const validators = createValidators([createMarkdownFileWithProperty('Note.md', 'Status', 'ToDo')]);
 
-        const changed = await service.cleanupWithValidators(validators, settings);
+        const changes = await service.cleanupWithValidators(validators, settings);
 
-        expect(changed).toBe(true);
+        expect(changes).toEqual({ settingsChanged: true, localChanged: false });
         expect(settings.propertyColors).toEqual({});
         expect(settings.propertyBackgroundColors).toEqual({});
         expect(settings.propertyIcons).toEqual({});
@@ -187,9 +197,9 @@ describe('PropertyMetadataService cleanupWithValidators', () => {
         const service = new PropertyMetadataService(app, provider);
         const validators = createValidators([createMarkdownFileWithProperty('Note.md', 'Status', 'ToDo')]);
 
-        const changed = await service.cleanupWithValidators(validators, settings);
+        const changes = await service.cleanupWithValidators(validators, settings);
 
-        expect(changed).toBe(true);
+        expect(changes).toEqual({ settingsChanged: true, localChanged: false });
         expect(settings.vaultProfiles[0]?.propertyKeys).toEqual([
             {
                 key: 'status',
@@ -214,8 +224,13 @@ describe('MetadataService getCleanupSummary', () => {
         ];
 
         const summary = (
-            MetadataService as unknown as { computeMetadataCounts(settings: NotebookNavigatorSettings): { properties: number } }
-        ).computeMetadataCounts(settings);
+            MetadataService as unknown as {
+                computeMetadataCounts(
+                    settings: NotebookNavigatorSettings,
+                    collapsedPinnedContexts: CollapsedPinnedContexts
+                ): { properties: number };
+            }
+        ).computeMetadataCounts(settings, {});
 
         expect(summary.properties).toBe(1);
     });

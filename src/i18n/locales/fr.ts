@@ -134,6 +134,8 @@ export const STRINGS_FR = {
     paneHeader: {
         collapseAllFolders: 'Replier les éléments', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Déplier tous les éléments', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Replier tous les groupes de la liste',
+        expandAllListGroups: 'Déplier tous les groupes de la liste',
         showCalendar: 'Afficher le calendrier',
         hideCalendar: 'Masquer le calendrier',
         newFolder: 'Nouveau dossier', // Tooltip for create new folder button (English: New folder)
@@ -501,6 +503,8 @@ export const STRINGS_FR = {
                 'list-search': 'Recherche',
                 'list-reveal-file': 'Révéler le fichier',
                 'list-descendants': 'Notes des sous-dossiers',
+                'list-expand-all': 'Déplier tous les groupes',
+                'list-collapse-all': 'Replier tous les groupes',
                 'list-sort-ascending': 'Ordre de tri : croissant',
                 'list-sort-descending': 'Ordre de tri : décroissant',
                 'list-sort-modified': 'Trier par date de modification',
@@ -901,7 +905,8 @@ export const STRINGS_FR = {
         togglePropertiesBySelection: 'Basculer les propriétés par sélection',
         toggleCompactMode: 'Basculer le mode compact', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Basculer la section épinglée',
-        collapseExpand: 'Replier / déplier tous les éléments', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Replier / déplier tous les éléments de navigation', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Replier / déplier tous les groupes de la liste',
         collapseExpandSelectedItem: "Replier / déplier l'élément sélectionné",
         addTag: 'Ajouter une étiquette aux fichiers sélectionnés', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Définir une propriété sur les fichiers sélectionnés', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

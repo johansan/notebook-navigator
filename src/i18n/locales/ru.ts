@@ -134,6 +134,8 @@ export const STRINGS_RU = {
     paneHeader: {
         collapseAllFolders: 'Свернуть элементы', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Развернуть все элементы', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Свернуть все группы списка',
+        expandAllListGroups: 'Развернуть все группы списка',
         showCalendar: 'Показать календарь',
         hideCalendar: 'Скрыть календарь',
         newFolder: 'Новая папка', // Tooltip for create new folder button (English: New folder)
@@ -500,6 +502,8 @@ export const STRINGS_RU = {
                 'list-search': 'Поиск',
                 'list-reveal-file': 'Показать файл',
                 'list-descendants': 'Заметки из подпапок',
+                'list-expand-all': 'Развернуть все группы',
+                'list-collapse-all': 'Свернуть все группы',
                 'list-sort-ascending': 'Порядок сортировки: по возрастанию',
                 'list-sort-descending': 'Порядок сортировки: по убыванию',
                 'list-sort-modified': 'Сортировать по дате изменения',
@@ -895,7 +899,8 @@ export const STRINGS_RU = {
         togglePropertiesBySelection: 'Переключить свойства по выбору',
         toggleCompactMode: 'Переключить компактный режим', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Переключить закреплённый раздел',
-        collapseExpand: 'Свернуть / развернуть все элементы', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Свернуть / развернуть все элементы навигации', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Свернуть / развернуть все группы списка',
         collapseExpandSelectedItem: 'Свернуть / развернуть выбранный элемент',
         addTag: 'Добавить тег к выбранным файлам', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Задать свойство для выбранных файлов', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

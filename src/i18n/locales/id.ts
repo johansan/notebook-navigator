@@ -134,6 +134,8 @@ export const STRINGS_ID = {
     paneHeader: {
         collapseAllFolders: 'Ciutkan item',
         expandAllFolders: 'Luaskan semua item',
+        collapseAllListGroups: 'Ciutkan semua grup daftar',
+        expandAllListGroups: 'Luaskan semua grup daftar',
         showCalendar: 'Tampilkan kalender',
         hideCalendar: 'Sembunyikan kalender',
         newFolder: 'Folder baru',
@@ -500,6 +502,8 @@ export const STRINGS_ID = {
                 'list-search': 'Cari',
                 'list-reveal-file': 'Tampilkan file',
                 'list-descendants': 'Catatan dari subfolder',
+                'list-expand-all': 'Luaskan semua grup',
+                'list-collapse-all': 'Ciutkan semua grup',
                 'list-sort-ascending': 'Urutan: menaik',
                 'list-sort-descending': 'Urutan: menurun',
                 'list-sort-modified': 'Urutkan berdasarkan tanggal edit',
@@ -898,7 +902,8 @@ export const STRINGS_ID = {
         togglePropertiesBySelection: 'Alihkan properti berdasarkan pilihan',
         toggleCompactMode: 'Alihkan mode kompak', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alihkan bagian yang disematkan',
-        collapseExpand: 'Ciutkan / luaskan semua item',
+        collapseExpand: 'Ciutkan / luaskan semua item navigasi',
+        collapseExpandListGroups: 'Ciutkan / luaskan semua grup daftar',
         collapseExpandSelectedItem: 'Ciutkan / luaskan item yang dipilih',
         addTag: 'Tambah tag ke file yang dipilih',
         setProperty: 'Atur properti pada file yang dipilih', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

@@ -547,6 +547,13 @@ export class NotebookNavigatorView extends ItemView {
     }
 
     /**
+     * Trigger list-pane group header collapse/expand
+     */
+    triggerListGroupCollapse(): boolean {
+        return this.componentHandle?.triggerListGroupCollapse() ?? false;
+    }
+
+    /**
      * Trigger collapse/expand for the selected navigation item
      */
     triggerSelectedItemCollapse(): boolean {

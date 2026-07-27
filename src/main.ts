@@ -26,6 +26,7 @@ import {
     NOTEBOOK_NAVIGATOR_FOLDER_NOTE_SIDEBAR_VIEW,
     NOTEBOOK_NAVIGATOR_VIEW,
     STORAGE_KEYS,
+    type CollapsedPinnedContexts,
     type DualPaneOrientation,
     type PinnedSectionCollapseKey,
     type UXPreferences,
@@ -48,12 +49,12 @@ import type { ExternalIconProviderId } from './services/icons/external/providerR
 import type { NavigateToFolderOptions } from './hooks/useNavigatorReveal';
 import ReleaseCheckService, { type ReleaseUpdateNotice } from './services/ReleaseCheckService';
 import { isNotebookNavigatorCalendarView, isNotebookNavigatorView } from './view/viewGuards';
-import { localStorage } from './utils/localStorage';
+import { LEGACY_STORAGE_KEYS, localStorage } from './utils/localStorage';
 import { INTERNAL_NOTEBOOK_NAVIGATOR_API, NotebookNavigatorAPI } from './api/NotebookNavigatorAPI';
 import { initializeDatabase, shutdownDatabase } from './storage/fileOperations';
 import { ExtendedApp } from './types/obsidian-extended';
 import { getLeafSplitLocation } from './utils/workspaceSplit';
-import { cloneCollapsedPinnedContextsRecord, sanitizeRecord } from './utils/recordUtils';
+import { sanitizeRecord } from './utils/recordUtils';
 import { runAsyncAction } from './utils/async';
 import WorkspaceCoordinator from './services/workspace/WorkspaceCoordinator';
 import HomepageController from './services/workspace/HomepageController';
@@ -260,9 +261,10 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             return;
         }
         const includeDescendantNotesChanged = this.preferencesController.syncMirrorsFromSettings();
+        const collapsedPinnedContextsChanged = this.preferencesController.syncCollapsedPinnedContextsFromLocalStorage();
         this.preferencesController.initializeRecentDataManager();
         this.notifySettingsUpdateWithFullRefresh();
-        if (includeDescendantNotesChanged) {
+        if (includeDescendantNotesChanged || collapsedPinnedContextsChanged) {
             this.preferencesController.notifyUXPreferencesUpdate();
         }
     }
@@ -482,7 +484,10 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             const versionNumber =
                 typeof storedLocalStorageVersion === 'number' ? storedLocalStorageVersion : Number(storedLocalStorageVersion ?? Number.NaN);
             if (!versionNumber || versionNumber !== this.settingsController.getCurrentLocalStorageVersion()) {
-                // Future localStorage migration logic can go here
+                // One-time removal of stored values under keys the plugin no longer uses
+                LEGACY_STORAGE_KEYS.forEach(key => {
+                    localStorage.remove(key);
+                });
                 this.settingsController.setLocalStorageVersion();
             }
         }
@@ -515,7 +520,8 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             this.app,
             () => this.settings,
             () => this.saveSettingsAndUpdate(),
-            () => this.propertyTreeService
+            () => this.propertyTreeService,
+            mutator => this.preferencesController.updateCollapsedPinnedContexts(mutator)
         );
         this.commandQueue = new CommandQueueService();
         this.folderNoteSidebarService = new FolderNoteSidebarService(this);
@@ -991,16 +997,16 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.preferencesController.toggleShowCalendar();
     }
 
-    public async togglePinnedGroupCollapsed(collapseKey: PinnedSectionCollapseKey): Promise<void> {
-        const collapsedContexts = cloneCollapsedPinnedContextsRecord(this.settings.collapsedPinnedContexts);
-        if (collapsedContexts[collapseKey]) {
-            delete collapsedContexts[collapseKey];
-        } else {
-            collapsedContexts[collapseKey] = true;
-        }
+    public togglePinnedGroupCollapsed(collapseKey: PinnedSectionCollapseKey): void {
+        this.preferencesController.togglePinnedGroupCollapsed(collapseKey);
+    }
 
-        this.settings.collapsedPinnedContexts = collapsedContexts;
-        await this.saveSettingsAndUpdate();
+    public getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return this.preferencesController.getCollapsedPinnedContexts();
+    }
+
+    public updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return this.preferencesController.updateCollapsedPinnedContexts(mutator);
     }
 
     /**
@@ -1494,12 +1500,12 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             return false;
         }
 
-        const changesMade = await this.metadataService.cleanupAllMetadata();
-        if (changesMade) {
+        const changes = await this.metadataService.cleanupAllMetadata();
+        if (changes.settingsChanged) {
             await this.saveSettingsAndUpdate();
         }
 
-        return changesMade;
+        return changes.settingsChanged || changes.localChanged;
     }
 
     /**

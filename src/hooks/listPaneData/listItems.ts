@@ -84,6 +84,17 @@ interface BuildListItemsArgs {
 
 export type CollapsedListGroupRevealTarget = { type: 'pinned' } | { type: 'list-group'; collapseKey: string };
 
+export interface ListGroupExpansionToggleState {
+    /** Collapse keys affected by the toggle, including persisted descendants hidden by collapsed parents when expanding. */
+    collapseKeys: string[];
+    /** Whether the current list renders the separately persisted pinned header. */
+    hasPinnedGroup: boolean;
+    /** False when the current list has no collapsible headers. */
+    canToggle: boolean;
+    /** True when at least one rendered collapsible header is expanded. */
+    shouldCollapse: boolean;
+}
+
 /**
  * Search-independent group data built from the unfiltered file sequence.
  * The member-to-header map preserves custom group boundaries when search excludes the note that owns a header.
@@ -756,4 +767,57 @@ export function findCollapsedListGroupRevealTarget(
     }
 
     return null;
+}
+
+/**
+ * Resolves the bulk toggle from the collapsible headers rendered in the current list.
+ * Zero expanded groups expands every persisted key in the current scope, including descendants
+ * hidden by collapsed parents; any expanded group collapses the rendered headers.
+ */
+export function resolveListGroupExpansionToggleState(
+    listItems: readonly ListPaneItem[],
+    pinnedGroupExpanded: boolean,
+    collapsedListGroups: ReadonlySet<string>,
+    collapseKeyPrefix: string
+): ListGroupExpansionToggleState {
+    const collapseKeys = new Set<string>();
+    let hasPinnedGroup = false;
+    let hasExpandedGroup = false;
+
+    listItems.forEach(item => {
+        if (item.type !== ListPaneItemType.HEADER) {
+            return;
+        }
+
+        if (item.key === PINNED_SECTION_HEADER_KEY) {
+            hasPinnedGroup = true;
+            hasExpandedGroup ||= pinnedGroupExpanded;
+            return;
+        }
+
+        if (!item.collapseKey) {
+            return;
+        }
+
+        collapseKeys.add(item.collapseKey);
+        hasExpandedGroup ||= item.isCollapsed !== true;
+    });
+
+    const canToggle = hasPinnedGroup || collapseKeys.size > 0;
+    if (canToggle && !hasExpandedGroup) {
+        // Collapsed parents omit manual-sort descendant headers from listItems, so expanding must also
+        // clear persisted keys in the same selection and grouping scope that are currently hidden.
+        collapsedListGroups.forEach(collapseKey => {
+            if (collapseKey.startsWith(collapseKeyPrefix)) {
+                collapseKeys.add(collapseKey);
+            }
+        });
+    }
+
+    return {
+        collapseKeys: Array.from(collapseKeys),
+        hasPinnedGroup,
+        canToggle,
+        shouldCollapse: hasExpandedGroup
+    };
 }

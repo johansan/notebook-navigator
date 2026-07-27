@@ -134,6 +134,8 @@ export const STRINGS_PL = {
     paneHeader: {
         collapseAllFolders: 'Zwiń elementy', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Rozwiń wszystkie elementy', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Zwiń wszystkie grupy listy',
+        expandAllListGroups: 'Rozwiń wszystkie grupy listy',
         showCalendar: 'Pokaż kalendarz',
         hideCalendar: 'Ukryj kalendarz',
         newFolder: 'Nowy folder', // Tooltip for create new folder button (English: New folder)
@@ -502,6 +504,8 @@ export const STRINGS_PL = {
                 'list-search': 'Szukaj',
                 'list-reveal-file': 'Pokaż plik',
                 'list-descendants': 'Notatki z podfolderów',
+                'list-expand-all': 'Rozwiń wszystkie grupy',
+                'list-collapse-all': 'Zwiń wszystkie grupy',
                 'list-sort-ascending': 'Kolejność: rosnąco',
                 'list-sort-descending': 'Kolejność: malejąco',
                 'list-sort-modified': 'Sortuj według daty modyfikacji',
@@ -901,7 +905,8 @@ export const STRINGS_PL = {
         togglePropertiesBySelection: 'Przełącz atrybuty według wyboru',
         toggleCompactMode: 'Przełącz tryb kompaktowy', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Przełącz przypiętą sekcję',
-        collapseExpand: 'Zwiń / rozwiń wszystkie elementy', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Zwiń / rozwiń wszystkie elementy nawigacji', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Zwiń / rozwiń wszystkie grupy listy',
         collapseExpandSelectedItem: 'Zwiń / rozwiń wybrany element',
         addTag: 'Dodaj tag do wybranych plików', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Ustaw atrybut dla wybranych plików', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

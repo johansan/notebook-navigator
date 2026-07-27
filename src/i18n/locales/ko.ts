@@ -133,6 +133,8 @@ export const STRINGS_KO = {
     paneHeader: {
         collapseAllFolders: '항목 접기', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: '모든 항목 펼치기', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: '모든 목록 그룹 접기',
+        expandAllListGroups: '모든 목록 그룹 펼치기',
         showCalendar: '달력 표시',
         hideCalendar: '달력 숨기기',
         newFolder: '새 폴더', // Tooltip for create new folder button (English: New folder)
@@ -497,6 +499,8 @@ export const STRINGS_KO = {
                 'list-search': '검색',
                 'list-reveal-file': '파일 표시',
                 'list-descendants': '하위 폴더의 노트',
+                'list-expand-all': '모든 그룹 펼치기',
+                'list-collapse-all': '모든 그룹 접기',
                 'list-sort-ascending': '정렬 순서: 오름차순',
                 'list-sort-descending': '정렬 순서: 내림차순',
                 'list-sort-modified': '수정 날짜로 정렬',
@@ -895,7 +899,8 @@ export const STRINGS_KO = {
         togglePropertiesBySelection: '선택에 따라 속성 전환',
         toggleCompactMode: '컴팩트 모드 전환', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '고정 섹션 전환',
-        collapseExpand: '모든 항목 접기 / 펼치기', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: '모든 탐색 항목 접기 / 펼치기', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: '모든 목록 그룹 접기 / 펼치기',
         collapseExpandSelectedItem: '선택한 항목 접기 / 펼치기',
         addTag: '선택한 파일에 태그 추가', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '선택한 파일에 속성 설정', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

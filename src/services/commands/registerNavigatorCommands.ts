@@ -39,6 +39,7 @@ const STATIC_COMMAND_SPECS: NavigatorCommandSpec[] = [
     { id: 'toggle-properties-by-selection', name: strings.commands.togglePropertiesBySelection },
     { id: 'toggle-compact-mode', name: strings.commands.toggleCompactMode },
     { id: 'toggle-pinned-section', name: strings.commands.togglePinnedSection },
+    { id: 'collapse-expand-list-groups', name: strings.commands.collapseExpandListGroups },
     { id: 'toggle-dual-pane', name: strings.commands.toggleDualPane },
     { id: 'toggle-dual-pane-orientation', name: strings.commands.toggleDualPaneOrientation },
     { id: 'toggle-calendar', name: strings.commands.toggleCalendar },

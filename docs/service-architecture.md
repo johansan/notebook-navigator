@@ -981,6 +981,8 @@ interface ISettingsProvider {
   setRecentNotes(recentNotes: string[]): void;
   getRecentIcons(): Record<string, string[]>;
   setRecentIcons(recentIcons: Record<string, string[]>): void;
+  getCollapsedPinnedContexts(): CollapsedPinnedContexts;
+  updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean;
   getRecentColors(): string[];
   setRecentColors(recentColors: string[]): void;
 }
@@ -1070,7 +1072,8 @@ this.propertyOperations = new PropertyOperations(
   this.app,
   () => this.settings,
   () => this.saveSettingsAndUpdate(),
-  () => this.propertyTreeService
+  () => this.propertyTreeService,
+  mutator => this.preferencesController.updateCollapsedPinnedContexts(mutator)
 );
 this.commandQueue = new CommandQueueService();
 this.folderNoteSidebarService = new FolderNoteSidebarService(this);

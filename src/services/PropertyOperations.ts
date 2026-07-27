@@ -34,7 +34,7 @@ import { buildUsageSummaryFromPaths, renderAffectedFilesPreview, yieldToEventLoo
 import { PropertyFileMutations } from './propertyOperations/PropertyFileMutations';
 import type { PropertyKeyDeleteEventPayload, PropertyKeyRenameEventPayload } from './propertyOperations/types';
 import { getActivePropertyFields, setActivePropertyFields } from '../utils/vaultProfiles';
-import { ItemType } from '../types';
+import { ItemType, type CollapsedPinnedContexts } from '../types';
 
 export type { PropertyKeyRenameEventPayload, PropertyKeyDeleteEventPayload } from './propertyOperations/types';
 
@@ -193,7 +193,8 @@ export class PropertyOperations {
         private readonly app: App,
         private readonly getSettings: () => NotebookNavigatorSettings,
         private readonly saveSettingsAndUpdate: () => Promise<void>,
-        private readonly getPropertyTreeService: () => IPropertyTreeProvider | null
+        private readonly getPropertyTreeService: () => IPropertyTreeProvider | null,
+        private readonly updateCollapsedPinnedContexts: (mutator: (record: CollapsedPinnedContexts) => boolean) => boolean
     ) {
         this.fileMutations = new PropertyFileMutations(this.app);
     }
@@ -673,27 +674,22 @@ export class PropertyOperations {
         const newKeyNodeId = buildPropertyKeyNodeId(newKeyNormalized);
         const nodeChanged = this.renamePropertyNodeMetadataFields(settings, oldKeyNodeId, newKeyNodeId);
         const keyChanged = this.renamePropertyKeyMetadataFields(settings, oldKeyNodeId, newKeyNodeId);
-        const collapsedPinnedContextChanged = updateCollapsedPinnedContextKeys(
-            settings.collapsedPinnedContexts,
-            ItemType.PROPERTY,
-            oldKeyNodeId,
-            newKeyNodeId,
-            { descendantDelimiter: '=' }
+        // Pinned-section collapse state persists to vault-local storage on its own, so it must not drive the settings save.
+        this.updateCollapsedPinnedContexts(record =>
+            updateCollapsedPinnedContextKeys(record, ItemType.PROPERTY, oldKeyNodeId, newKeyNodeId, { descendantDelimiter: '=' })
         );
-        return nodeChanged || keyChanged || collapsedPinnedContextChanged;
+        return nodeChanged || keyChanged;
     }
 
     private removePropertyMetadataForDeletedKey(settings: NotebookNavigatorSettings, normalizedKey: string): boolean {
         const keyNodeId = buildPropertyKeyNodeId(normalizedKey);
         const nodeChanged = this.removePropertyNodeMetadataFields(settings, keyNodeId);
         const keyChanged = this.removePropertyKeyMetadataFields(settings, keyNodeId);
-        const collapsedPinnedContextChanged = deleteCollapsedPinnedContextKeys(
-            settings.collapsedPinnedContexts,
-            ItemType.PROPERTY,
-            keyNodeId,
-            { descendantDelimiter: '=' }
+        // Pinned-section collapse state persists to vault-local storage on its own, so it must not drive the settings save.
+        this.updateCollapsedPinnedContexts(record =>
+            deleteCollapsedPinnedContextKeys(record, ItemType.PROPERTY, keyNodeId, { descendantDelimiter: '=' })
         );
-        return nodeChanged || keyChanged || collapsedPinnedContextChanged;
+        return nodeChanged || keyChanged;
     }
 
     protected async updateSettingsAfterRename(oldKeyNormalized: string, newKeyDisplay: string): Promise<void> {

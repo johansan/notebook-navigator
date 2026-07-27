@@ -25,13 +25,15 @@ import {
     buildListGroupItemCountData,
     buildListItems,
     findCollapsedListGroupRevealTarget,
+    resolveListGroupExpansionToggleState,
     type ListPaneConfig
 } from '../../../src/hooks/listPaneData/listItems';
 import { FILE_VISIBILITY } from '../../../src/utils/fileTypeUtils';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType, ListPaneItemType, PINNED_SECTION_HEADER_KEY } from '../../../src/types';
-import { buildListGroupCollapseKey } from '../../../src/utils/listGroupCollapse';
+import { buildListGroupCollapseKey, buildListGroupCollapseKeyPrefix } from '../../../src/utils/listGroupCollapse';
 import { formatTextCount } from '../../../src/utils/wordCountUtils';
+import type { ListPaneItem } from '../../../src/types/virtualization';
 
 interface FileMetadataRecord {
     properties: PropertyItem[] | null;
@@ -144,6 +146,99 @@ function getFolderHeaderSegmentItems(
             segments: item.headerFolderSegments ?? []
         }));
 }
+
+describe('resolveListGroupExpansionToggleState', () => {
+    const collapseKeyPrefix = buildListGroupCollapseKeyPrefix({
+        selectionType: ItemType.FOLDER,
+        selectedFolderPath: '/',
+        selectedTag: null,
+        selectedProperty: null,
+        groupingMode: 'custom'
+    });
+    const pinnedHeader: ListPaneItem = {
+        type: ListPaneItemType.HEADER,
+        data: 'Pinned',
+        key: PINNED_SECTION_HEADER_KEY
+    };
+    const expandedHeader: ListPaneItem = {
+        type: ListPaneItemType.HEADER,
+        data: 'Expanded',
+        key: 'expanded',
+        collapseKey: 'group:expanded',
+        isCollapsed: false
+    };
+    const collapsedHeader: ListPaneItem = {
+        type: ListPaneItemType.HEADER,
+        data: 'Collapsed',
+        key: 'collapsed',
+        collapseKey: 'group:collapsed',
+        isCollapsed: true
+    };
+
+    it('expands all when zero rendered groups are expanded', () => {
+        expect(resolveListGroupExpansionToggleState([pinnedHeader, collapsedHeader], false, new Set(), collapseKeyPrefix)).toEqual({
+            collapseKeys: ['group:collapsed'],
+            hasPinnedGroup: true,
+            canToggle: true,
+            shouldCollapse: false
+        });
+    });
+
+    it('collapses all when some rendered groups are expanded', () => {
+        expect(
+            resolveListGroupExpansionToggleState([expandedHeader, collapsedHeader], false, new Set(), collapseKeyPrefix).shouldCollapse
+        ).toBe(true);
+    });
+
+    it('collapses all when every rendered group is expanded', () => {
+        expect(
+            resolveListGroupExpansionToggleState([pinnedHeader, expandedHeader], true, new Set(), collapseKeyPrefix).shouldCollapse
+        ).toBe(true);
+    });
+
+    it('expands persisted descendant groups that are hidden behind a collapsed parent', () => {
+        const folderPrefix = buildListGroupCollapseKeyPrefix({
+            selectionType: ItemType.FOLDER,
+            selectedFolderPath: '/',
+            selectedTag: null,
+            selectedProperty: null,
+            groupingMode: 'folder'
+        });
+        const parentCollapseKey = createCollapseKey('folder', 'folder:/Alpha');
+        const hiddenDescendantCollapseKey = createCollapseKey('folder', 'manual-sort-custom:Alpha/Header.md');
+        const otherGroupingCollapseKey = createCollapseKey('custom', 'manual-sort-custom:Alpha/Header.md');
+        const parentHeader: ListPaneItem = {
+            type: ListPaneItemType.HEADER,
+            data: 'Alpha',
+            key: 'header-folder:/Alpha',
+            collapseKey: parentCollapseKey,
+            isCollapsed: true
+        };
+
+        expect(
+            resolveListGroupExpansionToggleState(
+                [parentHeader],
+                false,
+                new Set([parentCollapseKey, hiddenDescendantCollapseKey, otherGroupingCollapseKey]),
+                folderPrefix
+            )
+        ).toEqual({
+            collapseKeys: [parentCollapseKey, hiddenDescendantCollapseKey],
+            hasPinnedGroup: false,
+            canToggle: true,
+            shouldCollapse: false
+        });
+    });
+
+    it('disables the toggle when the list has no collapsible group headers', () => {
+        expect(resolveListGroupExpansionToggleState([], false, new Set(), collapseKeyPrefix)).toEqual({
+            collapseKeys: [],
+            hasPinnedGroup: false,
+            canToggle: false,
+            shouldCollapse: false
+        });
+    });
+});
 
 describe('buildListItems pinned display scope', () => {
     it('attaches internal search evidence to its file row', () => {

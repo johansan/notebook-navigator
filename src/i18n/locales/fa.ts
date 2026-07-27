@@ -134,6 +134,8 @@ export const STRINGS_FA = {
     paneHeader: {
         collapseAllFolders: 'جمع کردن آیتم‌ها',
         expandAllFolders: 'باز کردن همه آیتم‌ها',
+        collapseAllListGroups: 'جمع کردن همه گروه‌های فهرست',
+        expandAllListGroups: 'باز کردن همه گروه‌های فهرست',
         showCalendar: 'نمایش تقویم',
         hideCalendar: 'پنهان کردن تقویم',
         newFolder: 'پوشه جدید',
@@ -499,6 +501,8 @@ export const STRINGS_FA = {
                 'list-search': 'جستجو',
                 'list-reveal-file': 'نمایش فایل',
                 'list-descendants': 'یادداشت‌ها از زیرپوشه‌ها',
+                'list-expand-all': 'باز کردن همه گروه‌ها',
+                'list-collapse-all': 'جمع کردن همه گروه‌ها',
                 'list-sort-ascending': 'ترتیب: صعودی',
                 'list-sort-descending': 'ترتیب: نزولی',
                 'list-sort-modified': 'مرتب‌سازی بر اساس تاریخ ویرایش',
@@ -898,7 +902,8 @@ export const STRINGS_FA = {
         togglePropertiesBySelection: 'تغییر ویژگی‌ها بر اساس انتخاب',
         toggleCompactMode: 'تغییر حالت فشرده', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'تغییر بخش سنجاق‌شده',
-        collapseExpand: 'جمع / باز کردن همه آیتم‌ها',
+        collapseExpand: 'جمع / باز کردن همه آیتم‌های ناوبری',
+        collapseExpandListGroups: 'جمع / باز کردن همه گروه‌های فهرست',
         collapseExpandSelectedItem: 'جمع / باز کردن آیتم انتخاب‌شده',
         addTag: 'افزودن برچسب به فایل‌های انتخابی',
         setProperty: 'تنظیم ویژگی روی فایل‌های انتخابی', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

@@ -134,6 +134,8 @@ export const STRINGS_TR = {
     paneHeader: {
         collapseAllFolders: 'Öğeleri daralt', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Tüm öğeleri genişlet', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Tüm liste gruplarını daralt',
+        expandAllListGroups: 'Tüm liste gruplarını genişlet',
         showCalendar: 'Takvimi göster',
         hideCalendar: 'Takvimi gizle',
         newFolder: 'Yeni klasör', // Tooltip for create new folder button (English: New folder)
@@ -499,6 +501,8 @@ export const STRINGS_TR = {
                 'list-search': 'Ara',
                 'list-reveal-file': 'Dosyayı göster',
                 'list-descendants': 'Alt klasörlerden notlar',
+                'list-expand-all': 'Tüm grupları genişlet',
+                'list-collapse-all': 'Tüm grupları daralt',
                 'list-sort-ascending': 'Sıralama: artan',
                 'list-sort-descending': 'Sıralama: azalan',
                 'list-sort-modified': 'Düzenlenme tarihine göre sırala',
@@ -896,7 +900,8 @@ export const STRINGS_TR = {
         togglePropertiesBySelection: 'Özellikleri seçime göre aç/kapat',
         toggleCompactMode: 'Kompakt modu aç/kapat', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Sabitlenmiş bölümü aç/kapat',
-        collapseExpand: 'Tüm öğeleri daralt / genişlet', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Tüm gezinme öğelerini daralt / genişlet', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Tüm liste gruplarını daralt / genişlet',
         collapseExpandSelectedItem: 'Seçili öğeyi daralt / genişlet',
         addTag: 'Seçili dosyalara etiket ekle', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Seçili dosyalarda özellik ayarla', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
