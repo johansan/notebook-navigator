@@ -107,7 +107,7 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.2.5',
-        date: '2026-07-26',
+        date: '2026-07-28',
         showOnUpdate: true,
         info: 'Good news if you use Omnisearch with Notebook Navigator! Searching inside a folder could previously show few or no results even when the folder contained matching notes. Simon Cambier just released [Omnisearch 1.30.0](https://github.com/scambier/obsidian-omnisearch/releases/tag/1.30.0) which fixes this. Update Omnisearch to get much better search results inside folders.',
         new: [
