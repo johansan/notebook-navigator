@@ -133,6 +133,8 @@ export const STRINGS_ZH_TW = {
     paneHeader: {
         collapseAllFolders: '摺疊項目',
         expandAllFolders: '展開所有項目',
+        collapseAllListGroups: '摺疊所有列表群組',
+        expandAllListGroups: '展開所有列表群組',
         showCalendar: '顯示日曆',
         hideCalendar: '隱藏日曆',
         newFolder: '新建資料夾',
@@ -497,6 +499,8 @@ export const STRINGS_ZH_TW = {
                 'list-search': '搜尋',
                 'list-reveal-file': '定位檔案',
                 'list-descendants': '子資料夾中的筆記',
+                'list-expand-all': '展開所有群組',
+                'list-collapse-all': '摺疊所有群組',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
                 'list-sort-modified': '依編輯日期排序',
@@ -890,7 +894,8 @@ export const STRINGS_ZH_TW = {
         togglePropertiesBySelection: '依選擇切換屬性',
         toggleCompactMode: '切換精簡模式', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '切換置頂區域',
-        collapseExpand: '摺疊/展開所有項目',
+        collapseExpand: '摺疊/展開所有導覽項目',
+        collapseExpandListGroups: '摺疊/展開所有列表群組',
         collapseExpandSelectedItem: '摺疊/展開所選項目',
         addTag: '為選定檔案新增標籤',
         setProperty: '為選定檔案設定屬性', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

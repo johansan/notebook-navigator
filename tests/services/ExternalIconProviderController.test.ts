@@ -30,6 +30,7 @@ import {
     type ExternalIconProviderId
 } from '../../src/services/icons/external/providerRegistry';
 import type { BaseFontIconProvider } from '../../src/services/icons/providers/BaseFontIconProvider';
+import type { CollapsedPinnedContexts } from '../../src/types';
 
 const PROVIDER_ID: ExternalIconProviderId = 'bootstrap-icons';
 const PROVIDER_CONFIG = EXTERNAL_ICON_PROVIDERS[PROVIDER_ID];
@@ -52,6 +53,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentIcons(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 
     getRecentColors(): string[] {
         return [];

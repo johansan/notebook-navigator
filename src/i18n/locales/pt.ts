@@ -134,6 +134,8 @@ export const STRINGS_PT = {
     paneHeader: {
         collapseAllFolders: 'Recolher itens', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Expandir todos os itens', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Recolher todos os grupos da lista',
+        expandAllListGroups: 'Expandir todos os grupos da lista',
         showCalendar: 'Mostrar calendário',
         hideCalendar: 'Ocultar calendário',
         newFolder: 'Nova pasta', // Tooltip for create new folder button (English: New folder)
@@ -500,6 +502,8 @@ export const STRINGS_PT = {
                 'list-search': 'Pesquisar',
                 'list-reveal-file': 'Revelar ficheiro',
                 'list-descendants': 'Notas de subpastas',
+                'list-expand-all': 'Expandir todos os grupos',
+                'list-collapse-all': 'Recolher todos os grupos',
                 'list-sort-ascending': 'Ordem: crescente',
                 'list-sort-descending': 'Ordem: decrescente',
                 'list-sort-modified': 'Ordenar por data de edição',
@@ -898,7 +902,8 @@ export const STRINGS_PT = {
         togglePropertiesBySelection: 'Alternar propriedades por seleção',
         toggleCompactMode: 'Alternar modo compacto', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alternar secção fixada',
-        collapseExpand: 'Recolher / expandir todos os itens', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Recolher / expandir todos os itens de navegação', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Recolher / expandir todos os grupos da lista',
         collapseExpandSelectedItem: 'Recolher / expandir o item selecionado',
         addTag: 'Adicionar etiqueta aos ficheiros selecionados', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Definir propriedade nos ficheiros selecionados', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

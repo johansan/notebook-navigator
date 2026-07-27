@@ -857,7 +857,22 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
             runAsyncAction(async () => {
                 const view = await ensureNavigatorOpen(plugin);
                 await view?.whenReady();
-                await plugin.togglePinnedGroupCollapsed(getPinnedCollapseKeyForCommand(plugin));
+                plugin.togglePinnedGroupCollapsed(getPinnedCollapseKeyForCommand(plugin));
+            });
+        }
+    });
+
+    // Command to collapse or expand all group headers in the list pane
+    plugin.addCommand({
+        id: 'collapse-expand-list-groups',
+        name: strings.commands.collapseExpandListGroups,
+        callback: () => {
+            runAsyncAction(async () => {
+                const view = await ensureNavigatorOpen(plugin);
+                if (!view || !(await view.whenReady())) {
+                    return;
+                }
+                view.triggerListGroupCollapse();
             });
         }
     });

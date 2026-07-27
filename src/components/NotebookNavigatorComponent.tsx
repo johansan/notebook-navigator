@@ -166,6 +166,7 @@ export interface NotebookNavigatorHandle {
     toggleSearch: () => void;
     searchWithDescendants: () => void;
     triggerCollapse: () => void;
+    triggerListGroupCollapse: () => boolean;
     triggerSelectedItemCollapse: () => boolean;
     stopContentProcessing: () => void;
     rebuildCache: () => Promise<void>;
@@ -1275,6 +1276,9 @@ export const NotebookNavigatorComponent = React.memo(
                     window.requestAnimationFrame(() => {
                         ensureSelectedNavigationItemVisible();
                     });
+                },
+                triggerListGroupCollapse: () => {
+                    return listPaneRef.current?.toggleGroupExpansion() ?? false;
                 },
                 triggerSelectedItemCollapse: () => {
                     const didToggle = navigationPaneRef.current?.triggerSelectedItemCollapse() ?? false;

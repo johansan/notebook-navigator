@@ -56,7 +56,7 @@ import { useFileCache } from '../context/StorageContext';
 import { useShortcuts } from '../context/ShortcutsContext';
 import { useListPaneKeyboard } from '../hooks/useListPaneKeyboard';
 import { useListPaneData } from '../hooks/useListPaneData';
-import { findCollapsedListGroupRevealTarget } from '../hooks/listPaneData/listItems';
+import { findCollapsedListGroupRevealTarget, resolveListGroupExpansionToggleState } from '../hooks/listPaneData/listItems';
 import { useListPaneScroll } from '../hooks/useListPaneScroll';
 import { useListPaneTitle } from '../hooks/useListPaneTitle';
 import { useListPaneAppearance } from '../hooks/useListPaneAppearance';
@@ -77,7 +77,7 @@ import type { FileItemStorageHelpers } from './FileItem';
 import { type SearchShortcut } from '../types/shortcuts';
 import { type SearchNavFilterState } from '../types/search';
 import { EMPTY_LIST_MENU_TYPE } from '../utils/contextMenu';
-import { useUXPreferences } from '../context/UXPreferencesContext';
+import { useCollapsedPinnedContexts, useUXPreferences } from '../context/UXPreferencesContext';
 import { type InclusionOperator } from '../utils/filterSearch';
 import type { FolderDecorationModel } from '../utils/folderDecoration';
 import { useSurfaceColorVariables } from '../hooks/useSurfaceColorVariables';
@@ -92,6 +92,7 @@ import type { FileItemPillOrderModel } from '../utils/fileItemPillOrder';
 import { compositeWithBase } from '../utils/colorUtils';
 import { runAsyncAction } from '../utils/async';
 import { getFilesForNavigationSelection, getPinnedSectionCollapseKey } from '../utils/selectionUtils';
+import { buildListGroupCollapseKeyPrefix } from '../utils/listGroupCollapse';
 import {
     applyManualSortMarkdownOrder,
     applyManualSortTargetOrderToPlanningScope,
@@ -145,6 +146,7 @@ export interface ListPaneHandle {
     searchWithDescendants: () => void;
     executeSearchShortcut: (params: ExecuteSearchShortcutParams) => Promise<void>;
     getManualSortNewFileContext: () => ManualSortNewFilePlacementContext | null;
+    toggleGroupExpansion: () => boolean;
 }
 
 interface ListPaneProps {
@@ -249,6 +251,9 @@ interface ListPaneTitleChromeProps {
     onSearchToggle?: () => void;
     onManualSortStart?: (propertyKey: string) => void;
     getManualSortNewFileContext?: () => ManualSortNewFilePlacementContext | null;
+    canToggleGroupExpansion: boolean;
+    shouldCollapseGroups: boolean;
+    onToggleGroupExpansion: () => boolean;
     actionsDisabled?: boolean;
     shouldShowDesktopTitleArea: boolean;
     children: React.ReactNode;
@@ -260,6 +265,9 @@ function ListPaneTitleChrome({
     onSearchToggle,
     onManualSortStart,
     getManualSortNewFileContext,
+    canToggleGroupExpansion,
+    shouldCollapseGroups,
+    onToggleGroupExpansion,
     actionsDisabled,
     shouldShowDesktopTitleArea,
     children
@@ -273,6 +281,9 @@ function ListPaneTitleChrome({
                 onSearchToggle={onSearchToggle}
                 onManualSortStart={onManualSortStart}
                 getManualSortNewFileContext={getManualSortNewFileContext}
+                canToggleGroupExpansion={canToggleGroupExpansion}
+                shouldCollapseGroups={shouldCollapseGroups}
+                onToggleGroupExpansion={onToggleGroupExpansion}
                 actionsDisabled={actionsDisabled}
                 desktopTitle={desktopTitle}
                 breadcrumbSegments={breadcrumbSegments}
@@ -334,7 +345,6 @@ export const ListPane = React.memo(
         const [propertyKeyboardReorderState, setPropertyKeyboardReorderState] = useState<PropertyKeyboardReorderState | null>(null);
         const [forceSearchDescendants, setForceSearchDescendants] = useState(false);
         const hoverSyncFrameRef = useRef<number | null>(null);
-        const pinnedRevealExpansionRef = useRef<string | null>(null);
         const manualSortEditSessionCounterRef = useRef(0);
         const manualSortEditSaveCounterRef = useRef(0);
         const propertyKeyboardReorderSaveCounterRef = useRef(0);
@@ -474,9 +484,10 @@ export const ListPane = React.memo(
             }
         }, [isManualSortEditActive, props.rootContainerRef]);
         const pinnedCollapseKey = getPinnedSectionCollapseKey({ selectionType, selectedFolder, selectedTag, selectedProperty });
-        const pinnedGroupExpanded = settings.collapsedPinnedContexts[pinnedCollapseKey] !== true;
+        const collapsedPinnedContexts = useCollapsedPinnedContexts();
+        const pinnedGroupExpanded = collapsedPinnedContexts[pinnedCollapseKey] !== true;
         const handlePinnedGroupHeaderToggle = React.useCallback(() => {
-            runAsyncAction(() => plugin.togglePinnedGroupCollapsed(pinnedCollapseKey));
+            plugin.togglePinnedGroupCollapsed(pinnedCollapseKey);
         }, [pinnedCollapseKey, plugin]);
         const collapsedListGroups = isManualSortEditActive ? EMPTY_COLLAPSED_LIST_GROUPS : expansionState.collapsedListGroups;
         const groupCollapseStateSignature = useMemo(() => {
@@ -718,6 +729,41 @@ export const ListPane = React.memo(
             visibility: { includeDescendantNotes: effectiveIncludeDescendantNotes, showHiddenItems },
             propertySortOrderOverride
         });
+        const listGroupCollapseKeyPrefix = useMemo(
+            () =>
+                buildListGroupCollapseKeyPrefix({
+                    selectionType,
+                    selectedFolderPath,
+                    selectedTag,
+                    selectedProperty,
+                    groupingMode: effectiveAppearanceSettings.groupBy
+                }),
+            [effectiveAppearanceSettings.groupBy, selectedFolderPath, selectedProperty, selectedTag, selectionType]
+        );
+        const listGroupExpansionToggleState = useMemo(
+            () => resolveListGroupExpansionToggleState(listItems, pinnedGroupExpanded, collapsedListGroups, listGroupCollapseKeyPrefix),
+            [collapsedListGroups, listGroupCollapseKeyPrefix, listItems, pinnedGroupExpanded]
+        );
+        const toggleGroupExpansion = React.useCallback((): boolean => {
+            if (isManualSortEditActive || !listGroupExpansionToggleState.canToggle) {
+                return false;
+            }
+
+            const collapsed = listGroupExpansionToggleState.shouldCollapse;
+            expansionDispatch({
+                type: 'SET_LIST_GROUPS_COLLAPSED',
+                collapseKeys: listGroupExpansionToggleState.collapseKeys,
+                collapsed
+            });
+
+            const pinnedGroupCollapsed = !pinnedGroupExpanded;
+            if (listGroupExpansionToggleState.hasPinnedGroup && pinnedGroupCollapsed !== collapsed) {
+                // The pinned header persists per navigation context, separately from the other list-group collapse keys.
+                plugin.togglePinnedGroupCollapsed(pinnedCollapseKey);
+            }
+
+            return true;
+        }, [expansionDispatch, isManualSortEditActive, listGroupExpansionToggleState, pinnedCollapseKey, pinnedGroupExpanded, plugin]);
         const listStartsWithGroupHeader =
             listItems[0]?.type === ListPaneItemType.TOP_SPACER && listItems[1]?.type === ListPaneItemType.HEADER;
         const effectiveTopSpacerHeight = settings.stickyGroupHeaders && listStartsWithGroupHeader ? 0 : topSpacerHeight;
@@ -865,20 +911,8 @@ export const ListPane = React.memo(
             }
 
             if (revealTarget.type === 'pinned') {
-                if (pinnedRevealExpansionRef.current === pinnedCollapseKey) {
-                    return;
-                }
-
-                pinnedRevealExpansionRef.current = pinnedCollapseKey;
-                runAsyncAction(async () => {
-                    try {
-                        await plugin.togglePinnedGroupCollapsed(pinnedCollapseKey);
-                    } finally {
-                        if (pinnedRevealExpansionRef.current === pinnedCollapseKey) {
-                            pinnedRevealExpansionRef.current = null;
-                        }
-                    }
-                });
+                // The toggle updates the record synchronously, so the effect re-runs with the expanded state and needs no re-entry guard.
+                plugin.togglePinnedGroupCollapsed(pinnedCollapseKey);
                 return;
             }
 
@@ -1564,6 +1598,9 @@ export const ListPane = React.memo(
                     onSearchToggle={handleSearchToggleWithDefaultScope}
                     onManualSortStart={handleManualSortStart}
                     getManualSortNewFileContext={getManualSortNewFileContext}
+                    canToggleGroupExpansion={listGroupExpansionToggleState.canToggle}
+                    shouldCollapseGroups={listGroupExpansionToggleState.shouldCollapse}
+                    onToggleGroupExpansion={toggleGroupExpansion}
                     useFloatingLayout={shouldUseFloatingToolbars}
                 />
             );
@@ -1572,7 +1609,10 @@ export const ListPane = React.memo(
             handleManualSortStart,
             handleSearchToggleWithDefaultScope,
             isSearchActive,
-            shouldUseFloatingToolbars
+            listGroupExpansionToggleState.canToggle,
+            listGroupExpansionToggleState.shouldCollapse,
+            shouldUseFloatingToolbars,
+            toggleGroupExpansion
         ]);
 
         useEffect(() => {
@@ -1647,7 +1687,8 @@ export const ListPane = React.memo(
                 toggleSearch: toggleSearchWithDefaultScope,
                 searchWithDescendants,
                 executeSearchShortcut: executeSearchShortcutWithDefaultScope,
-                getManualSortNewFileContext
+                getManualSortNewFileContext,
+                toggleGroupExpansion
             }),
             [
                 filePathToIndex,
@@ -1662,7 +1703,8 @@ export const ListPane = React.memo(
                 modifySearchWithTagWithDefaultScope,
                 modifySearchWithPropertyWithDefaultScope,
                 modifySearchWithDateTokenWithDefaultScope,
-                getManualSortNewFileContext
+                getManualSortNewFileContext,
+                toggleGroupExpansion
             ]
         );
 
@@ -1716,6 +1758,9 @@ export const ListPane = React.memo(
                         onSearchToggle={handleSearchToggleWithDefaultScope}
                         onManualSortStart={handleManualSortStart}
                         getManualSortNewFileContext={getManualSortNewFileContext}
+                        canToggleGroupExpansion={listGroupExpansionToggleState.canToggle}
+                        shouldCollapseGroups={listGroupExpansionToggleState.shouldCollapse}
+                        onToggleGroupExpansion={toggleGroupExpansion}
                         actionsDisabled={isManualSortEditActive}
                         shouldShowDesktopTitleArea={shouldShowDesktopTitleArea}
                     >

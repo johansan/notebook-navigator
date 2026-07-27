@@ -134,6 +134,8 @@ export const STRINGS_AR = {
     paneHeader: {
         collapseAllFolders: 'طي العناصر', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'توسيع جميع العناصر', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'طي جميع مجموعات القائمة',
+        expandAllListGroups: 'توسيع جميع مجموعات القائمة',
         showCalendar: 'عرض التقويم',
         hideCalendar: 'إخفاء التقويم',
         newFolder: 'مجلد جديد', // Tooltip for create new folder button (English: New folder)
@@ -497,6 +499,8 @@ export const STRINGS_AR = {
                 'list-search': 'بحث',
                 'list-reveal-file': 'الكشف عن الملف',
                 'list-descendants': 'ملاحظات من المجلدات الفرعية',
+                'list-expand-all': 'توسيع جميع المجموعات',
+                'list-collapse-all': 'طي جميع المجموعات',
                 'list-sort-ascending': 'ترتيب الفرز: تصاعدي',
                 'list-sort-descending': 'ترتيب الفرز: تنازلي',
                 'list-sort-modified': 'الفرز حسب تاريخ التعديل',
@@ -893,7 +897,8 @@ export const STRINGS_AR = {
         togglePropertiesBySelection: 'تبديل الخصائص حسب التحديد',
         toggleCompactMode: 'تبديل الوضع المضغوط', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'تبديل قسم المثبتة',
-        collapseExpand: 'طي / توسيع جميع العناصر', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'طي / توسيع جميع عناصر التنقل', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'طي / توسيع جميع مجموعات القائمة',
         collapseExpandSelectedItem: 'طي / توسيع العنصر المحدد',
         addTag: 'إضافة وسم للملفات المحددة', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'تعيين خاصية على الملفات المحددة', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

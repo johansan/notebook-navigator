@@ -134,6 +134,8 @@ export const STRINGS_VI = {
     paneHeader: {
         collapseAllFolders: 'Thu gọn các mục', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Mở rộng tất cả các mục', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Thu gọn tất cả nhóm trong danh sách',
+        expandAllListGroups: 'Mở rộng tất cả nhóm trong danh sách',
         showCalendar: 'Hiển thị lịch',
         hideCalendar: 'Ẩn lịch',
         newFolder: 'Thư mục mới', // Tooltip for create new folder button (English: New folder)
@@ -499,6 +501,8 @@ export const STRINGS_VI = {
                 'list-search': 'Tìm kiếm',
                 'list-reveal-file': 'Hiện tệp',
                 'list-descendants': 'Ghi chú từ thư mục con',
+                'list-expand-all': 'Mở rộng tất cả nhóm',
+                'list-collapse-all': 'Thu gọn tất cả nhóm',
                 'list-sort-ascending': 'Thứ tự: tăng dần',
                 'list-sort-descending': 'Thứ tự: giảm dần',
                 'list-sort-modified': 'Sắp xếp theo ngày chỉnh sửa',
@@ -899,7 +903,8 @@ export const STRINGS_VI = {
         togglePropertiesBySelection: 'Bật/tắt thuộc tính theo lựa chọn',
         toggleCompactMode: 'Bật/tắt chế độ gọn', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Bật/tắt phần đã ghim',
-        collapseExpand: 'Thu gọn / mở rộng tất cả', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Thu gọn / mở rộng tất cả mục điều hướng', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Thu gọn / mở rộng tất cả nhóm trong danh sách',
         collapseExpandSelectedItem: 'Thu gọn / mở rộng mục đã chọn',
         addTag: 'Thêm thẻ vào tệp đã chọn', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Đặt thuộc tính cho tệp đã chọn', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

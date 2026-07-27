@@ -44,6 +44,8 @@ export type UXIconId =
     | 'list-search'
     | 'list-reveal-file'
     | 'list-descendants'
+    | 'list-expand-all'
+    | 'list-collapse-all'
     | 'list-sort-ascending'
     | 'list-sort-descending'
     | 'list-sort-modified'
@@ -91,6 +93,8 @@ export const UX_ICON_DEFINITIONS: UXIconDefinition[] = [
     { id: 'list-search', category: 'listPane', defaultIconId: 'search' },
     { id: 'list-reveal-file', category: 'listPane', defaultIconId: 'locate-fixed' },
     { id: 'list-descendants', category: 'listPane', defaultIconId: 'layers' },
+    { id: 'list-expand-all', category: 'listPane', defaultIconId: 'list-chevrons-up-down' },
+    { id: 'list-collapse-all', category: 'listPane', defaultIconId: 'list-chevrons-down-up' },
     { id: 'list-sort-ascending', category: 'listPane', defaultIconId: 'sort-asc' },
     { id: 'list-sort-descending', category: 'listPane', defaultIconId: 'sort-desc' },
     { id: 'list-sort-modified', category: 'listPane', defaultIconId: 'calendar-clock' },

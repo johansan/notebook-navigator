@@ -37,6 +37,7 @@ vi.mock('../src/settings/LazyNotebookNavigatorSettingTab', () => ({
 import NotebookNavigatorPlugin from '../src/main.ts';
 import { DEFAULT_SETTINGS } from '../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../src/settings/types';
+import type { MetadataCleanupResult } from '../src/services/metadata';
 
 interface SettingsControllerHarness {
     settings: NotebookNavigatorSettings;
@@ -51,9 +52,14 @@ interface SettingsControllerHarness {
 
 interface PreferencesControllerHarness {
     syncMirrorsFromSettings: ReturnType<typeof vi.fn>;
+    syncCollapsedPinnedContextsFromLocalStorage: ReturnType<typeof vi.fn>;
     initializeRecentDataManager: ReturnType<typeof vi.fn>;
     notifyUXPreferencesUpdate: ReturnType<typeof vi.fn>;
     resetUXPreferencesToDefaults: ReturnType<typeof vi.fn>;
+}
+
+interface MetadataServiceHarness {
+    cleanupAllMetadata: ReturnType<typeof vi.fn<() => Promise<MetadataCleanupResult>>>;
 }
 
 interface PluginHarness {
@@ -70,13 +76,18 @@ interface PluginHarness {
     settings: NotebookNavigatorSettings;
     settingsController: SettingsControllerHarness;
     preferencesController: PreferencesControllerHarness;
+    metadataService: MetadataServiceHarness | null;
     isUnloading: boolean;
+    hasStartedWithSettings: boolean;
     isRestoringDefaultSettings: boolean;
+    loadSettings: ReturnType<typeof vi.fn>;
     notifySettingsUpdateWithFullRefresh: ReturnType<typeof vi.fn>;
     onSettingsUpdate: ReturnType<typeof vi.fn>;
     saveSettingsAndUpdate: ReturnType<typeof vi.fn>;
+    onExternalSettingsChange(): Promise<void>;
     importSettingsTransfer(transferData: unknown): Promise<void>;
     resetAllSettings(): Promise<void>;
+    runMetadataCleanup(): Promise<boolean>;
     restoreDefaultSettingsFile(): Promise<void>;
 }
 
@@ -94,9 +105,13 @@ function createPluginHarness(): PluginHarness {
     };
     const preferencesController: PreferencesControllerHarness = {
         syncMirrorsFromSettings: vi.fn(() => false),
+        syncCollapsedPinnedContextsFromLocalStorage: vi.fn(() => false),
         initializeRecentDataManager: vi.fn(),
         notifyUXPreferencesUpdate: vi.fn(),
         resetUXPreferencesToDefaults: vi.fn()
+    };
+    const metadataService: MetadataServiceHarness = {
+        cleanupAllMetadata: vi.fn().mockResolvedValue({ settingsChanged: false, localChanged: false })
     };
     const plugin = new NotebookNavigatorPlugin(
         {} as App,
@@ -114,8 +129,11 @@ function createPluginHarness(): PluginHarness {
         settings,
         settingsController,
         preferencesController,
+        metadataService,
         isUnloading: false,
+        hasStartedWithSettings: true,
         isRestoringDefaultSettings: false,
+        loadSettings: vi.fn().mockResolvedValue('loaded'),
         notifySettingsUpdateWithFullRefresh: vi.fn(),
         onSettingsUpdate: vi.fn(),
         saveSettingsAndUpdate: vi.fn().mockResolvedValue(undefined)
@@ -128,6 +146,17 @@ afterEach(() => {
 });
 
 describe('NotebookNavigatorPlugin settings orchestration', () => {
+    it('publishes pinned collapse state migrated during an external settings reload', async () => {
+        const plugin = createPluginHarness();
+        plugin.preferencesController.syncCollapsedPinnedContextsFromLocalStorage.mockReturnValue(true);
+
+        await plugin.onExternalSettingsChange();
+
+        expect(plugin.preferencesController.syncCollapsedPinnedContextsFromLocalStorage).toHaveBeenCalledTimes(1);
+        expect(plugin.preferencesController.notifyUXPreferencesUpdate).toHaveBeenCalledTimes(1);
+        expect(plugin.notifySettingsUpdateWithFullRefresh).toHaveBeenCalledTimes(1);
+    });
+
     it('applies an import with record-local precedence and persists once without rereading', async () => {
         const plugin = createPluginHarness();
         const calls: string[] = [];
@@ -171,6 +200,30 @@ describe('NotebookNavigatorPlugin settings orchestration', () => {
         expect(plugin.settings.syncModes.folderSortOrder).toBe('local');
         expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
         expect(plugin.settingsController.mirrorAllSyncModeSettingsToLocalStorage).toHaveBeenCalledTimes(1);
+    });
+
+    it('reports local-only metadata cleanup without saving synced settings', async () => {
+        const plugin = createPluginHarness();
+        plugin.metadataService?.cleanupAllMetadata.mockResolvedValue({
+            settingsChanged: false,
+            localChanged: true
+        });
+
+        await expect(plugin.runMetadataCleanup()).resolves.toBe(true);
+
+        expect(plugin.saveSettingsAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('saves synced settings when metadata cleanup changes them', async () => {
+        const plugin = createPluginHarness();
+        plugin.metadataService?.cleanupAllMetadata.mockResolvedValue({
+            settingsChanged: true,
+            localChanged: false
+        });
+
+        await expect(plugin.runMetadataCleanup()).resolves.toBe(true);
+
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
     });
 });
 

@@ -18,7 +18,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type NotebookNavigatorPlugin from '../main';
-import type { UXPreferences } from '../types';
+import type { CollapsedPinnedContexts, UXPreferences } from '../types';
 
 /**
  * Props for the UX preferences provider component
@@ -48,6 +48,8 @@ interface UXPreferenceActions {
 const UXPreferencesStateContext = createContext<UXPreferences | null>(null);
 // Context for providing UX preference action methods
 const UXPreferencesActionsContext = createContext<UXPreferenceActions | null>(null);
+// Context for the vault-local pinned-section collapse state, refreshed through the same listener as UX preferences
+const CollapsedPinnedContextsStateContext = createContext<CollapsedPinnedContexts | null>(null);
 
 /**
  * Provider component for UX preferences
@@ -78,6 +80,11 @@ export function UXPreferencesProvider({ children, plugin }: UXPreferencesProvide
     const preferences = useMemo(() => {
         void version; // keep dependency so settings snapshot recreates when updates are published
         return plugin.getUXPreferences();
+    }, [plugin, version]);
+
+    const collapsedPinnedContexts = useMemo(() => {
+        void version; // keep dependency so the record snapshot recreates when updates are published
+        return plugin.getCollapsedPinnedContexts();
     }, [plugin, version]);
 
     // Create stable action methods that delegate to plugin
@@ -113,7 +120,11 @@ export function UXPreferencesProvider({ children, plugin }: UXPreferencesProvide
 
     return (
         <UXPreferencesStateContext.Provider value={preferences}>
-            <UXPreferencesActionsContext.Provider value={actions}>{children}</UXPreferencesActionsContext.Provider>
+            <UXPreferencesActionsContext.Provider value={actions}>
+                <CollapsedPinnedContextsStateContext.Provider value={collapsedPinnedContexts}>
+                    {children}
+                </CollapsedPinnedContextsStateContext.Provider>
+            </UXPreferencesActionsContext.Provider>
         </UXPreferencesStateContext.Provider>
     );
 }
@@ -138,6 +149,18 @@ export function useUXPreferenceActions(): UXPreferenceActions {
     const context = useContext(UXPreferencesActionsContext);
     if (!context) {
         throw new Error('useUXPreferenceActions must be used within a UXPreferencesProvider');
+    }
+    return context;
+}
+
+/**
+ * Hook to access the vault-local pinned-section collapse state
+ * @returns Record of navigation contexts where the pinned section is collapsed
+ */
+export function useCollapsedPinnedContexts(): CollapsedPinnedContexts {
+    const context = useContext(CollapsedPinnedContextsStateContext);
+    if (!context) {
+        throw new Error('useCollapsedPinnedContexts must be used within a UXPreferencesProvider');
     }
     return context;
 }

@@ -23,6 +23,7 @@ import type { NotebookNavigatorSettings } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { ISettingsProvider } from '../../src/interfaces/ISettingsProvider';
 import type { ITagTreeProvider } from '../../src/interfaces/ITagTreeProvider';
+import type { CollapsedPinnedContexts } from '../../src/types';
 import type { FileData } from '../../src/storage/IndexedDBStorage';
 import { createDefaultFileData } from '../../src/storage/indexeddb/fileData';
 
@@ -66,6 +67,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentColors(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 }
 
 function createSettings(): NotebookNavigatorSettings {
@@ -169,11 +180,27 @@ describe('MetadataService cleanup', () => {
         const provider = new TestSettingsProvider(settings);
         const service = new MetadataService(app, provider, () => createFilteredTagProvider());
 
-        const changed = await service.cleanupAllMetadata(settings);
+        const changes = await service.cleanupAllMetadata(settings);
 
-        expect(changed).toBe(true);
+        expect(changes).toEqual({ settingsChanged: true, localChanged: false });
         expect(settings.tagColors).toEqual({
             'hidden/private': '#111111'
         });
+    });
+
+    it('reports stale pinned collapse contexts as local-only changes', async () => {
+        const app = new App();
+        configureVault(app, []);
+        const settings = createSettings();
+        const provider = new TestSettingsProvider(settings);
+        provider.collapsedPinnedContexts = {
+            'folder:Missing': true
+        };
+        const service = new MetadataService(app, provider, () => createFilteredTagProvider());
+
+        const changes = await service.cleanupAllMetadata(settings);
+
+        expect(changes).toEqual({ settingsChanged: false, localChanged: true });
+        expect(provider.collapsedPinnedContexts).toEqual({});
     });
 });

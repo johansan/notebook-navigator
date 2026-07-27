@@ -135,6 +135,8 @@ export const STRINGS_NL = {
     paneHeader: {
         collapseAllFolders: 'Items inklappen',
         expandAllFolders: 'Alle items uitklappen',
+        collapseAllListGroups: 'Alle lijstgroepen inklappen',
+        expandAllListGroups: 'Alle lijstgroepen uitklappen',
         showCalendar: 'Kalender tonen',
         hideCalendar: 'Kalender verbergen',
         newFolder: 'Nieuwe map',
@@ -502,6 +504,8 @@ export const STRINGS_NL = {
                 'list-search': 'Zoeken',
                 'list-reveal-file': 'Bestand tonen',
                 'list-descendants': 'Notities uit submappen',
+                'list-expand-all': 'Alle groepen uitklappen',
+                'list-collapse-all': 'Alle groepen inklappen',
                 'list-sort-ascending': 'Sorteervolgorde: oplopend',
                 'list-sort-descending': 'Sorteervolgorde: aflopend',
                 'list-sort-modified': 'Sorteren op bewerkingsdatum',
@@ -900,7 +904,8 @@ export const STRINGS_NL = {
         togglePropertiesBySelection: 'Eigenschappen op selectie in-/uitschakelen',
         toggleCompactMode: 'Compacte modus in-/uitschakelen', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Vastgemaakt gedeelte in-/uitschakelen',
-        collapseExpand: 'Alle items in-/uitklappen',
+        collapseExpand: 'Alle navigatie-items in-/uitklappen',
+        collapseExpandListGroups: 'Alle lijstgroepen in-/uitklappen',
         collapseExpandSelectedItem: 'Geselecteerd item in-/uitklappen',
         addTag: 'Tag toevoegen aan geselecteerde bestanden',
         setProperty: 'Eigenschap instellen op geselecteerde bestanden', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

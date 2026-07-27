@@ -133,6 +133,8 @@ export const STRINGS_JA = {
     paneHeader: {
         collapseAllFolders: 'アイテムを折りたたむ', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'すべてのアイテムを展開', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'リストのすべてのグループを折りたたむ',
+        expandAllListGroups: 'リストのすべてのグループを展開',
         showCalendar: 'カレンダーを表示',
         hideCalendar: 'カレンダーを非表示',
         newFolder: '新規フォルダ', // Tooltip for create new folder button (English: New folder)
@@ -499,6 +501,8 @@ export const STRINGS_JA = {
                 'list-search': '検索',
                 'list-reveal-file': 'ファイルを表示',
                 'list-descendants': 'サブフォルダからのノート',
+                'list-expand-all': 'すべてのグループを展開',
+                'list-collapse-all': 'すべてのグループを折りたたむ',
                 'list-sort-ascending': '並べ替え: 昇順',
                 'list-sort-descending': '並べ替え: 降順',
                 'list-sort-modified': '更新日時で並べ替え',
@@ -897,7 +901,8 @@ export const STRINGS_JA = {
         togglePropertiesBySelection: '選択範囲でプロパティを切り替え',
         toggleCompactMode: 'コンパクトモードの切り替え', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'ピン留めセクションの切り替え',
-        collapseExpand: 'すべての項目を折りたたむ/展開', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'すべてのナビゲーション項目を折りたたむ/展開', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'リストのすべてのグループを折りたたむ/展開',
         collapseExpandSelectedItem: '選択した項目を折りたたむ/展開',
         addTag: '選択したファイルにタグを追加', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '選択したファイルにプロパティを設定', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)

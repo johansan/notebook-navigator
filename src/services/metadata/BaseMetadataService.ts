@@ -23,13 +23,13 @@ import {
     type ListSortOverrideValue,
     type NotebookNavigatorSettings
 } from '../../settings/types';
-import { ItemType } from '../../types';
+import { ItemType, type CollapsedPinnedContexts, type NavigatorContext } from '../../types';
 import { ISettingsProvider } from '../../interfaces/ISettingsProvider';
 import { FolderAppearance, TagAppearance } from '../../hooks/useListPaneAppearance';
 import type { ShortcutEntry } from '../../types/shortcuts';
 import { mutateVaultProfileShortcuts } from '../../utils/vaultProfiles';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';
-import { ensureRecord, isStringRecordValue, sanitizeRecord } from '../../utils/recordUtils';
+import { cleanupCollapsedPinnedContextKeys, ensureRecord, isStringRecordValue, sanitizeRecord } from '../../utils/recordUtils';
 
 /**
  * Type helper for metadata fields in settings
@@ -78,6 +78,16 @@ type MetadataKey = keyof MetadataFields;
 export type EntityType = typeof ItemType.FOLDER | typeof ItemType.TAG | typeof ItemType.PROPERTY | typeof ItemType.FILE;
 
 /**
+ * Reports which persistence domains changed during metadata cleanup.
+ * `settingsChanged` requires saving data.json. `localChanged` means the pinned-section
+ * collapse record changed and, for live cleanup, was already persisted to local storage.
+ */
+export interface MetadataCleanupResult {
+    settingsChanged: boolean;
+    localChanged: boolean;
+}
+
+/**
  * Base class for metadata services
  * Provides shared functionality for managing colors, icons, and sort overrides
  */
@@ -116,6 +126,25 @@ export abstract class BaseMetadataService {
             });
 
         return this.updateQueue;
+    }
+
+    /**
+     * Removes pinned-section collapse keys whose navigation target fails the validator.
+     * With a dry-run record, only that record is mutated so cleanup summaries never touch stored state;
+     * otherwise the vault-local store is mutated and persisted.
+     *
+     * @returns True if any keys were removed
+     */
+    protected cleanupCollapsedPinnedContexts(
+        context: NavigatorContext,
+        validator: (target: string) => boolean,
+        dryRunRecord?: CollapsedPinnedContexts
+    ): boolean {
+        const cleanup = (record: CollapsedPinnedContexts) => cleanupCollapsedPinnedContextKeys(record, context, validator);
+        if (dryRunRecord) {
+            return cleanup(dryRunRecord);
+        }
+        return this.settingsProvider.updateCollapsedPinnedContexts(cleanup);
     }
 
     /**

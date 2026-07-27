@@ -280,7 +280,6 @@ export interface LocalStorageKeys {
     navigationSectionOrderKey: string;
     pinnedShortcutsMaxHeightKey: string;
     uxPreferencesKey: string;
-    fileCacheKey: string;
     databaseSchemaVersionKey: string;
     databaseContentVersionKey: string;
     frontmatterMetadataCacheSignatureKey: string;
@@ -312,6 +311,7 @@ export interface LocalStorageKeys {
     featureImageSizeKey: string;
     featureImagePixelSizeKey: string;
     collapsedListGroupsKey: string;
+    collapsedPinnedContextsKey: string;
     mergeNotesSeparatorKey: string;
     mergeNotesMoveSourcesToTrashKey: string;
     settingsImportBackupToRootKey: string;
@@ -346,7 +346,6 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     navigationSectionOrderKey: 'notebook-navigator-section-order',
     pinnedShortcutsMaxHeightKey: 'notebook-navigator-pinned-shortcuts-max-height',
     uxPreferencesKey: 'notebook-navigator-ux-preferences',
-    fileCacheKey: 'notebook-navigator-file-cache',
     databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
     databaseContentVersionKey: 'notebook-navigator-db-content-version',
     frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
@@ -378,6 +377,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     featureImageSizeKey: 'notebook-navigator-feature-image-size',
     featureImagePixelSizeKey: 'notebook-navigator-feature-image-pixel-size',
     collapsedListGroupsKey: 'notebook-navigator-collapsed-list-groups',
+    collapsedPinnedContextsKey: 'notebook-navigator-collapsed-pinned-contexts',
     mergeNotesSeparatorKey: 'notebook-navigator-merge-notes-separator',
     mergeNotesMoveSourcesToTrashKey: 'notebook-navigator-merge-notes-move-sources-to-trash',
     settingsImportBackupToRootKey: 'notebook-navigator-settings-import-backup-to-root'

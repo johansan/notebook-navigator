@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type { EntityType } from './BaseMetadataService';
+export type { EntityType, MetadataCleanupResult } from './BaseMetadataService';
 export { FolderMetadataService, type FolderDisplayData } from './FolderMetadataService';
 export { TagMetadataService, type TagColorData } from './TagMetadataService';
 export { PropertyMetadataService, type PropertyColorData } from './PropertyMetadataService';

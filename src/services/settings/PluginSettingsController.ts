@@ -17,7 +17,7 @@
  */
 
 import { DEFAULT_SETTINGS } from '../../settings/defaultSettings';
-import { migrateRecentColors, migrateReleaseCheckState } from '../../settings/migrations/localPreferences';
+import { migrateCollapsedPinnedContexts, migrateRecentColors, migrateReleaseCheckState } from '../../settings/migrations/localPreferences';
 import { migrateMomentDateFormats } from '../../settings/migrations/momentFormats';
 import {
     applyExistingUserDefaults,
@@ -73,7 +73,7 @@ import {
     type NotebookNavigatorSettings,
     resolveMoveFileConflictsSetting
 } from '../../settings/types';
-import { LOCALSTORAGE_VERSION, localStorage } from '../../utils/localStorage';
+import { LEGACY_STORAGE_KEYS, LOCALSTORAGE_VERSION, localStorage } from '../../utils/localStorage';
 import { clearHiddenFileNameMatcherCache } from '../../utils/fileFilters';
 import {
     normalizeCanonicalIconId,
@@ -83,7 +83,6 @@ import {
 } from '../../utils/iconizeFormat';
 import { getDefaultDateFormat, getDefaultTimeFormat } from '../../i18n';
 import {
-    cloneCollapsedPinnedContextsRecord,
     clonePinnedNotesRecord,
     isBooleanRecordValue,
     isPlainObjectRecordValue,
@@ -271,6 +270,11 @@ export class PluginSettingsController {
             }
 
             const key = STORAGE_KEYS[storageKey];
+            localStorage.remove(key);
+        });
+
+        // Legacy keys are absent from STORAGE_KEYS, so reinstall cleanup must remove them explicitly
+        LEGACY_STORAGE_KEYS.forEach(key => {
             localStorage.remove(key);
         });
     }
@@ -606,6 +610,11 @@ export class PluginSettingsController {
             keys: this.options.keys
         });
         const migratedRecentColors = migrateRecentColors({ settings: this.currentSettings, storedData, keys: this.options.keys });
+        const migratedCollapsedPinnedContexts = migrateCollapsedPinnedContexts({
+            settings: this.currentSettings,
+            storedData,
+            keys: this.options.keys
+        });
         const hadLocalValuesInSettings = Boolean(
             storedData &&
             SYNC_MODE_SETTING_IDS.some(settingId => {
@@ -647,6 +656,7 @@ export class PluginSettingsController {
         const needsPersistedCleanup =
             migratedReleaseState ||
             migratedRecentColors ||
+            migratedCollapsedPinnedContexts ||
             hadLocalValuesInSettings ||
             hadLegacySearchProviderInSettings ||
             hadLegacyLastAnnouncedReleaseInSettings ||
@@ -1231,7 +1241,6 @@ export class PluginSettingsController {
         this.currentSettings.syncModes = sanitizeSettingsSyncMap(this.currentSettings.syncModes);
         this.currentSettings.calendarMonthHighlights = sanitizeStringMap(this.currentSettings.calendarMonthHighlights);
         this.currentSettings.pinnedNotes = clonePinnedNotesRecord(this.currentSettings.pinnedNotes);
-        this.currentSettings.collapsedPinnedContexts = cloneCollapsedPinnedContextsRecord(this.currentSettings.collapsedPinnedContexts);
     }
 
     private normalizeTaskSettings(): void {

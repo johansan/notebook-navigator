@@ -29,6 +29,8 @@ interface ListGroupCollapseKeyParams {
     groupId: string;
 }
 
+type ListGroupCollapseScopeParams = Omit<ListGroupCollapseKeyParams, 'groupId'>;
+
 export function normalizeStoredCollapsedListGroupKeys(value: unknown): string[] {
     if (!Array.isArray(value)) {
         return [];
@@ -62,14 +64,17 @@ function encodeKeyPart(value: string): string {
     return encodeURIComponent(value);
 }
 
-export function buildListGroupCollapseKey({
+/**
+ * Returns the prefix shared by every collapse key in one navigation selection and grouping mode.
+ * Bulk expansion uses the prefix because collapsed parents can keep descendant headers out of the rendered list.
+ */
+export function buildListGroupCollapseKeyPrefix({
     selectionType,
     selectedFolderPath,
     selectedTag,
     selectedProperty,
-    groupingMode,
-    groupId
-}: ListGroupCollapseKeyParams): string {
+    groupingMode
+}: ListGroupCollapseScopeParams): string {
     let scope: string;
     if (selectionType === ItemType.TAG && selectedTag) {
         scope = `tag:${encodeKeyPart(selectedTag)}`;
@@ -79,5 +84,9 @@ export function buildListGroupCollapseKey({
         scope = `folder:${encodeKeyPart(selectedFolderPath ?? '/')}`;
     }
 
-    return `scope=${scope};group=${encodeKeyPart(groupingMode)};id=${encodeKeyPart(groupId)}`;
+    return `scope=${scope};group=${encodeKeyPart(groupingMode)};id=`;
+}
+
+export function buildListGroupCollapseKey(params: ListGroupCollapseKeyParams): string {
+    return `${buildListGroupCollapseKeyPrefix(params)}${encodeKeyPart(params.groupId)}`;
 }

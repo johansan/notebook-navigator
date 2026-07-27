@@ -19,21 +19,20 @@
 import { EventRef, TFile, type TFolder } from 'obsidian';
 import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings/types';
 import { getDBInstanceOrNull } from '../../storage/fileOperations';
-import { ItemType } from '../../types';
+import { ItemType, type CollapsedPinnedContexts } from '../../types';
 import { isFolderShortcut } from '../../types/shortcuts';
 import type { FileContentChange } from '../../storage/IndexedDBStorage';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';
 import { getParentFolderPath } from '../../utils/pathUtils';
 import { createShortcutTargetPathEventMatcher } from '../../utils/shortcutPathResolver';
 import {
-    cleanupCollapsedPinnedContextKeys,
     deleteCollapsedPinnedContextKeys,
     ensureRecord,
     isStringRecordValue,
     updateCollapsedPinnedContextKeys
 } from '../../utils/recordUtils';
 import type { CleanupValidators } from '../MetadataService';
-import { BaseMetadataService } from './BaseMetadataService';
+import { BaseMetadataService, type MetadataCleanupResult } from './BaseMetadataService';
 import { FolderDisplayCache } from './folderMetadata/FolderDisplayCache';
 import { FolderNoteMetadataAdapter } from './folderMetadata/FolderNoteMetadataAdapter';
 import { resolveFolderDisplayData, resolveInheritedFolderStyleValues } from './folderMetadata/folderDisplayResolver';
@@ -722,6 +721,10 @@ export class FolderMetadataService extends BaseMetadataService {
     async handleFolderRename(oldPath: string, newPath: string, extraMutation?: SettingsMutation): Promise<void> {
         this.folderDisplayCache.clear();
         const matchesShortcutPath = createShortcutTargetPathEventMatcher(this.app, 'folder', oldPath, newPath);
+        // Pinned-section collapse state persists to vault-local storage on its own, outside the settings transaction.
+        this.settingsProvider.updateCollapsedPinnedContexts(record =>
+            updateCollapsedPinnedContextKeys(record, ItemType.FOLDER, oldPath, newPath, { descendantDelimiter: '/' })
+        );
         await this.saveAndUpdate(settings => {
             let changed = false;
 
@@ -731,10 +734,6 @@ export class FolderMetadataService extends BaseMetadataService {
             changed = this.updateNestedPaths(settings.folderSortOverrides, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderTreeSortOverrides, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderAppearances, oldPath, newPath) || changed;
-            changed =
-                updateCollapsedPinnedContextKeys(settings.collapsedPinnedContexts, ItemType.FOLDER, oldPath, newPath, {
-                    descendantDelimiter: '/'
-                }) || changed;
 
             const shortcutsChanged = this.updateShortcuts(settings, shortcut => {
                 if (!isFolderShortcut(shortcut) || !matchesShortcutPath(shortcut.path)) {
@@ -759,6 +758,10 @@ export class FolderMetadataService extends BaseMetadataService {
     async handleFolderDelete(folderPath: string, extraMutation?: SettingsMutation): Promise<void> {
         this.folderDisplayCache.clear();
         const matchesShortcutPath = createShortcutTargetPathEventMatcher(this.app, 'folder', folderPath);
+        // Pinned-section collapse state persists to vault-local storage on its own, outside the settings transaction.
+        this.settingsProvider.updateCollapsedPinnedContexts(record =>
+            deleteCollapsedPinnedContextKeys(record, ItemType.FOLDER, folderPath, { descendantDelimiter: '/' })
+        );
         await this.saveAndUpdate(settings => {
             let changed = false;
 
@@ -768,10 +771,6 @@ export class FolderMetadataService extends BaseMetadataService {
             changed = this.deleteNestedPaths(settings.folderSortOverrides, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderTreeSortOverrides, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderAppearances, folderPath) || changed;
-            changed =
-                deleteCollapsedPinnedContextKeys(settings.collapsedPinnedContexts, ItemType.FOLDER, folderPath, {
-                    descendantDelimiter: '/'
-                }) || changed;
 
             const shortcutsChanged = this.updateShortcuts(settings, shortcut => {
                 if (!isFolderShortcut(shortcut)) {
@@ -789,13 +788,16 @@ export class FolderMetadataService extends BaseMetadataService {
         });
     }
 
-    async cleanupFolderMetadata(targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings): Promise<boolean> {
+    async cleanupFolderMetadata(
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<boolean> {
         this.folderDisplayCache.clear();
         const validator = (path: string) => this.getFolderByPath(path) !== null;
-        const collapsedPinnedContextChanges = cleanupCollapsedPinnedContextKeys(
-            targetSettings.collapsedPinnedContexts,
+        const collapsedPinnedContextChanges = this.cleanupCollapsedPinnedContexts(
             ItemType.FOLDER,
-            validator
+            validator,
+            collapsedPinnedContextsOverride
         );
 
         const results = await Promise.all([
@@ -812,14 +814,15 @@ export class FolderMetadataService extends BaseMetadataService {
 
     async cleanupWithValidators(
         validators: CleanupValidators,
-        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings
-    ): Promise<boolean> {
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<MetadataCleanupResult> {
         this.folderDisplayCache.clear();
         const validator = (path: string) => validators.vaultFolders.has(path);
-        const collapsedPinnedContextChanges = cleanupCollapsedPinnedContextKeys(
-            targetSettings.collapsedPinnedContexts,
+        const collapsedPinnedContextChanges = this.cleanupCollapsedPinnedContexts(
             ItemType.FOLDER,
-            validator
+            validator,
+            collapsedPinnedContextsOverride
         );
 
         const results = await Promise.all([
@@ -831,6 +834,9 @@ export class FolderMetadataService extends BaseMetadataService {
             this.cleanupMetadata(targetSettings, 'folderAppearances', validator)
         ]);
 
-        return collapsedPinnedContextChanges || results.some(changed => changed);
+        return {
+            settingsChanged: results.some(changed => changed),
+            localChanged: collapsedPinnedContextChanges
+        };
     }
 }

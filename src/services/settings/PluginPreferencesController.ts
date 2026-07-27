@@ -41,10 +41,13 @@ import { sanitizeUIScale } from '../../utils/uiScale';
 import {
     MAX_PANE_TRANSITION_DURATION_MS,
     MIN_PANE_TRANSITION_DURATION_MS,
+    type CollapsedPinnedContexts,
     type DualPaneOrientation,
     type LocalStorageKeys,
+    type PinnedSectionCollapseKey,
     type UXPreferences
 } from '../../types';
+import { cloneCollapsedPinnedContextsRecord } from '../../utils/recordUtils';
 import { ensureVaultProfiles, DEFAULT_VAULT_PROFILE_ID } from '../../utils/vaultProfiles';
 import { runAsyncAction } from '../../utils/async';
 import { isAlphaSortOrder, isTagSortOrder } from '../../settings/types';
@@ -63,6 +66,15 @@ interface PluginPreferencesControllerOptions {
     refreshMatcherCachesIfNeeded: () => void;
 }
 
+function areCollapsedPinnedContextsEqual(left: CollapsedPinnedContexts, right: CollapsedPinnedContexts): boolean {
+    const leftKeys = Object.keys(left);
+    const rightKeys = Object.keys(right);
+    return (
+        leftKeys.length === rightKeys.length &&
+        leftKeys.every(key => left[key as PinnedSectionCollapseKey] === right[key as PinnedSectionCollapseKey])
+    );
+}
+
 export class PluginPreferencesController {
     private readonly options: PluginPreferencesControllerOptions;
     private dualPanePreference = true;
@@ -71,6 +83,8 @@ export class PluginPreferencesController {
     private recentDataListeners = new Map<string, () => void>();
     private uxPreferences: UXPreferences = getDefaultUXPreferences();
     private uxPreferenceListeners = new Map<string, () => void>();
+    // Pinned-section collapse state per navigation context, persisted to vault-local storage instead of synced settings
+    private collapsedPinnedContexts: CollapsedPinnedContexts = cloneCollapsedPinnedContextsRecord(undefined);
 
     constructor(options: PluginPreferencesControllerOptions) {
         this.options = options;
@@ -150,11 +164,61 @@ export class PluginPreferencesController {
         if (normalized.changed || !isUXPreferencesRecord(stored)) {
             this.persistUXPreferences(false);
         }
+        this.syncCollapsedPinnedContextsFromLocalStorage();
     }
 
     public resetUXPreferencesToDefaults(): void {
         this.uxPreferences = getDefaultUXPreferences();
         this.persistUXPreferences(false);
+        // First-launch reset runs after localStorage is cleared, so drop the in-memory pinned collapse state as well
+        this.collapsedPinnedContexts = cloneCollapsedPinnedContextsRecord(undefined);
+    }
+
+    public getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return cloneCollapsedPinnedContextsRecord(this.collapsedPinnedContexts);
+    }
+
+    /**
+     * Refreshes the in-memory record after a settings migration writes vault-local storage.
+     * Without this refresh, a later mutation would persist the stale record and discard migrated keys.
+     *
+     * @returns True when the in-memory record changed
+     */
+    public syncCollapsedPinnedContextsFromLocalStorage(): boolean {
+        const next = cloneCollapsedPinnedContextsRecord(localStorage.get<unknown>(this.options.keys.collapsedPinnedContextsKey));
+        if (areCollapsedPinnedContextsEqual(this.collapsedPinnedContexts, next)) {
+            return false;
+        }
+
+        this.collapsedPinnedContexts = next;
+        return true;
+    }
+
+    /**
+     * Applies a mutation to the pinned-section collapse record. When the mutator reports a change,
+     * the record is persisted to vault-local storage and UX preference listeners are notified;
+     * otherwise no storage write or notification happens.
+     *
+     * @returns True when the mutator changed the record
+     */
+    public updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        const changed = mutator(this.collapsedPinnedContexts);
+        if (changed) {
+            localStorage.set(this.options.keys.collapsedPinnedContextsKey, this.collapsedPinnedContexts);
+            this.notifyUXPreferencesUpdate();
+        }
+        return changed;
+    }
+
+    public togglePinnedGroupCollapsed(collapseKey: PinnedSectionCollapseKey): void {
+        this.updateCollapsedPinnedContexts(record => {
+            if (record[collapseKey]) {
+                delete record[collapseKey];
+            } else {
+                record[collapseKey] = true;
+            }
+            return true;
+        });
     }
 
     public mirrorUXPreferences(update: Partial<UXPreferences>): void {

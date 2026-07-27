@@ -110,9 +110,14 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-07-26',
         showOnUpdate: true,
         new: [
-            'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.'
+            'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.',
+            'New command: ==Collapse / expand all list groups==. When no groups are expanded, it expands all groups; otherwise, it collapses all groups, including the pinned section.',
+            'New toolbar button: ==Collapse / expand all list groups==, added under Settings > Appearance & behavior > Toolbar buttons > List toolbar. It is disabled when the current list has no collapsible groups.'
         ],
         improved: ['During list pane search, group header item counts show matching and total items, such as `12/20`.'],
+        changed: [
+            'The collapsed state of the pinned section is now stored per device and no longer syncs across devices, matching the collapsed state of list groups.'
+        ],
         fixed: [
             'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.',
             'Fixed folder note links not expanding folders when ==Expand on selection== was enabled.',

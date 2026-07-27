@@ -19,7 +19,7 @@
 import { App } from 'obsidian';
 import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings/types';
 import type { ISettingsProvider } from '../../interfaces/ISettingsProvider';
-import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../types';
+import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, type CollapsedPinnedContexts } from '../../types';
 import type { CleanupValidators } from '../MetadataService';
 import { getDBInstance } from '../../storage/fileOperations';
 import {
@@ -28,9 +28,9 @@ import {
     normalizePropertyKeyNodeId,
     normalizePropertyNodeId
 } from '../../utils/propertyTree';
-import { casefold, cleanupCollapsedPinnedContextKeys } from '../../utils/recordUtils';
+import { casefold } from '../../utils/recordUtils';
 import { getActivePropertyFields } from '../../utils/vaultProfiles';
-import { BaseMetadataService } from './BaseMetadataService';
+import { BaseMetadataService, type MetadataCleanupResult } from './BaseMetadataService';
 
 export interface PropertyColorData {
     color?: string;
@@ -275,26 +275,31 @@ export class PropertyMetadataService extends BaseMetadataService {
         return changed;
     }
 
-    async cleanupPropertyMetadata(targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings): Promise<boolean> {
+    async cleanupPropertyMetadata(
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<boolean> {
         const validators: CleanupValidators = {
             dbFiles: getDBInstance().getAllFiles(),
             tagTree: new Map(),
             vaultFiles: new Set(),
             vaultFolders: new Set()
         };
-        return this.cleanupWithValidators(validators, targetSettings);
+        const changes = await this.cleanupWithValidators(validators, targetSettings, collapsedPinnedContextsOverride);
+        return changes.settingsChanged || changes.localChanged;
     }
 
     async cleanupWithValidators(
         validators: CleanupValidators,
-        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings
-    ): Promise<boolean> {
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<MetadataCleanupResult> {
         const validator = this.createPropertyNodeValidator(targetSettings, validators);
         const existingPropertyKeys = this.collectExistingPropertyKeys(validators);
-        const collapsedPinnedContextChanges = cleanupCollapsedPinnedContextKeys(
-            targetSettings.collapsedPinnedContexts,
+        const collapsedPinnedContextChanges = this.cleanupCollapsedPinnedContexts(
             ItemType.PROPERTY,
-            validator
+            validator,
+            collapsedPinnedContextsOverride
         );
         const results = await Promise.all([
             this.cleanupMetadata(targetSettings, 'propertyColors', validator),
@@ -306,6 +311,9 @@ export class PropertyMetadataService extends BaseMetadataService {
         ]);
         const propertyKeyChanges = this.pruneConfiguredPropertyKeys(targetSettings, existingPropertyKeys);
 
-        return collapsedPinnedContextChanges || propertyKeyChanges || results.some(changed => changed);
+        return {
+            settingsChanged: propertyKeyChanges || results.some(changed => changed),
+            localChanged: collapsedPinnedContextChanges
+        };
     }
 }

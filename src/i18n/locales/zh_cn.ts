@@ -133,6 +133,8 @@ export const STRINGS_ZH_CN = {
     paneHeader: {
         collapseAllFolders: '折叠项目', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: '展开所有项目', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: '折叠所有列表分组',
+        expandAllListGroups: '展开所有列表分组',
         showCalendar: '显示日历',
         hideCalendar: '隐藏日历',
         newFolder: '新建文件夹', // Tooltip for create new folder button (English: New folder)
@@ -497,6 +499,8 @@ export const STRINGS_ZH_CN = {
                 'list-search': '搜索',
                 'list-reveal-file': '定位文件',
                 'list-descendants': '子文件夹中的笔记',
+                'list-expand-all': '展开所有分组',
+                'list-collapse-all': '折叠所有分组',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
                 'list-sort-modified': '按编辑日期排序',
@@ -890,7 +894,8 @@ export const STRINGS_ZH_CN = {
         togglePropertiesBySelection: '按选择切换属性',
         toggleCompactMode: '切换紧凑模式', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '切换置顶区域',
-        collapseExpand: '折叠/展开所有项目', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: '折叠/展开所有导航项', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: '折叠/展开所有列表分组',
         collapseExpandSelectedItem: '折叠/展开所选项目',
         addTag: '为选定文件添加标签', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '为选定文件设置属性', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
