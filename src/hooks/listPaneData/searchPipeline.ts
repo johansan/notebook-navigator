@@ -56,7 +56,6 @@ const EMPTY_MATCHED_ALIASES = new Map<string, readonly AliasSearchMatch[]>();
 const EMPTY_MATCHED_PROPERTIES = new Map<string, readonly PropertySearchMatch[]>();
 
 export interface OmnisearchListResult {
-    query: string;
     files: TFile[];
     meta: Map<string, SearchResultMeta>;
 }
@@ -266,10 +265,10 @@ export function useOmnisearchListResult({
                     });
                 });
 
-                setOmnisearchResult({ query: trimmedQuery, files, meta });
+                setOmnisearchResult({ files, meta });
             } catch {
                 if (searchTokenRef.current === token) {
-                    setOmnisearchResult({ query: trimmedQuery, files: [], meta: new Map() });
+                    setOmnisearchResult({ files: [], meta: new Map() });
                 }
             }
         });
@@ -373,8 +372,13 @@ export function filterListPaneFiles({
     }
 
     if (useOmnisearch) {
-        if (!omnisearchResult || omnisearchResult.query !== trimmedQuery) {
-            return { files: [], matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
+        // Omnisearch responses arrive asynchronously. While the response for the current
+        // query is in flight, the previous response keeps filtering the list, because
+        // returning an empty list here would flash the "No notes" empty state on every
+        // keystroke. Before the first response there is no previous result, so the
+        // unfiltered list stays visible, matching what the empty query already showed.
+        if (!omnisearchResult) {
+            return { files: baseFiles, matchedAliases: EMPTY_MATCHED_ALIASES, matchedProperties: EMPTY_MATCHED_PROPERTIES };
         }
 
         const omnisearchPaths = new Set(omnisearchResult.files.map(file => file.path));
