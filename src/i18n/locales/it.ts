@@ -1334,9 +1334,7 @@ export const STRINGS_IT = {
             },
             toolbarButtons: {
                 name: 'Pulsanti barra strumenti',
-                desc: 'Scegli quali pulsanti appaiono nella barra strumenti. I pulsanti nascosti rimangono accessibili tramite comandi e menu.',
-                navigationLabel: 'Barra strumenti navigazione',
-                listLabel: 'Barra strumenti lista'
+                desc: 'Scegli quali pulsanti appaiono nella barra strumenti. I pulsanti nascosti rimangono accessibili tramite comandi e menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Apri nuove note in una nuova scheda',

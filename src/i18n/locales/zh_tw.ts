@@ -1327,9 +1327,7 @@ export const STRINGS_ZH_TW = {
             },
             toolbarButtons: {
                 name: '工具列按鈕',
-                desc: '選擇在工具列中顯示哪些按鈕。隱藏的按鈕仍可透過命令和選單存取。',
-                navigationLabel: '導覽工具列',
-                listLabel: '列表工具列'
+                desc: '選擇在工具列中顯示哪些按鈕。隱藏的按鈕仍可透過命令和選單存取。'
             },
             createNewNotesInNewTab: {
                 name: '在新分頁中開啟新筆記',

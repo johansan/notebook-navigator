@@ -40,6 +40,7 @@ import {
     normalizeManualSortPropertyKey
 } from '../../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from '../SliderSetting';
+import { renderToolbarButtonsSetting } from '../ToolbarButtonsSetting';
 
 type QuickActionSettingKey =
     'quickActionRevealInFolder' | 'quickActionAddTag' | 'quickActionAddToShortcuts' | 'quickActionPinNote' | 'quickActionOpenInNewTab';
@@ -173,6 +174,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     };
 
     const organizationGroup = createGroup(undefined);
+
+    renderToolbarButtonsSetting(createSetting => organizationGroup.addSetting(createSetting), plugin, 'list');
 
     const includeDescendantNotesSetting = organizationGroup.addSetting(setting => {
         setting

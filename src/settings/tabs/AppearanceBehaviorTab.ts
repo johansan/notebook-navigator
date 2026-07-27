@@ -54,7 +54,6 @@ import type { AppearanceBehaviorDropdownKey, AppearanceBehaviorToggleKey } from 
 import { createSettingDescriptionWithExternalLink } from './externalLink';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
-import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 interface DefinitionOptions {
     aliases?: string[];
@@ -353,8 +352,6 @@ function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): Set
 }
 
 function createViewDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
-    const { plugin } = context;
-
     return createGroupDefinition(strings.settings.groups.general.view, [
         createRenderDefinition({
             name: strings.settings.items.appearanceScale.name,
@@ -370,33 +367,6 @@ function createViewDefinitionGroup(context: SettingsTabContext): SettingDefiniti
         createToggleDefinition('showInfoButtons', {
             name: strings.settings.items.showInfoButtons.name,
             desc: strings.settings.items.showInfoButtons.desc
-        }),
-        createRenderDefinition({
-            name: strings.settings.items.toolbarButtons.name,
-            desc: strings.settings.items.toolbarButtons.desc,
-            aliases: [
-                strings.settings.items.toolbarButtons.navigationLabel,
-                strings.settings.items.toolbarButtons.listLabel,
-                strings.paneHeader.showDualPane,
-                strings.paneHeader.expandAllFolders,
-                strings.paneHeader.showExcludedItems,
-                strings.paneHeader.showCalendar,
-                strings.paneHeader.reorderRootFolders,
-                strings.paneHeader.newFolder,
-                strings.paneHeader.showFolders,
-                strings.paneHeader.search,
-                strings.commands.revealFile,
-                strings.settings.items.includeDescendantNotes.name,
-                strings.paneHeader.changeSortAndGroup,
-                strings.paneHeader.changeAppearance,
-                strings.paneHeader.newNote
-            ],
-            render: setting => {
-                renderToolbarButtonsSetting(createSetting => {
-                    createSetting(setting);
-                    return setting;
-                }, plugin);
-            }
         })
     ]);
 }

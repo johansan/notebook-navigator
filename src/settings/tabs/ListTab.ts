@@ -28,6 +28,7 @@ import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
 import { getManualSortGroupHeaderPropertyKey, isValidManualSortPropertyKey, normalizeManualSortPropertyKey } from '../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
+import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 type QuickActionSettingKey =
     'quickActionRevealInFolder' | 'quickActionAddTag' | 'quickActionAddToShortcuts' | 'quickActionPinNote' | 'quickActionOpenInNewTab';
@@ -73,6 +74,30 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
     const { plugin } = context;
     const items: SettingDefinitionItem[] = [
         createGroupDefinition(undefined, [
+            createRenderDefinition({
+                name: strings.settings.items.toolbarButtons.name,
+                desc: strings.settings.items.toolbarButtons.desc,
+                aliases: [
+                    strings.paneHeader.showFolders,
+                    strings.paneHeader.search,
+                    strings.commands.revealFile,
+                    strings.settings.items.includeDescendantNotes.name,
+                    strings.commands.collapseExpandListGroups,
+                    strings.paneHeader.changeSortAndGroup,
+                    strings.paneHeader.changeAppearance,
+                    strings.paneHeader.newNote
+                ],
+                render: setting => {
+                    renderToolbarButtonsSetting(
+                        createSetting => {
+                            createSetting(setting);
+                            return setting;
+                        },
+                        plugin,
+                        'list'
+                    );
+                }
+            }),
             createRenderDefinition({
                 name: strings.settings.items.includeDescendantNotes.name,
                 desc: strings.settings.items.includeDescendantNotes.desc,

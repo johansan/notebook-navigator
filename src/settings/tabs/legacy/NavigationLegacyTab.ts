@@ -31,6 +31,7 @@ import { createDependentSettingsSection, setElementVisible, wireToggleSettingWit
 import { createHueInterpolator, toCssRgba } from '../../../utils/colorUtils';
 import { NAV_RAINBOW_DEFAULT_END, NAV_RAINBOW_DEFAULT_START } from '../../../utils/navigationRainbow';
 import { formatPixelSliderValue, formatSecondsSliderValue, renderSliderSetting } from '../SliderSetting';
+import { renderToolbarButtonsSetting } from '../ToolbarButtonsSetting';
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
 export function renderNavigationPaneTab(context: SettingsTabContext): void {
@@ -72,6 +73,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     const noteCountsGroup = createGroup(strings.settings.groups.navigation.noteCounts);
     const bannerGroup = createGroup(strings.settings.groups.navigation.banner);
     const appearanceGroup = createGroup(strings.settings.groups.navigation.appearance);
+
+    renderToolbarButtonsSetting(createSetting => behaviorGroup.addSetting(createSetting), plugin, 'navigation');
 
     const navigationBannerSetting = bannerGroup.addSetting(setting => {
         setting.setName(strings.settings.items.navigationBanner.name);

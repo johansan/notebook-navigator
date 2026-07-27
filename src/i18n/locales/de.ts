@@ -1341,9 +1341,7 @@ export const STRINGS_DE = {
             },
             toolbarButtons: {
                 name: 'Symbolleisten-Schaltflächen',
-                desc: 'Wählen Sie aus, welche Schaltflächen in der Symbolleiste angezeigt werden. Ausgeblendete Schaltflächen bleiben über Befehle und Menüs zugänglich.',
-                navigationLabel: 'Navigationssymbolleiste',
-                listLabel: 'Listensymbolleiste'
+                desc: 'Wählen Sie aus, welche Schaltflächen in der Symbolleiste angezeigt werden. Ausgeblendete Schaltflächen bleiben über Befehle und Menüs zugänglich.'
             },
             createNewNotesInNewTab: {
                 name: 'Neue Notizen in neuem Tab öffnen',

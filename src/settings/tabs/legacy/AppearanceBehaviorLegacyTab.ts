@@ -55,7 +55,6 @@ import {
 import { createSettingDescriptionWithExternalLink } from '../externalLink';
 import { formatPixelSliderValue, renderSliderSetting } from '../SliderSetting';
 import type { SettingsTabContext } from '../SettingsTabContext';
-import { renderToolbarButtonsSetting } from '../ToolbarButtonsSetting';
 
 type CreateSettingGroup = ReturnType<typeof createSettingGroupFactory>;
 
@@ -607,8 +606,6 @@ function renderViewSettings(context: SettingsTabContext, createGroup: CreateSett
                 await plugin.saveSettingsAndUpdate();
             })
         );
-
-    renderToolbarButtonsSetting(createSetting => viewGroup.addSetting(createSetting), plugin);
 }
 
 function renderIconSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {

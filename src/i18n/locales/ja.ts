@@ -1337,9 +1337,7 @@ export const STRINGS_JA = {
             },
             toolbarButtons: {
                 name: 'ツールバーボタン',
-                desc: 'ツールバーに表示するボタンを選択します。非表示のボタンはコマンドとメニューから引き続き利用できます。',
-                navigationLabel: 'ナビゲーションツールバー',
-                listLabel: 'リストツールバー'
+                desc: 'ツールバーに表示するボタンを選択します。非表示のボタンはコマンドとメニューから引き続き利用できます。'
             },
             createNewNotesInNewTab: {
                 name: '新しいノートを新しいタブで開く',

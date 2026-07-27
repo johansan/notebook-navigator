@@ -1339,9 +1339,7 @@ export const STRINGS_VI = {
             },
             toolbarButtons: {
                 name: 'Nút thanh công cụ',
-                desc: 'Chọn nút xuất hiện trên thanh công cụ. Nút ẩn vẫn truy cập được qua lệnh và menu.',
-                navigationLabel: 'Thanh công cụ điều hướng',
-                listLabel: 'Thanh công cụ danh sách'
+                desc: 'Chọn nút xuất hiện trên thanh công cụ. Nút ẩn vẫn truy cập được qua lệnh và menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Mở ghi chú mới trong tab mới',

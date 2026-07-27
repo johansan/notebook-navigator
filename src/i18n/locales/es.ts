@@ -1339,9 +1339,7 @@ export const STRINGS_ES = {
             },
             toolbarButtons: {
                 name: 'Botones de la barra de herramientas',
-                desc: 'Elige qué botones aparecen en la barra de herramientas. Los botones ocultos siguen siendo accesibles mediante comandos y menús.',
-                navigationLabel: 'Barra de navegación',
-                listLabel: 'Barra de lista'
+                desc: 'Elige qué botones aparecen en la barra de herramientas. Los botones ocultos siguen siendo accesibles mediante comandos y menús.'
             },
             createNewNotesInNewTab: {
                 name: 'Abrir notas nuevas en pestaña nueva',

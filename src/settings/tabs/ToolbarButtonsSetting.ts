@@ -50,49 +50,48 @@ const LIST_TOOLBAR_BUTTONS: ToolbarButtonConfig<ListToolbarButtonId>[] = [
     { id: 'newNote', iconType: 'ux', iconId: 'list-new-note', label: strings.paneHeader.newNote }
 ];
 
+/** Renders the button visibility grid for one toolbar. Both grids persist the shared toolbarVisibility setting. */
 export function renderToolbarButtonsSetting(
     addSetting: (createSetting: (setting: Setting) => void) => Setting,
-    plugin: NotebookNavigatorPlugin
+    plugin: NotebookNavigatorPlugin,
+    toolbar: 'navigation' | 'list'
 ): void {
-    const navigationToolbarButtons = plugin.settings.calendarEnabled
-        ? NAVIGATION_TOOLBAR_BUTTONS
-        : NAVIGATION_TOOLBAR_BUTTONS.filter(button => button.id !== 'calendar');
-
     const setting = addSetting(setting => {
         setting.setName(strings.settings.items.toolbarButtons.name).setDesc(strings.settings.items.toolbarButtons.desc);
     });
 
     setting.controlEl.addClass('nn-toolbar-visibility-control');
-    const sectionsEl = setting.controlEl.createDiv({ cls: 'nn-toolbar-visibility-sections' });
+    const gridEl = setting.controlEl.createDiv({ cls: ['nn-toolbar-visibility-grid', 'nn-toolbar-visibility-grid-scroll'] });
+    const onToggle = () => {
+        runAsyncAction(() => plugin.persistToolbarVisibility());
+    };
 
-    createToolbarButtonGroup({
-        containerEl: sectionsEl,
-        label: strings.settings.items.toolbarButtons.navigationLabel,
-        buttons: navigationToolbarButtons,
-        interfaceIcons: plugin.settings.interfaceIcons,
-        state: plugin.settings.toolbarVisibility.navigation,
-        onToggle: () => {
-            runAsyncAction(() => plugin.persistToolbarVisibility());
-        }
-    });
-
-    createToolbarButtonGroup({
-        containerEl: sectionsEl,
-        label: strings.settings.items.toolbarButtons.listLabel,
-        buttons: LIST_TOOLBAR_BUTTONS,
-        interfaceIcons: plugin.settings.interfaceIcons,
-        state: plugin.settings.toolbarVisibility.list,
-        onToggle: () => {
-            runAsyncAction(() => plugin.persistToolbarVisibility());
-        }
-    });
+    if (toolbar === 'navigation') {
+        const navigationToolbarButtons = plugin.settings.calendarEnabled
+            ? NAVIGATION_TOOLBAR_BUTTONS
+            : NAVIGATION_TOOLBAR_BUTTONS.filter(button => button.id !== 'calendar');
+        createToolbarButtonGroup({
+            gridEl,
+            buttons: navigationToolbarButtons,
+            interfaceIcons: plugin.settings.interfaceIcons,
+            state: plugin.settings.toolbarVisibility.navigation,
+            onToggle
+        });
+    } else {
+        createToolbarButtonGroup({
+            gridEl,
+            buttons: LIST_TOOLBAR_BUTTONS,
+            interfaceIcons: plugin.settings.interfaceIcons,
+            state: plugin.settings.toolbarVisibility.list,
+            onToggle
+        });
+    }
 
     addSettingSyncModeToggle({ setting, plugin, settingId: 'toolbarVisibility' });
 }
 
 interface ToolbarButtonGroupProps<T extends string> {
-    containerEl: HTMLElement;
-    label: string;
+    gridEl: HTMLElement;
     buttons: ToolbarButtonConfig<T>[];
     interfaceIcons: Record<string, string> | undefined;
     state: Record<T, boolean>;
@@ -100,17 +99,12 @@ interface ToolbarButtonGroupProps<T extends string> {
 }
 
 function createToolbarButtonGroup<T extends string>({
-    containerEl,
-    label,
+    gridEl,
     buttons,
     interfaceIcons,
     state,
     onToggle
 }: ToolbarButtonGroupProps<T>): void {
-    const groupEl = containerEl.createDiv({ cls: 'nn-toolbar-visibility-group' });
-    groupEl.createDiv({ cls: 'nn-toolbar-visibility-group-label', text: label });
-    const gridEl = groupEl.createDiv({ cls: ['nn-toolbar-visibility-grid', 'nn-toolbar-visibility-grid-scroll'] });
-
     buttons.forEach(button => {
         const buttonEl = gridEl.createEl('button', {
             cls: ['nn-toolbar-visibility-toggle', 'nn-mobile-toolbar-button'],

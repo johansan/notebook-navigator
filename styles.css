@@ -4676,6 +4676,11 @@ button.nn-navigation-calendar-day {
     gap: 6px;
 }
 
+/* The whole header row toggles collapse, not just the chevron button */
+.nn-list-group-header--collapsible {
+    cursor: pointer;
+}
+
 .nn-list-group-header-spacer {
     height: var(--item-height);
 }
@@ -7136,24 +7141,6 @@ body.nn-resizing {
     border-radius: 4px;
     border: 1px solid var(--background-modifier-border);
     box-sizing: border-box;
-}
-
-.nn-toolbar-visibility-sections {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-4-4);
-}
-
-.nn-toolbar-visibility-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-2-2);
-}
-
-.nn-toolbar-visibility-group-label {
-    font-size: var(--font-ui-small);
-    font-weight: var(--font-semibold);
-    color: var(--nn-theme-foreground-muted);
 }
 
 .nn-toolbar-visibility-grid {
