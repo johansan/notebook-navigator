@@ -1340,9 +1340,7 @@ export const STRINGS_NL = {
             },
             toolbarButtons: {
                 name: 'Werkbalkknoppen',
-                desc: "Kies welke knoppen in de werkbalk worden weergegeven. Verborgen knoppen blijven toegankelijk via opdrachten en menu's.",
-                navigationLabel: 'Navigatiewerkbalk',
-                listLabel: 'Lijstwerkbalk'
+                desc: "Kies welke knoppen in de werkbalk worden weergegeven. Verborgen knoppen blijven toegankelijk via opdrachten en menu's."
             },
             createNewNotesInNewTab: {
                 name: 'Nieuwe notities in nieuw tabblad openen',

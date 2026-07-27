@@ -1338,9 +1338,7 @@ export const STRINGS_ID = {
             },
             toolbarButtons: {
                 name: 'Tombol toolbar',
-                desc: 'Pilih tombol mana yang muncul di toolbar. Tombol tersembunyi tetap dapat diakses melalui perintah dan menu.',
-                navigationLabel: 'Toolbar navigasi',
-                listLabel: 'Toolbar daftar'
+                desc: 'Pilih tombol mana yang muncul di toolbar. Tombol tersembunyi tetap dapat diakses melalui perintah dan menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Buka catatan baru di tab baru',

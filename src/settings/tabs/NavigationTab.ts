@@ -29,6 +29,7 @@ import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import { formatPixelSliderValue, formatSecondsSliderValue, renderSliderSetting } from './SliderSetting';
+import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 /** Builds native 1.13 setting definitions for navigation pane settings. */
 export function createNavigationPaneSettingDefinitions(context: SettingsTabContext): SettingDefinitionItem[] {
@@ -36,6 +37,28 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
 
     return [
         createGroupDefinition(undefined, [
+            createRenderDefinition({
+                name: strings.settings.items.toolbarButtons.name,
+                desc: strings.settings.items.toolbarButtons.desc,
+                aliases: [
+                    strings.paneHeader.showDualPane,
+                    strings.paneHeader.expandAllFolders,
+                    strings.paneHeader.showExcludedItems,
+                    strings.paneHeader.showCalendar,
+                    strings.paneHeader.reorderRootFolders,
+                    strings.paneHeader.newFolder
+                ],
+                render: setting => {
+                    renderToolbarButtonsSetting(
+                        createSetting => {
+                            createSetting(setting);
+                            return setting;
+                        },
+                        plugin,
+                        'navigation'
+                    );
+                }
+            }),
             ...(Platform.isMobile
                 ? []
                 : [

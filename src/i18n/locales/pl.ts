@@ -1341,9 +1341,7 @@ export const STRINGS_PL = {
             },
             toolbarButtons: {
                 name: 'Przyciski paska narzędzi',
-                desc: 'Wybierz, które przyciski mają być wyświetlane na pasku narzędzi. Ukryte przyciski pozostają dostępne za pośrednictwem palety poleceń i w menu.',
-                navigationLabel: 'Panel nawigacji',
-                listLabel: 'Panel listy'
+                desc: 'Wybierz, które przyciski mają być wyświetlane na pasku narzędzi. Ukryte przyciski pozostają dostępne za pośrednictwem palety poleceń i w menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Otwieraj nowe notatki w nowej karcie',

@@ -1335,9 +1335,7 @@ export const STRINGS_KO = {
             },
             toolbarButtons: {
                 name: '도구 모음 버튼',
-                desc: '도구 모음에 표시할 버튼을 선택하세요. 숨겨진 버튼은 명령과 메뉴를 통해 계속 사용할 수 있습니다.',
-                navigationLabel: '탐색 도구 모음',
-                listLabel: '목록 도구 모음'
+                desc: '도구 모음에 표시할 버튼을 선택하세요. 숨겨진 버튼은 명령과 메뉴를 통해 계속 사용할 수 있습니다.'
             },
             createNewNotesInNewTab: {
                 name: '새 노트를 새 탭에서 열기',

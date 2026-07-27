@@ -1332,9 +1332,7 @@ export const STRINGS_EN = {
             },
             toolbarButtons: {
                 name: 'Toolbar buttons',
-                desc: 'Choose which buttons appear in the toolbar. Hidden buttons remain accessible via commands and menus.',
-                navigationLabel: 'Navigation toolbar',
-                listLabel: 'List toolbar'
+                desc: 'Choose which buttons appear in the toolbar. Hidden buttons remain accessible via commands and menus.'
             },
             createNewNotesInNewTab: {
                 name: 'Open new notes in new tab',

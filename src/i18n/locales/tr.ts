@@ -1336,9 +1336,7 @@ export const STRINGS_TR = {
             },
             toolbarButtons: {
                 name: 'Araç çubuğu düğmeleri',
-                desc: 'Araç çubuğunda hangi düğmelerin görüneceğini seçin. Gizli düğmelere komutlar ve menüler aracılığıyla erişilebilir.',
-                navigationLabel: 'Gezinme araç çubuğu',
-                listLabel: 'Liste araç çubuğu'
+                desc: 'Araç çubuğunda hangi düğmelerin görüneceğini seçin. Gizli düğmelere komutlar ve menüler aracılığıyla erişilebilir.'
             },
             createNewNotesInNewTab: {
                 name: 'Yeni notları yeni sekmede aç',
