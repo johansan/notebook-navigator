@@ -217,8 +217,8 @@ Note previews show Omnisearch result excerpts instead of the default preview tex
 **Known limitations**
 
 - **Performance** - Can be slow when searching for fewer than 3 characters in large vaults
-- **Path filters** - Folder scoping is sent to Omnisearch only for simple ASCII paths. Other paths are filtered after Omnisearch returns results
-- **Limited results** - Omnisearch searches the entire vault and returns a limited number of results before filtering, so relevant files from the current folder may not appear if many matches exist elsewhere
+- **Path filters** - Folder scoping is sent to Omnisearch for all folder paths except names containing `"` or `,`. Folder names with non-ASCII characters require Omnisearch 1.30.0 or later. Results are always filtered to the current view after Omnisearch returns
+- **Limited results** - Omnisearch returns at most 50 results. When searching in a folder, the limit covers the folder and its subfolders, so subfolder matches count toward the limit even when `Show notes from subfolders` is disabled
 - **Preview text** - Note previews are replaced with Omnisearch result excerpts, which may not show the actual search match highlight if it appears elsewhere in the file
 
 <br/>

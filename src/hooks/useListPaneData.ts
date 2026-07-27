@@ -174,6 +174,11 @@ export function useListPaneData({
     const hasDateSearchFilters =
         activeFilterSearchTokens !== null &&
         (activeFilterSearchTokens.dateRanges.length > 0 || activeFilterSearchTokens.excludeDateRanges.length > 0);
+    // Folder path passed to Omnisearch as a path:"..." filter. The filter matches the
+    // whole subtree, so with descendant notes hidden, subfolder matches still occupy
+    // Omnisearch's ranked top-50 slots before the list is filtered to direct children.
+    // The scope is applied anyway because the subtree pool is a subset of the vault-wide
+    // pool, so scoping never ranks out a direct child that an unscoped search would keep.
     const omnisearchPathScope = useMemo(() => {
         if (selectionType !== ItemType.FOLDER || !selectedFolder) {
             return undefined;
