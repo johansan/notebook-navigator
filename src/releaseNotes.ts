@@ -126,10 +126,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'The ==Toolbar buttons== setting moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
         ],
         fixed: [
-            'Fixed the appearance preview ignoring the ==Apply color to icons only== setting. When enabled, items without a custom icon show their default icon when previewing a color.',
-            'Fixed folder note links not expanding folders when ==Expand on selection== was enabled.',
-            'Fixed auto-reveal keeping a renamed note selected when a new note reused its previous path.',
-            "Fixed Obsidian's `Move current file to another folder` command switching the Navigator folder when ==Auto-reveal active note== was disabled.",
+            'Fixed the preview in the `Change icon` and `Change color` dialog coloring both the icon and the name when ==Apply color to icons only== was enabled. The preview now colors only the icon, and items without a custom icon show their default icon so you can see the color.',
+            'Fixed clicking the name of a folder with a folder note opening the note without expanding the folder, even when ==Expand on selection== was enabled.',
+            'Fixed new notes not being selected when they got the same name as a note you had just renamed. For example, after renaming a note called `Untitled`, creating a new note kept the renamed note selected instead of the new `Untitled` note.',
+            "Fixed the Navigator jumping to the destination folder when moving a note with Obsidian's `Move current file to another folder` command, even though ==Auto-reveal active note== was disabled.",
             'External files dropped into folders now preserve their original bytes instead of being rewritten as UTF-8.'
         ]
     },
