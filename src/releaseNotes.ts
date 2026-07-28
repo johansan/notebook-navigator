@@ -109,6 +109,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.0',
         date: '2026-07-28',
         showOnUpdate: true,
+        videoUrl: true,
+        videoClickable: true,
         info: 'Good news if you use Omnisearch with Notebook Navigator! Searching inside a folder could previously show few or no results even when the folder contained matching notes. Simon Cambier just released [Omnisearch 1.30.0](https://github.com/scambier/obsidian-omnisearch/releases/tag/1.30.0) which fixes this. Update Omnisearch to get much better search results inside folders.',
         new: [
             'New on tablets: ==Dual pane layout==! Obsidian 1.13.4 introduced resizable sidebars - so Notebook Navigator now brings the full desktop experience to your iPad. Dual pane layout, desktop toolbars, multi-select, and keyboard navigation: everything available on desktop now works on tablets. Find the settings under Settings > Appearance & behavior.',
@@ -126,6 +128,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'The ==Toolbar buttons== setting moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
         ],
         fixed: [
+            'Fixed reinstalling the plugin on the same device showing the `Notebook Navigator could not read its settings and did not start` notice instead of starting with default settings.',
             'Fixed the preview in the `Change icon` and `Change color` dialog coloring both the icon and the name when ==Apply color to icons only== was enabled. The preview now colors only the icon, and items without a custom icon show their default icon so you can see the color.',
             'Fixed clicking the name of a folder with a folder note opening the note without expanding the folder, even when ==Expand on selection== was enabled.',
             'Fixed new notes not being selected when they got the same name as a note you had just renamed. For example, after renaming a note called `Untitled`, creating a new note kept the renamed note selected instead of the new `Untitled` note.',
