@@ -1924,6 +1924,10 @@ export const STRINGS_DE = {
                 name: 'Codeblöcke in Vorschau überspringen',
                 desc: 'Codeblöcke bei der Erstellung des Vorschautextes überspringen.'
             },
+            skipCalloutsInPreview: {
+                name: 'Callouts in Vorschau überspringen',
+                desc: 'Callout-Blöcke bei der Erstellung des Vorschautextes überspringen.'
+            },
             stripHtmlInPreview: {
                 name: 'HTML in Vorschauen entfernen',
                 desc: 'HTML-Tags aus dem Vorschautext entfernen. Kann die Leistung bei großen Notizen beeinträchtigen.'

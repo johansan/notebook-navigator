@@ -1914,6 +1914,10 @@ export const STRINGS_KO = {
                 name: '미리보기에서 코드 블록 건너뛰기',
                 desc: '미리보기 텍스트를 생성할 때 코드 블록을 건너뜁니다.'
             },
+            skipCalloutsInPreview: {
+                name: '미리보기에서 콜아웃 건너뛰기',
+                desc: '미리보기 텍스트를 생성할 때 콜아웃 블록을 건너뜁니다.'
+            },
             stripHtmlInPreview: {
                 name: '미리보기에서 HTML 제거',
                 desc: '미리보기 텍스트에서 HTML 태그를 제거합니다. 큰 노트에서는 성능에 영향을 줄 수 있습니다.'

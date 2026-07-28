@@ -1920,6 +1920,10 @@ export const STRINGS_PT = {
                 name: 'Saltar blocos de código na pré-visualização',
                 desc: 'Saltar blocos de código ao gerar texto de pré-visualização.'
             },
+            skipCalloutsInPreview: {
+                name: 'Saltar callouts na pré-visualização',
+                desc: 'Saltar blocos de callout ao gerar texto de pré-visualização.'
+            },
             stripHtmlInPreview: {
                 name: 'Remover HTML nas pré-visualizações',
                 desc: 'Remover etiquetas HTML do texto de pré-visualização. Pode afetar o desempenho em notas grandes.'

@@ -1916,6 +1916,10 @@ export const STRINGS_TR = {
                 name: 'Önizlemede kod bloklarını atla',
                 desc: 'Önizleme metni oluştururken kod bloklarını atla.'
             },
+            skipCalloutsInPreview: {
+                name: 'Önizlemede callout bloklarını atla',
+                desc: 'Önizleme metni oluştururken callout bloklarını atla.'
+            },
             stripHtmlInPreview: {
                 name: 'Önizlemelerde HTML kaldır',
                 desc: 'Önizleme metninden HTML etiketlerini kaldırır. Büyük notlarda performansı etkileyebilir.'

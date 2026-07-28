@@ -319,6 +319,36 @@ Processing boundaries in Notebook Navigator:
 - Cache invalidation for preview regeneration is triggered when `stripLatexInPreview` changes
   (`MarkdownPipelineContentProvider.getRelevantSettings()` and `getMarkdownPipelineClearFlags()`)
 
+## Preview callout and blockquote fence rules
+
+Callout removal and blockquote fence detection are implemented in `src/utils/codeRangeUtils.ts`
+(`removeCalloutBlocks`, `scanFencedCodeSegments`) and applied in
+`src/utils/previewText/previewPipeline.ts`. The rules match Obsidian Reading view rendering
+(verified against Obsidian 1.13), which applies blockquote lazy continuation more broadly than
+CommonMark.
+
+Rule set for callout membership:
+
+- A callout starts at a line whose blockquote prefix is followed by a `[!type]` marker, with an optional `+` or `-` fold suffix
+- Every following line with blockquote depth at least the header depth is callout content, including nested callouts and fenced code
+- Lazy continuation: a non-blank line at shallower depth is still callout content unless it starts a heading, list item, thematic break, or fence. This includes lines directly after a fenced code block or a `>`-only line
+- A blank line or an interrupting block line ends the callout; that line is kept
+- Callout markers inside fenced code blocks are code and are not treated as callouts
+
+Rule set for fences inside blockquotes:
+
+- Closing fences must use the same fence character, be at least as long as the opener, and appear at the same blockquote depth
+- Shallower non-blank lines are absorbed into an open blockquote fence as code content
+- A blank line, or a shallower line starting a heading, list item, thematic break, or another fence, ends the blockquote and the open fence with it; a shallower fence marker then starts its own fence
+- An unclosed fence otherwise runs to the end of input
+
+Processing boundaries in Notebook Navigator:
+
+- Callout removal runs only when `skipCalloutsInPreview` is enabled; it runs before clipping so a leading callout longer than the clip window does not blank the preview
+- When `skipCalloutsInPreview` is disabled, callout markers are stripped but callout title text and content remain in the preview
+- Cache invalidation for preview regeneration is triggered when `skipCalloutsInPreview` changes
+  (`MarkdownPipelineContentProvider.getRelevantSettings()` and `getMarkdownPipelineClearFlags()`)
+
 ## Completion signals
 
 - Storage is ready when the initial diff + tag/property tree build completes and `StorageContext` sets `isStorageReady=true` (`useStorageVaultSync`).

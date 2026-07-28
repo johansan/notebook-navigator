@@ -353,6 +353,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showFilePreview: true,
     skipHeadingsInPreview: true,
     skipCodeBlocksInPreview: true,
+    skipCalloutsInPreview: false,
     stripHtmlInPreview: true,
     stripLatexInPreview: true,
     previewRows: 2,

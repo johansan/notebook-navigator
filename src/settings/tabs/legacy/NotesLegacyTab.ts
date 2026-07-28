@@ -508,6 +508,16 @@ export function renderNotesTab(context: SettingsTabContext): void {
         );
 
     new Setting(previewSettingsEl)
+        .setName(strings.settings.items.skipCalloutsInPreview.name)
+        .setDesc(strings.settings.items.skipCalloutsInPreview.desc)
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.skipCalloutsInPreview).onChange(async value => {
+                plugin.settings.skipCalloutsInPreview = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
+    new Setting(previewSettingsEl)
         .setName(strings.settings.items.stripHtmlInPreview.name)
         .setDesc(strings.settings.items.stripHtmlInPreview.desc)
         .addToggle(toggle =>

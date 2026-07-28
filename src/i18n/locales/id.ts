@@ -1918,6 +1918,10 @@ export const STRINGS_ID = {
                 name: 'Lewati blok kode dalam pratinjau',
                 desc: 'Lewati blok kode saat menghasilkan teks pratinjau.'
             },
+            skipCalloutsInPreview: {
+                name: 'Lewati callout dalam pratinjau',
+                desc: 'Lewati blok callout saat menghasilkan teks pratinjau.'
+            },
             stripHtmlInPreview: {
                 name: 'Hapus HTML di pratinjau',
                 desc: 'Hapus tag HTML dari teks pratinjau. Dapat memengaruhi kinerja pada catatan besar.'

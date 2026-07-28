@@ -712,6 +712,7 @@ export interface NotebookNavigatorSettings {
     showFilePreview: boolean;
     skipHeadingsInPreview: boolean;
     skipCodeBlocksInPreview: boolean;
+    skipCalloutsInPreview: boolean;
     stripHtmlInPreview: boolean;
     stripLatexInPreview: boolean;
     previewRows: number;

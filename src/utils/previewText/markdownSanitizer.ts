@@ -27,6 +27,16 @@ import {
     type CodeRangeContext
 } from './codeAwareTransforms';
 
+// Line-anchored block patterns. These classify a line from the original source structure, so they
+// run only in the first strip pass: later passes rewrite inline formatting, which can move literal
+// text to a line start (`**# title**` becomes `# title`), and re-running these patterns there
+// would reclassify that text as a heading, table row, list marker, or footnote definition and
+// drop it, even though the renderer treats it as plain inline text.
+const PATTERN_LIST_MARKER = /^(?:[-*+]\s+|\d+\.\s+)/.source;
+const PATTERN_HEADING = /^(#+)\s+(.*)$/m.source;
+const PATTERN_TABLE_ROW = /^\s*\|.*\|.*$/m.source;
+const PATTERN_FOOTNOTE_DEFINITION = /^\s*\[\^[^\]]+]:.*$/m.source;
+
 const BASE_PATTERNS = [
     /([`~]{3,})[\s\S]*?\1/.source,
     /%%[\s\S]*?%%/.source,
@@ -50,16 +60,22 @@ const BASE_PATTERNS = [
     /~~((?:(?!~~).)+)~~/.source,
     /==((?:(?!==).)+)==/.source,
     /\[([^\]]+)\]\([^)]+\)/.source,
-    /\[![\w-]+\][+-]?(?:\s+[^\n]*)?/.source,
-    /^(?:[-*+]\s+|\d+\.\s+)/.source,
-    /^(#+)\s+(.*)$/m.source,
-    /^\s*\|.*\|.*$/m.source,
+    // Matches only the callout marker so the title text stays in the input and this same pass
+    // strips its markdown (bold, links, tags) like ordinary text.
+    /\[![\w-]+\][+-]?/.source,
+    PATTERN_LIST_MARKER,
+    PATTERN_HEADING,
+    PATTERN_TABLE_ROW,
     /\^\[[^\]]*?]/.source,
     /\[\^[^\]]+]/.source,
-    /^\s*\[\^[^\]]+]:.*$/m.source
+    PATTERN_FOOTNOTE_DEFINITION
 ];
 
+const BLOCK_PATTERNS = new Set([PATTERN_LIST_MARKER, PATTERN_HEADING, PATTERN_TABLE_ROW, PATTERN_FOOTNOTE_DEFINITION]);
+
 const REGEX_STRIP_MARKDOWN = new RegExp(BASE_PATTERNS.join('|'), 'gm');
+// Same alternation minus the block patterns, preserving pattern order, for passes after the first.
+const REGEX_STRIP_INLINE_MARKDOWN = new RegExp(BASE_PATTERNS.filter(pattern => !BLOCK_PATTERNS.has(pattern)).join('|'), 'gm');
 const REGEX_BLOCKQUOTE_MARKERS = /^\s{0,3}(?:>\s*)+/gm;
 const REGEX_MARKDOWN_HARD_ESCAPES = /\\([\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E])/g;
 const REGEX_MARKDOWN_HARD_LINE_BREAK = /\\\r?\n/g;
@@ -296,7 +312,7 @@ export function stripMarkdownSyntax(
         ? withoutHardLineBreakEscapes.replace(REGEX_BLOCKQUOTE_MARKERS, '')
         : withoutHardLineBreakEscapes;
 
-    const stripped = withoutBlockquoteMarkers.replace(REGEX_STRIP_MARKDOWN, (match, ...rawArgs) => {
+    const replaceMarkdownMatch = (match: string, ...rawArgs: unknown[]): string => {
         const args: unknown[] = rawArgs;
         const captureLength = getCaptureLength(args);
         const fenceMatch = match.match(/^([`~]{3,})/u);
@@ -311,6 +327,8 @@ export function stripMarkdownSyntax(
             return '';
         }
 
+        // Removes bare callout markers and matches from other patterns that contain a callout
+        // marker, such as `[!note](url)` link matches.
         if (match.match(/\[![\w-]+\]/)) {
             return '';
         }
@@ -319,8 +337,11 @@ export function stripMarkdownSyntax(
             return match.slice(1, -1);
         }
 
+        // Removed embeds and images become a space, matching replaceWikiLinkSyntax, so words on
+        // both sides stay separated. This matters when a later pass removes an embed that an
+        // earlier pass unwrapped from formatting, such as `Alpha**![[img]]**Beta`.
         if (match.startsWith('!')) {
-            return '';
+            return ' ';
         }
 
         if (match.match(/#[\w\-/]+(?=\s|$)/)) {
@@ -332,8 +353,13 @@ export function stripMarkdownSyntax(
             return '';
         }
 
+        // The italic patterns capture a prefix character plus the content, so the generic
+        // capture return below would keep only the prefix. Reconstruct prefix plus content
+        // instead, but only when the re-match spans the whole match: a partial re-match means a
+        // different pattern (bold, heading) matched text that merely contains italics, and that
+        // match must fall through so its own capture is returned for the next pass.
         const italicStarMatch = match.match(/(^|[^*\d])\*([^*\n]+)\*(?![*\d])/);
-        if (italicStarMatch) {
+        if (italicStarMatch && italicStarMatch[0] === match) {
             const italicStarContent = italicStarMatch[2];
             if (typeof italicStarContent !== 'string' || !italicStarContent.trim()) {
                 return match;
@@ -343,7 +369,7 @@ export function stripMarkdownSyntax(
         }
 
         const italicUnderscoreMatch = match.match(/(^|[^_a-zA-Z0-9])_([^_\n]+)_(?![_a-zA-Z0-9])/);
-        if (italicUnderscoreMatch) {
+        if (italicUnderscoreMatch && italicUnderscoreMatch[0] === match) {
             const italicUnderscoreContent = italicUnderscoreMatch[2];
             if (typeof italicUnderscoreContent !== 'string' || !italicUnderscoreContent.trim()) {
                 return match;
@@ -375,7 +401,23 @@ export function stripMarkdownSyntax(
         }
 
         return match;
-    });
+    };
+
+    // One pass resolves one nesting level: for `**[link](url)**` the bold pattern returns its
+    // capture with the link syntax intact. Re-running until the text stabilizes strips nested
+    // constructs the same way as their un-nested forms. Passes after the first use the
+    // inline-only regex because block classification comes from the original line structure;
+    // unwrapping emphasis can expose block-like text at line starts that must stay literal.
+    // The bound keeps degenerate inputs cheap; nesting deeper than the bound keeps its
+    // literal markers.
+    let stripped = withoutBlockquoteMarkers.replace(REGEX_STRIP_MARKDOWN, replaceMarkdownMatch);
+    for (let pass = 0; pass < 2; pass += 1) {
+        const next = stripped.replace(REGEX_STRIP_INLINE_MARKDOWN, replaceMarkdownMatch);
+        if (next === stripped) {
+            break;
+        }
+        stripped = next;
+    }
 
     const withoutWikiLinkSyntax = replaceWikiLinkSyntax(stripped);
     const withoutTasksAndRules = stripTaskCheckboxesAndHorizontalRules(withoutWikiLinkSyntax);

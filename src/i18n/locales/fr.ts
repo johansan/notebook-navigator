@@ -1925,6 +1925,10 @@ export const STRINGS_FR = {
                 name: "Ignorer les blocs de code dans l'aperçu",
                 desc: "Ignorer les blocs de code lors de la génération du texte d'aperçu."
             },
+            skipCalloutsInPreview: {
+                name: "Ignorer les callouts dans l'aperçu",
+                desc: "Ignorer les blocs de callout lors de la génération du texte d'aperçu."
+            },
             stripHtmlInPreview: {
                 name: 'Supprimer le HTML dans les aperçus',
                 desc: "Supprimer les balises HTML du texte d'aperçu. Peut affecter les performances sur les longues notes."

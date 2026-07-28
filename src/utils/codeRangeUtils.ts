@@ -125,6 +125,25 @@ export function isFenceClose(
     return trailingIndex === line.length;
 }
 
+/** Matches an ATX heading marker at the start of a blockquote line remainder. */
+const ATX_HEADING_PATTERN = /^#{1,6}(?:[ \t]|$)/;
+/** Matches a list item marker at the start of a blockquote line remainder. */
+const LIST_ITEM_PATTERN = /^(?:[-+*][ \t]|\d{1,9}[.)][ \t])/;
+/** Matches a thematic break at the start of a blockquote line remainder. */
+const THEMATIC_BREAK_PATTERN = /^(?:(?:-[ \t]*){3,}|(?:\*[ \t]*){3,}|(?:_[ \t]*){3,})$/;
+
+/**
+ * Returns true when the line remainder starts a block that ends lazy continuation of a blockquote.
+ *
+ * The Obsidian renderer absorbs shallower non-blank lines into an open blockquote — including into
+ * an open fence inside it — unless the line starts a heading, list item, or thematic break (fence
+ * markers also interrupt; callers detect those with `parseFenceOpen`). Verified against Obsidian
+ * 1.13 rendering; this is laxer than CommonMark, which limits laziness to paragraph continuation.
+ */
+function startsInterruptingBlock(remainder: string): boolean {
+    return ATX_HEADING_PATTERN.test(remainder) || LIST_ITEM_PATTERN.test(remainder) || THEMATIC_BREAK_PATTERN.test(remainder);
+}
+
 type FencedSegmentKind = 'text' | 'fenced';
 
 interface FencedSegment {
@@ -155,7 +174,47 @@ function scanFencedCodeSegments(
         const segmentEnd = lineEnd === -1 ? content.length : lineEnd + 1;
         const prefix = parseBlockquotePrefix(line);
 
-        if (!inFence) {
+        // Set when the current line belongs to the open fence (interior or closing line), so it
+        // must not be re-parsed as regular content below.
+        let lineConsumedByFence = false;
+        if (inFence && fenceChar !== null) {
+            if (isFenceClose(line, fenceDepth, fenceChar, fenceLength, prefix)) {
+                const keepGoing = onSegment({ kind: 'fenced', start: fenceStart, end: segmentEnd });
+                if (keepGoing === false) {
+                    return;
+                }
+
+                inFence = false;
+                fenceChar = null;
+                fenceLength = 0;
+                fenceDepth = 0;
+                lineConsumedByFence = true;
+            } else if (fenceDepth > 0 && prefix.depth < fenceDepth) {
+                const remainder = line.slice(prefix.nextIndex);
+                // Obsidian lazily absorbs shallower plain lines into an open blockquote fence as
+                // code content. A blank line or a line starting an interrupting block (heading,
+                // list item, thematic break, or another fence) ends the blockquote and the fence
+                // with it: the fenced segment stops before this line, and the line is parsed as
+                // regular content so it can open a new fence or be emitted as text.
+                if (remainder.length === 0 || startsInterruptingBlock(remainder) || parseFenceOpen(line, prefix) !== null) {
+                    const keepGoing = onSegment({ kind: 'fenced', start: fenceStart, end: index });
+                    if (keepGoing === false) {
+                        return;
+                    }
+
+                    inFence = false;
+                    fenceChar = null;
+                    fenceLength = 0;
+                    fenceDepth = 0;
+                } else {
+                    lineConsumedByFence = true;
+                }
+            } else {
+                lineConsumedByFence = true;
+            }
+        }
+
+        if (!lineConsumedByFence) {
             const openFence = parseFenceOpen(line, prefix);
             if (openFence) {
                 inFence = true;
@@ -169,16 +228,6 @@ function scanFencedCodeSegments(
                     return;
                 }
             }
-        } else if (fenceChar !== null && isFenceClose(line, fenceDepth, fenceChar, fenceLength, prefix)) {
-            const keepGoing = onSegment({ kind: 'fenced', start: fenceStart, end: segmentEnd });
-            if (keepGoing === false) {
-                return;
-            }
-
-            inFence = false;
-            fenceChar = null;
-            fenceLength = 0;
-            fenceDepth = 0;
         }
 
         if (lineEnd === -1) {
@@ -201,7 +250,11 @@ function scanFencedCodeSegments(
  * - Closing fences must use the same fence character (` or ~) and be at least as long as the opener.
  * - Closing fences may contain trailing whitespace but no other characters.
  * - Closing fences must appear at the same blockquote depth as the opener.
- * - If an opening fence is never closed, the range runs to the end of the string.
+ * - Open fences inside blockquotes follow Obsidian's lazy continuation: shallower non-blank lines
+ *   are absorbed as code content, while a blank line or a line starting a heading, list item,
+ *   thematic break, or another fence ends the blockquote and the fence with it.
+ * - If an opening fence is never closed, the range runs to the end of the string (or, for
+ *   blockquote fences, to the end of the blockquote).
  *
  * Known limitations:
  * - The scan is line-based and does not attempt to validate markdown indentation rules.
@@ -271,6 +324,93 @@ export function collectVisibleTextSkippingFencedCodeBlocks(content: string, maxV
             }
 
             return;
+        },
+        { emitText: true }
+    );
+
+    return output;
+}
+
+/** Matches a callout marker (`[!type]` with an optional `+`/`-` fold suffix) at the start of a blockquote line remainder. */
+const CALLOUT_HEADER_PATTERN = /^\[![\w-]+\][+-]?(?:[ \t]|$)/;
+
+/**
+ * Removes callout blocks: `> [!type]` header lines and their continuation lines, matching how the
+ * Obsidian renderer determines callout membership (verified against Obsidian 1.13 rendering).
+ *
+ * Behavior:
+ * - A callout starts at a line whose blockquote prefix is followed by a `[!type]` marker.
+ * - The callout consumes every following line whose blockquote depth is at least the header depth.
+ *   Nested callouts and fenced code inside the callout are removed with it.
+ * - Lazy continuation: a non-blank line at shallower depth is still callout content unless it
+ *   starts a heading, list item, thematic break, or fence. The renderer absorbs such lines into
+ *   the callout — even directly after a fenced code block or a `>`-only line — so without this,
+ *   text that Obsidian renders inside the callout would leak into the preview.
+ * - A blank line or an interrupting block line ends the callout; that line is kept.
+ * - Callout markers inside fenced code blocks are treated as code, so code samples showing callout
+ *   syntax are not removed.
+ */
+export function removeCalloutBlocks(content: string): string {
+    if (!content.includes('[!')) {
+        return content;
+    }
+
+    let output = '';
+    // Blockquote depth of the callout currently being removed; 0 while outside a callout.
+    let calloutDepth = 0;
+
+    scanFencedCodeSegments(
+        content,
+        segment => {
+            const raw = content.slice(segment.start, segment.end);
+
+            if (segment.kind === 'fenced') {
+                if (calloutDepth > 0) {
+                    const firstLineEnd = raw.indexOf('\n');
+                    const firstLine = firstLineEnd === -1 ? raw : raw.slice(0, firstLineEnd);
+                    // A fence opening at the callout depth or deeper is callout content and is
+                    // removed with it, including shallower lines the scanner absorbed into it.
+                    if (parseBlockquotePrefix(firstLine).depth >= calloutDepth) {
+                        return;
+                    }
+                    // A shallower fence interrupts the callout and starts its own block.
+                    calloutDepth = 0;
+                }
+                output += raw;
+                return;
+            }
+
+            let line = raw;
+            const newlineIndex = line.indexOf('\n');
+            if (newlineIndex !== -1) {
+                line = line.slice(0, newlineIndex);
+            }
+            if (line.endsWith('\r')) {
+                line = line.slice(0, -1);
+            }
+
+            const prefix = parseBlockquotePrefix(line);
+            const remainder = line.slice(prefix.nextIndex);
+
+            if (calloutDepth > 0) {
+                if (prefix.depth >= calloutDepth) {
+                    return;
+                }
+                if (remainder.length > 0 && !startsInterruptingBlock(remainder)) {
+                    // Lazy continuation: the shallower line is rendered inside the callout, so it
+                    // is removed with it. Fence lines never reach this branch because the scanner
+                    // emits them as fenced segments.
+                    return;
+                }
+                calloutDepth = 0;
+            }
+
+            if (prefix.depth > 0 && CALLOUT_HEADER_PATTERN.test(remainder)) {
+                calloutDepth = prefix.depth;
+                return;
+            }
+
+            output += raw;
         },
         { emitText: true }
     );

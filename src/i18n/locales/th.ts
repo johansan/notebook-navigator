@@ -1910,6 +1910,10 @@ export const STRINGS_TH = {
                 name: 'ข้ามบล็อกโค้ดในตัวอย่าง',
                 desc: 'ข้ามบล็อกโค้ดเมื่อสร้างข้อความตัวอย่าง'
             },
+            skipCalloutsInPreview: {
+                name: 'ข้าม callout ในตัวอย่าง',
+                desc: 'ข้ามบล็อก callout เมื่อสร้างข้อความตัวอย่าง'
+            },
             stripHtmlInPreview: {
                 name: 'ลบ HTML ในตัวอย่าง',
                 desc: 'ลบแท็ก HTML ออกจากข้อความตัวอย่าง อาจส่งผลต่อประสิทธิภาพในโน้ตขนาดใหญ่'
