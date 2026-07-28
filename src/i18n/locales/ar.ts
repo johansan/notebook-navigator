@@ -918,6 +918,14 @@ export const STRINGS_AR = {
         revealInNavigator: 'الكشف في متصفح الدفتر', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'تعذر على متصفح الدفتر قراءة إعداداته ولم يبدأ التشغيل. إذا كان القبو قيد المزامنة، أعد تشغيل Obsidian بعد اكتمال المزامنة. للبدء من جديد بالإعدادات الافتراضية، شغّل الأمر "استعادة الإعدادات الافتراضية".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'البدء بالإعدادات الافتراضية؟', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'تم تثبيت متصفح الدفتر للتو ولا يوجد ملف إعدادات. إذا كان هذا تثبيتًا جديدًا أو إعادة تثبيت، فتابع بالإعدادات الافتراضية. إذا كانت إعداداتك تأتي من خدمة مزامنة، فألغِ العملية وانتظر اكتمال المزامنة ثم أعد تشغيل Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'متصفح الدفتر مثبت على هذا الجهاز منذ فترة، لكن ملف الإعدادات مفقود. إذا كان القبو لا يزال قيد المزامنة، فألغِ العملية وانتظر اكتمال المزامنة ثم أعد تشغيل Obsidian للاحتفاظ بإعداداتك الحالية. تابع فقط إذا أردت البدء من جديد بالإعدادات الافتراضية.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'استخدام الإعدادات الافتراضية' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'استعادة الإعدادات الافتراضية', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:

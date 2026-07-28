@@ -128,7 +128,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'The ==Toolbar buttons== setting moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
         ],
         fixed: [
-            'Fixed reinstalling the plugin on the same device showing the `Notebook Navigator could not read its settings and did not start` notice instead of starting with default settings.',
+            'Fixed reinstalling the plugin on the same device showing the `Notebook Navigator could not read its settings and did not start` notice. Enabling the plugin without a settings file now shows a confirmation dialog and starts with default settings after confirmation.',
             'Fixed the preview in the `Change icon` and `Change color` dialog coloring both the icon and the name when ==Apply color to icons only== was enabled. The preview now colors only the icon, and items without a custom icon show their default icon so you can see the color.',
             'Fixed clicking the name of a folder with a folder note opening the note without expanding the folder, even when ==Expand on selection== was enabled.',
             'Fixed new notes not being selected when they got the same name as a note you had just renamed. For example, after renaming a note called `Untitled`, creating a new note kept the renamed note selected instead of the new `Untitled` note.',

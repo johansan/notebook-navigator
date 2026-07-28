@@ -119,12 +119,22 @@ show progress.
      no persisted localStorage version marker, no attempt returned `unavailable`, and the file stays missing through
      the window. Cold startup and runtime enablement use the same grace period because sync can deliver `data.json`
      after the plugin files.
-   - When startup ends `unavailable`, show a notice, register the `Restore default settings` recovery command, and
-     abort initialization so no code path can overwrite `data.json` with defaults. The command confirms with a
-     dialog, copies a readable `data.json` to a timestamped backup in the plugin folder, writes and verifies defaults,
-     and only then clears plugin localStorage.
+   - When the file stays missing on a device that has a persisted localStorage version marker, startup ends `missing`
+     and initialization pauses. Uninstalling deletes the plugin folder but not localStorage, so a reinstall is
+     indistinguishable from a sync provider that has not delivered `data.json` yet. Obsidian calls `onUserEnable()`
+     right after `onload` only when the user explicitly installed or enabled the plugin; that call rereads
+     `data.json` (a file delivered in the meantime wins) and otherwise asks the user to confirm starting over with
+     default settings, because an explicit enable can also be a manual toggle on a device where sync has not
+     delivered the file. The dialog message reflects the plugin folder timestamp (recent install versus
+     long-standing install) but both variants require the same confirmation, and `data.json` is reread once more
+     after confirmation. Cancelling, or an aborted startup without a user enable, shows the settings-unavailable
+     notice with the recovery command and startup stays aborted.
+   - When startup ends `unavailable` (`data.json` exists but cannot be read), show a notice, register the
+     `Restore default settings` recovery command, and abort initialization so no code path can overwrite `data.json`
+     with defaults. The command confirms with a dialog, copies a readable `data.json` to a timestamped backup in the
+     plugin folder, writes and verifies defaults, and only then clears plugin localStorage.
    - External settings reloads (`onExternalSettingsChange`) that arrive before initialization completes are queued
-     and processed once at the end of `onload`. Reloads with a non-`loaded` result keep the current in-memory
+     and processed once startup completes. Reloads with a non-`loaded` result keep the current in-memory
      settings.
    - The settings pipeline (`applySettingsRecord`) sanitizes keyboard shortcuts, migrates legacy fields, applies
      default date/time formats, migrates folder note template settings, and normalizes tag, property, and navigation

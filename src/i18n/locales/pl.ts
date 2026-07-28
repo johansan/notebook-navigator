@@ -926,6 +926,14 @@ export const STRINGS_PL = {
         revealInNavigator: 'Pokaż w Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator nie mógł odczytać swoich ustawień i nie został uruchomiony. Jeśli sejf jest synchronizowany, uruchom ponownie Obsidian po zakończeniu synchronizacji. Aby zacząć od nowa z ustawieniami domyślnymi, uruchom polecenie „Przywróć ustawienia domyślne”.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Rozpocząć z ustawieniami domyślnymi?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator został właśnie zainstalowany i nie ma pliku ustawień. Jeśli to nowa instalacja lub ponowna instalacja, kontynuuj z ustawieniami domyślnymi. Jeśli ustawienia pochodzą z usługi synchronizacji, anuluj, poczekaj na zakończenie synchronizacji i uruchom ponownie Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator jest zainstalowany na tym urządzeniu od dłuższego czasu, ale brakuje pliku ustawień. Jeśli sejf nadal się synchronizuje, anuluj, poczekaj na zakończenie synchronizacji i uruchom ponownie Obsidian, aby zachować dotychczasowe ustawienia. Kontynuuj tylko po to, aby zacząć od nowa z ustawieniami domyślnymi.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Użyj ustawień domyślnych' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Przywróć ustawienia domyślne', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
