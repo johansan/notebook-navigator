@@ -107,11 +107,11 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.0',
-        date: '2026-07-28',
+        date: '2026-07-29',
         showOnUpdate: true,
         videoUrl: true,
         videoClickable: true,
-        info: 'Good news if you use Omnisearch with Notebook Navigator! Searching inside a folder could previously show few or no results even when the folder contained matching notes. Simon Cambier just released [Omnisearch 1.30.0](https://github.com/scambier/obsidian-omnisearch/releases/tag/1.30.0) which fixes this. Update Omnisearch to get much better search results inside folders.',
+        info: 'Finally dual pane support for iPads! And much better search results with Omnisearch! You can now also quickly collaps or expand all list pane groups with a new command or toolbar button, and much more!\n\nThank you for using Notebook Navigator!',
         new: [
             'New on tablets: ==Dual pane layout==! Obsidian 1.13.4 introduced resizable sidebars - so Notebook Navigator now brings the full desktop experience to your iPad. Dual pane layout, desktop toolbars, multi-select, and keyboard navigation: everything available on desktop now works on tablets. Find the settings under Settings > Appearance & behavior.',
             'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.',
