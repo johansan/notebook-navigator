@@ -60,7 +60,7 @@ export type UXIconId =
     | 'file-word-count'
     | 'file-character-count';
 
-export type UXIconCategory = 'navigationPane' | 'folders' | 'tags' | 'properties' | 'listPane' | 'fileItems';
+export type UXIconCategory = 'navigationPane' | 'folders' | 'tags' | 'properties' | 'listPane' | 'fileItems' | 'calendar';
 
 export interface UXIconDefinition {
     id: UXIconId;
@@ -75,7 +75,6 @@ export const UX_ICON_DEFINITIONS: UXIconDefinition[] = [
     { id: 'nav-shortcuts', category: 'navigationPane', defaultIconId: 'star' },
     { id: 'nav-expand-all', category: 'navigationPane', defaultIconId: 'chevrons-up-down' },
     { id: 'nav-collapse-all', category: 'navigationPane', defaultIconId: 'chevrons-down-up' },
-    { id: 'nav-calendar', category: 'navigationPane', defaultIconId: 'calendar-days' },
     { id: 'nav-hidden-items', category: 'navigationPane', defaultIconId: 'eye' },
     { id: 'nav-root-reorder', category: 'navigationPane', defaultIconId: 'list-tree' },
     { id: 'nav-new-folder', category: 'navigationPane', defaultIconId: 'folder-plus' },
@@ -107,7 +106,8 @@ export const UX_ICON_DEFINITIONS: UXIconDefinition[] = [
     { id: 'list-pinned', category: 'listPane', defaultIconId: '' },
     { id: 'file-unfinished-task', category: 'fileItems', defaultIconId: 'circle-alert' },
     { id: 'file-word-count', category: 'fileItems', defaultIconId: 'sigma' },
-    { id: 'file-character-count', category: 'fileItems', defaultIconId: 'type' }
+    { id: 'file-character-count', category: 'fileItems', defaultIconId: 'type' },
+    { id: 'nav-calendar', category: 'calendar', defaultIconId: 'calendar-days' }
 ];
 
 const UX_ICON_ID_SET: ReadonlySet<string> = new Set(UX_ICON_DEFINITIONS.map(definition => definition.id));
