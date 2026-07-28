@@ -1922,6 +1922,10 @@ export const STRINGS_PT_BR = {
                 name: 'Pular blocos de código na visualização',
                 desc: 'Pular blocos de código ao gerar texto de visualização.'
             },
+            skipCalloutsInPreview: {
+                name: 'Pular callouts na visualização',
+                desc: 'Pular blocos de callout ao gerar texto de visualização.'
+            },
             stripHtmlInPreview: {
                 name: 'Remover HTML nas visualizações',
                 desc: 'Remover tags HTML do texto de visualização. Pode afetar o desempenho em notas grandes.'

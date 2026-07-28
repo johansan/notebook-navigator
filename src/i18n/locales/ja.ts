@@ -1916,6 +1916,10 @@ export const STRINGS_JA = {
                 name: 'プレビューでコードブロックをスキップ',
                 desc: 'プレビューテキスト生成時にコードブロックをスキップします。'
             },
+            skipCalloutsInPreview: {
+                name: 'プレビューでコールアウトをスキップ',
+                desc: 'プレビューテキスト生成時にコールアウトブロックをスキップします。'
+            },
             stripHtmlInPreview: {
                 name: 'プレビューのHTMLを削除',
                 desc: 'プレビューテキストからHTMLタグを削除します。大きなノートではパフォーマンスに影響する場合があります。'

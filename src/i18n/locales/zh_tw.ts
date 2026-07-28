@@ -1904,6 +1904,10 @@ export const STRINGS_ZH_TW = {
                 name: '預覽中跳過程式碼區塊',
                 desc: '產生預覽文字時跳過程式碼區塊。'
             },
+            skipCalloutsInPreview: {
+                name: '預覽中跳過標註',
+                desc: '產生預覽文字時跳過標註區塊。'
+            },
             stripHtmlInPreview: {
                 name: '移除預覽中的 HTML',
                 desc: '從預覽文字中移除 HTML 標籤。可能會影響大型筆記的效能。'

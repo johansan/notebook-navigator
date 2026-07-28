@@ -116,6 +116,7 @@ export function getMarkdownPipelineClearFlags(
     const previewExtractionSettingsChanged =
         oldSettings.skipHeadingsInPreview !== newSettings.skipHeadingsInPreview ||
         oldSettings.skipCodeBlocksInPreview !== newSettings.skipCodeBlocksInPreview ||
+        oldSettings.skipCalloutsInPreview !== newSettings.skipCalloutsInPreview ||
         oldSettings.stripHtmlInPreview !== newSettings.stripHtmlInPreview ||
         oldSettings.stripLatexInPreview !== newSettings.stripLatexInPreview ||
         !areStringArraysEqual(oldSettings.previewProperties, newSettings.previewProperties) ||
@@ -507,6 +508,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             'showFilePreview',
             'skipHeadingsInPreview',
             'skipCodeBlocksInPreview',
+            'skipCalloutsInPreview',
             'stripHtmlInPreview',
             'stripLatexInPreview',
             'previewProperties',

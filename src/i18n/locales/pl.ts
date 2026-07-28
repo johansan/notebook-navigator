@@ -1922,6 +1922,10 @@ export const STRINGS_PL = {
                 name: 'Pomiń bloki kodu w podglądzie',
                 desc: 'Pomija bloki kodu podczas generowania tekstu podglądu.'
             },
+            skipCalloutsInPreview: {
+                name: 'Pomiń bloki callout w podglądzie',
+                desc: 'Pomija bloki callout podczas generowania tekstu podglądu.'
+            },
             stripHtmlInPreview: {
                 name: 'Usuń HTML w podglądach',
                 desc: 'Usuń znaczniki HTML z tekstu podglądu. Może wpływać na wydajność przy dużych notatkach.'

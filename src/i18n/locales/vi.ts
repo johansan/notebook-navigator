@@ -1919,6 +1919,10 @@ export const STRINGS_VI = {
                 name: 'Bỏ qua khối code trong xem trước',
                 desc: 'Bỏ qua khối code khi tạo văn bản xem trước.'
             },
+            skipCalloutsInPreview: {
+                name: 'Bỏ qua callout trong xem trước',
+                desc: 'Bỏ qua khối callout khi tạo văn bản xem trước.'
+            },
             stripHtmlInPreview: {
                 name: 'Xóa HTML trong xem trước',
                 desc: 'Xóa thẻ HTML khỏi văn bản xem trước. Có thể ảnh hưởng đến hiệu suất với ghi chú lớn.'

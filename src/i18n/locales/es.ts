@@ -1921,6 +1921,10 @@ export const STRINGS_ES = {
                 name: 'Omitir bloques de código en vista previa',
                 desc: 'Omite los bloques de código al generar el texto de vista previa.'
             },
+            skipCalloutsInPreview: {
+                name: 'Omitir llamadas en vista previa',
+                desc: 'Omite los bloques de llamada al generar el texto de vista previa.'
+            },
             stripHtmlInPreview: {
                 name: 'Eliminar HTML en vistas previas',
                 desc: 'Eliminar etiquetas HTML del texto de vista previa. Puede afectar el rendimiento en notas grandes.'
