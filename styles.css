@@ -2517,6 +2517,8 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     --nn-calendar-active-editor-border-color: var(--nn-theme-calendar-day-active-border-color);
     --nn-calendar-active-editor-border-width: var(--nn-theme-calendar-day-active-border-width);
     --nn-calendar-active-editor-gap-color: var(--nn-theme-nav-bg);
+    /* Opaque surface behind day cells; underlays translucent cell fills so overdrawn neighbors composite identically */
+    --nn-calendar-cell-surface-bg: var(--nn-theme-nav-bg);
 }
 
 .notebook-navigator-mobile :is(.nn-navigation-pane, .nn-list-pane, .nn-single-pane-calendar) {
@@ -3247,26 +3249,31 @@ button.nn-navigation-calendar-weeknumber-button {
     content: '';
     position: absolute;
     inset: 0;
-    background-color: var(--nn-theme-calendar-weekend-bg);
+    /* Opaque surface underlay with the translucent weekend color layered on top. This makes the
+       painted result opaque, so the 1px overdraw into gaps shared with adjacent weekend cells
+       overlaps invisibly. Without the underlay, overlapping translucent fills double-composite
+       into darker seams, and half-pixel overdraw leaves hairline gaps on fractional-DPR displays. */
+    background-color: var(--nn-calendar-cell-surface-bg);
+    background-image: linear-gradient(var(--nn-theme-calendar-weekend-bg), var(--nn-theme-calendar-weekend-bg));
     border-radius: 0;
     pointer-events: none;
     z-index: 0;
 }
 
 .nn-navigation-calendar-day-cell.is-weekend.has-weekend-before::before {
-    inset-inline-start: -0.5px;
+    inset-inline-start: -1px;
 }
 
 .nn-navigation-calendar-day-cell.is-weekend.has-weekend-after::before {
-    inset-inline-end: -0.5px;
+    inset-inline-end: -1px;
 }
 
 .nn-navigation-calendar-day-cell.is-weekend.has-weekend-above::before {
-    inset-block-start: -0.5px;
+    inset-block-start: -1px;
 }
 
 .nn-navigation-calendar-day-cell.is-weekend.has-weekend-below::before {
-    inset-block-end: -0.5px;
+    inset-block-end: -1px;
 }
 
 .nn-navigation-calendar-day-cell.is-weekend.round-weekend-top-left::before {
@@ -3560,6 +3567,7 @@ button.nn-navigation-calendar-day {
 .nn-calendar-right-sidebar .nn-navigation-calendar {
     --nn-calendar-header-chip-bg: var(--nn-calendar-right-sidebar-bg);
     --nn-calendar-active-editor-gap-color: var(--nn-calendar-right-sidebar-bg);
+    --nn-calendar-cell-surface-bg: var(--nn-calendar-right-sidebar-bg);
     --nn-calendar-header-font-size: 16px;
     --nn-calendar-today-font-size: 13px;
 }
