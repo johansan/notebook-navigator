@@ -125,6 +125,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'You can now click anywhere on group headers in the list pane to collapse or expand them, not just the chevron.'
         ],
         changed: [
+            'The calendar in the right sidebar now uses a calendar icon in the tab header. You can change this icon under Settings > Appearance & behavior > ==Interface icons== > Calendar.',
             'The collapsed state of the pinned section is now stored per device and no longer syncs across devices, matching the collapsed state of list groups.',
             'The ==Toolbar buttons== setting moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
         ],
