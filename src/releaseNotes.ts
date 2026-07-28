@@ -111,23 +111,23 @@ const RELEASE_NOTES: ReleaseNote[] = [
         showOnUpdate: true,
         videoUrl: true,
         videoClickable: true,
-        info: 'Finally dual pane support for iPads! And much better search results with Omnisearch! You can now also quickly collaps or expand all list pane groups with a new command or toolbar button, and much more!\n\nThank you for using Notebook Navigator!',
+        info: 'Finally dual pane support for iPads! And much better search results with Omnisearch! You can now also quickly collapse or expand all list pane groups with a new command or toolbar button, and much more!\n\nThank you for using Notebook Navigator!',
         new: [
-            'New on tablets: ==Dual pane layout==! Obsidian 1.13.4 introduced resizable sidebars - so Notebook Navigator now brings the full desktop experience to your iPad. Dual pane layout, desktop toolbars, multi-select, and keyboard navigation: everything available on desktop now works on tablets. Find the settings under Settings > Appearance & behavior.',
-            'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.',
+            'New on tablets: ==Dual pane layout==! Obsidian 1.13 introduced resizable sidebars - so Notebook Navigator now brings the full desktop experience to your iPad. Dual pane layout, desktop toolbars, multi-select, and keyboard navigation: everything available on desktop now works on tablets. Find the settings under Settings > Appearance & behavior.',
             'New command: ==Collapse / expand all list groups==. When no groups are expanded, it expands all groups; otherwise, it collapses all groups, including the pinned section.',
-            'New toolbar button: ==Collapse / expand all list groups==, added under Settings > List pane > Toolbar buttons. It is disabled when the current list has no collapsible groups.',
-            'New setting: Notes > ==Skip callouts in preview==. When enabled, callout blocks are skipped when generating preview text. Disabled by default.'
+            'New toolbar button: ==Collapse / expand all list groups==, added under Settings > List pane > Toolbar buttons. Disabled when the current list has no collapsible groups.',
+            'New setting: Notes > ==Skip callouts in preview==. When enabled, callout blocks are skipped when generating preview text. Disabled by default.',
+            'New setting: Calendar > ==Show hidden items==. When enabled, the calendar always shows all calendar notes, including notes hidden by vault profile filters. Disabled by default.'
         ],
         improved: [
-            'Searching with Omnisearch inside a folder now reliably shows the matching notes from that folder. Previously the result list could be incomplete or empty, especially in large vaults and in folders with non-English names such as `Möten`. Update Omnisearch to 1.30.0 or later to get this in every folder.',
-            'During list pane search, group header item counts show matching and total items, such as `12/20`.',
+            'Searching with Omnisearch inside a folder now reliably shows the matching notes from that folder. Omnisearch returns only its 50 best matches for the whole vault, so Notebook Navigator narrows the search to the selected folder. Previously this only worked for folders with plain names - in folders with special characters or non-English letters, such as `Möten`, the search still covered the whole vault, and the result list could be incomplete or empty, especially in large vaults. Update Omnisearch to 1.30.0 or later to get this in every folder.',
+            'During list pane search, group header item counts now show matching and total items, such as `12/20`.',
             'You can now click anywhere on group headers in the list pane to collapse or expand them, not just the chevron.'
         ],
         changed: [
-            'The calendar in the right sidebar now uses a calendar icon in the tab header. You can change this icon under Settings > Appearance & behavior > ==Interface icons== > Calendar.',
+            'The calendar in the right sidebar now uses a calendar icon in the tab header. You can change this to a custom icon under Settings > Appearance & behavior > ==Interface icons== > Calendar.',
             'The collapsed state of the pinned section is now stored per device and no longer syncs across devices, matching the collapsed state of list groups.',
-            'The ==Toolbar buttons== setting moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
+            'The ==Toolbar buttons== setting to enable / disable toolbar buttons moved from Appearance & behavior to the top of the Navigation pane and List pane tabs.'
         ],
         fixed: [
             'Fixed reinstalling the plugin on the same device showing the `Notebook Navigator could not read its settings and did not start` notice. Enabling the plugin without a settings file now shows a confirmation dialog and starts with default settings after confirmation.',
