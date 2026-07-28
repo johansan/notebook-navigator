@@ -1282,7 +1282,7 @@ export const STRINGS_DE = {
             },
             dualPane: {
                 name: 'Doppelbereichslayout',
-                desc: 'Navigationsbereich und Listenbereich nebeneinander auf dem Desktop anzeigen.'
+                desc: 'Navigationsbereich und Listenbereich nebeneinander anzeigen.'
             },
             dualPaneOrientation: {
                 name: 'Ausrichtung des Doppelbereichs',
@@ -1328,8 +1328,8 @@ export const STRINGS_DE = {
                 desc: 'Steuert die gesamte Zoomstufe von Notebook Navigator (Prozent).'
             },
             useFloatingToolbars: {
-                name: 'Schwebende Symbolleisten auf iOS/iPadOS verwenden',
-                desc: 'Gilt nur für iOS und iPadOS.'
+                name: 'Schwebende Symbolleisten auf iOS verwenden',
+                desc: 'Gilt nur für iOS.'
             },
             startView: {
                 name: 'Standard-Startansicht',

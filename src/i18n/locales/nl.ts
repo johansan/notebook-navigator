@@ -1281,7 +1281,7 @@ export const STRINGS_NL = {
             },
             dualPane: {
                 name: 'Dubbel paneellay-out',
-                desc: 'Navigatiepaneel en lijstpaneel naast elkaar tonen op desktop.'
+                desc: 'Navigatiepaneel en lijstpaneel naast elkaar tonen.'
             },
             dualPaneOrientation: {
                 name: 'Dubbel paneel oriëntatie',
@@ -1327,8 +1327,8 @@ export const STRINGS_NL = {
                 desc: 'Regelt het algemene zoomniveau van Notebook Navigator (procent).'
             },
             useFloatingToolbars: {
-                name: 'Zwevende werkbalken gebruiken op iOS/iPadOS',
-                desc: 'Geldt alleen op iOS en iPadOS.'
+                name: 'Zwevende werkbalken gebruiken op iOS',
+                desc: 'Geldt alleen op iOS.'
             },
             startView: {
                 name: 'Standaard opstartweergave',

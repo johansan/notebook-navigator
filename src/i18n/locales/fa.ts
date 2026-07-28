@@ -1279,7 +1279,7 @@ export const STRINGS_FA = {
             },
             dualPane: {
                 name: 'نمای پنل دوگانه',
-                desc: 'پنل ناوبری و پنل لیست را کنار هم در دسکتاپ نمایش دهید.'
+                desc: 'پنل ناوبری و پنل لیست را کنار هم نمایش دهید.'
             },
             dualPaneOrientation: {
                 name: 'جهت پنل دوگانه',
@@ -1325,8 +1325,8 @@ export const STRINGS_FA = {
                 desc: 'سطح زوم کلی Notebook Navigator را کنترل می‌کند (درصد).'
             },
             useFloatingToolbars: {
-                name: 'استفاده از نوار ابزار شناور در iOS/iPadOS',
-                desc: 'فقط برای iOS و iPadOS اعمال می‌شود.'
+                name: 'استفاده از نوار ابزار شناور در iOS',
+                desc: 'فقط برای iOS اعمال می‌شود.'
             },
             startView: {
                 name: 'نمای پیش‌فرض شروع',

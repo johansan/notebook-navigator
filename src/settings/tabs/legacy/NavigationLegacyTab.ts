@@ -24,6 +24,7 @@ import { DEFAULT_SETTINGS } from '../../defaultSettings';
 import { isItemScope, isNavCountLeaderStyle, isNavRainbowColorMode, type NavRainbowSettings } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
 import { runAsyncAction } from '../../../utils/async';
+import { supportsKeyboardInteractions } from '../../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../../utils/vaultProfiles';
 import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
@@ -433,7 +434,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
         refreshNavRainbowControls();
     });
 
-    if (!Platform.isMobile) {
+    // Auto-select follows keyboard navigation support (desktop and tablets); phones never auto-open
+    if (supportsKeyboardInteractions()) {
         addToggleSetting(
             behaviorGroup.addSetting,
             strings.settings.items.autoSelectFirstFileOnFocusChange.name,

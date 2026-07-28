@@ -1279,7 +1279,7 @@ export const STRINGS_ID = {
             },
             dualPane: {
                 name: 'Tata letak panel ganda',
-                desc: 'Tampilkan panel navigasi dan panel daftar berdampingan di desktop.'
+                desc: 'Tampilkan panel navigasi dan panel daftar berdampingan.'
             },
             dualPaneOrientation: {
                 name: 'Orientasi panel ganda',
@@ -1325,8 +1325,8 @@ export const STRINGS_ID = {
                 desc: 'Mengontrol tingkat zoom keseluruhan Notebook Navigator (persentase).'
             },
             useFloatingToolbars: {
-                name: 'Gunakan toolbar mengambang di iOS/iPadOS',
-                desc: 'Hanya berlaku di iOS dan iPadOS.'
+                name: 'Gunakan toolbar mengambang di iOS',
+                desc: 'Hanya berlaku di iOS.'
             },
             startView: {
                 name: 'Tampilan startup default',

@@ -265,7 +265,7 @@ export function useFileItemPills({
     fileItemPillDecorationModel,
     fileItemPillOrderModel
 }: UseFileItemPillsParams): FileItemPillsState {
-    const { app, isMobile } = useServices();
+    const { app } = useServices();
     const metadataService = useMetadataService();
     const { selectionType, selectedTag, selectedProperty } = useNavigationSelection();
     const { navigateToTag, navigateToProperty } = useTagNavigation();
@@ -294,7 +294,7 @@ export function useFileItemPills({
             event.stopPropagation();
 
             if (onModifySearchWithTag) {
-                const operator = getTagSearchModifierOperator(event, settings.multiSelectModifier, isMobile);
+                const operator = getTagSearchModifierOperator(event, settings.multiSelectModifier);
                 if (operator) {
                     event.preventDefault();
                     onModifySearchWithTag(tag, operator);
@@ -304,7 +304,7 @@ export function useFileItemPills({
 
             navigateToTag(tag, { preserveNavigationFocus: false });
         },
-        [isMobile, navigateToTag, onModifySearchWithTag, settings.multiSelectModifier]
+        [navigateToTag, onModifySearchWithTag, settings.multiSelectModifier]
     );
 
     const handlePropertyClick = useCallback(
@@ -319,7 +319,7 @@ export function useFileItemPills({
             }
 
             if (canNavigateToProperty && onModifySearchWithProperty && propertySearchKey) {
-                const operator = getTagSearchModifierOperator(event, settings.multiSelectModifier, isMobile);
+                const operator = getTagSearchModifierOperator(event, settings.multiSelectModifier);
                 if (operator) {
                     event.preventDefault();
                     onModifySearchWithProperty(propertySearchKey, pill.propertySearchValuePath ?? null, operator);
@@ -349,7 +349,6 @@ export function useFileItemPills({
         [
             app.workspace,
             file.path,
-            isMobile,
             navigateToProperty,
             onModifySearchWithProperty,
             settings.enablePropertyExternalLinks,

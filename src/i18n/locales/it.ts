@@ -1275,7 +1275,7 @@ export const STRINGS_IT = {
             },
             dualPane: {
                 name: 'Layout doppio pannello',
-                desc: 'Mostra pannello navigazione e pannello lista affiancati su desktop.'
+                desc: 'Mostra pannello navigazione e pannello lista affiancati.'
             },
             dualPaneOrientation: {
                 name: 'Orientamento doppio pannello',
@@ -1321,8 +1321,8 @@ export const STRINGS_IT = {
                 desc: 'Controlla il livello di zoom complessivo di Notebook Navigator (percentuale).'
             },
             useFloatingToolbars: {
-                name: 'Usa barre degli strumenti flottanti su iOS/iPadOS',
-                desc: 'Si applica solo a iOS e iPadOS.'
+                name: 'Usa barre degli strumenti flottanti su iOS',
+                desc: 'Si applica solo a iOS.'
             },
             startView: {
                 name: "Vista predefinita all'avvio",

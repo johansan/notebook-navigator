@@ -800,9 +800,15 @@ body {
    Mobile Layout
    ======================================================================== */
 
-/* Hide resize handle on mobile */
+/* Widen the divider hit area for touch dragging. The handle only renders in
+   dual pane mode, which is limited to tablets on mobile. */
 .notebook-navigator-mobile .nn-resize-handle {
-    display: none;
+    width: 12px;
+}
+
+.notebook-navigator-mobile .nn-split-container.nn-orientation-vertical .nn-resize-handle {
+    width: 100%;
+    height: 12px;
 }
 
 /* Add touch-action to prevent browser gestures interfering */
@@ -957,25 +963,17 @@ body {
    Mobile Headers + Breadcrumb
    ======================================================================== */
 
-/* Mobile header - adjust for back button */
-.notebook-navigator-mobile .nn-pane-header {
+/* Simplified mobile headers. Keyed on the phone chrome header class so the desktop
+   headers rendered on tablets keep the desktop height and per-pane backgrounds. */
+.notebook-navigator-mobile .nn-pane-header-simple {
     flex-shrink: 0;
     min-height: 48px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     padding: 0 var(--nn-file-item-padding-horizontal);
     background-color: var(--nn-theme-list-bg);
-}
-
-/* Simplified mobile headers */
-.notebook-navigator-mobile .nn-pane-header-simple {
-    justify-content: center;
-    text-align: center;
-}
-
-.notebook-navigator-mobile .nn-navigation-pane .nn-pane-header-simple {
-    justify-content: center;
-    text-align: center;
 }
 
 .notebook-navigator-mobile .nn-pane-header-simple .nn-pane-header-profile {
@@ -1416,17 +1414,6 @@ button.nn-icon-button {
     width: auto;
     min-width: 34px;
     height: 25px;
-}
-
-/* iPad-specific adjustment for icon buttons in headers */
-@media (min-width: 768px) {
-    .notebook-navigator-mobile .nn-header-actions button.nn-icon-button {
-        /* Maintain same dimensions as desktop for consistency */
-        padding: 0 8px;
-        width: auto;
-        min-width: 34px;
-        height: 25px;
-    }
 }
 
 /* Icon button hover state - subtle background on hover - desktop only */
@@ -8330,6 +8317,15 @@ button.nn-youtube-button svg {
     background-color: var(--nn-theme-nav-bg);
 }
 
+/* Horizontal dual pane on tablets sizes the navigation pane from the dragged divider width.
+   Without restoring flex: 0 0 auto, the flex: 1 above zeroes the flex basis so both panes
+   stay evenly split regardless of the stored width. The divider border returns because the
+   resize handle is transparent when idle. */
+.notebook-navigator-mobile .nn-dual-pane.nn-orientation-horizontal .nn-navigation-pane {
+    flex: 0 0 auto;
+    border-right: 1px solid var(--nn-theme-divider-border-color);
+}
+
 .notebook-navigator-mobile .nn-list-pane {
     display: flex;
     flex-direction: column;
@@ -8490,14 +8486,15 @@ button.nn-mobile-toolbar-button {
 
 /* iOS: bottom padding inside the navigator viewport */
 /* Applied to the internal split container so the bottom edge doesn't touch the view chrome and the toolbar shadow can render into the padding (8px matches the top spacer). */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-split-container {
+/* Scoped to body.is-phone (Obsidian keeps the class current on resize) because tablets render the desktop headers and no floating toolbars. */
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-split-container {
     padding-bottom: 8px;
     box-sizing: border-box;
 }
 
 /* iOS: allow the glass toolbar shadow to render into the split container padding */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane,
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane {
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane,
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane {
     overflow: visible;
 }
 
@@ -8517,8 +8514,9 @@ button.nn-mobile-toolbar-button {
 }
 
 /* iOS: reserve scroll space for the floating toolbar so rows can scroll under it. */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane-scroller,
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane-scroller {
+/* Scoped to body.is-phone because tablets never render the floating toolbars. */
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane-scroller,
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane-scroller {
     padding-bottom: var(--nn-ios-pane-bottom-overlay-height);
 }
 
@@ -8695,15 +8693,27 @@ button.nn-mobile-toolbar-button {
    Android Platform Overrides
    ======================================================================== */
 
+.notebook-navigator-android {
+    /* Declared so calc() uses of the variable stay valid; an undefined variable drops the
+       whole padding/height declaration at computed-value time. Obsidian accounts for
+       Android safe areas in the view chrome. */
+    --nn-mobile-safe-area-bottom: 0px;
+}
+
 /* Android: match the view container background to mobile pane surfaces */
 .view-content.notebook-navigator.notebook-navigator-android {
     background-color: var(--nn-theme-mobile-bg);
 }
 
-/* Android: bottom padding inside the navigator viewport */
-/* Applied to the internal split container so the bottom edge doesn't touch the view chrome (8px matches the top spacer). */
+/* Android: match the split container background to mobile pane surfaces */
 .notebook-navigator-android .nn-split-container {
     background-color: var(--nn-theme-mobile-bg);
+}
+
+/* Android: bottom padding inside the navigator viewport */
+/* Applied to the internal split container so the bottom edge doesn't touch the view chrome (8px matches the top spacer). */
+/* Scoped to body.is-phone to match the iOS rule; tablets render the desktop chrome without the inset. */
+body.is-phone .notebook-navigator-android .nn-split-container {
     padding-bottom: 8px;
     box-sizing: border-box;
 }

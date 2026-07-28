@@ -22,9 +22,13 @@ import { shouldOpenNoteClickInNewTab } from '../../src/utils/keyboardOpenContext
 
 const testPlatform = Platform as typeof Platform & { isMacOS?: boolean };
 const originalIsMacOS = testPlatform.isMacOS;
+const originalIsMobile = testPlatform.isMobile;
+const originalIsTablet = testPlatform.isTablet;
 
 afterEach(() => {
     testPlatform.isMacOS = originalIsMacOS;
+    testPlatform.isMobile = originalIsMobile;
+    testPlatform.isTablet = originalIsTablet;
 });
 
 describe('shouldOpenNoteClickInNewTab', () => {
@@ -38,8 +42,7 @@ describe('shouldOpenNoteClickInNewTab', () => {
                     ctrlKey: false,
                     metaKey: true
                 },
-                'optionAlt',
-                false
+                'optionAlt'
             )
         ).toBe(true);
     });
@@ -54,8 +57,7 @@ describe('shouldOpenNoteClickInNewTab', () => {
                     ctrlKey: true,
                     metaKey: false
                 },
-                'optionAlt',
-                false
+                'optionAlt'
             )
         ).toBe(true);
     });
@@ -70,8 +72,7 @@ describe('shouldOpenNoteClickInNewTab', () => {
                     ctrlKey: false,
                     metaKey: true
                 },
-                'cmdCtrl',
-                false
+                'cmdCtrl'
             )
         ).toBe(false);
     });
@@ -86,14 +87,15 @@ describe('shouldOpenNoteClickInNewTab', () => {
                     ctrlKey: false,
                     metaKey: true
                 },
-                'optionAlt',
-                false
+                'optionAlt'
             )
         ).toBe(false);
     });
 
-    it('does not open a new tab from modifier clicks on mobile', () => {
+    it('does not open a new tab from modifier clicks on phones', () => {
         testPlatform.isMacOS = true;
+        testPlatform.isMobile = true;
+        testPlatform.isTablet = false;
 
         expect(
             shouldOpenNoteClickInNewTab(
@@ -102,9 +104,25 @@ describe('shouldOpenNoteClickInNewTab', () => {
                     ctrlKey: false,
                     metaKey: true
                 },
-                'optionAlt',
-                true
+                'optionAlt'
             )
         ).toBe(false);
+    });
+
+    it('opens Cmd-click in a new tab on tablets', () => {
+        testPlatform.isMacOS = true;
+        testPlatform.isMobile = true;
+        testPlatform.isTablet = true;
+
+        expect(
+            shouldOpenNoteClickInNewTab(
+                {
+                    altKey: false,
+                    ctrlKey: false,
+                    metaKey: true
+                },
+                'optionAlt'
+            )
+        ).toBe(true);
     });
 });

@@ -25,6 +25,7 @@ import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { isNavRainbowColorMode } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
+import { supportsKeyboardInteractions } from '../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
@@ -59,14 +60,15 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                     );
                 }
             }),
-            ...(Platform.isMobile
-                ? []
-                : [
+            // Auto-select follows keyboard navigation support (desktop and tablets); phones never auto-open
+            ...(supportsKeyboardInteractions()
+                ? [
                       createToggleDefinition('autoSelectFirstFileOnFocusChange', {
                           name: strings.settings.items.autoSelectFirstFileOnFocusChange.name,
                           desc: strings.settings.items.autoSelectFirstFileOnFocusChange.desc
                       })
-                  ]),
+                  ]
+                : []),
             createToggleDefinition('autoExpandNavItems', {
                 name: strings.settings.items.autoExpandNavItems.name,
                 desc: strings.settings.items.autoExpandNavItems.desc

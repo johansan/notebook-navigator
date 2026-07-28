@@ -177,7 +177,7 @@ Border variables apply to navigation rows, file rows, count badges, and file pil
 | `--nn-theme-file-selected-tag-border-color`  | `var(--nn-theme-file-tag-border-color)`                             | Border color for tag pills in selected file rows  |
 | `--nn-theme-file-selected-property-border-color` | `var(--nn-theme-file-property-border-color)`                     | Border color for property pills in selected file rows |
 
-### Pane divider (desktop only)
+### Pane divider (desktop and tablet dual pane)
 
 | Variable                                    | Default                             | Description                                               |
 | ------------------------------------------- | ----------------------------------- | --------------------------------------------------------- |

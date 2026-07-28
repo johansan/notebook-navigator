@@ -1276,7 +1276,7 @@ export const STRINGS_KO = {
             },
             dualPane: {
                 name: '이중 창 레이아웃',
-                desc: '데스크톱에서 탐색 창과 목록 창을 나란히 표시합니다.'
+                desc: '탐색 창과 목록 창을 나란히 표시합니다.'
             },
             dualPaneOrientation: {
                 name: '듀얼 창 방향',
@@ -1322,8 +1322,8 @@ export const STRINGS_KO = {
                 desc: 'Notebook Navigator의 전체 확대 수준을 제어합니다(백분율).'
             },
             useFloatingToolbars: {
-                name: 'iOS/iPadOS에서 플로팅 툴바 사용',
-                desc: 'iOS 및 iPadOS에서만 적용됩니다.'
+                name: 'iOS에서 플로팅 툴바 사용',
+                desc: 'iOS에서만 적용됩니다.'
             },
             startView: {
                 name: '기본 시작 보기',

@@ -1273,7 +1273,7 @@ export const STRINGS_EN = {
             },
             dualPane: {
                 name: 'Dual pane layout',
-                desc: 'Show navigation pane and list pane side by side on desktop.'
+                desc: 'Show navigation pane and list pane side by side.'
             },
             dualPaneOrientation: {
                 name: 'Dual pane orientation',
@@ -1319,8 +1319,8 @@ export const STRINGS_EN = {
                 desc: 'Controls the overall zoom level of Notebook Navigator (percentage).'
             },
             useFloatingToolbars: {
-                name: 'Use floating toolbars on iOS/iPadOS',
-                desc: 'Applies only on iOS and iPadOS.'
+                name: 'Use floating toolbars on iOS',
+                desc: 'Applies only on iOS.'
             },
             startView: {
                 name: 'Default startup view',

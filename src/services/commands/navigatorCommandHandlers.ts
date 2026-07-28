@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { FileView, TFile, TFolder, type WorkspaceLeaf } from 'obsidian';
+import { FileView, Platform, TFile, TFolder, type WorkspaceLeaf } from 'obsidian';
 import type NotebookNavigatorPlugin from '../../main';
 import { getCurrentLanguage, strings } from '../../i18n';
 import {
@@ -676,43 +676,48 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         }
     });
 
-    // Command to toggle the left sidebar, opening Notebook Navigator when uncollapsing
-    plugin.addCommand({
-        id: 'toggle-left-sidebar',
-        name: strings.commands.toggleLeftSidebar,
-        callback: () => {
-            runAsyncAction(async () => {
-                const { workspace } = plugin.app;
-                const leftSplit = workspace.leftSplit;
-                if (leftSplit && !leftSplit.collapsed) {
-                    leftSplit.collapse();
-                    return;
-                }
+    // Command to toggle the left sidebar, opening Notebook Navigator when uncollapsing.
+    // Desktop only: on mobile the sidebar is a drawer, and on tablets collapse() is a
+    // no-op while the sidebar is pinned, so the command would do nothing. Must match the
+    // spec gate in registerNavigatorCommands.ts so the lazy handler stays in sync.
+    if (!Platform.isMobile) {
+        plugin.addCommand({
+            id: 'toggle-left-sidebar',
+            name: strings.commands.toggleLeftSidebar,
+            callback: () => {
+                runAsyncAction(async () => {
+                    const { workspace } = plugin.app;
+                    const leftSplit = workspace.leftSplit;
+                    if (leftSplit && !leftSplit.collapsed) {
+                        leftSplit.collapse();
+                        return;
+                    }
 
-                const navigatorLeaves = plugin.getNavigatorLeaves();
-                const leftSidebarNavigatorLeaf = navigatorLeaves.find(leaf => {
-                    return getLeafSplitLocation(plugin.app, leaf) === 'left-sidebar';
+                    const navigatorLeaves = plugin.getNavigatorLeaves();
+                    const leftSidebarNavigatorLeaf = navigatorLeaves.find(leaf => {
+                        return getLeafSplitLocation(plugin.app, leaf) === 'left-sidebar';
+                    });
+
+                    if (leftSidebarNavigatorLeaf) {
+                        await focusNavigatorVisiblePane(plugin, [leftSidebarNavigatorLeaf]);
+                        return;
+                    }
+
+                    const leftLeaf = workspace.getLeftLeaf(false);
+                    if (!leftLeaf) {
+                        return;
+                    }
+
+                    await leftLeaf.setViewState({ type: NOTEBOOK_NAVIGATOR_VIEW, active: true });
+                    await workspace.revealLeaf(leftLeaf);
+                    const view = leftLeaf.view;
+                    if (isNotebookNavigatorView(view)) {
+                        view.focusVisiblePane();
+                    }
                 });
-
-                if (leftSidebarNavigatorLeaf) {
-                    await focusNavigatorVisiblePane(plugin, [leftSidebarNavigatorLeaf]);
-                    return;
-                }
-
-                const leftLeaf = workspace.getLeftLeaf(false);
-                if (!leftLeaf) {
-                    return;
-                }
-
-                await leftLeaf.setViewState({ type: NOTEBOOK_NAVIGATOR_VIEW, active: true });
-                await workspace.revealLeaf(leftLeaf);
-                const view = leftLeaf.view;
-                if (isNotebookNavigatorView(view)) {
-                    view.focusVisiblePane();
-                }
-            });
-        }
-    });
+            }
+        });
+    }
 
     // Command to open the configured homepage file
     plugin.addCommand({

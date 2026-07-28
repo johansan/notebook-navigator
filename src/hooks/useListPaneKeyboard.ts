@@ -47,6 +47,7 @@ import { matchesShortcut, KeyboardShortcutAction } from '../utils/keyboardShortc
 import { runAsyncAction } from '../utils/async';
 import { openFileInContext } from '../utils/openFileInContext';
 import { isEnterKey, resolveKeyboardEnterAction } from '../utils/keyboardOpenContext';
+import { supportsKeyboardInteractions } from '../utils/paneLayout';
 import type { Align } from '../types/scroll';
 
 /**
@@ -107,7 +108,7 @@ export function useListPaneKeyboard({
     onReorderPropertySort,
     onStartRename
 }: UseListPaneKeyboardProps) {
-    const { app, commandQueue, isMobile, tagTreeService, propertyTreeService } = useServices();
+    const { app, commandQueue, tagTreeService, propertyTreeService } = useServices();
     const openFileInWorkspace = useFileOpener();
     const fileSystemOps = useFileSystemOps();
     const settings = useSettingsState();
@@ -342,7 +343,7 @@ export function useListPaneKeyboard({
 
             if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_EXTEND_SELECTION_DOWN)) {
                 e.preventDefault();
-                if (!isMobile && currentFileSelection.selectedFile?.path) {
+                if (supportsKeyboardInteractions() && currentFileSelection.selectedFile?.path) {
                     const currentFileIndex = orderedFileIndexMap.get(currentFileSelection.selectedFile.path);
                     if (currentFileIndex !== undefined && currentFileIndex !== -1) {
                         // Only debounce workspace opens for physical arrow keys so keyup can commit the final selection.
@@ -368,7 +369,7 @@ export function useListPaneKeyboard({
 
             if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_EXTEND_SELECTION_UP)) {
                 e.preventDefault();
-                if (!isMobile && currentFileSelection.selectedFile?.path) {
+                if (supportsKeyboardInteractions() && currentFileSelection.selectedFile?.path) {
                     const currentFileIndex = orderedFileIndexMap.get(currentFileSelection.selectedFile.path);
                     if (currentFileIndex !== undefined && currentFileIndex !== -1) {
                         // Only debounce workspace opens for physical arrow keys so keyup can commit the final selection.
@@ -501,18 +502,21 @@ export function useListPaneKeyboard({
                 }
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_SELECT_ALL)) {
                 e.preventDefault();
-                const allFiles = items
-                    .filter(item => item.type === ListPaneItemType.FILE)
-                    .map(item => {
-                        const fileItem = item;
-                        return fileItem.data instanceof TFile ? fileItem.data : null;
-                    })
-                    .filter((file): file is TFile => file !== null);
+                // Multi-selection requires keyboard interaction support; phones stay single-selection
+                if (supportsKeyboardInteractions()) {
+                    const allFiles = items
+                        .filter(item => item.type === ListPaneItemType.FILE)
+                        .map(item => {
+                            const fileItem = item;
+                            return fileItem.data instanceof TFile ? fileItem.data : null;
+                        })
+                        .filter((file): file is TFile => file !== null);
 
-                selectAll(allFiles);
+                    selectAll(allFiles);
+                }
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_RANGE_TO_START)) {
                 e.preventDefault();
-                if (!isMobile && currentFileSelection.selectedFile?.path) {
+                if (supportsKeyboardInteractions() && currentFileSelection.selectedFile?.path) {
                     const currentFileIndex = orderedFileIndexMap.get(currentFileSelection.selectedFile.path);
                     if (currentFileIndex !== undefined && currentFileIndex !== -1) {
                         handleRangeSelection('home', currentFileIndex);
@@ -521,7 +525,7 @@ export function useListPaneKeyboard({
                 return;
             } else if (matchesShortcut(e, shortcuts, KeyboardShortcutAction.LIST_RANGE_TO_END)) {
                 e.preventDefault();
-                if (!isMobile && currentFileSelection.selectedFile?.path) {
+                if (supportsKeyboardInteractions() && currentFileSelection.selectedFile?.path) {
                     const currentFileIndex = orderedFileIndexMap.get(currentFileSelection.selectedFile.path);
                     if (currentFileIndex !== undefined && currentFileIndex !== -1) {
                         handleRangeSelection('end', currentFileIndex);
@@ -564,7 +568,6 @@ export function useListPaneKeyboard({
             getCurrentIndex,
             enabled,
             settings,
-            isMobile,
             orderedFileIndexMap,
             handleShiftArrowSelection,
             orderedFiles,

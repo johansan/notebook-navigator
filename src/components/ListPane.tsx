@@ -83,6 +83,7 @@ import type { FolderDecorationModel } from '../utils/folderDecoration';
 import { useSurfaceColorVariables } from '../hooks/useSurfaceColorVariables';
 import { LIST_PANE_SURFACE_COLOR_MAPPINGS } from '../constants/surfaceColorMappings';
 import { getListPaneMeasurements } from '../utils/listPaneMeasurements';
+import { usesMobileChrome } from '../utils/paneLayout';
 import { createHiddenTagVisibility } from '../utils/tagPrefixMatcher';
 import { getPropertyKeySet } from '../utils/vaultProfiles';
 import { DateUtils } from '../utils/dateUtils';
@@ -354,7 +355,11 @@ export const ListPane = React.memo(
         const addNoteShortcutRef = useRef(addNoteShortcut);
         const removeShortcutRef = useRef(removeShortcut);
         const listPaneTitle = settings.listPaneTitle ?? 'header';
-        const shouldShowDesktopTitleArea = !isMobile && listPaneTitle === 'list';
+        // Mobile chrome (simplified header, mobile toolbars) applies to phones only. Tablets
+        // render the desktop header and title area in both pane layouts so the toolbars stay
+        // at the top when switching between single and dual pane.
+        const useMobileChrome = usesMobileChrome();
+        const shouldShowDesktopTitleArea = !useMobileChrome && listPaneTitle === 'list';
         const listMeasurements = getListPaneMeasurements(isMobile);
         const topSpacerHeight = shouldShowDesktopTitleArea ? 0 : listMeasurements.topSpacer;
         const iconColumnStyle = useMemo(() => {
@@ -405,7 +410,7 @@ export const ListPane = React.memo(
             };
         }, [listSurfaceColor, listSurfaceVersion]);
 
-        const shouldUseFloatingToolbars = isMobile && Platform.isIosApp && settings.useFloatingToolbars;
+        const shouldUseFloatingToolbars = useMobileChrome && Platform.isIosApp && settings.useFloatingToolbars;
         const scrollPaddingEnd = useMemo(() => {
             if (!shouldUseFloatingToolbars) {
                 return 0;
@@ -1738,7 +1743,7 @@ export const ListPane = React.memo(
         const isEmptySelection = !selectedFolder && !selectedTag && !selectedProperty;
         const hasNoFiles = files.length === 0;
 
-        const shouldRenderBottomToolbar = isMobile && !isAndroid;
+        const shouldRenderBottomToolbar = useMobileChrome && !isAndroid;
         const shouldRenderBottomToolbarInsidePanel = shouldRenderBottomToolbar && shouldUseFloatingToolbars;
         const shouldRenderBottomToolbarOutsidePanel = shouldRenderBottomToolbar && !shouldUseFloatingToolbars;
 
@@ -1765,7 +1770,7 @@ export const ListPane = React.memo(
                         shouldShowDesktopTitleArea={shouldShowDesktopTitleArea}
                     >
                         {/* Android - toolbar at top */}
-                        {isMobile && isAndroid && !manualSortEditState ? listToolbar : null}
+                        {useMobileChrome && isAndroid && !manualSortEditState ? listToolbar : null}
                         {/* Search bar - collapsible */}
                         <div className={`nn-search-bar-container ${isSearchActive ? 'nn-search-bar-visible' : ''}`}>
                             {isSearchActive && (

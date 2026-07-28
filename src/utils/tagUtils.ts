@@ -22,6 +22,7 @@ import { TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
 import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstanceOrNull } from '../storage/fileOperations';
 import { isMultiSelectModifierPressed } from './keyboardOpenContext';
+import { supportsKeyboardInteractions } from './paneLayout';
 import { normalizeTagPathValue } from './tagPrefixMatcher';
 import { findTagNode } from './tagTree';
 import type { TagTreeNode } from '../types/storage';
@@ -271,10 +272,10 @@ interface TagModifierState {
  */
 export function getTagSearchModifierOperator(
     event: TagModifierState | null | undefined,
-    modifierSetting: MultiSelectModifier,
-    isMobile: boolean
+    modifierSetting: MultiSelectModifier
 ): InclusionOperator | null {
-    if (!event || isMobile) {
+    // Modifier-driven filter mutation follows pointer-modifier support (desktop and tablets); phones stay touch-only.
+    if (!event || !supportsKeyboardInteractions()) {
         return null;
     }
 

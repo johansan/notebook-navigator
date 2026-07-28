@@ -23,6 +23,7 @@ import { useSettingsState } from '../context/SettingsContext';
 import { useServices } from '../context/ServicesContext';
 import { strings } from '../i18n';
 import { matchesShortcut, KeyboardShortcutAction } from '../utils/keyboardShortcuts';
+import { supportsKeyboardInteractions } from '../utils/paneLayout';
 import { runAsyncAction, type MaybePromise } from '../utils/async';
 import { SearchDateInputSuggest } from '../suggest/SearchDateInputSuggest';
 import { SearchTagInputSuggest } from '../suggest/SearchTagInputSuggest';
@@ -280,7 +281,9 @@ export function SearchInput({
             notifyEmptySearchExit();
             uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
 
-            if (isMobile) {
+            // Phones focus the list without forcing a selection; desktop and tablets
+            // ensure a selection exists so arrow keys have an anchor
+            if (!supportsKeyboardInteractions()) {
                 focusListPane();
                 return;
             }

@@ -1280,7 +1280,7 @@ export const STRINGS_ES = {
             },
             dualPane: {
                 name: 'Diseño de doble panel',
-                desc: 'Mostrar panel de navegación y panel de lista lado a lado en escritorio.'
+                desc: 'Mostrar panel de navegación y panel de lista lado a lado.'
             },
             dualPaneOrientation: {
                 name: 'Orientación del panel dual',
@@ -1326,8 +1326,8 @@ export const STRINGS_ES = {
                 desc: 'Controla el nivel de zoom general de Notebook Navigator (porcentaje).'
             },
             useFloatingToolbars: {
-                name: 'Usar barras de herramientas flotantes en iOS/iPadOS',
-                desc: 'Solo se aplica en iOS y iPadOS.'
+                name: 'Usar barras de herramientas flotantes en iOS',
+                desc: 'Solo se aplica en iOS.'
             },
             startView: {
                 name: 'Vista de inicio predeterminada',

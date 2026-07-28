@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DropdownComponent, Platform } from 'obsidian';
+import { DropdownComponent } from 'obsidian';
 import type { Setting, SettingDefinitionGroup } from 'obsidian';
 import { strings } from '../../i18n';
 import { EditVaultProfilesModal } from '../../modals/EditVaultProfilesModal';
@@ -31,6 +31,7 @@ import {
     validateVaultProfileNameOrNotify
 } from '../../utils/vaultProfiles';
 import { showNotice } from '../../utils/noticeUtils';
+import { usesMobileChrome } from '../../utils/paneLayout';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import type { VaultProfilePropertyKey } from '../types';
 import { isVaultTitleOption } from '../types';
@@ -63,7 +64,9 @@ function renderVaultSetupSection(context: SettingsTabContext, options: VaultSetu
     const vaultSetupGroup = createGroup(options.heading);
 
     vaultSetupGroup.addSetting(setting => renderers.renderProfileSetting(setting));
-    if (!Platform.isMobile) {
+    // The vault title places the profile selector in the desktop chrome (desktop and
+    // tablets); phones render the profile trigger in the mobile header instead
+    if (!usesMobileChrome()) {
         vaultSetupGroup.addSetting(setting => renderers.renderVaultTitleSetting(setting));
     }
     vaultSetupGroup.addSetting(setting => renderers.renderFileVisibilitySetting(setting));
@@ -90,7 +93,9 @@ export function createVaultSetupSettingDefinitions(context: SettingsTabContext):
         })
     ];
 
-    if (!Platform.isMobile) {
+    // The vault title places the profile selector in the desktop chrome (desktop and
+    // tablets); phones render the profile trigger in the mobile header instead
+    if (!usesMobileChrome()) {
         items.splice(
             1,
             0,
