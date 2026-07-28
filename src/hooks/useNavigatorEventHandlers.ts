@@ -17,13 +17,14 @@
  */
 
 import { useEffect, RefObject, Dispatch, SetStateAction } from 'react';
-import { App, TAbstractFile, TFile, TFolder, debounce, Platform } from 'obsidian';
+import { App, TAbstractFile, TFile, TFolder, debounce } from 'obsidian';
 import { TIMEOUTS } from '../types/obsidian-extended';
 import { useExpansionDispatch } from '../context/ExpansionContext';
 import { useSelectionDispatch } from '../context/SelectionContext';
 import { useUIState } from '../context/UIStateContext';
 import { useCommandQueue } from '../context/ServicesContext';
 import { focusElementPreventScroll } from '../utils/domUtils';
+import { supportsKeyboardInteractions } from '../utils/paneLayout';
 
 interface UseNavigatorEventHandlersOptions {
     app: App;
@@ -45,7 +46,6 @@ export function useNavigatorEventHandlers({ app, containerRef, setIsNavigatorFoc
     const expansionDispatch = useExpansionDispatch();
     const selectionDispatch = useSelectionDispatch();
     const commandQueue = useCommandQueue();
-    const isMobile = Platform.isMobile;
 
     // Handle delete events to clean up stale state
     useEffect(() => {
@@ -86,8 +86,9 @@ export function useNavigatorEventHandlers({ app, containerRef, setIsNavigatorFoc
 
     // Handle focus/blur events to track when navigator has focus
     useEffect(() => {
-        // Skip focus tracking on mobile since it's always considered focused
-        if (isMobile) {
+        // Phones skip focus tracking and are always considered focused; desktop and
+        // tablets track real focus so selection styling can dim when the editor is active
+        if (!supportsKeyboardInteractions()) {
             setIsNavigatorFocused(true);
             return;
         }
@@ -124,7 +125,7 @@ export function useNavigatorEventHandlers({ app, containerRef, setIsNavigatorFoc
             container.removeEventListener('focusin', handleFocus);
             container.removeEventListener('focusout', handleBlur);
         };
-    }, [containerRef, setIsNavigatorFocused, isMobile]);
+    }, [containerRef, setIsNavigatorFocused]);
 
     // Ensure the container has focus when the focused pane changes
     useEffect(() => {

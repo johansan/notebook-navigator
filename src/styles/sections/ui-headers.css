@@ -146,25 +146,17 @@
    Mobile Headers + Breadcrumb
    ======================================================================== */
 
-/* Mobile header - adjust for back button */
-.notebook-navigator-mobile .nn-pane-header {
+/* Simplified mobile headers. Keyed on the phone chrome header class so the desktop
+   headers rendered on tablets keep the desktop height and per-pane backgrounds. */
+.notebook-navigator-mobile .nn-pane-header-simple {
     flex-shrink: 0;
     min-height: 48px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     padding: 0 var(--nn-file-item-padding-horizontal);
     background-color: var(--nn-theme-list-bg);
-}
-
-/* Simplified mobile headers */
-.notebook-navigator-mobile .nn-pane-header-simple {
-    justify-content: center;
-    text-align: center;
-}
-
-.notebook-navigator-mobile .nn-navigation-pane .nn-pane-header-simple {
-    justify-content: center;
-    text-align: center;
 }
 
 .notebook-navigator-mobile .nn-pane-header-simple .nn-pane-header-profile {

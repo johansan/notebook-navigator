@@ -1268,7 +1268,7 @@ export const STRINGS_ZH_TW = {
             },
             dualPane: {
                 name: '雙窗格布局',
-                desc: '在桌面端並排顯示導覽窗格和列表窗格。'
+                desc: '並排顯示導覽窗格和列表窗格。'
             },
             dualPaneOrientation: {
                 name: '雙欄布局方向',
@@ -1314,8 +1314,8 @@ export const STRINGS_ZH_TW = {
                 desc: '控制 Notebook Navigator 的整體縮放級別（百分比）。'
             },
             useFloatingToolbars: {
-                name: '在 iOS/iPadOS 上使用浮動工具列',
-                desc: '僅適用於 iOS 和 iPadOS。'
+                name: '在 iOS 上使用浮動工具列',
+                desc: '僅適用於 iOS。'
             },
             startView: {
                 name: '預設啟動檢視',

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Command } from 'obsidian';
+import { Platform, type Command } from 'obsidian';
 import type NotebookNavigatorPlugin from '../../main';
 import { strings } from '../../i18n';
 
@@ -28,7 +28,9 @@ interface NavigatorCommandSpec {
 
 const STATIC_COMMAND_SPECS: NavigatorCommandSpec[] = [
     { id: 'open', name: strings.commands.open },
-    { id: 'toggle-left-sidebar', name: strings.commands.toggleLeftSidebar },
+    // Desktop only: on mobile the sidebar is a drawer, and on tablets collapse() is a
+    // no-op while the sidebar is pinned, so the command would do nothing
+    ...(Platform.isMobile ? [] : [{ id: 'toggle-left-sidebar', name: strings.commands.toggleLeftSidebar }]),
     { id: 'open-homepage', name: strings.commands.openHomepage, checkable: true },
     { id: 'reveal-file', name: strings.commands.revealFile, checkable: true },
     { id: 'open-all-files', name: strings.commands.openAllFiles, checkable: true },

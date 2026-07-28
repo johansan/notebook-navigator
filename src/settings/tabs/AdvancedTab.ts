@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ButtonComponent, Platform } from 'obsidian';
+import { ButtonComponent } from 'obsidian';
 import type { Setting, SettingDefinitionGroup, SettingDefinitionItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { ConfirmModal } from '../../modals/ConfirmModal';
@@ -24,6 +24,7 @@ import { SettingsExportModal, SettingsImportModal } from '../../modals/SettingsT
 import type { MetadataCleanupSummary } from '../../services/MetadataService';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { getNavigationPaneSizing } from '../../utils/paneSizing';
+import { isDualPaneSupported } from '../../utils/paneLayout';
 import { localStorage } from '../../utils/localStorage';
 import { runAsyncAction } from '../../utils/async';
 import { showNotice } from '../../utils/noticeUtils';
@@ -68,7 +69,8 @@ export function createAdvancedSettingDefinitions(context: SettingsTabContext): S
 
     const maintenanceItems: NonNullable<SettingDefinitionGroup['items']> = [];
 
-    if (!Platform.isMobile) {
+    // The pane separator only exists where dual pane is available (desktop and tablets)
+    if (isDualPaneSupported()) {
         maintenanceItems.push(
             createRenderDefinition({
                 name: strings.settings.items.resetPaneSeparator.name,

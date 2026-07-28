@@ -32,6 +32,7 @@ import { useSelectedFolderFileVersion } from '../hooks/useSelectedFolderFileVers
 import { ItemType } from '../types';
 import { getFolderNote, openFolderNoteFile } from '../utils/folderNotes';
 import { resolveFolderNoteClickOpenContext } from '../utils/keyboardOpenContext';
+import { usesMobileChrome } from '../utils/paneLayout';
 import { normalizeTagPath } from '../utils/tagUtils';
 import { runAsyncAction } from '../utils/async';
 import { resolveUXIcon } from '../utils/uxIcons';
@@ -69,7 +70,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     showIcon
 }: ListPaneHeaderProps) {
     const iconRef = React.useRef<HTMLSpanElement | null>(null);
-    const { app, isMobile, plugin } = useServices();
+    const { app, plugin } = useServices();
     const commandQueue = useCommandQueue();
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -82,6 +83,10 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     const iconVersion = useIconServiceVersion();
     const listToolbarVisibility = settings.toolbarVisibility.list;
     const showRevealButton = listToolbarVisibility.reveal;
+    // Mobile chrome (simplified header, actions in the tab bar) applies to phones only.
+    // Tablets render the desktop header in both pane layouts so the toolbars stay at the
+    // top when switching between single and dual pane.
+    const useMobileChrome = usesMobileChrome();
 
     // Use the shared actions hook
     const {
@@ -100,7 +105,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     } = useListActions({
         onManualSortStart,
         getManualSortNewFileContext,
-        trackRevealFileAvailability: !isMobile && showRevealButton
+        trackRevealFileAvailability: !useMobileChrome && showRevealButton
     });
     const showBackButton = listToolbarVisibility.back && uiState.singlePane;
     const showSearchButton = listToolbarVisibility.search;
@@ -111,8 +116,8 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     const showNewNoteButton = listToolbarVisibility.newNote;
     const hasNavigationSelection = Boolean(selectionState.selectedFolder || selectionState.selectedTag || selectionState.selectedProperty);
 
-    const shouldRenderBreadcrumbSegments = isMobile;
-    const shouldShowHeaderTitle = !isMobile && listPaneTitlePreference === 'header';
+    const shouldRenderBreadcrumbSegments = useMobileChrome;
+    const shouldShowHeaderTitle = !useMobileChrome && listPaneTitlePreference === 'header';
     const shouldShowHeaderIcon = shouldShowHeaderTitle && showIcon;
     const shouldRenderDesktopHeader =
         showBackButton ||
@@ -175,12 +180,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
             // Prevents header click handlers from also running.
             event.stopPropagation();
 
-            const openContext = resolveFolderNoteClickOpenContext(
-                event,
-                settings.folderNoteOpenLocation,
-                settings.multiSelectModifier,
-                isMobile
-            );
+            const openContext = resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier);
 
             runAsyncAction(() =>
                 openFolderNoteFile({
@@ -193,16 +193,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                 })
             );
         },
-        [
-            selectedFolder,
-            selectedFolderNote,
-            settings.folderNoteOpenLocation,
-            settings.multiSelectModifier,
-            isMobile,
-            app,
-            commandQueue,
-            plugin
-        ]
+        [selectedFolder, selectedFolderNote, settings.folderNoteOpenLocation, settings.multiSelectModifier, app, commandQueue, plugin]
     );
 
     const handleSelectedFolderNoteMouseDown = React.useCallback(
@@ -322,7 +313,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
 
     // Auto-scroll to end when selection changes
     useEffect(() => {
-        if (!isMobile) {
+        if (!useMobileChrome) {
             setShowFade(false);
             return;
         }
@@ -340,20 +331,22 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
         }, 0);
 
         return () => window.clearTimeout(timeoutId);
-    }, [selectionState.selectedFolder, selectionState.selectedTag, selectionState.selectedProperty, isMobile]);
+    }, [selectionState.selectedFolder, selectionState.selectedTag, selectionState.selectedProperty, useMobileChrome]);
 
     // Updates fade gradient visibility based on scroll position
     const handleScroll = React.useCallback(() => {
-        if (!isMobile) {
+        if (!useMobileChrome) {
             return;
         }
         if (scrollContainerRef.current) {
             setShowFade(scrollContainerRef.current.scrollLeft > 0);
         }
-    }, [isMobile]);
+    }, [useMobileChrome]);
 
-    if (isMobile) {
-        // On mobile, show simplified header with back button and path - actions moved to tab bar
+    if (useMobileChrome) {
+        // Simplified header with back button and breadcrumb path - actions live in the tab bar.
+        // Phones are always single pane, so the back button always has a navigation view to
+        // return to.
         return (
             <div className="nn-pane-header nn-pane-header-simple" onClick={onHeaderClick}>
                 <div className="nn-mobile-header nn-mobile-header-no-icon">

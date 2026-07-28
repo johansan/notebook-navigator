@@ -21,11 +21,12 @@ import { useServices } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useVaultProfileMenu } from '../hooks/useVaultProfileMenu';
 import { strings } from '../i18n';
+import { usesMobileChrome } from '../utils/paneLayout';
 import { resolveUXIcon } from '../utils/uxIcons';
 import { ServiceIcon } from './ServiceIcon';
 
 export const VaultTitleArea = React.memo(function VaultTitleArea() {
-    const { isMobile, plugin } = useServices();
+    const { plugin } = useServices();
     const settings = useSettingsState();
 
     const { hasProfiles, hasMultipleProfiles, activeProfileName, handleTriggerClick, handleTriggerKeyDown } = useVaultProfileMenu({
@@ -34,7 +35,8 @@ export const VaultTitleArea = React.memo(function VaultTitleArea() {
         activeProfileId: settings.vaultProfile
     });
 
-    if (isMobile || !hasProfiles || !hasMultipleProfiles) {
+    // Phones render the profile trigger inside the mobile chrome header instead.
+    if (usesMobileChrome() || !hasProfiles || !hasMultipleProfiles) {
         return null;
     }
 

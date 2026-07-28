@@ -21,6 +21,7 @@ import type { CalendarWeekendDays, MultiSelectModifier } from '../../settings/ty
 import type { IndexedDBStorage } from '../../storage/IndexedDBStorage';
 import type { CalendarNoteKind } from '../../utils/calendarNotes';
 import { isMultiSelectModifierPressed } from '../../utils/keyboardOpenContext';
+import { supportsKeyboardInteractions } from '../../utils/paneLayout';
 import type { MomentInstance } from '../../utils/moment';
 
 export function clamp(value: number, min: number, max: number): number {
@@ -59,10 +60,12 @@ export function shouldAutoRevealCalendarNoteKind(kind: CalendarNoteKind): boolea
 
 export function isDateFilterModifierPressed(
     event: { altKey: boolean; ctrlKey: boolean; metaKey: boolean },
-    modifierSetting: MultiSelectModifier,
-    isMobile: boolean
+    modifierSetting: MultiSelectModifier
 ): boolean {
-    if (isMobile) {
+    // Modifier-driven date filters follow pointer-modifier support (desktop and tablets);
+    // phones stay touch-only. Without this gate a modified click would fall through to
+    // creating or opening the calendar note.
+    if (!supportsKeyboardInteractions()) {
         return false;
     }
 

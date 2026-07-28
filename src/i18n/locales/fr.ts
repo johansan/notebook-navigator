@@ -1283,7 +1283,7 @@ export const STRINGS_FR = {
             },
             dualPane: {
                 name: 'Disposition à double panneau',
-                desc: 'Afficher le panneau de navigation et le panneau de liste côte à côte sur ordinateur.'
+                desc: 'Afficher le panneau de navigation et le panneau de liste côte à côte.'
             },
             dualPaneOrientation: {
                 name: 'Orientation du double panneau',
@@ -1329,8 +1329,8 @@ export const STRINGS_FR = {
                 desc: 'Contrôle le niveau de zoom global de Notebook Navigator (pourcentage).'
             },
             useFloatingToolbars: {
-                name: "Utiliser les barres d'outils flottantes sur iOS/iPadOS",
-                desc: "S'applique uniquement à iOS et iPadOS."
+                name: "Utiliser les barres d'outils flottantes sur iOS",
+                desc: "S'applique uniquement à iOS."
             },
             startView: {
                 name: 'Vue de démarrage par défaut',

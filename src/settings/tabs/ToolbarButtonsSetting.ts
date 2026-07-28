@@ -21,6 +21,7 @@ import { strings } from '../../i18n';
 import type NotebookNavigatorPlugin from '../../main';
 import { getIconService } from '../../services/icons';
 import { runAsyncAction } from '../../utils/async';
+import { isDualPaneSupported } from '../../utils/paneLayout';
 import { resolveUXIcon, type UXIconId } from '../../utils/uxIcons';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import type { ListToolbarButtonId, NavigationToolbarButtonId } from '../types';
@@ -67,9 +68,17 @@ export function renderToolbarButtonsSetting(
     };
 
     if (toolbar === 'navigation') {
-        const navigationToolbarButtons = plugin.settings.calendarEnabled
-            ? NAVIGATION_TOOLBAR_BUTTONS
-            : NAVIGATION_TOOLBAR_BUTTONS.filter(button => button.id !== 'calendar');
+        const navigationToolbarButtons = NAVIGATION_TOOLBAR_BUTTONS.filter(button => {
+            if (button.id === 'calendar') {
+                return plugin.settings.calendarEnabled;
+            }
+            // The dual pane toggle renders only in the desktop pane header, which desktop
+            // and tablets always show; phones never render it
+            if (button.id === 'toggleDualPane') {
+                return isDualPaneSupported();
+            }
+            return true;
+        });
         createToolbarButtonGroup({
             gridEl,
             buttons: navigationToolbarButtons,

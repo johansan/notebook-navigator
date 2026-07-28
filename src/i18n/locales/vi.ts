@@ -1280,7 +1280,7 @@ export const STRINGS_VI = {
             },
             dualPane: {
                 name: 'Bố cục hai ngăn',
-                desc: 'Hiện ngăn điều hướng và ngăn danh sách cạnh nhau trên máy tính.'
+                desc: 'Hiện ngăn điều hướng và ngăn danh sách cạnh nhau.'
             },
             dualPaneOrientation: {
                 name: 'Hướng hai ngăn',
@@ -1326,8 +1326,8 @@ export const STRINGS_VI = {
                 desc: 'Điều khiển mức thu phóng tổng thể của Notebook Navigator (phần trăm).'
             },
             useFloatingToolbars: {
-                name: 'Sử dụng thanh công cụ nổi trên iOS/iPadOS',
-                desc: 'Chỉ áp dụng trên iOS và iPadOS.'
+                name: 'Sử dụng thanh công cụ nổi trên iOS',
+                desc: 'Chỉ áp dụng trên iOS.'
             },
             startView: {
                 name: 'Chế độ xem khởi động mặc định',

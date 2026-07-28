@@ -1278,7 +1278,7 @@ export const STRINGS_JA = {
             },
             dualPane: {
                 name: 'デュアルペインレイアウト',
-                desc: 'デスクトップでナビゲーションペインとリストペインを並べて表示します。'
+                desc: 'ナビゲーションペインとリストペインを並べて表示します。'
             },
             dualPaneOrientation: {
                 name: 'デュアルペインの向き',
@@ -1324,8 +1324,8 @@ export const STRINGS_JA = {
                 desc: 'Notebook Navigator 全体のズームレベルを制御します（パーセント）。'
             },
             useFloatingToolbars: {
-                name: 'iOS/iPadOSでフローティングツールバーを使用',
-                desc: 'iOSおよびiPadOSでのみ適用されます。'
+                name: 'iOSでフローティングツールバーを使用',
+                desc: 'iOSでのみ適用されます。'
             },
             startView: {
                 name: 'デフォルト起動ビュー',

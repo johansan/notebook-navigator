@@ -56,7 +56,7 @@ import { deleteSelectedFiles } from '../utils/deleteOperations';
 import { calculateCompactListMetrics } from '../utils/listPaneMetrics';
 import { getNavigationPaneSizing } from '../utils/paneSizing';
 import { getAndroidFontScale } from '../utils/androidFontScale';
-import { getBackgroundClasses } from '../utils/paneLayout';
+import { getBackgroundClasses, isDualPaneSupported, supportsKeyboardInteractions } from '../utils/paneLayout';
 import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFilesWithPrompt } from '../utils/tagModalHelpers';
 import { normalizeTagPath } from '../utils/tagUtils';
 import { getTemplaterCreateNewNoteFromTemplate } from '../utils/templaterIntegration';
@@ -399,6 +399,12 @@ export const NotebookNavigatorComponent = React.memo(
             }
 
             const reportWidth = (width: number) => {
+                // Mobile drawers report zero width while hidden. Keeping the last real width
+                // prevents the narrow-sidebar fallback from switching layouts while the drawer
+                // is closed and switching back when it reopens.
+                if (width <= 0) {
+                    return;
+                }
                 uiDispatch({ type: 'SET_CONTAINER_WIDTH', width });
             };
 
@@ -431,12 +437,14 @@ export const NotebookNavigatorComponent = React.memo(
         const hasInitializedSinglePane = useRef(false);
         const preferredSinglePaneView = useRef<'navigation' | 'files'>(settings.startView === 'navigation' ? 'navigation' : 'files');
 
-        // Switch to preferred view when entering single pane (desktop only)
+        // Switch to preferred view when entering single pane. Runs only where dual pane is
+        // supported (desktop and tablet); phones are always single pane and track the visible
+        // view through user navigation instead.
         useLayoutEffect(() => {
             const wasDualPane = lastDualPaneRef.current;
             lastDualPaneRef.current = uiState.dualPane;
 
-            if (isMobile) {
+            if (!isDualPaneSupported()) {
                 return;
             }
 
@@ -464,7 +472,7 @@ export const NotebookNavigatorComponent = React.memo(
 
             const preferredView = preferredSinglePaneView.current;
             uiDispatch({ type: 'ACTIVATE_PANE', target: preferredView });
-        }, [isMobile, uiDispatch, uiState.dualPane]);
+        }, [uiDispatch, uiState.dualPane]);
 
         useEffect(() => {
             if (!uiState.singlePane) {
@@ -943,7 +951,7 @@ export const NotebookNavigatorComponent = React.memo(
                     }
                     return navHandle.openShortcutByNumber(shortcutNumber);
                 },
-                isDualPaneAutoFallbackActive: () => plugin.useDualPane() && !isMobile && uiState.singlePane,
+                isDualPaneAutoFallbackActive: () => plugin.useDualPane() && isDualPaneSupported() && uiState.singlePane,
                 deleteSelectedFiles: () => {
                     runAsyncAction(async () => {
                         if (!selectionState.selectedFile && selectionState.selectedFiles.size === 0) {
@@ -1304,7 +1312,6 @@ export const NotebookNavigatorComponent = React.memo(
             uiState.singlePane,
             uiState.currentSinglePaneView,
             preserveNavigationFocusForModal,
-            isMobile,
             app,
             settings,
             plugin,
@@ -1506,7 +1513,7 @@ export const NotebookNavigatorComponent = React.memo(
                     data-focus-pane={
                         uiState.singlePane ? (uiState.currentSinglePaneView === 'navigation' ? 'navigation' : 'files') : uiState.focusedPane
                     }
-                    data-navigator-focused={isMobile ? 'true' : isNavigatorFocused}
+                    data-navigator-focused={supportsKeyboardInteractions() ? isNavigatorFocused : 'true'}
                     data-nav-count-leader-style={settings.navCountLeaderStyle}
                     tabIndex={-1}
                     onKeyDown={() => {

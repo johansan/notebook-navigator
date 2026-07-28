@@ -1277,7 +1277,7 @@ export const STRINGS_TR = {
             },
             dualPane: {
                 name: 'Çift bölme düzeni',
-                desc: 'Masaüstünde gezinme bölmesini ve liste bölmesini yan yana göster.'
+                desc: 'Gezinme bölmesini ve liste bölmesini yan yana göster.'
             },
             dualPaneOrientation: {
                 name: 'Çift bölme yönü',
@@ -1323,8 +1323,8 @@ export const STRINGS_TR = {
                 desc: "Notebook Navigator'ın genel yakınlaştırma seviyesini kontrol eder (yüzde)."
             },
             useFloatingToolbars: {
-                name: "iOS/iPadOS'ta kayan araç çubuklarını kullan",
-                desc: 'Yalnızca iOS ve iPadOS için geçerlidir.'
+                name: "iOS'ta kayan araç çubuklarını kullan",
+                desc: 'Yalnızca iOS için geçerlidir.'
             },
             startView: {
                 name: 'Varsayılan başlangıç görünümü',

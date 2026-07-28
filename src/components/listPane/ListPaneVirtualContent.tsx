@@ -670,7 +670,7 @@ export function ListPaneVirtualContent({
     fileItemPillOrderModel,
     getSolidBackground
 }: ListPaneVirtualContentProps) {
-    const { app, commandQueue, isMobile, plugin } = useServices();
+    const { app, commandQueue, plugin } = useServices();
     const fileSystemOps = useFileSystemOps();
     const metadataService = useMetadataService();
     const collapseChevronIcons = useMemo(
@@ -856,12 +856,7 @@ export function ListPaneVirtualContent({
                 return;
             }
 
-            const openContext = resolveFolderNoteClickOpenContext(
-                event,
-                settings.folderNoteOpenLocation,
-                settings.multiSelectModifier,
-                isMobile
-            );
+            const openContext = resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier);
 
             if (
                 openContext === 'right-sidebar' &&
@@ -885,7 +880,6 @@ export function ListPaneVirtualContent({
         [
             app,
             commandQueue,
-            isMobile,
             onNavigateToFolder,
             plugin,
             selectedFolderPath,

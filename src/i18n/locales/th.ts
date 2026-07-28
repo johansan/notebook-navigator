@@ -1272,7 +1272,7 @@ export const STRINGS_TH = {
             },
             dualPane: {
                 name: 'รูปแบบแผงคู่',
-                desc: 'แสดงแผงนำทางและแผงรายการเคียงข้างกันบนเดสก์ท็อป'
+                desc: 'แสดงแผงนำทางและแผงรายการเคียงข้างกัน'
             },
             dualPaneOrientation: {
                 name: 'ทิศทางแผงคู่',
@@ -1318,8 +1318,8 @@ export const STRINGS_TH = {
                 desc: 'ควบคุมระดับการซูมโดยรวมของ Notebook Navigator (เปอร์เซ็นต์)'
             },
             useFloatingToolbars: {
-                name: 'ใช้แถบเครื่องมือลอยบน iOS/iPadOS',
-                desc: 'ใช้ได้เฉพาะบน iOS และ iPadOS'
+                name: 'ใช้แถบเครื่องมือลอยบน iOS',
+                desc: 'ใช้ได้เฉพาะบน iOS'
             },
             startView: {
                 name: 'มุมมองเริ่มต้นเมื่อเริ่มงาน',

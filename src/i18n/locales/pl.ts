@@ -1282,7 +1282,7 @@ export const STRINGS_PL = {
             },
             dualPane: {
                 name: 'Układ podwójnego panelu',
-                desc: 'Wyświetla panel nawigacji i panel listy obok siebie na komputerze.'
+                desc: 'Wyświetla panel nawigacji i panel listy obok siebie.'
             },
             dualPaneOrientation: {
                 name: 'Orientacja trybu podwójnego',
@@ -1328,8 +1328,8 @@ export const STRINGS_PL = {
                 desc: 'Kontroluje ogólny poziom przybliżenia Notebook Navigator (procent).'
             },
             useFloatingToolbars: {
-                name: 'Użyj pływających pasków narzędzi w systemie iOS/iPadOS',
-                desc: 'Dotyczy tylko iOS i iPadOS.'
+                name: 'Użyj pływających pasków narzędzi w systemie iOS',
+                desc: 'Dotyczy tylko iOS.'
             },
             startView: {
                 name: 'Domyślny widok początkowy',

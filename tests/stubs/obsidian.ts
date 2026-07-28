@@ -243,6 +243,8 @@ export class FileView {
 export const Platform = {
     isDesktopApp: true,
     isMobile: false,
+    isTablet: false,
+    isPhone: false,
     isIosApp: false
 };
 

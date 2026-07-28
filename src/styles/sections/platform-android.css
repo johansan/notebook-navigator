@@ -4,15 +4,27 @@
    Android Platform Overrides
    ======================================================================== */
 
+.notebook-navigator-android {
+    /* Declared so calc() uses of the variable stay valid; an undefined variable drops the
+       whole padding/height declaration at computed-value time. Obsidian accounts for
+       Android safe areas in the view chrome. */
+    --nn-mobile-safe-area-bottom: 0px;
+}
+
 /* Android: match the view container background to mobile pane surfaces */
 .view-content.notebook-navigator.notebook-navigator-android {
     background-color: var(--nn-theme-mobile-bg);
 }
 
-/* Android: bottom padding inside the navigator viewport */
-/* Applied to the internal split container so the bottom edge doesn't touch the view chrome (8px matches the top spacer). */
+/* Android: match the split container background to mobile pane surfaces */
 .notebook-navigator-android .nn-split-container {
     background-color: var(--nn-theme-mobile-bg);
+}
+
+/* Android: bottom padding inside the navigator viewport */
+/* Applied to the internal split container so the bottom edge doesn't touch the view chrome (8px matches the top spacer). */
+/* Scoped to body.is-phone to match the iOS rule; tablets render the desktop chrome without the inset. */
+body.is-phone .notebook-navigator-android .nn-split-container {
     padding-bottom: 8px;
     box-sizing: border-box;
 }

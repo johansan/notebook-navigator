@@ -18,6 +18,7 @@
 
 import { Platform } from 'obsidian';
 import type { EnterKeyAction, FolderNoteOpenLocation, MultiSelectModifier } from '../settings/types';
+import { supportsKeyboardInteractions } from './paneLayout';
 
 interface KeyboardOpenContextSettings {
     shiftEnterOpenContext: EnterKeyAction;
@@ -62,13 +63,9 @@ export function isMultiSelectModifierPressed(event: MultiSelectModifierEventStat
     return isCmdCtrlModifierPressed(event);
 }
 
-export function shouldOpenNoteClickInNewTab(
-    event: MultiSelectModifierEventState,
-    multiSelectModifier: MultiSelectModifier,
-    isMobile: boolean
-): boolean {
+export function shouldOpenNoteClickInNewTab(event: MultiSelectModifierEventState, multiSelectModifier: MultiSelectModifier): boolean {
     return (
-        !isMobile &&
+        supportsKeyboardInteractions() &&
         multiSelectModifier === 'optionAlt' &&
         !isMultiSelectModifierPressed(event, multiSelectModifier) &&
         isCmdCtrlModifierPressed(event)
@@ -78,8 +75,7 @@ export function shouldOpenNoteClickInNewTab(
 export function resolveFolderNoteClickOpenContext(
     event: CmdCtrlEventState,
     folderNoteOpenLocation: FolderNoteOpenLocation,
-    multiSelectModifier: MultiSelectModifier,
-    isMobile: boolean
+    multiSelectModifier: MultiSelectModifier
 ): 'tab' | 'right-sidebar' | null {
     // Explicit setting takes precedence over modifier-driven behavior.
     if (folderNoteOpenLocation === 'new-tab') {
@@ -90,8 +86,8 @@ export function resolveFolderNoteClickOpenContext(
         return 'right-sidebar';
     }
 
-    // Folder note click-to-tab modifier is desktop-only and tied to optionAlt mode.
-    if (isMobile || multiSelectModifier !== 'optionAlt') {
+    // Folder note click-to-tab follows pointer-modifier support (desktop and tablets) and is tied to optionAlt mode.
+    if (!supportsKeyboardInteractions() || multiSelectModifier !== 'optionAlt') {
         return null;
     }
 
