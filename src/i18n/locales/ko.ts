@@ -920,6 +920,14 @@ export const STRINGS_KO = {
         revealInNavigator: 'Notebook Navigator에서 표시', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator가 설정을 읽을 수 없어 시작되지 않았습니다. 보관소가 동기화 중이라면 동기화가 끝난 후 Obsidian을 다시 시작하세요. 기본 설정으로 새로 시작하려면 "기본 설정 복원" 명령을 실행하세요.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: '기본 설정으로 시작할까요?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator가 방금 설치되었고 설정 파일이 없습니다. 새로 설치했거나 다시 설치한 경우 기본 설정으로 계속하세요. 설정이 동기화 서비스에서 오는 경우 취소하고 동기화가 끝날 때까지 기다린 후 Obsidian을 다시 시작하세요.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator가 이 기기에 설치된 지 시간이 지났지만 설정 파일이 없습니다. 보관소가 아직 동기화 중이라면 취소하고 동기화가 끝난 후 Obsidian을 다시 시작하면 기존 설정을 유지할 수 있습니다. 기본 설정으로 새로 시작하려는 경우에만 계속하세요.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: '기본 설정 사용' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: '기본 설정 복원', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:

@@ -131,10 +131,14 @@ export type SettingsLoadResult = 'loaded' | 'missing' | 'unavailable';
  * Result of the startup settings load.
  * - 'first-launch': the settings file stayed missing on a device without prior plugin state; defaults were applied
  * - 'loaded': a stored settings record was read and applied
- * - 'unavailable': the settings file could not be established; startup must abort without writing
+ * - 'missing': the settings file stayed missing on a device with prior plugin state; nothing was applied. The caller
+ *   decides whether this is a reinstall (data.json was deleted with the plugin folder) or a sync provider that has
+ *   not delivered the file yet, because the two are indistinguishable from disk state alone.
+ * - 'unavailable': the settings file exists but could not be read on at least one attempt; startup must abort
+ *   without writing
  * - 'cancelled': plugin shutdown cancelled the retry before settings were established
  */
-export type StartupSettingsLoadResult = 'first-launch' | 'loaded' | 'unavailable' | 'cancelled';
+export type StartupSettingsLoadResult = 'first-launch' | 'loaded' | 'missing' | 'unavailable' | 'cancelled';
 
 // Keep the startup grace period below Obsidian's slow-plugin warning while polling for a settings file from sync.
 const STARTUP_SETTINGS_RETRY_ATTEMPTS = 4;
@@ -312,7 +316,9 @@ export class PluginSettingsController {
      * marker, no attempt observed an unreadable file, and the file stays missing through the retry window. Runtime
      * enablement uses the same grace period because sync can install the plugin before delivering data.json.
      * On 'first-launch' the default settings are applied through the settings pipeline without persisting; on
-     * 'unavailable' nothing is applied or written.
+     * 'missing' and 'unavailable' nothing is applied or written. A device with a persisted marker reports 'missing'
+     * instead of 'first-launch' because writing defaults there would overwrite settings a sync provider has not
+     * delivered yet.
      */
     public async loadSettingsAtStartup(options: {
         maxAttempts?: number;
@@ -351,9 +357,12 @@ export class PluginSettingsController {
             }
         }
 
-        if (lastResult === 'missing' && !hasRunOnDevice && !sawUnavailable) {
-            this.applySettingsRecord(null, { isFirstLaunch: true });
-            return 'first-launch';
+        if (lastResult === 'missing' && !sawUnavailable) {
+            if (!hasRunOnDevice) {
+                this.applySettingsRecord(null, { isFirstLaunch: true });
+                return 'first-launch';
+            }
+            return 'missing';
         }
 
         return 'unavailable';

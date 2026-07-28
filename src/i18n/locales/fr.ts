@@ -926,6 +926,14 @@ export const STRINGS_FR = {
         revealInNavigator: 'Révéler dans le Navigateur de Carnets', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             "Le Navigateur de Carnets n'a pas pu lire ses paramètres et ne s'est pas lancé. Si votre coffre est en cours de synchronisation, redémarrez Obsidian une fois la synchronisation terminée. Pour repartir avec les paramètres par défaut, exécutez la commande « Restaurer les paramètres par défaut ».", // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Démarrer avec les paramètres par défaut ?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                "Le Navigateur de Carnets vient d'être installé et n'a pas de fichier de paramètres. S'il s'agit d'une nouvelle installation ou d'une réinstallation, continuez avec les paramètres par défaut. Si vos paramètres proviennent d'un service de synchronisation, annulez, attendez la fin de la synchronisation, puis redémarrez Obsidian.", // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Le Navigateur de Carnets est installé sur cet appareil depuis un certain temps, mais son fichier de paramètres est introuvable. Si votre coffre est encore en cours de synchronisation, annulez, attendez la fin de la synchronisation, puis redémarrez Obsidian pour conserver vos paramètres existants. Continuez uniquement pour repartir avec les paramètres par défaut.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Utiliser les paramètres par défaut' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Restaurer les paramètres par défaut', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:

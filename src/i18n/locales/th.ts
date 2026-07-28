@@ -916,6 +916,14 @@ export const STRINGS_TH = {
         revealInNavigator: 'แสดงใน Notebook Navigator',
         settingsUnavailableNotice:
             'Notebook Navigator ไม่สามารถอ่านการตั้งค่าได้และไม่ได้เริ่มทำงาน หากคลังของคุณกำลังซิงค์อยู่ ให้รีสตาร์ท Obsidian หลังจากการซิงค์เสร็จสิ้น หากต้องการเริ่มใหม่ด้วยการตั้งค่าเริ่มต้น ให้เรียกใช้คำสั่ง "กู้คืนการตั้งค่าเริ่มต้น"', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'เริ่มด้วยการตั้งค่าเริ่มต้นหรือไม่', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator เพิ่งติดตั้งและยังไม่มีไฟล์การตั้งค่า หากเป็นการติดตั้งใหม่หรือการติดตั้งซ้ำ ให้ดำเนินการต่อด้วยการตั้งค่าเริ่มต้น หากการตั้งค่าของคุณมาจากบริการซิงค์ ให้ยกเลิก รอให้การซิงค์เสร็จสิ้น แล้วรีสตาร์ท Obsidian', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator ติดตั้งบนอุปกรณ์นี้มาระยะหนึ่งแล้ว แต่ไฟล์การตั้งค่าหายไป หากคลังของคุณยังซิงค์อยู่ ให้ยกเลิก รอให้การซิงค์เสร็จสิ้น แล้วรีสตาร์ท Obsidian เพื่อคงการตั้งค่าเดิมไว้ ดำเนินการต่อเฉพาะเมื่อต้องการเริ่มใหม่ด้วยการตั้งค่าเริ่มต้น', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'ใช้การตั้งค่าเริ่มต้น' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'กู้คืนการตั้งค่าเริ่มต้น', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:

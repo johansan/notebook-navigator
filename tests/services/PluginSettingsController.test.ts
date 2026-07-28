@@ -446,13 +446,24 @@ describe('PluginSettingsController.loadSettingsAtStartup', () => {
         expect(controller.settings).toEqual(DEFAULT_SETTINGS);
     });
 
-    it('returns unavailable for a missing file when the device has run the plugin before', async () => {
+    it('returns missing without applying defaults when the file stays missing on a device that ran the plugin before', async () => {
         mockLocalStorageStore.set(STORAGE_KEYS.localStorageVersionKey, 1);
         const { controller, saveData, loadDataMock } = createController(async () => null);
 
-        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('unavailable');
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('missing');
 
         expect(loadDataMock).toHaveBeenCalledTimes(3);
+        expect(saveData).not.toHaveBeenCalled();
+        expect(controller.settings).toEqual(DEFAULT_SETTINGS);
+    });
+
+    it('returns unavailable after an unreadable attempt on a device that ran the plugin before', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.localStorageVersionKey, 1);
+        const results: unknown[] = [undefined, null, null];
+        const { controller, saveData } = createController(async () => results.shift());
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('unavailable');
+
         expect(saveData).not.toHaveBeenCalled();
         expect(controller.settings).toEqual(DEFAULT_SETTINGS);
     });
