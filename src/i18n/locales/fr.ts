@@ -185,9 +185,14 @@ export const STRINGS_FR = {
         searchHelp: 'Syntaxe de recherche',
         searchHelpTitle: 'Syntaxe de recherche',
         searchHelpModal: {
-            intro: 'Combinez noms d’affichage, alias, propriétés, étiquettes, dates et filtres dans une requête (ex. `meeting .status=active #work @thisweek`). Installez le plugin Omnisearch pour utiliser la recherche plein texte.',
+            intro: "La recherche par filtre trouve les notes par noms d’affichage, alias, propriétés, étiquettes, dates et filtres, combinés dans une requête (ex. `meeting .status=active #work @thisweek`). Cliquez sur l'icône étoile pour ajouter une recherche aux raccourcis.",
+            introInstallOmnisearch: 'La recherche plein texte dans le contenu des notes nécessite le plugin Omnisearch.',
             introSwitching:
                 "Basculez entre la recherche par filtre et Omnisearch avec les touches fléchées haut/bas ou en cliquant sur l'icône de recherche.",
+            activeFilterSearch: 'La recherche par filtre est active.',
+            activeOmnisearch: 'Omnisearch est actif.',
+            omnisearchIntro:
+                "Omnisearch effectue une recherche plein texte dans le contenu des notes de tout le coffre. Notebook Navigator affiche les correspondances qui appartiennent au dossier, à l'étiquette ou à la sélection en cours.",
             sections: {
                 fileNames: {
                     title: 'Noms de fichiers et alias',
@@ -267,10 +272,11 @@ export const STRINGS_FR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Recherche plein texte dans tout le coffre, filtrée par le dossier actuel ou les étiquettes sélectionnées.',
-                        'Peut être lent avec moins de 3 caractères dans les grands coffres.',
-                        'Ne peut pas rechercher les chemins avec des caractères non-ASCII ou rechercher correctement les sous-chemins.',
-                        'Retourne des résultats limités avant le filtrage par dossier, donc les fichiers pertinents peuvent ne pas apparaître si de nombreuses correspondances existent ailleurs.',
+                        "La requête est envoyée au plugin Omnisearch et suit la syntaxe de requête d'Omnisearch. Les jetons de recherche par filtre tels que `#tag`, `.property` et `@date` n'ont pas de signification particulière.",
+                        'Lorsqu\'un dossier est sélectionné, `path:"<folder>/"` est ajouté à la requête afin qu\'Omnisearch cherche dans ce dossier et ses sous-dossiers. Les requêtes qui contiennent déjà `path:` sont envoyées telles quelles.',
+                        'Omnisearch retourne au plus 50 résultats classés par pertinence. Les recherches avec plus de correspondances omettent les notes les moins bien classées.',
+                        'Restreindre la recherche à des chemins de dossier avec des caractères non-ASCII nécessite Omnisearch 1.30.0 ou ultérieur. Les versions antérieures cherchent dans tout le coffre, puis les résultats sont filtrés par dossier.',
+                        'Les requêtes de moins de 3 caractères peuvent être lentes dans les grands coffres.',
                         "Les aperçus de notes affichent les extraits Omnisearch au lieu du texte d'aperçu par défaut."
                     ]
                 }

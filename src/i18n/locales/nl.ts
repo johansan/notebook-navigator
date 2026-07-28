@@ -187,9 +187,14 @@ export const STRINGS_NL = {
         searchHelp: 'Zoeksyntax',
         searchHelpTitle: 'Zoeksyntax',
         searchHelpModal: {
-            intro: 'Combineer weergavenamen, aliassen, eigenschappen, tags, datums en filters in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Installeer de Omnisearch-plugin om zoeken in volledige tekst te gebruiken.',
+            intro: 'Filterzoeken vindt notities op weergavenamen, aliassen, eigenschappen, tags, datums en filters, gecombineerd in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Klik op het sterpictogram om een zoekopdracht als snelkoppeling op te slaan.',
+            introInstallOmnisearch: 'Zoeken in de volledige tekst van notities vereist de Omnisearch-plugin.',
             introSwitching:
                 'Schakel tussen filterzoeken en Omnisearch met de pijltoetsen omhoog/omlaag of door op het zoekpictogram te klikken.',
+            activeFilterSearch: 'Filterzoeken is actief.',
+            activeOmnisearch: 'Omnisearch is actief.',
+            omnisearchIntro:
+                'Omnisearch voert zoeken in volledige tekst uit op de inhoud van notities in de hele vault. Notebook Navigator toont de overeenkomsten die bij de huidige map, tag of selectie horen.',
             sections: {
                 fileNames: {
                     title: 'Bestandsnamen en aliassen',
@@ -269,10 +274,11 @@ export const STRINGS_NL = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Zoeken in volledige tekst door de hele vault, gefilterd op de huidige map of geselecteerde tags.',
-                        'Kan traag zijn met minder dan 3 tekens in grote vaults.',
-                        'Kan geen paden met niet-ASCII-tekens doorzoeken of subpaden correct doorzoeken.',
-                        'Geeft beperkte resultaten terug vóór mapfiltering, waardoor relevante bestanden mogelijk niet verschijnen als er elders veel overeenkomsten bestaan.',
+                        'De zoekopdracht wordt naar de Omnisearch-plugin gestuurd en volgt de querysyntaxis van Omnisearch. Filterzoektokens zoals `#tag`, `.property` en `@date` hebben geen speciale betekenis.',
+                        'Wanneer een map is geselecteerd, wordt `path:"<folder>/"` aan de zoekopdracht toegevoegd zodat Omnisearch binnen die map en de submappen zoekt. Zoekopdrachten die al `path:` bevatten, worden ongewijzigd verstuurd.',
+                        'Omnisearch geeft maximaal 50 resultaten terug, gerangschikt op relevantie. Bij zoekopdrachten met meer overeenkomsten ontbreken de lager gerangschikte notities.',
+                        'Het beperken tot mappaden met niet-ASCII-tekens vereist Omnisearch 1.30.0 of hoger. Oudere versies doorzoeken de hele vault, waarna de resultaten op de map worden gefilterd.',
+                        'Zoekopdrachten met minder dan 3 tekens kunnen traag zijn in grote vaults.',
                         'Notitievoorbeelden tonen Omnisearch-fragmenten in plaats van de standaard voorbeeldtekst.'
                     ]
                 }

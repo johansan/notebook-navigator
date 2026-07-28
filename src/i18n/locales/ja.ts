@@ -184,8 +184,13 @@ export const STRINGS_JA = {
         searchHelp: '検索構文',
         searchHelpTitle: '検索構文',
         searchHelpModal: {
-            intro: '表示名、エイリアス、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせ可能（例：`meeting .status=active #work @thisweek`）。Omnisearch プラグインをインストールすると全文検索が使用できます。',
+            intro: 'フィルター検索は、表示名、エイリアス、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせてノートを検索します（例：`meeting .status=active #work @thisweek`）。星アイコンをクリックすると検索をショートカットに保存できます。',
+            introInstallOmnisearch: 'ノート内容の全文検索には Omnisearch プラグインが必要です。',
             introSwitching: '上下矢印キーまたは検索アイコンのクリックで、フィルター検索と Omnisearch を切り替えられます。',
+            activeFilterSearch: 'フィルター検索が有効です。',
+            activeOmnisearch: 'Omnisearch が有効です。',
+            omnisearchIntro:
+                'Omnisearch はボールト全体のノート内容を対象に全文検索を実行します。Notebook Navigator は現在のフォルダ、タグ、または選択範囲に属する一致結果を表示します。',
             sections: {
                 fileNames: {
                     title: 'ファイル名とエイリアス',
@@ -265,10 +270,11 @@ export const STRINGS_JA = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'ボールト全体の全文検索。現在のフォルダまたは選択されたタグでフィルタリングされます。',
-                        '大規模なボールトでは3文字未満の場合、動作が遅くなることがあります。',
-                        '非ASCIIパスの検索やサブパスの正確な検索はできません。',
-                        'フォルダフィルタリング前に返される結果数に制限があるため、他に多くの一致がある場合、関連ファイルが表示されないことがあります。',
+                        'クエリは Omnisearch プラグインに送信され、Omnisearch のクエリ構文に従います。`#tag`、`.property`、`@date` などのフィルター検索トークンは特別な意味を持ちません。',
+                        'フォルダを選択している場合、Omnisearch がそのフォルダとサブフォルダ内で一致するように、クエリに `path:"<folder>/"` が追加されます。すでに `path:` を含むクエリはそのまま送信されます。',
+                        'Omnisearch は関連度順に最大50件の結果を返します。それ以上の一致がある検索では、順位の低いノートは表示されません。',
+                        '非ASCII文字を含むフォルダパスの絞り込みには Omnisearch 1.30.0 以降が必要です。古いバージョンではボールト全体を検索し、その後結果がフォルダで絞り込まれます。',
+                        '大規模なボールトでは3文字未満のクエリは動作が遅くなることがあります。',
                         'ノートプレビューはデフォルトのプレビューテキストの代わりに Omnisearch の抜粋を表示します。'
                     ]
                 }

@@ -185,8 +185,13 @@ export const STRINGS_VI = {
         searchHelp: 'Cú pháp tìm kiếm',
         searchHelpTitle: 'Cú pháp tìm kiếm',
         searchHelpModal: {
-            intro: 'Kết hợp tên hiển thị, bí danh, thuộc tính, thẻ, ngày và bộ lọc trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Cài đặt plugin Omnisearch để sử dụng tìm kiếm toàn văn.',
+            intro: 'Tìm kiếm bộ lọc tìm ghi chú theo tên hiển thị, bí danh, thuộc tính, thẻ, ngày và bộ lọc, kết hợp trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Nhấp vào biểu tượng ngôi sao để lưu tìm kiếm làm lối tắt.',
+            introInstallOmnisearch: 'Tìm kiếm toàn văn trong nội dung ghi chú yêu cầu plugin Omnisearch.',
             introSwitching: 'Chuyển đổi giữa tìm kiếm bộ lọc và Omnisearch bằng phím mũi tên lên/xuống hoặc nhấp vào biểu tượng tìm kiếm.',
+            activeFilterSearch: 'Tìm kiếm bộ lọc đang hoạt động.',
+            activeOmnisearch: 'Omnisearch đang hoạt động.',
+            omnisearchIntro:
+                'Omnisearch thực hiện tìm kiếm toàn văn trong nội dung ghi chú của toàn bộ kho. Notebook Navigator hiển thị các kết quả khớp thuộc về thư mục, thẻ hoặc lựa chọn hiện tại.',
             sections: {
                 fileNames: {
                     title: 'Tên tệp và bí danh',
@@ -266,10 +271,11 @@ export const STRINGS_VI = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Tìm kiếm toàn văn trong toàn bộ kho, được lọc theo thư mục hiện tại hoặc thẻ đã chọn.',
-                        'Có thể chậm với ít hơn 3 ký tự trong kho lớn.',
-                        'Không thể tìm kiếm đường dẫn có ký tự không phải ASCII hoặc tìm kiếm đường dẫn con chính xác.',
-                        'Trả về kết quả giới hạn trước khi lọc thư mục, nên các tệp liên quan có thể không xuất hiện nếu có nhiều kết quả khớp ở nơi khác.',
+                        'Truy vấn được gửi đến plugin Omnisearch và tuân theo cú pháp truy vấn của Omnisearch. Các token tìm kiếm bộ lọc như `#tag`, `.property` và `@date` không có ý nghĩa đặc biệt.',
+                        'Khi một thư mục được chọn, `path:"<folder>/"` được thêm vào truy vấn để Omnisearch tìm kết quả khớp bên trong thư mục đó và các thư mục con của nó. Truy vấn đã chứa `path:` được gửi nguyên vẹn.',
+                        'Omnisearch trả về tối đa 50 kết quả được xếp hạng theo mức độ liên quan. Với các tìm kiếm có nhiều kết quả khớp hơn, những ghi chú xếp hạng thấp hơn sẽ không hiển thị.',
+                        'Giới hạn phạm vi theo đường dẫn thư mục có ký tự không phải ASCII yêu cầu Omnisearch 1.30.0 trở lên. Các phiên bản cũ hơn tìm kiếm trong toàn bộ kho, sau đó kết quả được lọc theo thư mục.',
+                        'Truy vấn có ít hơn 3 ký tự có thể chậm trong kho lớn.',
                         'Bản xem trước ghi chú hiển thị trích đoạn Omnisearch thay vì văn bản xem trước mặc định.'
                     ]
                 }
