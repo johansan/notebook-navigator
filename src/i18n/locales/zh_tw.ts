@@ -184,8 +184,13 @@ export const STRINGS_ZH_TW = {
         searchHelp: '搜尋語法',
         searchHelpTitle: '搜尋語法',
         searchHelpModal: {
-            intro: '在一個查詢中組合顯示名稱、別名、屬性、標籤、日期和篩選器（例如：`meeting .status=active #work @thisweek`）。安裝 Omnisearch 外掛程式以使用全文搜尋。',
+            intro: '篩選搜尋透過顯示名稱、別名、屬性、標籤、日期和篩選器尋找筆記，可在一個查詢中組合使用（例如：`meeting .status=active #work @thisweek`）。點擊星形圖示可將搜尋儲存至捷徑。',
+            introInstallOmnisearch: '全文搜尋筆記內容需要 Omnisearch 外掛程式。',
             introSwitching: '使用上/下箭頭鍵或點擊搜尋圖示在篩選搜尋和 Omnisearch 之間切換。',
+            activeFilterSearch: '篩選搜尋已啟用。',
+            activeOmnisearch: 'Omnisearch 已啟用。',
+            omnisearchIntro:
+                'Omnisearch 對整個保管庫的筆記內容執行全文搜尋。Notebook Navigator 顯示屬於目前資料夾、標籤或所選內容的符合項。',
             sections: {
                 fileNames: {
                     title: '檔案名稱和別名',
@@ -265,10 +270,11 @@ export const STRINGS_ZH_TW = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        '對整個保管庫進行全文搜尋，按目前資料夾或選定標籤篩選。',
-                        '在大型保管庫中輸入少於3個字元時可能會較慢。',
-                        '無法搜尋包含非ASCII字元的路徑，也無法正確搜尋子路徑。',
-                        '在資料夾篩選之前返回有限的結果，因此如果其他地方存在大量符合項，相關檔案可能不會顯示。',
+                        '查詢會傳送給 Omnisearch 外掛程式並遵循 Omnisearch 查詢語法。`#tag`、`.property` 和 `@date` 等篩選搜尋標記沒有特殊意義。',
+                        '選擇資料夾後，查詢會附加 `path:"<folder>/"`，使 Omnisearch 在該資料夾及其子資料夾內比對。已包含 `path:` 的查詢將原樣傳送。',
+                        'Omnisearch 按相關性排序最多傳回 50 筆結果。當符合項超過該數量時，排名較低的筆記不會顯示。',
+                        '限定包含非ASCII字元的資料夾路徑需要 Omnisearch 1.30.0 或更新版本。舊版本會搜尋整個保管庫，然後按資料夾篩選結果。',
+                        '在大型保管庫中，少於3個字元的查詢可能會較慢。',
                         '筆記預覽顯示 Omnisearch 摘錄，而不是預設預覽文字。'
                     ]
                 }

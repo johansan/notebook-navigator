@@ -301,24 +301,36 @@ export function SearchInput({
         uiDispatch({ type: 'ACTIVATE_PANE', target: 'search' });
     };
 
-    // Opens the search syntax help modal, closing any active suggest popups first
+    // Opens the search help modal for the active provider, closing any active suggest popups first
     const openSearchHelp = useCallback(() => {
         tagSuggestRef.current?.close();
         dateSuggestRef.current?.close();
-        const { fileNames, tags, properties, tasks, connectors, dates, omnisearch } = strings.searchInput.searchHelpModal.sections;
-        const propertiesSection = Object.prototype.hasOwnProperty.call(strings.searchInput.searchHelpModal.sections, 'properties')
-            ? properties
+        const helpStrings = strings.searchInput.searchHelpModal;
+        // Bold banner naming the active provider plus how to toggle. Shown only when
+        // both providers exist; with Omnisearch missing there is no mode to switch to.
+        const providerBanner = isOmnisearchAvailable
+            ? `${isOmnisearchActive ? helpStrings.activeOmnisearch : helpStrings.activeFilterSearch} ${helpStrings.introSwitching}`
             : undefined;
-        const sections = [fileNames, propertiesSection, tags, dates, tasks, connectors, omnisearch].filter(
-            (section): section is InfoModalSection => Boolean(section)
-        );
+
+        if (isOmnisearchActive) {
+            new InfoModal(app, {
+                title: strings.searchInput.searchHelpTitle,
+                intro: helpStrings.omnisearchIntro,
+                emphasizedIntro: providerBanner,
+                sections: [helpStrings.sections.omnisearch]
+            }).open();
+            return;
+        }
+
+        const { fileNames, tags, properties, tasks, connectors, dates } = helpStrings.sections;
+        const sections: InfoModalSection[] = [fileNames, properties, tags, dates, tasks, connectors];
         new InfoModal(app, {
             title: strings.searchInput.searchHelpTitle,
-            intro: strings.searchInput.searchHelpModal.intro,
-            emphasizedIntro: strings.searchInput.searchHelpModal.introSwitching,
+            intro: isOmnisearchAvailable ? helpStrings.intro : `${helpStrings.intro} ${helpStrings.introInstallOmnisearch}`,
+            emphasizedIntro: providerBanner,
             sections
         }).open();
-    }, [app]);
+    }, [app, isOmnisearchActive, isOmnisearchAvailable]);
 
     return (
         <div className="nn-search-input-wrapper">

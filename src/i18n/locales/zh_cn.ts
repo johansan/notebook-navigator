@@ -184,8 +184,12 @@ export const STRINGS_ZH_CN = {
         searchHelp: '搜索语法',
         searchHelpTitle: '搜索语法',
         searchHelpModal: {
-            intro: '在一个查询中组合显示名称、别名、属性、标签、日期和过滤器（例如：`meeting .status=active #work @thisweek`）。安装 Omnisearch 插件以使用全文搜索。',
+            intro: '过滤搜索通过显示名称、别名、属性、标签、日期和过滤器查找笔记，可在一个查询中组合使用（例如：`meeting .status=active #work @thisweek`）。点击星形图标可将搜索保存到快捷方式。',
+            introInstallOmnisearch: '全文搜索笔记内容需要 Omnisearch 插件。',
             introSwitching: '使用上/下箭头键或点击搜索图标在过滤搜索和 Omnisearch 之间切换。',
+            activeFilterSearch: '过滤搜索已启用。',
+            activeOmnisearch: 'Omnisearch 已启用。',
+            omnisearchIntro: 'Omnisearch 对整个仓库的笔记内容执行全文搜索。Notebook Navigator 显示属于当前文件夹、标签或所选内容的匹配项。',
             sections: {
                 fileNames: {
                     title: '文件名和别名',
@@ -265,10 +269,11 @@ export const STRINGS_ZH_CN = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        '对整个仓库进行全文搜索，按当前文件夹或选定标签过滤。',
-                        '在大型仓库中输入少于3个字符时可能会较慢。',
-                        '无法搜索包含非ASCII字符的路径，也无法正确搜索子路径。',
-                        '在文件夹过滤之前返回有限的结果，因此如果其他地方存在大量匹配项，相关文件可能不会显示。',
+                        '查询会发送给 Omnisearch 插件并遵循 Omnisearch 查询语法。`#tag`、`.property` 和 `@date` 等过滤搜索标记没有特殊含义。',
+                        '选择文件夹后，查询会附加 `path:"<folder>/"`，使 Omnisearch 在该文件夹及其子文件夹内匹配。已包含 `path:` 的查询将原样发送。',
+                        'Omnisearch 按相关性排序最多返回 50 条结果。当匹配项超过该数量时，排名较低的笔记不会显示。',
+                        '限定包含非ASCII字符的文件夹路径需要 Omnisearch 1.30.0 或更高版本。旧版本会搜索整个仓库，然后按文件夹筛选结果。',
+                        '在大型仓库中，少于3个字符的查询可能会较慢。',
                         '笔记预览显示 Omnisearch 摘录，而不是默认预览文本。'
                     ]
                 }

@@ -185,9 +185,14 @@ export const STRINGS_TR = {
         searchHelp: 'Arama sözdizimi',
         searchHelpTitle: 'Arama sözdizimi',
         searchHelpModal: {
-            intro: 'Görünen adları, takma adları, özellikleri, etiketleri, tarihleri ve filtreleri tek bir sorguda birleştirin (örn. `meeting .status=active #work @thisweek`). Tam metin araması kullanmak için Omnisearch eklentisini yükleyin.',
+            intro: 'Filtre araması, tek bir sorguda birleştirilen görünen adlar, takma adlar, özellikler, etiketler, tarihler ve filtrelerle notları bulur (örn. `meeting .status=active #work @thisweek`). Bir aramayı kısayol olarak kaydetmek için yıldız simgesine tıklayın.',
+            introInstallOmnisearch: 'Not içeriğinde tam metin araması Omnisearch eklentisini gerektirir.',
             introSwitching:
                 'Yukarı/aşağı ok tuşlarını kullanarak veya arama simgesine tıklayarak filtre araması ve Omnisearch arasında geçiş yapın.',
+            activeFilterSearch: 'Filtre araması etkin.',
+            activeOmnisearch: 'Omnisearch etkin.',
+            omnisearchIntro:
+                'Omnisearch, kasanın tamamındaki not içeriğinde tam metin araması yapar. Notebook Navigator geçerli klasöre, etikete veya seçime ait eşleşmeleri gösterir.',
             sections: {
                 fileNames: {
                     title: 'Dosya adları ve takma adlar',
@@ -267,10 +272,11 @@ export const STRINGS_TR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Kasadaki tam metin araması, geçerli klasör veya seçili etiketlere göre filtrelenir.',
-                        'Büyük kasalarda 3 karakterden az ile yavaş olabilir.',
-                        'ASCII olmayan karakterler içeren yolları veya alt yolları doğru şekilde arayamaz.',
-                        'Klasör filtrelemesinden önce sınırlı sonuç döndürür, bu nedenle başka yerlerde çok sayıda eşleşme varsa ilgili dosyalar görünmeyebilir.',
+                        'Sorgu Omnisearch eklentisine gönderilir ve Omnisearch sorgu sözdizimini takip eder. `#tag`, `.property` ve `@date` gibi filtre araması belirteçlerinin özel bir anlamı yoktur.',
+                        'Bir klasör seçildiğinde, sorguya `path:"<folder>/"` eklenir; böylece Omnisearch o klasör ve alt klasörleri içinde eşleşme arar. Zaten `path:` içeren sorgular değiştirilmeden gönderilir.',
+                        'Omnisearch alaka düzeyine göre sıralanmış en fazla 50 sonuç döndürür. Bundan daha fazla eşleşmesi olan aramalarda düşük sıralı notlar gösterilmez.',
+                        'ASCII olmayan karakterler içeren klasör yollarıyla kapsam belirlemek Omnisearch 1.30.0 veya sonrasını gerektirir. Daha eski sürümler kasanın tamamında arama yapar ve sonuçlar daha sonra klasöre göre filtrelenir.',
+                        '3 karakterden kısa sorgular büyük kasalarda yavaş olabilir.',
                         'Not önizlemeleri varsayılan önizleme metni yerine Omnisearch alıntılarını gösterir.'
                     ]
                 }

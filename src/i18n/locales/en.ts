@@ -185,8 +185,13 @@ export const STRINGS_EN = {
         searchHelp: 'Search syntax',
         searchHelpTitle: 'Search syntax',
         searchHelpModal: {
-            intro: 'Combine display names, aliases, properties, tags, dates, and filters in one query (e.g., `meeting .status=active #work @thisweek`). Install the Omnisearch plugin to use full-text search.',
+            intro: 'Filter search matches notes by display names, aliases, properties, tags, dates, and filters, combined in one query (e.g., `meeting .status=active #work @thisweek`). Click the star icon to save a search as a shortcut.',
+            introInstallOmnisearch: 'Full-text search of note content requires the Omnisearch plugin.',
             introSwitching: 'Switch between filter search and Omnisearch using the up/down arrow keys or by clicking the search icon.',
+            activeFilterSearch: 'Filter search is active.',
+            activeOmnisearch: 'Omnisearch is active.',
+            omnisearchIntro:
+                'Omnisearch performs full-text search across note content in the vault. Notebook Navigator shows the matches that belong to the current folder, tag, or selection.',
             sections: {
                 fileNames: {
                     title: 'File names and aliases',
@@ -266,10 +271,11 @@ export const STRINGS_EN = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Full-text search across the vault, filtered to the current folder or selected tags.',
-                        'Can be slow with fewer than 3 characters in large vaults.',
-                        'Cannot search paths with non-ASCII characters or search subpaths correctly.',
-                        'Returns limited results before folder filtering, so relevant files may not appear if many matches exist elsewhere.',
+                        'The query is sent to the Omnisearch plugin and follows Omnisearch query syntax. Filter search tokens such as `#tag`, `.property`, and `@date` have no special meaning.',
+                        'When a folder is selected, `path:"<folder>/"` is appended to the query so Omnisearch matches inside that folder and its subfolders. Queries that already contain `path:` are sent unchanged.',
+                        'Omnisearch returns at most 50 results ranked by relevance. Searches with more matches omit the lower-ranked notes.',
+                        'Folder scoping with non-ASCII folder paths requires Omnisearch 1.30.0 or later. Older versions search the whole vault, and results are filtered to the folder afterward.',
+                        'Queries with fewer than 3 characters can be slow in large vaults.',
                         'Note previews show Omnisearch excerpts instead of the default preview text.'
                     ]
                 }

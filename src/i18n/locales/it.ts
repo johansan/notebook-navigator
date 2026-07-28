@@ -185,8 +185,13 @@ export const STRINGS_IT = {
         searchHelp: 'Sintassi di ricerca',
         searchHelpTitle: 'Sintassi di ricerca',
         searchHelpModal: {
-            intro: 'Combina nomi visualizzati, alias, proprietà, tag, date e filtri in una query (es. `meeting .status=active #work @thisweek`). Installa il plugin Omnisearch per usare la ricerca full-text.',
+            intro: "La ricerca con filtro trova le note per nomi visualizzati, alias, proprietà, tag, date e filtri, combinati in una query (es. `meeting .status=active #work @thisweek`). Fai clic sull'icona a stella per salvare una ricerca come scorciatoia.",
+            introInstallOmnisearch: 'La ricerca full-text nel contenuto delle note richiede il plugin Omnisearch.',
             introSwitching: "Passa tra ricerca con filtro e Omnisearch usando i tasti freccia su/giù o cliccando sull'icona di ricerca.",
+            activeFilterSearch: 'La ricerca con filtro è attiva.',
+            activeOmnisearch: 'Omnisearch è attivo.',
+            omnisearchIntro:
+                "Omnisearch esegue una ricerca full-text nel contenuto delle note dell'intero vault. Notebook Navigator mostra le corrispondenze che appartengono alla cartella, al tag o alla selezione corrente.",
             sections: {
                 fileNames: {
                     title: 'Nomi file e alias',
@@ -266,10 +271,11 @@ export const STRINGS_IT = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        "Ricerca full-text nell'intero vault, filtrata per la cartella corrente o i tag selezionati.",
-                        'Può essere lento con meno di 3 caratteri nei vault grandi.',
-                        'Non può cercare percorsi con caratteri non-ASCII o cercare correttamente i sottopercorsi.',
-                        'Restituisce risultati limitati prima del filtraggio per cartella, quindi file rilevanti potrebbero non apparire se esistono molte corrispondenze altrove.',
+                        'La query viene inviata al plugin Omnisearch e segue la sintassi delle query di Omnisearch. I token della ricerca con filtro come `#tag`, `.property` e `@date` non hanno alcun significato speciale.',
+                        'Quando è selezionata una cartella, `path:"<folder>/"` viene aggiunto alla query in modo che Omnisearch cerchi in quella cartella e nelle sue sottocartelle. Le query che contengono già `path:` vengono inviate senza modifiche.',
+                        'Omnisearch restituisce al massimo 50 risultati ordinati per rilevanza. Le ricerche con più corrispondenze omettono le note con classificazione più bassa.',
+                        "Limitare la ricerca a percorsi di cartelle con caratteri non-ASCII richiede Omnisearch 1.30.0 o successivo. Le versioni precedenti cercano nell'intero vault e i risultati vengono poi filtrati per cartella.",
+                        'Le query con meno di 3 caratteri possono essere lente nei vault grandi.',
                         'Le anteprime delle note mostrano estratti di Omnisearch invece del testo di anteprima predefinito.'
                     ]
                 }

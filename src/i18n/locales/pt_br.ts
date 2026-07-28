@@ -186,9 +186,14 @@ export const STRINGS_PT_BR = {
         searchHelp: 'Sintaxe de pesquisa',
         searchHelpTitle: 'Sintaxe de pesquisa',
         searchHelpModal: {
-            intro: 'Combine nomes de exibição, aliases, propriedades, tags, datas e filtros em uma consulta (ex. `meeting .status=active #work @thisweek`). Instale o plugin Omnisearch para usar pesquisa de texto completo.',
+            intro: 'A pesquisa por filtro encontra notas por nomes de exibição, aliases, propriedades, tags, datas e filtros, combinados em uma consulta (ex. `meeting .status=active #work @thisweek`). Clique no ícone de estrela para salvar uma pesquisa como atalho.',
+            introInstallOmnisearch: 'A pesquisa de texto completo no conteúdo das notas requer o plugin Omnisearch.',
             introSwitching:
                 'Alterne entre pesquisa por filtro e Omnisearch usando as teclas de seta para cima/baixo ou clicando no ícone de pesquisa.',
+            activeFilterSearch: 'A pesquisa por filtro está ativa.',
+            activeOmnisearch: 'O Omnisearch está ativo.',
+            omnisearchIntro:
+                'O Omnisearch realiza pesquisa de texto completo no conteúdo das notas de todo o cofre. O Notebook Navigator mostra as correspondências que pertencem à pasta, tag ou seleção atual.',
             sections: {
                 fileNames: {
                     title: 'Nomes de arquivos e aliases',
@@ -268,10 +273,11 @@ export const STRINGS_PT_BR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Pesquisa de texto completo em todo o cofre, filtrada pela pasta atual ou tags selecionadas.',
-                        'Pode ser lento com menos de 3 caracteres em cofres grandes.',
-                        'Não consegue pesquisar caminhos com caracteres não-ASCII ou pesquisar subcaminhos corretamente.',
-                        'Retorna resultados limitados antes da filtragem por pasta, então arquivos relevantes podem não aparecer se muitas correspondências existirem em outros locais.',
+                        'A consulta é enviada ao plugin Omnisearch e segue a sintaxe de consulta do Omnisearch. Tokens da pesquisa por filtro como `#tag`, `.property` e `@date` não têm significado especial.',
+                        'Quando uma pasta está selecionada, `path:"<folder>/"` é adicionado à consulta para que o Omnisearch encontre correspondências nessa pasta e em suas subpastas. Consultas que já contêm `path:` são enviadas sem alterações.',
+                        'O Omnisearch retorna no máximo 50 resultados classificados por relevância. Pesquisas com mais correspondências omitem as notas com classificação mais baixa.',
+                        'Limitar a pesquisa a caminhos de pasta com caracteres não-ASCII requer o Omnisearch 1.30.0 ou posterior. Versões mais antigas pesquisam em todo o cofre e os resultados são depois filtrados pela pasta.',
+                        'Consultas com menos de 3 caracteres podem ser lentas em cofres grandes.',
                         'As prévias das notas mostram trechos do Omnisearch em vez do texto de prévia padrão.'
                     ]
                 }

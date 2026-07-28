@@ -185,9 +185,14 @@ export const STRINGS_PL = {
         searchHelp: 'Składnia wyszukiwania',
         searchHelpTitle: 'Składnia wyszukiwania',
         searchHelpModal: {
-            intro: 'Połącz nazwy wyświetlane, aliasy, atrybuty, tagi, daty i filtry w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Zainstaluj wtyczkę Omnisearch, aby korzystać z wyszukiwania pełnotekstowego.',
+            intro: 'Wyszukiwanie z filtrem znajduje notatki według nazw wyświetlanych, aliasów, atrybutów, tagów, dat i filtrów, połączonych w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Kliknij ikonę gwiazdki, aby zapisać wyszukiwanie w skrótach.',
+            introInstallOmnisearch: 'Wyszukiwanie pełnotekstowe w treści notatek wymaga wtyczki Omnisearch.',
             introSwitching:
                 'Przełączaj się między wyszukiwaniem z filtrem a Omnisearch za pomocą strzałek w górę i w dół lub klikając ikonę wyszukiwania.',
+            activeFilterSearch: 'Wyszukiwanie z filtrem jest aktywne.',
+            activeOmnisearch: 'Omnisearch jest aktywny.',
+            omnisearchIntro:
+                'Omnisearch wykonuje wyszukiwanie pełnotekstowe w treści notatek w całym sejfie. Notebook Navigator pokazuje dopasowania należące do bieżącego folderu, tagu lub wybranych elementów.',
             sections: {
                 fileNames: {
                     title: 'Nazwy plików i aliasy',
@@ -267,10 +272,11 @@ export const STRINGS_PL = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Wyszukiwanie pełnotekstowe w całym sejfie, filtrowane według bieżącego folderu lub wybranych tagów.',
-                        'Może działać wolno w przypadku mniej niż 3 znaków w dużych sejfach.',
-                        'Nie można wyszukiwać ścieżek zawierających znaki spoza ASCII ani poprawnie wyszukiwać podścieżek.',
-                        'Zwraca ograniczone wyniki przed filtrowaniem folderów, więc odpowiednie pliki mogą nie pojawić się, jeśli istnieje wiele dopasowań w innych miejscach.',
+                        'Zapytanie jest wysyłane do wtyczki Omnisearch i podlega składni zapytań Omnisearch. Tokeny wyszukiwania z filtrem, takie jak `#tag`, `.property` i `@date`, nie mają specjalnego znaczenia.',
+                        'Gdy wybrany jest folder, do zapytania dołączane jest `path:"<folder>/"`, dzięki czemu Omnisearch dopasowuje wyniki w tym folderze i jego podfolderach. Zapytania zawierające już `path:` są wysyłane bez zmian.',
+                        'Omnisearch zwraca maksymalnie 50 wyników uporządkowanych według trafności. Wyszukiwania z większą liczbą dopasowań pomijają notatki o niższej trafności.',
+                        'Ograniczenie wyszukiwania do ścieżek folderów zawierających znaki spoza ASCII wymaga Omnisearch w wersji 1.30.0 lub nowszej. Starsze wersje przeszukują cały sejf, a wyniki są następnie filtrowane do folderu.',
+                        'Zapytania krótsze niż 3 znaki mogą działać wolno w dużych sejfach.',
                         'Podgląd notatek pokazuje fragmenty Omnisearch zamiast domyślnego tekstu podglądu.'
                     ]
                 }

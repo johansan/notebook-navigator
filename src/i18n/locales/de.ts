@@ -184,9 +184,14 @@ export const STRINGS_DE = {
         searchHelp: 'Suchsyntax',
         searchHelpTitle: 'Suchsyntax',
         searchHelpModal: {
-            intro: 'Kombinieren Sie Anzeigenamen, Aliasnamen, Eigenschaften, Tags, Daten und Filter in einer Abfrage (z.B. `meeting .status=active #work @thisweek`). Installieren Sie das Omnisearch-Plugin für Volltextsuche.',
+            intro: 'Die Filtersuche findet Notizen anhand von Anzeigenamen, Aliasnamen, Eigenschaften, Tags, Daten und Filtern, kombiniert in einer Abfrage (z.B. `meeting .status=active #work @thisweek`). Klicken Sie auf das Sternsymbol, um eine Suche als Such-Lesezeichen zu speichern.',
+            introInstallOmnisearch: 'Die Volltextsuche im Inhalt von Notizen erfordert das Omnisearch-Plugin.',
             introSwitching:
                 'Wechseln Sie zwischen Filtersuche und Omnisearch mit den Auf-/Ab-Pfeiltasten oder durch Klicken auf das Suchsymbol.',
+            activeFilterSearch: 'Die Filtersuche ist aktiv.',
+            activeOmnisearch: 'Omnisearch ist aktiv.',
+            omnisearchIntro:
+                'Omnisearch führt eine Volltextsuche über den Notizinhalt im gesamten Vault durch. Notebook Navigator zeigt die Treffer, die zum aktuellen Ordner, Tag oder zur aktuellen Auswahl gehören.',
             sections: {
                 fileNames: {
                     title: 'Dateinamen und Aliasnamen',
@@ -266,10 +271,11 @@ export const STRINGS_DE = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Volltextsuche im gesamten Vault, gefiltert nach dem aktuellen Ordner oder ausgewählten Tags.',
-                        'Kann bei weniger als 3 Zeichen in großen Vaults langsam sein.',
-                        'Kann Pfade mit Nicht-ASCII-Zeichen nicht durchsuchen oder Unterpfade korrekt durchsuchen.',
-                        'Gibt begrenzte Ergebnisse vor der Ordnerfilterung zurück, sodass relevante Dateien möglicherweise nicht erscheinen, wenn viele Treffer an anderer Stelle existieren.',
+                        'Die Abfrage wird an das Omnisearch-Plugin gesendet und folgt der Omnisearch-Abfragesyntax. Filtersuche-Token wie `#tag`, `.property` und `@date` haben keine besondere Bedeutung.',
+                        'Wenn ein Ordner ausgewählt ist, wird `path:"<folder>/"` an die Abfrage angehängt, damit Omnisearch in diesem Ordner und seinen Unterordnern sucht. Abfragen, die bereits `path:` enthalten, werden unverändert gesendet.',
+                        'Omnisearch gibt höchstens 50 nach Relevanz sortierte Ergebnisse zurück. Bei Suchen mit mehr Treffern fehlen die niedriger eingestuften Notizen.',
+                        'Das Eingrenzen auf Ordnerpfade mit Nicht-ASCII-Zeichen erfordert Omnisearch 1.30.0 oder neuer. Ältere Versionen durchsuchen den gesamten Vault, und die Ergebnisse werden anschließend auf den Ordner gefiltert.',
+                        'Abfragen mit weniger als 3 Zeichen können in großen Vaults langsam sein.',
                         'Notizvorschauen zeigen Omnisearch-Auszüge anstelle des Standard-Vorschautexts.'
                     ]
                 }

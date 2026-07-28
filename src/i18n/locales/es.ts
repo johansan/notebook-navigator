@@ -184,9 +184,14 @@ export const STRINGS_ES = {
         searchHelp: 'Sintaxis de búsqueda',
         searchHelpTitle: 'Sintaxis de búsqueda',
         searchHelpModal: {
-            intro: 'Combina nombres para mostrar, alias, propiedades, etiquetas, fechas y filtros en una consulta (ej. `meeting .status=active #work @thisweek`). Instala el plugin Omnisearch para usar búsqueda de texto completo.',
+            intro: 'La búsqueda por filtro encuentra notas por nombres para mostrar, alias, propiedades, etiquetas, fechas y filtros, combinados en una consulta (ej. `meeting .status=active #work @thisweek`). Haz clic en el icono de estrella para guardar una búsqueda en accesos directos.',
+            introInstallOmnisearch: 'La búsqueda de texto completo en el contenido de las notas requiere el plugin Omnisearch.',
             introSwitching:
                 'Cambia entre búsqueda por filtro y Omnisearch usando las teclas de flecha arriba/abajo o haciendo clic en el icono de búsqueda.',
+            activeFilterSearch: 'La búsqueda por filtro está activa.',
+            activeOmnisearch: 'Omnisearch está activo.',
+            omnisearchIntro:
+                'Omnisearch realiza búsqueda de texto completo en el contenido de las notas de todo el vault. Notebook Navigator muestra las coincidencias que pertenecen a la carpeta, etiqueta o selección actual.',
             sections: {
                 fileNames: {
                     title: 'Nombres de archivo y alias',
@@ -266,10 +271,11 @@ export const STRINGS_ES = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Búsqueda de texto completo en todo el vault, filtrada por la carpeta actual o etiquetas seleccionadas.',
-                        'Puede ser lento con menos de 3 caracteres en vaults grandes.',
-                        'No puede buscar rutas con caracteres no ASCII ni buscar subrutas correctamente.',
-                        'Devuelve resultados limitados antes del filtrado por carpeta, por lo que archivos relevantes pueden no aparecer si existen muchas coincidencias en otros lugares.',
+                        'La consulta se envía al plugin Omnisearch y sigue la sintaxis de consulta de Omnisearch. Los tokens de búsqueda por filtro como `#tag`, `.property` y `@date` no tienen significado especial.',
+                        'Cuando hay una carpeta seleccionada, se añade `path:"<folder>/"` a la consulta para que Omnisearch busque dentro de esa carpeta y sus subcarpetas. Las consultas que ya contienen `path:` se envían sin cambios.',
+                        'Omnisearch devuelve como máximo 50 resultados ordenados por relevancia. Las búsquedas con más coincidencias omiten las notas con menor relevancia.',
+                        'Delimitar rutas de carpeta con caracteres no ASCII requiere Omnisearch 1.30.0 o posterior. Las versiones anteriores buscan en todo el vault y los resultados se filtran después por carpeta.',
+                        'Las consultas con menos de 3 caracteres pueden ser lentas en vaults grandes.',
                         'Las vistas previas de notas muestran extractos de Omnisearch en lugar del texto de vista previa predeterminado.'
                     ]
                 }
