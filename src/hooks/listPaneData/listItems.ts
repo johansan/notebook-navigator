@@ -579,7 +579,9 @@ function buildListItemsInternal(
                     }
                 }
                 // Labels of distinct buckets can compare equal because the collator ignores case and
-                // accent differences; the bucket key breaks the tie so such groups keep one stable order.
+                // accent differences, and some locales also ignore punctuation; the bucket key breaks
+                // the tie so such groups keep one stable order. Bucket keys are unique map keys, so
+                // equal keys never reach this comparison and no zero branch is needed.
                 return directionMultiplier * (left.bucketKey < right.bucketKey ? -1 : 1);
             });
 

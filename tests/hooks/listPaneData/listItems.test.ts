@@ -2233,12 +2233,15 @@ describe('buildListItems property grouping', () => {
             sortOption: 'title-asc'
         });
 
-        // The collator ignores punctuation at base sensitivity, so the two list labels tie and the
-        // stable sort keeps their encounter order.
-        expect(getHeaderItems(items)).toEqual([
+        // Whether the two split-boundary labels tie depends on the environment locale: collators
+        // that ignore punctuation (such as Thai) make them equal, which hands their order to the
+        // bucket-key tie-break, while others compare the comma directly. Sorting by code units
+        // keeps the assertion independent of the environment locale.
+        const headers = getHeaderItems(items);
+        expect([...headers].sort((left, right) => (left.data < right.data ? -1 : 1))).toEqual([
+            { data: 'Solo', kind: 'property' },
             { data: 'a b, c', kind: 'property' },
-            { data: 'a, b c', kind: 'property' },
-            { data: 'Solo', kind: 'property' }
+            { data: 'a, b c', kind: 'property' }
         ]);
 
         const soloHeader = items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Solo');
