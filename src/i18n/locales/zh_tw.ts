@@ -133,6 +133,8 @@ export const STRINGS_ZH_TW = {
     paneHeader: {
         collapseAllFolders: '摺疊項目',
         expandAllFolders: '展開所有項目',
+        collapseAllListGroups: '摺疊所有列表群組',
+        expandAllListGroups: '展開所有列表群組',
         showCalendar: '顯示日曆',
         hideCalendar: '隱藏日曆',
         newFolder: '新建資料夾',
@@ -182,8 +184,13 @@ export const STRINGS_ZH_TW = {
         searchHelp: '搜尋語法',
         searchHelpTitle: '搜尋語法',
         searchHelpModal: {
-            intro: '在一個查詢中組合顯示名稱、別名、屬性、標籤、日期和篩選器（例如：`meeting .status=active #work @thisweek`）。安裝 Omnisearch 外掛程式以使用全文搜尋。',
+            intro: '篩選搜尋透過顯示名稱、別名、屬性、標籤、日期和篩選器尋找筆記，可在一個查詢中組合使用（例如：`meeting .status=active #work @thisweek`）。點擊星形圖示可將搜尋儲存至捷徑。',
+            introInstallOmnisearch: '全文搜尋筆記內容需要 Omnisearch 外掛程式。',
             introSwitching: '使用上/下箭頭鍵或點擊搜尋圖示在篩選搜尋和 Omnisearch 之間切換。',
+            activeFilterSearch: '篩選搜尋已啟用。',
+            activeOmnisearch: 'Omnisearch 已啟用。',
+            omnisearchIntro:
+                'Omnisearch 對整個保管庫的筆記內容執行全文搜尋。Notebook Navigator 顯示屬於目前資料夾、標籤或所選內容的符合項。',
             sections: {
                 fileNames: {
                     title: '檔案名稱和別名',
@@ -263,10 +270,11 @@ export const STRINGS_ZH_TW = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        '對整個保管庫進行全文搜尋，按目前資料夾或選定標籤篩選。',
-                        '在大型保管庫中輸入少於3個字元時可能會較慢。',
-                        '無法搜尋包含非ASCII字元的路徑，也無法正確搜尋子路徑。',
-                        '在資料夾篩選之前返回有限的結果，因此如果其他地方存在大量符合項，相關檔案可能不會顯示。',
+                        '查詢會傳送給 Omnisearch 外掛程式並遵循 Omnisearch 查詢語法。`#tag`、`.property` 和 `@date` 等篩選搜尋標記沒有特殊意義。',
+                        '選擇資料夾後，查詢會附加 `path:"<folder>/"`，使 Omnisearch 在該資料夾及其子資料夾內比對。已包含 `path:` 的查詢將原樣傳送。',
+                        'Omnisearch 按相關性排序最多傳回 50 筆結果。當符合項超過該數量時，排名較低的筆記不會顯示。',
+                        '限定包含非ASCII字元的資料夾路徑需要 Omnisearch 1.30.0 或更新版本。舊版本會搜尋整個保管庫，然後按資料夾篩選結果。',
+                        '在大型保管庫中，少於3個字元的查詢可能會較慢。',
                         '筆記預覽顯示 Omnisearch 摘錄，而不是預設預覽文字。'
                     ]
                 }
@@ -497,6 +505,8 @@ export const STRINGS_ZH_TW = {
                 'list-search': '搜尋',
                 'list-reveal-file': '定位檔案',
                 'list-descendants': '子資料夾中的筆記',
+                'list-expand-all': '展開所有群組',
+                'list-collapse-all': '摺疊所有群組',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
                 'list-sort-modified': '依編輯日期排序',
@@ -890,7 +900,8 @@ export const STRINGS_ZH_TW = {
         togglePropertiesBySelection: '依選擇切換屬性',
         toggleCompactMode: '切換精簡模式', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '切換置頂區域',
-        collapseExpand: '摺疊/展開所有項目',
+        collapseExpand: '摺疊/展開所有導覽項目',
+        collapseExpandListGroups: '摺疊/展開所有列表群組',
         collapseExpandSelectedItem: '摺疊/展開所選項目',
         addTag: '為選定檔案新增標籤',
         setProperty: '為選定檔案設定屬性', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -910,6 +921,14 @@ export const STRINGS_ZH_TW = {
         revealInNavigator: '在筆記本導覽器中定位',
         settingsUnavailableNotice:
             '筆記本導覽器無法讀取其設定,因此未啟動。如果儲存庫正在同步,請在同步完成後重新啟動 Obsidian。若要以預設設定重新開始,請執行命令「還原預設設定」。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: '使用預設設定開始?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                '筆記本導覽器剛剛安裝,沒有設定檔。如果這是全新安裝或重新安裝,請使用預設設定繼續。如果你的設定來自同步服務,請取消,等待同步完成後重新啟動 Obsidian。', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                '筆記本導覽器已在此裝置上安裝了一段時間,但設定檔遺失。如果儲存庫仍在同步,請取消,等待同步完成後重新啟動 Obsidian 以保留現有設定。僅在想要使用預設設定重新開始時繼續。', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: '使用預設設定' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: '還原預設設定', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1263,7 +1282,7 @@ export const STRINGS_ZH_TW = {
             },
             dualPane: {
                 name: '雙窗格布局',
-                desc: '在桌面端並排顯示導覽窗格和列表窗格。'
+                desc: '並排顯示導覽窗格和列表窗格。'
             },
             dualPaneOrientation: {
                 name: '雙欄布局方向',
@@ -1309,8 +1328,8 @@ export const STRINGS_ZH_TW = {
                 desc: '控制 Notebook Navigator 的整體縮放級別（百分比）。'
             },
             useFloatingToolbars: {
-                name: '在 iOS/iPadOS 上使用浮動工具列',
-                desc: '僅適用於 iOS 和 iPadOS。'
+                name: '在 iOS 上使用浮動工具列',
+                desc: '僅適用於 iOS。'
             },
             startView: {
                 name: '預設啟動檢視',
@@ -1322,9 +1341,7 @@ export const STRINGS_ZH_TW = {
             },
             toolbarButtons: {
                 name: '工具列按鈕',
-                desc: '選擇在工具列中顯示哪些按鈕。隱藏的按鈕仍可透過命令和選單存取。',
-                navigationLabel: '導覽工具列',
-                listLabel: '列表工具列'
+                desc: '選擇在工具列中顯示哪些按鈕。隱藏的按鈕仍可透過命令和選單存取。'
             },
             createNewNotesInNewTab: {
                 name: '在新分頁中開啟新筆記',
@@ -1886,6 +1903,10 @@ export const STRINGS_ZH_TW = {
             skipCodeBlocksInPreview: {
                 name: '預覽中跳過程式碼區塊',
                 desc: '產生預覽文字時跳過程式碼區塊。'
+            },
+            skipCalloutsInPreview: {
+                name: '預覽中跳過標註',
+                desc: '產生預覽文字時跳過標註區塊。'
             },
             stripHtmlInPreview: {
                 name: '移除預覽中的 HTML',

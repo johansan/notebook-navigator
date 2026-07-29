@@ -135,6 +135,8 @@ export const STRINGS_NL = {
     paneHeader: {
         collapseAllFolders: 'Items inklappen',
         expandAllFolders: 'Alle items uitklappen',
+        collapseAllListGroups: 'Alle lijstgroepen inklappen',
+        expandAllListGroups: 'Alle lijstgroepen uitklappen',
         showCalendar: 'Kalender tonen',
         hideCalendar: 'Kalender verbergen',
         newFolder: 'Nieuwe map',
@@ -185,9 +187,14 @@ export const STRINGS_NL = {
         searchHelp: 'Zoeksyntax',
         searchHelpTitle: 'Zoeksyntax',
         searchHelpModal: {
-            intro: 'Combineer weergavenamen, aliassen, eigenschappen, tags, datums en filters in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Installeer de Omnisearch-plugin om zoeken in volledige tekst te gebruiken.',
+            intro: 'Filterzoeken vindt notities op weergavenamen, aliassen, eigenschappen, tags, datums en filters, gecombineerd in één zoekopdracht (bijv. `meeting .status=active #work @thisweek`). Klik op het sterpictogram om een zoekopdracht als snelkoppeling op te slaan.',
+            introInstallOmnisearch: 'Zoeken in de volledige tekst van notities vereist de Omnisearch-plugin.',
             introSwitching:
                 'Schakel tussen filterzoeken en Omnisearch met de pijltoetsen omhoog/omlaag of door op het zoekpictogram te klikken.',
+            activeFilterSearch: 'Filterzoeken is actief.',
+            activeOmnisearch: 'Omnisearch is actief.',
+            omnisearchIntro:
+                'Omnisearch voert zoeken in volledige tekst uit op de inhoud van notities in de hele vault. Notebook Navigator toont de overeenkomsten die bij de huidige map, tag of selectie horen.',
             sections: {
                 fileNames: {
                     title: 'Bestandsnamen en aliassen',
@@ -267,10 +274,11 @@ export const STRINGS_NL = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Zoeken in volledige tekst door de hele vault, gefilterd op de huidige map of geselecteerde tags.',
-                        'Kan traag zijn met minder dan 3 tekens in grote vaults.',
-                        'Kan geen paden met niet-ASCII-tekens doorzoeken of subpaden correct doorzoeken.',
-                        'Geeft beperkte resultaten terug vóór mapfiltering, waardoor relevante bestanden mogelijk niet verschijnen als er elders veel overeenkomsten bestaan.',
+                        'De zoekopdracht wordt naar de Omnisearch-plugin gestuurd en volgt de querysyntaxis van Omnisearch. Filterzoektokens zoals `#tag`, `.property` en `@date` hebben geen speciale betekenis.',
+                        'Wanneer een map is geselecteerd, wordt `path:"<folder>/"` aan de zoekopdracht toegevoegd zodat Omnisearch binnen die map en de submappen zoekt. Zoekopdrachten die al `path:` bevatten, worden ongewijzigd verstuurd.',
+                        'Omnisearch geeft maximaal 50 resultaten terug, gerangschikt op relevantie. Bij zoekopdrachten met meer overeenkomsten ontbreken de lager gerangschikte notities.',
+                        'Het beperken tot mappaden met niet-ASCII-tekens vereist Omnisearch 1.30.0 of hoger. Oudere versies doorzoeken de hele vault, waarna de resultaten op de map worden gefilterd.',
+                        'Zoekopdrachten met minder dan 3 tekens kunnen traag zijn in grote vaults.',
                         'Notitievoorbeelden tonen Omnisearch-fragmenten in plaats van de standaard voorbeeldtekst.'
                     ]
                 }
@@ -502,6 +510,8 @@ export const STRINGS_NL = {
                 'list-search': 'Zoeken',
                 'list-reveal-file': 'Bestand tonen',
                 'list-descendants': 'Notities uit submappen',
+                'list-expand-all': 'Alle groepen uitklappen',
+                'list-collapse-all': 'Alle groepen inklappen',
                 'list-sort-ascending': 'Sorteervolgorde: oplopend',
                 'list-sort-descending': 'Sorteervolgorde: aflopend',
                 'list-sort-modified': 'Sorteren op bewerkingsdatum',
@@ -900,7 +910,8 @@ export const STRINGS_NL = {
         togglePropertiesBySelection: 'Eigenschappen op selectie in-/uitschakelen',
         toggleCompactMode: 'Compacte modus in-/uitschakelen', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Vastgemaakt gedeelte in-/uitschakelen',
-        collapseExpand: 'Alle items in-/uitklappen',
+        collapseExpand: 'Alle navigatie-items in-/uitklappen',
+        collapseExpandListGroups: 'Alle lijstgroepen in-/uitklappen',
         collapseExpandSelectedItem: 'Geselecteerd item in-/uitklappen',
         addTag: 'Tag toevoegen aan geselecteerde bestanden',
         setProperty: 'Eigenschap instellen op geselecteerde bestanden', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -920,6 +931,14 @@ export const STRINGS_NL = {
         revealInNavigator: 'Tonen in Notebook Navigator',
         settingsUnavailableNotice:
             'Notebook Navigator kon de instellingen niet lezen en is niet gestart. Als je kluis wordt gesynchroniseerd, herstart Obsidian nadat de synchronisatie is voltooid. Om opnieuw te beginnen met standaardinstellingen, voer je de opdracht "Standaardinstellingen herstellen" uit.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Starten met standaardinstellingen?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator is zojuist geïnstalleerd en heeft geen instellingenbestand. Als dit een nieuwe installatie of een herinstallatie is, ga dan verder met de standaardinstellingen. Als je instellingen van een synchronisatiedienst komen, annuleer dan, wacht tot de synchronisatie is voltooid en herstart Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator staat al een tijd op dit apparaat, maar het instellingenbestand ontbreekt. Als je kluis nog wordt gesynchroniseerd, annuleer dan, wacht tot de synchronisatie is voltooid en herstart Obsidian om je bestaande instellingen te behouden. Ga alleen verder om opnieuw te beginnen met de standaardinstellingen.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Standaardinstellingen gebruiken' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Standaardinstellingen herstellen', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1276,7 +1295,7 @@ export const STRINGS_NL = {
             },
             dualPane: {
                 name: 'Dubbel paneellay-out',
-                desc: 'Navigatiepaneel en lijstpaneel naast elkaar tonen op desktop.'
+                desc: 'Navigatiepaneel en lijstpaneel naast elkaar tonen.'
             },
             dualPaneOrientation: {
                 name: 'Dubbel paneel oriëntatie',
@@ -1322,8 +1341,8 @@ export const STRINGS_NL = {
                 desc: 'Regelt het algemene zoomniveau van Notebook Navigator (procent).'
             },
             useFloatingToolbars: {
-                name: 'Zwevende werkbalken gebruiken op iOS/iPadOS',
-                desc: 'Geldt alleen op iOS en iPadOS.'
+                name: 'Zwevende werkbalken gebruiken op iOS',
+                desc: 'Geldt alleen op iOS.'
             },
             startView: {
                 name: 'Standaard opstartweergave',
@@ -1335,9 +1354,7 @@ export const STRINGS_NL = {
             },
             toolbarButtons: {
                 name: 'Werkbalkknoppen',
-                desc: "Kies welke knoppen in de werkbalk worden weergegeven. Verborgen knoppen blijven toegankelijk via opdrachten en menu's.",
-                navigationLabel: 'Navigatiewerkbalk',
-                listLabel: 'Lijstwerkbalk'
+                desc: "Kies welke knoppen in de werkbalk worden weergegeven. Verborgen knoppen blijven toegankelijk via opdrachten en menu's."
             },
             createNewNotesInNewTab: {
                 name: 'Nieuwe notities in nieuw tabblad openen',
@@ -1903,6 +1920,10 @@ export const STRINGS_NL = {
             skipCodeBlocksInPreview: {
                 name: 'Codeblokken overslaan in voorbeeld',
                 desc: 'Codeblokken overslaan bij het genereren van voorbeeldtekst.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Callouts overslaan in voorbeeld',
+                desc: 'Callout-blokken overslaan bij het genereren van voorbeeldtekst.'
             },
             stripHtmlInPreview: {
                 name: 'HTML verwijderen in voorbeelden',

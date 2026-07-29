@@ -24,6 +24,7 @@ import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { createTestTFile } from '../utils/createTestTFile';
 import { getActivePropertyFields, setActivePropertyFields } from '../../src/utils/vaultProfiles';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
+import type { CollapsedPinnedContexts } from '../../src/types';
 
 class TestPropertyOperations extends PropertyOperations {
     public renameSettings(oldKeyNormalized: string, newKeyDisplay: string): Promise<void> {
@@ -55,12 +56,14 @@ class TestPropertyOperations extends PropertyOperations {
 describe('PropertyOperations settings updates', () => {
     let app: App;
     let settings: NotebookNavigatorSettings;
+    let collapsedPinnedContexts: CollapsedPinnedContexts;
     let saveSettingsAndUpdate: ReturnType<typeof vi.fn>;
     let operations: TestPropertyOperations;
 
     beforeEach(() => {
         app = new App();
         settings = structuredClone(DEFAULT_SETTINGS);
+        collapsedPinnedContexts = {};
         saveSettingsAndUpdate = vi.fn().mockResolvedValue(undefined);
         operations = new TestPropertyOperations(
             app,
@@ -68,7 +71,8 @@ describe('PropertyOperations settings updates', () => {
             async () => {
                 await saveSettingsAndUpdate();
             },
-            () => null
+            () => null,
+            mutator => mutator(collapsedPinnedContexts)
         );
     });
 
@@ -301,12 +305,14 @@ describe('PropertyOperations settings updates', () => {
 describe('PropertyOperations rename conflict detection', () => {
     let app: App;
     let settings: NotebookNavigatorSettings;
+    let collapsedPinnedContexts: CollapsedPinnedContexts;
     let saveSettingsAndUpdate: ReturnType<typeof vi.fn>;
     let operations: TestPropertyOperations;
 
     beforeEach(() => {
         app = new App();
         settings = structuredClone(DEFAULT_SETTINGS);
+        collapsedPinnedContexts = {};
         saveSettingsAndUpdate = vi.fn().mockResolvedValue(undefined);
         operations = new TestPropertyOperations(
             app,
@@ -314,7 +320,8 @@ describe('PropertyOperations rename conflict detection', () => {
             async () => {
                 await saveSettingsAndUpdate();
             },
-            () => null
+            () => null,
+            mutator => mutator(collapsedPinnedContexts)
         );
     });
 

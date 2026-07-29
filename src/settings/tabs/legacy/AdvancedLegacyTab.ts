@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ButtonComponent, Platform } from 'obsidian';
+import { ButtonComponent } from 'obsidian';
 import { strings } from '../../../i18n';
 import { ConfirmModal } from '../../../modals/ConfirmModal';
 import { SettingsExportModal, SettingsImportModal } from '../../../modals/SettingsTransferModal';
@@ -24,6 +24,7 @@ import type { MetadataCleanupSummary } from '../../../services/MetadataService';
 import { runAsyncAction } from '../../../utils/async';
 import { localStorage } from '../../../utils/localStorage';
 import { showNotice } from '../../../utils/noticeUtils';
+import { isDualPaneSupported } from '../../../utils/paneLayout';
 import { getNavigationPaneSizing } from '../../../utils/paneSizing';
 import { createSettingGroupFactory } from '../../settingGroups';
 import { getNotSyncedSettingName } from '../../syncModeToggle';
@@ -67,7 +68,8 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
             );
     });
 
-    if (!Platform.isMobile) {
+    // The pane separator only exists where dual pane is available (desktop and tablets)
+    if (isDualPaneSupported()) {
         maintenanceGroup.addSetting(setting => {
             setting
                 .setName(strings.settings.items.resetPaneSeparator.name)

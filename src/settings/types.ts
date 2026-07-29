@@ -18,7 +18,7 @@
 
 import type { FileVisibility } from '../utils/fileTypeUtils';
 import type { FolderAppearance, TagAppearance } from '../hooks/useListPaneAppearance';
-import type { BackgroundMode, CollapsedPinnedContexts, DualPaneOrientation, PinnedNotes } from '../types';
+import type { BackgroundMode, DualPaneOrientation, PinnedNotes } from '../types';
 import type { FolderNoteCreationPreference } from '../types/folderNote';
 import type { KeyboardShortcutConfig } from '../utils/keyboardShortcuts';
 import type { ShortcutEntry } from '../types/shortcuts';
@@ -484,7 +484,7 @@ export function showsCharacterCount(display: TextCountDisplay): boolean {
 export type NavigationToolbarButtonId = 'toggleDualPane' | 'expandCollapse' | 'calendar' | 'hiddenItems' | 'rootReorder' | 'newFolder';
 
 /** Buttons available in the list toolbar */
-export type ListToolbarButtonId = 'back' | 'search' | 'reveal' | 'descendants' | 'sort' | 'appearance' | 'newNote';
+export type ListToolbarButtonId = 'back' | 'search' | 'reveal' | 'descendants' | 'groupExpansion' | 'sort' | 'appearance' | 'newNote';
 
 /** Visibility toggles for toolbar buttons */
 export interface ToolbarVisibilitySettings {
@@ -712,6 +712,7 @@ export interface NotebookNavigatorSettings {
     showFilePreview: boolean;
     skipHeadingsInPreview: boolean;
     skipCodeBlocksInPreview: boolean;
+    skipCalloutsInPreview: boolean;
     stripHtmlInPreview: boolean;
     stripLatexInPreview: boolean;
     previewRows: number;
@@ -788,7 +789,6 @@ export interface NotebookNavigatorSettings {
     // Runtime state and cached data
     customVaultName: string;
     pinnedNotes: PinnedNotes;
-    collapsedPinnedContexts: CollapsedPinnedContexts;
     fileIcons: Record<string, string>;
     fileColors: Record<string, string>;
     fileBackgroundColors: Record<string, string>;

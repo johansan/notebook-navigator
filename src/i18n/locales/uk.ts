@@ -135,6 +135,8 @@ export const STRINGS_UK = {
     paneHeader: {
         collapseAllFolders: 'Згорнути елементи', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Розгорнути всі елементи', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Згорнути всі групи списку',
+        expandAllListGroups: 'Розгорнути всі групи списку',
         showCalendar: 'Показати календар',
         hideCalendar: 'Сховати календар',
         newFolder: 'Нова папка', // Tooltip for create new folder button (English: New folder)
@@ -184,9 +186,14 @@ export const STRINGS_UK = {
         searchHelp: 'Синтаксис пошуку',
         searchHelpTitle: 'Синтаксис пошуку',
         searchHelpModal: {
-            intro: 'Комбінуйте відображувані імена, псевдоніми, властивості, теги, дати та фільтри в одному запиті (напр. `meeting .status=active #work @thisweek`). Встановіть плагін Omnisearch для повнотекстового пошуку.',
+            intro: 'Пошук за фільтром знаходить нотатки за відображуваними іменами, псевдонімами, властивостями, тегами, датами та фільтрами, поєднаними в одному запиті (напр. `meeting .status=active #work @thisweek`). Натисніть на значок зірки, щоб зберегти пошук як ярлик.',
+            introInstallOmnisearch: 'Для повнотекстового пошуку у вмісті нотаток потрібен плагін Omnisearch.',
             introSwitching:
                 'Перемикайтеся між пошуком за фільтром та Omnisearch за допомогою клавіш стрілок вгору/вниз або натиснувши на значок пошуку.',
+            activeFilterSearch: 'Пошук за фільтром активний.',
+            activeOmnisearch: 'Omnisearch активний.',
+            omnisearchIntro:
+                'Omnisearch виконує повнотекстовий пошук у вмісті нотаток по всьому сховищу. Notebook Navigator показує збіги, що належать до поточної папки, тегу або вибраних елементів.',
             sections: {
                 fileNames: {
                     title: 'Імена файлів і псевдоніми',
@@ -266,10 +273,11 @@ export const STRINGS_UK = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Повнотекстовий пошук по всьому сховищу з фільтрацією за поточною папкою або вибраними тегами.',
-                        'Може бути повільним при менш ніж 3 символах у великих сховищах.',
-                        'Не може шукати шляхи з не-ASCII символами або коректно шукати підшляхи.',
-                        "Повертає обмежені результати до фільтрації за папками, тому релевантні файли можуть не з'явитися, якщо багато збігів в інших місцях.",
+                        'Запит надсилається плагіну Omnisearch і відповідає синтаксису запитів Omnisearch. Токени пошуку за фільтром, такі як `#tag`, `.property` та `@date`, не мають особливого значення.',
+                        'Коли вибрано папку, до запиту додається `path:"<folder>/"`, щоб Omnisearch шукав збіги в цій папці та її підпапках. Запити, що вже містять `path:`, надсилаються без змін.',
+                        'Omnisearch повертає не більше 50 результатів, відсортованих за релевантністю. За більшої кількості збігів нотатки з нижчим рейтингом не відображаються.',
+                        'Для обмеження пошуку папкою, шлях якої містить не-ASCII символи, потрібен Omnisearch 1.30.0 або новіший. Старіші версії шукають по всьому сховищу, після чого результати фільтруються за папкою.',
+                        'Запити коротші за 3 символи можуть працювати повільно у великих сховищах.',
                         'Попередній перегляд нотаток показує фрагменти Omnisearch замість тексту попереднього перегляду за замовчуванням.'
                     ]
                 }
@@ -501,6 +509,8 @@ export const STRINGS_UK = {
                 'list-search': 'Пошук',
                 'list-reveal-file': 'Показати файл',
                 'list-descendants': 'Нотатки з підпапок',
+                'list-expand-all': 'Розгорнути всі групи',
+                'list-collapse-all': 'Згорнути всі групи',
                 'list-sort-ascending': 'Порядок сортування: за зростанням',
                 'list-sort-descending': 'Порядок сортування: за спаданням',
                 'list-sort-modified': 'Сортувати за датою зміни',
@@ -895,7 +905,8 @@ export const STRINGS_UK = {
         togglePropertiesBySelection: 'Перемкнути властивості за вибором',
         toggleCompactMode: 'Перемкнути компактний режим', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Перемкнути закріплений розділ',
-        collapseExpand: 'Згорнути / розгорнути всі елементи', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Згорнути / розгорнути всі елементи навігації', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Згорнути / розгорнути всі групи списку',
         collapseExpandSelectedItem: 'Згорнути / розгорнути вибраний елемент',
         addTag: 'Додати тег до вибраних файлів', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Встановити властивість для вибраних файлів', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -915,6 +926,14 @@ export const STRINGS_UK = {
         revealInNavigator: 'Показати в Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator не зміг прочитати свої налаштування і не запустився. Якщо сховище синхронізується, перезапустіть Obsidian після завершення синхронізації. Щоб почати заново з типовими налаштуваннями, виконайте команду «Відновити типові налаштування».', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Почати з типовими налаштуваннями?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator щойно встановлено, і файл налаштувань відсутній. Якщо це нове встановлення або перевстановлення, продовжте з типовими налаштуваннями. Якщо налаштування надходять зі служби синхронізації, скасуйте, дочекайтеся завершення синхронізації та перезапустіть Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator встановлено на цьому пристрої вже давно, але файл налаштувань відсутній. Якщо сховище ще синхронізується, скасуйте, дочекайтеся завершення синхронізації та перезапустіть Obsidian, щоб зберегти наявні налаштування. Продовжуйте, лише якщо хочете почати заново з типовими налаштуваннями.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Використати типові налаштування' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Відновити типові налаштування', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1271,7 +1290,7 @@ export const STRINGS_UK = {
             },
             dualPane: {
                 name: 'Макет подвійної панелі',
-                desc: "Показувати панель навігації та панель списку поруч на комп'ютері."
+                desc: 'Показувати панель навігації та панель списку поруч.'
             },
             dualPaneOrientation: {
                 name: 'Орієнтація подвійної панелі',
@@ -1317,8 +1336,8 @@ export const STRINGS_UK = {
                 desc: 'Керує загальним рівнем масштабування Notebook Navigator (у відсотках).'
             },
             useFloatingToolbars: {
-                name: 'Використовувати плаваючі панелі інструментів на iOS/iPadOS',
-                desc: 'Застосовується лише на iOS та iPadOS.'
+                name: 'Використовувати плаваючі панелі інструментів на iOS',
+                desc: 'Застосовується лише на iOS.'
             },
             startView: {
                 name: 'Вигляд при запуску за замовчуванням',
@@ -1330,9 +1349,7 @@ export const STRINGS_UK = {
             },
             toolbarButtons: {
                 name: 'Кнопки панелі інструментів',
-                desc: "Виберіть, які кнопки з'являються на панелі інструментів. Приховані кнопки залишаються доступними через команди та меню.",
-                navigationLabel: 'Панель інструментів навігації',
-                listLabel: 'Панель інструментів списку'
+                desc: "Виберіть, які кнопки з'являються на панелі інструментів. Приховані кнопки залишаються доступними через команди та меню."
             },
             createNewNotesInNewTab: {
                 name: 'Відкривати нові нотатки в новій вкладці',
@@ -1897,6 +1914,10 @@ export const STRINGS_UK = {
             skipCodeBlocksInPreview: {
                 name: 'Пропускати блоки коду в попередньому перегляді',
                 desc: 'Пропускати блоки коду при генерації тексту попереднього перегляду.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Пропускати блоки callout у попередньому перегляді',
+                desc: 'Пропускати блоки callout при генерації тексту попереднього перегляду.'
             },
             stripHtmlInPreview: {
                 name: 'Видаляти HTML у попередньому перегляді',

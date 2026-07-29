@@ -134,6 +134,8 @@ export const STRINGS_ID = {
     paneHeader: {
         collapseAllFolders: 'Ciutkan item',
         expandAllFolders: 'Luaskan semua item',
+        collapseAllListGroups: 'Ciutkan semua grup daftar',
+        expandAllListGroups: 'Luaskan semua grup daftar',
         showCalendar: 'Tampilkan kalender',
         hideCalendar: 'Sembunyikan kalender',
         newFolder: 'Folder baru',
@@ -183,9 +185,14 @@ export const STRINGS_ID = {
         searchHelp: 'Sintaks pencarian',
         searchHelpTitle: 'Sintaks pencarian',
         searchHelpModal: {
-            intro: 'Gabungkan nama tampilan, alias, properti, tag, tanggal, dan filter dalam satu kueri (contoh: `meeting .status=active #work @thisweek`). Instal plugin Omnisearch untuk menggunakan pencarian teks lengkap.',
+            intro: 'Pencarian filter menemukan catatan berdasarkan nama tampilan, alias, properti, tag, tanggal, dan filter, yang digabungkan dalam satu kueri (contoh: `meeting .status=active #work @thisweek`). Klik ikon bintang untuk menyimpan pencarian sebagai pintasan.',
+            introInstallOmnisearch: 'Pencarian teks lengkap pada konten catatan memerlukan plugin Omnisearch.',
             introSwitching:
                 'Beralih antara pencarian filter dan Omnisearch menggunakan tombol panah atas/bawah atau dengan mengklik ikon pencarian.',
+            activeFilterSearch: 'Pencarian filter aktif.',
+            activeOmnisearch: 'Omnisearch aktif.',
+            omnisearchIntro:
+                'Omnisearch melakukan pencarian teks lengkap pada konten catatan di seluruh vault. Notebook Navigator menampilkan kecocokan yang termasuk dalam folder, tag, atau pilihan saat ini.',
             sections: {
                 fileNames: {
                     title: 'Nama file dan alias',
@@ -265,10 +272,11 @@ export const STRINGS_ID = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Pencarian teks lengkap di seluruh vault, difilter berdasarkan folder saat ini atau tag yang dipilih.',
-                        'Bisa lambat dengan kurang dari 3 karakter di vault besar.',
-                        'Tidak dapat mencari jalur dengan karakter non-ASCII atau mencari subjalur dengan benar.',
-                        'Mengembalikan hasil terbatas sebelum filter folder, sehingga file yang relevan mungkin tidak muncul jika banyak kecocokan ada di tempat lain.',
+                        'Kueri dikirim ke plugin Omnisearch dan mengikuti sintaks kueri Omnisearch. Token pencarian filter seperti `#tag`, `.property`, dan `@date` tidak memiliki makna khusus.',
+                        'Saat folder dipilih, `path:"<folder>/"` ditambahkan ke kueri sehingga Omnisearch mencocokkan di dalam folder itu dan subfoldernya. Kueri yang sudah berisi `path:` dikirim tanpa perubahan.',
+                        'Omnisearch mengembalikan paling banyak 50 hasil yang diurutkan berdasarkan relevansi. Pencarian dengan lebih banyak kecocokan tidak menampilkan catatan dengan peringkat lebih rendah.',
+                        'Membatasi cakupan ke jalur folder dengan karakter non-ASCII memerlukan Omnisearch 1.30.0 atau yang lebih baru. Versi lama mencari di seluruh vault, lalu hasilnya difilter berdasarkan folder.',
+                        'Kueri dengan kurang dari 3 karakter bisa lambat di vault besar.',
                         'Pratinjau catatan menampilkan kutipan Omnisearch alih-alih teks pratinjau default.'
                     ]
                 }
@@ -500,6 +508,8 @@ export const STRINGS_ID = {
                 'list-search': 'Cari',
                 'list-reveal-file': 'Tampilkan file',
                 'list-descendants': 'Catatan dari subfolder',
+                'list-expand-all': 'Luaskan semua grup',
+                'list-collapse-all': 'Ciutkan semua grup',
                 'list-sort-ascending': 'Urutan: menaik',
                 'list-sort-descending': 'Urutan: menurun',
                 'list-sort-modified': 'Urutkan berdasarkan tanggal edit',
@@ -898,7 +908,8 @@ export const STRINGS_ID = {
         togglePropertiesBySelection: 'Alihkan properti berdasarkan pilihan',
         toggleCompactMode: 'Alihkan mode kompak', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alihkan bagian yang disematkan',
-        collapseExpand: 'Ciutkan / luaskan semua item',
+        collapseExpand: 'Ciutkan / luaskan semua item navigasi',
+        collapseExpandListGroups: 'Ciutkan / luaskan semua grup daftar',
         collapseExpandSelectedItem: 'Ciutkan / luaskan item yang dipilih',
         addTag: 'Tambah tag ke file yang dipilih',
         setProperty: 'Atur properti pada file yang dipilih', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -918,6 +929,14 @@ export const STRINGS_ID = {
         revealInNavigator: 'Tampilkan di Notebook Navigator',
         settingsUnavailableNotice:
             'Notebook Navigator tidak dapat membaca pengaturannya dan tidak dijalankan. Jika vault Anda sedang disinkronkan, mulai ulang Obsidian setelah sinkronisasi selesai. Untuk memulai ulang dengan pengaturan bawaan, jalankan perintah "Pulihkan pengaturan bawaan".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Mulai dengan pengaturan bawaan?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator baru saja dipasang dan tidak memiliki berkas pengaturan. Jika ini pemasangan baru atau pemasangan ulang, lanjutkan dengan pengaturan bawaan. Jika pengaturan Anda berasal dari layanan sinkronisasi, batalkan, tunggu sinkronisasi selesai, lalu mulai ulang Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator sudah terpasang di perangkat ini cukup lama, tetapi berkas pengaturannya hilang. Jika vault Anda masih disinkronkan, batalkan, tunggu sinkronisasi selesai, lalu mulai ulang Obsidian untuk mempertahankan pengaturan yang ada. Lanjutkan hanya untuk memulai ulang dengan pengaturan bawaan.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Gunakan pengaturan bawaan' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Pulihkan pengaturan bawaan', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1274,7 +1293,7 @@ export const STRINGS_ID = {
             },
             dualPane: {
                 name: 'Tata letak panel ganda',
-                desc: 'Tampilkan panel navigasi dan panel daftar berdampingan di desktop.'
+                desc: 'Tampilkan panel navigasi dan panel daftar berdampingan.'
             },
             dualPaneOrientation: {
                 name: 'Orientasi panel ganda',
@@ -1320,8 +1339,8 @@ export const STRINGS_ID = {
                 desc: 'Mengontrol tingkat zoom keseluruhan Notebook Navigator (persentase).'
             },
             useFloatingToolbars: {
-                name: 'Gunakan toolbar mengambang di iOS/iPadOS',
-                desc: 'Hanya berlaku di iOS dan iPadOS.'
+                name: 'Gunakan toolbar mengambang di iOS',
+                desc: 'Hanya berlaku di iOS.'
             },
             startView: {
                 name: 'Tampilan startup default',
@@ -1333,9 +1352,7 @@ export const STRINGS_ID = {
             },
             toolbarButtons: {
                 name: 'Tombol toolbar',
-                desc: 'Pilih tombol mana yang muncul di toolbar. Tombol tersembunyi tetap dapat diakses melalui perintah dan menu.',
-                navigationLabel: 'Toolbar navigasi',
-                listLabel: 'Toolbar daftar'
+                desc: 'Pilih tombol mana yang muncul di toolbar. Tombol tersembunyi tetap dapat diakses melalui perintah dan menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Buka catatan baru di tab baru',
@@ -1900,6 +1917,10 @@ export const STRINGS_ID = {
             skipCodeBlocksInPreview: {
                 name: 'Lewati blok kode dalam pratinjau',
                 desc: 'Lewati blok kode saat menghasilkan teks pratinjau.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Lewati callout dalam pratinjau',
+                desc: 'Lewati blok callout saat menghasilkan teks pratinjau.'
             },
             stripHtmlInPreview: {
                 name: 'Hapus HTML di pratinjau',

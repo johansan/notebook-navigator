@@ -125,6 +125,7 @@ const BOOLEAN_SETTING_KEYS = [
     'showFilePreview',
     'skipHeadingsInPreview',
     'skipCodeBlocksInPreview',
+    'skipCalloutsInPreview',
     'stripHtmlInPreview',
     'stripLatexInPreview',
     'previewPropertiesFallback',

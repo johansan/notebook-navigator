@@ -134,6 +134,8 @@ export const STRINGS_PT = {
     paneHeader: {
         collapseAllFolders: 'Recolher itens', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Expandir todos os itens', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Recolher todos os grupos da lista',
+        expandAllListGroups: 'Expandir todos os grupos da lista',
         showCalendar: 'Mostrar calendário',
         hideCalendar: 'Ocultar calendário',
         newFolder: 'Nova pasta', // Tooltip for create new folder button (English: New folder)
@@ -183,9 +185,14 @@ export const STRINGS_PT = {
         searchHelp: 'Sintaxe de pesquisa',
         searchHelpTitle: 'Sintaxe de pesquisa',
         searchHelpModal: {
-            intro: 'Combine nomes de apresentação, aliases, propriedades, etiquetas, datas e filtros numa consulta (ex. `meeting .status=active #work @thisweek`). Instale o plugin Omnisearch para usar pesquisa de texto completo.',
+            intro: 'A pesquisa por filtro encontra notas por nomes de apresentação, aliases, propriedades, etiquetas, datas e filtros, combinados numa consulta (ex. `meeting .status=active #work @thisweek`). Clique no ícone de estrela para guardar uma pesquisa como atalho.',
+            introInstallOmnisearch: 'A pesquisa de texto completo no conteúdo das notas requer o plugin Omnisearch.',
             introSwitching:
                 'Alterne entre pesquisa por filtro e Omnisearch usando as teclas de seta para cima/baixo ou clicando no ícone de pesquisa.',
+            activeFilterSearch: 'A pesquisa por filtro está ativa.',
+            activeOmnisearch: 'O Omnisearch está ativo.',
+            omnisearchIntro:
+                'O Omnisearch realiza pesquisa de texto completo no conteúdo das notas de todo o cofre. O Notebook Navigator mostra as correspondências que pertencem à pasta, etiqueta ou seleção atual.',
             sections: {
                 fileNames: {
                     title: 'Nomes de ficheiros e aliases',
@@ -265,10 +272,11 @@ export const STRINGS_PT = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Pesquisa de texto completo em todo o cofre, filtrada pela pasta atual ou etiquetas selecionadas.',
-                        'Pode ser lento com menos de 3 caracteres em cofres grandes.',
-                        'Não consegue pesquisar caminhos com caracteres não-ASCII ou pesquisar subcaminhos corretamente.',
-                        'Retorna resultados limitados antes da filtragem por pasta, pelo que ficheiros relevantes podem não aparecer se existirem muitas correspondências noutros locais.',
+                        'A consulta é enviada para o plugin Omnisearch e segue a sintaxe de consulta do Omnisearch. Tokens da pesquisa por filtro como `#tag`, `.property` e `@date` não têm significado especial.',
+                        'Quando uma pasta está selecionada, `path:"<folder>/"` é acrescentado à consulta para que o Omnisearch encontre correspondências nessa pasta e nas suas subpastas. Consultas que já contêm `path:` são enviadas sem alterações.',
+                        'O Omnisearch retorna no máximo 50 resultados ordenados por relevância. Pesquisas com mais correspondências omitem as notas com classificação mais baixa.',
+                        'Limitar a pesquisa a caminhos de pasta com caracteres não-ASCII requer o Omnisearch 1.30.0 ou posterior. Versões mais antigas pesquisam em todo o cofre e os resultados são depois filtrados pela pasta.',
+                        'Consultas com menos de 3 caracteres podem ser lentas em cofres grandes.',
                         'As pré-visualizações das notas mostram excertos do Omnisearch em vez do texto de pré-visualização predefinido.'
                     ]
                 }
@@ -500,6 +508,8 @@ export const STRINGS_PT = {
                 'list-search': 'Pesquisar',
                 'list-reveal-file': 'Revelar ficheiro',
                 'list-descendants': 'Notas de subpastas',
+                'list-expand-all': 'Expandir todos os grupos',
+                'list-collapse-all': 'Recolher todos os grupos',
                 'list-sort-ascending': 'Ordem: crescente',
                 'list-sort-descending': 'Ordem: decrescente',
                 'list-sort-modified': 'Ordenar por data de edição',
@@ -898,7 +908,8 @@ export const STRINGS_PT = {
         togglePropertiesBySelection: 'Alternar propriedades por seleção',
         toggleCompactMode: 'Alternar modo compacto', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alternar secção fixada',
-        collapseExpand: 'Recolher / expandir todos os itens', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Recolher / expandir todos os itens de navegação', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Recolher / expandir todos os grupos da lista',
         collapseExpandSelectedItem: 'Recolher / expandir o item selecionado',
         addTag: 'Adicionar etiqueta aos ficheiros selecionados', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Definir propriedade nos ficheiros selecionados', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -918,6 +929,14 @@ export const STRINGS_PT = {
         revealInNavigator: 'Revelar no Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'O Notebook Navigator não conseguiu ler as suas definições e não foi iniciado. Se o cofre estiver a sincronizar, reinicie o Obsidian após a sincronização terminar. Para recomeçar com as predefinições, execute o comando "Restaurar predefinições".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Iniciar com as predefinições?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'O Notebook Navigator acabou de ser instalado e não tem ficheiro de definições. Se for uma instalação nova ou uma reinstalação, continue com as predefinições. Se as suas definições vierem de um serviço de sincronização, cancele, aguarde a conclusão da sincronização e reinicie o Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'O Notebook Navigator está instalado neste dispositivo há algum tempo, mas o ficheiro de definições está em falta. Se o cofre ainda estiver a sincronizar, cancele, aguarde a conclusão da sincronização e reinicie o Obsidian para manter as definições existentes. Continue apenas para recomeçar com as predefinições.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Usar predefinições' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Restaurar predefinições', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1274,7 +1293,7 @@ export const STRINGS_PT = {
             },
             dualPane: {
                 name: 'Layout de painel duplo',
-                desc: 'Mostrar painel de navegação e painel de lista lado a lado no computador.'
+                desc: 'Mostrar painel de navegação e painel de lista lado a lado.'
             },
             dualPaneOrientation: {
                 name: 'Orientação do painel duplo',
@@ -1320,8 +1339,8 @@ export const STRINGS_PT = {
                 desc: 'Controla o nível de zoom geral do Notebook Navigator (percentagem).'
             },
             useFloatingToolbars: {
-                name: 'Usar barras de ferramentas flutuantes no iOS/iPadOS',
-                desc: 'Aplica-se apenas ao iOS e iPadOS.'
+                name: 'Usar barras de ferramentas flutuantes no iOS',
+                desc: 'Aplica-se apenas ao iOS.'
             },
             startView: {
                 name: 'Vista de arranque predefinida',
@@ -1333,9 +1352,7 @@ export const STRINGS_PT = {
             },
             toolbarButtons: {
                 name: 'Botões da barra de ferramentas',
-                desc: 'Escolha quais botões aparecem na barra de ferramentas. Os botões ocultos permanecem acessíveis através de comandos e menus.',
-                navigationLabel: 'Barra de ferramentas de navegação',
-                listLabel: 'Barra de ferramentas da lista'
+                desc: 'Escolha quais botões aparecem na barra de ferramentas. Os botões ocultos permanecem acessíveis através de comandos e menus.'
             },
             createNewNotesInNewTab: {
                 name: 'Abrir novas notas num novo separador',
@@ -1902,6 +1919,10 @@ export const STRINGS_PT = {
             skipCodeBlocksInPreview: {
                 name: 'Saltar blocos de código na pré-visualização',
                 desc: 'Saltar blocos de código ao gerar texto de pré-visualização.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Saltar callouts na pré-visualização',
+                desc: 'Saltar blocos de callout ao gerar texto de pré-visualização.'
             },
             stripHtmlInPreview: {
                 name: 'Remover HTML nas pré-visualizações',

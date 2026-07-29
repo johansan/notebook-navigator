@@ -23,7 +23,7 @@ import { ListPaneGroupHeader, type HeaderRenderModel } from '../../src/component
 
 vi.mock('../../src/components/FileItem', () => ({ FileItem: () => null }));
 
-function createHeader(itemCount: number | null): HeaderRenderModel {
+function createHeader(itemCount: number | null, totalItemCount: number | null = null): HeaderRenderModel {
     return {
         index: 0,
         label: 'Today',
@@ -38,6 +38,7 @@ function createHeader(itemCount: number | null): HeaderRenderModel {
         folderGroupHeaderSegments: [],
         groupFilePaths: ['First.md', 'Second.md', 'Third.md'],
         itemCount,
+        totalItemCount,
         manualSortHeaderFilePath: null,
         manualSortHeader: null,
         manualSortHeaderWordCount: 0,
@@ -48,10 +49,10 @@ function createHeader(itemCount: number | null): HeaderRenderModel {
     };
 }
 
-function renderHeader(itemCount: number | null): string {
+function renderHeader(itemCount: number | null, totalItemCount: number | null = null): string {
     return renderToStaticMarkup(
         React.createElement(ListPaneGroupHeader, {
-            header: createHeader(itemCount),
+            header: createHeader(itemCount, totalItemCount),
             collapseChevronIcons: { collapsed: 'chevron-right', expanded: 'chevron-down' },
             pinnedSectionIcon: '',
             onPinnedGroupHeaderToggle: () => {},
@@ -71,6 +72,10 @@ describe('ListPaneGroupHeader item count', () => {
 
         expect(countIndex).toBeGreaterThan(-1);
         expect(collapseIndex).toBeGreaterThan(countIndex);
+    });
+
+    it('renders the filtered and total item counts during search', () => {
+        expect(renderHeader(3, 8)).toContain('<span class="nn-list-group-header-item-count">(3/8)</span>');
     });
 
     it('omits the item count when the setting is disabled', () => {

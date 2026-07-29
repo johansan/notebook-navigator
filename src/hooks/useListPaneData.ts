@@ -52,6 +52,7 @@ import { buildHiddenFileState, filterListPaneFiles, useOmnisearchListResult, use
 import {
     buildFileIndexMap,
     buildFilePathToIndexMap,
+    buildListGroupItemCountData,
     buildListItems,
     buildOrderedFiles,
     type ListPaneConfig
@@ -59,6 +60,8 @@ import {
 import { useListPaneRefresh } from './listPaneData/useListPaneRefresh';
 
 const EMPTY_SEARCH_META = new Map<string, SearchResultMeta>();
+const EMPTY_HIDDEN_FILE_STATE = new Map<string, boolean>();
+const EMPTY_CUSTOM_GROUP_HEADER_FILE_PATHS: ReadonlySet<string> = new Set();
 
 /**
  * Parameters for the useListPaneData hook
@@ -171,6 +174,11 @@ export function useListPaneData({
     const hasDateSearchFilters =
         activeFilterSearchTokens !== null &&
         (activeFilterSearchTokens.dateRanges.length > 0 || activeFilterSearchTokens.excludeDateRanges.length > 0);
+    // Folder path passed to Omnisearch as a path:"..." filter. The filter matches the
+    // whole subtree, so with descendant notes hidden, subfolder matches still occupy
+    // Omnisearch's ranked top-50 slots before the list is filtered to direct children.
+    // The scope is applied anyway because the subtree pool is a subset of the vault-wide
+    // pool, so scoping never ranks out a direct child that an unscoped search would keep.
     const omnisearchPathScope = useMemo(() => {
         if (selectionType !== ItemType.FOLDER || !selectedFolder) {
             return undefined;
@@ -320,6 +328,18 @@ export function useListPaneData({
 
         return applyManualSortMarkdownOrder(filteredFiles, propertySortOrderOverride);
     }, [filteredFiles, propertySortOrderOverride]);
+    // Group totals depend on whether search is empty, not on its text, so typing another character
+    // reuses the same unfiltered ordering instead of rebuilding it for every debounced query.
+    const groupCountFiles = useMemo(() => {
+        if (!hasSearchQuery || !settings.showGroupHeaderItemCounts) {
+            return null;
+        }
+        if (!propertySortOrderOverride || propertySortOrderOverride.length === 0) {
+            return baseFiles;
+        }
+
+        return applyManualSortMarkdownOrder(baseFiles, propertySortOrderOverride);
+    }, [baseFiles, hasSearchQuery, propertySortOrderOverride, settings.showGroupHeaderItemCounts]);
 
     const hiddenFileState = useMemo(() => {
         return buildHiddenFileState({
@@ -357,6 +377,64 @@ export function useListPaneData({
     );
     const manualSortGroupHeaderPropertyKey = getManualSortGroupHeaderPropertyKey(settings);
     const shouldRefreshOnCustomGroupHeaderMetadataChange = groupBy === 'custom' && manualSortGroupHeaderPropertyKey !== null;
+    const groupItemCountData = useMemo(() => {
+        if (!groupCountFiles) {
+            return undefined;
+        }
+
+        return buildListGroupItemCountData({
+            app,
+            dayKey,
+            fileVisibility,
+            files: groupCountFiles,
+            getDB,
+            getFileTimestamps,
+            hiddenFileState: EMPTY_HIDDEN_FILE_STATE,
+            hiddenTags: [],
+            listConfig,
+            collapsedListGroups,
+            searchMetaMap: EMPTY_SEARCH_META,
+            selectedFolder,
+            selectedTag,
+            selectedProperty,
+            selectionType,
+            showHiddenItems: false,
+            sortOption,
+            propertySortKey: sortSpec.propertyKey,
+            isManualSortActive,
+            manualSortGroupHeaderPropertyKey
+        });
+    }, [
+        app,
+        collapsedListGroups,
+        dayKey,
+        fileVisibility,
+        getDB,
+        getFileTimestamps,
+        groupCountFiles,
+        isManualSortActive,
+        listConfig,
+        manualSortGroupHeaderPropertyKey,
+        selectedFolder,
+        selectedProperty,
+        selectedTag,
+        selectionType,
+        sortOption,
+        sortSpec.propertyKey
+    ]);
+    // Header owners with no current search match are absent from listItems, so retain the count
+    // snapshot owners to invalidate cached boundaries when their metadata changes.
+    const cachedCustomGroupHeaderFilePaths = useMemo<ReadonlySet<string>>(() => {
+        if (!groupItemCountData) {
+            return EMPTY_CUSTOM_GROUP_HEADER_FILE_PATHS;
+        }
+
+        const filePaths = new Set<string>();
+        groupItemCountData.manualSortGroupHeaderFileByMemberPath.forEach(headerFile => {
+            filePaths.add(headerFile.path);
+        });
+        return filePaths;
+    }, [groupItemCountData]);
 
     const listItems = useMemo(() => {
         return buildListItems({
@@ -382,7 +460,8 @@ export function useListPaneData({
             propertySortKey: sortSpec.propertyKey,
             isManualSortActive,
             manualSortGroupHeaderPropertyKey,
-            wordCountTargetProperty: settings.wordCountTargetProperty
+            wordCountTargetProperty: settings.wordCountTargetProperty,
+            groupItemCountData
         });
     }, [
         app,
@@ -407,7 +486,8 @@ export function useListPaneData({
         sortSpec.propertyKey,
         isManualSortActive,
         manualSortGroupHeaderPropertyKey,
-        settings.wordCountTargetProperty
+        settings.wordCountTargetProperty,
+        groupItemCountData
     ]);
 
     const filePathToIndex = useMemo(() => {
@@ -448,6 +528,7 @@ export function useListPaneData({
     useListPaneRefresh({
         app,
         basePathSet,
+        cachedCustomGroupHeaderFilePaths,
         commandQueue,
         customGroupHeaderFilePaths: customGroupHeaderState.filePaths,
         dayKey,

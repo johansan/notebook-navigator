@@ -99,6 +99,9 @@ export function useCalendarNoteActions({
         }
 
         // On mobile, opening a daily note should feel like navigating away from the sidebar.
+        // Safe with dual pane on tablets: Obsidian no-ops WorkspaceMobileDrawer.collapse()
+        // while the sidebar is pinned (see src/utils/paneLayout.ts), so only the overlay
+        // drawer closes.
         app.workspace.leftSplit.collapse();
     }, [app, isMobile]);
 

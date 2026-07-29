@@ -166,24 +166,6 @@
     box-sizing: border-box;
 }
 
-.nn-toolbar-visibility-sections {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-4-4);
-}
-
-.nn-toolbar-visibility-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-2-2);
-}
-
-.nn-toolbar-visibility-group-label {
-    font-size: var(--font-ui-small);
-    font-weight: var(--font-semibold);
-    color: var(--nn-theme-foreground-muted);
-}
-
 .nn-toolbar-visibility-grid {
     display: flex;
     flex-wrap: wrap;

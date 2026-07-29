@@ -50,6 +50,55 @@ describe('buildSearchableNameData', () => {
     });
 });
 
+describe('filterListPaneFiles omnisearch pending states', () => {
+    it('keeps the unfiltered list while the first Omnisearch response is pending', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/alpha.md');
+        const db = {
+            getFile: () => null
+        } as IndexedDBStorage;
+
+        const result = filterListPaneFiles({
+            app,
+            baseFiles: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            omnisearchResult: null,
+            searchableNames: new Map(),
+            settings: { alphabeticalDateMode: 'modified' },
+            sortOption: 'alphabetical-asc',
+            trimmedQuery: 'meeting',
+            useOmnisearch: true
+        });
+
+        expect(result.files).toEqual([file]);
+    });
+
+    it('filters files with the previous response while a new query is pending', () => {
+        const app = new App();
+        const matching = createTestTFile('Notes/alpha.md');
+        const other = createTestTFile('Notes/beta.md');
+        const db = {
+            getFile: () => null
+        } as IndexedDBStorage;
+
+        const result = filterListPaneFiles({
+            app,
+            baseFiles: [matching, other],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            omnisearchResult: { files: [matching], meta: new Map() },
+            searchableNames: new Map(),
+            settings: { alphabeticalDateMode: 'modified' },
+            sortOption: 'alphabetical-asc',
+            trimmedQuery: 'meeting notes',
+            useOmnisearch: true
+        });
+
+        expect(result.files).toEqual([matching]);
+    });
+});
+
 describe('filterListPaneFiles alias metadata', () => {
     it('returns the alias that satisfied an internal name search', () => {
         const app = new App();

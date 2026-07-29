@@ -38,6 +38,7 @@ import {
     parseStoredPropertySelectionNodeId,
     type PropertySelectionNodeId
 } from '../../utils/propertyTree';
+import { supportsKeyboardInteractions } from '../../utils/paneLayout';
 import { normalizeTagPath } from '../../utils/tagUtils';
 import { getActivePropertyKeySet } from '../../utils/vaultProfiles';
 import { getFirstSelectedFile } from './state';
@@ -53,7 +54,6 @@ interface UseSelectionEnhancedDispatchArgs {
     app: App;
     dispatch: SelectionDispatch;
     includeDescendantNotes: boolean;
-    isMobile: boolean;
     propertyTreeService: IPropertyTreeProvider | null;
     settings: NotebookNavigatorSettings;
     showHiddenItems: boolean;
@@ -238,7 +238,6 @@ export function useSelectionEnhancedDispatch({
     app,
     dispatch,
     includeDescendantNotes,
-    isMobile,
     propertyTreeService,
     settings,
     showHiddenItems,
@@ -246,7 +245,7 @@ export function useSelectionEnhancedDispatch({
 }: UseSelectionEnhancedDispatchArgs): SelectionDispatch {
     const resolveAutoSelectedFile = useCallback(
         (filesInScope: TFile[]): TFile | null => {
-            if (!isMobile && settings.autoSelectFirstFileOnFocusChange && filesInScope.length > 0) {
+            if (supportsKeyboardInteractions() && settings.autoSelectFirstFileOnFocusChange && filesInScope.length > 0) {
                 return filesInScope[0];
             }
 
@@ -257,7 +256,7 @@ export function useSelectionEnhancedDispatch({
 
             return null;
         },
-        [app.workspace, isMobile, settings.autoSelectFirstFileOnFocusChange]
+        [app.workspace, settings.autoSelectFirstFileOnFocusChange]
     );
 
     return useCallback(
@@ -290,24 +289,16 @@ export function useSelectionEnhancedDispatch({
                 return;
             }
 
-            if (action.type === 'CLEANUP_DELETED_FILE' && isMobile) {
+            // Phones clear the next-file selection after a delete; desktop and tablets
+            // keep it so keyboard flows stay anchored on the adjacent file.
+            if (action.type === 'CLEANUP_DELETED_FILE' && !supportsKeyboardInteractions()) {
                 dispatch({ ...action, nextFileToSelect: null });
                 return;
             }
 
             dispatch(action);
         },
-        [
-            app,
-            dispatch,
-            includeDescendantNotes,
-            isMobile,
-            propertyTreeService,
-            resolveAutoSelectedFile,
-            settings,
-            showHiddenItems,
-            tagTreeService
-        ]
+        [app, dispatch, includeDescendantNotes, propertyTreeService, resolveAutoSelectedFile, settings, showHiddenItems, tagTreeService]
     );
 }
 

@@ -21,7 +21,7 @@ import { BaseMetadataService, type EntityType } from '../../src/services/metadat
 import type { ISettingsProvider } from '../../src/interfaces/ISettingsProvider';
 import type { NotebookNavigatorSettings } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
-import { ItemType } from '../../src/types';
+import { ItemType, type CollapsedPinnedContexts } from '../../src/types';
 import * as iconizeFormat from '../../src/utils/iconizeFormat';
 
 class TestSettingsProvider implements ISettingsProvider {
@@ -42,6 +42,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentIcons(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 
     getRecentColors(): string[] {
         return [];

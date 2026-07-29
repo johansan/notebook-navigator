@@ -18,7 +18,12 @@
 
 import type { FrontMatterCache } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../../settings/types';
-import { collectVisibleTextSkippingFencedCodeBlocks, findFencedCodeBlockRanges, findInlineCodeRanges } from '../codeRangeUtils';
+import {
+    collectVisibleTextSkippingFencedCodeBlocks,
+    findFencedCodeBlockRanges,
+    findInlineCodeRanges,
+    removeCalloutBlocks
+} from '../codeRangeUtils';
 import { hasExcalidrawFrontmatterFlag, isExcalidrawFileName } from '../fileNameUtils';
 import { getMatchingRecordValue } from '../recordUtils';
 import {
@@ -165,11 +170,20 @@ export function extractPreviewText(content: string, settings: NotebookNavigatorS
                 continue;
             }
 
-            const limitedPropertySource = propertyValue.length > maxExtension ? propertyValue.slice(0, maxExtension) : propertyValue;
-            const fencedRanges = findFencedCodeBlockRanges(limitedPropertySource);
-            const inlineRanges = findInlineCodeRanges(limitedPropertySource, fencedRanges);
+            // Callouts are removed from the scan-limited window before clipping to maxExtension,
+            // otherwise a leading callout longer than the clip window would blank out the preview
+            // even when visible property text follows it.
+            const scanLimitedProperty =
+                propertyValue.length > PREVIEW_CODE_BLOCK_SCAN_LIMIT
+                    ? propertyValue.slice(0, PREVIEW_CODE_BLOCK_SCAN_LIMIT)
+                    : propertyValue;
+            const calloutFilteredProperty = settings.skipCalloutsInPreview ? removeCalloutBlocks(scanLimitedProperty) : scanLimitedProperty;
+            const propertySource =
+                calloutFilteredProperty.length > maxExtension ? calloutFilteredProperty.slice(0, maxExtension) : calloutFilteredProperty;
+            const fencedRanges = findFencedCodeBlockRanges(propertySource);
+            const inlineRanges = findInlineCodeRanges(propertySource, fencedRanges);
             const clippedProperty = clipIncludingCode(
-                limitedPropertySource,
+                propertySource,
                 { inlineCodeRanges: inlineRanges, fencedCodeRanges: fencedRanges },
                 targetLength,
                 maxExtension
@@ -195,13 +209,20 @@ export function extractPreviewText(content: string, settings: NotebookNavigatorS
         return '';
     }
 
+    // Callout blocks are removed before clipping so a long leading callout does not leave the
+    // clipped window empty when visible text follows it. The scan-limited slice bounds the walk
+    // for very large files.
+    const previewSource = settings.skipCalloutsInPreview
+        ? removeCalloutBlocks(
+              contentWithoutFrontmatter.length > PREVIEW_CODE_BLOCK_SCAN_LIMIT
+                  ? contentWithoutFrontmatter.slice(0, PREVIEW_CODE_BLOCK_SCAN_LIMIT)
+                  : contentWithoutFrontmatter
+          )
+        : contentWithoutFrontmatter;
+
     const clipped = settings.skipCodeBlocksInPreview
         ? (() => {
-              const visibleText = collectVisibleTextSkippingFencedCodeBlocks(
-                  contentWithoutFrontmatter,
-                  maxExtension,
-                  PREVIEW_CODE_BLOCK_SCAN_LIMIT
-              );
+              const visibleText = collectVisibleTextSkippingFencedCodeBlocks(previewSource, maxExtension, PREVIEW_CODE_BLOCK_SCAN_LIMIT);
               if (!visibleText) {
                   return { text: '', context: { inlineCodeRanges: [], fencedCodeRanges: [] } };
               }
@@ -209,10 +230,7 @@ export function extractPreviewText(content: string, settings: NotebookNavigatorS
               return clipIncludingCode(visibleText, { inlineCodeRanges: inlineRanges, fencedCodeRanges: [] }, targetLength, maxExtension);
           })()
         : (() => {
-              const limitedSource =
-                  contentWithoutFrontmatter.length > maxExtension
-                      ? contentWithoutFrontmatter.slice(0, maxExtension)
-                      : contentWithoutFrontmatter;
+              const limitedSource = previewSource.length > maxExtension ? previewSource.slice(0, maxExtension) : previewSource;
               const fencedRanges = findFencedCodeBlockRanges(limitedSource);
               const inlineRanges = findInlineCodeRanges(limitedSource, fencedRanges);
               return clipIncludingCode(

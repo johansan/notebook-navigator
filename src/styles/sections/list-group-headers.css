@@ -21,6 +21,11 @@
     gap: 6px;
 }
 
+/* The whole header row toggles collapse, not just the chevron button */
+.nn-list-group-header--collapsible {
+    cursor: pointer;
+}
+
 .nn-list-group-header-spacer {
     height: var(--item-height);
 }

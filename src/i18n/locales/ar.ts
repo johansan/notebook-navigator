@@ -134,6 +134,8 @@ export const STRINGS_AR = {
     paneHeader: {
         collapseAllFolders: 'طي العناصر', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'توسيع جميع العناصر', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'طي جميع مجموعات القائمة',
+        expandAllListGroups: 'توسيع جميع مجموعات القائمة',
         showCalendar: 'عرض التقويم',
         hideCalendar: 'إخفاء التقويم',
         newFolder: 'مجلد جديد', // Tooltip for create new folder button (English: New folder)
@@ -183,8 +185,13 @@ export const STRINGS_AR = {
         searchHelp: 'صيغة البحث',
         searchHelpTitle: 'صيغة البحث',
         searchHelpModal: {
-            intro: 'ادمج أسماء العرض والأسماء المستعارة والخصائص والوسوم والتواريخ والمرشحات في استعلام واحد (مثال: `meeting .status=active #work @thisweek`). قم بتثبيت إضافة Omnisearch لاستخدام البحث في النص الكامل.',
+            intro: 'يعثر البحث بالتصفية على الملاحظات حسب أسماء العرض والأسماء المستعارة والخصائص والوسوم والتواريخ والمرشحات، مدمجة في استعلام واحد (مثال: `meeting .status=active #work @thisweek`). انقر على أيقونة النجمة لحفظ البحث كاختصار.',
+            introInstallOmnisearch: 'يتطلب البحث في النص الكامل لمحتوى الملاحظات إضافة Omnisearch.',
             introSwitching: 'التبديل بين البحث بالتصفية و Omnisearch باستخدام مفاتيح الأسهم لأعلى/لأسفل أو بالنقر على أيقونة البحث.',
+            activeFilterSearch: 'البحث بالتصفية نشط.',
+            activeOmnisearch: 'Omnisearch نشط.',
+            omnisearchIntro:
+                'يجري Omnisearch بحثًا في النص الكامل لمحتوى الملاحظات عبر الخزنة. يعرض Notebook Navigator المطابقات التي تنتمي إلى المجلد أو الوسم أو التحديد الحالي.',
             sections: {
                 fileNames: {
                     title: 'أسماء الملفات والأسماء المستعارة',
@@ -264,10 +271,11 @@ export const STRINGS_AR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'البحث في النص الكامل عبر الخزنة، مع التصفية حسب المجلد الحالي أو الوسوم المحددة.',
-                        'قد يكون بطيئًا مع أقل من 3 أحرف في الخزن الكبيرة.',
-                        'لا يمكنه البحث في المسارات التي تحتوي على أحرف غير ASCII أو البحث في المسارات الفرعية بشكل صحيح.',
-                        'يعيد نتائج محدودة قبل تصفية المجلدات، لذا قد لا تظهر الملفات ذات الصلة إذا وُجدت مطابقات كثيرة في أماكن أخرى.',
+                        'يُرسل الاستعلام إلى إضافة Omnisearch ويتبع صيغة استعلامات Omnisearch. رموز البحث بالتصفية مثل `#tag` و `.property` و `@date` ليس لها معنى خاص.',
+                        'عند تحديد مجلد، يُضاف `path:"<folder>/"` إلى الاستعلام حتى يطابق Omnisearch داخل ذلك المجلد ومجلداته الفرعية. الاستعلامات التي تحتوي بالفعل على `path:` تُرسل دون تغيير.',
+                        'يعيد Omnisearch 50 نتيجة كحد أقصى مرتبة حسب الصلة. عندما يكون للبحث مطابقات أكثر من ذلك، لا تظهر الملاحظات الأقل ترتيبًا.',
+                        'يتطلب تقييد النطاق بمسارات مجلدات تحتوي على أحرف غير ASCII إضافة Omnisearch 1.30.0 أو أحدث. تبحث الإصدارات الأقدم في الخزنة بأكملها، ثم تتم تصفية النتائج حسب المجلد.',
+                        'الاستعلامات التي تحتوي على أقل من 3 أحرف قد تكون بطيئة في الخزن الكبيرة.',
                         'تعرض معاينات الملاحظات مقتطفات Omnisearch بدلاً من نص المعاينة الافتراضي.'
                     ]
                 }
@@ -497,6 +505,8 @@ export const STRINGS_AR = {
                 'list-search': 'بحث',
                 'list-reveal-file': 'الكشف عن الملف',
                 'list-descendants': 'ملاحظات من المجلدات الفرعية',
+                'list-expand-all': 'توسيع جميع المجموعات',
+                'list-collapse-all': 'طي جميع المجموعات',
                 'list-sort-ascending': 'ترتيب الفرز: تصاعدي',
                 'list-sort-descending': 'ترتيب الفرز: تنازلي',
                 'list-sort-modified': 'الفرز حسب تاريخ التعديل',
@@ -893,7 +903,8 @@ export const STRINGS_AR = {
         togglePropertiesBySelection: 'تبديل الخصائص حسب التحديد',
         toggleCompactMode: 'تبديل الوضع المضغوط', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'تبديل قسم المثبتة',
-        collapseExpand: 'طي / توسيع جميع العناصر', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'طي / توسيع جميع عناصر التنقل', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'طي / توسيع جميع مجموعات القائمة',
         collapseExpandSelectedItem: 'طي / توسيع العنصر المحدد',
         addTag: 'إضافة وسم للملفات المحددة', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'تعيين خاصية على الملفات المحددة', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -913,6 +924,14 @@ export const STRINGS_AR = {
         revealInNavigator: 'الكشف في متصفح الدفتر', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'تعذر على متصفح الدفتر قراءة إعداداته ولم يبدأ التشغيل. إذا كان القبو قيد المزامنة، أعد تشغيل Obsidian بعد اكتمال المزامنة. للبدء من جديد بالإعدادات الافتراضية، شغّل الأمر "استعادة الإعدادات الافتراضية".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'البدء بالإعدادات الافتراضية؟', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'تم تثبيت متصفح الدفتر للتو ولا يوجد ملف إعدادات. إذا كان هذا تثبيتًا جديدًا أو إعادة تثبيت، فتابع بالإعدادات الافتراضية. إذا كانت إعداداتك تأتي من خدمة مزامنة، فألغِ العملية وانتظر اكتمال المزامنة ثم أعد تشغيل Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'متصفح الدفتر مثبت على هذا الجهاز منذ فترة، لكن ملف الإعدادات مفقود. إذا كان القبو لا يزال قيد المزامنة، فألغِ العملية وانتظر اكتمال المزامنة ثم أعد تشغيل Obsidian للاحتفاظ بإعداداتك الحالية. تابع فقط إذا أردت البدء من جديد بالإعدادات الافتراضية.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'استخدام الإعدادات الافتراضية' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'استعادة الإعدادات الافتراضية', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1269,7 +1288,7 @@ export const STRINGS_AR = {
             },
             dualPane: {
                 name: 'تخطيط اللوحتين',
-                desc: 'إظهار لوحة التنقل ولوحة القائمة جنبًا إلى جنب على سطح المكتب.'
+                desc: 'إظهار لوحة التنقل ولوحة القائمة جنبًا إلى جنب.'
             },
             dualPaneOrientation: {
                 name: 'اتجاه اللوحتين',
@@ -1315,8 +1334,8 @@ export const STRINGS_AR = {
                 desc: 'التحكم في مستوى التكبير العام لمتصفح الدفتر (بالنسبة المئوية).'
             },
             useFloatingToolbars: {
-                name: 'استخدام أشرطة الأدوات العائمة على iOS/iPadOS',
-                desc: 'ينطبق فقط على iOS وiPadOS.'
+                name: 'استخدام أشرطة الأدوات العائمة على iOS',
+                desc: 'ينطبق فقط على iOS.'
             },
             startView: {
                 name: 'عرض البدء الافتراضي',
@@ -1328,9 +1347,7 @@ export const STRINGS_AR = {
             },
             toolbarButtons: {
                 name: 'أزرار شريط الأدوات',
-                desc: 'اختر الأزرار التي تظهر في شريط الأدوات. الأزرار المخفية تبقى قابلة للوصول عبر الأوامر والقوائم.',
-                navigationLabel: 'شريط أدوات التنقل',
-                listLabel: 'شريط أدوات القائمة'
+                desc: 'اختر الأزرار التي تظهر في شريط الأدوات. الأزرار المخفية تبقى قابلة للوصول عبر الأوامر والقوائم.'
             },
             createNewNotesInNewTab: {
                 name: 'فتح الملاحظات الجديدة في علامة تبويب جديدة',
@@ -1894,6 +1911,10 @@ export const STRINGS_AR = {
             skipCodeBlocksInPreview: {
                 name: 'تخطي كتل الكود في المعاينة',
                 desc: 'تخطي كتل الكود عند إنشاء نص المعاينة.'
+            },
+            skipCalloutsInPreview: {
+                name: 'تخطي التنبيهات في المعاينة',
+                desc: 'تخطي كتل التنبيه عند إنشاء نص المعاينة.'
             },
             stripHtmlInPreview: {
                 name: 'إزالة HTML من المعاينات',

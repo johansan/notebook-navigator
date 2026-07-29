@@ -134,6 +134,8 @@ export const STRINGS_IT = {
     paneHeader: {
         collapseAllFolders: 'Comprimi elementi', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Espandi tutti gli elementi', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: "Comprimi tutti i gruppi dell'elenco",
+        expandAllListGroups: "Espandi tutti i gruppi dell'elenco",
         showCalendar: 'Mostra calendario',
         hideCalendar: 'Nascondi calendario',
         newFolder: 'Nuova cartella', // Tooltip for create new folder button (English: New folder)
@@ -183,8 +185,13 @@ export const STRINGS_IT = {
         searchHelp: 'Sintassi di ricerca',
         searchHelpTitle: 'Sintassi di ricerca',
         searchHelpModal: {
-            intro: 'Combina nomi visualizzati, alias, proprietà, tag, date e filtri in una query (es. `meeting .status=active #work @thisweek`). Installa il plugin Omnisearch per usare la ricerca full-text.',
+            intro: "La ricerca con filtro trova le note per nomi visualizzati, alias, proprietà, tag, date e filtri, combinati in una query (es. `meeting .status=active #work @thisweek`). Fai clic sull'icona a stella per salvare una ricerca come scorciatoia.",
+            introInstallOmnisearch: 'La ricerca full-text nel contenuto delle note richiede il plugin Omnisearch.',
             introSwitching: "Passa tra ricerca con filtro e Omnisearch usando i tasti freccia su/giù o cliccando sull'icona di ricerca.",
+            activeFilterSearch: 'La ricerca con filtro è attiva.',
+            activeOmnisearch: 'Omnisearch è attivo.',
+            omnisearchIntro:
+                "Omnisearch esegue una ricerca full-text nel contenuto delle note dell'intero vault. Notebook Navigator mostra le corrispondenze che appartengono alla cartella, al tag o alla selezione corrente.",
             sections: {
                 fileNames: {
                     title: 'Nomi file e alias',
@@ -264,10 +271,11 @@ export const STRINGS_IT = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        "Ricerca full-text nell'intero vault, filtrata per la cartella corrente o i tag selezionati.",
-                        'Può essere lento con meno di 3 caratteri nei vault grandi.',
-                        'Non può cercare percorsi con caratteri non-ASCII o cercare correttamente i sottopercorsi.',
-                        'Restituisce risultati limitati prima del filtraggio per cartella, quindi file rilevanti potrebbero non apparire se esistono molte corrispondenze altrove.',
+                        'La query viene inviata al plugin Omnisearch e segue la sintassi delle query di Omnisearch. I token della ricerca con filtro come `#tag`, `.property` e `@date` non hanno alcun significato speciale.',
+                        'Quando è selezionata una cartella, `path:"<folder>/"` viene aggiunto alla query in modo che Omnisearch cerchi in quella cartella e nelle sue sottocartelle. Le query che contengono già `path:` vengono inviate senza modifiche.',
+                        'Omnisearch restituisce al massimo 50 risultati ordinati per rilevanza. Le ricerche con più corrispondenze omettono le note con classificazione più bassa.',
+                        "Limitare la ricerca a percorsi di cartelle con caratteri non-ASCII richiede Omnisearch 1.30.0 o successivo. Le versioni precedenti cercano nell'intero vault e i risultati vengono poi filtrati per cartella.",
+                        'Le query con meno di 3 caratteri possono essere lente nei vault grandi.',
                         'Le anteprime delle note mostrano estratti di Omnisearch invece del testo di anteprima predefinito.'
                     ]
                 }
@@ -499,6 +507,8 @@ export const STRINGS_IT = {
                 'list-search': 'Cerca',
                 'list-reveal-file': 'Mostra file',
                 'list-descendants': 'Note dalle sottocartelle',
+                'list-expand-all': 'Espandi tutti i gruppi',
+                'list-collapse-all': 'Comprimi tutti i gruppi',
                 'list-sort-ascending': 'Ordine: crescente',
                 'list-sort-descending': 'Ordine: decrescente',
                 'list-sort-modified': 'Ordina per data di modifica',
@@ -894,7 +904,8 @@ export const STRINGS_IT = {
         togglePropertiesBySelection: 'Attiva/disattiva proprietà per selezione',
         toggleCompactMode: 'Attiva/disattiva modalità compatta', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Attiva/disattiva sezione fissata',
-        collapseExpand: 'Comprimi / espandi tutti gli elementi', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Comprimi / espandi tutti gli elementi di navigazione', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: "Comprimi / espandi tutti i gruppi dell'elenco",
         collapseExpandSelectedItem: "Comprimi / espandi l'elemento selezionato",
         addTag: 'Aggiungi tag ai file selezionati', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Imposta proprietà sui file selezionati', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -914,6 +925,14 @@ export const STRINGS_IT = {
         revealInNavigator: 'Mostra in Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator non è riuscito a leggere le impostazioni e non è stato avviato. Se il tuo vault è in sincronizzazione, riavvia Obsidian al termine della sincronizzazione. Per ricominciare con le impostazioni predefinite, esegui il comando "Ripristina impostazioni predefinite".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Avviare con le impostazioni predefinite?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator è stato appena installato e non ha un file delle impostazioni. Se si tratta di una nuova installazione o di una reinstallazione, continua con le impostazioni predefinite. Se le tue impostazioni provengono da un servizio di sincronizzazione, annulla, attendi il completamento della sincronizzazione e riavvia Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator è installato su questo dispositivo da tempo, ma il file delle impostazioni è mancante. Se il tuo vault è ancora in sincronizzazione, annulla, attendi il completamento della sincronizzazione e riavvia Obsidian per mantenere le impostazioni esistenti. Continua solo per ricominciare con le impostazioni predefinite.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Usa impostazioni predefinite' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Ripristina impostazioni predefinite', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1270,7 +1289,7 @@ export const STRINGS_IT = {
             },
             dualPane: {
                 name: 'Layout doppio pannello',
-                desc: 'Mostra pannello navigazione e pannello lista affiancati su desktop.'
+                desc: 'Mostra pannello navigazione e pannello lista affiancati.'
             },
             dualPaneOrientation: {
                 name: 'Orientamento doppio pannello',
@@ -1316,8 +1335,8 @@ export const STRINGS_IT = {
                 desc: 'Controlla il livello di zoom complessivo di Notebook Navigator (percentuale).'
             },
             useFloatingToolbars: {
-                name: 'Usa barre degli strumenti flottanti su iOS/iPadOS',
-                desc: 'Si applica solo a iOS e iPadOS.'
+                name: 'Usa barre degli strumenti flottanti su iOS',
+                desc: 'Si applica solo a iOS.'
             },
             startView: {
                 name: "Vista predefinita all'avvio",
@@ -1329,9 +1348,7 @@ export const STRINGS_IT = {
             },
             toolbarButtons: {
                 name: 'Pulsanti barra strumenti',
-                desc: 'Scegli quali pulsanti appaiono nella barra strumenti. I pulsanti nascosti rimangono accessibili tramite comandi e menu.',
-                navigationLabel: 'Barra strumenti navigazione',
-                listLabel: 'Barra strumenti lista'
+                desc: 'Scegli quali pulsanti appaiono nella barra strumenti. I pulsanti nascosti rimangono accessibili tramite comandi e menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Apri nuove note in una nuova scheda',
@@ -1899,6 +1916,10 @@ export const STRINGS_IT = {
             skipCodeBlocksInPreview: {
                 name: "Salta blocchi codice nell'anteprima",
                 desc: 'Salta blocchi codice quando generi testo anteprima.'
+            },
+            skipCalloutsInPreview: {
+                name: "Salta callout nell'anteprima",
+                desc: 'Salta blocchi callout quando generi testo anteprima.'
             },
             stripHtmlInPreview: {
                 name: 'Rimuovi HTML nelle anteprime',

@@ -42,6 +42,7 @@ export type ExpansionAction =
     | { type: 'TOGGLE_VIRTUAL_FOLDER_EXPANDED'; folderId: string }
     | { type: 'TOGGLE_LIST_GROUP_COLLAPSED'; collapseKey: string }
     | { type: 'EXPAND_LIST_GROUP'; collapseKey: string }
+    | { type: 'SET_LIST_GROUPS_COLLAPSED'; collapseKeys: string[]; collapsed: boolean }
     | { type: 'EXPAND_FOLDERS'; folderPaths: string[] }
     | { type: 'EXPAND_TAGS'; tagPaths: string[] }
     | { type: 'EXPAND_PROPERTIES'; propertyNodeIds: string[] }
@@ -150,6 +151,19 @@ function expansionReducer(state: ExpansionState, action: ExpansionAction): Expan
 
             const newCollapsed = new Set(state.collapsedListGroups);
             newCollapsed.delete(action.collapseKey);
+            return { ...state, collapsedListGroups: newCollapsed };
+        }
+
+        case 'SET_LIST_GROUPS_COLLAPSED': {
+            // Bulk changes only touch the rendered context because collapse keys from other selections remain persisted.
+            const newCollapsed = new Set(state.collapsedListGroups);
+            action.collapseKeys.forEach(collapseKey => {
+                if (action.collapsed) {
+                    newCollapsed.add(collapseKey);
+                } else {
+                    newCollapsed.delete(collapseKey);
+                }
+            });
             return { ...state, collapsedListGroups: newCollapsed };
         }
 

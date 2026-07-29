@@ -217,8 +217,8 @@ Note previews show Omnisearch result excerpts instead of the default preview tex
 **Known limitations**
 
 - **Performance** - Can be slow when searching for fewer than 3 characters in large vaults
-- **Path filters** - Folder scoping is sent to Omnisearch only for simple ASCII paths. Other paths are filtered after Omnisearch returns results
-- **Limited results** - Omnisearch searches the entire vault and returns a limited number of results before filtering, so relevant files from the current folder may not appear if many matches exist elsewhere
+- **Path filters** - Folder scoping is sent to Omnisearch for all folder paths except names containing `"` or `,`. Folder names with non-ASCII characters require Omnisearch 1.30.0 or later. Results are always filtered to the current view after Omnisearch returns
+- **Limited results** - Omnisearch returns at most 50 results. When searching in a folder, the limit covers the folder and its subfolders, so subfolder matches count toward the limit even when `Show notes from subfolders` is disabled
 - **Preview text** - Note previews are replaced with Omnisearch result excerpts, which may not show the actual search match highlight if it appears elsewhere in the file
 
 <br/>
@@ -302,7 +302,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 
 **Layout & display**
 
-- `Notebook Navigator: Toggle dual pane layout` Toggle single/dual-pane layout (desktop). **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+A` to quickly switch between single-pane and dual-pane layout
+- `Notebook Navigator: Toggle dual pane layout` Toggle single/dual-pane layout (desktop and tablet). **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+A` to quickly switch between single-pane and dual-pane layout
 - `Notebook Navigator: Toggle dual pane orientation` Toggle dual-pane orientation between horizontal and vertical
 - `Notebook Navigator: Toggle descendants` Toggle subfolders / descendants notes display for folders and tags. **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+D` to quickly toggle display of notes from subfolders / descendants
 - `Notebook Navigator: Toggle hidden folders, tags, and notes` Show or hide hidden folders, tags, and notes
@@ -311,7 +311,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Toggle properties by selection` Toggle limiting properties to those found in notes within the selected folder or tag
 - `Notebook Navigator: Toggle compact mode` Toggle list mode between standard and compact
 - `Notebook Navigator: Toggle pinned section` Show or hide pinned notes in the list pane
-- `Notebook Navigator: Collapse / expand all items` Collapse or expand all items based on the current state. When `Keep selected item expanded` is enabled (default on), all folders except the current one will be collapsed. This is handy to keep the navigation tree tidy when searching for documents
+- `Notebook Navigator: Collapse / expand all navigation items` Collapse or expand all navigation items based on the current state. When `Keep selected item expanded` is enabled (default on), all folders except the current one will be collapsed. This is handy to keep the navigation tree tidy when searching for documents
 - `Notebook Navigator: Collapse / expand selected item` Collapse or expand the selected navigation item
 
 **Calendar**
@@ -394,7 +394,8 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 | `notebook-navigator:toggle-properties-by-selection` | Notebook Navigator: Toggle properties by selection         |
 | `notebook-navigator:toggle-compact-mode`            | Notebook Navigator: Toggle compact mode                    |
 | `notebook-navigator:toggle-pinned-section`          | Notebook Navigator: Toggle pinned section                  |
-| `notebook-navigator:collapse-expand`                | Notebook Navigator: Collapse / expand all items            |
+| `notebook-navigator:collapse-expand-list-groups`    | Notebook Navigator: Collapse / expand all list groups      |
+| `notebook-navigator:collapse-expand`                | Notebook Navigator: Collapse / expand all navigation items |
 | `notebook-navigator:collapse-expand-selected-item`  | Notebook Navigator: Collapse / expand selected item        |
 | `notebook-navigator:new-note`                       | Notebook Navigator: Create new note                        |
 | `notebook-navigator:new-note-from-template`         | Notebook Navigator: Create new note from template          |

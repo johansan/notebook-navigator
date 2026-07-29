@@ -41,6 +41,7 @@ import { useLocalDayKey } from '../../hooks/useLocalDayKey';
 import { extractFrontmatterName } from '../../utils/metadataExtractor';
 import { type CalendarNoteKind } from '../../utils/calendarNotes';
 import { escapeMomentLiteralPath } from '../../utils/calendarCustomNotePatterns';
+import { usesMobileChrome } from '../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { createFileVisibilityChecker } from '../../utils/fileFilters';
 import type { CalendarWeeksToShow } from '../../settings/types';
@@ -1193,7 +1194,7 @@ export function Calendar({
                 return false;
             }
 
-            if (!isDateFilterModifierPressed(event, settings.multiSelectModifier, isMobile)) {
+            if (!isDateFilterModifierPressed(event, settings.multiSelectModifier)) {
                 return false;
             }
 
@@ -1208,7 +1209,7 @@ export function Calendar({
             onAddDateFilter(dateToken);
             return true;
         },
-        [clearHoverTooltip, onAddDateFilter, settings.multiSelectModifier, isMobile]
+        [clearHoverTooltip, onAddDateFilter, settings.multiSelectModifier]
     );
 
     const handleSelectYearMonth = useCallback(
@@ -1310,7 +1311,9 @@ export function Calendar({
     const highlightToday = settings.calendarHighlightToday;
     const useRightSidebarYearHeaderInlineDetails = isRightSidebar && showYearCalendar;
     const showYearInHeader = !isRightSidebar || !showYearCalendar;
-    const showHeaderHelpButton = settings.showInfoButtons && !isMobile && useRightSidebarYearHeaderInlineDetails;
+    // Desktop chrome (desktop and tablets) shows the help button; the modal it opens
+    // documents the modifier click gestures, which also work on tablets
+    const showHeaderHelpButton = settings.showInfoButtons && !usesMobileChrome() && useRightSidebarYearHeaderInlineDetails;
     const showInlineMonthNavigation = false;
     const showCompactQuarterInMonthRow = useRightSidebarYearHeaderInlineDetails && settings.calendarShowQuarter;
     const showHeaderPeriodDetails = !useRightSidebarYearHeaderInlineDetails;

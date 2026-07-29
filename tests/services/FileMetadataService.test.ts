@@ -23,6 +23,7 @@ import type { NotebookNavigatorSettings } from '../../src/settings';
 import type { ISettingsProvider } from '../../src/interfaces/ISettingsProvider';
 import { extractMetadataFromCache } from '../../src/utils/metadataExtractor';
 import { ShortcutType } from '../../src/types/shortcuts';
+import type { CollapsedPinnedContexts } from '../../src/types';
 
 const updateFileMetadata = vi.fn();
 
@@ -50,6 +51,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentIcons(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 
     getRecentColors(): string[] {
         return [];

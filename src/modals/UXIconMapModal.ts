@@ -137,6 +137,8 @@ export class UXIconMapModal extends Modal {
                 return strings.settings.items.startView.options.files;
             case 'fileItems':
                 return strings.modals.interfaceIcons.fileItemsSection;
+            case 'calendar':
+                return strings.settings.sections.calendar;
             default:
                 return '';
         }
@@ -185,7 +187,7 @@ export class UXIconMapModal extends Modal {
         this.rowControls.clear();
         this.listEl.empty();
 
-        const categories: UXIconCategory[] = ['navigationPane', 'folders', 'tags', 'properties', 'listPane', 'fileItems'];
+        const categories: UXIconCategory[] = ['navigationPane', 'folders', 'tags', 'properties', 'listPane', 'fileItems', 'calendar'];
         const rowsByCategory = new Map<UXIconCategory, UXIconRow[]>();
         this.rows.forEach(row => {
             const existing = rowsByCategory.get(row.category);

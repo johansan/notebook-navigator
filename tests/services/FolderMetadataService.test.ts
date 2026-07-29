@@ -23,6 +23,7 @@ import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings';
 import type { ISettingsProvider } from '../../src/interfaces/ISettingsProvider';
 import { ShortcutType } from '../../src/types/shortcuts';
+import type { CollapsedPinnedContexts } from '../../src/types';
 
 type MetadataChangeEvent = {
     path: string;
@@ -116,6 +117,16 @@ class TestSettingsProvider implements ISettingsProvider {
     }
 
     setRecentColors(): void {}
+
+    collapsedPinnedContexts: CollapsedPinnedContexts = {};
+
+    getCollapsedPinnedContexts(): CollapsedPinnedContexts {
+        return { ...this.collapsedPinnedContexts };
+    }
+
+    updateCollapsedPinnedContexts(mutator: (record: CollapsedPinnedContexts) => boolean): boolean {
+        return mutator(this.collapsedPinnedContexts);
+    }
 
     registerSettingsUpdateListener(id: string, callback: () => void): void {
         this.settingsUpdateListeners.set(id, callback);

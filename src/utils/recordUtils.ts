@@ -301,25 +301,6 @@ export function updateCollapsedPinnedContextKeys(
 }
 
 /**
- * Returns true when the record contains an exact or descendant collapsed pinned section key.
- */
-export function hasCollapsedPinnedContextKeys(
-    record: CollapsedPinnedContexts | undefined,
-    context: NavigatorContext,
-    targetToFind: string,
-    options: Pick<CollapsedPinnedContextKeyMutationOptions, 'descendantDelimiter'> = {}
-): boolean {
-    if (!record) {
-        return false;
-    }
-
-    return Object.keys(record).some(key => {
-        const target = getCollapsedPinnedContextTarget(key, context);
-        return target !== null && matchesCollapsedPinnedContextTarget(target, targetToFind, options.descendantDelimiter);
-    });
-}
-
-/**
  * Removes collapsed pinned section keys when a navigation item is deleted.
  */
 export function deleteCollapsedPinnedContextKeys(

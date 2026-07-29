@@ -134,6 +134,8 @@ export const STRINGS_PL = {
     paneHeader: {
         collapseAllFolders: 'Zwiń elementy', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Rozwiń wszystkie elementy', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Zwiń wszystkie grupy listy',
+        expandAllListGroups: 'Rozwiń wszystkie grupy listy',
         showCalendar: 'Pokaż kalendarz',
         hideCalendar: 'Ukryj kalendarz',
         newFolder: 'Nowy folder', // Tooltip for create new folder button (English: New folder)
@@ -183,9 +185,14 @@ export const STRINGS_PL = {
         searchHelp: 'Składnia wyszukiwania',
         searchHelpTitle: 'Składnia wyszukiwania',
         searchHelpModal: {
-            intro: 'Połącz nazwy wyświetlane, aliasy, atrybuty, tagi, daty i filtry w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Zainstaluj wtyczkę Omnisearch, aby korzystać z wyszukiwania pełnotekstowego.',
+            intro: 'Wyszukiwanie z filtrem znajduje notatki według nazw wyświetlanych, aliasów, atrybutów, tagów, dat i filtrów, połączonych w jednym zapytaniu (np. „meeting .status=active #work @thisweek”). Kliknij ikonę gwiazdki, aby zapisać wyszukiwanie w skrótach.',
+            introInstallOmnisearch: 'Wyszukiwanie pełnotekstowe w treści notatek wymaga wtyczki Omnisearch.',
             introSwitching:
                 'Przełączaj się między wyszukiwaniem z filtrem a Omnisearch za pomocą strzałek w górę i w dół lub klikając ikonę wyszukiwania.',
+            activeFilterSearch: 'Wyszukiwanie z filtrem jest aktywne.',
+            activeOmnisearch: 'Omnisearch jest aktywny.',
+            omnisearchIntro:
+                'Omnisearch wykonuje wyszukiwanie pełnotekstowe w treści notatek w całym sejfie. Notebook Navigator pokazuje dopasowania należące do bieżącego folderu, tagu lub wybranych elementów.',
             sections: {
                 fileNames: {
                     title: 'Nazwy plików i aliasy',
@@ -265,10 +272,11 @@ export const STRINGS_PL = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Wyszukiwanie pełnotekstowe w całym sejfie, filtrowane według bieżącego folderu lub wybranych tagów.',
-                        'Może działać wolno w przypadku mniej niż 3 znaków w dużych sejfach.',
-                        'Nie można wyszukiwać ścieżek zawierających znaki spoza ASCII ani poprawnie wyszukiwać podścieżek.',
-                        'Zwraca ograniczone wyniki przed filtrowaniem folderów, więc odpowiednie pliki mogą nie pojawić się, jeśli istnieje wiele dopasowań w innych miejscach.',
+                        'Zapytanie jest wysyłane do wtyczki Omnisearch i podlega składni zapytań Omnisearch. Tokeny wyszukiwania z filtrem, takie jak `#tag`, `.property` i `@date`, nie mają specjalnego znaczenia.',
+                        'Gdy wybrany jest folder, do zapytania dołączane jest `path:"<folder>/"`, dzięki czemu Omnisearch dopasowuje wyniki w tym folderze i jego podfolderach. Zapytania zawierające już `path:` są wysyłane bez zmian.',
+                        'Omnisearch zwraca maksymalnie 50 wyników uporządkowanych według trafności. Wyszukiwania z większą liczbą dopasowań pomijają notatki o niższej trafności.',
+                        'Ograniczenie wyszukiwania do ścieżek folderów zawierających znaki spoza ASCII wymaga Omnisearch w wersji 1.30.0 lub nowszej. Starsze wersje przeszukują cały sejf, a wyniki są następnie filtrowane do folderu.',
+                        'Zapytania krótsze niż 3 znaki mogą działać wolno w dużych sejfach.',
                         'Podgląd notatek pokazuje fragmenty Omnisearch zamiast domyślnego tekstu podglądu.'
                     ]
                 }
@@ -502,6 +510,8 @@ export const STRINGS_PL = {
                 'list-search': 'Szukaj',
                 'list-reveal-file': 'Pokaż plik',
                 'list-descendants': 'Notatki z podfolderów',
+                'list-expand-all': 'Rozwiń wszystkie grupy',
+                'list-collapse-all': 'Zwiń wszystkie grupy',
                 'list-sort-ascending': 'Kolejność: rosnąco',
                 'list-sort-descending': 'Kolejność: malejąco',
                 'list-sort-modified': 'Sortuj według daty modyfikacji',
@@ -901,7 +911,8 @@ export const STRINGS_PL = {
         togglePropertiesBySelection: 'Przełącz atrybuty według wyboru',
         toggleCompactMode: 'Przełącz tryb kompaktowy', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Przełącz przypiętą sekcję',
-        collapseExpand: 'Zwiń / rozwiń wszystkie elementy', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Zwiń / rozwiń wszystkie elementy nawigacji', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Zwiń / rozwiń wszystkie grupy listy',
         collapseExpandSelectedItem: 'Zwiń / rozwiń wybrany element',
         addTag: 'Dodaj tag do wybranych plików', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Ustaw atrybut dla wybranych plików', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -921,6 +932,14 @@ export const STRINGS_PL = {
         revealInNavigator: 'Pokaż w Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator nie mógł odczytać swoich ustawień i nie został uruchomiony. Jeśli sejf jest synchronizowany, uruchom ponownie Obsidian po zakończeniu synchronizacji. Aby zacząć od nowa z ustawieniami domyślnymi, uruchom polecenie „Przywróć ustawienia domyślne”.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Rozpocząć z ustawieniami domyślnymi?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator został właśnie zainstalowany i nie ma pliku ustawień. Jeśli to nowa instalacja lub ponowna instalacja, kontynuuj z ustawieniami domyślnymi. Jeśli ustawienia pochodzą z usługi synchronizacji, anuluj, poczekaj na zakończenie synchronizacji i uruchom ponownie Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator jest zainstalowany na tym urządzeniu od dłuższego czasu, ale brakuje pliku ustawień. Jeśli sejf nadal się synchronizuje, anuluj, poczekaj na zakończenie synchronizacji i uruchom ponownie Obsidian, aby zachować dotychczasowe ustawienia. Kontynuuj tylko po to, aby zacząć od nowa z ustawieniami domyślnymi.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Użyj ustawień domyślnych' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Przywróć ustawienia domyślne', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1277,7 +1296,7 @@ export const STRINGS_PL = {
             },
             dualPane: {
                 name: 'Układ podwójnego panelu',
-                desc: 'Wyświetla panel nawigacji i panel listy obok siebie na komputerze.'
+                desc: 'Wyświetla panel nawigacji i panel listy obok siebie.'
             },
             dualPaneOrientation: {
                 name: 'Orientacja trybu podwójnego',
@@ -1323,8 +1342,8 @@ export const STRINGS_PL = {
                 desc: 'Kontroluje ogólny poziom przybliżenia Notebook Navigator (procent).'
             },
             useFloatingToolbars: {
-                name: 'Użyj pływających pasków narzędzi w systemie iOS/iPadOS',
-                desc: 'Dotyczy tylko iOS i iPadOS.'
+                name: 'Użyj pływających pasków narzędzi w systemie iOS',
+                desc: 'Dotyczy tylko iOS.'
             },
             startView: {
                 name: 'Domyślny widok początkowy',
@@ -1336,9 +1355,7 @@ export const STRINGS_PL = {
             },
             toolbarButtons: {
                 name: 'Przyciski paska narzędzi',
-                desc: 'Wybierz, które przyciski mają być wyświetlane na pasku narzędzi. Ukryte przyciski pozostają dostępne za pośrednictwem palety poleceń i w menu.',
-                navigationLabel: 'Panel nawigacji',
-                listLabel: 'Panel listy'
+                desc: 'Wybierz, które przyciski mają być wyświetlane na pasku narzędzi. Ukryte przyciski pozostają dostępne za pośrednictwem palety poleceń i w menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Otwieraj nowe notatki w nowej karcie',
@@ -1904,6 +1921,10 @@ export const STRINGS_PL = {
             skipCodeBlocksInPreview: {
                 name: 'Pomiń bloki kodu w podglądzie',
                 desc: 'Pomija bloki kodu podczas generowania tekstu podglądu.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Pomiń bloki callout w podglądzie',
+                desc: 'Pomija bloki callout podczas generowania tekstu podglądu.'
             },
             stripHtmlInPreview: {
                 name: 'Usuń HTML w podglądach',

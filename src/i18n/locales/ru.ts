@@ -134,6 +134,8 @@ export const STRINGS_RU = {
     paneHeader: {
         collapseAllFolders: 'Свернуть элементы', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Развернуть все элементы', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Свернуть все группы списка',
+        expandAllListGroups: 'Развернуть все группы списка',
         showCalendar: 'Показать календарь',
         hideCalendar: 'Скрыть календарь',
         newFolder: 'Новая папка', // Tooltip for create new folder button (English: New folder)
@@ -183,9 +185,14 @@ export const STRINGS_RU = {
         searchHelp: 'Синтаксис поиска',
         searchHelpTitle: 'Синтаксис поиска',
         searchHelpModal: {
-            intro: 'Комбинируйте отображаемые имена, псевдонимы, свойства, теги, даты и фильтры в одном запросе (напр. `meeting .status=active #work @thisweek`). Установите плагин Omnisearch для полнотекстового поиска.',
+            intro: 'Поиск по фильтру находит заметки по отображаемым именам, псевдонимам, свойствам, тегам, датам и фильтрам, объединённым в одном запросе (напр. `meeting .status=active #work @thisweek`). Нажмите на значок звезды, чтобы сохранить поиск как ярлык.',
+            introInstallOmnisearch: 'Для полнотекстового поиска по содержимому заметок требуется плагин Omnisearch.',
             introSwitching:
                 'Переключайтесь между поиском по фильтру и Omnisearch с помощью клавиш стрелок вверх/вниз или нажав на значок поиска.',
+            activeFilterSearch: 'Поиск по фильтру активен.',
+            activeOmnisearch: 'Omnisearch активен.',
+            omnisearchIntro:
+                'Omnisearch выполняет полнотекстовый поиск по содержимому заметок во всём хранилище. Notebook Navigator показывает совпадения, относящиеся к текущей папке, тегу или выбранным элементам.',
             sections: {
                 fileNames: {
                     title: 'Имена файлов и псевдонимы',
@@ -265,10 +272,11 @@ export const STRINGS_RU = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Полнотекстовый поиск по всему хранилищу с фильтрацией по текущей папке или выбранным тегам.',
-                        'Может быть медленным при менее чем 3 символах в больших хранилищах.',
-                        'Не может искать пути с не-ASCII символами или корректно искать подпути.',
-                        'Возвращает ограниченные результаты до фильтрации по папкам, поэтому релевантные файлы могут не отобразиться, если много совпадений в других местах.',
+                        'Запрос отправляется плагину Omnisearch и следует синтаксису запросов Omnisearch. Токены поиска по фильтру, такие как `#tag`, `.property` и `@date`, не имеют особого значения.',
+                        'Когда выбрана папка, к запросу добавляется `path:"<folder>/"`, чтобы Omnisearch искал совпадения в этой папке и её подпапках. Запросы, уже содержащие `path:`, отправляются без изменений.',
+                        'Omnisearch возвращает не более 50 результатов, отсортированных по релевантности. При большем количестве совпадений заметки с более низким рейтингом не отображаются.',
+                        'Для ограничения поиска папкой, путь которой содержит не-ASCII символы, требуется Omnisearch 1.30.0 или новее. Более старые версии ищут по всему хранилищу, после чего результаты фильтруются по папке.',
+                        'Запросы короче 3 символов могут работать медленно в больших хранилищах.',
                         'Превью заметок показывают фрагменты Omnisearch вместо текста превью по умолчанию.'
                     ]
                 }
@@ -500,6 +508,8 @@ export const STRINGS_RU = {
                 'list-search': 'Поиск',
                 'list-reveal-file': 'Показать файл',
                 'list-descendants': 'Заметки из подпапок',
+                'list-expand-all': 'Развернуть все группы',
+                'list-collapse-all': 'Свернуть все группы',
                 'list-sort-ascending': 'Порядок сортировки: по возрастанию',
                 'list-sort-descending': 'Порядок сортировки: по убыванию',
                 'list-sort-modified': 'Сортировать по дате изменения',
@@ -895,7 +905,8 @@ export const STRINGS_RU = {
         togglePropertiesBySelection: 'Переключить свойства по выбору',
         toggleCompactMode: 'Переключить компактный режим', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Переключить закреплённый раздел',
-        collapseExpand: 'Свернуть / развернуть все элементы', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Свернуть / развернуть все элементы навигации', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Свернуть / развернуть все группы списка',
         collapseExpandSelectedItem: 'Свернуть / развернуть выбранный элемент',
         addTag: 'Добавить тег к выбранным файлам', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Задать свойство для выбранных файлов', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -915,6 +926,14 @@ export const STRINGS_RU = {
         revealInNavigator: 'Показать в Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator не смог прочитать свои настройки и не был запущен. Если хранилище синхронизируется, перезапустите Obsidian после завершения синхронизации. Чтобы начать заново с настройками по умолчанию, выполните команду «Восстановить настройки по умолчанию».', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Начать с настройками по умолчанию?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator только что установлен, и файл настроек отсутствует. Если это новая установка или переустановка, продолжите с настройками по умолчанию. Если настройки поступают из службы синхронизации, отмените, дождитесь завершения синхронизации и перезапустите Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator установлен на этом устройстве уже давно, но файл настроек отсутствует. Если хранилище ещё синхронизируется, отмените, дождитесь завершения синхронизации и перезапустите Obsidian, чтобы сохранить существующие настройки. Продолжайте, только если хотите начать заново с настройками по умолчанию.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Использовать настройки по умолчанию' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Восстановить настройки по умолчанию', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1271,7 +1290,7 @@ export const STRINGS_RU = {
             },
             dualPane: {
                 name: 'Двухпанельный режим',
-                desc: 'Показывать панель навигации и панель списка рядом на компьютере.'
+                desc: 'Показывать панель навигации и панель списка рядом.'
             },
             dualPaneOrientation: {
                 name: 'Ориентация двухпанельного режима',
@@ -1317,8 +1336,8 @@ export const STRINGS_RU = {
                 desc: 'Управляет общим масштабом Notebook Navigator (в процентах).'
             },
             useFloatingToolbars: {
-                name: 'Использовать плавающие панели инструментов на iOS/iPadOS',
-                desc: 'Применяется только на iOS и iPadOS.'
+                name: 'Использовать плавающие панели инструментов на iOS',
+                desc: 'Применяется только на iOS.'
             },
             startView: {
                 name: 'Начальный вид по умолчанию',
@@ -1330,9 +1349,7 @@ export const STRINGS_RU = {
             },
             toolbarButtons: {
                 name: 'Кнопки панели инструментов',
-                desc: 'Выберите, какие кнопки отображаются на панели инструментов. Скрытые кнопки остаются доступными через команды и меню.',
-                navigationLabel: 'Панель навигации',
-                listLabel: 'Панель списка'
+                desc: 'Выберите, какие кнопки отображаются на панели инструментов. Скрытые кнопки остаются доступными через команды и меню.'
             },
             createNewNotesInNewTab: {
                 name: 'Открывать новые заметки в новой вкладке',
@@ -1897,6 +1914,10 @@ export const STRINGS_RU = {
             skipCodeBlocksInPreview: {
                 name: 'Пропускать блоки кода в превью',
                 desc: 'Пропускать блоки кода при генерации текста превью.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Пропускать выноски в превью',
+                desc: 'Пропускать блоки выносок при генерации текста превью.'
             },
             stripHtmlInPreview: {
                 name: 'Удалять HTML в превью',

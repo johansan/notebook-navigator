@@ -31,7 +31,7 @@ interface ListPaneTitleAreaProps {
 }
 
 export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktopTitle }: ListPaneTitleAreaProps) {
-    const { app, isMobile, plugin } = useServices();
+    const { app, plugin } = useServices();
     const commandQueue = useCommandQueue();
     const settings = useSettingsState();
     const selectionState = useSelectionState();
@@ -75,12 +75,7 @@ export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktop
             // Prevents parent title-area click handlers from running.
             event.stopPropagation();
 
-            const openContext = resolveFolderNoteClickOpenContext(
-                event,
-                settings.folderNoteOpenLocation,
-                settings.multiSelectModifier,
-                isMobile
-            );
+            const openContext = resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier);
 
             runAsyncAction(() =>
                 openFolderNoteFile({
@@ -93,16 +88,7 @@ export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktop
                 })
             );
         },
-        [
-            selectedFolder,
-            selectedFolderNote,
-            settings.folderNoteOpenLocation,
-            settings.multiSelectModifier,
-            isMobile,
-            app,
-            commandQueue,
-            plugin
-        ]
+        [selectedFolder, selectedFolderNote, settings.folderNoteOpenLocation, settings.multiSelectModifier, app, commandQueue, plugin]
     );
 
     const handleFolderNoteMouseDown = useCallback(

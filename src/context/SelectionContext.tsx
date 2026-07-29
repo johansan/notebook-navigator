@@ -70,7 +70,6 @@ interface SelectionProviderProps {
     propertyTreeService: IPropertyTreeProvider | null; // Property tree service for property operations
     onFileRename?: (listenerId: string, callback: (oldPath: string, newPath: string) => void) => void;
     onFileRenameUnsubscribe?: (listenerId: string) => void;
-    isMobile: boolean;
 }
 
 export function SelectionProvider({
@@ -80,8 +79,7 @@ export function SelectionProvider({
     tagTreeService,
     propertyTreeService,
     onFileRename,
-    onFileRenameUnsubscribe,
-    isMobile
+    onFileRenameUnsubscribe
 }: SelectionProviderProps) {
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -109,7 +107,6 @@ export function SelectionProvider({
         app,
         dispatch,
         includeDescendantNotes: uxPreferences.includeDescendantNotes,
-        isMobile,
         propertyTreeService,
         settings,
         showHiddenItems: uxPreferences.showHiddenItems,

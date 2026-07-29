@@ -190,6 +190,11 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 desc: strings.settings.items.skipCodeBlocksInPreview.desc,
                 visible: () => plugin.settings.showFilePreview
             }),
+            createToggleDefinition('skipCalloutsInPreview', {
+                name: strings.settings.items.skipCalloutsInPreview.name,
+                desc: strings.settings.items.skipCalloutsInPreview.desc,
+                visible: () => plugin.settings.showFilePreview
+            }),
             createToggleDefinition('stripHtmlInPreview', {
                 name: strings.settings.items.stripHtmlInPreview.name,
                 desc: strings.settings.items.stripHtmlInPreview.desc,

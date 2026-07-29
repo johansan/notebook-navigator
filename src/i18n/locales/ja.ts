@@ -133,6 +133,8 @@ export const STRINGS_JA = {
     paneHeader: {
         collapseAllFolders: 'アイテムを折りたたむ', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'すべてのアイテムを展開', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'リストのすべてのグループを折りたたむ',
+        expandAllListGroups: 'リストのすべてのグループを展開',
         showCalendar: 'カレンダーを表示',
         hideCalendar: 'カレンダーを非表示',
         newFolder: '新規フォルダ', // Tooltip for create new folder button (English: New folder)
@@ -182,8 +184,13 @@ export const STRINGS_JA = {
         searchHelp: '検索構文',
         searchHelpTitle: '検索構文',
         searchHelpModal: {
-            intro: '表示名、エイリアス、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせ可能（例：`meeting .status=active #work @thisweek`）。Omnisearch プラグインをインストールすると全文検索が使用できます。',
+            intro: 'フィルター検索は、表示名、エイリアス、プロパティ、タグ、日付、フィルターを1つのクエリで組み合わせてノートを検索します（例：`meeting .status=active #work @thisweek`）。星アイコンをクリックすると検索をショートカットに保存できます。',
+            introInstallOmnisearch: 'ノート内容の全文検索には Omnisearch プラグインが必要です。',
             introSwitching: '上下矢印キーまたは検索アイコンのクリックで、フィルター検索と Omnisearch を切り替えられます。',
+            activeFilterSearch: 'フィルター検索が有効です。',
+            activeOmnisearch: 'Omnisearch が有効です。',
+            omnisearchIntro:
+                'Omnisearch はボールト全体のノート内容を対象に全文検索を実行します。Notebook Navigator は現在のフォルダ、タグ、または選択範囲に属する一致結果を表示します。',
             sections: {
                 fileNames: {
                     title: 'ファイル名とエイリアス',
@@ -263,10 +270,11 @@ export const STRINGS_JA = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'ボールト全体の全文検索。現在のフォルダまたは選択されたタグでフィルタリングされます。',
-                        '大規模なボールトでは3文字未満の場合、動作が遅くなることがあります。',
-                        '非ASCIIパスの検索やサブパスの正確な検索はできません。',
-                        'フォルダフィルタリング前に返される結果数に制限があるため、他に多くの一致がある場合、関連ファイルが表示されないことがあります。',
+                        'クエリは Omnisearch プラグインに送信され、Omnisearch のクエリ構文に従います。`#tag`、`.property`、`@date` などのフィルター検索トークンは特別な意味を持ちません。',
+                        'フォルダを選択している場合、Omnisearch がそのフォルダとサブフォルダ内で一致するように、クエリに `path:"<folder>/"` が追加されます。すでに `path:` を含むクエリはそのまま送信されます。',
+                        'Omnisearch は関連度順に最大50件の結果を返します。それ以上の一致がある検索では、順位の低いノートは表示されません。',
+                        '非ASCII文字を含むフォルダパスの絞り込みには Omnisearch 1.30.0 以降が必要です。古いバージョンではボールト全体を検索し、その後結果がフォルダで絞り込まれます。',
+                        '大規模なボールトでは3文字未満のクエリは動作が遅くなることがあります。',
                         'ノートプレビューはデフォルトのプレビューテキストの代わりに Omnisearch の抜粋を表示します。'
                     ]
                 }
@@ -499,6 +507,8 @@ export const STRINGS_JA = {
                 'list-search': '検索',
                 'list-reveal-file': 'ファイルを表示',
                 'list-descendants': 'サブフォルダからのノート',
+                'list-expand-all': 'すべてのグループを展開',
+                'list-collapse-all': 'すべてのグループを折りたたむ',
                 'list-sort-ascending': '並べ替え: 昇順',
                 'list-sort-descending': '並べ替え: 降順',
                 'list-sort-modified': '更新日時で並べ替え',
@@ -897,7 +907,8 @@ export const STRINGS_JA = {
         togglePropertiesBySelection: '選択範囲でプロパティを切り替え',
         toggleCompactMode: 'コンパクトモードの切り替え', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'ピン留めセクションの切り替え',
-        collapseExpand: 'すべての項目を折りたたむ/展開', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'すべてのナビゲーション項目を折りたたむ/展開', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'リストのすべてのグループを折りたたむ/展開',
         collapseExpandSelectedItem: '選択した項目を折りたたむ/展開',
         addTag: '選択したファイルにタグを追加', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '選択したファイルにプロパティを設定', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -917,6 +928,14 @@ export const STRINGS_JA = {
         revealInNavigator: 'ノートブックナビゲーターで表示', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'ノートブックナビゲーターは設定を読み込めなかったため起動しませんでした。保管庫が同期中の場合は、同期完了後に Obsidian を再起動してください。デフォルト設定でやり直すには、コマンド「デフォルト設定を復元」を実行してください。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'デフォルト設定で開始しますか?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'ノートブックナビゲーターはインストールされたばかりで、設定ファイルがありません。新規インストールまたは再インストールの場合は、デフォルト設定で続行してください。設定を同期サービスから取得している場合は、キャンセルして同期の完了を待ち、Obsidian を再起動してください。', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'ノートブックナビゲーターはこのデバイスにしばらく前からインストールされていますが、設定ファイルが見つかりません。保管庫がまだ同期中の場合は、キャンセルして同期の完了を待ち、Obsidian を再起動すると既存の設定を保持できます。デフォルト設定でやり直す場合のみ続行してください。', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'デフォルト設定を使用' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'デフォルト設定を復元', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1273,7 +1292,7 @@ export const STRINGS_JA = {
             },
             dualPane: {
                 name: 'デュアルペインレイアウト',
-                desc: 'デスクトップでナビゲーションペインとリストペインを並べて表示します。'
+                desc: 'ナビゲーションペインとリストペインを並べて表示します。'
             },
             dualPaneOrientation: {
                 name: 'デュアルペインの向き',
@@ -1319,8 +1338,8 @@ export const STRINGS_JA = {
                 desc: 'Notebook Navigator 全体のズームレベルを制御します（パーセント）。'
             },
             useFloatingToolbars: {
-                name: 'iOS/iPadOSでフローティングツールバーを使用',
-                desc: 'iOSおよびiPadOSでのみ適用されます。'
+                name: 'iOSでフローティングツールバーを使用',
+                desc: 'iOSでのみ適用されます。'
             },
             startView: {
                 name: 'デフォルト起動ビュー',
@@ -1332,9 +1351,7 @@ export const STRINGS_JA = {
             },
             toolbarButtons: {
                 name: 'ツールバーボタン',
-                desc: 'ツールバーに表示するボタンを選択します。非表示のボタンはコマンドとメニューから引き続き利用できます。',
-                navigationLabel: 'ナビゲーションツールバー',
-                listLabel: 'リストツールバー'
+                desc: 'ツールバーに表示するボタンを選択します。非表示のボタンはコマンドとメニューから引き続き利用できます。'
             },
             createNewNotesInNewTab: {
                 name: '新しいノートを新しいタブで開く',
@@ -1898,6 +1915,10 @@ export const STRINGS_JA = {
             skipCodeBlocksInPreview: {
                 name: 'プレビューでコードブロックをスキップ',
                 desc: 'プレビューテキスト生成時にコードブロックをスキップします。'
+            },
+            skipCalloutsInPreview: {
+                name: 'プレビューでコールアウトをスキップ',
+                desc: 'プレビューテキスト生成時にコールアウトブロックをスキップします。'
             },
             stripHtmlInPreview: {
                 name: 'プレビューのHTMLを削除',

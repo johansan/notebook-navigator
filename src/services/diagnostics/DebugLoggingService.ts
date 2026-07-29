@@ -642,7 +642,7 @@ export class DebugLoggingService {
     private getSessionHeader(): DebugLogPayload {
         return {
             pluginVersion: this.pluginVersion,
-            platform: Platform.isMobile ? 'mobile' : 'desktop',
+            platform: Platform.isPhone ? 'phone' : Platform.isTablet ? 'tablet' : 'desktop',
             logPath: this.logPath
         };
     }

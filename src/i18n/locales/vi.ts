@@ -134,6 +134,8 @@ export const STRINGS_VI = {
     paneHeader: {
         collapseAllFolders: 'Thu gọn các mục', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Mở rộng tất cả các mục', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Thu gọn tất cả nhóm trong danh sách',
+        expandAllListGroups: 'Mở rộng tất cả nhóm trong danh sách',
         showCalendar: 'Hiển thị lịch',
         hideCalendar: 'Ẩn lịch',
         newFolder: 'Thư mục mới', // Tooltip for create new folder button (English: New folder)
@@ -183,8 +185,13 @@ export const STRINGS_VI = {
         searchHelp: 'Cú pháp tìm kiếm',
         searchHelpTitle: 'Cú pháp tìm kiếm',
         searchHelpModal: {
-            intro: 'Kết hợp tên hiển thị, bí danh, thuộc tính, thẻ, ngày và bộ lọc trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Cài đặt plugin Omnisearch để sử dụng tìm kiếm toàn văn.',
+            intro: 'Tìm kiếm bộ lọc tìm ghi chú theo tên hiển thị, bí danh, thuộc tính, thẻ, ngày và bộ lọc, kết hợp trong một truy vấn (ví dụ: `meeting .status=active #work @thisweek`). Nhấp vào biểu tượng ngôi sao để lưu tìm kiếm làm lối tắt.',
+            introInstallOmnisearch: 'Tìm kiếm toàn văn trong nội dung ghi chú yêu cầu plugin Omnisearch.',
             introSwitching: 'Chuyển đổi giữa tìm kiếm bộ lọc và Omnisearch bằng phím mũi tên lên/xuống hoặc nhấp vào biểu tượng tìm kiếm.',
+            activeFilterSearch: 'Tìm kiếm bộ lọc đang hoạt động.',
+            activeOmnisearch: 'Omnisearch đang hoạt động.',
+            omnisearchIntro:
+                'Omnisearch thực hiện tìm kiếm toàn văn trong nội dung ghi chú của toàn bộ kho. Notebook Navigator hiển thị các kết quả khớp thuộc về thư mục, thẻ hoặc lựa chọn hiện tại.',
             sections: {
                 fileNames: {
                     title: 'Tên tệp và bí danh',
@@ -264,10 +271,11 @@ export const STRINGS_VI = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Tìm kiếm toàn văn trong toàn bộ kho, được lọc theo thư mục hiện tại hoặc thẻ đã chọn.',
-                        'Có thể chậm với ít hơn 3 ký tự trong kho lớn.',
-                        'Không thể tìm kiếm đường dẫn có ký tự không phải ASCII hoặc tìm kiếm đường dẫn con chính xác.',
-                        'Trả về kết quả giới hạn trước khi lọc thư mục, nên các tệp liên quan có thể không xuất hiện nếu có nhiều kết quả khớp ở nơi khác.',
+                        'Truy vấn được gửi đến plugin Omnisearch và tuân theo cú pháp truy vấn của Omnisearch. Các token tìm kiếm bộ lọc như `#tag`, `.property` và `@date` không có ý nghĩa đặc biệt.',
+                        'Khi một thư mục được chọn, `path:"<folder>/"` được thêm vào truy vấn để Omnisearch tìm kết quả khớp bên trong thư mục đó và các thư mục con của nó. Truy vấn đã chứa `path:` được gửi nguyên vẹn.',
+                        'Omnisearch trả về tối đa 50 kết quả được xếp hạng theo mức độ liên quan. Với các tìm kiếm có nhiều kết quả khớp hơn, những ghi chú xếp hạng thấp hơn sẽ không hiển thị.',
+                        'Giới hạn phạm vi theo đường dẫn thư mục có ký tự không phải ASCII yêu cầu Omnisearch 1.30.0 trở lên. Các phiên bản cũ hơn tìm kiếm trong toàn bộ kho, sau đó kết quả được lọc theo thư mục.',
+                        'Truy vấn có ít hơn 3 ký tự có thể chậm trong kho lớn.',
                         'Bản xem trước ghi chú hiển thị trích đoạn Omnisearch thay vì văn bản xem trước mặc định.'
                     ]
                 }
@@ -499,6 +507,8 @@ export const STRINGS_VI = {
                 'list-search': 'Tìm kiếm',
                 'list-reveal-file': 'Hiện tệp',
                 'list-descendants': 'Ghi chú từ thư mục con',
+                'list-expand-all': 'Mở rộng tất cả nhóm',
+                'list-collapse-all': 'Thu gọn tất cả nhóm',
                 'list-sort-ascending': 'Thứ tự: tăng dần',
                 'list-sort-descending': 'Thứ tự: giảm dần',
                 'list-sort-modified': 'Sắp xếp theo ngày chỉnh sửa',
@@ -899,7 +909,8 @@ export const STRINGS_VI = {
         togglePropertiesBySelection: 'Bật/tắt thuộc tính theo lựa chọn',
         toggleCompactMode: 'Bật/tắt chế độ gọn', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Bật/tắt phần đã ghim',
-        collapseExpand: 'Thu gọn / mở rộng tất cả', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Thu gọn / mở rộng tất cả mục điều hướng', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Thu gọn / mở rộng tất cả nhóm trong danh sách',
         collapseExpandSelectedItem: 'Thu gọn / mở rộng mục đã chọn',
         addTag: 'Thêm thẻ vào tệp đã chọn', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Đặt thuộc tính cho tệp đã chọn', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -919,6 +930,14 @@ export const STRINGS_VI = {
         revealInNavigator: 'Hiện trong Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator không thể đọc cài đặt và đã không khởi động. Nếu kho của bạn đang đồng bộ, hãy khởi động lại Obsidian sau khi đồng bộ hoàn tất. Để bắt đầu lại với cài đặt mặc định, hãy chạy lệnh "Khôi phục cài đặt mặc định".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Bắt đầu với cài đặt mặc định?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator vừa được cài đặt và chưa có tệp cài đặt. Nếu đây là bản cài đặt mới hoặc cài đặt lại, hãy tiếp tục với cài đặt mặc định. Nếu cài đặt của bạn đến từ dịch vụ đồng bộ, hãy hủy, chờ đồng bộ hoàn tất rồi khởi động lại Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator đã được cài đặt trên thiết bị này một thời gian, nhưng tệp cài đặt bị thiếu. Nếu kho của bạn vẫn đang đồng bộ, hãy hủy, chờ đồng bộ hoàn tất rồi khởi động lại Obsidian để giữ cài đặt hiện có. Chỉ tiếp tục nếu bạn muốn bắt đầu lại với cài đặt mặc định.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Dùng cài đặt mặc định' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Khôi phục cài đặt mặc định', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1275,7 +1294,7 @@ export const STRINGS_VI = {
             },
             dualPane: {
                 name: 'Bố cục hai ngăn',
-                desc: 'Hiện ngăn điều hướng và ngăn danh sách cạnh nhau trên máy tính.'
+                desc: 'Hiện ngăn điều hướng và ngăn danh sách cạnh nhau.'
             },
             dualPaneOrientation: {
                 name: 'Hướng hai ngăn',
@@ -1321,8 +1340,8 @@ export const STRINGS_VI = {
                 desc: 'Điều khiển mức thu phóng tổng thể của Notebook Navigator (phần trăm).'
             },
             useFloatingToolbars: {
-                name: 'Sử dụng thanh công cụ nổi trên iOS/iPadOS',
-                desc: 'Chỉ áp dụng trên iOS và iPadOS.'
+                name: 'Sử dụng thanh công cụ nổi trên iOS',
+                desc: 'Chỉ áp dụng trên iOS.'
             },
             startView: {
                 name: 'Chế độ xem khởi động mặc định',
@@ -1334,9 +1353,7 @@ export const STRINGS_VI = {
             },
             toolbarButtons: {
                 name: 'Nút thanh công cụ',
-                desc: 'Chọn nút xuất hiện trên thanh công cụ. Nút ẩn vẫn truy cập được qua lệnh và menu.',
-                navigationLabel: 'Thanh công cụ điều hướng',
-                listLabel: 'Thanh công cụ danh sách'
+                desc: 'Chọn nút xuất hiện trên thanh công cụ. Nút ẩn vẫn truy cập được qua lệnh và menu.'
             },
             createNewNotesInNewTab: {
                 name: 'Mở ghi chú mới trong tab mới',
@@ -1901,6 +1918,10 @@ export const STRINGS_VI = {
             skipCodeBlocksInPreview: {
                 name: 'Bỏ qua khối code trong xem trước',
                 desc: 'Bỏ qua khối code khi tạo văn bản xem trước.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Bỏ qua callout trong xem trước',
+                desc: 'Bỏ qua khối callout khi tạo văn bản xem trước.'
             },
             stripHtmlInPreview: {
                 name: 'Xóa HTML trong xem trước',

@@ -30,6 +30,7 @@ import { runAsyncAction } from '../utils/async';
 import { isKeyboardEventContextBlocked } from '../utils/domUtils';
 import { isCmdCtrlModifierPressed, isMultiSelectModifierPressed } from '../utils/keyboardOpenContext';
 import { openFileInContext } from '../utils/openFileInContext';
+import { supportsKeyboardInteractions } from '../utils/paneLayout';
 import { getAdjacentFile } from '../utils/selectionUtils';
 import type { Align } from '../types/scroll';
 
@@ -388,12 +389,14 @@ export function useListPaneSelectionCoordinator({
             const clickOrderedFiles = filesOverride ?? orderedFiles;
             const isShiftKey = event.shiftKey;
             const isCmdCtrlClick = isCmdCtrlModifierPressed(event);
-            const shouldMultiSelect = !isMobile && isMultiSelectModifierPressed(event, settings.multiSelectModifier);
-            const shouldOpenInNewTab = !isMobile && !shouldMultiSelect && settings.multiSelectModifier === 'optionAlt' && isCmdCtrlClick;
+            const modifierSelectEnabled = supportsKeyboardInteractions();
+            const shouldMultiSelect = modifierSelectEnabled && isMultiSelectModifierPressed(event, settings.multiSelectModifier);
+            const shouldOpenInNewTab =
+                modifierSelectEnabled && !shouldMultiSelect && settings.multiSelectModifier === 'optionAlt' && isCmdCtrlClick;
 
             if (shouldMultiSelect) {
                 handleMultiSelectClick(file, fileIndex, clickOrderedFiles);
-            } else if (!isMobile && isShiftKey && fileIndex !== undefined) {
+            } else if (modifierSelectEnabled && isShiftKey && fileIndex !== undefined) {
                 handleRangeSelectClick(file, fileIndex, clickOrderedFiles);
             } else {
                 selectFileFromList(file, {
@@ -408,6 +411,9 @@ export function useListPaneSelectionCoordinator({
                 runAsyncAction(() => openFileInContext({ app, commandQueue, file, context: 'tab' }));
             }
 
+            // Closes the drawer so the opened note is visible. Safe with dual pane on
+            // tablets: Obsidian no-ops WorkspaceMobileDrawer.collapse() while the sidebar
+            // is pinned (see src/utils/paneLayout.ts), so only the overlay drawer closes.
             if (isMobile && app.workspace.leftSplit && !shouldMultiSelect && !isShiftKey) {
                 app.workspace.leftSplit.collapse();
             }
@@ -455,7 +461,7 @@ export function useListPaneSelectionCoordinator({
         let selectionStateChangedBySearchSync = false;
         let handledSearchFolderAutoSelect = false;
 
-        if (isSearchActive && settings.autoSelectFirstFileOnFocusChange && !isMobile && isFolderChangeWithAutoSelect) {
+        if (isSearchActive && settings.autoSelectFirstFileOnFocusChange && supportsKeyboardInteractions() && isFolderChangeWithAutoSelect) {
             const ensureResult = ensureSelectionForCurrentFilter({
                 openInEditor: true,
                 clearIfEmpty: true,
@@ -471,7 +477,7 @@ export function useListPaneSelectionCoordinator({
             selectedFile &&
             !isUserSelectionRef.current &&
             settings.autoSelectFirstFileOnFocusChange &&
-            !isMobile &&
+            supportsKeyboardInteractions() &&
             isFolderChangeWithAutoSelect &&
             !settings.enterToOpenFiles
         ) {
@@ -492,7 +498,6 @@ export function useListPaneSelectionCoordinator({
         isUserSelectionRef.current = false;
     }, [
         ensureSelectionForCurrentFilter,
-        isMobile,
         isSearchActive,
         openFileInWorkspace,
         scheduleKeyboardOpen,
@@ -503,7 +508,7 @@ export function useListPaneSelectionCoordinator({
     ]);
 
     useEffect(() => {
-        if (uiState.singlePane || isMobile) {
+        if (uiState.singlePane || !supportsKeyboardInteractions()) {
             return;
         }
 
@@ -529,7 +534,6 @@ export function useListPaneSelectionCoordinator({
     }, [
         app.workspace,
         ensureSelectionForCurrentFilter,
-        isMobile,
         orderedFiles,
         selectionDispatch,
         selectionState.isKeyboardNavigation,

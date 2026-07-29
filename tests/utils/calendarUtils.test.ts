@@ -16,12 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { Platform } from 'obsidian';
 import { isDateFilterModifierPressed, shouldAutoRevealCalendarNoteKind } from '../../src/components/calendar/calendarUtils';
+
+const originalIsMobile = Platform.isMobile;
+const originalIsTablet = Platform.isTablet;
+
+afterEach(() => {
+    Platform.isMobile = originalIsMobile;
+    Platform.isTablet = originalIsTablet;
+});
 
 describe('calendarUtils', () => {
     describe('isDateFilterModifierPressed', () => {
-        it('returns false on mobile regardless of modifier state', () => {
+        it('returns false on phones regardless of modifier state', () => {
+            Platform.isMobile = true;
+            Platform.isTablet = false;
+
             expect(
                 isDateFilterModifierPressed(
                     {
@@ -29,10 +41,25 @@ describe('calendarUtils', () => {
                         ctrlKey: true,
                         metaKey: true
                     },
-                    'cmdCtrl',
-                    true
+                    'cmdCtrl'
                 )
             ).toBe(false);
+        });
+
+        it('detects the modifier on tablets', () => {
+            Platform.isMobile = true;
+            Platform.isTablet = true;
+
+            expect(
+                isDateFilterModifierPressed(
+                    {
+                        altKey: false,
+                        ctrlKey: true,
+                        metaKey: false
+                    },
+                    'cmdCtrl'
+                )
+            ).toBe(true);
         });
 
         it('uses Cmd/Ctrl when cmdCtrl modifier is selected', () => {
@@ -43,8 +70,7 @@ describe('calendarUtils', () => {
                         ctrlKey: true,
                         metaKey: false
                     },
-                    'cmdCtrl',
-                    false
+                    'cmdCtrl'
                 )
             ).toBe(true);
 
@@ -55,8 +81,7 @@ describe('calendarUtils', () => {
                         ctrlKey: false,
                         metaKey: false
                     },
-                    'cmdCtrl',
-                    false
+                    'cmdCtrl'
                 )
             ).toBe(false);
         });
@@ -69,8 +94,7 @@ describe('calendarUtils', () => {
                         ctrlKey: false,
                         metaKey: false
                     },
-                    'optionAlt',
-                    false
+                    'optionAlt'
                 )
             ).toBe(true);
 
@@ -81,8 +105,7 @@ describe('calendarUtils', () => {
                         ctrlKey: true,
                         metaKey: true
                     },
-                    'optionAlt',
-                    false
+                    'optionAlt'
                 )
             ).toBe(false);
         });

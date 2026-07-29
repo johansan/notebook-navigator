@@ -72,6 +72,7 @@ import { getNavigationExpansionTargetForItem, toggleNavigationExpansionTarget } 
 import type { TagTreeNode } from '../../types/storage';
 import { normalizeNavigationSectionOrderInput } from '../../utils/navigationSections';
 import { compositeWithBase } from '../../utils/colorUtils';
+import { usesMobileChrome } from '../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { PropertyKeyVisibilityModal } from '../../modals/PropertyKeyVisibilityModal';
 import type { NavigateToFolderOptions, RevealPropertyOptions, RevealTagOptions } from '../../hooks/useNavigatorReveal';
@@ -461,7 +462,6 @@ export const NavigationPane = React.memo(
         const tree = useNavigationPaneTreeInteractions({
             app,
             commandQueue,
-            isMobile,
             settings,
             uiState,
             expansionState,
@@ -679,7 +679,11 @@ export const NavigationPane = React.memo(
         }, [canReorderRootItems]);
 
         const isAndroid = Platform.isAndroidApp;
-        const shouldUseFloatingToolbars = isMobile && Platform.isIosApp && settings.useFloatingToolbars;
+        // Mobile chrome (profile-only header, mobile toolbars) applies to phones only.
+        // Tablets render the desktop header in both pane layouts so the toolbars stay at
+        // the top when switching between single and dual pane.
+        const useMobileChrome = usesMobileChrome();
+        const shouldUseFloatingToolbars = useMobileChrome && Platform.isIosApp && settings.useFloatingToolbars;
         const scrollPaddingEnd = useMemo(() => {
             if (!shouldUseFloatingToolbars) {
                 return 0;
@@ -993,9 +997,9 @@ export const NavigationPane = React.memo(
         }, [canReorderRootItems, handleToggleRootReorder, handleTreeUpdateComplete, isRootReorderMode, shouldUseFloatingToolbars]);
 
         const showVaultTitleInHeader =
-            !isMobile && (settings.vaultProfiles ?? []).length > 1 && (settings.vaultTitle ?? 'navigation') === 'header';
+            !useMobileChrome && (settings.vaultProfiles ?? []).length > 1 && (settings.vaultTitle ?? 'navigation') === 'header';
         const shouldShowVaultTitleInNavigationPane =
-            !isMobile && (settings.vaultProfiles ?? []).length > 1 && (settings.vaultTitle ?? 'navigation') === 'navigation';
+            !useMobileChrome && (settings.vaultProfiles ?? []).length > 1 && (settings.vaultTitle ?? 'navigation') === 'navigation';
 
         const handleSectionContextMenu = useCallback(
             (event: React.MouseEvent<HTMLDivElement>, sectionId: NavigationSectionId, options?: { allowSeparator?: boolean }) => {
@@ -1231,7 +1235,7 @@ export const NavigationPane = React.memo(
                         rootReorderDisabled={!canReorderRootItems}
                         showVaultTitleInHeader={showVaultTitleInHeader}
                         shouldShowVaultTitleInNavigationPane={shouldShowVaultTitleInNavigationPane}
-                        showAndroidToolbar={isMobile && isAndroid}
+                        showAndroidToolbar={useMobileChrome && isAndroid}
                         navigationToolbar={navigationToolbar}
                         pinNavigationBanner={settings.pinNavigationBanner}
                         navigationBannerContent={navigationBannerContent}
@@ -1256,8 +1260,8 @@ export const NavigationPane = React.memo(
                         items={items}
                         rowVirtualizer={rowVirtualizer}
                         navigationScrollMargin={navigationScrollMargin}
-                        shouldRenderBottomToolbarInsidePanel={isMobile && !isAndroid && shouldUseFloatingToolbars}
-                        shouldRenderBottomToolbarOutsidePanel={isMobile && !isAndroid && !shouldUseFloatingToolbars}
+                        shouldRenderBottomToolbarInsidePanel={useMobileChrome && !isAndroid && shouldUseFloatingToolbars}
+                        shouldRenderBottomToolbarOutsidePanel={useMobileChrome && !isAndroid && !shouldUseFloatingToolbars}
                         calendarOverlay={
                             shouldRenderCalendarOverlay ? (
                                 <div className="nn-navigation-calendar-overlay">

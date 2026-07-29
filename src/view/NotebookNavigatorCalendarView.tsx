@@ -23,10 +23,10 @@ import { SettingsProvider } from '../context/SettingsContext';
 import { UXPreferencesProvider } from '../context/UXPreferencesContext';
 import { ServicesProvider } from '../context/ServicesContext';
 import { CalendarRightSidebar } from '../components/CalendarRightSidebar';
-import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../constants/notebookNavigatorIcon';
 import { strings } from '../i18n';
 import type NotebookNavigatorPlugin from '../main';
 import { NOTEBOOK_NAVIGATOR_CALENDAR_VIEW } from '../types';
+import { resolveUXIconForMenu } from '../utils/uxIcons';
 import {
     IOS_FLOATING_TOOLBARS_CLASS,
     setupNotebookNavigatorViewContainer,
@@ -67,7 +67,20 @@ export class NotebookNavigatorCalendarView extends ItemView {
     }
 
     getIcon() {
-        return NOTEBOOK_NAVIGATOR_ICON_ID;
+        // Tab header icons must be registered with Obsidian, so the menu resolver is reused here:
+        // it returns the Lucide icon from the calendar interface icon setting and falls back to the
+        // default calendar icon when the configured icon is an emoji or external icon pack icon.
+        return resolveUXIconForMenu(this.plugin.settings.interfaceIcons, 'nav-calendar');
+    }
+
+    // WorkspaceLeaf.updateHeader() re-renders the tab header from getIcon() and getDisplayText().
+    // It is not part of the public API, so it is accessed through Reflect and feature-detected;
+    // without the call the tab keeps the previous icon until the view is reopened.
+    private updateLeafHeader(): void {
+        const updateHeader: unknown = Reflect.get(this.leaf, 'updateHeader');
+        if (typeof updateHeader === 'function') {
+            Reflect.apply(updateHeader, this.leaf, []);
+        }
     }
 
     async onOpen() {
@@ -85,6 +98,7 @@ export class NotebookNavigatorCalendarView extends ItemView {
         setupNotebookNavigatorViewContainer(container, { useFloatingToolbars: this.plugin.settings.useFloatingToolbars });
         this.plugin.registerSettingsUpdateListener(this.settingsUpdateListenerId, () => {
             this.updatePlatformClasses();
+            this.updateLeafHeader();
         });
         this.updatePlatformClasses();
 

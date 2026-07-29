@@ -54,7 +54,6 @@ import type { AppearanceBehaviorDropdownKey, AppearanceBehaviorToggleKey } from 
 import { createSettingDescriptionWithExternalLink } from './externalLink';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
-import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 interface DefinitionOptions {
     aliases?: string[];
@@ -81,6 +80,10 @@ export function createAppearanceBehaviorSettingDefinitions(context: SettingsTabC
             createDesktopAppearanceDefinitionGroup(context)
         );
     } else {
+        // Tablets support hardware keyboards, so they get the keyboard navigation settings
+        if (Platform.isTablet) {
+            groups.push(createKeyboardNavigationDefinitionGroup(context));
+        }
         groups.push(createMobileAppearanceDefinitionGroup(context));
     }
 
@@ -168,6 +171,7 @@ function createKeyboardNavigationDefinitionGroup(context: SettingsTabContext): S
         window: strings.contextMenu.file.openInNewWindow,
         rename: strings.contextMenu.file.renameFile
     };
+    // Platform.isMacOS is also true on iOS/iPadOS devices, which use Cmd-based keyboards
     const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterOpenContext : strings.settings.items.ctrlEnterOpenContext;
 
     return createGroupDefinition(strings.settings.groups.general.keyboardNavigation, [
@@ -218,10 +222,11 @@ function createMouseButtonsDefinitionGroup(): SettingDefinitionGroup {
     ]);
 }
 
-function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
+/** Builds dual pane layout settings shown on desktop and tablets; phones never render these. */
+function createDualPaneDefinitions(context: SettingsTabContext): SettingDefinitionRender[] {
     const { plugin } = context;
 
-    return createGroupDefinition(strings.settings.groups.general.desktopAppearance, [
+    return [
         createRenderDefinition({
             name: strings.settings.items.dualPane.name,
             desc: strings.settings.items.dualPane.desc,
@@ -302,7 +307,15 @@ function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): Se
                 plugin.settings.narrowSidebarLayout !== 'none' &&
                 plugin.settings.narrowSidebarTriggerMode === 'customWidth',
             render: setting => renderNarrowSidebarCustomWidthSetting(setting, context)
-        }),
+        })
+    ];
+}
+
+function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
+    const { plugin } = context;
+
+    return createGroupDefinition(strings.settings.groups.general.desktopAppearance, [
+        ...createDualPaneDefinitions(context),
         createDropdownDefinition('desktopBackground', {
             name: strings.settings.items.appearanceBackground.name,
             desc: strings.settings.items.appearanceBackground.desc,
@@ -334,27 +347,32 @@ function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): Set
     const { plugin } = context;
 
     return createGroupDefinition(strings.settings.groups.general.mobileAppearance, [
-        createRenderDefinition({
-            name: strings.settings.items.useFloatingToolbars.name,
-            desc: strings.settings.items.useFloatingToolbars.desc,
-            render: setting => {
-                setting
-                    .setName(strings.settings.items.useFloatingToolbars.name)
-                    .setDesc(strings.settings.items.useFloatingToolbars.desc)
-                    .addToggle(toggle =>
-                        toggle.setValue(plugin.settings.useFloatingToolbars).onChange(value => {
-                            plugin.setUseFloatingToolbars(value);
-                        })
-                    );
-                addSettingSyncModeToggle({ setting, plugin, settingId: 'useFloatingToolbars' });
-            }
-        })
+        // Tablets support the dual pane layout, so they get the same pane settings as desktop
+        ...(Platform.isTablet ? createDualPaneDefinitions(context) : []),
+        // Floating toolbars only render with the phone chrome; tablets use the desktop headers
+        ...(Platform.isTablet
+            ? []
+            : [
+                  createRenderDefinition({
+                      name: strings.settings.items.useFloatingToolbars.name,
+                      desc: strings.settings.items.useFloatingToolbars.desc,
+                      render: setting => {
+                          setting
+                              .setName(strings.settings.items.useFloatingToolbars.name)
+                              .setDesc(strings.settings.items.useFloatingToolbars.desc)
+                              .addToggle(toggle =>
+                                  toggle.setValue(plugin.settings.useFloatingToolbars).onChange(value => {
+                                      plugin.setUseFloatingToolbars(value);
+                                  })
+                              );
+                          addSettingSyncModeToggle({ setting, plugin, settingId: 'useFloatingToolbars' });
+                      }
+                  })
+              ])
     ]);
 }
 
 function createViewDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
-    const { plugin } = context;
-
     return createGroupDefinition(strings.settings.groups.general.view, [
         createRenderDefinition({
             name: strings.settings.items.appearanceScale.name,
@@ -370,33 +388,6 @@ function createViewDefinitionGroup(context: SettingsTabContext): SettingDefiniti
         createToggleDefinition('showInfoButtons', {
             name: strings.settings.items.showInfoButtons.name,
             desc: strings.settings.items.showInfoButtons.desc
-        }),
-        createRenderDefinition({
-            name: strings.settings.items.toolbarButtons.name,
-            desc: strings.settings.items.toolbarButtons.desc,
-            aliases: [
-                strings.settings.items.toolbarButtons.navigationLabel,
-                strings.settings.items.toolbarButtons.listLabel,
-                strings.paneHeader.showDualPane,
-                strings.paneHeader.expandAllFolders,
-                strings.paneHeader.showExcludedItems,
-                strings.paneHeader.showCalendar,
-                strings.paneHeader.reorderRootFolders,
-                strings.paneHeader.newFolder,
-                strings.paneHeader.showFolders,
-                strings.paneHeader.search,
-                strings.commands.revealFile,
-                strings.settings.items.includeDescendantNotes.name,
-                strings.paneHeader.changeSortAndGroup,
-                strings.paneHeader.changeAppearance,
-                strings.paneHeader.newNote
-            ],
-            render: setting => {
-                renderToolbarButtonsSetting(createSetting => {
-                    createSetting(setting);
-                    return setting;
-                }, plugin);
-            }
         })
     ]);
 }
