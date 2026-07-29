@@ -67,7 +67,6 @@ interface UIStateLike {
 interface UseNavigationPaneTreeInteractionsProps {
     app: App;
     commandQueue: CommandQueueService | null;
-    isMobile: boolean;
     settings: NotebookNavigatorSettings;
     uiState: UIStateLike;
     expansionState: ExpansionStateLike;
@@ -108,7 +107,6 @@ export interface NavigationPaneTreeInteractionsResult {
 export function useNavigationPaneTreeInteractions({
     app,
     commandQueue,
-    isMobile,
     settings,
     uiState,
     expansionState,
@@ -238,7 +236,7 @@ export function useNavigationPaneTreeInteractions({
             }
 
             const openContext = event
-                ? resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier, isMobile)
+                ? resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier)
                 : resolveFolderNoteDefaultOpenContext(settings.folderNoteOpenLocation);
             focusListPaneAfterRightSidebarFolderNoteSelection(openContext);
 
@@ -264,7 +262,6 @@ export function useNavigationPaneTreeInteractions({
             focusListPaneAfterRightSidebarFolderNoteSelection,
             handleFolderClick,
             handleFolderToggle,
-            isMobile,
             openFolderNoteInRightSidebar,
             selectionDispatch,
             selectionState.selectedFolder,
@@ -526,7 +523,7 @@ export function useNavigationPaneTreeInteractions({
             }
 
             const isVirtualCollection = isVirtualTagCollectionId(canonicalPath);
-            const operator = getTagSearchModifierOperator(event ?? null, settings.multiSelectModifier, isMobile);
+            const operator = getTagSearchModifierOperator(event ?? null, settings.multiSelectModifier);
             if (operator && !isVirtualCollection && canonicalPath !== UNTAGGED_TAG_ID) {
                 if (event) {
                     event.preventDefault();
@@ -565,7 +562,6 @@ export function useNavigationPaneTreeInteractions({
             expansionState.expandedTags,
             expansionState.expandedVirtualFolders,
             handleTagToggle,
-            isMobile,
             onModifySearchWithTag,
             selectionDispatch,
             selectionState.selectedTag,
@@ -619,7 +615,7 @@ export function useNavigationPaneTreeInteractions({
 
     const handlePropertyClick = useCallback(
         (propertyNode: PropertyTreeNode, event?: React.MouseEvent, options?: { fromShortcut?: boolean }) => {
-            const operator = getTagSearchModifierOperator(event ?? null, settings.multiSelectModifier, isMobile);
+            const operator = getTagSearchModifierOperator(event ?? null, settings.multiSelectModifier);
             if (operator) {
                 if (event) {
                     event.preventDefault();
@@ -654,7 +650,6 @@ export function useNavigationPaneTreeInteractions({
             applyTreeSelection,
             expansionState.expandedProperties,
             handlePropertyToggle,
-            isMobile,
             onModifySearchWithProperty,
             selectionDispatch,
             selectionState.selectedProperty,

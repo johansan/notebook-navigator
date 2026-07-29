@@ -134,6 +134,8 @@ export const STRINGS_FA = {
     paneHeader: {
         collapseAllFolders: 'جمع کردن آیتم‌ها',
         expandAllFolders: 'باز کردن همه آیتم‌ها',
+        collapseAllListGroups: 'جمع کردن همه گروه‌های فهرست',
+        expandAllListGroups: 'باز کردن همه گروه‌های فهرست',
         showCalendar: 'نمایش تقویم',
         hideCalendar: 'پنهان کردن تقویم',
         newFolder: 'پوشه جدید',
@@ -183,8 +185,13 @@ export const STRINGS_FA = {
         searchHelp: 'نحو جستجو',
         searchHelpTitle: 'نحو جستجو',
         searchHelpModal: {
-            intro: 'نام‌های نمایشی، نام‌های مستعار، ویژگی‌ها، برچسب‌ها، تاریخ‌ها و فیلترها را در یک جستجو ترکیب کنید (مثال: `meeting .status=active #work @thisweek`). افزونه Omnisearch را نصب کنید تا از جستجوی متن کامل استفاده کنید.',
+            intro: 'جستجوی فیلتری یادداشت‌ها را بر اساس نام‌های نمایشی، نام‌های مستعار، ویژگی‌ها، برچسب‌ها، تاریخ‌ها و فیلترها پیدا می‌کند که در یک جستجو ترکیب می‌شوند (مثال: `meeting .status=active #work @thisweek`). برای ذخیره جستجو به عنوان میانبر، روی آیکون ستاره کلیک کنید.',
+            introInstallOmnisearch: 'جستجوی متن کامل در محتوای یادداشت‌ها به افزونه Omnisearch نیاز دارد.',
             introSwitching: 'با استفاده از کلیدهای بالا/پایین یا کلیک روی آیکون جستجو بین جستجوی فیلتر و Omnisearch جابه‌جا شوید.',
+            activeFilterSearch: 'جستجوی فیلتری فعال است.',
+            activeOmnisearch: 'Omnisearch فعال است.',
+            omnisearchIntro:
+                'Omnisearch جستجوی متن کامل را در محتوای یادداشت‌های سراسر خزانه انجام می‌دهد. Notebook Navigator تطابق‌هایی را نشان می‌دهد که به پوشه، برچسب یا انتخاب فعلی تعلق دارند.',
             sections: {
                 fileNames: {
                     title: 'نام‌های فایل و نام‌های مستعار',
@@ -264,10 +271,11 @@ export const STRINGS_FA = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'جستجوی متن کامل در سراسر خزانه، فیلتر شده بر اساس پوشه فعلی یا برچسب‌های انتخاب شده.',
-                        'ممکن است با کمتر از ۳ کاراکتر در خزانه‌های بزرگ کند باشد.',
-                        'نمی‌تواند مسیرهای دارای کاراکترهای غیر ASCII را جستجو کند یا زیرمسیرها را به درستی جستجو کند.',
-                        'نتایج محدودی قبل از فیلتر پوشه برمی‌گرداند، بنابراین فایل‌های مرتبط ممکن است ظاهر نشوند اگر تطابقات زیادی در جاهای دیگر وجود داشته باشد.',
+                        'جستجو به افزونه Omnisearch ارسال می‌شود و از نحو جستجوی Omnisearch پیروی می‌کند. توکن‌های جستجوی فیلتری مانند `#tag`، `.property` و `@date` معنای خاصی ندارند.',
+                        'وقتی پوشه‌ای انتخاب شده باشد، `path:"<folder>/"` به جستجو افزوده می‌شود تا Omnisearch داخل آن پوشه و زیرپوشه‌های آن را جستجو کند. جستجوهایی که از قبل شامل `path:` هستند بدون تغییر ارسال می‌شوند.',
+                        'Omnisearch حداکثر ۵۰ نتیجه مرتب شده بر اساس ارتباط برمی‌گرداند. در جستجوهایی که تطابق‌های بیشتری دارند، یادداشت‌های با رتبه پایین‌تر نمایش داده نمی‌شوند.',
+                        'محدود کردن دامنه به مسیرهای پوشه با کاراکترهای غیر ASCII به Omnisearch 1.30.0 یا جدیدتر نیاز دارد. نسخه‌های قدیمی‌تر در کل خزانه جستجو می‌کنند و سپس نتایج بر اساس پوشه فیلتر می‌شوند.',
+                        'جستجوهای کمتر از ۳ کاراکتر ممکن است در خزانه‌های بزرگ کند باشند.',
                         'پیش‌نمایش یادداشت‌ها گزیده‌های Omnisearch را به جای متن پیش‌نمایش پیش‌فرض نشان می‌دهد.'
                     ]
                 }
@@ -499,6 +507,8 @@ export const STRINGS_FA = {
                 'list-search': 'جستجو',
                 'list-reveal-file': 'نمایش فایل',
                 'list-descendants': 'یادداشت‌ها از زیرپوشه‌ها',
+                'list-expand-all': 'باز کردن همه گروه‌ها',
+                'list-collapse-all': 'جمع کردن همه گروه‌ها',
                 'list-sort-ascending': 'ترتیب: صعودی',
                 'list-sort-descending': 'ترتیب: نزولی',
                 'list-sort-modified': 'مرتب‌سازی بر اساس تاریخ ویرایش',
@@ -898,7 +908,8 @@ export const STRINGS_FA = {
         togglePropertiesBySelection: 'تغییر ویژگی‌ها بر اساس انتخاب',
         toggleCompactMode: 'تغییر حالت فشرده', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'تغییر بخش سنجاق‌شده',
-        collapseExpand: 'جمع / باز کردن همه آیتم‌ها',
+        collapseExpand: 'جمع / باز کردن همه آیتم‌های ناوبری',
+        collapseExpandListGroups: 'جمع / باز کردن همه گروه‌های فهرست',
         collapseExpandSelectedItem: 'جمع / باز کردن آیتم انتخاب‌شده',
         addTag: 'افزودن برچسب به فایل‌های انتخابی',
         setProperty: 'تنظیم ویژگی روی فایل‌های انتخابی', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -918,6 +929,14 @@ export const STRINGS_FA = {
         revealInNavigator: 'نمایش در Notebook Navigator',
         settingsUnavailableNotice:
             'Notebook Navigator نتوانست تنظیمات خود را بخواند و راه‌اندازی نشد. اگر Vault شما در حال همگام‌سازی است، پس از پایان همگام‌سازی Obsidian را دوباره راه‌اندازی کنید. برای شروع دوباره با تنظیمات پیش‌فرض، فرمان «بازیابی تنظیمات پیش‌فرض» را اجرا کنید.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'شروع با تنظیمات پیش‌فرض؟', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator همین حالا نصب شده و فایل تنظیمات ندارد. اگر این یک نصب جدید یا نصب مجدد است، با تنظیمات پیش‌فرض ادامه دهید. اگر تنظیمات شما از یک سرویس همگام‌سازی می‌آید، لغو کنید، تا پایان همگام‌سازی صبر کنید و سپس Obsidian را دوباره راه‌اندازی کنید.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator مدتی است روی این دستگاه نصب شده است، اما فایل تنظیمات آن موجود نیست. اگر Vault شما هنوز در حال همگام‌سازی است، لغو کنید، تا پایان همگام‌سازی صبر کنید و سپس Obsidian را دوباره راه‌اندازی کنید تا تنظیمات فعلی شما حفظ شود. فقط در صورتی ادامه دهید که می‌خواهید با تنظیمات پیش‌فرض از نو شروع کنید.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'استفاده از تنظیمات پیش‌فرض' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'بازیابی تنظیمات پیش‌فرض', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1274,7 +1293,7 @@ export const STRINGS_FA = {
             },
             dualPane: {
                 name: 'نمای پنل دوگانه',
-                desc: 'پنل ناوبری و پنل لیست را کنار هم در دسکتاپ نمایش دهید.'
+                desc: 'پنل ناوبری و پنل لیست را کنار هم نمایش دهید.'
             },
             dualPaneOrientation: {
                 name: 'جهت پنل دوگانه',
@@ -1320,8 +1339,8 @@ export const STRINGS_FA = {
                 desc: 'سطح زوم کلی Notebook Navigator را کنترل می‌کند (درصد).'
             },
             useFloatingToolbars: {
-                name: 'استفاده از نوار ابزار شناور در iOS/iPadOS',
-                desc: 'فقط برای iOS و iPadOS اعمال می‌شود.'
+                name: 'استفاده از نوار ابزار شناور در iOS',
+                desc: 'فقط برای iOS اعمال می‌شود.'
             },
             startView: {
                 name: 'نمای پیش‌فرض شروع',
@@ -1333,9 +1352,7 @@ export const STRINGS_FA = {
             },
             toolbarButtons: {
                 name: 'دکمه‌های نوار ابزار',
-                desc: 'دکمه‌هایی که در نوار ابزار نمایش داده می‌شوند را انتخاب کنید. دکمه‌های مخفی از طریق دستورات و منوها قابل دسترسی هستند.',
-                navigationLabel: 'نوار ابزار ناوبری',
-                listLabel: 'نوار ابزار لیست'
+                desc: 'دکمه‌هایی که در نوار ابزار نمایش داده می‌شوند را انتخاب کنید. دکمه‌های مخفی از طریق دستورات و منوها قابل دسترسی هستند.'
             },
             createNewNotesInNewTab: {
                 name: 'باز کردن یادداشت‌های جدید در زبانه جدید',
@@ -1900,6 +1917,10 @@ export const STRINGS_FA = {
             skipCodeBlocksInPreview: {
                 name: 'رد شدن از بلوک‌های کد در پیش‌نمایش',
                 desc: 'هنگام تولید متن پیش‌نمایش از بلوک‌های کد رد شوید.'
+            },
+            skipCalloutsInPreview: {
+                name: 'رد شدن از بلوک‌های callout در پیش‌نمایش',
+                desc: 'هنگام تولید متن پیش‌نمایش از بلوک‌های callout رد شوید.'
             },
             stripHtmlInPreview: {
                 name: 'حذف HTML از پیش‌نمایش‌ها',

@@ -28,6 +28,7 @@ import { ServiceIcon } from './ServiceIcon';
 import { useNavigationActions } from '../hooks/useNavigationActions';
 import { runAsyncAction } from '../utils/async';
 import { showNotice } from '../utils/noticeUtils';
+import { usesMobileChrome } from '../utils/paneLayout';
 import { resolveUXIcon } from '../utils/uxIcons';
 
 interface NavigationPaneHeaderProps {
@@ -45,7 +46,7 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
     rootReorderDisabled,
     showVaultTitleInHeader
 }: NavigationPaneHeaderProps) {
-    const { isMobile, plugin } = useServices();
+    const { plugin } = useServices();
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
     const { toggleShowCalendar } = useUXPreferenceActions();
@@ -62,6 +63,10 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
     // Hook providing shared navigation actions (expand/collapse, folder creation, toggle visibility)
     const { shouldCollapseItems, handleExpandCollapseAll, handleNewFolder, handleToggleShowExcludedFolders } = useNavigationActions();
     const navigationVisibility = settings.toolbarVisibility.navigation;
+    // Mobile chrome (profile-only header, actions in the tab bar) applies to phones only.
+    // Tablets render the desktop header in both pane layouts so the toolbars stay at the
+    // top when switching between single and dual pane.
+    const useMobileChrome = usesMobileChrome();
     const showToggleDualPaneButton = navigationVisibility.toggleDualPane;
     const showExpandCollapseButton = navigationVisibility.expandCollapse;
     const showCalendarButton = navigationVisibility.calendar && settings.calendarEnabled && settings.calendarPlacement !== 'right-sidebar';
@@ -74,7 +79,7 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
     }
 
     // Clickable element that displays the active profile name and opens the profile menu on interaction
-    const shouldRenderProfileTrigger = hasMultipleProfiles && (isMobile || showVaultTitleInHeader);
+    const shouldRenderProfileTrigger = hasMultipleProfiles && (useMobileChrome || showVaultTitleInHeader);
     const profileTriggerContent = (
         <>
             <span className="nn-pane-header-text">{activeProfileName}</span>
@@ -86,7 +91,7 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
         </>
     );
     const profileTrigger = shouldRenderProfileTrigger ? (
-        isMobile ? (
+        useMobileChrome ? (
             <div
                 className="nn-pane-header-title nn-pane-header-profile"
                 aria-label={strings.navigationPane.profileMenuAria}
@@ -113,7 +118,7 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
         )
     ) : null;
 
-    if (isMobile) {
+    if (useMobileChrome) {
         if (!profileTrigger) {
             return null;
         }

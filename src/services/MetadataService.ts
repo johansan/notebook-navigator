@@ -30,12 +30,13 @@ import {
     type FolderDisplayData,
     type TagColorData,
     type PropertyColorData,
-    type FileMetadataMigrationResult
+    type FileMetadataMigrationResult,
+    type MetadataCleanupResult
 } from './metadata';
 import { TagTreeNode } from '../types/storage';
 import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstance } from '../storage/fileOperations';
-import { NavigatorContext } from '../types';
+import { NavigatorContext, type CollapsedPinnedContexts } from '../types';
 import type { NavigationSeparatorTarget } from '../utils/navigationSeparators';
 import { buildPropertyKeyNodeId } from '../utils/propertyTree';
 import { casefold, getCollapsedPinnedContextTarget } from '../utils/recordUtils';
@@ -528,11 +529,14 @@ export class MetadataService {
     /**
      * Cleanup metadata for folders, tags, and files
      * Called on plugin startup to remove references to deleted items
-     * @returns True if any changes were made
+     * @returns Separate settings and local-storage change flags
      */
-    async cleanupAllMetadata(targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings): Promise<boolean> {
+    async cleanupAllMetadata(
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<MetadataCleanupResult> {
         const validators = MetadataService.prepareCleanupValidators(this.app);
-        return this.runUnifiedCleanup(validators, targetSettings);
+        return this.runUnifiedCleanup(validators, targetSettings, collapsedPinnedContextsOverride);
     }
 
     /**
@@ -550,28 +554,42 @@ export class MetadataService {
      * This avoids multiple file iterations during startup
      *
      * @param validators - Object containing database files, tag tree, and vault files
-     * @returns true if any changes were made
+     * @param targetSettings - Settings object to clean; defaults to live settings
+     * @param collapsedPinnedContextsOverride - Dry-run record for pinned-section collapse keys.
+     *   When provided, stale keys are removed from this record only; otherwise the vault-local store is mutated and persisted.
+     * @returns Separate flags so local-only cleanup does not trigger a data.json save
      */
     async runUnifiedCleanup(
         validators: CleanupValidators,
-        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings
-    ): Promise<boolean> {
+        targetSettings: NotebookNavigatorSettings = this.settingsProvider.settings,
+        collapsedPinnedContextsOverride?: CollapsedPinnedContexts
+    ): Promise<MetadataCleanupResult> {
         const [folderChanges, tagChanges, propertyChanges, fileChanges, separatorChanges] = await Promise.all([
-            this.folderService.cleanupWithValidators(validators, targetSettings),
-            this.tagService.cleanupWithValidators(validators, targetSettings),
-            this.propertyService.cleanupWithValidators(validators, targetSettings),
+            this.folderService.cleanupWithValidators(validators, targetSettings, collapsedPinnedContextsOverride),
+            this.tagService.cleanupWithValidators(validators, targetSettings, collapsedPinnedContextsOverride),
+            this.propertyService.cleanupWithValidators(validators, targetSettings, collapsedPinnedContextsOverride),
             this.fileService.cleanupWithValidators(validators, targetSettings),
             this.navigationSeparatorService.cleanupWithValidators(validators, targetSettings)
         ]);
 
-        return folderChanges || tagChanges || propertyChanges || fileChanges || separatorChanges;
+        return {
+            settingsChanged:
+                folderChanges.settingsChanged ||
+                tagChanges.settingsChanged ||
+                propertyChanges.settingsChanged ||
+                fileChanges ||
+                separatorChanges,
+            localChanged: folderChanges.localChanged || tagChanges.localChanged || propertyChanges.localChanged
+        };
     }
 
     async getCleanupSummary(): Promise<MetadataCleanupSummary> {
         const clonedSettings = MetadataService.cloneSettings(this.settingsProvider.settings);
-        const before = MetadataService.computeMetadataCounts(clonedSettings);
-        await this.cleanupAllMetadata(clonedSettings);
-        const after = MetadataService.computeMetadataCounts(clonedSettings);
+        // Clone the vault-local record so the dry run never mutates persisted pinned-section collapse state
+        const clonedCollapsedPinnedContexts = this.settingsProvider.getCollapsedPinnedContexts();
+        const before = MetadataService.computeMetadataCounts(clonedSettings, clonedCollapsedPinnedContexts);
+        await this.cleanupAllMetadata(clonedSettings, clonedCollapsedPinnedContexts);
+        const after = MetadataService.computeMetadataCounts(clonedSettings, clonedCollapsedPinnedContexts);
 
         const folders = Math.max(0, before.folders - after.folders);
         const tags = Math.max(0, before.tags - after.tags);
@@ -588,7 +606,7 @@ export class MetadataService {
         return JSON.parse(JSON.stringify(settings)) as NotebookNavigatorSettings;
     }
 
-    private static computeMetadataCounts(settings: NotebookNavigatorSettings) {
+    private static computeMetadataCounts(settings: NotebookNavigatorSettings, collapsedPinnedContexts: CollapsedPinnedContexts) {
         const folderKeys = MetadataService.collectUniqueKeys([
             settings.folderColors,
             settings.folderBackgroundColors,
@@ -629,7 +647,7 @@ export class MetadataService {
             });
         });
 
-        Object.keys(settings.collapsedPinnedContexts ?? {}).forEach(key => {
+        Object.keys(collapsedPinnedContexts).forEach(key => {
             const folderTarget = getCollapsedPinnedContextTarget(key, 'folder');
             if (folderTarget !== null) {
                 folderKeys.add(folderTarget);

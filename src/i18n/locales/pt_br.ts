@@ -134,6 +134,8 @@ export const STRINGS_PT_BR = {
     paneHeader: {
         collapseAllFolders: 'Recolher itens',
         expandAllFolders: 'Expandir todos os itens',
+        collapseAllListGroups: 'Recolher todos os grupos da lista',
+        expandAllListGroups: 'Expandir todos os grupos da lista',
         showCalendar: 'Mostrar calendário',
         hideCalendar: 'Ocultar calendário',
         newFolder: 'Nova pasta',
@@ -184,9 +186,14 @@ export const STRINGS_PT_BR = {
         searchHelp: 'Sintaxe de pesquisa',
         searchHelpTitle: 'Sintaxe de pesquisa',
         searchHelpModal: {
-            intro: 'Combine nomes de exibição, aliases, propriedades, tags, datas e filtros em uma consulta (ex. `meeting .status=active #work @thisweek`). Instale o plugin Omnisearch para usar pesquisa de texto completo.',
+            intro: 'A pesquisa por filtro encontra notas por nomes de exibição, aliases, propriedades, tags, datas e filtros, combinados em uma consulta (ex. `meeting .status=active #work @thisweek`). Clique no ícone de estrela para salvar uma pesquisa como atalho.',
+            introInstallOmnisearch: 'A pesquisa de texto completo no conteúdo das notas requer o plugin Omnisearch.',
             introSwitching:
                 'Alterne entre pesquisa por filtro e Omnisearch usando as teclas de seta para cima/baixo ou clicando no ícone de pesquisa.',
+            activeFilterSearch: 'A pesquisa por filtro está ativa.',
+            activeOmnisearch: 'O Omnisearch está ativo.',
+            omnisearchIntro:
+                'O Omnisearch realiza pesquisa de texto completo no conteúdo das notas de todo o cofre. O Notebook Navigator mostra as correspondências que pertencem à pasta, tag ou seleção atual.',
             sections: {
                 fileNames: {
                     title: 'Nomes de arquivos e aliases',
@@ -266,10 +273,11 @@ export const STRINGS_PT_BR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Pesquisa de texto completo em todo o cofre, filtrada pela pasta atual ou tags selecionadas.',
-                        'Pode ser lento com menos de 3 caracteres em cofres grandes.',
-                        'Não consegue pesquisar caminhos com caracteres não-ASCII ou pesquisar subcaminhos corretamente.',
-                        'Retorna resultados limitados antes da filtragem por pasta, então arquivos relevantes podem não aparecer se muitas correspondências existirem em outros locais.',
+                        'A consulta é enviada ao plugin Omnisearch e segue a sintaxe de consulta do Omnisearch. Tokens da pesquisa por filtro como `#tag`, `.property` e `@date` não têm significado especial.',
+                        'Quando uma pasta está selecionada, `path:"<folder>/"` é adicionado à consulta para que o Omnisearch encontre correspondências nessa pasta e em suas subpastas. Consultas que já contêm `path:` são enviadas sem alterações.',
+                        'O Omnisearch retorna no máximo 50 resultados classificados por relevância. Pesquisas com mais correspondências omitem as notas com classificação mais baixa.',
+                        'Limitar a pesquisa a caminhos de pasta com caracteres não-ASCII requer o Omnisearch 1.30.0 ou posterior. Versões mais antigas pesquisam em todo o cofre e os resultados são depois filtrados pela pasta.',
+                        'Consultas com menos de 3 caracteres podem ser lentas em cofres grandes.',
                         'As prévias das notas mostram trechos do Omnisearch em vez do texto de prévia padrão.'
                     ]
                 }
@@ -501,6 +509,8 @@ export const STRINGS_PT_BR = {
                 'list-search': 'Pesquisar',
                 'list-reveal-file': 'Revelar arquivo',
                 'list-descendants': 'Notas de subpastas',
+                'list-expand-all': 'Expandir todos os grupos',
+                'list-collapse-all': 'Recolher todos os grupos',
                 'list-sort-ascending': 'Ordem: crescente',
                 'list-sort-descending': 'Ordem: decrescente',
                 'list-sort-modified': 'Classificar por data de edição',
@@ -900,7 +910,8 @@ export const STRINGS_PT_BR = {
         togglePropertiesBySelection: 'Alternar propriedades por seleção',
         toggleCompactMode: 'Alternar modo compacto', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Alternar seção fixada',
-        collapseExpand: 'Recolher / expandir todos os itens',
+        collapseExpand: 'Recolher / expandir todos os itens de navegação',
+        collapseExpandListGroups: 'Recolher / expandir todos os grupos da lista',
         collapseExpandSelectedItem: 'Recolher / expandir o item selecionado',
         addTag: 'Adicionar tag aos arquivos selecionados',
         setProperty: 'Definir propriedade nos arquivos selecionados', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -920,6 +931,14 @@ export const STRINGS_PT_BR = {
         revealInNavigator: 'Revelar no Notebook Navigator',
         settingsUnavailableNotice:
             'O Notebook Navigator não conseguiu ler suas configurações e não foi iniciado. Se o cofre estiver sincronizando, reinicie o Obsidian após a sincronização terminar. Para recomeçar com as configurações padrão, execute o comando "Restaurar configurações padrão".', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Iniciar com as configurações padrão?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'O Notebook Navigator acabou de ser instalado e não tem arquivo de configurações. Se for uma instalação nova ou uma reinstalação, continue com as configurações padrão. Se suas configurações vierem de um serviço de sincronização, cancele, aguarde a sincronização terminar e reinicie o Obsidian.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'O Notebook Navigator está instalado neste dispositivo há algum tempo, mas o arquivo de configurações está faltando. Se o cofre ainda estiver sincronizando, cancele, aguarde a sincronização terminar e reinicie o Obsidian para manter as configurações existentes. Continue apenas para recomeçar com as configurações padrão.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Usar configurações padrão' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Restaurar configurações padrão', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1276,7 +1295,7 @@ export const STRINGS_PT_BR = {
             },
             dualPane: {
                 name: 'Layout de painel duplo',
-                desc: 'Mostrar painel de navegação e painel de lista lado a lado no desktop.'
+                desc: 'Mostrar painel de navegação e painel de lista lado a lado.'
             },
             dualPaneOrientation: {
                 name: 'Orientação do painel duplo',
@@ -1322,8 +1341,8 @@ export const STRINGS_PT_BR = {
                 desc: 'Controla o nível de zoom geral do Notebook Navigator (porcentagem).'
             },
             useFloatingToolbars: {
-                name: 'Usar barras de ferramentas flutuantes no iOS/iPadOS',
-                desc: 'Aplica-se apenas ao iOS e iPadOS.'
+                name: 'Usar barras de ferramentas flutuantes no iOS',
+                desc: 'Aplica-se apenas ao iOS.'
             },
             startView: {
                 name: 'Visualização inicial padrão',
@@ -1335,9 +1354,7 @@ export const STRINGS_PT_BR = {
             },
             toolbarButtons: {
                 name: 'Botões da barra de ferramentas',
-                desc: 'Escolha quais botões aparecem na barra de ferramentas. Botões ocultos permanecem acessíveis via comandos e menus.',
-                navigationLabel: 'Barra de navegação',
-                listLabel: 'Barra de lista'
+                desc: 'Escolha quais botões aparecem na barra de ferramentas. Botões ocultos permanecem acessíveis via comandos e menus.'
             },
             createNewNotesInNewTab: {
                 name: 'Abrir novas notas em nova aba',
@@ -1904,6 +1921,10 @@ export const STRINGS_PT_BR = {
             skipCodeBlocksInPreview: {
                 name: 'Pular blocos de código na visualização',
                 desc: 'Pular blocos de código ao gerar texto de visualização.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Pular callouts na visualização',
+                desc: 'Pular blocos de callout ao gerar texto de visualização.'
             },
             stripHtmlInPreview: {
                 name: 'Remover HTML nas visualizações',

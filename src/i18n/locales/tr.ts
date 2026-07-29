@@ -134,6 +134,8 @@ export const STRINGS_TR = {
     paneHeader: {
         collapseAllFolders: 'Öğeleri daralt', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Tüm öğeleri genişlet', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Tüm liste gruplarını daralt',
+        expandAllListGroups: 'Tüm liste gruplarını genişlet',
         showCalendar: 'Takvimi göster',
         hideCalendar: 'Takvimi gizle',
         newFolder: 'Yeni klasör', // Tooltip for create new folder button (English: New folder)
@@ -183,9 +185,14 @@ export const STRINGS_TR = {
         searchHelp: 'Arama sözdizimi',
         searchHelpTitle: 'Arama sözdizimi',
         searchHelpModal: {
-            intro: 'Görünen adları, takma adları, özellikleri, etiketleri, tarihleri ve filtreleri tek bir sorguda birleştirin (örn. `meeting .status=active #work @thisweek`). Tam metin araması kullanmak için Omnisearch eklentisini yükleyin.',
+            intro: 'Filtre araması, tek bir sorguda birleştirilen görünen adlar, takma adlar, özellikler, etiketler, tarihler ve filtrelerle notları bulur (örn. `meeting .status=active #work @thisweek`). Bir aramayı kısayol olarak kaydetmek için yıldız simgesine tıklayın.',
+            introInstallOmnisearch: 'Not içeriğinde tam metin araması Omnisearch eklentisini gerektirir.',
             introSwitching:
                 'Yukarı/aşağı ok tuşlarını kullanarak veya arama simgesine tıklayarak filtre araması ve Omnisearch arasında geçiş yapın.',
+            activeFilterSearch: 'Filtre araması etkin.',
+            activeOmnisearch: 'Omnisearch etkin.',
+            omnisearchIntro:
+                'Omnisearch, kasanın tamamındaki not içeriğinde tam metin araması yapar. Notebook Navigator geçerli klasöre, etikete veya seçime ait eşleşmeleri gösterir.',
             sections: {
                 fileNames: {
                     title: 'Dosya adları ve takma adlar',
@@ -265,10 +272,11 @@ export const STRINGS_TR = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Kasadaki tam metin araması, geçerli klasör veya seçili etiketlere göre filtrelenir.',
-                        'Büyük kasalarda 3 karakterden az ile yavaş olabilir.',
-                        'ASCII olmayan karakterler içeren yolları veya alt yolları doğru şekilde arayamaz.',
-                        'Klasör filtrelemesinden önce sınırlı sonuç döndürür, bu nedenle başka yerlerde çok sayıda eşleşme varsa ilgili dosyalar görünmeyebilir.',
+                        'Sorgu Omnisearch eklentisine gönderilir ve Omnisearch sorgu sözdizimini takip eder. `#tag`, `.property` ve `@date` gibi filtre araması belirteçlerinin özel bir anlamı yoktur.',
+                        'Bir klasör seçildiğinde, sorguya `path:"<folder>/"` eklenir; böylece Omnisearch o klasör ve alt klasörleri içinde eşleşme arar. Zaten `path:` içeren sorgular değiştirilmeden gönderilir.',
+                        'Omnisearch alaka düzeyine göre sıralanmış en fazla 50 sonuç döndürür. Bundan daha fazla eşleşmesi olan aramalarda düşük sıralı notlar gösterilmez.',
+                        'ASCII olmayan karakterler içeren klasör yollarıyla kapsam belirlemek Omnisearch 1.30.0 veya sonrasını gerektirir. Daha eski sürümler kasanın tamamında arama yapar ve sonuçlar daha sonra klasöre göre filtrelenir.',
+                        '3 karakterden kısa sorgular büyük kasalarda yavaş olabilir.',
                         'Not önizlemeleri varsayılan önizleme metni yerine Omnisearch alıntılarını gösterir.'
                     ]
                 }
@@ -499,6 +507,8 @@ export const STRINGS_TR = {
                 'list-search': 'Ara',
                 'list-reveal-file': 'Dosyayı göster',
                 'list-descendants': 'Alt klasörlerden notlar',
+                'list-expand-all': 'Tüm grupları genişlet',
+                'list-collapse-all': 'Tüm grupları daralt',
                 'list-sort-ascending': 'Sıralama: artan',
                 'list-sort-descending': 'Sıralama: azalan',
                 'list-sort-modified': 'Düzenlenme tarihine göre sırala',
@@ -896,7 +906,8 @@ export const STRINGS_TR = {
         togglePropertiesBySelection: 'Özellikleri seçime göre aç/kapat',
         toggleCompactMode: 'Kompakt modu aç/kapat', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Sabitlenmiş bölümü aç/kapat',
-        collapseExpand: 'Tüm öğeleri daralt / genişlet', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Tüm gezinme öğelerini daralt / genişlet', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Tüm liste gruplarını daralt / genişlet',
         collapseExpandSelectedItem: 'Seçili öğeyi daralt / genişlet',
         addTag: 'Seçili dosyalara etiket ekle', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Seçili dosyalarda özellik ayarla', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -916,6 +927,14 @@ export const STRINGS_TR = {
         revealInNavigator: "Notebook Navigator'da göster", // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator ayarlarını okuyamadı ve başlatılmadı. Kasanız eşitleniyorsa, eşitleme tamamlandıktan sonra Obsidian uygulamasını yeniden başlatın. Varsayılan ayarlarla yeniden başlamak için "Varsayılan ayarları geri yükle" komutunu çalıştırın.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'Varsayılan ayarlarla başlansın mı?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator az önce yüklendi ve ayar dosyası yok. Bu yeni bir yükleme veya yeniden yükleme ise varsayılan ayarlarla devam edin. Ayarlarınız bir eşitleme hizmetinden geliyorsa iptal edin, eşitlemenin tamamlanmasını bekleyin ve Obsidian uygulamasını yeniden başlatın.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator bu cihazda bir süredir yüklü, ancak ayar dosyası eksik. Kasanız hâlâ eşitleniyorsa iptal edin, eşitlemenin tamamlanmasını bekleyin ve mevcut ayarlarınızı korumak için Obsidian uygulamasını yeniden başlatın. Yalnızca varsayılan ayarlarla yeniden başlamak için devam edin.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'Varsayılan ayarları kullan' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'Varsayılan ayarları geri yükle', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1272,7 +1291,7 @@ export const STRINGS_TR = {
             },
             dualPane: {
                 name: 'Çift bölme düzeni',
-                desc: 'Masaüstünde gezinme bölmesini ve liste bölmesini yan yana göster.'
+                desc: 'Gezinme bölmesini ve liste bölmesini yan yana göster.'
             },
             dualPaneOrientation: {
                 name: 'Çift bölme yönü',
@@ -1318,8 +1337,8 @@ export const STRINGS_TR = {
                 desc: "Notebook Navigator'ın genel yakınlaştırma seviyesini kontrol eder (yüzde)."
             },
             useFloatingToolbars: {
-                name: "iOS/iPadOS'ta kayan araç çubuklarını kullan",
-                desc: 'Yalnızca iOS ve iPadOS için geçerlidir.'
+                name: "iOS'ta kayan araç çubuklarını kullan",
+                desc: 'Yalnızca iOS için geçerlidir.'
             },
             startView: {
                 name: 'Varsayılan başlangıç görünümü',
@@ -1331,9 +1350,7 @@ export const STRINGS_TR = {
             },
             toolbarButtons: {
                 name: 'Araç çubuğu düğmeleri',
-                desc: 'Araç çubuğunda hangi düğmelerin görüneceğini seçin. Gizli düğmelere komutlar ve menüler aracılığıyla erişilebilir.',
-                navigationLabel: 'Gezinme araç çubuğu',
-                listLabel: 'Liste araç çubuğu'
+                desc: 'Araç çubuğunda hangi düğmelerin görüneceğini seçin. Gizli düğmelere komutlar ve menüler aracılığıyla erişilebilir.'
             },
             createNewNotesInNewTab: {
                 name: 'Yeni notları yeni sekmede aç',
@@ -1898,6 +1915,10 @@ export const STRINGS_TR = {
             skipCodeBlocksInPreview: {
                 name: 'Önizlemede kod bloklarını atla',
                 desc: 'Önizleme metni oluştururken kod bloklarını atla.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Önizlemede callout bloklarını atla',
+                desc: 'Önizleme metni oluştururken callout bloklarını atla.'
             },
             stripHtmlInPreview: {
                 name: 'Önizlemelerde HTML kaldır',

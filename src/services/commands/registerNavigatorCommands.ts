@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Command } from 'obsidian';
+import { Platform, type Command } from 'obsidian';
 import type NotebookNavigatorPlugin from '../../main';
 import { strings } from '../../i18n';
 
@@ -28,7 +28,9 @@ interface NavigatorCommandSpec {
 
 const STATIC_COMMAND_SPECS: NavigatorCommandSpec[] = [
     { id: 'open', name: strings.commands.open },
-    { id: 'toggle-left-sidebar', name: strings.commands.toggleLeftSidebar },
+    // Desktop only: on mobile the sidebar is a drawer, and on tablets collapse() is a
+    // no-op while the sidebar is pinned, so the command would do nothing
+    ...(Platform.isMobile ? [] : [{ id: 'toggle-left-sidebar', name: strings.commands.toggleLeftSidebar }]),
     { id: 'open-homepage', name: strings.commands.openHomepage, checkable: true },
     { id: 'reveal-file', name: strings.commands.revealFile, checkable: true },
     { id: 'open-all-files', name: strings.commands.openAllFiles, checkable: true },
@@ -39,6 +41,7 @@ const STATIC_COMMAND_SPECS: NavigatorCommandSpec[] = [
     { id: 'toggle-properties-by-selection', name: strings.commands.togglePropertiesBySelection },
     { id: 'toggle-compact-mode', name: strings.commands.toggleCompactMode },
     { id: 'toggle-pinned-section', name: strings.commands.togglePinnedSection },
+    { id: 'collapse-expand-list-groups', name: strings.commands.collapseExpandListGroups },
     { id: 'toggle-dual-pane', name: strings.commands.toggleDualPane },
     { id: 'toggle-dual-pane-orientation', name: strings.commands.toggleDualPaneOrientation },
     { id: 'toggle-calendar', name: strings.commands.toggleCalendar },

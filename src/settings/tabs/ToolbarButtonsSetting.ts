@@ -21,6 +21,7 @@ import { strings } from '../../i18n';
 import type NotebookNavigatorPlugin from '../../main';
 import { getIconService } from '../../services/icons';
 import { runAsyncAction } from '../../utils/async';
+import { isDualPaneSupported } from '../../utils/paneLayout';
 import { resolveUXIcon, type UXIconId } from '../../utils/uxIcons';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import type { ListToolbarButtonId, NavigationToolbarButtonId } from '../types';
@@ -44,54 +45,62 @@ const LIST_TOOLBAR_BUTTONS: ToolbarButtonConfig<ListToolbarButtonId>[] = [
     { id: 'search', iconType: 'ux', iconId: 'list-search', label: strings.paneHeader.search },
     { id: 'reveal', iconType: 'ux', iconId: 'list-reveal-file', label: strings.commands.revealFile },
     { id: 'descendants', iconType: 'ux', iconId: 'list-descendants', label: strings.settings.items.includeDescendantNotes.name },
+    { id: 'groupExpansion', iconType: 'ux', iconId: 'list-expand-all', label: strings.commands.collapseExpandListGroups },
     { id: 'sort', iconType: 'ux', iconId: 'list-sort-ascending', label: strings.paneHeader.changeSortAndGroup },
     { id: 'appearance', iconType: 'ux', iconId: 'list-appearance', label: strings.paneHeader.changeAppearance },
     { id: 'newNote', iconType: 'ux', iconId: 'list-new-note', label: strings.paneHeader.newNote }
 ];
 
+/** Renders the button visibility grid for one toolbar. Both grids persist the shared toolbarVisibility setting. */
 export function renderToolbarButtonsSetting(
     addSetting: (createSetting: (setting: Setting) => void) => Setting,
-    plugin: NotebookNavigatorPlugin
+    plugin: NotebookNavigatorPlugin,
+    toolbar: 'navigation' | 'list'
 ): void {
-    const navigationToolbarButtons = plugin.settings.calendarEnabled
-        ? NAVIGATION_TOOLBAR_BUTTONS
-        : NAVIGATION_TOOLBAR_BUTTONS.filter(button => button.id !== 'calendar');
-
     const setting = addSetting(setting => {
         setting.setName(strings.settings.items.toolbarButtons.name).setDesc(strings.settings.items.toolbarButtons.desc);
     });
 
     setting.controlEl.addClass('nn-toolbar-visibility-control');
-    const sectionsEl = setting.controlEl.createDiv({ cls: 'nn-toolbar-visibility-sections' });
+    const gridEl = setting.controlEl.createDiv({ cls: ['nn-toolbar-visibility-grid', 'nn-toolbar-visibility-grid-scroll'] });
+    const onToggle = () => {
+        runAsyncAction(() => plugin.persistToolbarVisibility());
+    };
 
-    createToolbarButtonGroup({
-        containerEl: sectionsEl,
-        label: strings.settings.items.toolbarButtons.navigationLabel,
-        buttons: navigationToolbarButtons,
-        interfaceIcons: plugin.settings.interfaceIcons,
-        state: plugin.settings.toolbarVisibility.navigation,
-        onToggle: () => {
-            runAsyncAction(() => plugin.persistToolbarVisibility());
-        }
-    });
-
-    createToolbarButtonGroup({
-        containerEl: sectionsEl,
-        label: strings.settings.items.toolbarButtons.listLabel,
-        buttons: LIST_TOOLBAR_BUTTONS,
-        interfaceIcons: plugin.settings.interfaceIcons,
-        state: plugin.settings.toolbarVisibility.list,
-        onToggle: () => {
-            runAsyncAction(() => plugin.persistToolbarVisibility());
-        }
-    });
+    if (toolbar === 'navigation') {
+        const navigationToolbarButtons = NAVIGATION_TOOLBAR_BUTTONS.filter(button => {
+            if (button.id === 'calendar') {
+                return plugin.settings.calendarEnabled;
+            }
+            // The dual pane toggle renders only in the desktop pane header, which desktop
+            // and tablets always show; phones never render it
+            if (button.id === 'toggleDualPane') {
+                return isDualPaneSupported();
+            }
+            return true;
+        });
+        createToolbarButtonGroup({
+            gridEl,
+            buttons: navigationToolbarButtons,
+            interfaceIcons: plugin.settings.interfaceIcons,
+            state: plugin.settings.toolbarVisibility.navigation,
+            onToggle
+        });
+    } else {
+        createToolbarButtonGroup({
+            gridEl,
+            buttons: LIST_TOOLBAR_BUTTONS,
+            interfaceIcons: plugin.settings.interfaceIcons,
+            state: plugin.settings.toolbarVisibility.list,
+            onToggle
+        });
+    }
 
     addSettingSyncModeToggle({ setting, plugin, settingId: 'toolbarVisibility' });
 }
 
 interface ToolbarButtonGroupProps<T extends string> {
-    containerEl: HTMLElement;
-    label: string;
+    gridEl: HTMLElement;
     buttons: ToolbarButtonConfig<T>[];
     interfaceIcons: Record<string, string> | undefined;
     state: Record<T, boolean>;
@@ -99,17 +108,12 @@ interface ToolbarButtonGroupProps<T extends string> {
 }
 
 function createToolbarButtonGroup<T extends string>({
-    containerEl,
-    label,
+    gridEl,
     buttons,
     interfaceIcons,
     state,
     onToggle
 }: ToolbarButtonGroupProps<T>): void {
-    const groupEl = containerEl.createDiv({ cls: 'nn-toolbar-visibility-group' });
-    groupEl.createDiv({ cls: 'nn-toolbar-visibility-group-label', text: label });
-    const gridEl = groupEl.createDiv({ cls: ['nn-toolbar-visibility-grid', 'nn-toolbar-visibility-grid-scroll'] });
-
     buttons.forEach(button => {
         const buttonEl = gridEl.createEl('button', {
             cls: ['nn-toolbar-visibility-toggle', 'nn-mobile-toolbar-button'],

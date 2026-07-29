@@ -77,6 +77,7 @@ export interface HeaderRenderModel {
     folderGroupHeaderSegments: FolderGroupHeaderSegment[];
     groupFilePaths: string[];
     itemCount: number | null;
+    totalItemCount: number | null;
     manualSortHeaderFilePath: string | null;
     manualSortHeader: ManualSortGroupHeaderData | null;
     manualSortHeaderWordCount: number;
@@ -268,8 +269,10 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
     const folderColor = header.folderColor ?? undefined;
     const folderIconStyle = folderColor ? { color: folderColor } : undefined;
     const folderLabelStyle = header.applyFolderColorToLabel && folderColor ? { color: folderColor } : undefined;
-    const handleCollapseButtonClick = useCallback(
-        (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Shared by the header row and the chevron button. stopPropagation keeps a chevron click from
+    // bubbling to the row handler, which would toggle the group twice and leave it unchanged.
+    const handleCollapseToggle = useCallback(
+        (event: React.MouseEvent<HTMLElement>) => {
             event.stopPropagation();
             if (header.isPinnedHeader) {
                 onPinnedGroupHeaderToggle();
@@ -283,6 +286,9 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
         [header.collapseKey, header.isPinnedHeader, onListGroupHeaderToggle, onPinnedGroupHeaderToggle]
     );
     const headerClasses = ['nn-list-group-header'];
+    if (header.isCollapsible) {
+        headerClasses.push('nn-list-group-header--collapsible');
+    }
     if (header.isPinnedHeader) {
         headerClasses.push('nn-pinned-section-header');
     }
@@ -312,7 +318,15 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
                                 ) : null}
                                 <span
                                     className={segmentClassName}
-                                    onClick={segmentTarget ? event => onFolderGroupHeaderClick(event, segmentTarget) : undefined}
+                                    onClick={
+                                        segmentTarget
+                                            ? event => {
+                                                  // Folder-note navigation must not bubble to the row-level collapse toggle
+                                                  event.stopPropagation();
+                                                  onFolderGroupHeaderClick(event, segmentTarget);
+                                              }
+                                            : undefined
+                                    }
                                     onMouseDown={segmentTarget ? event => onFolderGroupHeaderMouseDown(event, segmentTarget) : undefined}
                                 >
                                     {segment.label}
@@ -328,7 +342,15 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
             <span
                 className={textClassName}
                 style={folderLabelStyle}
-                onClick={folderGroupHeaderTarget ? event => onFolderGroupHeaderClick(event, folderGroupHeaderTarget) : undefined}
+                onClick={
+                    folderGroupHeaderTarget
+                        ? event => {
+                              // Folder-note navigation must not bubble to the row-level collapse toggle
+                              event.stopPropagation();
+                              onFolderGroupHeaderClick(event, folderGroupHeaderTarget);
+                          }
+                        : undefined
+                }
                 onMouseDown={folderGroupHeaderTarget ? event => onFolderGroupHeaderMouseDown(event, folderGroupHeaderTarget) : undefined}
             >
                 {header.label}
@@ -337,7 +359,11 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
     };
 
     const headerRow = (
-        <div className={headerClasses.join(' ')} onContextMenu={hasManualSortGoal ? undefined : handleContextMenu}>
+        <div
+            className={headerClasses.join(' ')}
+            onClick={header.isCollapsible ? handleCollapseToggle : undefined}
+            onContextMenu={hasManualSortGoal ? undefined : handleContextMenu}
+        >
             {manualSortHeader ? (
                 <ManualSortGroupHeaderContent
                     header={manualSortHeader}
@@ -365,14 +391,19 @@ export const ListPaneGroupHeader = React.memo(function ListPaneGroupHeader({
                     {renderFolderGroupHeaderText()}
                 </>
             )}
-            {header.itemCount !== null ? <span className="nn-list-group-header-item-count">({header.itemCount})</span> : null}
+            {header.itemCount !== null ? (
+                <span className="nn-list-group-header-item-count">
+                    ({header.itemCount}
+                    {header.totalItemCount !== null ? `/${header.totalItemCount}` : ''})
+                </span>
+            ) : null}
             {header.isCollapsible ? (
                 <button
                     type="button"
                     className="nn-list-group-header-collapse-button"
                     aria-label={header.isCollapsed ? strings.listPane.expandGroup : strings.listPane.collapseGroup}
                     aria-expanded={!header.isCollapsed}
-                    onClick={handleCollapseButtonClick}
+                    onClick={handleCollapseToggle}
                 >
                     <ServiceIcon
                         iconId={header.isCollapsed ? collapseChevronIcons.collapsed : collapseChevronIcons.expanded}
@@ -639,7 +670,7 @@ export function ListPaneVirtualContent({
     fileItemPillOrderModel,
     getSolidBackground
 }: ListPaneVirtualContentProps) {
-    const { app, commandQueue, isMobile, plugin } = useServices();
+    const { app, commandQueue, plugin } = useServices();
     const fileSystemOps = useFileSystemOps();
     const metadataService = useMetadataService();
     const collapseChevronIcons = useMemo(
@@ -779,6 +810,7 @@ export function ListPaneVirtualContent({
                 folderGroupHeaderSegments,
                 groupFilePaths: item.groupFilePaths ?? [],
                 itemCount: settings.showGroupHeaderItemCounts ? (item.groupFilePaths?.length ?? 0) : null,
+                totalItemCount: settings.showGroupHeaderItemCounts ? (item.groupTotalItemCount ?? null) : null,
                 manualSortHeaderFilePath: item.headerKind === 'manual-sort-custom' ? (item.manualSortHeaderFilePath ?? null) : null,
                 manualSortHeader,
                 manualSortHeaderWordCount: item.manualSortHeaderWordCount ?? 0,
@@ -824,12 +856,7 @@ export function ListPaneVirtualContent({
                 return;
             }
 
-            const openContext = resolveFolderNoteClickOpenContext(
-                event,
-                settings.folderNoteOpenLocation,
-                settings.multiSelectModifier,
-                isMobile
-            );
+            const openContext = resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier);
 
             if (
                 openContext === 'right-sidebar' &&
@@ -853,7 +880,6 @@ export function ListPaneVirtualContent({
         [
             app,
             commandQueue,
-            isMobile,
             onNavigateToFolder,
             plugin,
             selectedFolderPath,

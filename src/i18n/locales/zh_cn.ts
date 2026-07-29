@@ -133,6 +133,8 @@ export const STRINGS_ZH_CN = {
     paneHeader: {
         collapseAllFolders: '折叠项目', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: '展开所有项目', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: '折叠所有列表分组',
+        expandAllListGroups: '展开所有列表分组',
         showCalendar: '显示日历',
         hideCalendar: '隐藏日历',
         newFolder: '新建文件夹', // Tooltip for create new folder button (English: New folder)
@@ -182,8 +184,12 @@ export const STRINGS_ZH_CN = {
         searchHelp: '搜索语法',
         searchHelpTitle: '搜索语法',
         searchHelpModal: {
-            intro: '在一个查询中组合显示名称、别名、属性、标签、日期和过滤器（例如：`meeting .status=active #work @thisweek`）。安装 Omnisearch 插件以使用全文搜索。',
+            intro: '过滤搜索通过显示名称、别名、属性、标签、日期和过滤器查找笔记，可在一个查询中组合使用（例如：`meeting .status=active #work @thisweek`）。点击星形图标可将搜索保存到快捷方式。',
+            introInstallOmnisearch: '全文搜索笔记内容需要 Omnisearch 插件。',
             introSwitching: '使用上/下箭头键或点击搜索图标在过滤搜索和 Omnisearch 之间切换。',
+            activeFilterSearch: '过滤搜索已启用。',
+            activeOmnisearch: 'Omnisearch 已启用。',
+            omnisearchIntro: 'Omnisearch 对整个仓库的笔记内容执行全文搜索。Notebook Navigator 显示属于当前文件夹、标签或所选内容的匹配项。',
             sections: {
                 fileNames: {
                     title: '文件名和别名',
@@ -263,10 +269,11 @@ export const STRINGS_ZH_CN = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        '对整个仓库进行全文搜索，按当前文件夹或选定标签过滤。',
-                        '在大型仓库中输入少于3个字符时可能会较慢。',
-                        '无法搜索包含非ASCII字符的路径，也无法正确搜索子路径。',
-                        '在文件夹过滤之前返回有限的结果，因此如果其他地方存在大量匹配项，相关文件可能不会显示。',
+                        '查询会发送给 Omnisearch 插件并遵循 Omnisearch 查询语法。`#tag`、`.property` 和 `@date` 等过滤搜索标记没有特殊含义。',
+                        '选择文件夹后，查询会附加 `path:"<folder>/"`，使 Omnisearch 在该文件夹及其子文件夹内匹配。已包含 `path:` 的查询将原样发送。',
+                        'Omnisearch 按相关性排序最多返回 50 条结果。当匹配项超过该数量时，排名较低的笔记不会显示。',
+                        '限定包含非ASCII字符的文件夹路径需要 Omnisearch 1.30.0 或更高版本。旧版本会搜索整个仓库，然后按文件夹筛选结果。',
+                        '在大型仓库中，少于3个字符的查询可能会较慢。',
                         '笔记预览显示 Omnisearch 摘录，而不是默认预览文本。'
                     ]
                 }
@@ -497,6 +504,8 @@ export const STRINGS_ZH_CN = {
                 'list-search': '搜索',
                 'list-reveal-file': '定位文件',
                 'list-descendants': '子文件夹中的笔记',
+                'list-expand-all': '展开所有分组',
+                'list-collapse-all': '折叠所有分组',
                 'list-sort-ascending': '排序: 升序',
                 'list-sort-descending': '排序: 降序',
                 'list-sort-modified': '按编辑日期排序',
@@ -890,7 +899,8 @@ export const STRINGS_ZH_CN = {
         togglePropertiesBySelection: '按选择切换属性',
         toggleCompactMode: '切换紧凑模式', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '切换置顶区域',
-        collapseExpand: '折叠/展开所有项目', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: '折叠/展开所有导航项', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: '折叠/展开所有列表分组',
         collapseExpandSelectedItem: '折叠/展开所选项目',
         addTag: '为选定文件添加标签', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '为选定文件设置属性', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -910,6 +920,14 @@ export const STRINGS_ZH_CN = {
         revealInNavigator: '在笔记本导航器中定位', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             '笔记本导航器无法读取其设置,因此未启动。如果仓库正在同步,请在同步完成后重启 Obsidian。要使用默认设置重新开始,请运行命令"恢复默认设置"。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: '使用默认设置开始?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                '笔记本导航器刚刚安装,没有设置文件。如果这是全新安装或重新安装,请使用默认设置继续。如果你的设置来自同步服务,请取消,等待同步完成后重启 Obsidian。', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                '笔记本导航器已在此设备上安装了一段时间,但设置文件缺失。如果仓库仍在同步,请取消,等待同步完成后重启 Obsidian 以保留现有设置。仅在想要使用默认设置重新开始时继续。', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: '使用默认设置' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: '恢复默认设置', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1263,7 +1281,7 @@ export const STRINGS_ZH_CN = {
             },
             dualPane: {
                 name: '双窗格布局',
-                desc: '在桌面端并排显示导航窗格和列表窗格。'
+                desc: '并排显示导航窗格和列表窗格。'
             },
             dualPaneOrientation: {
                 name: '双栏布局方向',
@@ -1309,8 +1327,8 @@ export const STRINGS_ZH_CN = {
                 desc: '控制 Notebook Navigator 的整体缩放级别（百分比）。'
             },
             useFloatingToolbars: {
-                name: '在 iOS/iPadOS 上使用浮动工具栏',
-                desc: '仅适用于 iOS 和 iPadOS。'
+                name: '在 iOS 上使用浮动工具栏',
+                desc: '仅适用于 iOS。'
             },
             startView: {
                 name: '默认启动视图',
@@ -1322,9 +1340,7 @@ export const STRINGS_ZH_CN = {
             },
             toolbarButtons: {
                 name: '工具栏按钮',
-                desc: '选择在工具栏中显示哪些按钮。隐藏的按钮仍可通过命令和菜单访问。',
-                navigationLabel: '导航工具栏',
-                listLabel: '列表工具栏'
+                desc: '选择在工具栏中显示哪些按钮。隐藏的按钮仍可通过命令和菜单访问。'
             },
             createNewNotesInNewTab: {
                 name: '在新标签页中打开新笔记',
@@ -1886,6 +1902,10 @@ export const STRINGS_ZH_CN = {
             skipCodeBlocksInPreview: {
                 name: '预览中跳过代码块',
                 desc: '生成预览文本时跳过代码块。'
+            },
+            skipCalloutsInPreview: {
+                name: '预览中跳过标注',
+                desc: '生成预览文本时跳过标注块。'
             },
             stripHtmlInPreview: {
                 name: '移除预览中的 HTML',

@@ -18,7 +18,11 @@
 
 import { describe, expect, it } from 'vitest';
 import { ItemType } from '../../src/types';
-import { buildListGroupCollapseKey, normalizeStoredCollapsedListGroupKeys } from '../../src/utils/listGroupCollapse';
+import {
+    buildListGroupCollapseKey,
+    buildListGroupCollapseKeyPrefix,
+    normalizeStoredCollapsedListGroupKeys
+} from '../../src/utils/listGroupCollapse';
 
 describe('normalizeStoredCollapsedListGroupKeys', () => {
     it('keeps string keys, trims empty entries, and deduplicates', () => {
@@ -49,5 +53,17 @@ describe('buildListGroupCollapseKey', () => {
                 groupId: 'date:mtime:relative:today'
             })
         ).toBe('scope=tag:work%2Fclient%20a;group=date;id=date%3Amtime%3Arelative%3Atoday');
+    });
+
+    it('builds a prefix shared only by the same selection and grouping mode', () => {
+        expect(
+            buildListGroupCollapseKeyPrefix({
+                selectionType: ItemType.TAG,
+                selectedFolderPath: '/',
+                selectedTag: 'work/client a',
+                selectedProperty: null,
+                groupingMode: 'date'
+            })
+        ).toBe('scope=tag:work%2Fclient%20a;group=date;id=');
     });
 });

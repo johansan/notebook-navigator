@@ -17,8 +17,14 @@
  */
 
 import { Platform } from 'obsidian';
-import { MAX_PANE_TRANSITION_DURATION_MS, MIN_PANE_TRANSITION_DURATION_MS, type LocalStorageKeys } from '../../types';
+import {
+    MAX_PANE_TRANSITION_DURATION_MS,
+    MIN_PANE_TRANSITION_DURATION_MS,
+    type LocalStorageKeys,
+    type PinnedSectionCollapseKey
+} from '../../types';
 import { MAX_RECENT_COLORS } from '../../constants/colorPalette';
+import { cloneCollapsedPinnedContextsRecord } from '../../utils/recordUtils';
 import { localStorage } from '../../utils/localStorage';
 import { isRecord } from '../../utils/typeGuards';
 import { DEFAULT_UI_SCALE, sanitizeUIScale } from '../../utils/uiScale';
@@ -187,6 +193,37 @@ export function migrateReleaseCheckState(params: {
 
     // Signals that synced fields existed and should be cleaned up via getPersistableSettings().
     return Boolean(storedData && ('lastReleaseCheckAt' in storedData || 'latestKnownRelease' in storedData));
+}
+
+/**
+ * Migrates pinned-section collapse state from synced settings to vault-local storage.
+ */
+export function migrateCollapsedPinnedContexts(params: {
+    settings: NotebookNavigatorSettings;
+    storedData: Record<string, unknown> | null;
+    keys: LocalStorageKeys;
+}): boolean {
+    const { settings, storedData, keys } = params;
+
+    const storedRecord = cloneCollapsedPinnedContextsRecord(storedData?.['collapsedPinnedContexts']);
+    const localRecord = cloneCollapsedPinnedContextsRecord(localStorage.get<unknown>(keys.collapsedPinnedContextsKey));
+
+    // Seed local storage from the legacy synced record without dropping collapse state already stored locally.
+    let changed = false;
+    (Object.keys(storedRecord) as PinnedSectionCollapseKey[]).forEach(key => {
+        if (localRecord[key] !== true) {
+            localRecord[key] = true;
+            changed = true;
+        }
+    });
+    if (changed) {
+        localStorage.set(keys.collapsedPinnedContextsKey, localRecord);
+    }
+
+    delete (settings as unknown as Record<string, unknown>).collapsedPinnedContexts;
+
+    // Signals that synced fields existed and should be cleaned up via getPersistableSettings().
+    return Boolean(storedData && 'collapsedPinnedContexts' in storedData);
 }
 
 /**

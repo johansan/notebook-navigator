@@ -134,6 +134,8 @@ export const STRINGS_EN = {
     paneHeader: {
         collapseAllFolders: 'Collapse items', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: 'Expand all items', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: 'Collapse all list groups',
+        expandAllListGroups: 'Expand all list groups',
         showCalendar: 'Show calendar',
         hideCalendar: 'Hide calendar',
         newFolder: 'New folder', // Tooltip for create new folder button (English: New folder)
@@ -183,8 +185,13 @@ export const STRINGS_EN = {
         searchHelp: 'Search syntax',
         searchHelpTitle: 'Search syntax',
         searchHelpModal: {
-            intro: 'Combine display names, aliases, properties, tags, dates, and filters in one query (e.g., `meeting .status=active #work @thisweek`). Install the Omnisearch plugin to use full-text search.',
+            intro: 'Filter search matches notes by display names, aliases, properties, tags, dates, and filters, combined in one query (e.g., `meeting .status=active #work @thisweek`). Click the star icon to save a search as a shortcut.',
+            introInstallOmnisearch: 'Full-text search of note content requires the Omnisearch plugin.',
             introSwitching: 'Switch between filter search and Omnisearch using the up/down arrow keys or by clicking the search icon.',
+            activeFilterSearch: 'Filter search is active.',
+            activeOmnisearch: 'Omnisearch is active.',
+            omnisearchIntro:
+                'Omnisearch performs full-text search across note content in the vault. Notebook Navigator shows the matches that belong to the current folder, tag, or selection.',
             sections: {
                 fileNames: {
                     title: 'File names and aliases',
@@ -264,10 +271,11 @@ export const STRINGS_EN = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'Full-text search across the vault, filtered to the current folder or selected tags.',
-                        'Can be slow with fewer than 3 characters in large vaults.',
-                        'Cannot search paths with non-ASCII characters or search subpaths correctly.',
-                        'Returns limited results before folder filtering, so relevant files may not appear if many matches exist elsewhere.',
+                        'The query is sent to the Omnisearch plugin and follows Omnisearch query syntax. Filter search tokens such as `#tag`, `.property`, and `@date` have no special meaning.',
+                        'When a folder is selected, `path:"<folder>/"` is appended to the query so Omnisearch matches inside that folder and its subfolders. Queries that already contain `path:` are sent unchanged.',
+                        'Omnisearch returns at most 50 results ranked by relevance. Searches with more matches omit the lower-ranked notes.',
+                        'Folder scoping with non-ASCII folder paths requires Omnisearch 1.30.0 or later. Older versions search the whole vault, and results are filtered to the folder afterward.',
+                        'Queries with fewer than 3 characters can be slow in large vaults.',
                         'Note previews show Omnisearch excerpts instead of the default preview text.'
                     ]
                 }
@@ -498,6 +506,8 @@ export const STRINGS_EN = {
                 'list-search': 'Search',
                 'list-reveal-file': 'Reveal file',
                 'list-descendants': 'Notes from subfolders',
+                'list-expand-all': 'Expand all groups',
+                'list-collapse-all': 'Collapse all groups',
                 'list-sort-ascending': 'Sort order: ascending',
                 'list-sort-descending': 'Sort order: descending',
                 'list-sort-modified': 'Sort by edited date',
@@ -892,7 +902,8 @@ export const STRINGS_EN = {
         togglePropertiesBySelection: 'Toggle properties by selection',
         toggleCompactMode: 'Toggle compact mode', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'Toggle pinned section',
-        collapseExpand: 'Collapse / expand all items', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: 'Collapse / expand all navigation items', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: 'Collapse / expand all list groups',
         collapseExpandSelectedItem: 'Collapse / expand selected item', // Command palette: Collapse or expand the selected navigation item (English: Collapse / expand selected item)
         addTag: 'Add tag to selected files', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: 'Set property on selected files', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -912,6 +923,14 @@ export const STRINGS_EN = {
         revealInNavigator: 'Reveal in Notebook Navigator', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".', // Notice shown when startup is aborted because the settings file is missing or cannot be read
+        settingsMissingConfirm: {
+            title: 'Start with default settings?', // Title of the dialog shown when the plugin is enabled while its settings file is missing
+            messageRecentInstall:
+                'Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.', // Dialog message when the plugin folder was written recently
+            messageExistingInstall:
+                'Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.', // Dialog message when the plugin folder has existed for a while
+            confirmButton: 'Use default settings' // Confirm button label in the missing-settings dialog
+        },
         settingsRecovery: {
             confirmTitle: 'Restore default settings', // Title of the confirmation dialog for the settings recovery command
             confirmMessage:
@@ -1268,7 +1287,7 @@ export const STRINGS_EN = {
             },
             dualPane: {
                 name: 'Dual pane layout',
-                desc: 'Show navigation pane and list pane side by side on desktop.'
+                desc: 'Show navigation pane and list pane side by side.'
             },
             dualPaneOrientation: {
                 name: 'Dual pane orientation',
@@ -1314,8 +1333,8 @@ export const STRINGS_EN = {
                 desc: 'Controls the overall zoom level of Notebook Navigator (percentage).'
             },
             useFloatingToolbars: {
-                name: 'Use floating toolbars on iOS/iPadOS',
-                desc: 'Applies only on iOS and iPadOS.'
+                name: 'Use floating toolbars on iOS',
+                desc: 'Applies only on iOS.'
             },
             startView: {
                 name: 'Default startup view',
@@ -1327,9 +1346,7 @@ export const STRINGS_EN = {
             },
             toolbarButtons: {
                 name: 'Toolbar buttons',
-                desc: 'Choose which buttons appear in the toolbar. Hidden buttons remain accessible via commands and menus.',
-                navigationLabel: 'Navigation toolbar',
-                listLabel: 'List toolbar'
+                desc: 'Choose which buttons appear in the toolbar. Hidden buttons remain accessible via commands and menus.'
             },
             createNewNotesInNewTab: {
                 name: 'Open new notes in new tab',
@@ -1893,6 +1910,10 @@ export const STRINGS_EN = {
             skipCodeBlocksInPreview: {
                 name: 'Skip code blocks in preview',
                 desc: 'Skip code blocks when generating preview text.'
+            },
+            skipCalloutsInPreview: {
+                name: 'Skip callouts in preview',
+                desc: 'Skip callout blocks when generating preview text.'
             },
             stripHtmlInPreview: {
                 name: 'Strip HTML in previews',

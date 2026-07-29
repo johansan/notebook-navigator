@@ -21,6 +21,7 @@ import { FILE_PANE_DIMENSIONS, NAVIGATION_PANE_DIMENSIONS, type DualPaneOrientat
 // Storage keys
 import { STORAGE_KEYS } from '../types';
 import { localStorage } from '../utils/localStorage';
+import { isDualPaneSupported } from '../utils/paneLayout';
 import { useServices } from './ServicesContext';
 import { useSettingsState } from './SettingsContext';
 import type { NotebookNavigatorSettings } from '../settings/types';
@@ -104,10 +105,9 @@ export function uiStateReducer(state: UIState, action: UIAction): UIState {
 // Provider component
 interface UIStateProviderProps {
     children: ReactNode;
-    isMobile: boolean;
 }
 
-export function UIStateProvider({ children, isMobile }: UIStateProviderProps) {
+export function UIStateProvider({ children }: UIStateProviderProps) {
     const { plugin } = useServices();
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -144,7 +144,7 @@ export function UIStateProvider({ children, isMobile }: UIStateProviderProps) {
 
     // Compute the effective pane layout from user preference and current container width.
     const stateWithPaneMode = useMemo(() => {
-        let dualPane = !isMobile && state.dualPanePreference;
+        let dualPane = isDualPaneSupported() && state.dualPanePreference;
         let effectiveDualPaneOrientation: DualPaneOrientation = settings.dualPaneOrientation;
 
         if (
@@ -177,7 +177,6 @@ export function UIStateProvider({ children, isMobile }: UIStateProviderProps) {
         };
     }, [
         state,
-        isMobile,
         settings.dualPaneOrientation,
         settings.narrowSidebarCustomWidth,
         settings.narrowSidebarLayout,

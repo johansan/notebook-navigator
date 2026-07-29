@@ -14,6 +14,15 @@
     background-color: var(--nn-theme-nav-bg);
 }
 
+/* Horizontal dual pane on tablets sizes the navigation pane from the dragged divider width.
+   Without restoring flex: 0 0 auto, the flex: 1 above zeroes the flex basis so both panes
+   stay evenly split regardless of the stored width. The divider border returns because the
+   resize handle is transparent when idle. */
+.notebook-navigator-mobile .nn-dual-pane.nn-orientation-horizontal .nn-navigation-pane {
+    flex: 0 0 auto;
+    border-right: 1px solid var(--nn-theme-divider-border-color);
+}
+
 .notebook-navigator-mobile .nn-list-pane {
     display: flex;
     flex-direction: column;

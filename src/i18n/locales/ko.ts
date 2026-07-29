@@ -133,6 +133,8 @@ export const STRINGS_KO = {
     paneHeader: {
         collapseAllFolders: '항목 접기', // Tooltip for button that collapses expanded items (English: Collapse items)
         expandAllFolders: '모든 항목 펼치기', // Tooltip for button that expands all items (English: Expand all items)
+        collapseAllListGroups: '모든 목록 그룹 접기',
+        expandAllListGroups: '모든 목록 그룹 펼치기',
         showCalendar: '달력 표시',
         hideCalendar: '달력 숨기기',
         newFolder: '새 폴더', // Tooltip for create new folder button (English: New folder)
@@ -182,8 +184,13 @@ export const STRINGS_KO = {
         searchHelp: '검색 구문',
         searchHelpTitle: '검색 구문',
         searchHelpModal: {
-            intro: '표시 이름, 별칭, 속성, 태그, 날짜, 필터를 하나의 쿼리에서 결합 (예: `meeting .status=active #work @thisweek`). Omnisearch 플러그인을 설치하면 전체 텍스트 검색을 사용할 수 있습니다.',
+            intro: '필터 검색은 표시 이름, 별칭, 속성, 태그, 날짜, 필터를 하나의 쿼리로 결합하여 노트를 찾습니다 (예: `meeting .status=active #work @thisweek`). 별 아이콘을 클릭하면 검색을 바로가기에 저장할 수 있습니다.',
+            introInstallOmnisearch: '노트 내용의 전체 텍스트 검색에는 Omnisearch 플러그인이 필요합니다.',
             introSwitching: '위/아래 화살표 키 또는 검색 아이콘 클릭으로 필터 검색과 Omnisearch 간에 전환할 수 있습니다.',
+            activeFilterSearch: '필터 검색이 활성화되어 있습니다.',
+            activeOmnisearch: 'Omnisearch가 활성화되어 있습니다.',
+            omnisearchIntro:
+                'Omnisearch는 보관소 전체의 노트 내용에서 전체 텍스트 검색을 수행합니다. Notebook Navigator는 현재 폴더, 태그 또는 선택 항목에 속하는 일치 항목을 표시합니다.',
             sections: {
                 fileNames: {
                     title: '파일 이름과 별칭',
@@ -263,10 +270,11 @@ export const STRINGS_KO = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        '보관소 전체의 전체 텍스트 검색. 현재 폴더 또는 선택된 태그로 필터링됩니다.',
-                        '대규모 보관소에서 3자 미만일 경우 느릴 수 있습니다.',
-                        '비ASCII 문자가 포함된 경로를 검색하거나 하위 경로를 올바르게 검색할 수 없습니다.',
-                        '폴더 필터링 전에 제한된 결과를 반환하므로, 다른 곳에 많은 일치 항목이 있으면 관련 파일이 표시되지 않을 수 있습니다.',
+                        '쿼리는 Omnisearch 플러그인으로 전송되며 Omnisearch 쿼리 구문을 따릅니다. `#tag`, `.property`, `@date`와 같은 필터 검색 토큰은 특별한 의미가 없습니다.',
+                        '폴더를 선택하면 Omnisearch가 해당 폴더와 하위 폴더 내에서 일치하도록 쿼리에 `path:"<folder>/"`가 추가됩니다. 이미 `path:`가 포함된 쿼리는 그대로 전송됩니다.',
+                        'Omnisearch는 관련성 순으로 최대 50개의 결과를 반환합니다. 일치 항목이 그보다 많은 검색에서는 순위가 낮은 노트가 표시되지 않습니다.',
+                        '비ASCII 문자가 포함된 폴더 경로를 범위로 지정하려면 Omnisearch 1.30.0 이상이 필요합니다. 이전 버전에서는 보관소 전체를 검색한 후 결과가 폴더로 필터링됩니다.',
+                        '대규모 보관소에서는 3자 미만의 쿼리가 느릴 수 있습니다.',
                         '노트 미리보기에 기본 미리보기 텍스트 대신 Omnisearch 발췌문이 표시됩니다.'
                     ]
                 }
@@ -497,6 +505,8 @@ export const STRINGS_KO = {
                 'list-search': '검색',
                 'list-reveal-file': '파일 표시',
                 'list-descendants': '하위 폴더의 노트',
+                'list-expand-all': '모든 그룹 펼치기',
+                'list-collapse-all': '모든 그룹 접기',
                 'list-sort-ascending': '정렬 순서: 오름차순',
                 'list-sort-descending': '정렬 순서: 내림차순',
                 'list-sort-modified': '수정 날짜로 정렬',
@@ -895,7 +905,8 @@ export const STRINGS_KO = {
         togglePropertiesBySelection: '선택에 따라 속성 전환',
         toggleCompactMode: '컴팩트 모드 전환', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: '고정 섹션 전환',
-        collapseExpand: '모든 항목 접기 / 펼치기', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all items)
+        collapseExpand: '모든 탐색 항목 접기 / 펼치기', // Command palette: Collapse or expand all folders and tags (English: Collapse / expand all navigation items)
+        collapseExpandListGroups: '모든 목록 그룹 접기 / 펼치기',
         collapseExpandSelectedItem: '선택한 항목 접기 / 펼치기',
         addTag: '선택한 파일에 태그 추가', // Command palette: Opens a dialog to add a tag to selected files (English: Add tag to selected files)
         setProperty: '선택한 파일에 속성 설정', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -915,6 +926,14 @@ export const STRINGS_KO = {
         revealInNavigator: 'Notebook Navigator에서 표시', // Context menu item to reveal a file in the navigator (English: Reveal in Notebook Navigator)
         settingsUnavailableNotice:
             'Notebook Navigator가 설정을 읽을 수 없어 시작되지 않았습니다. 보관소가 동기화 중이라면 동기화가 끝난 후 Obsidian을 다시 시작하세요. 기본 설정으로 새로 시작하려면 "기본 설정 복원" 명령을 실행하세요.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: '기본 설정으로 시작할까요?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator가 방금 설치되었고 설정 파일이 없습니다. 새로 설치했거나 다시 설치한 경우 기본 설정으로 계속하세요. 설정이 동기화 서비스에서 오는 경우 취소하고 동기화가 끝날 때까지 기다린 후 Obsidian을 다시 시작하세요.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator가 이 기기에 설치된 지 시간이 지났지만 설정 파일이 없습니다. 보관소가 아직 동기화 중이라면 취소하고 동기화가 끝난 후 Obsidian을 다시 시작하면 기존 설정을 유지할 수 있습니다. 기본 설정으로 새로 시작하려는 경우에만 계속하세요.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: '기본 설정 사용' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: '기본 설정 복원', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1271,7 +1290,7 @@ export const STRINGS_KO = {
             },
             dualPane: {
                 name: '이중 창 레이아웃',
-                desc: '데스크톱에서 탐색 창과 목록 창을 나란히 표시합니다.'
+                desc: '탐색 창과 목록 창을 나란히 표시합니다.'
             },
             dualPaneOrientation: {
                 name: '듀얼 창 방향',
@@ -1317,8 +1336,8 @@ export const STRINGS_KO = {
                 desc: 'Notebook Navigator의 전체 확대 수준을 제어합니다(백분율).'
             },
             useFloatingToolbars: {
-                name: 'iOS/iPadOS에서 플로팅 툴바 사용',
-                desc: 'iOS 및 iPadOS에서만 적용됩니다.'
+                name: 'iOS에서 플로팅 툴바 사용',
+                desc: 'iOS에서만 적용됩니다.'
             },
             startView: {
                 name: '기본 시작 보기',
@@ -1330,9 +1349,7 @@ export const STRINGS_KO = {
             },
             toolbarButtons: {
                 name: '도구 모음 버튼',
-                desc: '도구 모음에 표시할 버튼을 선택하세요. 숨겨진 버튼은 명령과 메뉴를 통해 계속 사용할 수 있습니다.',
-                navigationLabel: '탐색 도구 모음',
-                listLabel: '목록 도구 모음'
+                desc: '도구 모음에 표시할 버튼을 선택하세요. 숨겨진 버튼은 명령과 메뉴를 통해 계속 사용할 수 있습니다.'
             },
             createNewNotesInNewTab: {
                 name: '새 노트를 새 탭에서 열기',
@@ -1896,6 +1913,10 @@ export const STRINGS_KO = {
             skipCodeBlocksInPreview: {
                 name: '미리보기에서 코드 블록 건너뛰기',
                 desc: '미리보기 텍스트를 생성할 때 코드 블록을 건너뜁니다.'
+            },
+            skipCalloutsInPreview: {
+                name: '미리보기에서 콜아웃 건너뛰기',
+                desc: '미리보기 텍스트를 생성할 때 콜아웃 블록을 건너뜁니다.'
             },
             stripHtmlInPreview: {
                 name: '미리보기에서 HTML 제거',

@@ -18,6 +18,7 @@
 
 import { App, TFile, TAbstractFile } from 'obsidian';
 import { ExtendedApp } from '../types/obsidian-extended';
+import { compareVersions } from '../utils/versionUtils';
 
 /**
  * Raw match data structure from the Omnisearch plugin API.
@@ -58,21 +59,30 @@ interface OmnisearchApi {
  *
  * `pathScope` appends a `path:"..."` filter to the outgoing query when it is
  * safe to do so. This lets Omnisearch apply folder restriction internally
- * before returning ranked results.
+ * before returning ranked results. The restriction runs before Omnisearch
+ * truncates to its top 50 hits, so a scoped query returns up to 50 results
+ * from the folder tree instead of the vault-wide top 50.
  */
 interface OmnisearchSearchOptions {
     pathScope?: string;
 }
 
-// Restrict scope injection to printable ASCII only.
-// This avoids known path-filter issues when Omnisearch normalizes diacritics.
+// The scope is injected as a quoted path:"..." token. A double quote would terminate
+// that token early, and Omnisearch's query parser splits keyword values on commas,
+// turning one folder scope into multiple OR'd path filters. Either way the query no
+// longer means a single folder, so such paths are not injected at all.
+const UNSAFE_PATH_SCOPE_CHARACTER_REGEX = /[",]/;
+// Printable ASCII scopes are safe on every Omnisearch version because diacritics
+// normalization does not alter ASCII text.
 const ASCII_PATH_SCOPE_REGEX = /^[\x20-\x7E]+$/;
-// Restrict to simple path characters so the appended query segment remains stable.
-// Quotes and escape sequences are intentionally excluded.
-const SIMPLE_PATH_SCOPE_REGEX = /^[A-Za-z0-9 _./-]+$/;
 // Detect user-supplied path filters and preserve user intent.
 // Supports both `path:` and `-path:`.
 const HAS_PATH_FILTER_REGEX = /(^|\s)-?path\s*:/i;
+
+// Omnisearch 1.30.0 normalizes diacritics in the note path before matching path filters.
+// Earlier versions normalize only the query, so a non-ASCII scope matches nothing and
+// would empty the result list instead of scoping it.
+const NON_ASCII_PATH_SCOPE_MIN_VERSION = '1.30.0';
 
 /**
  * Type guard to verify that a file is a regular file (TFile) and not a folder.
@@ -164,19 +174,19 @@ function normalizeMatches(matches: SearchMatchApi[]): OmnisearchMatch[] {
 /**
  * Checks whether a folder scope is safe to inject into an Omnisearch query.
  *
- * The safety rules intentionally conservative:
+ * Rules:
  * - empty strings are rejected
- * - only printable ASCII is accepted
- * - only basic path characters are accepted
+ * - double quotes and commas are rejected on every version
+ * - non-ASCII paths are accepted only when `allowNonAsciiScope` is true
  *
  * If this check fails we keep the original query unchanged.
  */
-function isSafePathScope(path: string): boolean {
+function isSafePathScope(path: string, allowNonAsciiScope: boolean): boolean {
     const normalized = path.trim();
-    if (!normalized) {
+    if (!normalized || UNSAFE_PATH_SCOPE_CHARACTER_REGEX.test(normalized)) {
         return false;
     }
-    return ASCII_PATH_SCOPE_REGEX.test(normalized) && SIMPLE_PATH_SCOPE_REGEX.test(normalized);
+    return allowNonAsciiScope || ASCII_PATH_SCOPE_REGEX.test(normalized);
 }
 
 /**
@@ -191,15 +201,18 @@ function isSafePathScope(path: string): boolean {
  * own search pipeline. Notebook Navigator still performs post-filtering by the
  * current view scope after results are returned.
  */
-function buildScopedQuery(query: string, options?: OmnisearchSearchOptions): string {
+function buildScopedQuery(query: string, options: OmnisearchSearchOptions | undefined, allowNonAsciiScope: boolean): string {
     const pathScope = options?.pathScope?.trim();
-    if (!pathScope || !isSafePathScope(pathScope)) {
+    if (!pathScope || !isSafePathScope(pathScope, allowNonAsciiScope)) {
         return query;
     }
     if (HAS_PATH_FILTER_REGEX.test(query)) {
         return query;
     }
-    return `${query} path:"${pathScope}"`;
+    // The trailing slash anchors the substring filter at the folder boundary so
+    // sibling folders sharing the scope as a name prefix do not consume slots in
+    // Omnisearch's ranked top-50 result list.
+    return `${query} path:"${pathScope}/"`;
 }
 
 /**
@@ -246,6 +259,18 @@ export class OmnisearchService {
     }
 
     /**
+     * Reads the installed Omnisearch version from the plugin registry.
+     * Returns null when the plugin entry or its manifest is unavailable, for
+     * example when the API was resolved through the global-scope fallback.
+     */
+    private resolveInstalledVersion(): string | null {
+        const extended = this.app as ExtendedApp;
+        const plugin = extended.plugins?.plugins?.omnisearch as { manifest?: { version?: unknown } } | undefined;
+        const version = plugin?.manifest?.version;
+        return typeof version === 'string' && version.length > 0 ? version : null;
+    }
+
+    /**
      * Indicates whether the Omnisearch plugin is currently available and functional.
      * Use this to conditionally enable full-text search features in the UI.
      *
@@ -267,7 +292,8 @@ export class OmnisearchService {
      * - Invalid or non-file results are filtered out silently
      * - Results include match excerpts and highlighted segments
      * - Files that no longer exist in the vault are automatically excluded
-     * - pathScope is appended as path:"..." only for ASCII/simple folder paths
+     * - pathScope is appended as path:"..." for any folder path without double
+     *   quotes or commas; non-ASCII paths additionally require Omnisearch 1.30.0+
      */
     public async search(query: string, options?: OmnisearchSearchOptions): Promise<OmnisearchHit[]> {
         const api = this.resolveApi();
@@ -276,8 +302,13 @@ export class OmnisearchService {
         }
 
         try {
+            // Non-ASCII scopes require the 1.30.0 path-filter diacritics fix. When the
+            // version is unknown (global-scope API fallback) only ASCII scopes are used.
+            const installedVersion = this.resolveInstalledVersion();
+            const allowNonAsciiScope =
+                installedVersion !== null && compareVersions(installedVersion, NON_ASCII_PATH_SCOPE_MIN_VERSION) >= 0;
             // Use the scoped query when safe; otherwise this is exactly `query`.
-            const scopedQuery = buildScopedQuery(query, options);
+            const scopedQuery = buildScopedQuery(query, options, allowNonAsciiScope);
             // Omnisearch's public API accepts one query string and returns ranked hits.
             const rawResults = await api.search(scopedQuery);
             const hits: OmnisearchHit[] = [];

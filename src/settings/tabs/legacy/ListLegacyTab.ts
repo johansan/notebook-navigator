@@ -30,6 +30,7 @@ import {
 import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
 import { runAsyncAction } from '../../../utils/async';
+import { usesMobileChrome } from '../../../utils/paneLayout';
 import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
 import { createDependentSettingsSection, setElementVisible } from '../../dependentSettings';
@@ -40,6 +41,7 @@ import {
     normalizeManualSortPropertyKey
 } from '../../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from '../SliderSetting';
+import { renderToolbarButtonsSetting } from '../ToolbarButtonsSetting';
 
 type QuickActionSettingKey =
     'quickActionRevealInFolder' | 'quickActionAddTag' | 'quickActionAddToShortcuts' | 'quickActionPinNote' | 'quickActionOpenInNewTab';
@@ -88,7 +90,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     const renderAppearanceGroup = (): void => {
         const appearanceGroup = createGroup(strings.settings.groups.list.display);
 
-        if (!Platform.isMobile) {
+        // The list pane title only renders with the desktop chrome (desktop and tablets)
+        if (!usesMobileChrome()) {
             appearanceGroup.addSetting(setting => {
                 setting
                     .setName(strings.settings.items.listPaneTitle.name)
@@ -173,6 +176,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     };
 
     const organizationGroup = createGroup(undefined);
+
+    renderToolbarButtonsSetting(createSetting => organizationGroup.addSetting(createSetting), plugin, 'list');
 
     const includeDescendantNotesSetting = organizationGroup.addSetting(setting => {
         setting

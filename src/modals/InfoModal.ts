@@ -91,13 +91,15 @@ export class InfoModal extends Modal {
 
         const scrollEl = contentEl.createDiv({ cls: 'nn-search-help-scroll' });
 
-        if (this.modalContent.intro) {
-            scrollEl.createEl('p', { text: this.modalContent.intro });
-        }
-
+        // The emphasized paragraph renders first so callers can use it as a status banner
+        // (for example the active search provider) above the descriptive intro text.
         if (this.modalContent.emphasizedIntro) {
             const introEl = scrollEl.createEl('p');
             introEl.createEl('strong', { text: this.modalContent.emphasizedIntro });
+        }
+
+        if (this.modalContent.intro) {
+            scrollEl.createEl('p', { text: this.modalContent.intro });
         }
 
         const sections = this.modalContent.sections ?? [];

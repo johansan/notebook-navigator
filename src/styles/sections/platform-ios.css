@@ -17,14 +17,15 @@
 
 /* iOS: bottom padding inside the navigator viewport */
 /* Applied to the internal split container so the bottom edge doesn't touch the view chrome and the toolbar shadow can render into the padding (8px matches the top spacer). */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-split-container {
+/* Scoped to body.is-phone (Obsidian keeps the class current on resize) because tablets render the desktop headers and no floating toolbars. */
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-split-container {
     padding-bottom: 8px;
     box-sizing: border-box;
 }
 
 /* iOS: allow the glass toolbar shadow to render into the split container padding */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane,
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane {
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane,
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane {
     overflow: visible;
 }
 
@@ -44,8 +45,9 @@
 }
 
 /* iOS: reserve scroll space for the floating toolbar so rows can scroll under it. */
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane-scroller,
-.notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane-scroller {
+/* Scoped to body.is-phone because tablets never render the floating toolbars. */
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-navigation-pane-scroller,
+body.is-phone .notebook-navigator-ios.notebook-navigator-ios-floating-toolbars .nn-list-pane-scroller {
     padding-bottom: var(--nn-ios-pane-bottom-overlay-height);
 }
 

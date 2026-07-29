@@ -25,10 +25,12 @@ import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { isNavRainbowColorMode } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
+import { supportsKeyboardInteractions } from '../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import { formatPixelSliderValue, formatSecondsSliderValue, renderSliderSetting } from './SliderSetting';
+import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 /** Builds native 1.13 setting definitions for navigation pane settings. */
 export function createNavigationPaneSettingDefinitions(context: SettingsTabContext): SettingDefinitionItem[] {
@@ -36,14 +38,37 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
 
     return [
         createGroupDefinition(undefined, [
-            ...(Platform.isMobile
-                ? []
-                : [
+            createRenderDefinition({
+                name: strings.settings.items.toolbarButtons.name,
+                desc: strings.settings.items.toolbarButtons.desc,
+                aliases: [
+                    strings.paneHeader.showDualPane,
+                    strings.paneHeader.expandAllFolders,
+                    strings.paneHeader.showExcludedItems,
+                    strings.paneHeader.showCalendar,
+                    strings.paneHeader.reorderRootFolders,
+                    strings.paneHeader.newFolder
+                ],
+                render: setting => {
+                    renderToolbarButtonsSetting(
+                        createSetting => {
+                            createSetting(setting);
+                            return setting;
+                        },
+                        plugin,
+                        'navigation'
+                    );
+                }
+            }),
+            // Auto-select follows keyboard navigation support (desktop and tablets); phones never auto-open
+            ...(supportsKeyboardInteractions()
+                ? [
                       createToggleDefinition('autoSelectFirstFileOnFocusChange', {
                           name: strings.settings.items.autoSelectFirstFileOnFocusChange.name,
                           desc: strings.settings.items.autoSelectFirstFileOnFocusChange.desc
                       })
-                  ]),
+                  ]
+                : []),
             createToggleDefinition('autoExpandNavItems', {
                 name: strings.settings.items.autoExpandNavItems.name,
                 desc: strings.settings.items.autoExpandNavItems.desc

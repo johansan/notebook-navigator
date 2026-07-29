@@ -109,6 +109,23 @@ describe('PluginPreferencesController', () => {
         });
     });
 
+    it('refreshes migrated pinned collapse keys before the next local mutation persists the record', () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.collapsedPinnedContextsKey, { 'folder:/': true });
+        controller.loadUXPreferences();
+
+        mockLocalStorageStore.set(STORAGE_KEYS.collapsedPinnedContextsKey, {
+            'folder:/': true,
+            'tag:work': true
+        });
+
+        expect(controller.syncCollapsedPinnedContextsFromLocalStorage()).toBe(true);
+        controller.togglePinnedGroupCollapsed('folder:/');
+
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.collapsedPinnedContextsKey)).toEqual({
+            'tag:work': true
+        });
+    });
+
     it('mirrors feature image pixel size updates to local storage', () => {
         isLocal = true;
 

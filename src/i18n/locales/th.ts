@@ -134,6 +134,8 @@ export const STRINGS_TH = {
     paneHeader: {
         collapseAllFolders: 'ยุบรายการ',
         expandAllFolders: 'ขยายรายการทั้งหมด',
+        collapseAllListGroups: 'ยุบกลุ่มรายการทั้งหมด',
+        expandAllListGroups: 'ขยายกลุ่มรายการทั้งหมด',
         showCalendar: 'แสดงปฏิทิน',
         hideCalendar: 'ซ่อนปฏิทิน',
         newFolder: 'โฟลเดอร์ใหม่',
@@ -183,8 +185,13 @@ export const STRINGS_TH = {
         searchHelp: 'ไวยากรณ์การค้นหา',
         searchHelpTitle: 'ไวยากรณ์การค้นหา',
         searchHelpModal: {
-            intro: 'รวมชื่อที่แสดง นามแฝง คุณสมบัติ แท็ก วันที่ และตัวกรองในคำค้นหาเดียว (เช่น `meeting .status=active #work @thisweek`) ติดตั้งปลั๊กอิน Omnisearch เพื่อใช้การค้นหาข้อความเต็ม',
+            intro: 'การค้นหาแบบกรองจะค้นหาโน้ตตามชื่อที่แสดง นามแฝง คุณสมบัติ แท็ก วันที่ และตัวกรอง โดยรวมกันในคำค้นหาเดียว (เช่น `meeting .status=active #work @thisweek`) คลิกไอคอนรูปดาวเพื่อบันทึกการค้นหาเป็นทางลัด',
+            introInstallOmnisearch: 'การค้นหาข้อความเต็มในเนื้อหาโน้ตต้องใช้ปลั๊กอิน Omnisearch',
             introSwitching: 'สลับระหว่างการค้นหาแบบกรองและ Omnisearch โดยใช้ปุ่มลูกศรขึ้น/ลงหรือคลิกไอคอนค้นหา',
+            activeFilterSearch: 'การค้นหาแบบกรองกำลังทำงานอยู่',
+            activeOmnisearch: 'Omnisearch กำลังทำงานอยู่',
+            omnisearchIntro:
+                'Omnisearch ค้นหาข้อความเต็มในเนื้อหาโน้ตทั่วทั้งห้องนิรภัย Notebook Navigator แสดงรายการที่ตรงกันซึ่งอยู่ในโฟลเดอร์ แท็ก หรือรายการที่เลือกในปัจจุบัน',
             sections: {
                 fileNames: {
                     title: 'ชื่อไฟล์และนามแฝง',
@@ -264,10 +271,11 @@ export const STRINGS_TH = {
                 omnisearch: {
                     title: 'Omnisearch',
                     items: [
-                        'ค้นหาข้อความเต็มทั่วทั้งห้องนิรภัย กรองตามโฟลเดอร์ปัจจุบันหรือแท็กที่เลือก',
-                        'อาจช้าเมื่อป้อนน้อยกว่า 3 ตัวอักษรในห้องนิรภัยขนาดใหญ่',
-                        'ไม่สามารถค้นหาเส้นทางที่มีอักขระที่ไม่ใช่ ASCII หรือค้นหาเส้นทางย่อยได้อย่างถูกต้อง',
-                        'ส่งคืนผลลัพธ์จำกัดก่อนการกรองโฟลเดอร์ ดังนั้นไฟล์ที่เกี่ยวข้องอาจไม่แสดงหากมีรายการที่ตรงกันจำนวนมากในที่อื่น',
+                        'คำค้นหาจะถูกส่งไปยังปลั๊กอิน Omnisearch และเป็นไปตามไวยากรณ์คำค้นหาของ Omnisearch โทเค็นการค้นหาแบบกรองเช่น `#tag`, `.property` และ `@date` ไม่มีความหมายพิเศษ',
+                        'เมื่อเลือกโฟลเดอร์ `path:"<folder>/"` จะถูกเพิ่มต่อท้ายคำค้นหาเพื่อให้ Omnisearch ค้นหาภายในโฟลเดอร์นั้นและโฟลเดอร์ย่อย คำค้นหาที่มี `path:` อยู่แล้วจะถูกส่งโดยไม่เปลี่ยนแปลง',
+                        'Omnisearch ส่งคืนผลลัพธ์สูงสุด 50 รายการโดยเรียงตามความเกี่ยวข้อง เมื่อการค้นหามีรายการที่ตรงกันมากกว่านั้น โน้ตที่มีอันดับต่ำกว่าจะไม่แสดง',
+                        'การจำกัดขอบเขตเส้นทางโฟลเดอร์ที่มีอักขระที่ไม่ใช่ ASCII ต้องใช้ Omnisearch 1.30.0 ขึ้นไป เวอร์ชันเก่ากว่าจะค้นหาทั่วทั้งห้องนิรภัย จากนั้นผลลัพธ์จะถูกกรองตามโฟลเดอร์',
+                        'คำค้นหาที่น้อยกว่า 3 ตัวอักษรอาจช้าในห้องนิรภัยขนาดใหญ่',
                         'ตัวอย่างโน้ตแสดงข้อความที่ตัดตอนจาก Omnisearch แทนข้อความตัวอย่างเริ่มต้น'
                     ]
                 }
@@ -497,6 +505,8 @@ export const STRINGS_TH = {
                 'list-search': 'ค้นหา',
                 'list-reveal-file': 'แสดงไฟล์',
                 'list-descendants': 'โน้ตจากโฟลเดอร์ย่อย',
+                'list-expand-all': 'ขยายกลุ่มทั้งหมด',
+                'list-collapse-all': 'ยุบกลุ่มทั้งหมด',
                 'list-sort-ascending': 'ลำดับ: น้อยไปมาก',
                 'list-sort-descending': 'ลำดับ: มากไปน้อย',
                 'list-sort-modified': 'จัดเรียงตามวันที่แก้ไข',
@@ -891,7 +901,8 @@ export const STRINGS_TH = {
         togglePropertiesBySelection: 'สลับคุณสมบัติตามการเลือก',
         toggleCompactMode: 'สลับโหมดกะทัดรัด', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
         togglePinnedSection: 'สลับส่วนที่ปักหมุด',
-        collapseExpand: 'ยุบ / ขยายรายการทั้งหมด',
+        collapseExpand: 'ยุบ / ขยายรายการนำทางทั้งหมด',
+        collapseExpandListGroups: 'ยุบ / ขยายกลุ่มรายการทั้งหมด',
         collapseExpandSelectedItem: 'ยุบ / ขยายรายการที่เลือก',
         addTag: 'เพิ่มแท็กในไฟล์ที่เลือก',
         setProperty: 'ตั้งค่าคุณสมบัติในไฟล์ที่เลือก', // Command palette: Opens a fuzzy dialog to set a property on selected files (English: Set property on selected files)
@@ -911,6 +922,14 @@ export const STRINGS_TH = {
         revealInNavigator: 'แสดงใน Notebook Navigator',
         settingsUnavailableNotice:
             'Notebook Navigator ไม่สามารถอ่านการตั้งค่าได้และไม่ได้เริ่มทำงาน หากคลังของคุณกำลังซิงค์อยู่ ให้รีสตาร์ท Obsidian หลังจากการซิงค์เสร็จสิ้น หากต้องการเริ่มใหม่ด้วยการตั้งค่าเริ่มต้น ให้เรียกใช้คำสั่ง "กู้คืนการตั้งค่าเริ่มต้น"', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+        settingsMissingConfirm: {
+            title: 'เริ่มด้วยการตั้งค่าเริ่มต้นหรือไม่', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            messageRecentInstall:
+                'Notebook Navigator เพิ่งติดตั้งและยังไม่มีไฟล์การตั้งค่า หากเป็นการติดตั้งใหม่หรือการติดตั้งซ้ำ ให้ดำเนินการต่อด้วยการตั้งค่าเริ่มต้น หากการตั้งค่าของคุณมาจากบริการซิงค์ ให้ยกเลิก รอให้การซิงค์เสร็จสิ้น แล้วรีสตาร์ท Obsidian', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+            messageExistingInstall:
+                'Notebook Navigator ติดตั้งบนอุปกรณ์นี้มาระยะหนึ่งแล้ว แต่ไฟล์การตั้งค่าหายไป หากคลังของคุณยังซิงค์อยู่ ให้ยกเลิก รอให้การซิงค์เสร็จสิ้น แล้วรีสตาร์ท Obsidian เพื่อคงการตั้งค่าเดิมไว้ ดำเนินการต่อเฉพาะเมื่อต้องการเริ่มใหม่ด้วยการตั้งค่าเริ่มต้น', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+            confirmButton: 'ใช้การตั้งค่าเริ่มต้น' // Confirm button label in the missing-settings dialog (English: Use default settings)
+        },
         settingsRecovery: {
             confirmTitle: 'กู้คืนการตั้งค่าเริ่มต้น', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
@@ -1267,7 +1286,7 @@ export const STRINGS_TH = {
             },
             dualPane: {
                 name: 'รูปแบบแผงคู่',
-                desc: 'แสดงแผงนำทางและแผงรายการเคียงข้างกันบนเดสก์ท็อป'
+                desc: 'แสดงแผงนำทางและแผงรายการเคียงข้างกัน'
             },
             dualPaneOrientation: {
                 name: 'ทิศทางแผงคู่',
@@ -1313,8 +1332,8 @@ export const STRINGS_TH = {
                 desc: 'ควบคุมระดับการซูมโดยรวมของ Notebook Navigator (เปอร์เซ็นต์)'
             },
             useFloatingToolbars: {
-                name: 'ใช้แถบเครื่องมือลอยบน iOS/iPadOS',
-                desc: 'ใช้ได้เฉพาะบน iOS และ iPadOS'
+                name: 'ใช้แถบเครื่องมือลอยบน iOS',
+                desc: 'ใช้ได้เฉพาะบน iOS'
             },
             startView: {
                 name: 'มุมมองเริ่มต้นเมื่อเริ่มงาน',
@@ -1326,9 +1345,7 @@ export const STRINGS_TH = {
             },
             toolbarButtons: {
                 name: 'ปุ่มแถบเครื่องมือ',
-                desc: 'เลือกปุ่มที่จะปรากฏในแถบเครื่องมือ ปุ่มที่ซ่อนยังคงเข้าถึงได้ผ่านคำสั่งและเมนู',
-                navigationLabel: 'แถบเครื่องมือนำทาง',
-                listLabel: 'แถบเครื่องมือรายการ'
+                desc: 'เลือกปุ่มที่จะปรากฏในแถบเครื่องมือ ปุ่มที่ซ่อนยังคงเข้าถึงได้ผ่านคำสั่งและเมนู'
             },
             createNewNotesInNewTab: {
                 name: 'เปิดโน้ตใหม่ในแท็บใหม่',
@@ -1892,6 +1909,10 @@ export const STRINGS_TH = {
             skipCodeBlocksInPreview: {
                 name: 'ข้ามบล็อกโค้ดในตัวอย่าง',
                 desc: 'ข้ามบล็อกโค้ดเมื่อสร้างข้อความตัวอย่าง'
+            },
+            skipCalloutsInPreview: {
+                name: 'ข้าม callout ในตัวอย่าง',
+                desc: 'ข้ามบล็อก callout เมื่อสร้างข้อความตัวอย่าง'
             },
             stripHtmlInPreview: {
                 name: 'ลบ HTML ในตัวอย่าง',

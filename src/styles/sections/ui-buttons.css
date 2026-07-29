@@ -37,17 +37,6 @@ button.nn-icon-button {
     height: 25px;
 }
 
-/* iPad-specific adjustment for icon buttons in headers */
-@media (min-width: 768px) {
-    .notebook-navigator-mobile .nn-header-actions button.nn-icon-button {
-        /* Maintain same dimensions as desktop for consistency */
-        padding: 0 8px;
-        width: auto;
-        min-width: 34px;
-        height: 25px;
-    }
-}
-
 /* Icon button hover state - subtle background on hover - desktop only */
 .nn-desktop button.nn-icon-button:hover {
     background-color: var(--nn-theme-header-button-hover-bg);

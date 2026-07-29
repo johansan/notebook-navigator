@@ -168,9 +168,15 @@
    Mobile Layout
    ======================================================================== */
 
-/* Hide resize handle on mobile */
+/* Widen the divider hit area for touch dragging. The handle only renders in
+   dual pane mode, which is limited to tablets on mobile. */
 .notebook-navigator-mobile .nn-resize-handle {
-    display: none;
+    width: 12px;
+}
+
+.notebook-navigator-mobile .nn-split-container.nn-orientation-vertical .nn-resize-handle {
+    width: 100%;
+    height: 12px;
 }
 
 /* Add touch-action to prevent browser gestures interfering */

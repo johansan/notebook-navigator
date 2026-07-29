@@ -24,10 +24,12 @@ import { createDropdownDefinition, createGroupDefinition, createRenderDefinition
 import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
+import { usesMobileChrome } from '../../utils/paneLayout';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
 import { getManualSortGroupHeaderPropertyKey, isValidManualSortPropertyKey, normalizeManualSortPropertyKey } from '../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
+import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
 
 type QuickActionSettingKey =
     'quickActionRevealInFolder' | 'quickActionAddTag' | 'quickActionAddToShortcuts' | 'quickActionPinNote' | 'quickActionOpenInNewTab';
@@ -73,6 +75,30 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
     const { plugin } = context;
     const items: SettingDefinitionItem[] = [
         createGroupDefinition(undefined, [
+            createRenderDefinition({
+                name: strings.settings.items.toolbarButtons.name,
+                desc: strings.settings.items.toolbarButtons.desc,
+                aliases: [
+                    strings.paneHeader.showFolders,
+                    strings.paneHeader.search,
+                    strings.commands.revealFile,
+                    strings.settings.items.includeDescendantNotes.name,
+                    strings.commands.collapseExpandListGroups,
+                    strings.paneHeader.changeSortAndGroup,
+                    strings.paneHeader.changeAppearance,
+                    strings.paneHeader.newNote
+                ],
+                render: setting => {
+                    renderToolbarButtonsSetting(
+                        createSetting => {
+                            createSetting(setting);
+                            return setting;
+                        },
+                        plugin,
+                        'list'
+                    );
+                }
+            }),
             createRenderDefinition({
                 name: strings.settings.items.includeDescendantNotes.name,
                 desc: strings.settings.items.includeDescendantNotes.desc,
@@ -214,7 +240,8 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
 function createListAppearanceDefinitionGroup(context: SettingsTabContext): SettingDefinitionItem {
     const items: NonNullable<ReturnType<typeof createGroupDefinition>['items']> = [];
 
-    if (!Platform.isMobile) {
+    // The list pane title only renders with the desktop chrome (desktop and tablets)
+    if (!usesMobileChrome()) {
         items.push(
             createDropdownDefinition('listPaneTitle', {
                 name: strings.settings.items.listPaneTitle.name,

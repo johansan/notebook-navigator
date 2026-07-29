@@ -148,7 +148,6 @@ describe('useNavigationPaneTreeInteractions', () => {
             captured = useNavigationPaneTreeInteractions({
                 app: new App(),
                 commandQueue: null,
-                isMobile: false,
                 settings: DEFAULT_SETTINGS,
                 uiState: { singlePane: false },
                 expansionState: {
@@ -206,7 +205,6 @@ describe('useNavigationPaneTreeInteractions', () => {
             captured = useNavigationPaneTreeInteractions({
                 app,
                 commandQueue: null,
-                isMobile: false,
                 settings: {
                     ...DEFAULT_SETTINGS,
                     autoExpandNavItems: true,
@@ -268,7 +266,6 @@ describe('useNavigationPaneTreeInteractions', () => {
             captured = useNavigationPaneTreeInteractions({
                 app,
                 commandQueue: null,
-                isMobile: false,
                 settings: {
                     ...DEFAULT_SETTINGS,
                     enableFolderNotes: true,
@@ -328,7 +325,6 @@ describe('useNavigationPaneTreeInteractions', () => {
             captured = useNavigationPaneTreeInteractions({
                 app,
                 commandQueue: null,
-                isMobile: false,
                 settings: {
                     ...DEFAULT_SETTINGS,
                     enableFolderNotes: true,

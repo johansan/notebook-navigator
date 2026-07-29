@@ -55,7 +55,6 @@ import {
 import { createSettingDescriptionWithExternalLink } from '../externalLink';
 import { formatPixelSliderValue, renderSliderSetting } from '../SliderSetting';
 import type { SettingsTabContext } from '../SettingsTabContext';
-import { renderToolbarButtonsSetting } from '../ToolbarButtonsSetting';
 
 type CreateSettingGroup = ReturnType<typeof createSettingGroupFactory>;
 
@@ -68,8 +67,13 @@ export function renderAppearanceBehaviorTab(context: SettingsTabContext): void {
 
     if (!Platform.isMobile) {
         renderKeyboardNavigationSettings(context, createGroup);
+        renderMouseButtonSettings(context, createGroup);
         renderDesktopAppearanceSettings(context, createGroup);
     } else {
+        // Tablets support hardware keyboards, so they get the keyboard navigation settings
+        if (Platform.isTablet) {
+            renderKeyboardNavigationSettings(context, createGroup);
+        }
         renderMobileAppearanceSettings(context, createGroup);
     }
 
@@ -332,6 +336,7 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
                 })
         );
 
+    // Platform.isMacOS is also true on iOS/iPadOS devices, which use Cmd-based keyboards
     const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterOpenContext : strings.settings.items.ctrlEnterOpenContext;
 
     new Setting(enterToOpenSettingsEl)
@@ -349,7 +354,10 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
                     await plugin.saveSettingsAndUpdate();
                 })
         );
+}
 
+function renderMouseButtonSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
+    const { plugin } = context;
     const mouseButtonsGroup = createGroup(strings.settings.groups.general.mouseButtons);
     const normalizeMouseBackForwardAction = (value: string): MouseBackForwardAction => {
         if (value === 'singlePaneSwitch' || value === 'history') {
@@ -376,11 +384,11 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
     });
 }
 
-function renderDesktopAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
+/** Renders dual pane layout settings shown on desktop and tablets; phones never render these. */
+function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<CreateSettingGroup>): void {
     const { plugin } = context;
-    const desktopAppearanceGroup = createGroup(strings.settings.groups.general.desktopAppearance);
 
-    const dualPaneSetting = desktopAppearanceGroup.addSetting(setting => {
+    const dualPaneSetting = group.addSetting(setting => {
         setting
             .setName(strings.settings.items.dualPane.name)
             .setDesc(strings.settings.items.dualPane.desc)
@@ -393,7 +401,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
 
     addSettingSyncModeToggle({ setting: dualPaneSetting, plugin, settingId: 'dualPane' });
 
-    const dualPaneOrientationSetting = desktopAppearanceGroup.addSetting(setting => {
+    const dualPaneOrientationSetting = group.addSetting(setting => {
         setting
             .setName(strings.settings.items.dualPaneOrientation.name)
             .setDesc(strings.settings.items.dualPaneOrientation.desc)
@@ -417,7 +425,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
     const showNarrowSidebarSettings = plugin.getDualPaneOrientation() === 'horizontal';
 
     if (showNarrowSidebarSettings) {
-        const narrowSidebarLayoutSetting = desktopAppearanceGroup.addSetting(setting => {
+        const narrowSidebarLayoutSetting = group.addSetting(setting => {
             setting
                 .setName(strings.settings.items.narrowSidebarLayout.name)
                 .setDesc(strings.settings.items.narrowSidebarLayout.desc)
@@ -440,7 +448,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
         addSettingSyncModeToggle({ setting: narrowSidebarLayoutSetting, plugin, settingId: 'narrowSidebarLayout' });
 
         if (plugin.settings.narrowSidebarLayout !== 'none') {
-            const narrowSidebarTriggerSetting = desktopAppearanceGroup.addSetting(setting => {
+            const narrowSidebarTriggerSetting = group.addSetting(setting => {
                 setting
                     .setName(strings.settings.items.narrowSidebarTrigger.name)
                     .setDesc(strings.settings.items.narrowSidebarTrigger.desc)
@@ -462,7 +470,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
         }
 
         if (plugin.settings.narrowSidebarLayout !== 'none' && plugin.settings.narrowSidebarTriggerMode === 'customWidth') {
-            const narrowSidebarCustomWidthSetting = desktopAppearanceGroup.addSetting(setting => {
+            const narrowSidebarCustomWidthSetting = group.addSetting(setting => {
                 renderSliderSetting(setting, {
                     name: strings.settings.items.narrowSidebarCustomWidth.name,
                     desc: strings.settings.items.narrowSidebarCustomWidth.desc,
@@ -482,6 +490,13 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
             addSettingSyncModeToggle({ setting: narrowSidebarCustomWidthSetting, plugin, settingId: 'narrowSidebarCustomWidth' });
         }
     }
+}
+
+function renderDesktopAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
+    const { plugin } = context;
+    const desktopAppearanceGroup = createGroup(strings.settings.groups.general.desktopAppearance);
+
+    renderDualPaneSettings(context, desktopAppearanceGroup);
 
     desktopAppearanceGroup.addSetting(setting => {
         setting
@@ -541,6 +556,13 @@ function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup
     const { plugin } = context;
     const mobileAppearanceGroup = createGroup(strings.settings.groups.general.mobileAppearance);
 
+    // Tablets support the dual pane layout, so they get the same pane settings as desktop
+    if (Platform.isTablet) {
+        renderDualPaneSettings(context, mobileAppearanceGroup);
+        return;
+    }
+
+    // Floating toolbars only render with the phone chrome; tablets use the desktop headers
     const useFloatingToolbarsSetting = mobileAppearanceGroup.addSetting(setting => {
         setting
             .setName(strings.settings.items.useFloatingToolbars.name)
@@ -607,8 +629,6 @@ function renderViewSettings(context: SettingsTabContext, createGroup: CreateSett
                 await plugin.saveSettingsAndUpdate();
             })
         );
-
-    renderToolbarButtonsSetting(createSetting => viewGroup.addSetting(createSetting), plugin);
 }
 
 function renderIconSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {

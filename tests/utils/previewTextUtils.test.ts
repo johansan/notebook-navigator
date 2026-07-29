@@ -224,6 +224,182 @@ describe('PreviewTextUtils.extractPreviewText', () => {
         expect(preview).toBe('Example [!note] content');
     });
 
+    it('keeps callout titles and content when callouts are not skipped', () => {
+        const content = '> [!note] Important title\n> First line\n> Second line';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('Important title First line Second line');
+    });
+
+    it('keeps the first content line of an untitled callout', () => {
+        const content = '> [!warning]\n> First line\n> Second line';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('First line Second line');
+    });
+
+    it('keeps callout content with a fold marker after the type', () => {
+        const content = '> [!tip]- Folded title\n> Body line';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('Folded title Body line');
+    });
+
+    it('removes callout blocks when callouts are skipped', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = 'Before text\n\n> [!note] Title\n> Callout content\n\nAfter text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Before text After text');
+    });
+
+    it('removes nested callouts together with their lazy continuation lines', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> Quote line\n> > [!inner] Inner\n> > Inner content\n> More quote\n\n> After blank';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Quote line After blank');
+    });
+
+    it('removes lazy continuation lines that follow a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note] Title\nLazy continuation line\n\nAfter text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('After text');
+    });
+
+    it('ends a skipped callout at a heading without a preceding blank line', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note] Title\n# Next section\nTail text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Next section Tail text');
+    });
+
+    it('ends a skipped callout at a list item without a preceding blank line', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note] Title\n- First item';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('First item');
+    });
+
+    it('removes fenced code inside a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCodeBlocksInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note]\n> ```js\n> const x = 1\n> ```\n> More callout\n\nTail text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Tail text');
+    });
+
+    it('removes text absorbed into an unterminated fence inside a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCodeBlocksInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note]\n> ```js\n> const x = 1\nAbsorbed into code\n\nAfter blank';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('After blank');
+    });
+
+    it('removes text lazily absorbed after a fenced code block in a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCodeBlocksInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note]\n> ```js\n> const x = 1\n> ```\nAbsorbed text\n\nAfter blank';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('After blank');
+    });
+
+    it('removes text lazily absorbed after an empty quote line in a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note] Title\n>\nAbsorbed text\n\nAfter blank';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('After blank');
+    });
+
+    it('removes table rows lazily absorbed into a skipped callout', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note] Title\n| a | b |\nAbsorbed text\n\nAfter blank';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('After blank');
+    });
+
+    it('keeps a fence that interrupts a skipped callout at shallower depth', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCodeBlocksInPreview: false, skipCalloutsInPreview: true });
+        const content = '> [!note]\n> ```js\n> const x = 1\n```\nTail text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Tail text');
+    });
+
+    it('keeps callout syntax inside fenced code blocks when callouts are skipped', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCodeBlocksInPreview: false, skipCalloutsInPreview: true });
+        const content = '```\n> [!note] Sample\n```\nTail text';
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('> [!note] Sample Tail text');
+    });
+
+    it('builds the preview from text after a callout longer than the clip window', () => {
+        const settings = createSettings({ skipHeadingsInPreview: false, skipCalloutsInPreview: true });
+        const calloutLines = Array.from({ length: 100 }, (_, index) => `> Callout line ${index} with filler text padding`);
+        const content = `> [!note] Long callout\n${calloutLines.join('\n')}\n\nVisible tail`;
+        const preview = PreviewTextUtils.extractPreviewText(content, settings);
+        expect(preview).toBe('Visible tail');
+    });
+
+    it('strips markdown formatting inside callout titles', () => {
+        const content = '> [!note] A **bold** [link](https://example.com) title\n> Body line';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('A bold link title Body line');
+    });
+
+    it('strips links nested inside bold formatting', () => {
+        const preview = PreviewTextUtils.extractPreviewText('See **[link text](https://example.com)** here', skipCodeSettings);
+        expect(preview).toBe('See link text here');
+    });
+
+    it('strips bold formatting nested inside link text', () => {
+        const preview = PreviewTextUtils.extractPreviewText('See [**bold text**](https://example.com) here', skipCodeSettings);
+        expect(preview).toBe('See bold text here');
+    });
+
+    it('strips italic links nested inside bold formatting', () => {
+        const preview = PreviewTextUtils.extractPreviewText('See **[*italic*](https://example.com)** here', skipCodeSettings);
+        expect(preview).toBe('See italic here');
+    });
+
+    it('strips nested formatting inside callout titles', () => {
+        const content = '> [!note] A [**bold link**](https://example.com) title\n> Body line';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('A bold link title Body line');
+    });
+
+    it('keeps surrounding bold content when italics are nested inside', () => {
+        const preview = PreviewTextUtils.extractPreviewText('**alpha *beta* gamma**', skipCodeSettings);
+        expect(preview).toBe('alpha beta gamma');
+    });
+
+    it('keeps heading text containing italics when headings are included', () => {
+        const preview = PreviewTextUtils.extractPreviewText('# Head *word* tail', skipCodeSettings);
+        expect(preview).toBe('Head word tail');
+    });
+
+    it('keeps bold text that looks like a heading when headings are skipped', () => {
+        const settings = createSettings({ skipHeadingsInPreview: true });
+        const preview = PreviewTextUtils.extractPreviewText('**# Visible text** tail', settings);
+        expect(preview).toBe('# Visible text tail');
+    });
+
+    it('keeps bold text that looks like a table row', () => {
+        const preview = PreviewTextUtils.extractPreviewText('**| visible | text |** tail', skipCodeSettings);
+        expect(preview).toBe('| visible | text | tail');
+    });
+
+    it('keeps bold text that looks like a list item', () => {
+        const preview = PreviewTextUtils.extractPreviewText('**- item** tail', skipCodeSettings);
+        expect(preview).toBe('- item tail');
+    });
+
+    it('builds the property preview from text after a callout longer than the clip window', () => {
+        const settings = createSettings({
+            skipHeadingsInPreview: false,
+            skipCalloutsInPreview: true,
+            previewProperties: ['summary'],
+            previewPropertiesFallback: false
+        });
+        const calloutLines = Array.from({ length: 100 }, (_, index) => `> Callout line ${index} with filler text padding`);
+        const frontmatter = { summary: `> [!note] Long callout\n${calloutLines.join('\n')}\n\nVisible property tail` };
+        const preview = PreviewTextUtils.extractPreviewText('Fallback content', settings, frontmatter);
+        expect(preview).toBe('Visible property tail');
+    });
+
     it('strips html tags while keeping their text content', () => {
         const content = 'Alpha <font color="red">red</font> and <u>underlined</u> text';
         const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
@@ -370,6 +546,18 @@ describe('PreviewTextUtils.extractPreviewText', () => {
         const content = ['> ```js', '> const value = 42;', '> ```', 'Tail'].join('\n');
         const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
         expect(preview).toBe('Tail');
+    });
+
+    it('ends unterminated blockquote fences at a blank line when skipping code blocks', () => {
+        const content = ['> ```js', '> const value = 42;', 'Absorbed into code', '', 'Tail'].join('\n');
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('Tail');
+    });
+
+    it('ends unterminated blockquote fences at a heading when skipping code blocks', () => {
+        const content = ['> ```js', '> const value = 42;', '# Heading', 'Tail'].join('\n');
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('Heading Tail');
     });
 
     it('keeps fenced code block content inside blockquotes when including code blocks', () => {
