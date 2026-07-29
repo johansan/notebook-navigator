@@ -106,6 +106,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.1',
+        date: '2026-07-29',
+        showOnUpdate: true,
+        changed: [
+            'In Style Settings, the navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, and `Custom color file name weight` are merged into ==Name weight== and ==Custom color name weight==. The merged sliders apply to all names in the navigation pane: folders, tags, properties, section headers, shortcuts, and recent files. Names with custom or rainbow colors use ==Custom color name weight==, all other names use ==Name weight==. Previously `Default folder/tag weight` did not affect shortcuts, and the `Shortcuts` section header ignored both sliders.'
+        ]
+    },
+    {
         version: '3.3.0',
         date: '2026-07-29',
         showOnUpdate: true,
