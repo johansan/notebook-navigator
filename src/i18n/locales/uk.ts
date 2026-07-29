@@ -857,6 +857,7 @@ export const STRINGS_UK = {
 
     // Date grouping
     dateGroups: {
+        future: 'Майбутнє',
         today: 'Сьогодні',
         yesterday: 'Вчора',
         previous7Days: 'Попередні 7 днів',

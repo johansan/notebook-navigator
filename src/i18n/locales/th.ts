@@ -853,6 +853,7 @@ export const STRINGS_TH = {
 
     // Date grouping
     dateGroups: {
+        future: 'อนาคต',
         today: 'วันนี้',
         yesterday: 'เมื่อวาน',
         previous7Days: '7 วันที่ผ่านมา',

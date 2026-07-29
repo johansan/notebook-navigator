@@ -859,6 +859,7 @@ export const STRINGS_JA = {
 
     // Date grouping
     dateGroups: {
+        future: '未来',
         today: '今日',
         yesterday: '昨日',
         previous7Days: '過去7日間',

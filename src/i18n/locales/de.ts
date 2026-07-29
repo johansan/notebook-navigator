@@ -862,6 +862,7 @@ export const STRINGS_DE = {
 
     // Date grouping
     dateGroups: {
+        future: 'Zukunft',
         today: 'Heute',
         yesterday: 'Gestern',
         previous7Days: 'Letzte 7 Tage',

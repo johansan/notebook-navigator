@@ -181,6 +181,19 @@ describe('DateUtils.getDateGroupInfo', () => {
         });
         expect(DateUtils.getDateGroup(timestamp, referenceDate)).toBe(group.label);
     });
+
+    it.each([
+        ['tomorrow', new Date(2026, 2, 8, 8, 30, 0, 0)],
+        ['a later month in the current year', new Date(2026, 7, 15, 8, 30, 0, 0)],
+        ['a later year', new Date(2027, 0, 1, 8, 30, 0, 0)]
+    ])('groups %s under the future group', (_description, date) => {
+        const referenceDate = new Date(2026, 2, 7, 12, 0, 0, 0);
+
+        expect(DateUtils.getDateGroupInfo(date.getTime(), referenceDate)).toEqual({
+            label: 'Future',
+            key: 'relative:future'
+        });
+    });
 });
 
 describe('DateUtils.parseFrontmatterDate', () => {

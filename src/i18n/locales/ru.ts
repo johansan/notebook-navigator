@@ -857,6 +857,7 @@ export const STRINGS_RU = {
 
     // Date grouping
     dateGroups: {
+        future: 'Будущее',
         today: 'Сегодня',
         yesterday: 'Вчера',
         previous7Days: 'Последние 7 дней',

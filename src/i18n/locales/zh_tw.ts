@@ -852,6 +852,7 @@ export const STRINGS_ZH_TW = {
 
     // Date grouping
     dateGroups: {
+        future: '未來',
         today: '今天',
         yesterday: '昨天',
         previous7Days: '過去 7 天',

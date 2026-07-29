@@ -860,6 +860,7 @@ export const STRINGS_PT = {
 
     // Date grouping
     dateGroups: {
+        future: 'Futuro',
         today: 'Hoje',
         yesterday: 'Ontem',
         previous7Days: 'Últimos 7 dias',

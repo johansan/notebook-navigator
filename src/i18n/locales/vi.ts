@@ -861,6 +861,7 @@ export const STRINGS_VI = {
 
     // Date grouping
     dateGroups: {
+        future: 'Tương lai',
         today: 'Hôm nay',
         yesterday: 'Hôm qua',
         previous7Days: '7 ngày trước',

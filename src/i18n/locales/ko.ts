@@ -857,6 +857,7 @@ export const STRINGS_KO = {
 
     // Date grouping
     dateGroups: {
+        future: '미래',
         today: '오늘',
         yesterday: '어제',
         previous7Days: '지난 7일',

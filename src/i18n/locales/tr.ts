@@ -858,6 +858,7 @@ export const STRINGS_TR = {
 
     // Date grouping
     dateGroups: {
+        future: 'Gelecek',
         today: 'Bugün',
         yesterday: 'Dün',
         previous7Days: 'Son 7 gün',

@@ -107,13 +107,16 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.1',
-        date: '2026-07-29',
+        date: '2026-08-03',
         showOnUpdate: true,
         new: [
             'New search syntax: quoted literal terms. A search term that opens with a double quote is matched literally against note names and aliases instead of being read as a filter. For example, `".F"` finds notes with `.F` in the name, while unquoted `.F` still filters on properties starting with `f`. Use `-".F"` to exclude matches. Previously, quotes around a term were ignored, so `"#work"` behaved like the tag filter `#work`.'
         ],
         changed: [
             'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.'
+        ],
+        fixed: [
+            'When a note had a creation date in the future (for example from a frontmatter `created` property), the `Previous 7 days` group header appeared twice in the list pane, and stray headers then showed up in other folders until Obsidian was restarted. Notes dated in the future now group under a new `Future` group.'
         ]
     },
     {
