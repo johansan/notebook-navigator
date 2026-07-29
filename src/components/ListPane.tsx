@@ -427,7 +427,7 @@ export const ListPane = React.memo(
             searchQuery,
             debouncedSearchQuery,
             debouncedSearchTokens,
-            searchHighlightQuery,
+            searchHighlightTerms,
             shouldFocusSearch,
             activeSearchShortcut,
             isSavingSearchShortcut,
@@ -1853,7 +1853,7 @@ export const ListPane = React.memo(
                             selectionType={selectionType}
                             selectedFolderPath={selectedFolderPath}
                             sortOption={effectiveSortOption}
-                            searchHighlightQuery={searchHighlightQuery}
+                            searchHighlightTerms={searchHighlightTerms}
                             isFolderNavigation={selectionState.isFolderNavigation}
                             lastSelectedFilePath={lastSelectedFilePath}
                             isFileSelected={isFileSelected}

@@ -199,7 +199,9 @@ export const STRINGS_ES = {
                     items: [
                         '`word` Encontrar notas con "word" en el nombre para mostrar o en un alias.',
                         '`word1 word2` Cada palabra debe encontrarse en el nombre para mostrar o en los alias.',
-                        '`-word` Excluir notas con "word" en el nombre para mostrar o en un alias.'
+                        '`-word` Excluir notas con "word" en el nombre para mostrar o en un alias.',
+                        '`"text"` Buscar el texto literalmente; un término que empieza con comillas dobles nunca se interpreta como etiqueta, propiedad, fecha o filtro (por ejemplo: `".F"`).',
+                        '`-"text"` Excluir notas con el texto literal en el nombre para mostrar o en un alias.'
                     ]
                 },
                 tags: {

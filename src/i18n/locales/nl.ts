@@ -202,7 +202,9 @@ export const STRINGS_NL = {
                     items: [
                         '`word` Notities met "word" in de weergavenaam of een alias vinden.',
                         '`word1 word2` Elk woord moet voorkomen in de weergavenaam of de aliassen.',
-                        '`-word` Notities met "word" in de weergavenaam of een alias uitsluiten.'
+                        '`-word` Notities met "word" in de weergavenaam of een alias uitsluiten.',
+                        '`"text"` Tekst letterlijk vinden; een term die met een dubbel aanhalingsteken begint, wordt nooit als tag, eigenschap, datum of filter geïnterpreteerd (bijvoorbeeld: `".F"`).',
+                        '`-"text"` Notities met de letterlijke tekst in de weergavenaam of een alias uitsluiten.'
                     ]
                 },
                 tags: {

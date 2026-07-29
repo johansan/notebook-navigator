@@ -200,7 +200,9 @@ export const STRINGS_PL = {
                     items: [
                         '`word` Dopasuj notatki ze słowem "word" w nazwie wyświetlanej lub aliasie.',
                         '`word1 word2` Każde słowo musi występować w nazwie wyświetlanej lub aliasach.',
-                        '`-word` Wyklucz notatki zawierające słowo "word" w nazwie wyświetlanej lub aliasie.'
+                        '`-word` Wyklucz notatki zawierające słowo "word" w nazwie wyświetlanej lub aliasie.',
+                        '`"text"` Dopasuj tekst dosłownie; fraza rozpoczynająca się od cudzysłowu nigdy nie jest interpretowana jako tag, właściwość, data ani filtr (na przykład: `".F"`).',
+                        '`-"text"` Wyklucz notatki zawierające dosłowny tekst w nazwie wyświetlanej lub aliasie.'
                     ]
                 },
                 tags: {

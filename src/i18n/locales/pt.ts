@@ -200,7 +200,9 @@ export const STRINGS_PT = {
                     items: [
                         '`word` Encontrar notas com "word" no nome de apresentação ou num alias.',
                         '`word1 word2` Cada palavra deve corresponder ao nome de apresentação ou a um dos aliases.',
-                        '`-word` Excluir notas com "word" no nome de apresentação ou num alias.'
+                        '`-word` Excluir notas com "word" no nome de apresentação ou num alias.',
+                        '`"text"` Corresponder ao texto literalmente; um termo que começa com aspas duplas nunca é interpretado como etiqueta, propriedade, data ou filtro (por exemplo: `".F"`).',
+                        '`-"text"` Excluir notas com o texto literal no nome de apresentação ou num alias.'
                     ]
                 },
                 tags: {

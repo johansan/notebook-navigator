@@ -199,7 +199,9 @@ export const STRINGS_DE = {
                     items: [
                         '`word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen finden.',
                         '`word1 word2` Jedes Wort muss im Anzeigenamen oder in den Aliasnamen vorkommen.',
-                        '`-word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen ausschließen.'
+                        '`-word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen ausschließen.',
+                        '`"text"` Text wörtlich finden; ein Begriff, der mit einem doppelten Anführungszeichen beginnt, wird nie als Tag, Eigenschaft, Datum oder Filter interpretiert (zum Beispiel: `".F"`).',
+                        '`-"text"` Notizen mit dem wörtlichen Text im Anzeigenamen oder in einem Aliasnamen ausschließen.'
                     ]
                 },
                 tags: {

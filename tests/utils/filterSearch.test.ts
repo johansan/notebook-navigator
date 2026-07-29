@@ -23,7 +23,8 @@ import {
     fileMatchesFilterTokens,
     findFilterSearchNameMatch,
     getFileFilterSearchMatch,
-    updateFilterQueryWithTag
+    updateFilterQueryWithTag,
+    updateFilterQueryWithProperty
 } from '../../src/utils/filterSearch';
 import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
 import { foldSearchText } from '../../src/utils/recordUtils';
@@ -1065,5 +1066,149 @@ describe('fileMatchesDateFilterTokens', () => {
                 tokens
             )
         ).toBe(true);
+    });
+});
+
+describe('quoted literal search terms', () => {
+    it('parses a quoted leading-dot term as a name token instead of a property filter', () => {
+        const tokens = parseFilterSearchTokens('".F"');
+        expect(tokens.mode).toBe('filter');
+        expect(tokens.nameTokens).toEqual(['.f']);
+        expect(tokens.propertyTokens).toEqual([]);
+        expect(tokens.requiresProperties).toBe(false);
+    });
+
+    it('parses -"..." as a literal name exclusion', () => {
+        const tokens = parseFilterSearchTokens('-".F"');
+        expect(tokens.excludeNameTokens).toEqual(['.f']);
+        expect(tokens.nameTokens).toEqual([]);
+        expect(tokens.excludePropertyTokens).toEqual([]);
+    });
+
+    it('keeps a quoted leading minus inside the literal text', () => {
+        const tokens = parseFilterSearchTokens('"-.F"');
+        expect(tokens.nameTokens).toEqual(['-.f']);
+        expect(tokens.excludeNameTokens).toEqual([]);
+        expect(tokens.excludePropertyTokens).toEqual([]);
+    });
+
+    it('treats quoted filter syntax as literal name text', () => {
+        expect(parseFilterSearchTokens('"#work"').nameTokens).toEqual(['#work']);
+        expect(parseFilterSearchTokens('"#work"').requireTagged).toBe(false);
+        expect(parseFilterSearchTokens('"@today"').dateRanges).toEqual([]);
+        expect(parseFilterSearchTokens('"@today"').nameTokens).toEqual(['@today']);
+        expect(parseFilterSearchTokens('"has:task"').requireUnfinishedTasks).toBe(false);
+        expect(parseFilterSearchTokens('"has:task"').nameTokens).toEqual(['has:task']);
+        expect(parseFilterSearchTokens('"folder:work"').folderTokens).toEqual([]);
+        expect(parseFilterSearchTokens('"folder:work"').nameTokens).toEqual(['folder:work']);
+        expect(parseFilterSearchTokens('"ext:md"').extensionTokens).toEqual([]);
+        expect(parseFilterSearchTokens('"ext:md"').nameTokens).toEqual(['ext:md']);
+    });
+
+    it('keeps property filters with quoted keys when the quote is not at the start of the term', () => {
+        const tokens = parseFilterSearchTokens('."Reading Status"');
+        expect(tokens.propertyTokens).toEqual([{ key: 'reading status', value: null }]);
+        expect(tokens.nameTokens).toEqual([]);
+    });
+
+    it('forces filter mode when a quoted connector appears between tags', () => {
+        const literalConnector = parseFilterSearchTokens('#a "AND" #b');
+        expect(literalConnector.mode).toBe('filter');
+        expect(literalConnector.nameTokens).toEqual(['and']);
+        expect(sortTokens(literalConnector.tagTokens)).toEqual(['a', 'b']);
+
+        const operatorConnector = parseFilterSearchTokens('#a AND #b');
+        expect(operatorConnector.mode).toBe('tag');
+    });
+
+    it('treats an unterminated opening quote as a literal term while typing', () => {
+        const tokens = parseFilterSearchTokens('".F');
+        expect(tokens.nameTokens).toEqual(['.f']);
+        expect(tokens.propertyTokens).toEqual([]);
+    });
+
+    it('folds diacritics in literal terms', () => {
+        expect(parseFilterSearchTokens('"É.F"').nameTokens).toEqual(['e.f']);
+    });
+
+    it('matches and excludes file names by literal terms', () => {
+        const includeTokens = parseFilterSearchTokens('".F"');
+        expect(fileMatchesFilterTokens(foldSearchText('Report.F'), [], includeTokens)).toBe(true);
+        expect(fileMatchesFilterTokens(foldSearchText('Report'), [], includeTokens)).toBe(false);
+
+        const excludeTokens = parseFilterSearchTokens('-".F"');
+        expect(fileMatchesFilterTokens(foldSearchText('Report.F'), [], excludeTokens)).toBe(false);
+        expect(fileMatchesFilterTokens(foldSearchText('Report'), [], excludeTokens)).toBe(true);
+    });
+
+    it('excludes literal terms from navigation highlight state', () => {
+        const state = buildSearchNavFilterState('"#work" ".status"');
+        expect(state.tags.include).toEqual([]);
+        expect(state.properties.include).toEqual([]);
+    });
+
+    it('adds a tag filter instead of removing a matching literal term', () => {
+        const result = updateFilterQueryWithTag('"#work"', 'work', 'AND');
+        expect(result.action).toBe('added');
+        expect(result.query).toBe('"#work" #work');
+    });
+
+    it('adds a property filter instead of removing a matching literal term', () => {
+        const result = updateFilterQueryWithProperty('".status"', 'status', null, 'AND');
+        expect(result.action).toBe('added');
+        expect(result.query).toBe('".status" .status');
+    });
+
+    it('preserves literal quotes when toggling tags in the same query', () => {
+        const added = updateFilterQueryWithTag('".F"', 'work', 'AND');
+        expect(added.query).toBe('".F" #work');
+
+        const removed = updateFilterQueryWithTag('".F" #work', 'work', 'AND');
+        expect(removed.action).toBe('removed');
+        expect(removed.query).toBe('".F"');
+    });
+
+    it('preserves negated literal quotes through query mutations', () => {
+        const result = updateFilterQueryWithTag('-".F"', 'work', 'AND');
+        expect(result.query).toBe('-".F" #work');
+    });
+
+    it('does not insert connectors when a literal term makes the query mixed', () => {
+        const result = updateFilterQueryWithTag('".F" #a', 'b', 'AND');
+        expect(result.query).toBe('".F" #a #b');
+    });
+
+    it('preserves literal quotes when removing a property filter', () => {
+        const result = updateFilterQueryWithProperty('".F" .status', 'status', null, 'AND');
+        expect(result.action).toBe('removed');
+        expect(result.query).toBe('".F"');
+    });
+
+    it('keeps the folder prefix outside the quotes when a mutation re-serializes the query', () => {
+        const result = updateFilterQueryWithTag('folder:"my folder"', 'work', 'AND');
+        expect(result.query).toBe('folder:"my folder" #work');
+
+        const tokens = parseFilterSearchTokens(result.query);
+        expect(tokens.folderTokens).toEqual([{ mode: 'segment', value: 'my folder' }]);
+        expect(tokens.nameTokens).toEqual([]);
+    });
+
+    it('keeps negated folder filters through query mutations', () => {
+        const result = updateFilterQueryWithTag('-folder:"my folder"', 'work', 'AND');
+        expect(result.query).toBe('-folder:"my folder" #work');
+
+        const tokens = parseFilterSearchTokens(result.query);
+        expect(tokens.excludeFolderTokens).toEqual([{ mode: 'segment', value: 'my folder' }]);
+        expect(tokens.excludeNameTokens).toEqual([]);
+    });
+
+    it('keeps folder filters with backslashes in the payload through query mutations', () => {
+        // Backslashes normalize to path separators, so the raw payload round-trips escaped
+        // while the parsed token keeps its exact path value.
+        const result = updateFilterQueryWithTag('folder:"/my\\\\folder"', 'work', 'AND');
+        expect(result.query).toBe('folder:"/my\\\\folder" #work');
+
+        const tokens = parseFilterSearchTokens(result.query);
+        expect(tokens.folderTokens).toEqual([{ mode: 'exact', value: 'my/folder' }]);
     });
 });

@@ -199,7 +199,9 @@ export const STRINGS_EN = {
                     items: [
                         '`word` Match notes with "word" in the display name or an alias.',
                         '`word1 word2` Require every word to match across the display name and aliases.',
-                        '`-word` Exclude notes with "word" in the display name or an alias.'
+                        '`-word` Exclude notes with "word" in the display name or an alias.',
+                        '`"text"` Match text literally; a term that opens with a double quote is never interpreted as a tag, property, date, or filter (for example: `".F"`).',
+                        '`-"text"` Exclude notes with the literal text in the display name or an alias.'
                     ]
                 },
                 tags: {

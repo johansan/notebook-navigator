@@ -200,7 +200,9 @@ export const STRINGS_ID = {
                     items: [
                         '`word` Temukan catatan dengan "word" di nama tampilan atau alias.',
                         '`word1 word2` Setiap kata harus cocok pada nama tampilan atau alias.',
-                        '`-word` Kecualikan catatan dengan "word" di nama tampilan atau alias.'
+                        '`-word` Kecualikan catatan dengan "word" di nama tampilan atau alias.',
+                        '`"text"` Cocokkan teks secara harfiah; istilah yang diawali tanda kutip ganda tidak pernah ditafsirkan sebagai tag, properti, tanggal, atau filter (contoh: `".F"`).',
+                        '`-"text"` Kecualikan catatan dengan teks harfiah di nama tampilan atau alias.'
                     ]
                 },
                 tags: {

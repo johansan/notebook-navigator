@@ -199,7 +199,9 @@ export const STRINGS_IT = {
                     items: [
                         '`word` Trova note con "word" nel nome visualizzato o in un alias.',
                         '`word1 word2` Ogni parola deve corrispondere al nome visualizzato o a uno degli alias.',
-                        '`-word` Escludi note con "word" nel nome visualizzato o in un alias.'
+                        '`-word` Escludi note con "word" nel nome visualizzato o in un alias.',
+                        '`"text"` Trova il testo letteralmente; un termine che inizia con virgolette doppie non viene mai interpretato come tag, proprietà, data o filtro (ad esempio: `".F"`).',
+                        '`-"text"` Escludi note con il testo letterale nel nome visualizzato o in un alias.'
                     ]
                 },
                 tags: {
