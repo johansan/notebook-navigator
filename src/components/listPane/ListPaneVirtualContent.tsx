@@ -124,7 +124,7 @@ interface ListPaneVirtualContentProps {
     selectionType: NavigationItemType | null;
     selectedFolderPath: string | null;
     sortOption?: SortOption;
-    searchHighlightQuery?: string;
+    searchHighlightTerms?: readonly string[];
     isFolderNavigation: boolean;
     lastSelectedFilePath: string | null;
     isFileSelected: (file: TFile) => boolean;
@@ -639,7 +639,7 @@ export function ListPaneVirtualContent({
     selectionType,
     selectedFolderPath,
     sortOption,
-    searchHighlightQuery,
+    searchHighlightTerms,
     isFolderNavigation,
     lastSelectedFilePath,
     isFileSelected,
@@ -1016,7 +1016,7 @@ export function ListPaneVirtualContent({
             onFileClick,
             selectionType,
             sortOption,
-            searchQuery: searchHighlightQuery,
+            searchHighlightTerms,
             onModifySearchWithTag,
             onModifySearchWithProperty,
             localDayReference,
@@ -1038,7 +1038,7 @@ export function ListPaneVirtualContent({
             onFileClick,
             selectionType,
             sortOption,
-            searchHighlightQuery,
+            searchHighlightTerms,
             onModifySearchWithTag,
             onModifySearchWithProperty,
             localDayReference,

@@ -200,7 +200,9 @@ export const STRINGS_TR = {
                     items: [
                         '`word` Görünen adında veya takma adlarından birinde "word" olan notları bul.',
                         '`word1 word2` Her kelime görünen ad veya takma adlardan biriyle eşleşmeli.',
-                        '`-word` Görünen adında veya takma adlarından birinde "word" olan notları hariç tut.'
+                        '`-word` Görünen adında veya takma adlarından birinde "word" olan notları hariç tut.',
+                        '`"text"` Metni birebir eşleştir; çift tırnakla başlayan bir terim hiçbir zaman etiket, özellik, tarih veya filtre olarak yorumlanmaz (örneğin: `".F"`).',
+                        '`-"text"` Görünen adında veya takma adlarından birinde birebir metin geçen notları hariç tut.'
                     ]
                 },
                 tags: {

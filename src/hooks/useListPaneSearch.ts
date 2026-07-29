@@ -79,7 +79,7 @@ export interface UseListPaneSearchResult {
     searchQuery: string;
     debouncedSearchQuery: string;
     debouncedSearchTokens: FilterSearchTokens;
-    searchHighlightQuery: string | undefined;
+    searchHighlightTerms: readonly string[] | undefined;
     shouldFocusSearch: boolean;
     activeSearchShortcut: SearchShortcut | null;
     isSavingSearchShortcut: boolean;
@@ -193,14 +193,22 @@ export function useListPaneSearch({
         () => parseFilterSearchTokens(isSearchActive ? debouncedSearchQuery : ''),
         [debouncedSearchQuery, isSearchActive]
     );
-    const debouncedSearchMode = debouncedSearchTokens.mode;
-    const searchHighlightQuery = useMemo(() => {
-        if (!isSearchActive || debouncedSearchMode === 'tag') {
+    // Name highlighting uses parsed folded name tokens instead of the raw query so quoted literal
+    // terms (for example `".F"`) highlight without their quotes and filter tokens such as
+    // `folder:...` never leak into name highlights. Tokens are parsed from the immediate query,
+    // not the debounced one, so highlights keep tracking while the user types.
+    const searchHighlightTerms = useMemo(() => {
+        if (!isSearchActive) {
             return undefined;
         }
 
-        return searchQuery;
-    }, [debouncedSearchMode, isSearchActive, searchQuery]);
+        const tokens = parseFilterSearchTokens(searchQuery);
+        if (tokens.mode === 'tag' || tokens.nameTokens.length === 0) {
+            return undefined;
+        }
+
+        return tokens.nameTokens;
+    }, [isSearchActive, searchQuery]);
 
     const activeSearchShortcut = useMemo(() => {
         const normalizedQuery = searchQuery.trim();
@@ -591,7 +599,7 @@ export function useListPaneSearch({
         searchQuery,
         debouncedSearchQuery,
         debouncedSearchTokens,
-        searchHighlightQuery,
+        searchHighlightTerms,
         shouldFocusSearch,
         activeSearchShortcut,
         isSavingSearchShortcut,

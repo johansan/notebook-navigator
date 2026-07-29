@@ -199,7 +199,9 @@ export const STRINGS_VI = {
                     items: [
                         '`word` Tìm ghi chú có "word" trong tên hiển thị hoặc bí danh.',
                         '`word1 word2` Mỗi từ phải khớp với tên hiển thị hoặc một trong các bí danh.',
-                        '`-word` Loại trừ ghi chú có "word" trong tên hiển thị hoặc bí danh.'
+                        '`-word` Loại trừ ghi chú có "word" trong tên hiển thị hoặc bí danh.',
+                        '`"text"` Khớp văn bản theo nghĩa đen; cụm từ bắt đầu bằng dấu ngoặc kép không bao giờ được hiểu là thẻ, thuộc tính, ngày hoặc bộ lọc (ví dụ: `".F"`).',
+                        '`-"text"` Loại trừ ghi chú có văn bản theo nghĩa đen trong tên hiển thị hoặc bí danh.'
                     ]
                 },
                 tags: {

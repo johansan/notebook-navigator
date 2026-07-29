@@ -38,4 +38,8 @@ describe('getFoldedSearchHighlightRanges', () => {
     it('returns no ranges for unmatched terms', () => {
         expect(getFoldedSearchHighlightRanges('Notebook Navigator', ['other'])).toEqual([]);
     });
+
+    it('matches literal terms with leading punctuation in file names', () => {
+        expect(getFoldedSearchHighlightRanges('Report.F', ['.f'])).toEqual([{ start: 6, end: 8 }]);
+    });
 });

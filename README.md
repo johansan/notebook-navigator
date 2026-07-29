@@ -149,6 +149,8 @@ Filters files by display name, alias, tags, properties, dates, folders, extensio
 - `word` - Match notes with "word" in the display name or an alias
 - `word1 word2` - Require every word to match across the display name and aliases
 - `-word` - Exclude notes with "word" in the display name or an alias
+- `".F"` - Match text literally; a term that opens with a double quote is never interpreted as a tag, property, date, or filter (e.g., `".F"` matches names containing `.F` instead of filtering on a property)
+- `-".F"` - Exclude notes with the literal text in the display name or an alias
 
 **Tags**
 

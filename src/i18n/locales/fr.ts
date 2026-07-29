@@ -200,7 +200,9 @@ export const STRINGS_FR = {
                     items: [
                         '`word` Trouver les notes avec "word" dans le nom d’affichage ou un alias.',
                         '`word1 word2` Chaque mot doit être présent dans le nom d’affichage ou dans les alias.',
-                        '`-word` Exclure les notes avec "word" dans le nom d’affichage ou un alias.'
+                        '`-word` Exclure les notes avec "word" dans le nom d’affichage ou un alias.',
+                        '`"text"` Rechercher le texte littéralement ; un terme qui commence par un guillemet double n’est jamais interprété comme un tag, une propriété, une date ou un filtre (par exemple : `".F"`).',
+                        '`-"text"` Exclure les notes avec le texte littéral dans le nom d’affichage ou un alias.'
                     ]
                 },
                 tags: {
