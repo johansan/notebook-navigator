@@ -239,11 +239,9 @@ body {
     --nn-theme-tag-negative-bg: #ff000033;
 
     /* -- Navigation Item Text Styling -- */
-    --nn-theme-navitem-file-name-font-weight: 400;
     --nn-theme-navitem-name-font-weight: 400;
-    --nn-theme-navitem-count-font-weight: 400;
-    --nn-theme-navitem-custom-color-file-name-font-weight: 600;
     --nn-theme-navitem-custom-color-name-font-weight: 600;
+    --nn-theme-navitem-count-font-weight: 400;
     --nn-theme-navitem-folder-note-name-font-weight: 400;
     --nn-theme-navitem-folder-note-name-decoration: underline;
     --nn-theme-navitem-folder-note-name-hover-decoration: underline;
@@ -2200,10 +2198,6 @@ button.nn-icon-button.nn-navitem-hover-action-button {
 }
 
 /* Shortcut section styling */
-.nn-shortcut-header-item .nn-navitem-name {
-    font-weight: 400;
-}
-
 .nn-shortcut-header-item .nn-navitem-count {
     font-size: var(--nn-navitem-count-font-size);
 }
@@ -2226,27 +2220,14 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     white-space: nowrap;
 }
 
-.nn-shortcut-item .nn-shortcut-label {
-    font-weight: var(--nn-theme-navitem-file-name-font-weight);
-}
-
-.nn-shortcut-item .nn-shortcut-label[data-has-color='true'] {
-    font-weight: var(--nn-theme-navitem-custom-color-file-name-font-weight);
-}
-
 .nn-shortcut-item--missing .nn-shortcut-label {
     text-decoration: line-through;
 }
 
-/* Styles for shortcut labels that have an associated folder note */
+/* Underline only the label, not the trailing description, for shortcuts with folder notes.
+   Font weight is inherited from the .nn-navitem-name folder note rules. */
 .nn-shortcut-item .nn-navitem-name.nn-has-folder-note .nn-shortcut-label {
-    font-weight: var(--nn-theme-navitem-folder-note-name-font-weight);
     text-decoration: var(--nn-theme-navitem-folder-note-name-decoration);
-}
-
-/* Folder note shortcuts with custom color use custom color weight */
-.nn-shortcut-item .nn-navitem-name.nn-has-folder-note.nn-has-custom-color .nn-shortcut-label {
-    font-weight: var(--nn-theme-navitem-custom-color-file-name-font-weight);
 }
 
 /* Pointer cursor on hover for clickable folder note shortcuts */
@@ -9707,20 +9688,20 @@ settings:
         level: 2
         collapsed: false
     -
-        id: nn-theme-navitem-file-name-font-weight
-        title: Default file name weight
-        description: Default font weight for file names in shortcuts and recent files.
+        id: nn-theme-navitem-name-font-weight
+        title: Name weight
+        description: Font weight of folder, tag, note, and section names, including shortcuts and recent files.
         type: variable-number-slider
         default: 400
         min: 100
         max: 900
         step: 100
     -
-        id: nn-theme-navitem-name-font-weight
-        title: Default folder/tag weight
-        description: Default font weight for folder and tag names.
+        id: nn-theme-navitem-custom-color-name-font-weight
+        title: Custom color name weight
+        description: Font weight of names with custom or rainbow colors (overrides name weight).
         type: variable-number-slider
-        default: 400
+        default: 600
         min: 100
         max: 900
         step: 100
@@ -9730,24 +9711,6 @@ settings:
         description: Font weight for file count badges.
         type: variable-number-slider
         default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-custom-color-file-name-font-weight
-        title: Custom color file name weight
-        description: Font weight for file names with custom colors (overrides default file weight).
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-custom-color-name-font-weight
-        title: Custom color folder/tag weight
-        description: Font weight for folders and tags with custom colors (overrides default folder/tag weight).
-        type: variable-number-slider
-        default: 600
         min: 100
         max: 900
         step: 100

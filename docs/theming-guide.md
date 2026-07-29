@@ -126,20 +126,19 @@ Most variables are colors and should resolve to a computed color (some are used 
 
 #### Text styling
 
-These variables control the font weight and decoration of folder/tag/property names and file names in shortcuts and recent files.
+These variables control the font weight and decoration of names in the navigation pane: folders, tags, properties, section
+headers, shortcuts, and recent files.
 Priority order for font weight: custom color styles override folder note styles, which override the default style.
-Folder note decoration still applies when custom colors are present.
+Rainbow colors count as custom colors. Folder note decoration still applies when custom colors are present.
 
-| Variable                                                | Default     | Description                                                                   |
-| ------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------- |
-| `--nn-theme-navitem-name-font-weight`                   | `400`       | Default font weight for all folder/tag/property names (400 = regular, 600 = bold) |
-| `--nn-theme-navitem-file-name-font-weight`              | `400`       | Default font weight for file names in shortcuts and recent files              |
-| `--nn-theme-navitem-count-font-weight`                  | `400`       | Font weight for file count badges                                             |
-| `--nn-theme-navitem-custom-color-name-font-weight`      | `600`       | Font weight for folders/tags/properties with custom colors (overrides default) |
-| `--nn-theme-navitem-custom-color-file-name-font-weight` | `600`       | Font weight for file names with custom colors (overrides default file weight) |
-| `--nn-theme-navitem-folder-note-name-font-weight`       | `400`       | Font weight for folders with notes when no custom color weight applies        |
-| `--nn-theme-navitem-folder-note-name-decoration`        | `underline` | Text decoration for folders with notes (none, underline, underline dotted)    |
-| `--nn-theme-navitem-folder-note-name-hover-decoration`  | `underline` | Text decoration when hovering folders with notes                              |
+| Variable                                               | Default     | Description                                                                |
+| ------------------------------------------------------ | ----------- | -------------------------------------------------------------------------- |
+| `--nn-theme-navitem-name-font-weight`                  | `400`       | Font weight of all names in the navigation pane (400 = regular, 600 = bold) |
+| `--nn-theme-navitem-custom-color-name-font-weight`     | `600`       | Font weight of names with custom or rainbow colors (overrides name weight) |
+| `--nn-theme-navitem-count-font-weight`                 | `400`       | Font weight for file count badges                                          |
+| `--nn-theme-navitem-folder-note-name-font-weight`      | `400`       | Font weight for folders with notes when no custom color weight applies     |
+| `--nn-theme-navitem-folder-note-name-decoration`       | `underline` | Text decoration for folders with notes (none, underline, underline dotted) |
+| `--nn-theme-navitem-folder-note-name-hover-decoration` | `underline` | Text decoration when hovering folders with notes                           |
 
 ### Borders
 
@@ -376,9 +375,7 @@ body {
 
   /* Navigation text styling */
   --nn-theme-navitem-name-font-weight: 400;
-  --nn-theme-navitem-file-name-font-weight: 400;
   --nn-theme-navitem-custom-color-name-font-weight: 600;
-  --nn-theme-navitem-custom-color-file-name-font-weight: 600;
   --nn-theme-navitem-folder-note-name-font-weight: 600;
   --nn-theme-navitem-folder-note-name-decoration: underline;
   --nn-theme-navitem-folder-note-name-hover-decoration: underline;

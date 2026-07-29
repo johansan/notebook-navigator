@@ -658,20 +658,20 @@ settings:
         level: 2
         collapsed: false
     -
-        id: nn-theme-navitem-file-name-font-weight
-        title: Default file name weight
-        description: Default font weight for file names in shortcuts and recent files.
+        id: nn-theme-navitem-name-font-weight
+        title: Name weight
+        description: Font weight of folder, tag, note, and section names, including shortcuts and recent files.
         type: variable-number-slider
         default: 400
         min: 100
         max: 900
         step: 100
     -
-        id: nn-theme-navitem-name-font-weight
-        title: Default folder/tag weight
-        description: Default font weight for folder and tag names.
+        id: nn-theme-navitem-custom-color-name-font-weight
+        title: Custom color name weight
+        description: Font weight of names with custom or rainbow colors (overrides name weight).
         type: variable-number-slider
-        default: 400
+        default: 600
         min: 100
         max: 900
         step: 100
@@ -681,24 +681,6 @@ settings:
         description: Font weight for file count badges.
         type: variable-number-slider
         default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-custom-color-file-name-font-weight
-        title: Custom color file name weight
-        description: Font weight for file names with custom colors (overrides default file weight).
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-custom-color-name-font-weight
-        title: Custom color folder/tag weight
-        description: Font weight for folders and tags with custom colors (overrides default folder/tag weight).
-        type: variable-number-slider
-        default: 600
         min: 100
         max: 900
         step: 100
