@@ -58,6 +58,7 @@ export const STRINGS_ID = {
         manualSortHint: 'Seret untuk mengatur ulang. Urutan disimpan sebagai nilai indeks numerik di properti "{property}".',
         manualSortNonMarkdownHint: 'File non-Markdown ditampilkan di bawah dan tidak dapat diatur ulang.',
         unsortedSection: 'Belum diurutkan',
+        propertyGroupNoValue: 'Tidak ada',
         manualSortDone: 'Selesai',
         manualSortMultipleWriteFailure: '{count} file gagal; pertama: {path}: {message}'
     },
@@ -1043,7 +1044,7 @@ export const STRINGS_ID = {
             list: {
                 display: 'Tampilan',
                 groupHeaders: 'Header grup',
-                propertySort: 'Urutan properti',
+                propertySort: 'Urutan dan pengelompokan properti',
                 manualSort: 'Urutan manual',
                 pinnedNotes: 'Catatan yang disematkan',
                 drawingPreviews: 'Pratinjau gambar'
@@ -1103,8 +1104,8 @@ export const STRINGS_ID = {
                 }
             },
             propertySortKey: {
-                name: 'Properti untuk diurutkan',
-                desc: 'Properti frontmatter yang dipisahkan koma ditampilkan sebagai opsi urutan properti. Nilai array digabungkan menjadi satu string. Properti ini tidak diubah.',
+                name: 'Properti urutan dan pengelompokan',
+                desc: 'Properti frontmatter yang dipisahkan koma. Setiap properti muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Properti ini tidak diubah.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1118,7 +1119,7 @@ export const STRINGS_ID = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Setiap properti yang tercantum di atas muncul sebagai opsi urutan di menu urutan pada panel daftar. Memilih salah satu akan mengurutkan catatan berdasarkan nilai frontmatter-nya.'
+                intro: 'Setiap properti yang tercantum di atas muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Pengurutan mengurutkan catatan berdasarkan nilai frontmatter, dengan nilai array digabungkan menjadi satu string. Pengelompokan mengumpulkan catatan dengan nilai yang sama di bawah satu header; catatan dengan nilai daftar dikelompokkan di bawah daftar lengkap, dan catatan yang tidak memiliki properti tersebut masuk ke grup "Tidak ada" di bagian akhir.'
             },
             manualSortPropertyKey: {
                 name: 'Properti urutan manual',
@@ -1175,7 +1176,7 @@ export const STRINGS_ID = {
             },
             groupNotes: {
                 name: 'Pengelompokan default',
-                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih.',
+                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih. Pengelompokan berdasarkan nilai properti frontmatter tersedia per tampilan dari menu urutan di panel daftar.',
                 options: {
                     custom: 'Kustom',
                     date: 'Tanggal',
@@ -1188,7 +1189,7 @@ export const STRINGS_ID = {
             },
             stickyGroupHeaders: {
                 name: 'Header grup tetap',
-                desc: 'Jaga header bagian tanggal, folder, atau yang disematkan saat ini tetap terlihat saat menggulir.'
+                desc: 'Jaga header bagian tanggal, folder, properti, atau yang disematkan saat ini tetap terlihat saat menggulir.'
             },
             showFolderGroupPaths: {
                 name: 'Tampilkan jalur subfolder',

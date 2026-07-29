@@ -27,6 +27,7 @@ import { runAsyncAction } from '../../utils/async';
 import { usesMobileChrome } from '../../utils/paneLayout';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
+import { pruneUnavailablePropertyGroupingOverrides } from '../../utils/listGrouping';
 import { getManualSortGroupHeaderPropertyKey, isValidManualSortPropertyKey, normalizeManualSortPropertyKey } from '../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
 import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
@@ -424,6 +425,7 @@ function renderPropertySortKeySetting(setting: Setting, context: SettingsTabCont
                 }
                 plugin.settings.propertySortKey = value;
                 pruneUnavailablePropertySortOverrides(plugin.settings);
+                pruneUnavailablePropertyGroupingOverrides(plugin.settings);
                 context.refreshSettingsDomState();
                 await plugin.saveSettingsAndUpdate();
             };
@@ -463,6 +465,7 @@ function renderManualSortPropertyKeySetting(setting: Setting, context: SettingsT
                 }
                 plugin.settings.manualSortPropertyKey = value;
                 pruneUnavailablePropertySortOverrides(plugin.settings);
+                pruneUnavailablePropertyGroupingOverrides(plugin.settings);
                 await plugin.saveSettingsAndUpdate();
             };
 

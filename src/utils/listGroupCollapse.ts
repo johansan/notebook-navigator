@@ -17,6 +17,7 @@
  */
 
 import { ItemType, type NavigationItemType } from '../types';
+import { createPropertyGroupingOption, getPropertyGroupingKey } from '../settings/types';
 import type { ListNoteGroupingOption } from '../settings/types';
 import type { PropertySelectionNodeId } from './propertyTree';
 
@@ -84,7 +85,11 @@ export function buildListGroupCollapseKeyPrefix({
         scope = `folder:${encodeKeyPart(selectedFolderPath ?? '/')}`;
     }
 
-    return `scope=${scope};group=${encodeKeyPart(groupingMode)};id=`;
+    // Property grouping keys drop the direction prefix so collapse state survives flipping the group order.
+    const propertyGroupingKey = getPropertyGroupingKey(groupingMode);
+    const scopeGroupingMode = propertyGroupingKey !== null ? createPropertyGroupingOption(propertyGroupingKey) : groupingMode;
+
+    return `scope=${scope};group=${encodeKeyPart(scopeGroupingMode)};id=`;
 }
 
 export function buildListGroupCollapseKey(params: ListGroupCollapseKeyParams): string {
