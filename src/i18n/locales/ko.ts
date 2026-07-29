@@ -198,7 +198,9 @@ export const STRINGS_KO = {
                     items: [
                         '`word` 표시 이름 또는 별칭에 "word"가 포함된 노트 찾기.',
                         '`word1 word2` 모든 단어가 표시 이름 또는 별칭 중 하나와 일치해야 합니다.',
-                        '`-word` 표시 이름 또는 별칭에 "word"가 포함된 노트 제외.'
+                        '`-word` 표시 이름 또는 별칭에 "word"가 포함된 노트 제외.',
+                        '`"text"` 텍스트를 그대로 검색. 큰따옴표로 시작하는 검색어는 태그, 속성, 날짜, 필터로 해석되지 않습니다 (예: `".F"`).',
+                        '`-"text"` 표시 이름 또는 별칭에 해당 텍스트가 포함된 노트 제외.'
                     ]
                 },
                 tags: {
@@ -383,11 +385,17 @@ export const STRINGS_KO = {
             addSeparator: '구분선 추가',
             removeSeparator: '구분선 제거'
         },
-        copyPath: {
-            title: '경로 복사',
-            asObsidianUrl: 'Obsidian URL로',
-            fromVaultFolder: 'Vault 폴더에서',
-            fromSystemRoot: '시스템 루트에서'
+        copy: {
+            title: '복사',
+            noteLink: '노트 링크',
+            fileLink: '파일 링크',
+            noteLinkAsFootnote: '각주로 노트 링크',
+            fileLinkAsFootnote: '각주로 파일 링크',
+            noteEmbed: '노트 임베드',
+            fileEmbed: '파일 임베드',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'Vault 폴더 기준 경로',
+            pathFromSystemRoot: '시스템 루트 기준 경로'
         },
         style: {
             title: '스타일',
@@ -799,6 +807,9 @@ export const STRINGS_KO = {
             deepLinkCopied: 'Obsidian URL이 클립보드에 복사됨',
             pathCopied: '경로가 클립보드에 복사됨',
             relativePathCopied: '상대 경로가 클립보드에 복사됨',
+            linkCopied: '링크가 클립보드에 복사됨',
+            footnoteLinkCopied: '각주 링크가 클립보드에 복사됨',
+            embedLinkCopied: '임베드 링크가 클립보드에 복사됨',
             tagAddedToNote: '1개의 노트에 태그 추가됨',
             tagAddedToNotes: '{count}개의 노트에 태그 추가됨',
             tagRemovedFromNote: '1개의 노트에서 태그 제거됨',
@@ -855,6 +866,7 @@ export const STRINGS_KO = {
 
     // Date grouping
     dateGroups: {
+        future: '미래',
         today: '오늘',
         yesterday: '어제',
         previous7Days: '지난 7일',
@@ -998,7 +1010,7 @@ export const STRINGS_KO = {
             general: '릴리스 노트, 지원, 보관소 프로필, 파일 유형, 속성 키.',
             vaultFilters: '숨겨진 폴더, 태그, 파일, 파일 태그 및 속성 규칙.',
             appearanceBehavior: '동작, 키보드 탐색, 마우스 버튼, 모양 및 서식.',
-            navigationPane: '레이아웃, 모양, 노트 수, 접기 동작 및 무지개 색상.',
+            navigationPane: '레이아웃, 모양, 파일 수, 접기 동작 및 무지개 색상.',
             shortcuts: '바로 가기 표시, 배지, 최근 파일 및 고정된 항목.',
             calendar: '달력 표시, 날짜 노트, 템플릿, 로케일 및 사이드바 위치.',
             fileOperations: '템플릿, 삭제 확인, 첨부 파일 및 파일 이동 충돌 동작.',
@@ -1033,7 +1045,7 @@ export const STRINGS_KO = {
                 banner: '배너',
                 collapseItems: '항목 접기',
                 dragAndDrop: '끌어서 놓기',
-                noteCounts: '노트 수',
+                noteCounts: '파일 수',
                 rainbowColors: '무지개 색상',
                 leftSidebar: '왼쪽 사이드바',
                 calendarIntegration: '캘린더 연동'
@@ -1168,8 +1180,8 @@ export const STRINGS_KO = {
                 desc: '고정된 노트는 자신의 폴더에서만 고정된 것으로 표시됩니다. 폴더 노트이거나 고정된 노트가 많을 때 유용합니다. 태그 또는 속성 보기에는 영향을 주지 않습니다.'
             },
             separateNoteCounts: {
-                name: '현재와 하위 노트 수를 별도로 표시',
-                desc: '폴더, 태그, 속성의 노트 수를 "현재 ▾ 하위" 형식으로 표시합니다.'
+                name: '현재와 하위 파일 수를 별도로 표시',
+                desc: '폴더, 태그, 속성의 파일 수를 "현재 ▾ 하위" 형식으로 표시합니다.'
             },
             groupNotes: {
                 name: '기본 그룹화',
@@ -1835,7 +1847,7 @@ export const STRINGS_KO = {
             },
             textCountDisplay: {
                 name: '카운트 유형',
-                desc: '파일 항목에 표시할 노트 카운트를 선택합니다.',
+                desc: '파일 항목에 표시할 텍스트 카운트를 선택합니다.',
                 options: {
                     none: '없음',
                     words: '단어 수',
@@ -1845,7 +1857,7 @@ export const STRINGS_KO = {
             },
             textCountPlacement: {
                 name: '배치',
-                desc: '노트 카운트가 표시될 위치를 선택합니다.',
+                desc: '텍스트 카운트가 표시될 위치를 선택합니다.',
                 options: {
                     title: '제목 안',
                     property: '속성으로'
@@ -2035,8 +2047,8 @@ export const STRINGS_KO = {
                 }
             },
             showNoteCount: {
-                name: '노트 수 표시',
-                desc: '폴더, 태그, 속성 옆에 노트 수를 표시합니다.'
+                name: '파일 수 표시',
+                desc: '폴더, 태그, 속성 옆에 파일 수를 표시합니다.'
             },
             showSectionIcons: {
                 name: '바로 가기 및 최근 항목 아이콘 표시',
@@ -2168,7 +2180,7 @@ export const STRINGS_KO = {
             },
             navCountLeaderStyle: {
                 name: '리더 표시',
-                desc: '항목 이름과 노트 수 사이에 점, 대시 또는 선을 표시합니다.',
+                desc: '항목 이름과 파일 수 사이에 점, 대시 또는 선을 표시합니다.',
                 options: {
                     none: '없음',
                     dots: '점 (...)',

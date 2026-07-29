@@ -30,7 +30,7 @@ import { SelectionState, SelectionAction } from '../../context/SelectionContext'
 import type { ShortcutsContextValue } from '../../context/ShortcutsContext';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { CommandQueueService } from '../../services/CommandQueueService';
-import { addCopyPathSubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { addCopySubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { openFileInContext } from '../openFileInContext';
 import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFilesWithPrompt } from '../tagModalHelpers';
@@ -431,8 +431,12 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
     if (!shouldShowMultiOptions) {
         const adapter = app.vault.adapter;
         const fileSystemAdapter = adapter instanceof FileSystemAdapter ? adapter : null;
-        const addedCopyMenu = addCopyPathSubmenu({
+        const addedCopyMenu = addCopySubmenu({
             menu,
+            linkItems: {
+                getLinkText: () => getWikilinkTargetText(app, file),
+                isMarkdownFile: isMarkdown
+            },
             getObsidianUrl: () => {
                 const vaultName = app.vault.getName();
                 const encodedVault = encodeURIComponent(vaultName);
@@ -565,6 +569,27 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
             getCachedFileList
         );
     }
+}
+
+/**
+ * Returns the wikilink target for a file: the full vault path, matching the links
+ * Obsidian inserts when a file is dragged into the editor. A full-path link
+ * resolves to the same file from any note, unlike a bare file name, which
+ * Obsidian re-resolves per source note once another file shares the name.
+ * Markdown files drop the `.md` extension; other files keep their extension,
+ * matching how Obsidian writes wikilinks.
+ */
+function getWikilinkTargetText(app: App, file: TFile): string {
+    if (file.extension !== 'md') {
+        return file.path;
+    }
+
+    // A dotted note name can collide with another file: for `Sketch.canvas.md`, the
+    // stripped path `Sketch.canvas` resolves to a sibling canvas file when one exists,
+    // because Obsidian matches full file names before appending `.md`. Keep the
+    // extension in that case; a link with `.md` resolves to the note from anywhere.
+    const stripped = file.path.slice(0, -'.md'.length);
+    return app.metadataCache.getFirstLinkpathDest(stripped, '') === file ? stripped : file.path;
 }
 
 function addManualSortGroupHeaderAction(params: AddManualSortGroupHeaderActionParams): boolean {

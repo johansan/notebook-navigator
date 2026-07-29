@@ -199,7 +199,9 @@ export const STRINGS_ES = {
                     items: [
                         '`word` Encontrar notas con "word" en el nombre para mostrar o en un alias.',
                         '`word1 word2` Cada palabra debe encontrarse en el nombre para mostrar o en los alias.',
-                        '`-word` Excluir notas con "word" en el nombre para mostrar o en un alias.'
+                        '`-word` Excluir notas con "word" en el nombre para mostrar o en un alias.',
+                        '`"text"` Buscar el texto literalmente; un término que empieza con comillas dobles nunca se interpreta como etiqueta, propiedad, fecha o filtro (por ejemplo: `".F"`).',
+                        '`-"text"` Excluir notas con el texto literal en el nombre para mostrar o en un alias.'
                     ]
                 },
                 tags: {
@@ -385,11 +387,17 @@ export const STRINGS_ES = {
             addSeparator: 'Agregar separador',
             removeSeparator: 'Eliminar separador'
         },
-        copyPath: {
-            title: 'Copiar ruta',
-            asObsidianUrl: 'como URL de Obsidian',
-            fromVaultFolder: 'desde la carpeta del vault',
-            fromSystemRoot: 'desde la raíz del sistema'
+        copy: {
+            title: 'Copiar',
+            noteLink: 'enlace a la nota',
+            fileLink: 'enlace al archivo',
+            noteLinkAsFootnote: 'enlace a la nota como nota al pie',
+            fileLinkAsFootnote: 'enlace al archivo como nota al pie',
+            noteEmbed: 'incrustación de la nota',
+            fileEmbed: 'incrustación del archivo',
+            obsidianUrl: 'URL de Obsidian',
+            pathFromVaultFolder: 'ruta desde la carpeta del vault',
+            pathFromSystemRoot: 'ruta desde la raíz del sistema'
         },
         style: {
             title: 'Estilo',
@@ -803,6 +811,9 @@ export const STRINGS_ES = {
             deepLinkCopied: 'URL de Obsidian copiada al portapapeles',
             pathCopied: 'Ruta copiada al portapapeles',
             relativePathCopied: 'Ruta relativa copiada al portapapeles',
+            linkCopied: 'Enlace copiado al portapapeles',
+            footnoteLinkCopied: 'Enlace de nota al pie copiado al portapapeles',
+            embedLinkCopied: 'Enlace de incrustación copiado al portapapeles',
             tagAddedToNote: 'Etiqueta añadida a 1 nota',
             tagAddedToNotes: 'Etiqueta añadida a {count} notas',
             tagRemovedFromNote: 'Etiqueta eliminada de 1 nota',
@@ -859,6 +870,7 @@ export const STRINGS_ES = {
 
     // Date grouping
     dateGroups: {
+        future: 'Futuro',
         today: 'Hoy',
         yesterday: 'Ayer',
         previous7Days: 'Últimos 7 días',
@@ -1002,7 +1014,7 @@ export const STRINGS_ES = {
             general: 'Notas de versión, soporte, perfil de bóveda, tipos de archivo y claves de propiedades.',
             vaultFilters: 'Carpetas, etiquetas, archivos, etiquetas de archivo y reglas de propiedades ocultos.',
             appearanceBehavior: 'Comportamiento, navegación con teclado, botones del ratón, apariencia y formato.',
-            navigationPane: 'Diseño, apariencia, recuento de notas, comportamiento de colapso y colores arcoíris.',
+            navigationPane: 'Diseño, apariencia, recuento de archivos, comportamiento de colapso y colores arcoíris.',
             shortcuts: 'Visibilidad de accesos directos, insignias, archivos recientes y elementos fijados.',
             calendar: 'Visualización del calendario, notas de fecha, plantillas, configuración regional y ubicación de la barra lateral.',
             fileOperations: 'Plantillas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
@@ -1037,7 +1049,7 @@ export const STRINGS_ES = {
                 banner: 'Banner',
                 collapseItems: 'Contraer elementos',
                 dragAndDrop: 'Arrastrar y soltar',
-                noteCounts: 'Conteos de notas',
+                noteCounts: 'Conteos de archivos',
                 rainbowColors: 'Colores arcoíris',
                 leftSidebar: 'Barra lateral izquierda',
                 calendarIntegration: 'Integración de calendario'
@@ -1172,8 +1184,8 @@ export const STRINGS_ES = {
                 desc: 'Las notas fijadas aparecen fijadas solo en su propia carpeta. Útil para notas de carpeta o si tiene muchas notas fijadas. No afecta las vistas de etiquetas o propiedades.'
             },
             separateNoteCounts: {
-                name: 'Mostrar recuentos de notas actuales y descendientes por separado',
-                desc: 'Muestra el conteo de notas como "actual ▾ descendientes" para carpetas, etiquetas y propiedades.'
+                name: 'Mostrar recuentos de archivos actuales y descendientes por separado',
+                desc: 'Muestra el conteo de archivos como "actual ▾ descendientes" para carpetas, etiquetas y propiedades.'
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
@@ -1842,7 +1854,7 @@ export const STRINGS_ES = {
             },
             textCountDisplay: {
                 name: 'Tipo de recuento',
-                desc: 'Elige qué recuentos de notas aparecen en los elementos de archivo.',
+                desc: 'Elige qué recuentos de texto aparecen en los elementos de archivo.',
                 options: {
                     none: 'Ninguno',
                     words: 'Recuento de palabras',
@@ -1852,7 +1864,7 @@ export const STRINGS_ES = {
             },
             textCountPlacement: {
                 name: 'Ubicación',
-                desc: 'Elige dónde aparecen los recuentos de notas.',
+                desc: 'Elige dónde aparecen los recuentos de texto.',
                 options: {
                     title: 'En el título',
                     property: 'Como propiedad'
@@ -2042,8 +2054,8 @@ export const STRINGS_ES = {
                 }
             },
             showNoteCount: {
-                name: 'Mostrar conteo de notas',
-                desc: 'Muestra el conteo de notas junto a carpetas, etiquetas y propiedades.'
+                name: 'Mostrar conteo de archivos',
+                desc: 'Muestra el conteo de archivos junto a carpetas, etiquetas y propiedades.'
             },
             showSectionIcons: {
                 name: 'Mostrar iconos para atajos y elementos recientes',
@@ -2175,7 +2187,7 @@ export const STRINGS_ES = {
             },
             navCountLeaderStyle: {
                 name: 'Mostrar guías de relleno',
-                desc: 'Mostrar puntos, guiones o una línea entre los nombres de los elementos y el número de notas.',
+                desc: 'Mostrar puntos, guiones o una línea entre los nombres de los elementos y el número de archivos.',
                 options: {
                     none: 'Ninguno',
                     dots: 'Puntos (...)',

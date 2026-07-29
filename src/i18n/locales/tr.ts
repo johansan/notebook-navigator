@@ -200,7 +200,9 @@ export const STRINGS_TR = {
                     items: [
                         '`word` Görünen adında veya takma adlarından birinde "word" olan notları bul.',
                         '`word1 word2` Her kelime görünen ad veya takma adlardan biriyle eşleşmeli.',
-                        '`-word` Görünen adında veya takma adlarından birinde "word" olan notları hariç tut.'
+                        '`-word` Görünen adında veya takma adlarından birinde "word" olan notları hariç tut.',
+                        '`"text"` Metni birebir eşleştir; çift tırnakla başlayan bir terim hiçbir zaman etiket, özellik, tarih veya filtre olarak yorumlanmaz (örneğin: `".F"`).',
+                        '`-"text"` Görünen adında veya takma adlarından birinde birebir metin geçen notları hariç tut.'
                     ]
                 },
                 tags: {
@@ -385,11 +387,17 @@ export const STRINGS_TR = {
             addSeparator: 'Ayırıcı ekle',
             removeSeparator: 'Ayırıcıyı kaldır'
         },
-        copyPath: {
-            title: 'Yolu kopyala',
-            asObsidianUrl: 'Obsidian URL olarak',
-            fromVaultFolder: 'kasa klasöründen',
-            fromSystemRoot: 'sistem kökünden'
+        copy: {
+            title: 'Kopyala',
+            noteLink: 'not bağlantısı',
+            fileLink: 'dosya bağlantısı',
+            noteLinkAsFootnote: 'dipnot olarak not bağlantısı',
+            fileLinkAsFootnote: 'dipnot olarak dosya bağlantısı',
+            noteEmbed: 'not gömme',
+            fileEmbed: 'dosya gömme',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'kasa klasöründen yol',
+            pathFromSystemRoot: 'sistem kökünden yol'
         },
         style: {
             title: 'Stil',
@@ -800,6 +808,9 @@ export const STRINGS_TR = {
             deepLinkCopied: 'Obsidian URL panoya kopyalandı',
             pathCopied: 'Yol panoya kopyalandı',
             relativePathCopied: 'Göreli yol panoya kopyalandı',
+            linkCopied: 'Bağlantı panoya kopyalandı',
+            footnoteLinkCopied: 'Dipnot bağlantısı panoya kopyalandı',
+            embedLinkCopied: 'Gömme bağlantısı panoya kopyalandı',
             tagAddedToNote: '1 nota etiket eklendi',
             tagAddedToNotes: '{count} nota etiket eklendi',
             tagRemovedFromNote: '1 nottan etiket kaldırıldı',
@@ -856,6 +867,7 @@ export const STRINGS_TR = {
 
     // Date grouping
     dateGroups: {
+        future: 'Gelecek',
         today: 'Bugün',
         yesterday: 'Dün',
         previous7Days: 'Son 7 gün',
@@ -999,7 +1011,7 @@ export const STRINGS_TR = {
             general: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
             vaultFilters: 'Gizli klasörler, etiketler, dosyalar, dosya etiketleri ve özellik kuralları.',
             appearanceBehavior: 'Davranış, klavye ile gezinme, fare düğmeleri, görünüm ve biçimlendirme.',
-            navigationPane: 'Yerleşim, görünüm, not sayıları, daraltma davranışı ve gökkuşağı renkleri.',
+            navigationPane: 'Yerleşim, görünüm, dosya sayıları, daraltma davranışı ve gökkuşağı renkleri.',
             shortcuts: 'Kısayol görünürlüğü, rozetler, son dosyalar ve sabitlenmiş öğeler.',
             calendar: 'Takvim görünümü, tarih notları, şablonlar, yerel ayar ve kenar çubuğu konumu.',
             fileOperations: 'Şablonlar, silme onayları, ekler ve dosya taşıma çakışma davranışı.',
@@ -1034,7 +1046,7 @@ export const STRINGS_TR = {
                 banner: 'Afiş',
                 collapseItems: 'Öğeleri daralt',
                 dragAndDrop: 'Sürükle ve bırak',
-                noteCounts: 'Not sayıları',
+                noteCounts: 'Dosya sayıları',
                 rainbowColors: 'Gökkuşağı renkleri',
                 leftSidebar: 'Sol kenar çubuğu',
                 calendarIntegration: 'Takvim entegrasyonu'
@@ -1169,8 +1181,8 @@ export const STRINGS_TR = {
                 desc: 'Sabitlenen notlar yalnızca kendi klasörlerinde sabitlenmiş olarak görünür. Klasör notları veya çok sayıda sabitlenmiş notunuz varsa kullanışlıdır. Etiket veya özellik görünümlerini etkilemez.'
             },
             separateNoteCounts: {
-                name: 'Mevcut ve alt not sayılarını ayrı göster',
-                desc: 'Klasörler, etiketler ve özellikler için not sayılarını "mevcut ▾ alt öğeler" biçiminde göster.'
+                name: 'Mevcut ve alt dosya sayılarını ayrı göster',
+                desc: 'Klasörler, etiketler ve özellikler için dosya sayılarını "mevcut ▾ alt öğeler" biçiminde göster.'
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
@@ -1837,7 +1849,7 @@ export const STRINGS_TR = {
             },
             textCountDisplay: {
                 name: 'Sayım türü',
-                desc: 'Dosya öğelerinde hangi not sayımlarının görüneceğini seçin.',
+                desc: 'Dosya öğelerinde hangi metin sayımlarının görüneceğini seçin.',
                 options: {
                     none: 'Yok',
                     words: 'Kelime sayısı',
@@ -1847,7 +1859,7 @@ export const STRINGS_TR = {
             },
             textCountPlacement: {
                 name: 'Yerleşim',
-                desc: 'Not sayımlarının nerede görüneceğini seçin.',
+                desc: 'Metin sayımlarının nerede görüneceğini seçin.',
                 options: {
                     title: 'Başlıkta',
                     property: 'Özellik olarak'
@@ -2037,8 +2049,8 @@ export const STRINGS_TR = {
                 }
             },
             showNoteCount: {
-                name: 'Not sayısını göster',
-                desc: 'Klasörler, etiketler ve özelliklerin yanında not sayısını görüntüle.'
+                name: 'Dosya sayısını göster',
+                desc: 'Klasörler, etiketler ve özelliklerin yanında dosya sayısını görüntüle.'
             },
             showSectionIcons: {
                 name: 'Kısayollar ve son öğeler için simgeleri göster',
@@ -2170,7 +2182,7 @@ export const STRINGS_TR = {
             },
             navCountLeaderStyle: {
                 name: 'Doldurma işaretlerini göster',
-                desc: 'Öğe adları ile not sayıları arasında nokta, tire veya çizgi göster.',
+                desc: 'Öğe adları ile dosya sayıları arasında nokta, tire veya çizgi göster.',
                 options: {
                     none: 'Yok',
                     dots: 'Noktalar (...)',

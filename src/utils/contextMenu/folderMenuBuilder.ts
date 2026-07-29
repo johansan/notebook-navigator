@@ -29,7 +29,7 @@ import {
     shouldExcludeFolderFromDescendants
 } from '../../utils/fileFilters';
 import { ItemType } from '../../types';
-import { addCopyPathSubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { addCopySubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { resolveNavigationFolderIcon, resolveUXIconForMenu } from '../uxIcons';
 import {
@@ -444,7 +444,7 @@ export function buildFolderMenu(params: FolderMenuBuilderParams): void {
     // Copy actions
     const adapter = app.vault.adapter;
     const fileSystemAdapter = adapter instanceof FileSystemAdapter ? adapter : null;
-    const addedCopyMenu = addCopyPathSubmenu({
+    const addedCopyMenu = addCopySubmenu({
         menu,
         getVaultPath: () => folder.path,
         getSystemPath: fileSystemAdapter ? () => fileSystemAdapter.getFullPath(folder.path) : undefined

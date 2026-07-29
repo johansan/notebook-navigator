@@ -200,7 +200,9 @@ export const STRINGS_ID = {
                     items: [
                         '`word` Temukan catatan dengan "word" di nama tampilan atau alias.',
                         '`word1 word2` Setiap kata harus cocok pada nama tampilan atau alias.',
-                        '`-word` Kecualikan catatan dengan "word" di nama tampilan atau alias.'
+                        '`-word` Kecualikan catatan dengan "word" di nama tampilan atau alias.',
+                        '`"text"` Cocokkan teks secara harfiah; istilah yang diawali tanda kutip ganda tidak pernah ditafsirkan sebagai tag, properti, tanggal, atau filter (contoh: `".F"`).',
+                        '`-"text"` Kecualikan catatan dengan teks harfiah di nama tampilan atau alias.'
                     ]
                 },
                 tags: {
@@ -385,11 +387,17 @@ export const STRINGS_ID = {
             addSeparator: 'Tambah pemisah',
             removeSeparator: 'Hapus pemisah'
         },
-        copyPath: {
-            title: 'Salin path',
-            asObsidianUrl: 'sebagai URL Obsidian',
-            fromVaultFolder: 'dari folder vault',
-            fromSystemRoot: 'dari root sistem'
+        copy: {
+            title: 'Salin',
+            noteLink: 'tautan catatan',
+            fileLink: 'tautan file',
+            noteLinkAsFootnote: 'tautan catatan sebagai catatan kaki',
+            fileLinkAsFootnote: 'tautan file sebagai catatan kaki',
+            noteEmbed: 'sematan catatan',
+            fileEmbed: 'sematan file',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'path dari folder vault',
+            pathFromSystemRoot: 'path dari root sistem'
         },
         style: {
             title: 'Gaya',
@@ -802,6 +810,9 @@ export const STRINGS_ID = {
             deepLinkCopied: 'URL Obsidian disalin ke clipboard',
             pathCopied: 'Path disalin ke clipboard',
             relativePathCopied: 'Path relatif disalin ke clipboard',
+            linkCopied: 'Tautan disalin ke clipboard',
+            footnoteLinkCopied: 'Tautan catatan kaki disalin ke clipboard',
+            embedLinkCopied: 'Tautan sematan disalin ke clipboard',
             tagAddedToNote: 'Menambahkan tag ke 1 catatan',
             tagAddedToNotes: 'Menambahkan tag ke {count} catatan',
             tagRemovedFromNote: 'Menghapus tag dari 1 catatan',
@@ -858,6 +869,7 @@ export const STRINGS_ID = {
 
     // Date grouping
     dateGroups: {
+        future: 'Masa depan',
         today: 'Hari ini',
         yesterday: 'Kemarin',
         previous7Days: '7 hari terakhir',
@@ -1001,7 +1013,7 @@ export const STRINGS_ID = {
             general: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
             vaultFilters: 'Folder, tag, file, tag file, dan aturan properti tersembunyi.',
             appearanceBehavior: 'Perilaku, navigasi keyboard, tombol mouse, tampilan, dan pemformatan.',
-            navigationPane: 'Tata letak, tampilan, jumlah catatan, perilaku menciutkan, dan warna pelangi.',
+            navigationPane: 'Tata letak, tampilan, jumlah file, perilaku menciutkan, dan warna pelangi.',
             shortcuts: 'Visibilitas pintasan, lencana, file terbaru, dan item yang disematkan.',
             calendar: 'Tampilan kalender, catatan tanggal, templat, lokal, dan penempatan bilah sisi.',
             fileOperations: 'Templat, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
@@ -1036,7 +1048,7 @@ export const STRINGS_ID = {
                 banner: 'Banner',
                 collapseItems: 'Ciutkan item',
                 dragAndDrop: 'Seret dan lepas',
-                noteCounts: 'Jumlah catatan',
+                noteCounts: 'Jumlah file',
                 rainbowColors: 'Warna pelangi',
                 leftSidebar: 'Bilah sisi kiri',
                 calendarIntegration: 'Integrasi kalender'
@@ -1171,8 +1183,8 @@ export const STRINGS_ID = {
                 desc: 'Catatan yang disematkan hanya tampil disematkan di folder miliknya sendiri. Berguna untuk catatan folder atau jika Anda memiliki banyak catatan yang disematkan. Tidak memengaruhi tampilan tag atau properti.'
             },
             separateNoteCounts: {
-                name: 'Tampilkan jumlah catatan saat ini dan turunan secara terpisah',
-                desc: 'Tampilkan jumlah catatan sebagai "saat ini ▾ turunan" untuk folder, tag, dan properti.'
+                name: 'Tampilkan jumlah file saat ini dan turunan secara terpisah',
+                desc: 'Tampilkan jumlah file sebagai "saat ini ▾ turunan" untuk folder, tag, dan properti.'
             },
             groupNotes: {
                 name: 'Pengelompokan default',
@@ -1839,7 +1851,7 @@ export const STRINGS_ID = {
             },
             textCountDisplay: {
                 name: 'Jenis hitungan',
-                desc: 'Pilih hitungan catatan yang muncul di item file.',
+                desc: 'Pilih hitungan teks yang muncul di item file.',
                 options: {
                     none: 'Tidak ada',
                     words: 'Jumlah kata',
@@ -1849,7 +1861,7 @@ export const STRINGS_ID = {
             },
             textCountPlacement: {
                 name: 'Penempatan',
-                desc: 'Pilih tempat hitungan catatan muncul.',
+                desc: 'Pilih tempat hitungan teks muncul.',
                 options: {
                     title: 'Di judul',
                     property: 'Sebagai properti'
@@ -2039,8 +2051,8 @@ export const STRINGS_ID = {
                 }
             },
             showNoteCount: {
-                name: 'Tampilkan jumlah catatan',
-                desc: 'Tampilkan jumlah catatan di sebelah folder, tag, dan properti.'
+                name: 'Tampilkan jumlah file',
+                desc: 'Tampilkan jumlah file di sebelah folder, tag, dan properti.'
             },
             showSectionIcons: {
                 name: 'Tampilkan ikon untuk pintasan dan item terbaru',
@@ -2172,7 +2184,7 @@ export const STRINGS_ID = {
             },
             navCountLeaderStyle: {
                 name: 'Tampilkan tanda penghubung',
-                desc: 'Tampilkan titik, tanda hubung, atau garis antara nama item dan jumlah catatan.',
+                desc: 'Tampilkan titik, tanda hubung, atau garis antara nama item dan jumlah file.',
                 options: {
                     none: 'Tidak ada',
                     dots: 'Titik (...)',
