@@ -198,7 +198,9 @@ export const STRINGS_JA = {
                     items: [
                         '`word` 表示名またはエイリアスに「word」を含むノートを検索。',
                         '`word1 word2` すべての単語が表示名またはエイリアスのいずれかに一致する必要があります。',
-                        '`-word` 表示名またはエイリアスに「word」を含むノートを除外。'
+                        '`-word` 表示名またはエイリアスに「word」を含むノートを除外。',
+                        '`"text"` テキストをそのまま検索。二重引用符で始まる語はタグ、プロパティ、日付、フィルターとして解釈されません（例: `".F"`）。',
+                        '`-"text"` 表示名またはエイリアスにそのテキストを含むノートを除外。'
                     ]
                 },
                 tags: {
@@ -384,11 +386,17 @@ export const STRINGS_JA = {
             addSeparator: '区切り線を追加',
             removeSeparator: '区切り線を削除'
         },
-        copyPath: {
-            title: 'パスをコピー',
-            asObsidianUrl: 'Obsidian URL として',
-            fromVaultFolder: 'Vault フォルダから',
-            fromSystemRoot: 'システムルートから'
+        copy: {
+            title: 'コピー',
+            noteLink: 'ノートリンク',
+            fileLink: 'ファイルリンク',
+            noteLinkAsFootnote: '脚注としてノートリンク',
+            fileLinkAsFootnote: '脚注としてファイルリンク',
+            noteEmbed: 'ノート埋め込み',
+            fileEmbed: 'ファイル埋め込み',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'Vault フォルダからのパス',
+            pathFromSystemRoot: 'システムルートからのパス'
         },
         style: {
             title: 'スタイル',
@@ -801,6 +809,9 @@ export const STRINGS_JA = {
             deepLinkCopied: 'Obsidian URL をクリップボードにコピーしました',
             pathCopied: 'パスをクリップボードにコピーしました',
             relativePathCopied: '相対パスをクリップボードにコピーしました',
+            linkCopied: 'リンクをクリップボードにコピーしました',
+            footnoteLinkCopied: '脚注リンクをクリップボードにコピーしました',
+            embedLinkCopied: '埋め込みリンクをクリップボードにコピーしました',
             tagAddedToNote: '1個のノートにタグを追加しました',
             tagAddedToNotes: '{count}個のノートにタグを追加しました',
             tagRemovedFromNote: '1個のノートからタグを削除しました',
@@ -857,6 +868,7 @@ export const STRINGS_JA = {
 
     // Date grouping
     dateGroups: {
+        future: '未来',
         today: '今日',
         yesterday: '昨日',
         previous7Days: '過去7日間',
@@ -1000,7 +1012,7 @@ export const STRINGS_JA = {
             general: 'リリースノート、サポート、保管庫プロファイル、ファイルタイプ、プロパティキー。',
             vaultFilters: '非表示のフォルダ、タグ、ファイル、ファイルタグ、プロパティルール。',
             appearanceBehavior: '動作、キーボード操作、マウスボタン、外観、書式。',
-            navigationPane: 'レイアウト、外観、ノート数、折りたたみ動作、レインボーカラー。',
+            navigationPane: 'レイアウト、外観、ファイル数、折りたたみ動作、レインボーカラー。',
             shortcuts: 'ショートカットの表示、バッジ、最近のファイル、ピン留めされた項目。',
             calendar: 'カレンダー表示、日付ノート、テンプレート、ロケール、サイドバーの配置。',
             fileOperations: 'テンプレート、削除確認、添付ファイル、ファイル移動時の競合動作。',
@@ -1035,7 +1047,7 @@ export const STRINGS_JA = {
                 banner: 'バナー',
                 collapseItems: '項目を折りたたむ',
                 dragAndDrop: 'ドラッグ＆ドロップ',
-                noteCounts: 'ノート数',
+                noteCounts: 'ファイル数',
                 rainbowColors: 'レインボーカラー',
                 leftSidebar: '左サイドバー',
                 calendarIntegration: 'カレンダー連携'
@@ -1170,8 +1182,8 @@ export const STRINGS_JA = {
                 desc: '固定したノートは自身のフォルダーでのみ固定済みとして表示されます。フォルダーノートや固定ノートが多い場合に便利です。タグやプロパティビューには影響しません。'
             },
             separateNoteCounts: {
-                name: '現在と子孫のノート数を個別に表示',
-                desc: 'フォルダ、タグ、プロパティのノート数を「現在 ▾ 子孫」形式で表示します。'
+                name: '現在と子孫のファイル数を個別に表示',
+                desc: 'フォルダ、タグ、プロパティのファイル数を「現在 ▾ 子孫」形式で表示します。'
             },
             groupNotes: {
                 name: 'デフォルトのグループ化',
@@ -1837,7 +1849,7 @@ export const STRINGS_JA = {
             },
             textCountDisplay: {
                 name: 'カウントの種類',
-                desc: 'ファイル項目に表示するノートのカウントを選択します。',
+                desc: 'ファイル項目に表示するテキストのカウントを選択します。',
                 options: {
                     none: 'なし',
                     words: '単語数',
@@ -1847,7 +1859,7 @@ export const STRINGS_JA = {
             },
             textCountPlacement: {
                 name: '配置',
-                desc: 'ノートのカウントを表示する場所を選択します。',
+                desc: 'テキストのカウントを表示する場所を選択します。',
                 options: {
                     title: 'タイトル内',
                     property: 'プロパティとして'
@@ -2037,8 +2049,8 @@ export const STRINGS_JA = {
                 }
             },
             showNoteCount: {
-                name: 'ノート数を表示',
-                desc: 'フォルダ、タグ、プロパティの横にノート数を表示します。'
+                name: 'ファイル数を表示',
+                desc: 'フォルダ、タグ、プロパティの横にファイル数を表示します。'
             },
             showSectionIcons: {
                 name: 'ショートカットと最近の項目のアイコンを表示',
@@ -2170,7 +2182,7 @@ export const STRINGS_JA = {
             },
             navCountLeaderStyle: {
                 name: 'リーダーを表示',
-                desc: '項目名とノート数の間に点、ダッシュ、または線を表示します。',
+                desc: '項目名とファイル数の間に点、ダッシュ、または線を表示します。',
                 options: {
                     none: 'なし',
                     dots: '点 (...)',

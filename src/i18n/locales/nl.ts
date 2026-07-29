@@ -202,7 +202,9 @@ export const STRINGS_NL = {
                     items: [
                         '`word` Notities met "word" in de weergavenaam of een alias vinden.',
                         '`word1 word2` Elk woord moet voorkomen in de weergavenaam of de aliassen.',
-                        '`-word` Notities met "word" in de weergavenaam of een alias uitsluiten.'
+                        '`-word` Notities met "word" in de weergavenaam of een alias uitsluiten.',
+                        '`"text"` Tekst letterlijk vinden; een term die met een dubbel aanhalingsteken begint, wordt nooit als tag, eigenschap, datum of filter geïnterpreteerd (bijvoorbeeld: `".F"`).',
+                        '`-"text"` Notities met de letterlijke tekst in de weergavenaam of een alias uitsluiten.'
                     ]
                 },
                 tags: {
@@ -387,11 +389,17 @@ export const STRINGS_NL = {
             addSeparator: 'Scheidingslijn toevoegen',
             removeSeparator: 'Scheidingslijn verwijderen'
         },
-        copyPath: {
-            title: 'Pad kopiëren',
-            asObsidianUrl: 'als Obsidian URL',
-            fromVaultFolder: 'vanuit vault-map',
-            fromSystemRoot: 'vanaf systeemroot'
+        copy: {
+            title: 'Kopiëren',
+            noteLink: 'notitielink',
+            fileLink: 'bestandslink',
+            noteLinkAsFootnote: 'notitielink als voetnoot',
+            fileLinkAsFootnote: 'bestandslink als voetnoot',
+            noteEmbed: 'notitie-insluiting',
+            fileEmbed: 'bestandsinsluiting',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'pad vanuit vault-map',
+            pathFromSystemRoot: 'pad vanaf systeemroot'
         },
         style: {
             title: 'Stijl',
@@ -804,6 +812,9 @@ export const STRINGS_NL = {
             deepLinkCopied: 'Obsidian URL gekopieerd naar klembord',
             pathCopied: 'Pad gekopieerd naar klembord',
             relativePathCopied: 'Relatief pad gekopieerd naar klembord',
+            linkCopied: 'Link gekopieerd naar klembord',
+            footnoteLinkCopied: 'Voetnootlink gekopieerd naar klembord',
+            embedLinkCopied: 'Insluitlink gekopieerd naar klembord',
             tagAddedToNote: 'Tag toegevoegd aan 1 notitie',
             tagAddedToNotes: 'Tag toegevoegd aan {count} notities',
             tagRemovedFromNote: 'Tag verwijderd van 1 notitie',
@@ -860,6 +871,7 @@ export const STRINGS_NL = {
 
     // Date grouping
     dateGroups: {
+        future: 'Toekomst',
         today: 'Vandaag',
         yesterday: 'Gisteren',
         previous7Days: 'Afgelopen 7 dagen',
@@ -1003,7 +1015,7 @@ export const STRINGS_NL = {
             general: 'Releasenotities, ondersteuning, kluisprofiel, bestandstypen en eigenschapssleutels.',
             vaultFilters: 'Verborgen mappen, tags, bestanden, bestandstags en eigenschapsregels.',
             appearanceBehavior: 'Gedrag, toetsenbordnavigatie, muisknoppen, uiterlijk en opmaak.',
-            navigationPane: 'Indeling, uiterlijk, aantal notities, inklapgedrag en regenboogkleuren.',
+            navigationPane: 'Indeling, uiterlijk, aantal bestanden, inklapgedrag en regenboogkleuren.',
             shortcuts: 'Zichtbaarheid van snelkoppelingen, badges, recente bestanden en vastgezette items.',
             calendar: 'Kalenderweergave, datumnotities, sjablonen, taalinstellingen en zijbalkplaatsing.',
             fileOperations: 'Sjablonen, verwijderingsbevestigingen, bijlagen en gedrag bij bestandsverplaatsingsconflicten.',
@@ -1038,7 +1050,7 @@ export const STRINGS_NL = {
                 banner: 'Banner',
                 collapseItems: 'Items inklappen',
                 dragAndDrop: 'Slepen en neerzetten',
-                noteCounts: 'Notitietellingen',
+                noteCounts: 'Bestandstellingen',
                 rainbowColors: 'Regenboogkleuren',
                 leftSidebar: 'Linkerzijbalk',
                 calendarIntegration: 'Kalenderintegratie'
@@ -1173,8 +1185,8 @@ export const STRINGS_NL = {
                 desc: 'Vastgemaakte notities worden alleen als vastgemaakt weergegeven in hun eigen map. Handig voor mapnotities of als je veel vastgemaakte notities hebt. Heeft geen invloed op tag- of eigenschapweergaven.'
             },
             separateNoteCounts: {
-                name: 'Huidige en afstammeling-notitietellingen apart tonen',
-                desc: 'Notitietellingen weergeven in "huidig ▾ afstammelingen" formaat voor mappen, tags en eigenschappen.'
+                name: 'Huidige en afstammeling-bestandstellingen apart tonen',
+                desc: 'Bestandstellingen weergeven in "huidig ▾ afstammelingen" formaat voor mappen, tags en eigenschappen.'
             },
             groupNotes: {
                 name: 'Standaard groepering',
@@ -1842,7 +1854,7 @@ export const STRINGS_NL = {
             },
             textCountDisplay: {
                 name: 'Type telling',
-                desc: 'Kies welke notitietellingen in bestandsitems verschijnen.',
+                desc: 'Kies welke teksttellingen in bestandsitems verschijnen.',
                 options: {
                     none: 'Geen',
                     words: 'Aantal woorden',
@@ -1852,7 +1864,7 @@ export const STRINGS_NL = {
             },
             textCountPlacement: {
                 name: 'Plaatsing',
-                desc: 'Kies waar notitietellingen verschijnen.',
+                desc: 'Kies waar teksttellingen verschijnen.',
                 options: {
                     title: 'In titel',
                     property: 'Als eigenschap'
@@ -2042,8 +2054,8 @@ export const STRINGS_NL = {
                 }
             },
             showNoteCount: {
-                name: 'Notitietelling tonen',
-                desc: 'Notitietellingen naast mappen, tags en eigenschappen weergeven.'
+                name: 'Bestandstelling tonen',
+                desc: 'Bestandstellingen naast mappen, tags en eigenschappen weergeven.'
             },
             showSectionIcons: {
                 name: 'Pictogrammen tonen voor snelkoppelingen en recente items',
@@ -2175,7 +2187,7 @@ export const STRINGS_NL = {
             },
             navCountLeaderStyle: {
                 name: 'Opvultekens tonen',
-                desc: 'Punten, streepjes of een lijn weergeven tussen itemnamen en notitie-aantallen.',
+                desc: 'Punten, streepjes of een lijn weergeven tussen itemnamen en bestandsaantallen.',
                 options: {
                     none: 'Geen',
                     dots: 'Punten (...)',

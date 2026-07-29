@@ -212,12 +212,9 @@ body {
     --nn-theme-tag-negative-bg: #ff000033;
 
     /* -- Navigation Item Text Styling -- */
-    --nn-theme-navitem-file-name-font-weight: 400;
     --nn-theme-navitem-name-font-weight: 400;
-    --nn-theme-navitem-count-font-weight: 400;
-    --nn-theme-navitem-custom-color-file-name-font-weight: 600;
     --nn-theme-navitem-custom-color-name-font-weight: 600;
-    --nn-theme-navitem-folder-note-name-font-weight: 400;
+    --nn-theme-navitem-count-font-weight: 400;
     --nn-theme-navitem-folder-note-name-decoration: underline;
     --nn-theme-navitem-folder-note-name-hover-decoration: underline;
 
@@ -312,7 +309,6 @@ body {
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
-    --nn-theme-mobile-toolbar-bg: var(--background-secondary);
     --nn-theme-mobile-toolbar-button-icon-color: var(--link-color);
     --nn-theme-mobile-toolbar-button-active-bg: var(--background-modifier-hover);
     --nn-theme-mobile-toolbar-button-active-icon-color: var(--link-color);

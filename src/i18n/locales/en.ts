@@ -199,7 +199,9 @@ export const STRINGS_EN = {
                     items: [
                         '`word` Match notes with "word" in the display name or an alias.',
                         '`word1 word2` Require every word to match across the display name and aliases.',
-                        '`-word` Exclude notes with "word" in the display name or an alias.'
+                        '`-word` Exclude notes with "word" in the display name or an alias.',
+                        '`"text"` Match text literally; a term that opens with a double quote is never interpreted as a tag, property, date, or filter (for example: `".F"`).',
+                        '`-"text"` Exclude notes with the literal text in the display name or an alias.'
                     ]
                 },
                 tags: {
@@ -384,11 +386,17 @@ export const STRINGS_EN = {
             addSeparator: 'Add separator',
             removeSeparator: 'Remove separator'
         },
-        copyPath: {
-            title: 'Copy path',
-            asObsidianUrl: 'as Obsidian URL',
-            fromVaultFolder: 'from vault folder',
-            fromSystemRoot: 'from system root'
+        copy: {
+            title: 'Copy',
+            noteLink: 'note link',
+            fileLink: 'file link',
+            noteLinkAsFootnote: 'note link as footnote',
+            fileLinkAsFootnote: 'file link as footnote',
+            noteEmbed: 'note embed',
+            fileEmbed: 'file embed',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'path from vault folder',
+            pathFromSystemRoot: 'path from system root'
         },
         style: {
             title: 'Style',
@@ -796,6 +804,9 @@ export const STRINGS_EN = {
             deepLinkCopied: 'Obsidian URL copied to clipboard',
             pathCopied: 'Path copied to clipboard',
             relativePathCopied: 'Relative path copied to clipboard',
+            linkCopied: 'Link copied to clipboard',
+            footnoteLinkCopied: 'Footnote link copied to clipboard',
+            embedLinkCopied: 'Embed link copied to clipboard',
             tagAddedToNote: 'Added tag to 1 note',
             tagAddedToNotes: 'Added tag to {count} notes',
             tagRemovedFromNote: 'Removed tag from 1 note',
@@ -852,6 +863,7 @@ export const STRINGS_EN = {
 
     // Date grouping
     dateGroups: {
+        future: 'Future',
         today: 'Today',
         yesterday: 'Yesterday',
         previous7Days: 'Previous 7 days',
@@ -995,7 +1007,7 @@ export const STRINGS_EN = {
             general: 'Release notes, support, vault profile, file types, and property keys.',
             vaultFilters: 'Hidden folders, tags, files, file tags, and property rules.',
             appearanceBehavior: 'Behavior, keyboard navigation, mouse buttons, appearance, and formatting.',
-            navigationPane: 'Layout, appearance, note counts, collapse behavior, and rainbow colors.',
+            navigationPane: 'Layout, appearance, file counts, collapse behavior, and rainbow colors.',
             shortcuts: 'Shortcut visibility, badges, recent files, and pinned items.',
             calendar: 'Calendar display, date notes, templates, locale, and sidebar placement.',
             fileOperations: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
@@ -1030,7 +1042,7 @@ export const STRINGS_EN = {
                 banner: 'Banner',
                 collapseItems: 'Collapse items',
                 dragAndDrop: 'Drag and drop',
-                noteCounts: 'Note counts',
+                noteCounts: 'File counts',
                 rainbowColors: 'Rainbow colors',
                 leftSidebar: 'Left sidebar',
                 calendarIntegration: 'Calendar integration'
@@ -1165,8 +1177,8 @@ export const STRINGS_EN = {
                 desc: 'Pinned notes appear pinned only in their own folder. Useful for folder notes or if you have many pinned notes. Does not affect tag or property views.'
             },
             separateNoteCounts: {
-                name: 'Show current and descendant note counts separately',
-                desc: 'Display note counts as "current ▾ descendants" for folders, tags, and properties.'
+                name: 'Show current and descendant file counts separately',
+                desc: 'Display file counts as "current ▾ descendants" for folders, tags, and properties.'
             },
             groupNotes: {
                 name: 'Default grouping',
@@ -1852,7 +1864,7 @@ export const STRINGS_EN = {
             },
             textCountDisplay: {
                 name: 'Count type',
-                desc: 'Choose which note counts appear in file items.',
+                desc: 'Choose which text counts appear in file items.',
                 options: {
                     none: 'None',
                     words: 'Word count',
@@ -1862,7 +1874,7 @@ export const STRINGS_EN = {
             },
             textCountPlacement: {
                 name: 'Placement',
-                desc: 'Choose where note counts appear.',
+                desc: 'Choose where text counts appear.',
                 options: {
                     title: 'In title',
                     property: 'As property'
@@ -2031,8 +2043,8 @@ export const STRINGS_EN = {
                 }
             },
             showNoteCount: {
-                name: 'Show note count',
-                desc: 'Display note counts next to folders, tags, and properties.'
+                name: 'Show file count',
+                desc: 'Display file counts next to folders, tags, and properties.'
             },
             showSectionIcons: {
                 name: 'Show icons for shortcuts and recent items',
@@ -2164,7 +2176,7 @@ export const STRINGS_EN = {
             },
             navCountLeaderStyle: {
                 name: 'Show leaders',
-                desc: 'Display dots, dashes, or a line between item names and note counts.',
+                desc: 'Display dots, dashes, or a line between item names and file counts.',
                 options: {
                     none: 'None',
                     dots: 'Dots (...)',

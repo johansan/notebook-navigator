@@ -126,20 +126,18 @@ Most variables are colors and should resolve to a computed color (some are used 
 
 #### Text styling
 
-These variables control the font weight and decoration of folder/tag/property names and file names in shortcuts and recent files.
-Priority order for font weight: custom color styles override folder note styles, which override the default style.
-Folder note decoration still applies when custom colors are present.
+These variables control the font weight and decoration of names in the navigation pane: folders, tags, properties, section
+headers, shortcuts, and recent files.
+Priority order for font weight: custom color styles override the default style.
+Folders with notes use the same font weights and are marked with a text decoration.
 
-| Variable                                                | Default     | Description                                                                   |
-| ------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------- |
-| `--nn-theme-navitem-name-font-weight`                   | `400`       | Default font weight for all folder/tag/property names (400 = regular, 600 = bold) |
-| `--nn-theme-navitem-file-name-font-weight`              | `400`       | Default font weight for file names in shortcuts and recent files              |
-| `--nn-theme-navitem-count-font-weight`                  | `400`       | Font weight for file count badges                                             |
-| `--nn-theme-navitem-custom-color-name-font-weight`      | `600`       | Font weight for folders/tags/properties with custom colors (overrides default) |
-| `--nn-theme-navitem-custom-color-file-name-font-weight` | `600`       | Font weight for file names with custom colors (overrides default file weight) |
-| `--nn-theme-navitem-folder-note-name-font-weight`       | `400`       | Font weight for folders with notes when no custom color weight applies        |
-| `--nn-theme-navitem-folder-note-name-decoration`        | `underline` | Text decoration for folders with notes (none, underline, underline dotted)    |
-| `--nn-theme-navitem-folder-note-name-hover-decoration`  | `underline` | Text decoration when hovering folders with notes                              |
+| Variable                                               | Default     | Description                                                                |
+| ------------------------------------------------------ | ----------- | -------------------------------------------------------------------------- |
+| `--nn-theme-navitem-name-font-weight`                  | `400`       | Font weight of all names in the navigation pane (400 = regular, 600 = bold) |
+| `--nn-theme-navitem-custom-color-name-font-weight`     | `600`       | Font weight of names with custom or rainbow colors (overrides name weight) |
+| `--nn-theme-navitem-count-font-weight`                 | `400`       | Font weight for file count badges                                          |
+| `--nn-theme-navitem-folder-note-name-decoration`       | `underline` | Text decoration for folders with notes (none, underline, underline dotted) |
+| `--nn-theme-navitem-folder-note-name-hover-decoration` | `underline` | Text decoration when hovering folders with notes                           |
 
 ### Borders
 
@@ -284,7 +282,6 @@ navigation pane background. In `primary` and `secondary` background modes, both 
 | `--nn-theme-mobile-list-header-link-color`             | `var(--link-color)`                                              | Color for back button and clickable breadcrumb segments on mobile                                                |
 | `--nn-theme-mobile-list-header-breadcrumb-color`       | `var(--nn-theme-foreground)`                                     | Color for current folder and separators in breadcrumb on mobile                                                  |
 | `--nn-theme-mobile-list-header-breadcrumb-font-weight` | `600`                                                            | Font weight for mobile breadcrumb                                                                                |
-| `--nn-theme-mobile-toolbar-bg`                         | `var(--background-secondary)`                                    | Defined token exposed in Style Settings; current shipped toolbar styles use `--nn-theme-list-bg` or `--nn-theme-mobile-toolbar-glass-bg` instead |
 | `--nn-theme-mobile-toolbar-button-icon-color`          | `var(--link-color)`                                              | Icon color for toolbar buttons                                                                                   |
 | `--nn-theme-mobile-toolbar-button-active-bg`           | `var(--background-modifier-hover)`                               | Background color for active toolbar button                                                                       |
 | `--nn-theme-mobile-toolbar-button-active-icon-color`   | `var(--link-color)`                                              | Icon color for active toolbar button                                                                             |
@@ -376,10 +373,7 @@ body {
 
   /* Navigation text styling */
   --nn-theme-navitem-name-font-weight: 400;
-  --nn-theme-navitem-file-name-font-weight: 400;
   --nn-theme-navitem-custom-color-name-font-weight: 600;
-  --nn-theme-navitem-custom-color-file-name-font-weight: 600;
-  --nn-theme-navitem-folder-note-name-font-weight: 600;
   --nn-theme-navitem-folder-note-name-decoration: underline;
   --nn-theme-navitem-folder-note-name-hover-decoration: underline;
   --nn-theme-navitem-count-font-weight: 400;
@@ -475,7 +469,6 @@ body {
   --nn-theme-mobile-list-header-link-color: #589df6;
   --nn-theme-mobile-list-header-breadcrumb-color: #a9b7c6;
   --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
-  --nn-theme-mobile-toolbar-bg: #3c3f41;
   --nn-theme-mobile-toolbar-button-icon-color: #a9b7c6;
   --nn-theme-mobile-toolbar-button-active-bg: #4a78c8;
   --nn-theme-mobile-toolbar-button-active-icon-color: #ffffff;
@@ -547,8 +540,7 @@ their choices automatically override your theme through inline styles and row-le
 ## Style Settings Support
 
 Notebook Navigator includes a Style Settings `@settings` block for most theming variables.
-
-Border variables are available in the Style Settings **Borders** section.
+Settings are grouped by pane and element; border settings appear next to the elements they style.
 
 Not currently exposed in the Style Settings UI:
 

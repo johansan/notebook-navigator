@@ -193,16 +193,45 @@ const foldPropertySearchToken = (token: PropertySearchToken): PropertySearchToke
     };
 };
 
-function tokenizeFilterSearchQuery(query: string): string[] {
-    const tokens: string[] = [];
+/**
+ * Raw token emitted by the query tokenizer with quote metadata preserved.
+ *
+ * `text` is the quote-stripped payload. `literal` marks terms the user opened with a quote
+ * (`"..."`) or a minus directly followed by a quote (`-"..."`); classification must match their
+ * text against names instead of interpreting filter prefixes such as `.`, `#`, or `@`.
+ * `negated` is only set for literal terms because the minus of `-"..."` sits outside the quoted
+ * payload; unquoted negation stays inside `text` and is resolved during classification. This keeps
+ * `-".F"` (exclude names containing `.F`) distinct from `"-.F"` (include names containing `-.F`).
+ */
+interface RawSearchToken {
+    text: string;
+    literal: boolean;
+    negated: boolean;
+}
+
+const createMutationToken = (text: string): RawSearchToken => ({ text, literal: false, negated: false });
+
+function tokenizeFilterSearchQuery(query: string): RawSearchToken[] {
+    const tokens: RawSearchToken[] = [];
     const input = query.trim();
     if (!input) {
         return tokens;
     }
 
     let current = '';
+    let literal = false;
+    let negated = false;
     let inQuotes = false;
     let index = 0;
+
+    const pushCurrent = () => {
+        if (current.length > 0) {
+            tokens.push({ text: current, literal, negated });
+        }
+        current = '';
+        literal = false;
+        negated = false;
+    };
 
     while (index < input.length) {
         const char = input[index];
@@ -217,16 +246,26 @@ function tokenizeFilterSearchQuery(query: string): string[] {
         }
 
         if (char === '"') {
+            if (!inQuotes && !literal) {
+                // A quote opening at the start of a term marks it literal so payloads such as
+                // `.F` or `#work` are matched as name text instead of being classified as
+                // property or tag filters. A quote right after a single leading minus keeps the
+                // minus outside the payload as an exclusion marker.
+                if (current === '') {
+                    literal = true;
+                } else if (current === '-') {
+                    literal = true;
+                    negated = true;
+                    current = '';
+                }
+            }
             inQuotes = !inQuotes;
             index += 1;
             continue;
         }
 
         if (!inQuotes && /\s/.test(char)) {
-            if (current.length > 0) {
-                tokens.push(current);
-                current = '';
-            }
+            pushCurrent();
             index += 1;
             continue;
         }
@@ -235,9 +274,7 @@ function tokenizeFilterSearchQuery(query: string): string[] {
         index += 1;
     }
 
-    if (current.length > 0) {
-        tokens.push(current);
-    }
+    pushCurrent();
 
     return tokens;
 }
@@ -462,20 +499,29 @@ const extensionMatchesToken = (fileExtension: string, token: string): boolean =>
 };
 
 // Parses raw tokens into classified tokens with metadata
-const classifyRawTokens = (rawTokens: string[]): TokenClassificationResult => {
+const classifyRawTokens = (rawTokens: RawSearchToken[]): TokenClassificationResult => {
     const tokens: ClassifiedToken[] = [];
     let hasTagOperand = false;
     let hasNonTagOperand = false;
     let hasInvalidToken = false;
 
     for (const token of rawTokens) {
-        if (!token) {
+        if (!token.text) {
+            continue;
+        }
+
+        // Literal terms bypass every prefix and connector interpretation so quoted text such as
+        // `".F"`, `"#work"`, or `"AND"` is matched against names and aliases verbatim.
+        if (token.literal) {
+            hasNonTagOperand = true;
+            const foldedLiteral = foldSearchTextFromLowercase(token.text.toLowerCase());
+            tokens.push(token.negated ? { kind: 'nameNegation', value: foldedLiteral } : { kind: 'name', value: foldedLiteral });
             continue;
         }
 
         // Token shape detection (operators, prefixes, separators) is done on lowercase text.
         // Accent folding is applied only to operand payloads that participate in matching.
-        const lowercaseToken = token.toLowerCase();
+        const lowercaseToken = token.text.toLowerCase();
         let foldedLowercaseToken: string | null = null;
         const getFoldedLowercaseToken = (): string => {
             if (foldedLowercaseToken !== null) {
@@ -816,6 +862,7 @@ const parseFilterModeTokens = (
  * - folder:/ - Include notes in the vault root
  * - ext:md - Include notes with extension "md"
  * - word - Include notes with "word" in their name
+ * - "text" - Include notes with "text" in their name, matched literally without filter interpretation
  *
  * Exclusion patterns (must NOT match):
  * - -#tag - Exclude notes with tags containing "tag"
@@ -828,8 +875,11 @@ const parseFilterModeTokens = (
  * - -folder:/archive - Exclude notes whose parent folder path is exactly "archive"
  * - -ext:pdf - Exclude notes with extension "pdf"
  * - -word - Exclude notes with "word" in their name
+ * - -"text" - Exclude notes with "text" in their name, matched literally without filter interpretation
  *
  * Special handling:
+ * - A term opening with a double quote is literal: `".F"` matches names containing ".F" instead of
+ *   filtering on a property, and `"-.F"` matches names containing "-.F" (the minus is part of the text)
  * - AND/OR act as operators only in pure tag queries
  * - Mixed queries treat AND/OR as literal name tokens
  * - In pure tag queries, AND has higher precedence than OR
@@ -849,7 +899,7 @@ export function parseFilterSearchTokens(query: string): FilterSearchTokens {
     // Tokenization preserves original code points.
     // Normalization is handled in classification so token type detection and token folding
     // stay explicit and testable.
-    const rawTokens = tokenizeFilterSearchQuery(trimmedQuery).filter(Boolean);
+    const rawTokens = tokenizeFilterSearchQuery(trimmedQuery);
     if (rawTokens.length === 0) {
         return EMPTY_TOKENS;
     }
@@ -936,7 +986,7 @@ export function buildSearchNavFilterState(query: string): SearchNavFilterState {
     const propertyIncludeOperators: Record<string, InclusionOperator> = {};
 
     if (tokens.mode === 'tag') {
-        const rawTokens = tokenizeFilterSearchQuery(trimmedQuery).filter(Boolean);
+        const rawTokens = tokenizeFilterSearchQuery(trimmedQuery);
         const classification = classifyRawTokens(rawTokens);
         let hasPriorOperand = false;
         let pendingOperator: InclusionOperator | null = null;
@@ -988,6 +1038,15 @@ const isConnectorToken = (value: string | undefined): boolean => {
     return CONNECTOR_TOKEN_SET.has(value.toLowerCase());
 };
 
+// Checks if a raw token acts as a connector word. Quoted terms are never connectors because
+// literal `"AND"` / `"OR"` must survive query mutations as name text.
+const isConnectorRawToken = (token: RawSearchToken | undefined): boolean => {
+    if (!token || token.literal) {
+        return false;
+    }
+    return isConnectorToken(token.text);
+};
+
 // Checks whether a query contains only tag/property operands and connector words.
 const isTagOnlyMutationQuery = (query: string): boolean => {
     const trimmed = query.trim();
@@ -999,7 +1058,12 @@ const isTagOnlyMutationQuery = (query: string): boolean => {
     let hasTagOperand = false;
 
     for (const token of tokens) {
-        const lowercaseToken = token.toLowerCase();
+        // Literal terms are name operands, so their presence makes the query mixed.
+        if (token.literal) {
+            return false;
+        }
+
+        const lowercaseToken = token.text.toLowerCase();
         if (isConnectorToken(lowercaseToken)) {
             continue;
         }
@@ -1067,8 +1131,21 @@ const formatPropertyTokenForQuery = (propertyToken: PropertySearchToken, negated
     return `${prefix}${serializedKey}=${serializedValue}`;
 };
 
-const serializeMutationToken = (token: string): string => {
-    const normalized = token.toLowerCase();
+// Filter prefixes that must stay outside the quotes when a re-serialized payload needs quoting.
+// A term that opens with a double quote parses as a literal name term, so `"folder:my folder"`
+// would silently drop the folder filter; `folder:"my folder"` keeps it.
+const QUOTED_SERIALIZATION_PREFIXES = [FOLDER_FILTER_PREFIX, EXT_FILTER_PREFIX, '#'];
+
+const serializeMutationToken = (token: RawSearchToken): string => {
+    // Literal serialization must run before property detection so a quoted `.F` keeps its quotes
+    // instead of being rewritten into a property token on the next parse. The minus is placed
+    // outside the quotes so exclusion survives the round trip as `-"..."`.
+    if (token.literal) {
+        return `${token.negated ? '-' : ''}"${escapeQuotedTokenValue(token.text)}"`;
+    }
+
+    const text = token.text;
+    const normalized = text.toLowerCase();
     if (normalized.startsWith('-.') || normalized.startsWith('.')) {
         const negated = normalized.startsWith('-.');
         const candidate = negated ? normalized.slice(1) : normalized;
@@ -1078,14 +1155,23 @@ const serializeMutationToken = (token: string): string => {
         }
     }
 
-    if (/\s/.test(token) || token.includes('"') || token.includes('\\')) {
-        return `"${escapeQuotedTokenValue(token)}"`;
+    if (/\s/.test(text) || text.includes('"') || text.includes('\\')) {
+        // A leading minus stays outside the quotes so exclusions survive the round trip as
+        // `-"..."` / `-folder:"..."` instead of re-parsing as literal inclusions.
+        const negationPrefix = text.startsWith('-') ? '-' : '';
+        const body = text.slice(negationPrefix.length);
+        const lowercaseBody = body.toLowerCase();
+        const matchedPrefix = QUOTED_SERIALIZATION_PREFIXES.find(prefix => lowercaseBody.startsWith(prefix));
+        // Preserve the prefix's original casing; classification lowercases token shapes on parse.
+        const filterPrefix = matchedPrefix ? body.slice(0, matchedPrefix.length) : '';
+        const payload = body.slice(filterPrefix.length);
+        return `${negationPrefix}${filterPrefix}"${escapeQuotedTokenValue(payload)}"`;
     }
 
-    return token;
+    return text;
 };
 
-const serializeMutationTokens = (tokens: string[]): string => {
+const serializeMutationTokens = (tokens: RawSearchToken[]): string => {
     return tokens
         .map(token => serializeMutationToken(token))
         .join(' ')
@@ -1109,7 +1195,7 @@ export interface UpdateFilterQueryWithPropertyResult {
     changed: boolean;
 }
 
-const removeMutationToken = (tokens: string[], removalIndex: number, expressionMode: boolean): string[] => {
+const removeMutationToken = (tokens: RawSearchToken[], removalIndex: number, expressionMode: boolean): RawSearchToken[] => {
     const updatedTokens = tokens.slice();
     updatedTokens.splice(removalIndex, 1);
 
@@ -1118,43 +1204,48 @@ const removeMutationToken = (tokens: string[], removalIndex: number, expressionM
     }
 
     const precedingIndex = removalIndex - 1;
-    if (precedingIndex >= 0 && isConnectorToken(updatedTokens[precedingIndex])) {
+    if (precedingIndex >= 0 && isConnectorRawToken(updatedTokens[precedingIndex])) {
         updatedTokens.splice(precedingIndex, 1);
     }
 
-    while (updatedTokens.length > 0 && isConnectorToken(updatedTokens[0])) {
+    while (updatedTokens.length > 0 && isConnectorRawToken(updatedTokens[0])) {
         updatedTokens.shift();
     }
 
     for (let index = 0; index < updatedTokens.length - 1; index += 1) {
-        if (isConnectorToken(updatedTokens[index]) && isConnectorToken(updatedTokens[index + 1])) {
+        if (isConnectorRawToken(updatedTokens[index]) && isConnectorRawToken(updatedTokens[index + 1])) {
             updatedTokens.splice(index + 1, 1);
             index -= 1;
         }
     }
 
-    while (updatedTokens.length > 0 && isConnectorToken(updatedTokens[updatedTokens.length - 1])) {
+    while (updatedTokens.length > 0 && isConnectorRawToken(updatedTokens[updatedTokens.length - 1])) {
         updatedTokens.pop();
     }
 
     return updatedTokens;
 };
 
-const appendMutationToken = (tokens: string[], token: string, operator: InclusionOperator, expressionMode: boolean): string[] => {
+const appendMutationToken = (
+    tokens: RawSearchToken[],
+    token: string,
+    operator: InclusionOperator,
+    expressionMode: boolean
+): RawSearchToken[] => {
     const nextTokens = tokens.slice();
     if (!expressionMode) {
-        nextTokens.push(token);
+        nextTokens.push(createMutationToken(token));
         return nextTokens;
     }
 
     const connector = operator === 'OR' ? 'OR' : 'AND';
     if (nextTokens.length === 0) {
-        nextTokens.push(token);
-    } else if (isConnectorToken(nextTokens[nextTokens.length - 1])) {
-        nextTokens[nextTokens.length - 1] = connector;
-        nextTokens.push(token);
+        nextTokens.push(createMutationToken(token));
+    } else if (isConnectorRawToken(nextTokens[nextTokens.length - 1])) {
+        nextTokens[nextTokens.length - 1] = createMutationToken(connector);
+        nextTokens.push(createMutationToken(token));
     } else {
-        nextTokens.push(connector, token);
+        nextTokens.push(createMutationToken(connector), createMutationToken(token));
     }
 
     return nextTokens;
@@ -1184,7 +1275,9 @@ export function updateFilterQueryWithTag(
     const tokens = trimmed.length > 0 ? tokenizeFilterSearchQuery(trimmed) : [];
     const tagOnlyQuery = isTagOnlyMutationQuery(trimmed);
     const lowerTarget = foldSearchText(formattedTag);
-    const removalIndex = tokens.findIndex(token => foldSearchText(token) === lowerTarget);
+    // Literal terms never match: a quoted `"#work"` is name text, so toggling the `#work` tag
+    // must add a tag filter instead of removing the literal.
+    const removalIndex = tokens.findIndex(token => !token.literal && foldSearchText(token.text) === lowerTarget);
 
     if (removalIndex !== -1) {
         const updatedTokens = removeMutationToken(tokens, removalIndex, tagOnlyQuery);
@@ -1244,10 +1337,12 @@ export function updateFilterQueryWithProperty(
     const foldedTargetValue = foldSearchText(propertyToken.value ?? '');
 
     const removalIndex = tokens.findIndex(token => {
-        if (token.startsWith('-')) {
+        // Literal terms never match: a quoted `".status"` is name text, so toggling the `status`
+        // property must add a property filter instead of removing the literal.
+        if (token.literal || token.text.startsWith('-')) {
             return false;
         }
-        const parsed = parsePropertyFilterToken(token);
+        const parsed = parsePropertyFilterToken(token.text);
         if (!parsed) {
             return false;
         }

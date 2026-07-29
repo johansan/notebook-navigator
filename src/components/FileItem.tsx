@@ -151,8 +151,8 @@ export interface FileItemPaneProps {
     onFileClick: (file: TFile, fileIndex: number | undefined, event: React.MouseEvent) => void;
     selectionType?: NavigationItemType | null;
     sortOption?: SortOption;
-    /** Active search query for highlighting matches in the file name */
-    searchQuery?: string;
+    /** Folded name tokens from the active internal filter search for highlighting the file name */
+    searchHighlightTerms?: readonly string[];
     /** Modifies the active search query with a tag token when modifier clicking */
     onModifySearchWithTag?: (tag: string, operator: InclusionOperator) => void;
     /** Modifies the active search query with a property token when modifier clicking */
@@ -220,55 +220,53 @@ export interface FileItemStorageHelpers {
  * Computes merged highlight ranges for all occurrences of search segments.
  * Overlapping ranges are merged to avoid nested highlights.
  */
-function getMergedHighlightRanges(text: string, query?: string, searchMeta?: SearchResultMeta): NumericRange[] {
+function getMergedHighlightRanges(text: string, foldedTerms?: readonly string[], searchMeta?: SearchResultMeta): NumericRange[] {
     if (!text) return [];
 
-    const lower = text.toLowerCase();
-    const ranges: NumericRange[] = [];
-    const seenTokens = new Set<string>();
-
-    const addTokenRanges = (rawToken: string | undefined) => {
-        if (!rawToken) return;
-        const token = rawToken.toLowerCase();
-        if (!token || seenTokens.has(token)) return;
-        seenTokens.add(token);
-
-        let idx = lower.indexOf(token);
-        while (idx !== -1) {
-            ranges.push({ start: idx, end: idx + token.length });
-            idx = lower.indexOf(token, idx + token.length);
-        }
-    };
-
+    // When Omnisearch metadata is present, highlight strictly from provider tokens.
+    // This avoids filter-term fallback highlighting for path/ext-only filters.
     if (searchMeta) {
+        const lower = text.toLowerCase();
+        const ranges: NumericRange[] = [];
+        const seenTokens = new Set<string>();
+
+        const addTokenRanges = (rawToken: string | undefined) => {
+            if (!rawToken) return;
+            const token = rawToken.toLowerCase();
+            if (!token || seenTokens.has(token)) return;
+            seenTokens.add(token);
+
+            let idx = lower.indexOf(token);
+            while (idx !== -1) {
+                ranges.push({ start: idx, end: idx + token.length });
+                idx = lower.indexOf(token, idx + token.length);
+            }
+        };
+
         searchMeta.matches.forEach(match => addTokenRanges(match.text));
         searchMeta.terms.forEach(term => addTokenRanges(term));
-    }
 
-    // When Omnisearch metadata is present, highlight strictly from provider tokens.
-    // This avoids raw-query fallback highlighting for path/ext-only filters.
-    if (!searchMeta && ranges.length === 0 && query) {
-        const normalizedQuery = query.trim().toLowerCase();
-        if (normalizedQuery) {
-            normalizedQuery
-                .split(/\s+/)
-                .filter(Boolean)
-                .forEach(segment => addTokenRanges(segment));
+        if (ranges.length === 0) {
+            return [];
         }
+
+        return mergeRanges(ranges);
     }
 
-    if (ranges.length === 0) {
-        return [];
+    // Internal filter search passes pre-folded name tokens, so fold-aware range mapping keeps
+    // highlights aligned with the source text the same way alias highlighting does.
+    if (foldedTerms && foldedTerms.length > 0) {
+        return getFoldedSearchHighlightRanges(text, foldedTerms);
     }
 
-    return mergeRanges(ranges);
+    return [];
 }
 
 /**
  * Splits text into plain and highlighted parts based on merged ranges.
  */
-function renderHighlightedText(text: string, query?: string, searchMeta?: SearchResultMeta): React.ReactNode {
-    return renderTextWithHighlightRanges(text, getMergedHighlightRanges(text, query, searchMeta));
+function renderHighlightedText(text: string, foldedTerms?: readonly string[], searchMeta?: SearchResultMeta): React.ReactNode {
+    return renderTextWithHighlightRanges(text, getMergedHighlightRanges(text, foldedTerms, searchMeta));
 }
 
 function renderAliasSearchMatch(matchedAlias: AliasSearchMatch): React.ReactNode {
@@ -410,7 +408,7 @@ export const FileItem = React.memo(function FileItem({
         onFileClick,
         selectionType,
         sortOption,
-        searchQuery,
+        searchHighlightTerms,
         onModifySearchWithTag,
         onModifySearchWithProperty,
         localDayReference,
@@ -549,8 +547,8 @@ export const FileItem = React.memo(function FileItem({
 
     // Highlight matches in display name when search is active
     const highlightedName = useMemo(
-        () => renderHighlightedText(displayName, searchQuery, searchMeta),
-        [displayName, searchQuery, searchMeta]
+        () => renderHighlightedText(displayName, searchHighlightTerms, searchMeta),
+        [displayName, searchHighlightTerms, searchMeta]
     );
 
     // Decide whether to render an inline extension suffix after the name
@@ -860,9 +858,9 @@ export const FileItem = React.memo(function FileItem({
     const hasPreviewAccordingToStatus = appearanceSettings.showPreview && file.extension === 'md' ? hasPreview(file.path) : false;
     const hasPreviewContent = hasPreviewAccordingToStatus || effectivePreviewText.length > 0;
     const highlightedPreview = useMemo(
-        // Only Omnisearch trigger highlighting in preview, not regular filter
-        () => (searchMeta ? renderHighlightedText(effectivePreviewText, searchQuery, searchMeta) : effectivePreviewText),
-        [effectivePreviewText, searchMeta, searchQuery]
+        // Only Omnisearch triggers highlighting in preview, not regular filter
+        () => (searchMeta ? renderHighlightedText(effectivePreviewText, undefined, searchMeta) : effectivePreviewText),
+        [effectivePreviewText, searchMeta]
     );
     const pinnedPreviewRows = isPinned ? 1 : appearanceSettings.previewRows;
 

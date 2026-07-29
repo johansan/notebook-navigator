@@ -252,7 +252,13 @@ export class DateUtils {
         const date = new Date(timestamp);
         const dateOnlyTime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 
-        if (dateOnlyTime === boundaries.todayTime) {
+        if (dateOnlyTime > boundaries.todayTime) {
+            // Future dates get one dedicated group so classification stays monotonic with
+            // date-sorted file order. Without this branch a future date falls into "Previous
+            // 7 days", the walk over sorted files emits that header twice, and the duplicate
+            // list item keys leave orphaned header rows in the list DOM.
+            return { label: strings.dateGroups.future, key: 'relative:future' };
+        } else if (dateOnlyTime === boundaries.todayTime) {
             return { label: strings.dateGroups.today, key: 'relative:today' };
         } else if (dateOnlyTime === boundaries.yesterdayTime) {
             return { label: strings.dateGroups.yesterday, key: 'relative:yesterday' };

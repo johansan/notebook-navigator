@@ -199,7 +199,9 @@ export const STRINGS_DE = {
                     items: [
                         '`word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen finden.',
                         '`word1 word2` Jedes Wort muss im Anzeigenamen oder in den Aliasnamen vorkommen.',
-                        '`-word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen ausschließen.'
+                        '`-word` Notizen mit "word" im Anzeigenamen oder in einem Aliasnamen ausschließen.',
+                        '`"text"` Text wörtlich finden; ein Begriff, der mit einem doppelten Anführungszeichen beginnt, wird nie als Tag, Eigenschaft, Datum oder Filter interpretiert (zum Beispiel: `".F"`).',
+                        '`-"text"` Notizen mit dem wörtlichen Text im Anzeigenamen oder in einem Aliasnamen ausschließen.'
                     ]
                 },
                 tags: {
@@ -385,11 +387,17 @@ export const STRINGS_DE = {
             addSeparator: 'Trennlinie hinzufügen',
             removeSeparator: 'Trennlinie entfernen'
         },
-        copyPath: {
-            title: 'Pfad kopieren',
-            asObsidianUrl: 'als Obsidian-URL',
-            fromVaultFolder: 'vom Vault-Ordner',
-            fromSystemRoot: 'vom Systemstammverzeichnis'
+        copy: {
+            title: 'Kopieren',
+            noteLink: 'Notiz-Link',
+            fileLink: 'Datei-Link',
+            noteLinkAsFootnote: 'Notiz-Link als Fußnote',
+            fileLinkAsFootnote: 'Datei-Link als Fußnote',
+            noteEmbed: 'Notiz-Einbettung',
+            fileEmbed: 'Datei-Einbettung',
+            obsidianUrl: 'Obsidian-URL',
+            pathFromVaultFolder: 'Pfad vom Vault-Ordner',
+            pathFromSystemRoot: 'Pfad vom Systemstammverzeichnis'
         },
         style: {
             title: 'Stil',
@@ -804,6 +812,9 @@ export const STRINGS_DE = {
             deepLinkCopied: 'Obsidian-URL in die Zwischenablage kopiert',
             pathCopied: 'Pfad in die Zwischenablage kopiert',
             relativePathCopied: 'Relativen Pfad in die Zwischenablage kopiert',
+            linkCopied: 'Link in die Zwischenablage kopiert',
+            footnoteLinkCopied: 'Fußnoten-Link in die Zwischenablage kopiert',
+            embedLinkCopied: 'Einbettungs-Link in die Zwischenablage kopiert',
             tagAddedToNote: 'Tag zu 1 Notiz hinzugefügt',
             tagAddedToNotes: 'Tag zu {count} Notizen hinzugefügt',
             tagRemovedFromNote: 'Tag von 1 Notiz entfernt',
@@ -860,6 +871,7 @@ export const STRINGS_DE = {
 
     // Date grouping
     dateGroups: {
+        future: 'Zukunft',
         today: 'Heute',
         yesterday: 'Gestern',
         previous7Days: 'Letzte 7 Tage',
@@ -1004,7 +1016,7 @@ export const STRINGS_DE = {
             general: 'Versionshinweise, Support, Tresorprofil, Dateitypen und Eigenschaftsschlüssel.',
             vaultFilters: 'Versteckte Ordner, Tags, Dateien, Datei-Tags und Eigenschaftsregeln.',
             appearanceBehavior: 'Verhalten, Tastaturnavigation, Maustasten, Darstellung und Formatierung.',
-            navigationPane: 'Layout, Darstellung, Notizenanzahl, Einklappverhalten und Regenbogenfarben.',
+            navigationPane: 'Layout, Darstellung, Dateianzahl, Einklappverhalten und Regenbogenfarben.',
             shortcuts: 'Verknüpfungssichtbarkeit, Abzeichen, zuletzt verwendete Dateien und angeheftete Elemente.',
             calendar: 'Kalenderanzeige, Datumsnotizen, Vorlagen, Sprachumgebung und Seitenleistenposition.',
             fileOperations: 'Vorlagen, Löschbestätigungen, Anhänge und Verhalten bei Dateikonflikten beim Verschieben.',
@@ -1039,7 +1051,7 @@ export const STRINGS_DE = {
                 banner: 'Banner',
                 collapseItems: 'Elemente einklappen',
                 dragAndDrop: 'Drag-and-drop',
-                noteCounts: 'Notizanzahlen',
+                noteCounts: 'Dateianzahlen',
                 rainbowColors: 'Regenbogenfarben',
                 leftSidebar: 'Linke Seitenleiste',
                 calendarIntegration: 'Kalenderintegration'
@@ -1174,8 +1186,8 @@ export const STRINGS_DE = {
                 desc: 'Angeheftete Notizen erscheinen nur in ihrem eigenen Ordner als angeheftet. Nützlich für Ordnernotizen oder bei vielen angehefteten Notizen. Hat keinen Einfluss auf Tag- oder Eigenschaftsansichten.'
             },
             separateNoteCounts: {
-                name: 'Aktuelle und Nachkommen-Notizanzahl getrennt anzeigen',
-                desc: 'Zeigt Notizanzahlen als "aktuell ▾ Nachkommen" für Ordner, Tags und Eigenschaften.'
+                name: 'Aktuelle und Nachkommen-Dateianzahl getrennt anzeigen',
+                desc: 'Zeigt Dateianzahlen als "aktuell ▾ Nachkommen" für Ordner, Tags und Eigenschaften.'
             },
             groupNotes: {
                 name: 'Standardgruppierung',
@@ -1845,7 +1857,7 @@ export const STRINGS_DE = {
             },
             textCountDisplay: {
                 name: 'Zähltyp',
-                desc: 'Wählen Sie, welche Notizzählungen in Dateielementen angezeigt werden.',
+                desc: 'Wählen Sie, welche Textzählungen in Dateielementen angezeigt werden.',
                 options: {
                     none: 'Keine',
                     words: 'Wortanzahl',
@@ -1855,7 +1867,7 @@ export const STRINGS_DE = {
             },
             textCountPlacement: {
                 name: 'Platzierung',
-                desc: 'Wählen Sie, wo Notizzählungen angezeigt werden.',
+                desc: 'Wählen Sie, wo Textzählungen angezeigt werden.',
                 options: {
                     title: 'Im Titel',
                     property: 'Als Eigenschaft'
@@ -2044,8 +2056,8 @@ export const STRINGS_DE = {
                 }
             },
             showNoteCount: {
-                name: 'Notizenzahl anzeigen',
-                desc: 'Notizanzahlen neben Ordnern, Tags und Eigenschaften anzeigen.'
+                name: 'Dateianzahl anzeigen',
+                desc: 'Dateianzahlen neben Ordnern, Tags und Eigenschaften anzeigen.'
             },
             showSectionIcons: {
                 name: 'Icons für Shortcuts und kürzliche Elemente anzeigen',
@@ -2177,7 +2189,7 @@ export const STRINGS_DE = {
             },
             navCountLeaderStyle: {
                 name: 'Führungszeichen anzeigen',
-                desc: 'Punkte, Striche oder eine Linie zwischen Elementnamen und Notizanzahl anzeigen.',
+                desc: 'Punkte, Striche oder eine Linie zwischen Elementnamen und Dateianzahl anzeigen.',
                 options: {
                     none: 'Keine',
                     dots: 'Punkte (...)',
