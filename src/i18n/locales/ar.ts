@@ -855,6 +855,7 @@ export const STRINGS_AR = {
 
     // Date grouping
     dateGroups: {
+        future: 'المستقبل',
         today: 'اليوم',
         yesterday: 'أمس',
         previous7Days: 'آخر 7 أيام',

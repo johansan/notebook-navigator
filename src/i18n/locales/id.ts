@@ -860,6 +860,7 @@ export const STRINGS_ID = {
 
     // Date grouping
     dateGroups: {
+        future: 'Masa depan',
         today: 'Hari ini',
         yesterday: 'Kemarin',
         previous7Days: '7 hari terakhir',

@@ -860,6 +860,7 @@ export const STRINGS_FA = {
 
     // Date grouping
     dateGroups: {
+        future: 'آینده',
         today: 'امروز',
         yesterday: 'دیروز',
         previous7Days: '۷ روز گذشته',

@@ -862,6 +862,7 @@ export const STRINGS_NL = {
 
     // Date grouping
     dateGroups: {
+        future: 'Toekomst',
         today: 'Vandaag',
         yesterday: 'Gisteren',
         previous7Days: 'Afgelopen 7 dagen',

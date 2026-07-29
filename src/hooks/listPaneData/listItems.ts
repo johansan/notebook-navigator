@@ -512,7 +512,9 @@ function buildListItemsInternal(
                 pushHeaderItem({
                     data: group.label,
                     collapseKey: createCollapseKey(`date:${dateField}:${groupKey}`),
-                    key: `header-${group.label}`,
+                    // Key by group key rather than label so two distinct groups can never share a
+                    // list item key; duplicate keys break virtualizer and React row reconciliation.
+                    key: `header-${groupKey}`,
                     headerKind: 'date'
                 });
             }
