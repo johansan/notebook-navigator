@@ -386,11 +386,17 @@ export const STRINGS_ZH_TW = {
             addSeparator: '新增分隔線',
             removeSeparator: '移除分隔線'
         },
-        copyPath: {
-            title: '複製路徑',
-            asObsidianUrl: '作為 Obsidian URL',
-            fromVaultFolder: '從保險庫資料夾',
-            fromSystemRoot: '從系統根目錄'
+        copy: {
+            title: '複製',
+            noteLink: '筆記連結',
+            fileLink: '檔案連結',
+            noteLinkAsFootnote: '註腳形式的筆記連結',
+            fileLinkAsFootnote: '註腳形式的檔案連結',
+            noteEmbed: '筆記嵌入',
+            fileEmbed: '檔案嵌入',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: '自保險庫資料夾的路徑',
+            pathFromSystemRoot: '自系統根目錄的路徑'
         },
         style: {
             title: '樣式',
@@ -796,6 +802,9 @@ export const STRINGS_ZH_TW = {
             deepLinkCopied: 'Obsidian URL 已複製到剪貼簿',
             pathCopied: '路徑已複製到剪貼簿',
             relativePathCopied: '相對路徑已複製到剪貼簿',
+            linkCopied: '連結已複製到剪貼簿',
+            footnoteLinkCopied: '註腳連結已複製到剪貼簿',
+            embedLinkCopied: '嵌入連結已複製到剪貼簿',
             tagAddedToNote: '已將標籤新增到 1 個筆記',
             tagAddedToNotes: '已將標籤新增到 {count} 個筆記',
             tagRemovedFromNote: '已從 1 個筆記中移除標籤',

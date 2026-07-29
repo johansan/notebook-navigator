@@ -387,11 +387,17 @@ export const STRINGS_ID = {
             addSeparator: 'Tambah pemisah',
             removeSeparator: 'Hapus pemisah'
         },
-        copyPath: {
-            title: 'Salin path',
-            asObsidianUrl: 'sebagai URL Obsidian',
-            fromVaultFolder: 'dari folder vault',
-            fromSystemRoot: 'dari root sistem'
+        copy: {
+            title: 'Salin',
+            noteLink: 'tautan catatan',
+            fileLink: 'tautan file',
+            noteLinkAsFootnote: 'tautan catatan sebagai catatan kaki',
+            fileLinkAsFootnote: 'tautan file sebagai catatan kaki',
+            noteEmbed: 'sematan catatan',
+            fileEmbed: 'sematan file',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'path dari folder vault',
+            pathFromSystemRoot: 'path dari root sistem'
         },
         style: {
             title: 'Gaya',
@@ -804,6 +810,9 @@ export const STRINGS_ID = {
             deepLinkCopied: 'URL Obsidian disalin ke clipboard',
             pathCopied: 'Path disalin ke clipboard',
             relativePathCopied: 'Path relatif disalin ke clipboard',
+            linkCopied: 'Tautan disalin ke clipboard',
+            footnoteLinkCopied: 'Tautan catatan kaki disalin ke clipboard',
+            embedLinkCopied: 'Tautan sematan disalin ke clipboard',
             tagAddedToNote: 'Menambahkan tag ke 1 catatan',
             tagAddedToNotes: 'Menambahkan tag ke {count} catatan',
             tagRemovedFromNote: 'Menghapus tag dari 1 catatan',

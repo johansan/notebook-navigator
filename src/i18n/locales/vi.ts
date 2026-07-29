@@ -386,11 +386,17 @@ export const STRINGS_VI = {
             addSeparator: 'Thêm dấu phân cách',
             removeSeparator: 'Gỡ dấu phân cách'
         },
-        copyPath: {
-            title: 'Sao chép đường dẫn',
-            asObsidianUrl: 'dưới dạng URL Obsidian',
-            fromVaultFolder: 'từ thư mục vault',
-            fromSystemRoot: 'từ gốc hệ thống'
+        copy: {
+            title: 'Sao chép',
+            noteLink: 'liên kết ghi chú',
+            fileLink: 'liên kết tệp',
+            noteLinkAsFootnote: 'liên kết ghi chú dạng chú thích cuối trang',
+            fileLinkAsFootnote: 'liên kết tệp dạng chú thích cuối trang',
+            noteEmbed: 'nhúng ghi chú',
+            fileEmbed: 'nhúng tệp',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'đường dẫn từ thư mục vault',
+            pathFromSystemRoot: 'đường dẫn từ gốc hệ thống'
         },
         style: {
             title: 'Kiểu',
@@ -805,6 +811,9 @@ export const STRINGS_VI = {
             deepLinkCopied: 'Đã sao chép URL Obsidian vào clipboard',
             pathCopied: 'Đã sao chép đường dẫn vào clipboard',
             relativePathCopied: 'Đã sao chép đường dẫn tương đối vào clipboard',
+            linkCopied: 'Đã sao chép liên kết vào clipboard',
+            footnoteLinkCopied: 'Đã sao chép liên kết chú thích cuối trang vào clipboard',
+            embedLinkCopied: 'Đã sao chép liên kết nhúng vào clipboard',
             tagAddedToNote: 'Đã thêm thẻ vào 1 ghi chú',
             tagAddedToNotes: 'Đã thêm thẻ vào {count} ghi chú',
             tagRemovedFromNote: 'Đã gỡ thẻ khỏi 1 ghi chú',

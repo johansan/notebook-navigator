@@ -387,11 +387,17 @@ export const STRINGS_PL = {
             addSeparator: 'Dodaj separator',
             removeSeparator: 'Usuń separator'
         },
-        copyPath: {
-            title: 'Kopiuj ścieżkę',
-            asObsidianUrl: 'jako adres URL Obsidian',
-            fromVaultFolder: 'z folderu sejfu',
-            fromSystemRoot: 'z folderu systemu'
+        copy: {
+            title: 'Kopiuj',
+            noteLink: 'link do notatki',
+            fileLink: 'link do pliku',
+            noteLinkAsFootnote: 'link do notatki jako przypis',
+            fileLinkAsFootnote: 'link do pliku jako przypis',
+            noteEmbed: 'osadzenie notatki',
+            fileEmbed: 'osadzenie pliku',
+            obsidianUrl: 'adres URL Obsidian',
+            pathFromVaultFolder: 'ścieżka z folderu sejfu',
+            pathFromSystemRoot: 'ścieżka z folderu systemu'
         },
         style: {
             title: 'Styl',
@@ -807,6 +813,9 @@ export const STRINGS_PL = {
             deepLinkCopied: 'Adres URL Obsidian skopiowany do schowka',
             pathCopied: 'Ścieżka skopiowana do schowka',
             relativePathCopied: 'Ścieżka względna skopiowana do schowka',
+            linkCopied: 'Link skopiowany do schowka',
+            footnoteLinkCopied: 'Link przypisu skopiowany do schowka',
+            embedLinkCopied: 'Link osadzenia skopiowany do schowka',
             tagAddedToNote: 'Dodano tag do 1 notatki',
             tagAddedToNotes: 'Dodano tag do wielu ({count}) notatek',
             tagRemovedFromNote: 'Usunięto tag z 1 notatki',

@@ -388,11 +388,17 @@ export const STRINGS_FR = {
             addSeparator: 'Ajouter un séparateur',
             removeSeparator: 'Supprimer le séparateur'
         },
-        copyPath: {
-            title: 'Copier le chemin',
-            asObsidianUrl: 'en URL Obsidian',
-            fromVaultFolder: 'depuis le dossier du coffre',
-            fromSystemRoot: 'depuis la racine du système'
+        copy: {
+            title: 'Copier',
+            noteLink: 'lien vers la note',
+            fileLink: 'lien vers le fichier',
+            noteLinkAsFootnote: 'lien vers la note en note de bas de page',
+            fileLinkAsFootnote: 'lien vers le fichier en note de bas de page',
+            noteEmbed: 'intégration de la note',
+            fileEmbed: 'intégration du fichier',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'chemin depuis le dossier du coffre',
+            pathFromSystemRoot: 'chemin depuis la racine du système'
         },
         style: {
             title: 'Style',
@@ -807,6 +813,9 @@ export const STRINGS_FR = {
             deepLinkCopied: 'URL Obsidian copiée dans le presse-papiers',
             pathCopied: 'Chemin copié dans le presse-papiers',
             relativePathCopied: 'Chemin relatif copié dans le presse-papiers',
+            linkCopied: 'Lien copié dans le presse-papiers',
+            footnoteLinkCopied: 'Lien de note de bas de page copié dans le presse-papiers',
+            embedLinkCopied: "Lien d'intégration copié dans le presse-papiers",
             tagAddedToNote: 'Étiquette ajoutée à 1 note',
             tagAddedToNotes: 'Étiquette ajoutée à {count} notes',
             tagRemovedFromNote: 'Étiquette supprimée de 1 note',

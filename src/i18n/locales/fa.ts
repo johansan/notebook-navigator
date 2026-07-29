@@ -386,11 +386,17 @@ export const STRINGS_FA = {
             addSeparator: 'افزودن جداکننده',
             removeSeparator: 'حذف جداکننده'
         },
-        copyPath: {
-            title: 'کپی مسیر',
-            asObsidianUrl: 'به‌صورت URL اوبسیدین',
-            fromVaultFolder: 'از پوشه خزانه',
-            fromSystemRoot: 'از ریشه سیستم'
+        copy: {
+            title: 'کپی',
+            noteLink: 'پیوند یادداشت',
+            fileLink: 'پیوند فایل',
+            noteLinkAsFootnote: 'پیوند یادداشت به‌صورت پاورقی',
+            fileLinkAsFootnote: 'پیوند فایل به‌صورت پاورقی',
+            noteEmbed: 'جاسازی یادداشت',
+            fileEmbed: 'جاسازی فایل',
+            obsidianUrl: 'URL اوبسیدین',
+            pathFromVaultFolder: 'مسیر از پوشه خزانه',
+            pathFromSystemRoot: 'مسیر از ریشه سیستم'
         },
         style: {
             title: 'سبک',
@@ -804,6 +810,9 @@ export const STRINGS_FA = {
             deepLinkCopied: 'URL اوبسیدین در کلیپ‌بورد کپی شد',
             pathCopied: 'مسیر در کلیپ‌بورد کپی شد',
             relativePathCopied: 'مسیر نسبی در کلیپ‌بورد کپی شد',
+            linkCopied: 'پیوند در کلیپ‌بورد کپی شد',
+            footnoteLinkCopied: 'پیوند پاورقی در کلیپ‌بورد کپی شد',
+            embedLinkCopied: 'پیوند جاسازی در کلیپ‌بورد کپی شد',
             tagAddedToNote: 'برچسب به ۱ یادداشت اضافه شد',
             tagAddedToNotes: 'برچسب به {count} یادداشت اضافه شد',
             tagRemovedFromNote: 'برچسب از ۱ یادداشت حذف شد',

@@ -388,11 +388,17 @@ export const STRINGS_UK = {
             addSeparator: 'Додати роздільник',
             removeSeparator: 'Вилучити роздільник'
         },
-        copyPath: {
-            title: 'Копіювати шлях',
-            asObsidianUrl: 'як URL Obsidian',
-            fromVaultFolder: 'з папки сховища',
-            fromSystemRoot: 'з кореня системи'
+        copy: {
+            title: 'Копіювати',
+            noteLink: 'посилання на нотатку',
+            fileLink: 'посилання на файл',
+            noteLinkAsFootnote: 'посилання на нотатку як виноску',
+            fileLinkAsFootnote: 'посилання на файл як виноску',
+            noteEmbed: 'вбудовування нотатки',
+            fileEmbed: 'вбудовування файлу',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'шлях з папки сховища',
+            pathFromSystemRoot: 'шлях з кореня системи'
         },
         style: {
             title: 'Стиль',
@@ -801,6 +807,9 @@ export const STRINGS_UK = {
             deepLinkCopied: 'URL Obsidian скопійовано в буфер обміну',
             pathCopied: 'Шлях скопійовано в буфер обміну',
             relativePathCopied: 'Відносний шлях скопійовано в буфер обміну',
+            linkCopied: 'Посилання скопійовано в буфер обміну',
+            footnoteLinkCopied: 'Посилання-виноску скопійовано в буфер обміну',
+            embedLinkCopied: 'Посилання вбудовування скопійовано в буфер обміну',
             tagAddedToNote: 'Тег додано до 1 нотатки',
             tagAddedToNotes: 'Тег додано до {count} нотаток',
             tagRemovedFromNote: 'Тег вилучено з 1 нотатки',

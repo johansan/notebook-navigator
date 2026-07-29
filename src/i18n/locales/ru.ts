@@ -387,11 +387,17 @@ export const STRINGS_RU = {
             addSeparator: 'Добавить разделитель',
             removeSeparator: 'Удалить разделитель'
         },
-        copyPath: {
-            title: 'Копировать путь',
-            asObsidianUrl: 'как URL Obsidian',
-            fromVaultFolder: 'из папки хранилища',
-            fromSystemRoot: 'из корня системы'
+        copy: {
+            title: 'Копировать',
+            noteLink: 'ссылку на заметку',
+            fileLink: 'ссылку на файл',
+            noteLinkAsFootnote: 'ссылку на заметку как сноску',
+            fileLinkAsFootnote: 'ссылку на файл как сноску',
+            noteEmbed: 'встраивание заметки',
+            fileEmbed: 'встраивание файла',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'путь из папки хранилища',
+            pathFromSystemRoot: 'путь из корня системы'
         },
         style: {
             title: 'Стиль',
@@ -801,6 +807,9 @@ export const STRINGS_RU = {
             deepLinkCopied: 'URL Obsidian скопирован в буфер обмена',
             pathCopied: 'Путь скопирован в буфер обмена',
             relativePathCopied: 'Относительный путь скопирован в буфер обмена',
+            linkCopied: 'Ссылка скопирована в буфер обмена',
+            footnoteLinkCopied: 'Ссылка-сноска скопирована в буфер обмена',
+            embedLinkCopied: 'Ссылка встраивания скопирована в буфер обмена',
             tagAddedToNote: 'Тег добавлен к 1 заметке',
             tagAddedToNotes: 'Тег добавлен к {count} заметкам',
             tagRemovedFromNote: 'Тег удалён из 1 заметки',
