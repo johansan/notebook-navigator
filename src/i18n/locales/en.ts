@@ -995,7 +995,7 @@ export const STRINGS_EN = {
             general: 'Release notes, support, vault profile, file types, and property keys.',
             vaultFilters: 'Hidden folders, tags, files, file tags, and property rules.',
             appearanceBehavior: 'Behavior, keyboard navigation, mouse buttons, appearance, and formatting.',
-            navigationPane: 'Layout, appearance, note counts, collapse behavior, and rainbow colors.',
+            navigationPane: 'Layout, appearance, file counts, collapse behavior, and rainbow colors.',
             shortcuts: 'Shortcut visibility, badges, recent files, and pinned items.',
             calendar: 'Calendar display, date notes, templates, locale, and sidebar placement.',
             fileOperations: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
@@ -1030,7 +1030,7 @@ export const STRINGS_EN = {
                 banner: 'Banner',
                 collapseItems: 'Collapse items',
                 dragAndDrop: 'Drag and drop',
-                noteCounts: 'Note counts',
+                noteCounts: 'File counts',
                 rainbowColors: 'Rainbow colors',
                 leftSidebar: 'Left sidebar',
                 calendarIntegration: 'Calendar integration'
@@ -1165,8 +1165,8 @@ export const STRINGS_EN = {
                 desc: 'Pinned notes appear pinned only in their own folder. Useful for folder notes or if you have many pinned notes. Does not affect tag or property views.'
             },
             separateNoteCounts: {
-                name: 'Show current and descendant note counts separately',
-                desc: 'Display note counts as "current ▾ descendants" for folders, tags, and properties.'
+                name: 'Show current and descendant file counts separately',
+                desc: 'Display file counts as "current ▾ descendants" for folders, tags, and properties.'
             },
             groupNotes: {
                 name: 'Default grouping',
@@ -1852,7 +1852,7 @@ export const STRINGS_EN = {
             },
             textCountDisplay: {
                 name: 'Count type',
-                desc: 'Choose which note counts appear in file items.',
+                desc: 'Choose which text counts appear in file items.',
                 options: {
                     none: 'None',
                     words: 'Word count',
@@ -1862,7 +1862,7 @@ export const STRINGS_EN = {
             },
             textCountPlacement: {
                 name: 'Placement',
-                desc: 'Choose where note counts appear.',
+                desc: 'Choose where text counts appear.',
                 options: {
                     title: 'In title',
                     property: 'As property'
@@ -2031,8 +2031,8 @@ export const STRINGS_EN = {
                 }
             },
             showNoteCount: {
-                name: 'Show note count',
-                desc: 'Display note counts next to folders, tags, and properties.'
+                name: 'Show file count',
+                desc: 'Display file counts next to folders, tags, and properties.'
             },
             showSectionIcons: {
                 name: 'Show icons for shortcuts and recent items',
@@ -2164,7 +2164,7 @@ export const STRINGS_EN = {
             },
             navCountLeaderStyle: {
                 name: 'Show leaders',
-                desc: 'Display dots, dashes, or a line between item names and note counts.',
+                desc: 'Display dots, dashes, or a line between item names and file counts.',
                 options: {
                     none: 'None',
                     dots: 'Dots (...)',

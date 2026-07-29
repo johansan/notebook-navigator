@@ -998,7 +998,7 @@ export const STRINGS_KO = {
             general: '릴리스 노트, 지원, 보관소 프로필, 파일 유형, 속성 키.',
             vaultFilters: '숨겨진 폴더, 태그, 파일, 파일 태그 및 속성 규칙.',
             appearanceBehavior: '동작, 키보드 탐색, 마우스 버튼, 모양 및 서식.',
-            navigationPane: '레이아웃, 모양, 노트 수, 접기 동작 및 무지개 색상.',
+            navigationPane: '레이아웃, 모양, 파일 수, 접기 동작 및 무지개 색상.',
             shortcuts: '바로 가기 표시, 배지, 최근 파일 및 고정된 항목.',
             calendar: '달력 표시, 날짜 노트, 템플릿, 로케일 및 사이드바 위치.',
             fileOperations: '템플릿, 삭제 확인, 첨부 파일 및 파일 이동 충돌 동작.',
@@ -1033,7 +1033,7 @@ export const STRINGS_KO = {
                 banner: '배너',
                 collapseItems: '항목 접기',
                 dragAndDrop: '끌어서 놓기',
-                noteCounts: '노트 수',
+                noteCounts: '파일 수',
                 rainbowColors: '무지개 색상',
                 leftSidebar: '왼쪽 사이드바',
                 calendarIntegration: '캘린더 연동'
@@ -1168,8 +1168,8 @@ export const STRINGS_KO = {
                 desc: '고정된 노트는 자신의 폴더에서만 고정된 것으로 표시됩니다. 폴더 노트이거나 고정된 노트가 많을 때 유용합니다. 태그 또는 속성 보기에는 영향을 주지 않습니다.'
             },
             separateNoteCounts: {
-                name: '현재와 하위 노트 수를 별도로 표시',
-                desc: '폴더, 태그, 속성의 노트 수를 "현재 ▾ 하위" 형식으로 표시합니다.'
+                name: '현재와 하위 파일 수를 별도로 표시',
+                desc: '폴더, 태그, 속성의 파일 수를 "현재 ▾ 하위" 형식으로 표시합니다.'
             },
             groupNotes: {
                 name: '기본 그룹화',
@@ -1835,7 +1835,7 @@ export const STRINGS_KO = {
             },
             textCountDisplay: {
                 name: '카운트 유형',
-                desc: '파일 항목에 표시할 노트 카운트를 선택합니다.',
+                desc: '파일 항목에 표시할 텍스트 카운트를 선택합니다.',
                 options: {
                     none: '없음',
                     words: '단어 수',
@@ -1845,7 +1845,7 @@ export const STRINGS_KO = {
             },
             textCountPlacement: {
                 name: '배치',
-                desc: '노트 카운트가 표시될 위치를 선택합니다.',
+                desc: '텍스트 카운트가 표시될 위치를 선택합니다.',
                 options: {
                     title: '제목 안',
                     property: '속성으로'
@@ -2035,8 +2035,8 @@ export const STRINGS_KO = {
                 }
             },
             showNoteCount: {
-                name: '노트 수 표시',
-                desc: '폴더, 태그, 속성 옆에 노트 수를 표시합니다.'
+                name: '파일 수 표시',
+                desc: '폴더, 태그, 속성 옆에 파일 수를 표시합니다.'
             },
             showSectionIcons: {
                 name: '바로 가기 및 최근 항목 아이콘 표시',
@@ -2168,7 +2168,7 @@ export const STRINGS_KO = {
             },
             navCountLeaderStyle: {
                 name: '리더 표시',
-                desc: '항목 이름과 노트 수 사이에 점, 대시 또는 선을 표시합니다.',
+                desc: '항목 이름과 파일 수 사이에 점, 대시 또는 선을 표시합니다.',
                 options: {
                     none: '없음',
                     dots: '점 (...)',

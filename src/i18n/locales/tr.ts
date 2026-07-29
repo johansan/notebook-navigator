@@ -999,7 +999,7 @@ export const STRINGS_TR = {
             general: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
             vaultFilters: 'Gizli klasörler, etiketler, dosyalar, dosya etiketleri ve özellik kuralları.',
             appearanceBehavior: 'Davranış, klavye ile gezinme, fare düğmeleri, görünüm ve biçimlendirme.',
-            navigationPane: 'Yerleşim, görünüm, not sayıları, daraltma davranışı ve gökkuşağı renkleri.',
+            navigationPane: 'Yerleşim, görünüm, dosya sayıları, daraltma davranışı ve gökkuşağı renkleri.',
             shortcuts: 'Kısayol görünürlüğü, rozetler, son dosyalar ve sabitlenmiş öğeler.',
             calendar: 'Takvim görünümü, tarih notları, şablonlar, yerel ayar ve kenar çubuğu konumu.',
             fileOperations: 'Şablonlar, silme onayları, ekler ve dosya taşıma çakışma davranışı.',
@@ -1034,7 +1034,7 @@ export const STRINGS_TR = {
                 banner: 'Afiş',
                 collapseItems: 'Öğeleri daralt',
                 dragAndDrop: 'Sürükle ve bırak',
-                noteCounts: 'Not sayıları',
+                noteCounts: 'Dosya sayıları',
                 rainbowColors: 'Gökkuşağı renkleri',
                 leftSidebar: 'Sol kenar çubuğu',
                 calendarIntegration: 'Takvim entegrasyonu'
@@ -1169,8 +1169,8 @@ export const STRINGS_TR = {
                 desc: 'Sabitlenen notlar yalnızca kendi klasörlerinde sabitlenmiş olarak görünür. Klasör notları veya çok sayıda sabitlenmiş notunuz varsa kullanışlıdır. Etiket veya özellik görünümlerini etkilemez.'
             },
             separateNoteCounts: {
-                name: 'Mevcut ve alt not sayılarını ayrı göster',
-                desc: 'Klasörler, etiketler ve özellikler için not sayılarını "mevcut ▾ alt öğeler" biçiminde göster.'
+                name: 'Mevcut ve alt dosya sayılarını ayrı göster',
+                desc: 'Klasörler, etiketler ve özellikler için dosya sayılarını "mevcut ▾ alt öğeler" biçiminde göster.'
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
@@ -1837,7 +1837,7 @@ export const STRINGS_TR = {
             },
             textCountDisplay: {
                 name: 'Sayım türü',
-                desc: 'Dosya öğelerinde hangi not sayımlarının görüneceğini seçin.',
+                desc: 'Dosya öğelerinde hangi metin sayımlarının görüneceğini seçin.',
                 options: {
                     none: 'Yok',
                     words: 'Kelime sayısı',
@@ -1847,7 +1847,7 @@ export const STRINGS_TR = {
             },
             textCountPlacement: {
                 name: 'Yerleşim',
-                desc: 'Not sayımlarının nerede görüneceğini seçin.',
+                desc: 'Metin sayımlarının nerede görüneceğini seçin.',
                 options: {
                     title: 'Başlıkta',
                     property: 'Özellik olarak'
@@ -2037,8 +2037,8 @@ export const STRINGS_TR = {
                 }
             },
             showNoteCount: {
-                name: 'Not sayısını göster',
-                desc: 'Klasörler, etiketler ve özelliklerin yanında not sayısını görüntüle.'
+                name: 'Dosya sayısını göster',
+                desc: 'Klasörler, etiketler ve özelliklerin yanında dosya sayısını görüntüle.'
             },
             showSectionIcons: {
                 name: 'Kısayollar ve son öğeler için simgeleri göster',
@@ -2170,7 +2170,7 @@ export const STRINGS_TR = {
             },
             navCountLeaderStyle: {
                 name: 'Doldurma işaretlerini göster',
-                desc: 'Öğe adları ile not sayıları arasında nokta, tire veya çizgi göster.',
+                desc: 'Öğe adları ile dosya sayıları arasında nokta, tire veya çizgi göster.',
                 options: {
                     none: 'Yok',
                     dots: 'Noktalar (...)',

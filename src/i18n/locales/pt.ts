@@ -1001,7 +1001,7 @@ export const STRINGS_PT = {
             general: 'Notas de versão, suporte, perfil do cofre, tipos de ficheiro e chaves de propriedades.',
             vaultFilters: 'Pastas, etiquetas, ficheiros, etiquetas de ficheiro e regras de propriedades ocultas.',
             appearanceBehavior: 'Comportamento, navegação por teclado, botões do rato, aparência e formatação.',
-            navigationPane: 'Esquema, aparência, contagem de notas, comportamento de recolha e cores arco-íris.',
+            navigationPane: 'Esquema, aparência, contagem de ficheiros, comportamento de recolha e cores arco-íris.',
             shortcuts: 'Visibilidade de atalhos, distintivos, ficheiros recentes e itens fixados.',
             calendar: 'Exibição do calendário, notas de data, modelos, localização e posicionamento da barra lateral.',
             fileOperations: 'Modelos, confirmações de eliminação, anexos e comportamento de conflitos ao mover ficheiros.',
@@ -1036,7 +1036,7 @@ export const STRINGS_PT = {
                 banner: 'Banner',
                 collapseItems: 'Recolher itens',
                 dragAndDrop: 'Arrastar e largar',
-                noteCounts: 'Contagens de notas',
+                noteCounts: 'Contagens de ficheiros',
                 rainbowColors: 'Cores arco-íris',
                 leftSidebar: 'Barra lateral esquerda',
                 calendarIntegration: 'Integração do calendário'
@@ -1171,8 +1171,8 @@ export const STRINGS_PT = {
                 desc: 'As notas fixadas aparecem fixadas apenas na sua própria pasta. Útil para notas de pasta ou se tiver muitas notas fixadas. Não afeta as vistas de etiquetas ou propriedades.'
             },
             separateNoteCounts: {
-                name: 'Mostrar contagens de notas atuais e descendentes separadamente',
-                desc: 'Exibir contagens de notas no formato "atuais ▾ descendentes" para pastas, etiquetas e propriedades.'
+                name: 'Mostrar contagens de ficheiros atuais e descendentes separadamente',
+                desc: 'Exibir contagens de ficheiros no formato "atuais ▾ descendentes" para pastas, etiquetas e propriedades.'
             },
             groupNotes: {
                 name: 'Agrupamento predefinido',
@@ -1841,7 +1841,7 @@ export const STRINGS_PT = {
             },
             textCountDisplay: {
                 name: 'Tipo de contagem',
-                desc: 'Escolha que contagens de notas aparecem nos itens de ficheiro.',
+                desc: 'Escolha que contagens de texto aparecem nos itens de ficheiro.',
                 options: {
                     none: 'Nenhuma',
                     words: 'Contagem de palavras',
@@ -1851,7 +1851,7 @@ export const STRINGS_PT = {
             },
             textCountPlacement: {
                 name: 'Posicionamento',
-                desc: 'Escolha onde aparecem as contagens de notas.',
+                desc: 'Escolha onde aparecem as contagens de texto.',
                 options: {
                     title: 'No título',
                     property: 'Como propriedade'
@@ -2041,8 +2041,8 @@ export const STRINGS_PT = {
                 }
             },
             showNoteCount: {
-                name: 'Mostrar contagem de notas',
-                desc: 'Exibir contagens de notas junto a pastas, etiquetas e propriedades.'
+                name: 'Mostrar contagem de ficheiros',
+                desc: 'Exibir contagens de ficheiros junto a pastas, etiquetas e propriedades.'
             },
             showSectionIcons: {
                 name: 'Mostrar ícones para atalhos e itens recentes',
@@ -2174,7 +2174,7 @@ export const STRINGS_PT = {
             },
             navCountLeaderStyle: {
                 name: 'Mostrar carateres de preenchimento',
-                desc: 'Apresentar pontos, traços ou uma linha entre os nomes dos itens e o número de notas.',
+                desc: 'Apresentar pontos, traços ou uma linha entre os nomes dos itens e o número de ficheiros.',
                 options: {
                     none: 'Nenhum',
                     dots: 'Pontos (...)',

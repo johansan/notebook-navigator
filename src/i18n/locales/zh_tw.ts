@@ -993,7 +993,7 @@ export const STRINGS_ZH_TW = {
             general: '發行說明、支援、保險庫設定檔、檔案類型與屬性鍵。',
             vaultFilters: '隱藏的資料夾、標籤、檔案、檔案標籤與屬性規則。',
             appearanceBehavior: '行為、鍵盤導覽、滑鼠按鈕、外觀與格式。',
-            navigationPane: '版面配置、外觀、筆記數量、摺疊行為與彩虹顏色。',
+            navigationPane: '版面配置、外觀、檔案數量、摺疊行為與彩虹顏色。',
             shortcuts: '快捷方式可見性、徽章、最近檔案與釘選項目。',
             calendar: '日曆顯示、日期筆記、範本、區域設定與側邊欄位置。',
             fileOperations: '範本、刪除確認、附件與檔案移動衝突行為。',
@@ -1028,7 +1028,7 @@ export const STRINGS_ZH_TW = {
                 banner: '橫幅',
                 collapseItems: '摺疊項目',
                 dragAndDrop: '拖放',
-                noteCounts: '筆記數',
+                noteCounts: '檔案數',
                 rainbowColors: '彩虹顏色',
                 leftSidebar: '左側邊欄',
                 calendarIntegration: '行事曆整合'
@@ -1160,8 +1160,8 @@ export const STRINGS_ZH_TW = {
                 desc: '釘選筆記僅在其所在資料夾中顯示為已釘選。適用於資料夾筆記或釘選筆記較多的情況。不影響標籤或屬性檢視。'
             },
             separateNoteCounts: {
-                name: '分別顯示目前和後代筆記計數',
-                desc: '為資料夾、標籤和屬性以「目前 ▾ 後代」格式顯示筆記計數。'
+                name: '分別顯示目前和後代檔案計數',
+                desc: '為資料夾、標籤和屬性以「目前 ▾ 後代」格式顯示檔案計數。'
             },
             groupNotes: {
                 name: '預設分組',
@@ -1825,7 +1825,7 @@ export const STRINGS_ZH_TW = {
             },
             textCountDisplay: {
                 name: '計數類型',
-                desc: '選擇檔案項目中要顯示哪些筆記計數。',
+                desc: '選擇檔案項目中要顯示哪些文字計數。',
                 options: {
                     none: '無',
                     words: '字數',
@@ -1835,7 +1835,7 @@ export const STRINGS_ZH_TW = {
             },
             textCountPlacement: {
                 name: '位置',
-                desc: '選擇筆記計數的顯示位置。',
+                desc: '選擇文字計數的顯示位置。',
                 options: {
                     title: '在標題中',
                     property: '作為屬性'
@@ -2025,8 +2025,8 @@ export const STRINGS_ZH_TW = {
                 }
             },
             showNoteCount: {
-                name: '顯示筆記數',
-                desc: '在資料夾、標籤和屬性旁顯示筆記數量。'
+                name: '顯示檔案數',
+                desc: '在資料夾、標籤和屬性旁顯示檔案數量。'
             },
             showSectionIcons: {
                 name: '顯示捷徑和最近項目的圖示',
@@ -2158,7 +2158,7 @@ export const STRINGS_ZH_TW = {
             },
             navCountLeaderStyle: {
                 name: '顯示前導符號',
-                desc: '在項目名稱和筆記數量之間顯示點、短劃線或直線。',
+                desc: '在項目名稱和檔案數量之間顯示點、短劃線或直線。',
                 options: {
                     none: '無',
                     dots: '點 (...)',

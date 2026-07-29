@@ -8,7 +8,7 @@ settings:
     -
         id: nn-theme-foreground-heading
         title: Foreground colors
-        description: Base foreground colors used by Notebook Navigator.
+        description: Base colors for text, icons, and lines. Most other colors default to these.
         type: heading
         level: 1
         collapsed: true
@@ -400,7 +400,7 @@ settings:
     -
         id: nn-theme-navitem-name-font-weight
         title: Name weight
-        description: Font weight of folder, tag, note, and section names, including shortcuts and recent files.
+        description: Font weight of folder, tag, property, note, and section names, including shortcuts and recent files.
         type: variable-number-slider
         default: 400
         min: 100
@@ -412,15 +412,6 @@ settings:
         description: Font weight of names with custom or rainbow colors (overrides name weight).
         type: variable-number-slider
         default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-folder-note-name-font-weight
-        title: Folder note weight
-        description: Font weight for folders with notes (overrides all others).
-        type: variable-number-slider
-        default: 400
         min: 100
         max: 900
         step: 100
@@ -1247,7 +1238,7 @@ settings:
         title: Selection outline thickness
         description: Border width for active calendar outlines.
         type: variable-number-slider
-        default: 2
+        default: 3
         format: px
         min: 1
         max: 4
@@ -1316,14 +1307,6 @@ settings:
         min: 100
         max: 900
         step: 100
-    -
-        id: nn-theme-mobile-toolbar-bg
-        title: Mobile toolbar background
-        description: Background color of the mobile toolbar.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
     -
         id: nn-theme-mobile-toolbar-glass-bg
         title: iOS glass toolbar background

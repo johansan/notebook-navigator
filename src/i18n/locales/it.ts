@@ -997,7 +997,7 @@ export const STRINGS_IT = {
             general: 'Note di rilascio, supporto, profilo vault, tipi di file e chiavi delle proprietà.',
             vaultFilters: 'Cartelle, tag, file, tag dei file e regole delle proprietà nascosti.',
             appearanceBehavior: 'Comportamento, navigazione da tastiera, pulsanti del mouse, aspetto e formattazione.',
-            navigationPane: 'Layout, aspetto, conteggio note, comportamento del collasso e colori arcobaleno.',
+            navigationPane: 'Layout, aspetto, conteggio file, comportamento del collasso e colori arcobaleno.',
             shortcuts: 'Visibilità delle scorciatoie, badge, file recenti ed elementi fissati.',
             calendar: 'Visualizzazione calendario, note data, modelli, locale e posizionamento della barra laterale.',
             fileOperations: 'Modelli, conferme di eliminazione, allegati e comportamento in caso di conflitti di spostamento dei file.',
@@ -1032,7 +1032,7 @@ export const STRINGS_IT = {
                 banner: 'Banner',
                 collapseItems: 'Comprimi elementi',
                 dragAndDrop: 'Trascina e rilascia',
-                noteCounts: 'Conteggi note',
+                noteCounts: 'Conteggi file',
                 rainbowColors: 'Colori arcobaleno',
                 leftSidebar: 'Barra laterale sinistra',
                 calendarIntegration: 'Integrazione calendario'
@@ -1167,8 +1167,8 @@ export const STRINGS_IT = {
                 desc: 'Le note fissate appaiono fissate solo nella propria cartella. Utile per le note cartella o se hai molte note fissate. Non influisce sulle viste per tag o proprietà.'
             },
             separateNoteCounts: {
-                name: 'Mostra conteggi note correnti e discendenti separatamente',
-                desc: 'Visualizza i conteggi note nel formato "correnti ▾ discendenti" per cartelle, tag e proprietà.'
+                name: 'Mostra conteggi file correnti e discendenti separatamente',
+                desc: 'Visualizza i conteggi file nel formato "correnti ▾ discendenti" per cartelle, tag e proprietà.'
             },
             groupNotes: {
                 name: 'Raggruppamento predefinito',
@@ -1838,7 +1838,7 @@ export const STRINGS_IT = {
             },
             textCountDisplay: {
                 name: 'Tipo di conteggio',
-                desc: 'Scegli quali conteggi delle note mostrare negli elementi file.',
+                desc: 'Scegli quali conteggi del testo mostrare negli elementi file.',
                 options: {
                     none: 'Nessuno',
                     words: 'Conteggio parole',
@@ -1848,7 +1848,7 @@ export const STRINGS_IT = {
             },
             textCountPlacement: {
                 name: 'Posizione',
-                desc: 'Scegli dove mostrare i conteggi delle note.',
+                desc: 'Scegli dove mostrare i conteggi del testo.',
                 options: {
                     title: 'Nel titolo',
                     property: 'Come proprietà'
@@ -2038,8 +2038,8 @@ export const STRINGS_IT = {
                 }
             },
             showNoteCount: {
-                name: 'Mostra conteggio note',
-                desc: 'Visualizza i conteggi note accanto a cartelle, tag e proprietà.'
+                name: 'Mostra conteggio file',
+                desc: 'Visualizza i conteggi file accanto a cartelle, tag e proprietà.'
             },
             showSectionIcons: {
                 name: 'Mostra icone per scorciatoie e elementi recenti',
@@ -2171,7 +2171,7 @@ export const STRINGS_IT = {
             },
             navCountLeaderStyle: {
                 name: 'Mostra caratteri di riempimento',
-                desc: 'Mostra punti, trattini o una linea tra i nomi degli elementi e il numero di note.',
+                desc: 'Mostra punti, trattini o una linea tra i nomi degli elementi e il numero di file.',
                 options: {
                     none: 'Nessuno',
                     dots: 'Punti (...)',

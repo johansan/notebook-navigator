@@ -1002,7 +1002,7 @@ export const STRINGS_VI = {
             general: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
             vaultFilters: 'Thư mục, thẻ, tệp, thẻ tệp và quy tắc thuộc tính bị ẩn.',
             appearanceBehavior: 'Hành vi, điều hướng bằng bàn phím, nút chuột, giao diện và định dạng.',
-            navigationPane: 'Bố cục, giao diện, số lượng ghi chú, hành vi thu gọn và màu cầu vồng.',
+            navigationPane: 'Bố cục, giao diện, số lượng tệp, hành vi thu gọn và màu cầu vồng.',
             shortcuts: 'Khả năng hiển thị lối tắt, huy hiệu, tệp gần đây và mục đã ghim.',
             calendar: 'Hiển thị lịch, ghi chú ngày, mẫu, ngôn ngữ và vị trí thanh bên.',
             fileOperations: 'Mẫu, xác nhận xóa, tệp đính kèm và hành vi xung đột khi di chuyển tệp.',
@@ -1037,7 +1037,7 @@ export const STRINGS_VI = {
                 banner: 'Banner',
                 collapseItems: 'Thu gọn mục',
                 dragAndDrop: 'Kéo và thả',
-                noteCounts: 'Số lượng ghi chú',
+                noteCounts: 'Số lượng tệp',
                 rainbowColors: 'Màu cầu vồng',
                 leftSidebar: 'Thanh bên trái',
                 calendarIntegration: 'Tích hợp lịch'
@@ -1172,8 +1172,8 @@ export const STRINGS_VI = {
                 desc: 'Ghi chú đã ghim chỉ hiển thị là đã ghim trong thư mục riêng của nó. Hữu ích cho ghi chú thư mục hoặc nếu bạn có nhiều ghi chú đã ghim. Không ảnh hưởng đến chế độ xem thẻ hoặc thuộc tính.'
             },
             separateNoteCounts: {
-                name: 'Hiện số lượng ghi chú hiện tại và con riêng biệt',
-                desc: 'Hiển thị số lượng ghi chú theo định dạng "hiện tại ▾ con" cho thư mục, thẻ và thuộc tính.'
+                name: 'Hiện số lượng tệp hiện tại và con riêng biệt',
+                desc: 'Hiển thị số lượng tệp theo định dạng "hiện tại ▾ con" cho thư mục, thẻ và thuộc tính.'
             },
             groupNotes: {
                 name: 'Nhóm mặc định',
@@ -1840,7 +1840,7 @@ export const STRINGS_VI = {
             },
             textCountDisplay: {
                 name: 'Loại bộ đếm',
-                desc: 'Chọn số liệu ghi chú xuất hiện trong mục tệp.',
+                desc: 'Chọn số liệu văn bản xuất hiện trong mục tệp.',
                 options: {
                     none: 'Không',
                     words: 'Số từ',
@@ -1850,7 +1850,7 @@ export const STRINGS_VI = {
             },
             textCountPlacement: {
                 name: 'Vị trí',
-                desc: 'Chọn nơi hiển thị số liệu ghi chú.',
+                desc: 'Chọn nơi hiển thị số liệu văn bản.',
                 options: {
                     title: 'Trong tiêu đề',
                     property: 'Dưới dạng thuộc tính'
@@ -2040,8 +2040,8 @@ export const STRINGS_VI = {
                 }
             },
             showNoteCount: {
-                name: 'Hiện số lượng ghi chú',
-                desc: 'Hiển thị số lượng ghi chú bên cạnh thư mục, thẻ và thuộc tính.'
+                name: 'Hiện số lượng tệp',
+                desc: 'Hiển thị số lượng tệp bên cạnh thư mục, thẻ và thuộc tính.'
             },
             showSectionIcons: {
                 name: 'Hiện biểu tượng cho lối tắt và mục gần đây',
@@ -2173,7 +2173,7 @@ export const STRINGS_VI = {
             },
             navCountLeaderStyle: {
                 name: 'Hiển thị ký tự dẫn',
-                desc: 'Hiển thị dấu chấm, dấu gạch hoặc một đường kẻ giữa tên mục và số lượng ghi chú.',
+                desc: 'Hiển thị dấu chấm, dấu gạch hoặc một đường kẻ giữa tên mục và số lượng tệp.',
                 options: {
                     none: 'Không',
                     dots: 'Dấu chấm (...)',

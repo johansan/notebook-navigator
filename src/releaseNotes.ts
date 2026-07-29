@@ -110,8 +110,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-07-29',
         showOnUpdate: true,
         changed: [
-            'I finally took the time to clean up the Style Settings panel. Settings are grouped by where they apply, border settings sit next to the elements they style instead of in a separate `Borders` section, and new subsections collect selection colors, file counts, and tag & property pills. Saved values are not affected.',
-            'In Style Settings, the navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, and `Custom color file name weight` are merged into ==Name weight== and ==Custom color name weight==. The merged sliders apply to all names in the navigation pane: folders, tags, properties, section headers, shortcuts, and recent files. Names with custom or rainbow colors use ==Custom color name weight==, all other names use ==Name weight==. Previously `Default folder/tag weight` did not affect shortcuts, and the `Shortcuts` section header ignored both sliders.'
+            'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.'
         ]
     },
     {

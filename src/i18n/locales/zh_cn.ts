@@ -992,7 +992,7 @@ export const STRINGS_ZH_CN = {
             general: '发行说明、支持、仓库配置文件、文件类型和属性键。',
             vaultFilters: '隐藏的文件夹、标签、文件、文件标签和属性规则。',
             appearanceBehavior: '行为、键盘导航、鼠标按钮、外观和格式。',
-            navigationPane: '布局、外观、笔记数量、折叠行为和彩虹颜色。',
+            navigationPane: '布局、外观、文件数量、折叠行为和彩虹颜色。',
             shortcuts: '快捷方式可见性、徽章、最近文件和固定项目。',
             calendar: '日历显示、日期笔记、模板、区域设置和侧边栏位置。',
             fileOperations: '模板、删除确认、附件和文件移动冲突行为。',
@@ -1027,7 +1027,7 @@ export const STRINGS_ZH_CN = {
                 banner: '横幅',
                 collapseItems: '折叠项目',
                 dragAndDrop: '拖放',
-                noteCounts: '笔记数',
+                noteCounts: '文件数',
                 rainbowColors: '彩虹颜色',
                 leftSidebar: '左侧边栏',
                 calendarIntegration: '日历集成'
@@ -1159,8 +1159,8 @@ export const STRINGS_ZH_CN = {
                 desc: '固定笔记仅在其所在文件夹中显示为已固定。适用于文件夹笔记或固定笔记较多的情况。不影响标签或属性视图。'
             },
             separateNoteCounts: {
-                name: '分别显示当前和后代笔记计数',
-                desc: '为文件夹、标签和属性以"当前 ▾ 后代"格式显示笔记计数。'
+                name: '分别显示当前和后代文件计数',
+                desc: '为文件夹、标签和属性以"当前 ▾ 后代"格式显示文件计数。'
             },
             groupNotes: {
                 name: '默认分组',
@@ -1824,7 +1824,7 @@ export const STRINGS_ZH_CN = {
             },
             textCountDisplay: {
                 name: '计数类型',
-                desc: '选择文件项目中显示哪些笔记计数。',
+                desc: '选择文件项目中显示哪些文本计数。',
                 options: {
                     none: '无',
                     words: '字数',
@@ -1834,7 +1834,7 @@ export const STRINGS_ZH_CN = {
             },
             textCountPlacement: {
                 name: '位置',
-                desc: '选择笔记计数的显示位置。',
+                desc: '选择文本计数的显示位置。',
                 options: {
                     title: '在标题中',
                     property: '作为属性'
@@ -2024,8 +2024,8 @@ export const STRINGS_ZH_CN = {
                 }
             },
             showNoteCount: {
-                name: '显示笔记数',
-                desc: '在文件夹、标签和属性旁显示笔记数量。'
+                name: '显示文件数',
+                desc: '在文件夹、标签和属性旁显示文件数量。'
             },
             showSectionIcons: {
                 name: '显示快捷方式和最近项目的图标',
@@ -2157,7 +2157,7 @@ export const STRINGS_ZH_CN = {
             },
             navCountLeaderStyle: {
                 name: '显示前导符',
-                desc: '在项目名称和笔记数量之间显示点、短划线或直线。',
+                desc: '在项目名称和文件数量之间显示点、短划线或直线。',
                 options: {
                     none: '无',
                     dots: '点 (...)',
