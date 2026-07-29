@@ -31,7 +31,7 @@ export interface VirtualItem<T> {
     level?: number; // For hierarchical items
 }
 
-export type ListPaneHeaderKind = 'date' | 'folder' | 'pinned' | 'section' | 'manual-sort-custom';
+export type ListPaneHeaderKind = 'date' | 'folder' | 'pinned' | 'property' | 'section' | 'manual-sort-custom';
 
 export interface ListPaneFolderPathSegment {
     label: string;

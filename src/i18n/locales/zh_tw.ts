@@ -58,6 +58,7 @@ export const STRINGS_ZH_TW = {
         manualSortHint: '拖曳以重新排序。順序會以數字索引值儲存在屬性「{property}」中。',
         manualSortNonMarkdownHint: '非 Markdown 檔案顯示於底部，無法重新排序。',
         unsortedSection: '未排序',
+        propertyGroupNoValue: '無',
         manualSortDone: '完成',
         manualSortMultipleWriteFailure: '{count} 個檔案失敗；第一個: {path}: {message}'
     },
@@ -1035,7 +1036,7 @@ export const STRINGS_ZH_TW = {
             list: {
                 display: '外觀',
                 groupHeaders: '群組標題',
-                propertySort: '屬性排序',
+                propertySort: '屬性排序與分組',
                 manualSort: '手動排序',
                 pinnedNotes: '釘選筆記',
                 drawingPreviews: '繪圖預覽'
@@ -1095,8 +1096,8 @@ export const STRINGS_ZH_TW = {
                 }
             },
             propertySortKey: {
-                name: '用於排序的屬性',
-                desc: '顯示為屬性排序選項的以逗號分隔的 frontmatter 屬性。陣列值會合併為單一字串。這些屬性不會被變更。',
+                name: '用於排序和分組的屬性',
+                desc: '以逗號分隔的 frontmatter 屬性。每個屬性都會在列表面板的排序選單中顯示為排序選項和分組選項。這些屬性不會被變更。',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1110,7 +1111,7 @@ export const STRINGS_ZH_TW = {
                 }
             },
             propertySortInstructions: {
-                intro: '上面列出的每個屬性都會在列表面板的排序選單中顯示為排序選項。選擇其中一個會依其 frontmatter 值排序筆記。'
+                intro: '上面列出的每個屬性都會在列表面板的排序選單中顯示為排序選項和分組選項。排序會依 frontmatter 值排列筆記，陣列值會合併為單一字串。分組會將具有相同值的筆記集中在同一個標題下；具有清單值的筆記會依完整清單分組，缺少該屬性的筆記會歸入最後的「無」群組。'
             },
             manualSortPropertyKey: {
                 name: '手動排序屬性',
@@ -1164,7 +1165,7 @@ export const STRINGS_ZH_TW = {
             },
             groupNotes: {
                 name: '預設分組',
-                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。',
+                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。按 frontmatter 屬性值分組可在列表面板的排序選單中針對每個檢視單獨設定。',
                 options: {
                     custom: '自訂',
                     date: '日期',
@@ -1177,7 +1178,7 @@ export const STRINGS_ZH_TW = {
             },
             stickyGroupHeaders: {
                 name: '固定群組標題',
-                desc: '捲動時保持目前的日期、資料夾或釘選區段的標題可見。'
+                desc: '捲動時保持目前的日期、資料夾、屬性或釘選區段的標題可見。'
             },
             showFolderGroupPaths: {
                 name: '顯示子資料夾路徑',

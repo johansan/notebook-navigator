@@ -58,6 +58,7 @@ export const STRINGS_DE = {
         manualSortHint: 'Zum Neuordnen ziehen. Die Reihenfolge wird als numerische Indexwerte in der Eigenschaft „{property}" gespeichert.',
         manualSortNonMarkdownHint: 'Nicht-Markdown-Dateien werden unten angezeigt und können nicht neu geordnet werden.',
         unsortedSection: 'Unsortiert',
+        propertyGroupNoValue: 'Keine',
         manualSortDone: 'Fertig',
         manualSortMultipleWriteFailure: '{count} Dateien fehlgeschlagen; erste: {path}: {message}'
     },
@@ -1046,7 +1047,7 @@ export const STRINGS_DE = {
             list: {
                 display: 'Darstellung',
                 groupHeaders: 'Gruppenüberschriften',
-                propertySort: 'Eigenschaftssortierung',
+                propertySort: 'Eigenschaftssortierung und -gruppierung',
                 manualSort: 'Manuelle Sortierung',
                 pinnedNotes: 'Angeheftete Notizen',
                 drawingPreviews: 'Zeichnungsvorschauen'
@@ -1106,8 +1107,8 @@ export const STRINGS_DE = {
                 }
             },
             propertySortKey: {
-                name: 'Eigenschaften zum Sortieren',
-                desc: 'Kommagetrennte Frontmatter-Eigenschaften, die als Eigenschaftssortier-Optionen angezeigt werden. Array-Werte werden zu einer einzelnen Zeichenkette zusammengefügt. Diese Eigenschaften werden nicht geändert.',
+                name: 'Sortier- und Gruppierungseigenschaften',
+                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1121,7 +1122,7 @@ export const STRINGS_DE = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Jede oben aufgeführte Eigenschaft erscheint als Sortieroption im Sortiermenü des Listenbereichs. Bei Auswahl werden Notizen nach ihrem Frontmatter-Wert sortiert.'
+                intro: 'Jede oben aufgeführte Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Die Sortierung ordnet Notizen nach ihrem Frontmatter-Wert, wobei Array-Werte zu einer einzelnen Zeichenkette zusammengefügt werden. Die Gruppierung fasst Notizen mit demselben Wert unter einer Überschrift zusammen; Notizen mit einem Listenwert werden unter der vollständigen Liste gruppiert, und Notizen ohne die Eigenschaft stehen in einer abschließenden Gruppe „Keine".'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschaft für manuelle Sortierung',
@@ -1178,7 +1179,7 @@ export const STRINGS_DE = {
             },
             groupNotes: {
                 name: 'Standardgruppierung',
-                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist.',
+                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist. Die Gruppierung nach einem Frontmatter-Eigenschaftswert ist pro Ansicht über das Sortiermenü im Listenbereich verfügbar.',
                 options: {
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',
@@ -1191,7 +1192,7 @@ export const STRINGS_DE = {
             },
             stickyGroupHeaders: {
                 name: 'Gruppenüberschriften fixieren',
-                desc: 'Hält die aktuelle Datums-, Ordner- oder Anheftbereichsüberschrift beim Scrollen sichtbar.'
+                desc: 'Hält die aktuelle Datums-, Ordner-, Eigenschafts- oder Anheftbereichsüberschrift beim Scrollen sichtbar.'
             },
             showFolderGroupPaths: {
                 name: 'Unterordnerpfade anzeigen',

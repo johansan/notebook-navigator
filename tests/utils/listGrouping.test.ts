@@ -19,9 +19,24 @@
 import { describe, expect, it } from 'vitest';
 import type { NotebookNavigatorSettings } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
+import {
+    createPropertyGroupingOption,
+    getPropertyGroupingDirection,
+    getPropertyGroupingKey,
+    normalizeListNoteGroupingBaseOption,
+    normalizeListNoteGroupingOption
+} from '../../src/settings/types';
 import { ItemType } from '../../src/types';
 import { buildPropertyKeyNodeId } from '../../src/utils/propertyTree';
-import { hasEffectiveCustomListGrouping, resolveEffectiveListGroupingForSort, resolveListGrouping } from '../../src/utils/listGrouping';
+import {
+    areListGroupingOptionsEqual,
+    areListGroupingOptionsSameKind,
+    hasEffectiveCustomListGrouping,
+    pruneUnavailablePropertyGroupingOverrides,
+    resolveEffectiveListGroupingForSort,
+    resolveListGrouping,
+    updatePropertyGroupingOverrideKeys
+} from '../../src/utils/listGrouping';
 
 type GroupingSettings = Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
 
@@ -156,6 +171,159 @@ describe('resolveEffectiveListGroupingForSort', () => {
                 isManualSortActive: true
             })
         ).toBe('custom');
+    });
+
+    it('keeps property grouping under every sort and selection type', () => {
+        const groupBy = createPropertyGroupingOption('status');
+        (['modified-desc', 'title-asc', 'property-asc'] as const).forEach(sortOption => {
+            expect(
+                resolveEffectiveListGroupingForSort({
+                    groupBy,
+                    sortOption,
+                    selectionType: ItemType.FOLDER
+                })
+            ).toBe(groupBy);
+        });
+        expect(
+            resolveEffectiveListGroupingForSort({
+                groupBy,
+                sortOption: 'property-asc',
+                selectionType: ItemType.TAG
+            })
+        ).toBe(groupBy);
+    });
+
+    it('locks manual sort to custom groups even with property grouping', () => {
+        expect(
+            resolveEffectiveListGroupingForSort({
+                groupBy: createPropertyGroupingOption('status'),
+                sortOption: 'property-asc',
+                selectionType: ItemType.FOLDER,
+                isManualSortActive: true
+            })
+        ).toBe('custom');
+    });
+});
+
+describe('property grouping option encoding', () => {
+    it('extracts trimmed property keys from encoded options', () => {
+        expect(getPropertyGroupingKey('property:status')).toBe('status');
+        expect(getPropertyGroupingKey('property: status ')).toBe('status');
+        expect(getPropertyGroupingKey('property-desc:status')).toBe('status');
+        expect(getPropertyGroupingKey('property:')).toBeNull();
+        expect(getPropertyGroupingKey('folder')).toBeNull();
+    });
+
+    it('extracts the group order direction from the prefix', () => {
+        expect(getPropertyGroupingDirection('property:status')).toBe('asc');
+        expect(getPropertyGroupingDirection('property-desc:status')).toBe('desc');
+        expect(getPropertyGroupingDirection('folder')).toBeNull();
+        expect(createPropertyGroupingOption('status', 'desc')).toBe('property-desc:status');
+        expect(createPropertyGroupingOption('status')).toBe('property:status');
+    });
+
+    it('keeps keys containing separator characters intact under both prefixes', () => {
+        expect(getPropertyGroupingKey('property:-desc:odd')).toBe('-desc:odd');
+        expect(getPropertyGroupingDirection('property:-desc:odd')).toBe('asc');
+    });
+
+    it('normalizes property grouping options to trimmed canonical form', () => {
+        expect(normalizeListNoteGroupingOption('property: status ')).toBe('property:status');
+        expect(normalizeListNoteGroupingOption('property-desc: status ')).toBe('property-desc:status');
+        expect(normalizeListNoteGroupingOption('property:')).toBeNull();
+        expect(normalizeListNoteGroupingOption('property-desc:')).toBeNull();
+        expect(normalizeListNoteGroupingOption('none')).toBe('custom');
+        expect(normalizeListNoteGroupingOption('date')).toBe('date');
+    });
+
+    it('rejects property encodings for the vault-wide default grouping', () => {
+        expect(normalizeListNoteGroupingBaseOption('property:status')).toBeNull();
+        expect(normalizeListNoteGroupingBaseOption('property-desc:status')).toBeNull();
+        expect(normalizeListNoteGroupingBaseOption('none')).toBe('custom');
+        expect(normalizeListNoteGroupingBaseOption('folder')).toBe('folder');
+        expect(normalizeListNoteGroupingBaseOption('date')).toBe('date');
+    });
+
+    it('compares property grouping options case-insensitively including direction', () => {
+        expect(areListGroupingOptionsEqual('property:Status', 'property:status')).toBe(true);
+        expect(areListGroupingOptionsEqual('property:status', 'property-desc:status')).toBe(false);
+        expect(areListGroupingOptionsEqual('property:status', 'property:genre')).toBe(false);
+        expect(areListGroupingOptionsEqual('property:status', 'folder')).toBe(false);
+        expect(areListGroupingOptionsEqual('date', 'date')).toBe(true);
+    });
+
+    it('matches grouping options of the same kind regardless of direction', () => {
+        expect(areListGroupingOptionsSameKind('property:status', 'property-desc:Status')).toBe(true);
+        expect(areListGroupingOptionsSameKind('property:status', 'property:genre')).toBe(false);
+        expect(areListGroupingOptionsSameKind('date', 'date')).toBe(true);
+        expect(areListGroupingOptionsSameKind('property:status', 'custom')).toBe(false);
+    });
+});
+
+describe('pruneUnavailablePropertyGroupingOverrides', () => {
+    it('removes overrides for unregistered keys and keeps the rest', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'status, genre';
+        settings.folderAppearances.Projects = { groupBy: 'property:status' };
+        settings.folderAppearances.Archive = { groupBy: 'property:removed' };
+        settings.folderAppearances.Mixed = { groupBy: 'property:removed', mode: 'compact' };
+        settings.tagAppearances.reading = { groupBy: 'date' };
+
+        expect(pruneUnavailablePropertyGroupingOverrides(settings)).toBe(true);
+        expect(settings.folderAppearances.Projects.groupBy).toBe('property:status');
+        // Grouping-only records are dropped entirely; records with other fields keep those fields.
+        expect(settings.folderAppearances.Archive).toBeUndefined();
+        expect(settings.folderAppearances.Mixed).toEqual({ mode: 'compact' });
+        expect(settings.tagAppearances.reading.groupBy).toBe('date');
+    });
+
+    it('removes overrides referencing the manual sort key', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = `status, ${settings.manualSortPropertyKey}`;
+        settings.folderAppearances.Projects = { groupBy: createPropertyGroupingOption(settings.manualSortPropertyKey) };
+
+        expect(pruneUnavailablePropertyGroupingOverrides(settings)).toBe(true);
+        expect(settings.folderAppearances.Projects).toBeUndefined();
+    });
+
+    it('reports no change when every override is available', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'status';
+        settings.folderAppearances.Projects = { groupBy: 'property:Status' };
+
+        expect(pruneUnavailablePropertyGroupingOverrides(settings)).toBe(false);
+        expect(settings.folderAppearances.Projects.groupBy).toBe('property:Status');
+    });
+});
+
+describe('updatePropertyGroupingOverrideKeys', () => {
+    it('rewrites overrides after a property rename', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.folderAppearances.Projects = { groupBy: 'property:Status' };
+        settings.tagAppearances.reading = { groupBy: 'date' };
+
+        expect(updatePropertyGroupingOverrideKeys(settings, 'status', 'State')).toBe(true);
+        expect(settings.folderAppearances.Projects.groupBy).toBe('property:State');
+        expect(settings.tagAppearances.reading.groupBy).toBe('date');
+    });
+
+    it('preserves the group order direction across a rename', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.folderAppearances.Projects = { groupBy: 'property-desc:Status' };
+
+        expect(updatePropertyGroupingOverrideKeys(settings, 'status', 'State')).toBe(true);
+        expect(settings.folderAppearances.Projects.groupBy).toBe('property-desc:State');
+    });
+
+    it('removes overrides when the property is deleted', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.folderAppearances.Projects = { groupBy: 'property:status' };
+        settings.folderAppearances.Mixed = { groupBy: 'property:status', mode: 'compact' };
+
+        expect(updatePropertyGroupingOverrideKeys(settings, 'status', null)).toBe(true);
+        // Grouping-only records are dropped entirely; records with other fields keep those fields.
+        expect(settings.folderAppearances.Projects).toBeUndefined();
+        expect(settings.folderAppearances.Mixed).toEqual({ mode: 'compact' });
     });
 });
 

@@ -30,6 +30,7 @@ import { removePropertyField, renamePropertyField } from '../utils/propertyUtils
 import { isRecord } from '../utils/typeGuards';
 import { buildPropertyKeyNodeId } from '../utils/propertyTree';
 import { replacePropertySortKey, SORT_OVERRIDE_RECORD_KEYS } from '../utils/sortUtils';
+import { updatePropertyGroupingOverrideKeys } from '../utils/listGrouping';
 import { buildUsageSummaryFromPaths, renderAffectedFilesPreview, yieldToEventLoop } from './operations/OperationBatchUtils';
 import { PropertyFileMutations } from './propertyOperations/PropertyFileMutations';
 import type { PropertyKeyDeleteEventPayload, PropertyKeyRenameEventPayload } from './propertyOperations/types';
@@ -705,6 +706,7 @@ export class PropertyOperations {
         changed = updateManualSortPropertyKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateManualSortGroupHeaderPropertySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updatePropertyGroupingOverrideKeys(settings, oldKeyNormalized, newKeyDisplay) || changed;
 
         if (newKeyNormalized) {
             changed = this.migratePropertyMetadataAfterRename(settings, oldKeyNormalized, newKeyNormalized) || changed;
@@ -727,6 +729,7 @@ export class PropertyOperations {
         changed = updateManualSortPropertyKeySetting(settings, normalizedKey, null) || changed;
         changed = updateManualSortGroupHeaderPropertySetting(settings, normalizedKey, null) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, normalizedKey, null) || changed;
+        changed = updatePropertyGroupingOverrideKeys(settings, normalizedKey, null) || changed;
 
         changed = this.removePropertyMetadataForDeletedKey(settings, normalizedKey) || changed;
 

@@ -58,6 +58,7 @@ export const STRINGS_ES = {
         manualSortHint: 'Arrastra para reordenar. El orden se guarda como valores numéricos de índice en la propiedad "{property}".',
         manualSortNonMarkdownHint: 'Los archivos no Markdown se muestran al final y no se pueden reordenar.',
         unsortedSection: 'Sin ordenar',
+        propertyGroupNoValue: 'Ninguno',
         manualSortDone: 'Hecho',
         manualSortMultipleWriteFailure: '{count} archivos fallaron; primero: {path}: {message}'
     },
@@ -1044,7 +1045,7 @@ export const STRINGS_ES = {
             list: {
                 display: 'Apariencia',
                 groupHeaders: 'Encabezados de grupo',
-                propertySort: 'Orden por propiedad',
+                propertySort: 'Orden y agrupación por propiedad',
                 manualSort: 'Orden manual',
                 pinnedNotes: 'Notas fijadas',
                 drawingPreviews: 'Vistas previas de dibujos'
@@ -1104,8 +1105,8 @@ export const STRINGS_ES = {
                 }
             },
             propertySortKey: {
-                name: 'Propiedades para ordenar',
-                desc: 'Propiedades del frontmatter separadas por comas que se muestran como opciones de orden por propiedad. Los valores de tipo array se combinan en una sola cadena. Estas propiedades no se modifican.',
+                name: 'Propiedades de orden y agrupación',
+                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1119,7 +1120,7 @@ export const STRINGS_ES = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Cada propiedad listada arriba aparece como una opción de orden en el menú de ordenación del panel de lista. Al seleccionar una se ordenan las notas por su valor del frontmatter.'
+                intro: 'Cada propiedad listada arriba aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. La ordenación ordena las notas por el valor del frontmatter, uniendo los valores de matriz en una sola cadena. La agrupación reúne las notas que comparten el mismo valor bajo un mismo encabezado; las notas con un valor de lista se agrupan bajo la lista completa, y las notas sin la propiedad quedan en un grupo final "Ninguno".'
             },
             manualSortPropertyKey: {
                 name: 'Propiedad de orden manual',
@@ -1176,7 +1177,7 @@ export const STRINGS_ES = {
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
-                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta.',
+                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta. La agrupación por un valor de propiedad del frontmatter está disponible por vista desde el menú de ordenación del panel de lista.',
                 options: {
                     custom: 'Personalizada',
                     date: 'Fecha',
@@ -1189,7 +1190,7 @@ export const STRINGS_ES = {
             },
             stickyGroupHeaders: {
                 name: 'Encabezados de grupo fijos',
-                desc: 'Mantén visible el encabezado actual de fecha, carpeta o sección anclada al desplazarte.'
+                desc: 'Mantén visible el encabezado actual de fecha, carpeta, propiedad o sección anclada al desplazarte.'
             },
             showFolderGroupPaths: {
                 name: 'Mostrar rutas de subcarpetas',

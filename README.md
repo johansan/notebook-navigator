@@ -459,6 +459,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Thumbnails** - Featured images plus auto-generated thumbnails for PDF, SVG, and drawing files stored in the metadata cache
 - **External images** - Optional downloads for external images and YouTube thumbnails
 - **Date grouping** - Group notes by Today, Yesterday, Previous 7 days, Previous 30 days, months, and years when sorted by date
+- **Property grouping** - Group notes by a frontmatter property value, matching group by in Obsidian Bases: notes sharing the same value collect under one header, notes without the property go into a trailing None group, and groups sort by value with natural ordering
 - **Frontmatter support** - Read note names and timestamps from frontmatter fields
 - **Note metadata** - Show modification date and tags in the file list
 - **Custom properties** - Display frontmatter properties or word count in file list with per-folder/tag overrides and custom colors

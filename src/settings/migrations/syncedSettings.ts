@@ -34,7 +34,7 @@ import {
     isTextCountPlacement,
     normalizeNarrowSidebarLayout,
     normalizeAppearanceGroupBy,
-    normalizeListNoteGroupingOption
+    normalizeListNoteGroupingBaseOption
 } from '../types';
 import { normalizeCalendarCustomRootFolder } from '../../utils/calendarCustomNotePatterns';
 import { normalizeFolderNoteNamePattern } from '../../utils/folderNoteName';
@@ -184,7 +184,8 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings['mobileHomepage'];
     delete mutableSettings['useMobileHomepage'];
 
-    settings.noteGrouping = normalizeListNoteGroupingOption(settings.noteGrouping) ?? defaultSettings.noteGrouping;
+    // The global default rejects property encodings; only appearance overrides accept them.
+    settings.noteGrouping = normalizeListNoteGroupingBaseOption(settings.noteGrouping) ?? defaultSettings.noteGrouping;
 
     const normalizeAppearanceGrouping = (collection: Record<string, FolderAppearance> | undefined): void => {
         if (!collection) {

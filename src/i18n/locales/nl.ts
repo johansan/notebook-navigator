@@ -59,6 +59,7 @@ export const STRINGS_NL = {
             'Sleep om opnieuw te ordenen. De volgorde wordt opgeslagen als numerieke indexwaarden in de eigenschap "{property}".',
         manualSortNonMarkdownHint: 'Niet-Markdown-bestanden worden onderaan getoond en kunnen niet opnieuw worden geordend.',
         unsortedSection: 'Niet gesorteerd',
+        propertyGroupNoValue: 'Geen',
         manualSortDone: 'Klaar',
         manualSortMultipleWriteFailure: '{count} bestanden mislukt; eerste: {path}: {message}'
     },
@@ -1045,7 +1046,7 @@ export const STRINGS_NL = {
             list: {
                 display: 'Uiterlijk',
                 groupHeaders: 'Groepskoppen',
-                propertySort: 'Sorteren op eigenschap',
+                propertySort: 'Sorteren en groeperen op eigenschap',
                 manualSort: 'Handmatig sorteren',
                 pinnedNotes: 'Vastgezette notities',
                 drawingPreviews: 'Tekeningvoorbeelden'
@@ -1105,8 +1106,8 @@ export const STRINGS_NL = {
                 }
             },
             propertySortKey: {
-                name: 'Eigenschappen om op te sorteren',
-                desc: "Door komma's gescheiden frontmatter-eigenschappen die worden weergegeven als sorteeropties op eigenschap. Arraywaarden worden samengevoegd tot één string. Deze eigenschappen worden niet gewijzigd.",
+                name: 'Sorteer- en groeperingseigenschappen',
+                desc: "Door komma's gescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.",
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1120,7 +1121,7 @@ export const STRINGS_NL = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Elke hierboven vermelde eigenschap verschijnt als sorteeroptie in het sorteermenu van het lijstpaneel. Een keuze sorteert notities op de frontmatter-waarde ervan.'
+                intro: 'Elke hierboven vermelde eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Sorteren ordent notities op de frontmatter-waarde, waarbij arraywaarden worden samengevoegd tot één string. Groeperen verzamelt notities met dezelfde waarde onder één kop; notities met een lijstwaarde worden gegroepeerd onder de volledige lijst, en notities zonder de eigenschap komen in een afsluitende groep "Geen".'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschap voor handmatig sorteren',
@@ -1177,7 +1178,7 @@ export const STRINGS_NL = {
             },
             groupNotes: {
                 name: 'Standaard groepering',
-                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd.',
+                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd. Groeperen op een frontmatter-eigenschapswaarde is per weergave beschikbaar via het sorteermenu in het lijstpaneel.',
                 options: {
                     custom: 'Aangepast',
                     date: 'Datum',
@@ -1190,7 +1191,7 @@ export const STRINGS_NL = {
             },
             stickyGroupHeaders: {
                 name: 'Plakkerige groepskoppen',
-                desc: 'Houd de huidige datum-, map- of vastgepinde sectiekop zichtbaar tijdens het scrollen.'
+                desc: 'Houd de huidige datum-, map-, eigenschap- of vastgepinde sectiekop zichtbaar tijdens het scrollen.'
             },
             showFolderGroupPaths: {
                 name: 'Submappaden tonen',

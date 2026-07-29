@@ -97,6 +97,7 @@ import { normalizeNavigationSeparatorKey } from '../../utils/navigationSeparator
 import { normalizeUXIconMapRecord } from '../../utils/uxIcons';
 import { sanitizeKeyboardShortcuts } from '../../utils/keyboardShortcuts';
 import { isPropertySortOption, pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
+import { pruneUnavailablePropertyGroupingOverrides } from '../../utils/listGrouping';
 import { isRecord } from '../../utils/typeGuards';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
 import { isFileTypeIconPreset } from '../../utils/fileTypeIconPresets';
@@ -514,6 +515,7 @@ export class PluginSettingsController {
 
         this.sanitizeSettingsRecords();
         const prunedUnavailablePropertySortOverrides = pruneUnavailablePropertySortOverrides(this.currentSettings);
+        const prunedUnavailablePropertyGroupingOverrides = pruneUnavailablePropertyGroupingOverrides(this.currentSettings);
 
         const migratedMomentFormats = migrateMomentDateFormats({
             settings: this.currentSettings,
@@ -683,6 +685,7 @@ export class PluginSettingsController {
             hadInvalidShiftEnterOpenContextInStoredData ||
             hadInvalidCmdCtrlEnterOpenContextInStoredData ||
             prunedUnavailablePropertySortOverrides ||
+            prunedUnavailablePropertyGroupingOverrides ||
             uiScaleMigrated ||
             migratedMomentFormats ||
             migratedShortcutNegationSyntax;

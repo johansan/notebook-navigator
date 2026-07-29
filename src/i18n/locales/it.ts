@@ -58,6 +58,7 @@ export const STRINGS_IT = {
         manualSortHint: 'Trascina per riordinare. L\'ordine è salvato come valori indice numerici nella proprietà "{property}".',
         manualSortNonMarkdownHint: 'I file non Markdown sono mostrati in fondo e non possono essere riordinati.',
         unsortedSection: 'Non ordinato',
+        propertyGroupNoValue: 'Nessuno',
         manualSortDone: 'Fatto',
         manualSortMultipleWriteFailure: '{count} file non riusciti; primo: {path}: {message}'
     },
@@ -1039,7 +1040,7 @@ export const STRINGS_IT = {
             list: {
                 display: 'Aspetto',
                 groupHeaders: 'Intestazioni di gruppo',
-                propertySort: 'Ordinamento per proprietà',
+                propertySort: 'Ordinamento e raggruppamento per proprietà',
                 manualSort: 'Ordinamento manuale',
                 pinnedNotes: 'Note fissate',
                 drawingPreviews: 'Anteprime dei disegni'
@@ -1099,8 +1100,8 @@ export const STRINGS_IT = {
                 }
             },
             propertySortKey: {
-                name: 'Proprietà per ordinare',
-                desc: 'Proprietà frontmatter separate da virgola mostrate come opzioni di ordinamento per proprietà. I valori array vengono uniti in una singola stringa. Queste proprietà non vengono modificate.',
+                name: 'Proprietà di ordinamento e raggruppamento',
+                desc: 'Proprietà frontmatter separate da virgola. Ogni proprietà appare come opzione di ordinamento e opzione di raggruppamento nel menu di ordinamento nel pannello lista. Queste proprietà non vengono modificate.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1114,7 +1115,7 @@ export const STRINGS_IT = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Ogni proprietà elencata sopra appare come opzione di ordinamento nel menu di ordinamento nel pannello lista. Selezionandone una si ordinano le note per il suo valore frontmatter.'
+                intro: "Ogni proprietà elencata sopra appare come opzione di ordinamento e come opzione di raggruppamento nel menu di ordinamento nel pannello lista. L'ordinamento dispone le note in base al valore frontmatter, unendo i valori array in una singola stringa. Il raggruppamento raccoglie le note che condividono lo stesso valore sotto un'unica intestazione; le note con un valore elenco vengono raggruppate sotto l'elenco completo, e le note prive della proprietà finiscono in un gruppo finale \"Nessuno\"."
             },
             manualSortPropertyKey: {
                 name: 'Proprietà ordinamento manuale',
@@ -1171,7 +1172,7 @@ export const STRINGS_IT = {
             },
             groupNotes: {
                 name: 'Raggruppamento predefinito',
-                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella.',
+                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella. Il raggruppamento per valore di una proprietà frontmatter è disponibile per vista dal menu di ordinamento nel pannello lista.',
                 options: {
                     custom: 'Personalizzato',
                     date: 'Data',
@@ -1184,7 +1185,7 @@ export const STRINGS_IT = {
             },
             stickyGroupHeaders: {
                 name: 'Intestazioni di gruppo fisse',
-                desc: "Mantieni visibile l'intestazione corrente di data, cartella o sezione fissate mentre scorri."
+                desc: "Mantieni visibile l'intestazione corrente di data, cartella, proprietà o sezione fissate mentre scorri."
             },
             showFolderGroupPaths: {
                 name: 'Mostra percorsi sottocartelle',

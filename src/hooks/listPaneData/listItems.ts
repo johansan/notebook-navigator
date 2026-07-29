@@ -23,7 +23,14 @@ import { ListPaneItemType, ItemType, PINNED_SECTION_HEADER_KEY } from '../../typ
 import type { ListPaneItem } from '../../types/virtualization';
 import { strings } from '../../i18n';
 import { FILE_VISIBILITY, type FileVisibility } from '../../utils/fileTypeUtils';
-import { compareByAlphaSortOrder, getDateField, isDateSortOption, isPropertySortOption } from '../../utils/sortUtils';
+import {
+    compareByAlphaSortOrder,
+    getDateField,
+    getPropertyGroupingValueFromRecord,
+    isDateSortOption,
+    isPropertySortOption
+} from '../../utils/sortUtils';
+import { getPropertyGroupingDirection, getPropertyGroupingKey } from '../../settings/types';
 import { partitionPinnedFiles } from '../../utils/fileFinder';
 import {
     formatManualSortGroupHeaderLabel,
@@ -443,9 +450,10 @@ function buildListItemsInternal(
 
     const shouldGroupByDate = groupingMode === 'date' && isDateSortOption(sortOption);
     const shouldGroupByFolder = groupingMode === 'folder' && selectionType === ItemType.FOLDER;
+    const propertyGroupingKey = getPropertyGroupingKey(groupingMode);
     const shouldShowUnsortedSection = isPropertySortOption(sortOption) && isManualSortActive && propertySortKey.trim().length > 0;
 
-    if (!shouldGroupByDate && !shouldGroupByFolder) {
+    if (!shouldGroupByDate && !shouldGroupByFolder && propertyGroupingKey === null) {
         const sortedFiles: TFile[] = [];
         const unsortedFiles: TFile[] = [];
         if (shouldShowUnsortedSection) {
@@ -511,6 +519,95 @@ function buildListItemsInternal(
 
             pushFileItem(file);
         });
+    } else if (propertyGroupingKey !== null) {
+        // Buckets match the extracted value parts element-wise and groups sort in the configured
+        // direction: number-keyed groups first in numeric order, then text groups in natural string
+        // order, following how Obsidian Bases groups by property. Files inside each group keep
+        // the active sort order. The bucket key joins parts with a separator that cannot appear in
+        // trimmed part values, so lists with different element boundaries such as ["a b", "c"] and
+        // ["a", "b c"] stay in separate groups.
+        const propertyGroupingDirection = getPropertyGroupingDirection(groupingMode) ?? 'asc';
+        const propertyGroups = new Map<string, { label: string; numericValue: number | null; files: TFile[] }>();
+        const ungroupedFiles: TFile[] = [];
+
+        unpinnedFiles.forEach(file => {
+            const groupingValue =
+                file.extension === 'md'
+                    ? getPropertyGroupingValueFromRecord(app.metadataCache.getFileCache(file)?.frontmatter, propertyGroupingKey)
+                    : null;
+            if (groupingValue === null) {
+                ungroupedFiles.push(file);
+                return;
+            }
+
+            const bucketKey = groupingValue.parts.join('\u0000');
+            const group = propertyGroups.get(bucketKey);
+            if (group) {
+                group.files.push(file);
+                return;
+            }
+
+            // The first file to create a bucket decides whether the group carries a numeric key,
+            // matching how the first encountered value becomes the group key in Obsidian Bases.
+            propertyGroups.set(bucketKey, {
+                label: groupingValue.parts.join(', '),
+                numericValue: groupingValue.numericValue,
+                files: [file]
+            });
+        });
+
+        const directionMultiplier = propertyGroupingDirection === 'desc' ? -1 : 1;
+        const alphaOrder = propertyGroupingDirection === 'desc' ? 'alpha-desc' : 'alpha-asc';
+        const orderedPropertyGroups = Array.from(propertyGroups.entries())
+            .map(([bucketKey, group]) => ({ bucketKey, ...group }))
+            .sort((left, right) => {
+                // The comparator must be a total order or the group order depends on file encounter
+                // order. Bases compares mixed numeric/text pairs by label, which turns intransitive
+                // once text labels mix with negative or decimal numbers (numerically -10 < -2 while
+                // the collator places "-2" before "-10") and leaves its result unspecified, so there
+                // is no defined Bases order to match; number-keyed groups sort before text groups.
+                if (left.numericValue !== null && right.numericValue !== null) {
+                    if (left.numericValue !== right.numericValue) {
+                        return directionMultiplier * (left.numericValue < right.numericValue ? -1 : 1);
+                    }
+                } else if (left.numericValue !== null || right.numericValue !== null) {
+                    return directionMultiplier * (left.numericValue !== null ? -1 : 1);
+                } else {
+                    const labelCompare = compareByAlphaSortOrder(left.label, right.label, alphaOrder);
+                    if (labelCompare !== 0) {
+                        return labelCompare;
+                    }
+                }
+                // Labels of distinct buckets can compare equal because the collator ignores case and
+                // accent differences, and some locales also ignore punctuation; the bucket key breaks
+                // the tie so such groups keep one stable order. Bucket keys are unique map keys, so
+                // equal keys never reach this comparison and no zero branch is needed.
+                return directionMultiplier * (left.bucketKey < right.bucketKey ? -1 : 1);
+            });
+
+        const renderPropertyGroup = (label: string, groupFiles: TFile[], groupId: string): void => {
+            pushHeaderItem({
+                data: label,
+                collapseKey: createCollapseKey(groupId),
+                key: `header-${groupId}`,
+                headerKind: 'property',
+                groupFiles
+            });
+            groupFiles.forEach(file => {
+                pushFileItem(file);
+            });
+        };
+
+        // Group ids use the bucket key rather than the display label so collapse state and item
+        // counts stay stable if the label formatting changes.
+        orderedPropertyGroups.forEach(group => {
+            renderPropertyGroup(group.label, group.files, `property-value:${group.bucketKey}`);
+        });
+
+        // Files without the property collect into one trailing group, matching the Bases "None" group placement.
+        if (ungroupedFiles.length > 0) {
+            renderPropertyGroup(strings.listPane.propertyGroupNoValue, ungroupedFiles, 'property-none');
+        }
     } else {
         const baseFolderPath = selectedFolder?.path ?? null;
         const baseFolderName = selectedFolder?.name ?? null;
