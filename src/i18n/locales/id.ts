@@ -1001,7 +1001,7 @@ export const STRINGS_ID = {
             general: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
             vaultFilters: 'Folder, tag, file, tag file, dan aturan properti tersembunyi.',
             appearanceBehavior: 'Perilaku, navigasi keyboard, tombol mouse, tampilan, dan pemformatan.',
-            navigationPane: 'Tata letak, tampilan, jumlah catatan, perilaku menciutkan, dan warna pelangi.',
+            navigationPane: 'Tata letak, tampilan, jumlah file, perilaku menciutkan, dan warna pelangi.',
             shortcuts: 'Visibilitas pintasan, lencana, file terbaru, dan item yang disematkan.',
             calendar: 'Tampilan kalender, catatan tanggal, templat, lokal, dan penempatan bilah sisi.',
             fileOperations: 'Templat, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
@@ -1036,7 +1036,7 @@ export const STRINGS_ID = {
                 banner: 'Banner',
                 collapseItems: 'Ciutkan item',
                 dragAndDrop: 'Seret dan lepas',
-                noteCounts: 'Jumlah catatan',
+                noteCounts: 'Jumlah file',
                 rainbowColors: 'Warna pelangi',
                 leftSidebar: 'Bilah sisi kiri',
                 calendarIntegration: 'Integrasi kalender'
@@ -1171,8 +1171,8 @@ export const STRINGS_ID = {
                 desc: 'Catatan yang disematkan hanya tampil disematkan di folder miliknya sendiri. Berguna untuk catatan folder atau jika Anda memiliki banyak catatan yang disematkan. Tidak memengaruhi tampilan tag atau properti.'
             },
             separateNoteCounts: {
-                name: 'Tampilkan jumlah catatan saat ini dan turunan secara terpisah',
-                desc: 'Tampilkan jumlah catatan sebagai "saat ini ▾ turunan" untuk folder, tag, dan properti.'
+                name: 'Tampilkan jumlah file saat ini dan turunan secara terpisah',
+                desc: 'Tampilkan jumlah file sebagai "saat ini ▾ turunan" untuk folder, tag, dan properti.'
             },
             groupNotes: {
                 name: 'Pengelompokan default',
@@ -1839,7 +1839,7 @@ export const STRINGS_ID = {
             },
             textCountDisplay: {
                 name: 'Jenis hitungan',
-                desc: 'Pilih hitungan catatan yang muncul di item file.',
+                desc: 'Pilih hitungan teks yang muncul di item file.',
                 options: {
                     none: 'Tidak ada',
                     words: 'Jumlah kata',
@@ -1849,7 +1849,7 @@ export const STRINGS_ID = {
             },
             textCountPlacement: {
                 name: 'Penempatan',
-                desc: 'Pilih tempat hitungan catatan muncul.',
+                desc: 'Pilih tempat hitungan teks muncul.',
                 options: {
                     title: 'Di judul',
                     property: 'Sebagai properti'
@@ -2039,8 +2039,8 @@ export const STRINGS_ID = {
                 }
             },
             showNoteCount: {
-                name: 'Tampilkan jumlah catatan',
-                desc: 'Tampilkan jumlah catatan di sebelah folder, tag, dan properti.'
+                name: 'Tampilkan jumlah file',
+                desc: 'Tampilkan jumlah file di sebelah folder, tag, dan properti.'
             },
             showSectionIcons: {
                 name: 'Tampilkan ikon untuk pintasan dan item terbaru',
@@ -2172,7 +2172,7 @@ export const STRINGS_ID = {
             },
             navCountLeaderStyle: {
                 name: 'Tampilkan tanda penghubung',
-                desc: 'Tampilkan titik, tanda hubung, atau garis antara nama item dan jumlah catatan.',
+                desc: 'Tampilkan titik, tanda hubung, atau garis antara nama item dan jumlah file.',
                 options: {
                     none: 'Tidak ada',
                     dots: 'Titik (...)',

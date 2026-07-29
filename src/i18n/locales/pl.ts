@@ -1004,7 +1004,7 @@ export const STRINGS_PL = {
             general: 'Informacje o wydaniu, wsparcie, profil sejfu, typy plików i klucze atrybutów.',
             vaultFilters: 'Ukryte foldery, tagi, pliki, tagi plików i reguły atrybutów.',
             appearanceBehavior: 'Zachowanie, nawigacja klawiaturą, przyciski myszy, wygląd i formatowanie.',
-            navigationPane: 'Układ, wygląd, liczba notatek, zachowanie zwijania i kolory tęczy.',
+            navigationPane: 'Układ, wygląd, liczba plików, zachowanie zwijania i kolory tęczy.',
             shortcuts: 'Widoczność skrótów, odznaki, ostatnie pliki i przypięte elementy.',
             calendar: 'Wyświetlanie kalendarza, notatki dat, szablony, lokalizacja i położenie paska bocznego.',
             fileOperations: 'Szablony, potwierdzenia usunięcia, załączniki i zachowanie przy konflikcie przenoszenia plików.',
@@ -1039,7 +1039,7 @@ export const STRINGS_PL = {
                 banner: 'Baner',
                 collapseItems: 'Zwiń elementy',
                 dragAndDrop: 'Przeciągnij i upuść',
-                noteCounts: 'Liczba notatek',
+                noteCounts: 'Liczba plików',
                 rainbowColors: 'Kolory tęczy',
                 leftSidebar: 'Lewy panel boczny',
                 calendarIntegration: 'Integracja z kalendarzem'
@@ -1174,8 +1174,8 @@ export const STRINGS_PL = {
                 desc: 'Przypięte notatki są wyświetlane jako przypięte tylko w swoim własnym folderze. Przydatne dla notatek folderów lub jeśli masz wiele przypiętych notatek. Nie wpływa na widoki tagów ani atrybutów.'
             },
             separateNoteCounts: {
-                name: 'Pokaż bieżącą i podrzędną liczbę notatek oddzielnie',
-                desc: 'Wyświetla liczbę notatek jako "nadrzędne ▾ podrzędne" dla folderów, tagów i właściwości.'
+                name: 'Pokaż bieżącą i podrzędną liczbę plików oddzielnie',
+                desc: 'Wyświetla liczbę plików jako "nadrzędne ▾ podrzędne" dla folderów, tagów i właściwości.'
             },
             groupNotes: {
                 name: 'Domyślne grupowanie',
@@ -1843,7 +1843,7 @@ export const STRINGS_PL = {
             },
             textCountDisplay: {
                 name: 'Typ licznika',
-                desc: 'Wybierz, które liczniki notatek pojawiają się w elementach plików.',
+                desc: 'Wybierz, które liczniki tekstu pojawiają się w elementach plików.',
                 options: {
                     none: 'Brak',
                     words: 'Liczba słów',
@@ -1853,7 +1853,7 @@ export const STRINGS_PL = {
             },
             textCountPlacement: {
                 name: 'Położenie',
-                desc: 'Wybierz, gdzie pojawiają się liczniki notatek.',
+                desc: 'Wybierz, gdzie pojawiają się liczniki tekstu.',
                 options: {
                     title: 'W tytule',
                     property: 'Jako atrybut'
@@ -2043,8 +2043,8 @@ export const STRINGS_PL = {
                 }
             },
             showNoteCount: {
-                name: 'Pokaż liczbę notatek',
-                desc: 'Wyświetla liczbę notatek obok folderów, tagów i właściwości.'
+                name: 'Pokaż liczbę plików',
+                desc: 'Wyświetla liczbę plików obok folderów, tagów i właściwości.'
             },
             showSectionIcons: {
                 name: 'Pokaż ikonki skrótów i ostatnich elementów',
@@ -2176,7 +2176,7 @@ export const STRINGS_PL = {
             },
             navCountLeaderStyle: {
                 name: 'Pokaż znaki wiodące',
-                desc: 'Wyświetla kropki, kreski lub linię między nazwami elementów a liczbą notatek.',
+                desc: 'Wyświetla kropki, kreski lub linię między nazwami elementów a liczbą plików.',
                 options: {
                     none: 'Brak',
                     dots: 'Kropki (...)',

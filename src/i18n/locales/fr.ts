@@ -1004,7 +1004,7 @@ export const STRINGS_FR = {
             general: 'Notes de version, support, profil du coffre, types de fichiers et clés de propriétés.',
             vaultFilters: 'Dossiers, étiquettes, fichiers, étiquettes de fichiers et règles de propriétés masqués.',
             appearanceBehavior: 'Comportement, navigation au clavier, boutons de souris, apparence et formatage.',
-            navigationPane: 'Disposition, apparence, comptage des notes, comportement de repli et couleurs arc-en-ciel.',
+            navigationPane: 'Disposition, apparence, comptage des fichiers, comportement de repli et couleurs arc-en-ciel.',
             shortcuts: 'Visibilité des raccourcis, badges, fichiers récents et éléments épinglés.',
             calendar: 'Affichage du calendrier, notes de date, modèles, paramètres régionaux et emplacement de la barre latérale.',
             fileOperations:
@@ -1040,7 +1040,7 @@ export const STRINGS_FR = {
                 banner: 'Bannière',
                 collapseItems: 'Replier les éléments',
                 dragAndDrop: 'Glisser-déposer',
-                noteCounts: 'Nombre de notes',
+                noteCounts: 'Nombre de fichiers',
                 rainbowColors: 'Couleurs arc-en-ciel',
                 leftSidebar: 'Barre latérale gauche',
                 calendarIntegration: 'Intégration du calendrier'
@@ -1175,8 +1175,8 @@ export const STRINGS_FR = {
                 desc: 'Les notes épinglées n’apparaissent épinglées que dans leur propre dossier. Utile pour les notes de dossier ou si vous avez beaucoup de notes épinglées. N’affecte pas les vues par étiquette ou propriété.'
             },
             separateNoteCounts: {
-                name: 'Afficher les nombres de notes actuelles et descendantes séparément',
-                desc: 'Affiche le nombre de notes au format "actuel ▾ descendants" pour les dossiers, étiquettes et propriétés.'
+                name: 'Afficher les nombres de fichiers actuels et descendants séparément',
+                desc: 'Affiche le nombre de fichiers au format "actuel ▾ descendants" pour les dossiers, étiquettes et propriétés.'
             },
             groupNotes: {
                 name: 'Regroupement par défaut',
@@ -1846,7 +1846,7 @@ export const STRINGS_FR = {
             },
             textCountDisplay: {
                 name: 'Type de compteur',
-                desc: 'Choisissez les compteurs de note affichés dans les éléments de fichier.',
+                desc: 'Choisissez les compteurs de texte affichés dans les éléments de fichier.',
                 options: {
                     none: 'Aucun',
                     words: 'Nombre de mots',
@@ -1856,7 +1856,7 @@ export const STRINGS_FR = {
             },
             textCountPlacement: {
                 name: 'Emplacement',
-                desc: 'Choisissez où les compteurs de note apparaissent.',
+                desc: 'Choisissez où les compteurs de texte apparaissent.',
                 options: {
                     title: 'Dans le titre',
                     property: 'Comme propriété'
@@ -2046,8 +2046,8 @@ export const STRINGS_FR = {
                 }
             },
             showNoteCount: {
-                name: 'Afficher le nombre de notes',
-                desc: 'Afficher le nombre de notes à côté des dossiers, étiquettes et propriétés.'
+                name: 'Afficher le nombre de fichiers',
+                desc: 'Afficher le nombre de fichiers à côté des dossiers, étiquettes et propriétés.'
             },
             showSectionIcons: {
                 name: 'Afficher les icônes pour les raccourcis et les éléments récents',
@@ -2179,7 +2179,7 @@ export const STRINGS_FR = {
             },
             navCountLeaderStyle: {
                 name: 'Afficher les points de conduite',
-                desc: 'Afficher des points, des tirets ou une ligne entre les noms des éléments et le nombre de notes.',
+                desc: 'Afficher des points, des tirets ou une ligne entre les noms des éléments et le nombre de fichiers.',
                 options: {
                     none: 'Aucun',
                     dots: 'Points (...)',

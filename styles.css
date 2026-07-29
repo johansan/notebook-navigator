@@ -242,7 +242,6 @@ body {
     --nn-theme-navitem-name-font-weight: 400;
     --nn-theme-navitem-custom-color-name-font-weight: 600;
     --nn-theme-navitem-count-font-weight: 400;
-    --nn-theme-navitem-folder-note-name-font-weight: 400;
     --nn-theme-navitem-folder-note-name-decoration: underline;
     --nn-theme-navitem-folder-note-name-hover-decoration: underline;
 
@@ -337,7 +336,6 @@ body {
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
-    --nn-theme-mobile-toolbar-bg: var(--background-secondary);
     --nn-theme-mobile-toolbar-button-icon-color: var(--link-color);
     --nn-theme-mobile-toolbar-button-active-bg: var(--background-modifier-hover);
     --nn-theme-mobile-toolbar-button-active-icon-color: var(--link-color);
@@ -2031,13 +2029,7 @@ button.nn-icon-button.nn-icon-button-active svg:not(.nn-vault-icon-svg) {
 
 /* Folder with folder note */
 .nn-navitem-name.nn-has-folder-note {
-    font-weight: var(--nn-theme-navitem-folder-note-name-font-weight);
     text-decoration: var(--nn-theme-navitem-folder-note-name-decoration);
-}
-
-/* Folder with folder note and custom color uses custom color weight */
-.nn-navitem-name.nn-has-folder-note.nn-has-custom-color {
-    font-weight: var(--nn-theme-navitem-custom-color-name-font-weight);
 }
 
 /* Folder with folder note - show pointer cursor on hover */
@@ -2224,8 +2216,7 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     text-decoration: line-through;
 }
 
-/* Underline only the label, not the trailing description, for shortcuts with folder notes.
-   Font weight is inherited from the .nn-navitem-name folder note rules. */
+/* Underline only the label, not the trailing description, for shortcuts with folder notes. */
 .nn-shortcut-item .nn-navitem-name.nn-has-folder-note .nn-shortcut-label {
     text-decoration: var(--nn-theme-navitem-folder-note-name-decoration);
 }
@@ -9038,7 +9029,7 @@ settings:
     -
         id: nn-theme-foreground-heading
         title: Foreground colors
-        description: Base foreground colors used by Notebook Navigator.
+        description: Base colors for text, icons, and lines. Most other colors default to these.
         type: heading
         level: 1
         collapsed: true
@@ -9430,7 +9421,7 @@ settings:
     -
         id: nn-theme-navitem-name-font-weight
         title: Name weight
-        description: Font weight of folder, tag, note, and section names, including shortcuts and recent files.
+        description: Font weight of folder, tag, property, note, and section names, including shortcuts and recent files.
         type: variable-number-slider
         default: 400
         min: 100
@@ -9442,15 +9433,6 @@ settings:
         description: Font weight of names with custom or rainbow colors (overrides name weight).
         type: variable-number-slider
         default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-folder-note-name-font-weight
-        title: Folder note weight
-        description: Font weight for folders with notes (overrides all others).
-        type: variable-number-slider
-        default: 400
         min: 100
         max: 900
         step: 100
@@ -10277,7 +10259,7 @@ settings:
         title: Selection outline thickness
         description: Border width for active calendar outlines.
         type: variable-number-slider
-        default: 2
+        default: 3
         format: px
         min: 1
         max: 4
@@ -10346,14 +10328,6 @@ settings:
         min: 100
         max: 900
         step: 100
-    -
-        id: nn-theme-mobile-toolbar-bg
-        title: Mobile toolbar background
-        description: Background color of the mobile toolbar.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
     -
         id: nn-theme-mobile-toolbar-glass-bg
         title: iOS glass toolbar background

@@ -1002,7 +1002,7 @@ export const STRINGS_ES = {
             general: 'Notas de versión, soporte, perfil de bóveda, tipos de archivo y claves de propiedades.',
             vaultFilters: 'Carpetas, etiquetas, archivos, etiquetas de archivo y reglas de propiedades ocultos.',
             appearanceBehavior: 'Comportamiento, navegación con teclado, botones del ratón, apariencia y formato.',
-            navigationPane: 'Diseño, apariencia, recuento de notas, comportamiento de colapso y colores arcoíris.',
+            navigationPane: 'Diseño, apariencia, recuento de archivos, comportamiento de colapso y colores arcoíris.',
             shortcuts: 'Visibilidad de accesos directos, insignias, archivos recientes y elementos fijados.',
             calendar: 'Visualización del calendario, notas de fecha, plantillas, configuración regional y ubicación de la barra lateral.',
             fileOperations: 'Plantillas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
@@ -1037,7 +1037,7 @@ export const STRINGS_ES = {
                 banner: 'Banner',
                 collapseItems: 'Contraer elementos',
                 dragAndDrop: 'Arrastrar y soltar',
-                noteCounts: 'Conteos de notas',
+                noteCounts: 'Conteos de archivos',
                 rainbowColors: 'Colores arcoíris',
                 leftSidebar: 'Barra lateral izquierda',
                 calendarIntegration: 'Integración de calendario'
@@ -1172,8 +1172,8 @@ export const STRINGS_ES = {
                 desc: 'Las notas fijadas aparecen fijadas solo en su propia carpeta. Útil para notas de carpeta o si tiene muchas notas fijadas. No afecta las vistas de etiquetas o propiedades.'
             },
             separateNoteCounts: {
-                name: 'Mostrar recuentos de notas actuales y descendientes por separado',
-                desc: 'Muestra el conteo de notas como "actual ▾ descendientes" para carpetas, etiquetas y propiedades.'
+                name: 'Mostrar recuentos de archivos actuales y descendientes por separado',
+                desc: 'Muestra el conteo de archivos como "actual ▾ descendientes" para carpetas, etiquetas y propiedades.'
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
@@ -1842,7 +1842,7 @@ export const STRINGS_ES = {
             },
             textCountDisplay: {
                 name: 'Tipo de recuento',
-                desc: 'Elige qué recuentos de notas aparecen en los elementos de archivo.',
+                desc: 'Elige qué recuentos de texto aparecen en los elementos de archivo.',
                 options: {
                     none: 'Ninguno',
                     words: 'Recuento de palabras',
@@ -1852,7 +1852,7 @@ export const STRINGS_ES = {
             },
             textCountPlacement: {
                 name: 'Ubicación',
-                desc: 'Elige dónde aparecen los recuentos de notas.',
+                desc: 'Elige dónde aparecen los recuentos de texto.',
                 options: {
                     title: 'En el título',
                     property: 'Como propiedad'
@@ -2042,8 +2042,8 @@ export const STRINGS_ES = {
                 }
             },
             showNoteCount: {
-                name: 'Mostrar conteo de notas',
-                desc: 'Muestra el conteo de notas junto a carpetas, etiquetas y propiedades.'
+                name: 'Mostrar conteo de archivos',
+                desc: 'Muestra el conteo de archivos junto a carpetas, etiquetas y propiedades.'
             },
             showSectionIcons: {
                 name: 'Mostrar iconos para atajos y elementos recientes',
@@ -2175,7 +2175,7 @@ export const STRINGS_ES = {
             },
             navCountLeaderStyle: {
                 name: 'Mostrar guías de relleno',
-                desc: 'Mostrar puntos, guiones o una línea entre los nombres de los elementos y el número de notas.',
+                desc: 'Mostrar puntos, guiones o una línea entre los nombres de los elementos y el número de archivos.',
                 options: {
                     none: 'Ninguno',
                     dots: 'Puntos (...)',

@@ -258,13 +258,7 @@
 
 /* Folder with folder note */
 .nn-navitem-name.nn-has-folder-note {
-    font-weight: var(--nn-theme-navitem-folder-note-name-font-weight);
     text-decoration: var(--nn-theme-navitem-folder-note-name-decoration);
-}
-
-/* Folder with folder note and custom color uses custom color weight */
-.nn-navitem-name.nn-has-folder-note.nn-has-custom-color {
-    font-weight: var(--nn-theme-navitem-custom-color-name-font-weight);
 }
 
 /* Folder with folder note - show pointer cursor on hover */
@@ -451,8 +445,7 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     text-decoration: line-through;
 }
 
-/* Underline only the label, not the trailing description, for shortcuts with folder notes.
-   Font weight is inherited from the .nn-navitem-name folder note rules. */
+/* Underline only the label, not the trailing description, for shortcuts with folder notes. */
 .nn-shortcut-item .nn-navitem-name.nn-has-folder-note .nn-shortcut-label {
     text-decoration: var(--nn-theme-navitem-folder-note-name-decoration);
 }
