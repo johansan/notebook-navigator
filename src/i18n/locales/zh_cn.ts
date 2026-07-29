@@ -58,6 +58,7 @@ export const STRINGS_ZH_CN = {
         manualSortHint: '拖动以重新排序。顺序以数字索引值的形式保存在属性"{property}"中。',
         manualSortNonMarkdownHint: '非 Markdown 文件显示在底部，无法重新排序。',
         unsortedSection: '未排序',
+        propertyGroupNoValue: '无',
         manualSortDone: '完成',
         manualSortMultipleWriteFailure: '{count} 个文件失败；第一个: {path}: {message}'
     },
@@ -1034,7 +1035,7 @@ export const STRINGS_ZH_CN = {
             list: {
                 display: '外观',
                 groupHeaders: '分组标题',
-                propertySort: '属性排序',
+                propertySort: '属性排序与分组',
                 manualSort: '手动排序',
                 pinnedNotes: '固定笔记',
                 drawingPreviews: '绘图预览'
@@ -1094,8 +1095,8 @@ export const STRINGS_ZH_CN = {
                 }
             },
             propertySortKey: {
-                name: '用于排序的属性',
-                desc: '以逗号分隔的 frontmatter 属性，作为属性排序选项显示。数组值会合并为单一字符串。这些属性不会被更改。',
+                name: '用于排序和分组的属性',
+                desc: '以逗号分隔的 frontmatter 属性。每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。这些属性不会被更改。',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1109,7 +1110,7 @@ export const STRINGS_ZH_CN = {
                 }
             },
             propertySortInstructions: {
-                intro: '上面列出的每个属性会在列表窗格的排序菜单中作为排序选项显示。选择某个属性会按其 frontmatter 值对笔记排序。'
+                intro: '上面列出的每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。排序会按 frontmatter 值排列笔记，数组值会合并为单一字符串。分组会将具有相同值的笔记归入同一标题下；具有列表值的笔记按完整列表分组，缺少该属性的笔记归入末尾的"无"分组。'
             },
             manualSortPropertyKey: {
                 name: '手动排序属性',
@@ -1163,7 +1164,7 @@ export const STRINGS_ZH_CN = {
             },
             groupNotes: {
                 name: '默认分组',
-                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。',
+                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。按 frontmatter 属性值分组可在列表窗格的排序菜单中针对每个视图单独设置。',
                 options: {
                     custom: '自定义',
                     date: '日期',
@@ -1176,7 +1177,7 @@ export const STRINGS_ZH_CN = {
             },
             stickyGroupHeaders: {
                 name: '固定分组标题',
-                desc: '滚动时保持当前日期、文件夹或固定部分的标题可见。'
+                desc: '滚动时保持当前日期、文件夹、属性或固定部分的标题可见。'
             },
             showFolderGroupPaths: {
                 name: '显示子文件夹路径',

@@ -59,6 +59,7 @@ export const STRINGS_FR = {
             "Glissez pour réorganiser. L'ordre est enregistré sous forme de valeurs numériques dans la propriété « {property} ».",
         manualSortNonMarkdownHint: 'Les fichiers non Markdown sont affichés en bas et ne peuvent pas être réorganisés.',
         unsortedSection: 'Non trié',
+        propertyGroupNoValue: 'Aucun',
         manualSortDone: 'Terminé',
         manualSortMultipleWriteFailure: '{count} fichiers ont échoué ; premier : {path} : {message}'
     },
@@ -1047,7 +1048,7 @@ export const STRINGS_FR = {
             list: {
                 display: 'Apparence',
                 groupHeaders: 'En-têtes de groupe',
-                propertySort: 'Tri par propriété',
+                propertySort: 'Tri et regroupement par propriété',
                 manualSort: 'Tri manuel',
                 pinnedNotes: 'Notes épinglées',
                 drawingPreviews: 'Aperçus des dessins'
@@ -1107,8 +1108,8 @@ export const STRINGS_FR = {
                 }
             },
             propertySortKey: {
-                name: 'Propriétés de tri',
-                desc: 'Propriétés frontmatter séparées par des virgules affichées comme options de tri par propriété. Les valeurs de tableau sont jointes en une seule chaîne. Ces propriétés ne sont pas modifiées.',
+                name: 'Propriétés de tri et de regroupement',
+                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1122,7 +1123,7 @@ export const STRINGS_FR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Chaque propriété listée ci-dessus apparaît comme option de tri dans le menu de tri du panneau de liste. En sélectionner une trie les notes selon sa valeur frontmatter.'
+                intro: 'Chaque propriété listée ci-dessus apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Le tri ordonne les notes selon la valeur frontmatter, les valeurs de tableau étant jointes en une seule chaîne. Le regroupement rassemble les notes partageant la même valeur sous un même en-tête ; les notes avec une valeur de liste sont regroupées sous la liste complète, et les notes sans la propriété sont placées dans un groupe « Aucun » à la fin.'
             },
             manualSortPropertyKey: {
                 name: 'Propriété de tri manuel',
@@ -1179,7 +1180,7 @@ export const STRINGS_FR = {
             },
             groupNotes: {
                 name: 'Regroupement par défaut',
-                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné.',
+                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné. Le regroupement par valeur de propriété frontmatter est disponible par vue depuis le menu de tri du panneau de liste.',
                 options: {
                     custom: 'Personnalisé',
                     date: 'Date',
@@ -1192,7 +1193,7 @@ export const STRINGS_FR = {
             },
             stickyGroupHeaders: {
                 name: 'En-têtes de groupe épinglés',
-                desc: "Garder visible l'en-tête de section actuel (date, dossier ou épinglé) lors du défilement."
+                desc: "Garder visible l'en-tête de section actuel (date, dossier, propriété ou épinglé) lors du défilement."
             },
             showFolderGroupPaths: {
                 name: 'Afficher les chemins des sous-dossiers',

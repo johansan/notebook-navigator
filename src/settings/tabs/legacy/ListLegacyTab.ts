@@ -21,7 +21,7 @@ import { strings } from '../../../i18n';
 import { DEFAULT_SETTINGS } from '../../defaultSettings';
 import {
     isListDisplayMode,
-    isListNoteGroupingOption,
+    normalizeListNoteGroupingBaseOption,
     isListPaneTitleOption,
     isManualSortNewNotePlacement,
     isPropertySortSecondaryOption,
@@ -35,6 +35,7 @@ import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
 import { createDependentSettingsSection, setElementVisible } from '../../dependentSettings';
 import { pruneUnavailablePropertySortOverrides } from '../../../utils/sortUtils';
+import { pruneUnavailablePropertyGroupingOverrides } from '../../../utils/listGrouping';
 import {
     getManualSortGroupHeaderPropertyKey,
     isValidManualSortPropertyKey,
@@ -229,10 +230,11 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     .addOption('folder', strings.settings.items.groupNotes.options.folder)
                     .setValue(plugin.settings.noteGrouping)
                     .onChange(async value => {
-                        if (!isListNoteGroupingOption(value)) {
+                        const baseOption = normalizeListNoteGroupingBaseOption(value);
+                        if (!baseOption) {
                             return;
                         }
-                        plugin.settings.noteGrouping = value;
+                        plugin.settings.noteGrouping = baseOption;
                         await plugin.saveSettingsAndUpdate();
                     })
             );
@@ -348,6 +350,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     }
                     plugin.settings.propertySortKey = value;
                     pruneUnavailablePropertySortOverrides(plugin.settings);
+                    pruneUnavailablePropertyGroupingOverrides(plugin.settings);
                     refreshPropertySortSecondaryVisibility();
                     await plugin.saveSettingsAndUpdate();
                 };
@@ -413,6 +416,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     }
                     plugin.settings.manualSortPropertyKey = value;
                     pruneUnavailablePropertySortOverrides(plugin.settings);
+                    pruneUnavailablePropertyGroupingOverrides(plugin.settings);
                     await plugin.saveSettingsAndUpdate();
                 };
 

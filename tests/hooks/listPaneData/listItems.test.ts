@@ -1886,3 +1886,362 @@ describe('buildListItems pinned display scope', () => {
         expect(findCollapsedListGroupRevealTarget(items, regularFile.path, false)).toBeNull();
     });
 });
+
+describe('buildListItems property grouping', () => {
+    function createFrontmatterApp(frontmatterByPath: Record<string, Record<string, unknown>>): App {
+        const app = createApp();
+        app.metadataCache.getFileCache = file => {
+            const frontmatter = frontmatterByPath[file.path];
+            return frontmatter ? { frontmatter } : null;
+        };
+        return app;
+    }
+
+    it('collects files sharing a property value under one header with the None group last', () => {
+        const done = createTestTFile('notes/Alpha.md');
+        const active = createTestTFile('notes/Beta.md');
+        const doneAgain = createTestTFile('notes/Gamma.md');
+        const missing = createTestTFile('notes/Delta.md');
+        const app = createFrontmatterApp({
+            [done.path]: { status: 'Done' },
+            [active.path]: { status: 'Active' },
+            [doneAgain.path]: { status: 'Done' },
+            [missing.path]: {}
+        });
+        const db = createDb({
+            [done.path]: { tags: null, properties: null },
+            [active.path]: { tags: null, properties: null },
+            [doneAgain.path]: { tags: null, properties: null },
+            [missing.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [done, active, doneAgain, missing],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({}),
+                groupBy: 'property:status'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Active', kind: 'property' },
+            { data: 'Done', kind: 'property' },
+            { data: 'None', kind: 'property' }
+        ]);
+        expect(getFileItems(items).map(item => item.path)).toEqual([active.path, done.path, doneAgain.path, missing.path]);
+
+        const doneHeader = items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Done');
+        expect(doneHeader?.groupFilePaths).toEqual([done.path, doneAgain.path]);
+        expect(doneHeader?.collapseKey).toBe(createCollapseKey('property:status', 'property-value:Done'));
+    });
+
+    it('orders groups descending while keeping the None group last and collapse keys direction-independent', () => {
+        const done = createTestTFile('notes/Alpha.md');
+        const active = createTestTFile('notes/Beta.md');
+        const missing = createTestTFile('notes/Delta.md');
+        const app = createFrontmatterApp({
+            [done.path]: { status: 'Done' },
+            [active.path]: { status: 'Active' },
+            [missing.path]: {}
+        });
+        const db = createDb({
+            [done.path]: { tags: null, properties: null },
+            [active.path]: { tags: null, properties: null },
+            [missing.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [done, active, missing],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({}),
+                groupBy: 'property-desc:status'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Done', kind: 'property' },
+            { data: 'Active', kind: 'property' },
+            { data: 'None', kind: 'property' }
+        ]);
+
+        const doneHeader = items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Done');
+        expect(doneHeader?.collapseKey).toBe(createCollapseKey('property:status', 'property-value:Done'));
+        expect(createCollapseKey('property-desc:status', 'property-value:Done')).toBe(
+            createCollapseKey('property:status', 'property-value:Done')
+        );
+    });
+
+    it('groups list values under their joined string and skips property rows for collapsed groups', () => {
+        const listValued = createTestTFile('notes/List.md');
+        const scalar = createTestTFile('notes/Scalar.md');
+        const app = createFrontmatterApp({
+            [listValued.path]: { status: ['Active', 'Waiting'] },
+            [scalar.path]: { status: 'Active' }
+        });
+        const db = createDb({
+            [listValued.path]: { tags: null, properties: null },
+            [scalar.path]: { tags: null, properties: null }
+        });
+        const collapseKey = createCollapseKey('property:status', 'property-value:Active');
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [listValued, scalar],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({}),
+                groupBy: 'property:status'
+            },
+            collapsedListGroups: new Set([collapseKey]),
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Active', kind: 'property' },
+            { data: 'Active, Waiting', kind: 'property' }
+        ]);
+        expect(getFileItems(items).map(item => item.path)).toEqual([listValued.path]);
+        expect(findCollapsedListGroupRevealTarget(items, scalar.path, true)).toEqual({ type: 'list-group', collapseKey });
+    });
+
+    it('orders number-valued groups numerically, including negatives, with strings in natural order', () => {
+        const minusTen = createTestTFile('notes/MinusTen.md');
+        const minusTwo = createTestTFile('notes/MinusTwo.md');
+        const five = createTestTFile('notes/Five.md');
+        const text = createTestTFile('notes/Text.md');
+        const app = createFrontmatterApp({
+            [minusTen.path]: { score: -10 },
+            [minusTwo.path]: { score: -2 },
+            [five.path]: { score: 5 },
+            [text.path]: { score: '12 points' }
+        });
+        const db = createDb({
+            [minusTen.path]: { tags: null, properties: null },
+            [minusTwo.path]: { tags: null, properties: null },
+            [five.path]: { tags: null, properties: null },
+            [text.path]: { tags: null, properties: null }
+        });
+
+        const buildWithGrouping = (groupBy: 'property:score' | 'property-desc:score') =>
+            buildListItems({
+                app,
+                dayKey: '2026-03-07',
+                fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+                files: [minusTen, minusTwo, five, text],
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                hiddenFileState: new Map(),
+                hiddenTags: [],
+                listConfig: {
+                    ...createListConfig({}),
+                    groupBy
+                },
+                searchMetaMap: new Map(),
+                selectedFolder: null,
+                selectedTag: null,
+                selectionType: ItemType.FOLDER,
+                showHiddenItems: false,
+                sortOption: 'title-asc'
+            });
+
+        // A pure string collator would order '-2' after '-10'; numeric group keys compare numerically.
+        expect(getHeaderItems(buildWithGrouping('property:score')).map(header => header.data)).toEqual(['-10', '-2', '5', '12 points']);
+        expect(getHeaderItems(buildWithGrouping('property-desc:score')).map(header => header.data)).toEqual([
+            '12 points',
+            '5',
+            '-2',
+            '-10'
+        ]);
+    });
+
+    it('keeps mixed numeric and text group order identical across all file encounter orders', () => {
+        // Numeric order says -10 < -2 while the collator places '-2' before '-3 points' before '-10',
+        // so a comparator that compares mixed pairs by label is intransitive and its output would
+        // depend on the file order. Every permutation must produce the same group order.
+        const minusTen = createTestTFile('notes/MinusTen.md');
+        const minusTwo = createTestTFile('notes/MinusTwo.md');
+        const text = createTestTFile('notes/Text.md');
+        const app = createFrontmatterApp({
+            [minusTen.path]: { score: -10 },
+            [minusTwo.path]: { score: -2 },
+            [text.path]: { score: '-3 points' }
+        });
+        const db = createDb({
+            [minusTen.path]: { tags: null, properties: null },
+            [minusTwo.path]: { tags: null, properties: null },
+            [text.path]: { tags: null, properties: null }
+        });
+
+        const buildWithFiles = (files: TFile[], groupBy: 'property:score' | 'property-desc:score') =>
+            buildListItems({
+                app,
+                dayKey: '2026-03-07',
+                fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+                files,
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                hiddenFileState: new Map(),
+                hiddenTags: [],
+                listConfig: {
+                    ...createListConfig({}),
+                    groupBy
+                },
+                searchMetaMap: new Map(),
+                selectedFolder: null,
+                selectedTag: null,
+                selectionType: ItemType.FOLDER,
+                showHiddenItems: false,
+                sortOption: 'title-asc'
+            });
+
+        const permutations: TFile[][] = [
+            [minusTen, minusTwo, text],
+            [minusTen, text, minusTwo],
+            [minusTwo, minusTen, text],
+            [minusTwo, text, minusTen],
+            [text, minusTen, minusTwo],
+            [text, minusTwo, minusTen]
+        ];
+        for (const files of permutations) {
+            expect(getHeaderItems(buildWithFiles(files, 'property:score')).map(header => header.data)).toEqual(['-10', '-2', '-3 points']);
+            expect(getHeaderItems(buildWithFiles(files, 'property-desc:score')).map(header => header.data)).toEqual([
+                '-3 points',
+                '-2',
+                '-10'
+            ]);
+        }
+    });
+
+    it('orders case-variant group labels by bucket key instead of file encounter order', () => {
+        // The collator compares labels at base sensitivity, so 'Apple' and 'apple' form distinct
+        // buckets whose labels compare equal; the bucket-key tie-break must produce the same order
+        // regardless of which file is encountered first.
+        const upper = createTestTFile('notes/Upper.md');
+        const lower = createTestTFile('notes/Lower.md');
+        const app = createFrontmatterApp({
+            [upper.path]: { status: 'Apple' },
+            [lower.path]: { status: 'apple' }
+        });
+        const db = createDb({
+            [upper.path]: { tags: null, properties: null },
+            [lower.path]: { tags: null, properties: null }
+        });
+
+        const buildWithFiles = (files: TFile[], groupBy: 'property:status' | 'property-desc:status') =>
+            buildListItems({
+                app,
+                dayKey: '2026-03-07',
+                fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+                files,
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                hiddenFileState: new Map(),
+                hiddenTags: [],
+                listConfig: {
+                    ...createListConfig({}),
+                    groupBy
+                },
+                searchMetaMap: new Map(),
+                selectedFolder: null,
+                selectedTag: null,
+                selectionType: ItemType.FOLDER,
+                showHiddenItems: false,
+                sortOption: 'title-asc'
+            });
+
+        for (const files of [
+            [upper, lower],
+            [lower, upper]
+        ]) {
+            expect(getHeaderItems(buildWithFiles(files, 'property:status')).map(header => header.data)).toEqual(['Apple', 'apple']);
+            expect(getHeaderItems(buildWithFiles(files, 'property-desc:status')).map(header => header.data)).toEqual(['apple', 'Apple']);
+        }
+    });
+
+    it('keeps lists with different element boundaries in separate groups and merges single-element lists with scalars', () => {
+        const splitEarly = createTestTFile('notes/SplitEarly.md');
+        const splitLate = createTestTFile('notes/SplitLate.md');
+        const singleList = createTestTFile('notes/SingleList.md');
+        const scalar = createTestTFile('notes/Scalar.md');
+        const app = createFrontmatterApp({
+            [splitEarly.path]: { status: ['a b', 'c'] },
+            [splitLate.path]: { status: ['a', 'b c'] },
+            [singleList.path]: { status: ['Solo'] },
+            [scalar.path]: { status: 'Solo' }
+        });
+        const db = createDb({
+            [splitEarly.path]: { tags: null, properties: null },
+            [splitLate.path]: { tags: null, properties: null },
+            [singleList.path]: { tags: null, properties: null },
+            [scalar.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [splitEarly, splitLate, singleList, scalar],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: {
+                ...createListConfig({}),
+                groupBy: 'property:status'
+            },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        // The collator ignores punctuation at base sensitivity, so the two list labels tie and the
+        // stable sort keeps their encounter order.
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'a b, c', kind: 'property' },
+            { data: 'a, b c', kind: 'property' },
+            { data: 'Solo', kind: 'property' }
+        ]);
+
+        const soloHeader = items.find(item => item.type === ListPaneItemType.HEADER && item.data === 'Solo');
+        expect(soloHeader?.groupFilePaths).toEqual([singleList.path, scalar.path]);
+    });
+});

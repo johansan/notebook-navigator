@@ -58,6 +58,7 @@ export const STRINGS_PT = {
         manualSortHint: 'Arraste para reordenar. A ordem é guardada como valores de índice numéricos na propriedade "{property}".',
         manualSortNonMarkdownHint: 'Os ficheiros não Markdown são mostrados no fundo e não podem ser reordenados.',
         unsortedSection: 'Sem ordenação',
+        propertyGroupNoValue: 'Nenhum',
         manualSortDone: 'Concluído',
         manualSortMultipleWriteFailure: '{count} ficheiros falharam; primeiro: {path}: {message}'
     },
@@ -1043,7 +1044,7 @@ export const STRINGS_PT = {
             list: {
                 display: 'Aparência',
                 groupHeaders: 'Cabeçalhos de grupo',
-                propertySort: 'Ordenação por propriedade',
+                propertySort: 'Ordenação e agrupamento por propriedade',
                 manualSort: 'Ordenação manual',
                 pinnedNotes: 'Notas fixadas',
                 drawingPreviews: 'Pré-visualizações de desenhos'
@@ -1103,8 +1104,8 @@ export const STRINGS_PT = {
                 }
             },
             propertySortKey: {
-                name: 'Propriedades para ordenar',
-                desc: 'Propriedades frontmatter separadas por vírgulas mostradas como opções de ordenação por propriedade. Os valores de array são juntos numa única cadeia. Estas propriedades não são alteradas.',
+                name: 'Propriedades de ordenação e agrupamento',
+                desc: 'Propriedades frontmatter separadas por vírgulas. Cada propriedade aparece como uma opção de ordenação e uma opção de agrupamento no menu de ordenação do painel de lista. Estas propriedades não são alteradas.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1118,7 +1119,7 @@ export const STRINGS_PT = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Cada propriedade listada acima aparece como uma opção de ordenação no menu de ordenação do painel de lista. Ao selecionar uma, as notas são ordenadas pelo seu valor frontmatter.'
+                intro: 'Cada propriedade listada acima aparece como uma opção de ordenação e uma opção de agrupamento no menu de ordenação do painel de lista. A ordenação ordena as notas pelo valor do frontmatter, com os valores de array juntos numa única cadeia. O agrupamento reúne as notas que partilham o mesmo valor sob um cabeçalho; as notas com um valor de lista são agrupadas pela lista completa, e as notas sem a propriedade ficam num grupo "Nenhum" no final.'
             },
             manualSortPropertyKey: {
                 name: 'Propriedade de ordenação manual',
@@ -1175,7 +1176,7 @@ export const STRINGS_PT = {
             },
             groupNotes: {
                 name: 'Agrupamento predefinido',
-                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. As vistas de etiqueta e propriedade usam grupos de data quando uma pasta está selecionada.',
+                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. As vistas de etiqueta e propriedade usam grupos de data quando uma pasta está selecionada. O agrupamento por um valor de propriedade do frontmatter está disponível para cada vista no menu de ordenação do painel de lista.',
                 options: {
                     custom: 'Personalizado',
                     date: 'Data',
@@ -1188,7 +1189,7 @@ export const STRINGS_PT = {
             },
             stickyGroupHeaders: {
                 name: 'Cabeçalhos de grupo fixos',
-                desc: 'Mantém o cabeçalho atual de data, pasta ou secção fixada visível ao deslocar.'
+                desc: 'Mantém o cabeçalho atual de data, pasta, propriedade ou secção fixada visível ao deslocar.'
             },
             showFolderGroupPaths: {
                 name: 'Mostrar caminhos das subpastas',

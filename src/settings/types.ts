@@ -415,19 +415,81 @@ export function isListDisplayMode(value: unknown): value is ListDisplayMode {
     return value === 'standard' || value === 'compact';
 }
 
-/** Grouping options for list pane notes */
-export type ListNoteGroupingOption = 'custom' | 'date' | 'folder';
+/** Built-in grouping modes for list pane notes */
+export type ListNoteGroupingBaseOption = 'custom' | 'date' | 'folder';
 
-export function isListNoteGroupingOption(value: unknown): value is ListNoteGroupingOption {
+/** Direction applied to property grouping group order */
+export type PropertyGroupingDirection = 'asc' | 'desc';
+
+/**
+ * Grouping options for list pane notes.
+ * Property grouping is stored as `property:<frontmatter key>` (ascending group order) or
+ * `property-desc:<frontmatter key>` (descending group order) so appearance records keep a
+ * single scalar `groupBy` value across settings sync. The direction lives in the prefix
+ * because keys may themselves contain separator characters such as `:`.
+ */
+export type ListNoteGroupingOption = ListNoteGroupingBaseOption | `property:${string}` | `property-desc:${string}`;
+
+const PROPERTY_GROUPING_PREFIX = 'property:';
+const PROPERTY_GROUPING_DESC_PREFIX = 'property-desc:';
+
+function isListNoteGroupingBaseOption(value: unknown): value is ListNoteGroupingBaseOption {
     return value === 'custom' || value === 'date' || value === 'folder';
 }
 
-export function normalizeListNoteGroupingOption(value: unknown): ListNoteGroupingOption | null {
+function parsePropertyGroupingOption(value: unknown): { propertyKey: string; direction: PropertyGroupingDirection } | null {
+    if (typeof value !== 'string') {
+        return null;
+    }
+
+    // The descending prefix must be tested first because both prefixes start with `property`.
+    const direction: PropertyGroupingDirection = value.startsWith(PROPERTY_GROUPING_DESC_PREFIX) ? 'desc' : 'asc';
+    const prefix = direction === 'desc' ? PROPERTY_GROUPING_DESC_PREFIX : PROPERTY_GROUPING_PREFIX;
+    if (!value.startsWith(prefix)) {
+        return null;
+    }
+
+    const propertyKey = value.slice(prefix.length).trim();
+    return propertyKey.length > 0 ? { propertyKey, direction } : null;
+}
+
+/** Returns the frontmatter key encoded in a property grouping option, or null for base grouping modes. */
+export function getPropertyGroupingKey(value: unknown): string | null {
+    return parsePropertyGroupingOption(value)?.propertyKey ?? null;
+}
+
+/** Returns the group order direction of a property grouping option, or null for base grouping modes. */
+export function getPropertyGroupingDirection(value: unknown): PropertyGroupingDirection | null {
+    return parsePropertyGroupingOption(value)?.direction ?? null;
+}
+
+export function createPropertyGroupingOption(propertyKey: string, direction: PropertyGroupingDirection = 'asc'): ListNoteGroupingOption {
+    const prefix = direction === 'desc' ? PROPERTY_GROUPING_DESC_PREFIX : PROPERTY_GROUPING_PREFIX;
+    return `${prefix}${propertyKey.trim()}`;
+}
+
+/**
+ * Validates the vault-wide default grouping, which never supports property grouping.
+ * Property grouping is a per-view override, so the global default rejects property
+ * encodings that appearance overrides accept.
+ */
+export function normalizeListNoteGroupingBaseOption(value: unknown): ListNoteGroupingBaseOption | null {
     if (value === 'none') {
         return 'custom';
     }
 
-    return isListNoteGroupingOption(value) ? value : null;
+    return isListNoteGroupingBaseOption(value) ? value : null;
+}
+
+export function normalizeListNoteGroupingOption(value: unknown): ListNoteGroupingOption | null {
+    const baseOption = normalizeListNoteGroupingBaseOption(value);
+    if (baseOption) {
+        return baseOption;
+    }
+
+    // Re-encode property groupings so stored values always carry a trimmed key.
+    const parsed = parsePropertyGroupingOption(value);
+    return parsed ? createPropertyGroupingOption(parsed.propertyKey, parsed.direction) : null;
 }
 
 export interface AppearanceGroupingValue {
@@ -669,7 +731,8 @@ export interface NotebookNavigatorSettings {
     confirmBeforeManualSort: boolean;
     revealFileOnListChanges: boolean;
     listPaneTitle: ListPaneTitleOption;
-    noteGrouping: ListNoteGroupingOption;
+    // The vault-wide default supports only the base modes; property grouping is a per-view override.
+    noteGrouping: ListNoteGroupingBaseOption;
     showSelectedNavigationPills: boolean;
     stickyGroupHeaders: boolean;
     showFolderGroupPaths: boolean;

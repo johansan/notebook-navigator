@@ -58,6 +58,7 @@ export const STRINGS_VI = {
         manualSortHint: 'Kéo để sắp xếp lại. Thứ tự được lưu dưới dạng giá trị chỉ số trong thuộc tính "{property}".',
         manualSortNonMarkdownHint: 'Các tệp không phải Markdown được hiển thị ở dưới cùng và không thể sắp xếp lại.',
         unsortedSection: 'Chưa sắp xếp',
+        propertyGroupNoValue: 'Không có',
         manualSortDone: 'Xong',
         manualSortMultipleWriteFailure: '{count} tệp thất bại; đầu tiên: {path}: {message}'
     },
@@ -1044,7 +1045,7 @@ export const STRINGS_VI = {
             list: {
                 display: 'Giao diện',
                 groupHeaders: 'Header nhóm',
-                propertySort: 'Sắp xếp theo thuộc tính',
+                propertySort: 'Sắp xếp và nhóm theo thuộc tính',
                 manualSort: 'Sắp xếp thủ công',
                 pinnedNotes: 'Ghi chú đã ghim',
                 drawingPreviews: 'Xem trước bản vẽ'
@@ -1104,8 +1105,8 @@ export const STRINGS_VI = {
                 }
             },
             propertySortKey: {
-                name: 'Thuộc tính để sắp xếp',
-                desc: 'Các thuộc tính frontmatter phân cách bằng dấu phẩy hiển thị làm tùy chọn sắp xếp theo thuộc tính. Mảng được kết hợp thành một chuỗi. Các thuộc tính này không bị thay đổi.',
+                name: 'Thuộc tính sắp xếp và nhóm',
+                desc: 'Các thuộc tính frontmatter phân cách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1119,7 +1120,7 @@ export const STRINGS_VI = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Mỗi thuộc tính được liệt kê ở trên xuất hiện làm tùy chọn sắp xếp trong menu sắp xếp ở ngăn danh sách. Chọn một sẽ sắp xếp ghi chú theo giá trị frontmatter của nó.'
+                intro: 'Mỗi thuộc tính được liệt kê ở trên xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Sắp xếp sẽ xếp thứ tự ghi chú theo giá trị frontmatter, với các giá trị mảng được kết hợp thành một chuỗi. Nhóm sẽ gom các ghi chú có cùng giá trị dưới một header; ghi chú có giá trị dạng danh sách được nhóm theo toàn bộ danh sách, còn các ghi chú thiếu thuộc tính này nằm trong nhóm "Không có" ở cuối.'
             },
             manualSortPropertyKey: {
                 name: 'Thuộc tính sắp xếp thủ công',
@@ -1176,7 +1177,7 @@ export const STRINGS_VI = {
             },
             groupNotes: {
                 name: 'Nhóm mặc định',
-                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn.',
+                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn. Nhóm theo giá trị thuộc tính frontmatter khả dụng riêng cho từng chế độ xem từ menu sắp xếp trong ngăn danh sách.',
                 options: {
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',
@@ -1189,7 +1190,7 @@ export const STRINGS_VI = {
             },
             stickyGroupHeaders: {
                 name: 'Header nhóm cố định',
-                desc: 'Giữ header phần ngày, thư mục hoặc đã ghim hiện tại hiển thị khi cuộn.'
+                desc: 'Giữ header phần ngày, thư mục, thuộc tính hoặc đã ghim hiện tại hiển thị khi cuộn.'
             },
             showFolderGroupPaths: {
                 name: 'Hiện đường dẫn thư mục con',

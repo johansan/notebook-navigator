@@ -17,8 +17,17 @@
  */
 
 import { ItemType } from '../types';
+import { createPropertyGroupingOption, getPropertyGroupingDirection, getPropertyGroupingKey } from '../settings/types';
 import type { ListNoteGroupingOption, ListSortOverrideValue, NotebookNavigatorSettings, SortOption } from '../settings/types';
-import { getSortField, isDateSortOption, isManualSortPropertyKey, resolveListSort } from './sortUtils';
+import { casefold } from './recordUtils';
+import {
+    getManualSortPropertyKey,
+    getSortField,
+    isDateSortOption,
+    isManualSortPropertyKey,
+    parsePropertySortKeys,
+    resolveListSort
+} from './sortUtils';
 
 interface ResolveListGroupingParams {
     settings: Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
@@ -54,6 +63,11 @@ export function resolveEffectiveListGroupingForSort({
         return 'custom';
     }
 
+    // Property grouping buckets by frontmatter value independent of the file order, so it survives every sort.
+    if (getPropertyGroupingKey(groupBy) !== null) {
+        return groupBy;
+    }
+
     if (getSortField(sortOption) === 'property') {
         return selectionType === ItemType.FOLDER && groupBy === 'folder' ? 'folder' : 'custom';
     }
@@ -63,6 +77,123 @@ export function resolveEffectiveListGroupingForSort({
     }
 
     return groupBy;
+}
+
+/** Compares grouping options with case-insensitive property keys, matching how sort override keys are matched. */
+export function areListGroupingOptionsEqual(left: ListNoteGroupingOption, right: ListNoteGroupingOption): boolean {
+    if (left === right) {
+        return true;
+    }
+
+    const leftPropertyKey = getPropertyGroupingKey(left);
+    const rightPropertyKey = getPropertyGroupingKey(right);
+    if (leftPropertyKey === null || rightPropertyKey === null) {
+        return false;
+    }
+
+    return (
+        casefold(leftPropertyKey) === casefold(rightPropertyKey) &&
+        getPropertyGroupingDirection(left) === getPropertyGroupingDirection(right)
+    );
+}
+
+/** Compares grouping options ignoring group order direction, so a direction change stays on the same grouping property. */
+export function areListGroupingOptionsSameKind(left: ListNoteGroupingOption, right: ListNoteGroupingOption): boolean {
+    if (left === right) {
+        return true;
+    }
+
+    const leftPropertyKey = getPropertyGroupingKey(left);
+    const rightPropertyKey = getPropertyGroupingKey(right);
+    if (leftPropertyKey === null || rightPropertyKey === null) {
+        return false;
+    }
+
+    return casefold(leftPropertyKey) === casefold(rightPropertyKey);
+}
+
+const APPEARANCE_RECORD_KEYS = ['folderAppearances', 'tagAppearances', 'propertyAppearances'] as const;
+
+/**
+ * Removes property grouping overrides whose key is no longer configured in the property sort list.
+ * The manual sort key never appears as a grouping choice, so overrides referencing it are removed too.
+ * Returns true when at least one appearance record changed; callers persist the settings on change.
+ */
+export function pruneUnavailablePropertyGroupingOverrides(settings: NotebookNavigatorSettings): boolean {
+    const manualSortPropertyKey = casefold(getManualSortPropertyKey(settings));
+    const availablePropertyKeys = new Set(
+        parsePropertySortKeys(settings.propertySortKey)
+            .map(propertyKey => casefold(propertyKey))
+            .filter(propertyKey => propertyKey !== manualSortPropertyKey)
+    );
+    let changed = false;
+
+    APPEARANCE_RECORD_KEYS.forEach(recordKey => {
+        const record = settings[recordKey];
+        if (!record) {
+            return;
+        }
+
+        Object.entries(record).forEach(([entryKey, appearance]) => {
+            const propertyKey = getPropertyGroupingKey(appearance?.groupBy);
+            if (propertyKey === null || availablePropertyKeys.has(casefold(propertyKey))) {
+                return;
+            }
+
+            delete appearance.groupBy;
+            // A grouping-only appearance becomes an empty object; drop the entry so no
+            // field-less record stays persisted and counted as stored metadata.
+            if (Object.keys(appearance).length === 0) {
+                delete record[entryKey];
+            }
+            changed = true;
+        });
+    });
+
+    return changed;
+}
+
+/**
+ * Rewrites property grouping overrides after a frontmatter key rename, or removes them when the key is deleted.
+ * Passing null as the new key deletes matching overrides. Returns true when at least one appearance record changed.
+ */
+export function updatePropertyGroupingOverrideKeys(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    let changed = false;
+
+    APPEARANCE_RECORD_KEYS.forEach(recordKey => {
+        const record = settings[recordKey];
+        if (!record) {
+            return;
+        }
+
+        Object.entries(record).forEach(([entryKey, appearance]) => {
+            const propertyKey = getPropertyGroupingKey(appearance?.groupBy);
+            if (propertyKey === null || casefold(propertyKey) !== oldKeyNormalized) {
+                return;
+            }
+
+            if (newKeyDisplay) {
+                appearance.groupBy = createPropertyGroupingOption(
+                    newKeyDisplay,
+                    getPropertyGroupingDirection(appearance?.groupBy) ?? 'asc'
+                );
+            } else {
+                delete appearance.groupBy;
+                // A grouping-only appearance becomes an empty object; drop the entry so no
+                // field-less record stays persisted and counted as stored metadata.
+                if (Object.keys(appearance).length === 0) {
+                    delete record[entryKey];
+                }
+            }
+            changed = true;
+        });
+    });
+
+    return changed;
 }
 
 export function resolveListGroupingOverride({

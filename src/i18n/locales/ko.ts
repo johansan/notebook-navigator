@@ -58,6 +58,7 @@ export const STRINGS_KO = {
         manualSortHint: '드래그하여 순서를 변경하세요. 순서는 숫자 인덱스 값으로 속성 "{property}"에 저장됩니다.',
         manualSortNonMarkdownHint: '마크다운이 아닌 파일은 하단에 표시되며 순서를 변경할 수 없습니다.',
         unsortedSection: '정렬되지 않음',
+        propertyGroupNoValue: '없음',
         manualSortDone: '완료',
         manualSortMultipleWriteFailure: '{count}개 파일 실패; 첫 번째: {path}: {message}'
     },
@@ -1040,7 +1041,7 @@ export const STRINGS_KO = {
             list: {
                 display: '모양',
                 groupHeaders: '그룹 머리글',
-                propertySort: '속성 정렬',
+                propertySort: '속성 정렬 및 그룹화',
                 manualSort: '수동 정렬',
                 pinnedNotes: '고정된 노트',
                 drawingPreviews: '그림 미리보기'
@@ -1100,8 +1101,8 @@ export const STRINGS_KO = {
                 }
             },
             propertySortKey: {
-                name: '정렬에 사용할 속성',
-                desc: '속성 정렬 옵션으로 표시되는 쉼표로 구분된 frontmatter 속성. 배열 값은 하나의 문자열로 결합됩니다. 이 속성들은 변경되지 않습니다.',
+                name: '정렬 및 그룹화에 사용할 속성',
+                desc: '쉼표로 구분된 frontmatter 속성. 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1115,7 +1116,7 @@ export const STRINGS_KO = {
                 }
             },
             propertySortInstructions: {
-                intro: '위에 나열된 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션으로 표시됩니다. 그중 하나를 선택하면 해당 frontmatter 값으로 노트가 정렬됩니다.'
+                intro: '위에 나열된 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 정렬은 frontmatter 값으로 노트를 정렬하며, 배열 값은 하나의 문자열로 결합됩니다. 그룹화는 같은 값을 가진 노트를 하나의 머리글 아래에 모읍니다. 목록 값을 가진 노트는 전체 목록으로 그룹화되고, 속성이 없는 노트는 마지막의 "없음" 그룹에 들어갑니다.'
             },
             manualSortPropertyKey: {
                 name: '수동 정렬 속성',
@@ -1172,7 +1173,7 @@ export const STRINGS_KO = {
             },
             groupNotes: {
                 name: '기본 그룹화',
-                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다.',
+                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다. frontmatter 속성 값별 그룹화는 목록 창의 정렬 메뉴에서 보기별로 사용할 수 있습니다.',
                 options: {
                     custom: '사용자 지정',
                     date: '날짜',
@@ -1185,7 +1186,7 @@ export const STRINGS_KO = {
             },
             stickyGroupHeaders: {
                 name: '그룹 헤더 고정',
-                desc: '스크롤하는 동안 현재 날짜, 폴더 또는 고정된 섹션 헤더를 계속 표시합니다.'
+                desc: '스크롤하는 동안 현재 날짜, 폴더, 속성 또는 고정된 섹션 헤더를 계속 표시합니다.'
             },
             showFolderGroupPaths: {
                 name: '하위 폴더 경로 표시',
