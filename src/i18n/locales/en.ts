@@ -386,11 +386,17 @@ export const STRINGS_EN = {
             addSeparator: 'Add separator',
             removeSeparator: 'Remove separator'
         },
-        copyPath: {
-            title: 'Copy path',
-            asObsidianUrl: 'as Obsidian URL',
-            fromVaultFolder: 'from vault folder',
-            fromSystemRoot: 'from system root'
+        copy: {
+            title: 'Copy',
+            noteLink: 'note link',
+            fileLink: 'file link',
+            noteLinkAsFootnote: 'note link as footnote',
+            fileLinkAsFootnote: 'file link as footnote',
+            noteEmbed: 'note embed',
+            fileEmbed: 'file embed',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'path from vault folder',
+            pathFromSystemRoot: 'path from system root'
         },
         style: {
             title: 'Style',
@@ -798,6 +804,9 @@ export const STRINGS_EN = {
             deepLinkCopied: 'Obsidian URL copied to clipboard',
             pathCopied: 'Path copied to clipboard',
             relativePathCopied: 'Relative path copied to clipboard',
+            linkCopied: 'Link copied to clipboard',
+            footnoteLinkCopied: 'Footnote link copied to clipboard',
+            embedLinkCopied: 'Embed link copied to clipboard',
             tagAddedToNote: 'Added tag to 1 note',
             tagAddedToNotes: 'Added tag to {count} notes',
             tagRemovedFromNote: 'Removed tag from 1 note',

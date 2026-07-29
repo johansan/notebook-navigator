@@ -385,11 +385,17 @@ export const STRINGS_KO = {
             addSeparator: '구분선 추가',
             removeSeparator: '구분선 제거'
         },
-        copyPath: {
-            title: '경로 복사',
-            asObsidianUrl: 'Obsidian URL로',
-            fromVaultFolder: 'Vault 폴더에서',
-            fromSystemRoot: '시스템 루트에서'
+        copy: {
+            title: '복사',
+            noteLink: '노트 링크',
+            fileLink: '파일 링크',
+            noteLinkAsFootnote: '각주로 노트 링크',
+            fileLinkAsFootnote: '각주로 파일 링크',
+            noteEmbed: '노트 임베드',
+            fileEmbed: '파일 임베드',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'Vault 폴더 기준 경로',
+            pathFromSystemRoot: '시스템 루트 기준 경로'
         },
         style: {
             title: '스타일',
@@ -801,6 +807,9 @@ export const STRINGS_KO = {
             deepLinkCopied: 'Obsidian URL이 클립보드에 복사됨',
             pathCopied: '경로가 클립보드에 복사됨',
             relativePathCopied: '상대 경로가 클립보드에 복사됨',
+            linkCopied: '링크가 클립보드에 복사됨',
+            footnoteLinkCopied: '각주 링크가 클립보드에 복사됨',
+            embedLinkCopied: '임베드 링크가 클립보드에 복사됨',
             tagAddedToNote: '1개의 노트에 태그 추가됨',
             tagAddedToNotes: '{count}개의 노트에 태그 추가됨',
             tagRemovedFromNote: '1개의 노트에서 태그 제거됨',

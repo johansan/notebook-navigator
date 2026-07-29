@@ -387,11 +387,17 @@ export const STRINGS_TR = {
             addSeparator: 'Ayırıcı ekle',
             removeSeparator: 'Ayırıcıyı kaldır'
         },
-        copyPath: {
-            title: 'Yolu kopyala',
-            asObsidianUrl: 'Obsidian URL olarak',
-            fromVaultFolder: 'kasa klasöründen',
-            fromSystemRoot: 'sistem kökünden'
+        copy: {
+            title: 'Kopyala',
+            noteLink: 'not bağlantısı',
+            fileLink: 'dosya bağlantısı',
+            noteLinkAsFootnote: 'dipnot olarak not bağlantısı',
+            fileLinkAsFootnote: 'dipnot olarak dosya bağlantısı',
+            noteEmbed: 'not gömme',
+            fileEmbed: 'dosya gömme',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'kasa klasöründen yol',
+            pathFromSystemRoot: 'sistem kökünden yol'
         },
         style: {
             title: 'Stil',
@@ -802,6 +808,9 @@ export const STRINGS_TR = {
             deepLinkCopied: 'Obsidian URL panoya kopyalandı',
             pathCopied: 'Yol panoya kopyalandı',
             relativePathCopied: 'Göreli yol panoya kopyalandı',
+            linkCopied: 'Bağlantı panoya kopyalandı',
+            footnoteLinkCopied: 'Dipnot bağlantısı panoya kopyalandı',
+            embedLinkCopied: 'Gömme bağlantısı panoya kopyalandı',
             tagAddedToNote: '1 nota etiket eklendi',
             tagAddedToNotes: '{count} nota etiket eklendi',
             tagRemovedFromNote: '1 nottan etiket kaldırıldı',

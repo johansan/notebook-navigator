@@ -386,11 +386,17 @@ export const STRINGS_TH = {
             addSeparator: 'เพิ่มตัวคั่น',
             removeSeparator: 'นำตัวคั่นออก'
         },
-        copyPath: {
-            title: 'คัดลอกเส้นทาง',
-            asObsidianUrl: 'เป็น URL Obsidian',
-            fromVaultFolder: 'จากโฟลเดอร์ห้องนิรภัย',
-            fromSystemRoot: 'จากรากระบบ'
+        copy: {
+            title: 'คัดลอก',
+            noteLink: 'ลิงก์โน้ต',
+            fileLink: 'ลิงก์ไฟล์',
+            noteLinkAsFootnote: 'ลิงก์โน้ตเป็นเชิงอรรถ',
+            fileLinkAsFootnote: 'ลิงก์ไฟล์เป็นเชิงอรรถ',
+            noteEmbed: 'การฝังโน้ต',
+            fileEmbed: 'การฝังไฟล์',
+            obsidianUrl: 'URL Obsidian',
+            pathFromVaultFolder: 'เส้นทางจากโฟลเดอร์ห้องนิรภัย',
+            pathFromSystemRoot: 'เส้นทางจากรากระบบ'
         },
         style: {
             title: 'สไตล์',
@@ -797,6 +803,9 @@ export const STRINGS_TH = {
             deepLinkCopied: 'คัดลอก URL Obsidian ไปคลิปบอร์ดแล้ว',
             pathCopied: 'คัดลอกเส้นทางไปคลิปบอร์ดแล้ว',
             relativePathCopied: 'คัดลอกเส้นทางสัมพัทธ์ไปคลิปบอร์ดแล้ว',
+            linkCopied: 'คัดลอกลิงก์ไปคลิปบอร์ดแล้ว',
+            footnoteLinkCopied: 'คัดลอกลิงก์เชิงอรรถไปคลิปบอร์ดแล้ว',
+            embedLinkCopied: 'คัดลอกลิงก์ฝังไปคลิปบอร์ดแล้ว',
             tagAddedToNote: 'เพิ่มแท็กใน 1 โน้ตแล้ว',
             tagAddedToNotes: 'เพิ่มแท็กใน {count} โน้ตแล้ว',
             tagRemovedFromNote: 'นำแท็กออกจาก 1 โน้ตแล้ว',

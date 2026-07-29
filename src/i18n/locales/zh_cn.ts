@@ -385,11 +385,17 @@ export const STRINGS_ZH_CN = {
             addSeparator: '添加分隔符',
             removeSeparator: '移除分隔符'
         },
-        copyPath: {
-            title: '复制路径',
-            asObsidianUrl: '作为 Obsidian URL',
-            fromVaultFolder: '从仓库文件夹',
-            fromSystemRoot: '从系统根目录'
+        copy: {
+            title: '复制',
+            noteLink: '笔记链接',
+            fileLink: '文件链接',
+            noteLinkAsFootnote: '脚注形式的笔记链接',
+            fileLinkAsFootnote: '脚注形式的文件链接',
+            noteEmbed: '笔记嵌入',
+            fileEmbed: '文件嵌入',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: '自仓库文件夹的路径',
+            pathFromSystemRoot: '自系统根目录的路径'
         },
         style: {
             title: '样式',
@@ -795,6 +801,9 @@ export const STRINGS_ZH_CN = {
             deepLinkCopied: 'Obsidian URL 已复制到剪贴板',
             pathCopied: '路径已复制到剪贴板',
             relativePathCopied: '相对路径已复制到剪贴板',
+            linkCopied: '链接已复制到剪贴板',
+            footnoteLinkCopied: '脚注链接已复制到剪贴板',
+            embedLinkCopied: '嵌入链接已复制到剪贴板',
             tagAddedToNote: '已将标签添加到 1 个笔记',
             tagAddedToNotes: '已将标签添加到 {count} 个笔记',
             tagRemovedFromNote: '已从 1 个笔记中移除标签',

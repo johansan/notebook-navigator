@@ -387,11 +387,17 @@ export const STRINGS_DE = {
             addSeparator: 'Trennlinie hinzufügen',
             removeSeparator: 'Trennlinie entfernen'
         },
-        copyPath: {
-            title: 'Pfad kopieren',
-            asObsidianUrl: 'als Obsidian-URL',
-            fromVaultFolder: 'vom Vault-Ordner',
-            fromSystemRoot: 'vom Systemstammverzeichnis'
+        copy: {
+            title: 'Kopieren',
+            noteLink: 'Notiz-Link',
+            fileLink: 'Datei-Link',
+            noteLinkAsFootnote: 'Notiz-Link als Fußnote',
+            fileLinkAsFootnote: 'Datei-Link als Fußnote',
+            noteEmbed: 'Notiz-Einbettung',
+            fileEmbed: 'Datei-Einbettung',
+            obsidianUrl: 'Obsidian-URL',
+            pathFromVaultFolder: 'Pfad vom Vault-Ordner',
+            pathFromSystemRoot: 'Pfad vom Systemstammverzeichnis'
         },
         style: {
             title: 'Stil',
@@ -806,6 +812,9 @@ export const STRINGS_DE = {
             deepLinkCopied: 'Obsidian-URL in die Zwischenablage kopiert',
             pathCopied: 'Pfad in die Zwischenablage kopiert',
             relativePathCopied: 'Relativen Pfad in die Zwischenablage kopiert',
+            linkCopied: 'Link in die Zwischenablage kopiert',
+            footnoteLinkCopied: 'Fußnoten-Link in die Zwischenablage kopiert',
+            embedLinkCopied: 'Einbettungs-Link in die Zwischenablage kopiert',
             tagAddedToNote: 'Tag zu 1 Notiz hinzugefügt',
             tagAddedToNotes: 'Tag zu {count} Notizen hinzugefügt',
             tagRemovedFromNote: 'Tag von 1 Notiz entfernt',

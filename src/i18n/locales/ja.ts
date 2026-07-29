@@ -386,11 +386,17 @@ export const STRINGS_JA = {
             addSeparator: '区切り線を追加',
             removeSeparator: '区切り線を削除'
         },
-        copyPath: {
-            title: 'パスをコピー',
-            asObsidianUrl: 'Obsidian URL として',
-            fromVaultFolder: 'Vault フォルダから',
-            fromSystemRoot: 'システムルートから'
+        copy: {
+            title: 'コピー',
+            noteLink: 'ノートリンク',
+            fileLink: 'ファイルリンク',
+            noteLinkAsFootnote: '脚注としてノートリンク',
+            fileLinkAsFootnote: '脚注としてファイルリンク',
+            noteEmbed: 'ノート埋め込み',
+            fileEmbed: 'ファイル埋め込み',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'Vault フォルダからのパス',
+            pathFromSystemRoot: 'システムルートからのパス'
         },
         style: {
             title: 'スタイル',
@@ -803,6 +809,9 @@ export const STRINGS_JA = {
             deepLinkCopied: 'Obsidian URL をクリップボードにコピーしました',
             pathCopied: 'パスをクリップボードにコピーしました',
             relativePathCopied: '相対パスをクリップボードにコピーしました',
+            linkCopied: 'リンクをクリップボードにコピーしました',
+            footnoteLinkCopied: '脚注リンクをクリップボードにコピーしました',
+            embedLinkCopied: '埋め込みリンクをクリップボードにコピーしました',
             tagAddedToNote: '1個のノートにタグを追加しました',
             tagAddedToNotes: '{count}個のノートにタグを追加しました',
             tagRemovedFromNote: '1個のノートからタグを削除しました',

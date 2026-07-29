@@ -386,11 +386,17 @@ export const STRINGS_AR = {
             addSeparator: 'إضافة فاصل',
             removeSeparator: 'إزالة الفاصل'
         },
-        copyPath: {
-            title: 'نسخ المسار',
-            asObsidianUrl: 'كرابط Obsidian',
-            fromVaultFolder: 'من مجلد الخزنة',
-            fromSystemRoot: 'من جذر النظام'
+        copy: {
+            title: 'نسخ',
+            noteLink: 'رابط الملاحظة',
+            fileLink: 'رابط الملف',
+            noteLinkAsFootnote: 'رابط الملاحظة كحاشية سفلية',
+            fileLinkAsFootnote: 'رابط الملف كحاشية سفلية',
+            noteEmbed: 'تضمين الملاحظة',
+            fileEmbed: 'تضمين الملف',
+            obsidianUrl: 'رابط Obsidian',
+            pathFromVaultFolder: 'المسار من مجلد الخزنة',
+            pathFromSystemRoot: 'المسار من جذر النظام'
         },
         style: {
             title: 'النمط',
@@ -799,6 +805,9 @@ export const STRINGS_AR = {
             deepLinkCopied: 'تم نسخ رابط Obsidian إلى الحافظة',
             pathCopied: 'تم نسخ المسار إلى الحافظة',
             relativePathCopied: 'تم نسخ المسار النسبي إلى الحافظة',
+            linkCopied: 'تم نسخ الرابط إلى الحافظة',
+            footnoteLinkCopied: 'تم نسخ رابط الحاشية السفلية إلى الحافظة',
+            embedLinkCopied: 'تم نسخ رابط التضمين إلى الحافظة',
             tagAddedToNote: 'تمت إضافة الوسم إلى ملاحظة واحدة',
             tagAddedToNotes: 'تمت إضافة الوسم إلى {count} ملاحظات',
             tagRemovedFromNote: 'تمت إزالة الوسم من ملاحظة واحدة',

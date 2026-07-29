@@ -389,11 +389,17 @@ export const STRINGS_NL = {
             addSeparator: 'Scheidingslijn toevoegen',
             removeSeparator: 'Scheidingslijn verwijderen'
         },
-        copyPath: {
-            title: 'Pad kopiëren',
-            asObsidianUrl: 'als Obsidian URL',
-            fromVaultFolder: 'vanuit vault-map',
-            fromSystemRoot: 'vanaf systeemroot'
+        copy: {
+            title: 'Kopiëren',
+            noteLink: 'notitielink',
+            fileLink: 'bestandslink',
+            noteLinkAsFootnote: 'notitielink als voetnoot',
+            fileLinkAsFootnote: 'bestandslink als voetnoot',
+            noteEmbed: 'notitie-insluiting',
+            fileEmbed: 'bestandsinsluiting',
+            obsidianUrl: 'Obsidian URL',
+            pathFromVaultFolder: 'pad vanuit vault-map',
+            pathFromSystemRoot: 'pad vanaf systeemroot'
         },
         style: {
             title: 'Stijl',
@@ -806,6 +812,9 @@ export const STRINGS_NL = {
             deepLinkCopied: 'Obsidian URL gekopieerd naar klembord',
             pathCopied: 'Pad gekopieerd naar klembord',
             relativePathCopied: 'Relatief pad gekopieerd naar klembord',
+            linkCopied: 'Link gekopieerd naar klembord',
+            footnoteLinkCopied: 'Voetnootlink gekopieerd naar klembord',
+            embedLinkCopied: 'Insluitlink gekopieerd naar klembord',
             tagAddedToNote: 'Tag toegevoegd aan 1 notitie',
             tagAddedToNotes: 'Tag toegevoegd aan {count} notities',
             tagRemovedFromNote: 'Tag verwijderd van 1 notitie',
