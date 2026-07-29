@@ -58,6 +58,7 @@ export const STRINGS_TR = {
         manualSortHint: 'Yeniden sıralamak için sürükleyin. Sıra, "{property}" özelliğinde sayısal indeks değerleri olarak kaydedilir.',
         manualSortNonMarkdownHint: 'Markdown olmayan dosyalar altta gösterilir ve yeniden sıralanamaz.',
         unsortedSection: 'Sıralanmamış',
+        propertyGroupNoValue: 'Yok',
         manualSortDone: 'Tamam',
         manualSortMultipleWriteFailure: '{count} dosya başarısız oldu; ilki: {path}: {message}'
     },
@@ -1041,7 +1042,7 @@ export const STRINGS_TR = {
             list: {
                 display: 'Görünüm',
                 groupHeaders: 'Grup başlıkları',
-                propertySort: 'Özelliğe göre sıralama',
+                propertySort: 'Özelliğe göre sıralama ve gruplama',
                 manualSort: 'Manuel sıralama',
                 pinnedNotes: 'Sabitlenmiş notlar',
                 drawingPreviews: 'Çizim önizlemeleri'
@@ -1101,8 +1102,8 @@ export const STRINGS_TR = {
                 }
             },
             propertySortKey: {
-                name: 'Sıralama özellikleri',
-                desc: 'Özelliğe göre sıralama seçenekleri olarak gösterilen virgülle ayrılmış frontmatter özellikleri. Dizi değerleri tek bir dizede birleştirilir. Bu özellikler değiştirilmez.',
+                name: 'Sıralama ve gruplama özellikleri',
+                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1116,7 +1117,7 @@ export const STRINGS_TR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Yukarıda listelenen her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği olarak görünür. Birini seçmek, notları frontmatter değerine göre sıralar.'
+                intro: 'Yukarıda listelenen her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Sıralama, notları frontmatter değerine göre sıralar ve dizi değerleri tek bir dizede birleştirilir. Gruplama, aynı değeri paylaşan notları tek bir başlık altında toplar; liste değerine sahip notlar tam listeye göre gruplanır ve özelliği olmayan notlar sondaki "Yok" grubunda yer alır.'
             },
             manualSortPropertyKey: {
                 name: 'Manuel sıralama özelliği',
@@ -1173,7 +1174,7 @@ export const STRINGS_TR = {
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
-                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır.",
+                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır. Bir frontmatter özellik değerine göre gruplama, liste bölmesindeki sıralama menüsünden her görünüm için ayrı ayrı kullanılabilir.",
                 options: {
                     custom: 'Özel',
                     date: 'Tarih',
@@ -1186,7 +1187,7 @@ export const STRINGS_TR = {
             },
             stickyGroupHeaders: {
                 name: 'Yapışkan grup başlıkları',
-                desc: 'Geçerli tarih, klasör veya sabitlenmiş bölüm başlığını kaydırırken görünür tut.'
+                desc: 'Geçerli tarih, klasör, özellik veya sabitlenmiş bölüm başlığını kaydırırken görünür tut.'
             },
             showFolderGroupPaths: {
                 name: 'Alt klasör yollarını göster',

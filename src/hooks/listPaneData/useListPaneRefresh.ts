@@ -20,6 +20,7 @@ import { useEffect, useRef } from 'react';
 import { TFile } from 'obsidian';
 import { debounce } from 'obsidian';
 import type { App, TFolder } from 'obsidian';
+import { getPropertyGroupingKey } from '../../settings/types';
 import type { ListNoteGroupingOption, NotebookNavigatorSettings, PropertySortSecondaryOption, SortOption } from '../../settings/types';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { OperationType, type CommandQueueService } from '../../services/CommandQueueService';
@@ -315,15 +316,19 @@ export function useListPaneRefresh({
         }
 
         const shouldRefreshOnFileModify = shouldRefreshOnFileModifyForSort(sortOption, propertySortSecondary);
-        const shouldRefreshOnMetadataChange = shouldRefreshOnMetadataChangeForSort({
-            sortOption,
-            propertySortKey,
-            propertySortSecondary,
-            useFrontmatterMetadata: settings.useFrontmatterMetadata,
-            frontmatterNameField: settings.frontmatterNameField,
-            frontmatterCreatedField: settings.frontmatterCreatedField,
-            frontmatterModifiedField: settings.frontmatterModifiedField
-        });
+        // Property grouping reads frontmatter at list build time, so an edited grouping value must
+        // rebuild group membership even when the active sort ignores metadata changes.
+        const shouldRefreshOnMetadataChange =
+            getPropertyGroupingKey(groupBy) !== null ||
+            shouldRefreshOnMetadataChangeForSort({
+                sortOption,
+                propertySortKey,
+                propertySortSecondary,
+                useFrontmatterMetadata: settings.useFrontmatterMetadata,
+                frontmatterNameField: settings.frontmatterNameField,
+                frontmatterCreatedField: settings.frontmatterCreatedField,
+                frontmatterModifiedField: settings.frontmatterModifiedField
+            });
 
         const vaultEvents = [
             app.vault.on('create', () => {

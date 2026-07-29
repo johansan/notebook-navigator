@@ -58,6 +58,7 @@ export const STRINGS_JA = {
         manualSortHint: 'ドラッグして並べ替えます。並び順は数値インデックス値としてプロパティ「{property}」に保存されます。',
         manualSortNonMarkdownHint: 'Markdown 以外のファイルは下部に表示され、並べ替えできません。',
         unsortedSection: '未ソート',
+        propertyGroupNoValue: 'なし',
         manualSortDone: '完了',
         manualSortMultipleWriteFailure: '{count} 件のファイルが失敗しました。最初: {path}: {message}'
     },
@@ -1042,7 +1043,7 @@ export const STRINGS_JA = {
             list: {
                 display: '外観',
                 groupHeaders: 'グループヘッダー',
-                propertySort: 'プロパティで並べ替え',
+                propertySort: 'プロパティでの並べ替えとグループ化',
                 manualSort: '手動並べ替え',
                 pinnedNotes: 'ピン留めされたノート',
                 drawingPreviews: '描画プレビュー'
@@ -1102,8 +1103,8 @@ export const STRINGS_JA = {
                 }
             },
             propertySortKey: {
-                name: 'ソートに使うプロパティ',
-                desc: 'プロパティソートオプションとして表示されるカンマ区切りのfrontmatterプロパティ。配列値は1つの文字列に結合されます。これらのプロパティは変更されません。',
+                name: '並べ替えとグループ化に使うプロパティ',
+                desc: 'カンマ区切りのfrontmatterプロパティ。各プロパティは、リストペインの並べ替えメニューに並べ替えオプションおよびグループ化オプションとして表示されます。これらのプロパティは変更されません。',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1117,7 +1118,7 @@ export const STRINGS_JA = {
                 }
             },
             propertySortInstructions: {
-                intro: '上記の各プロパティは、リストペインの並べ替えメニューに並べ替えオプションとして表示されます。選択すると、そのフロントマターの値でノートが並べ替えられます。'
+                intro: '上記の各プロパティは、リストペインの並べ替えメニューに並べ替えオプションおよびグループ化オプションとして表示されます。並べ替えは、フロントマターの値でノートを並べ替え、配列値は 1 つの文字列に結合されます。グループ化は、同じ値を持つノートを 1 つのヘッダーの下にまとめます。リスト値を持つノートはリスト全体でグループ化され、プロパティがないノートは末尾の「なし」グループに入ります。'
             },
             manualSortPropertyKey: {
                 name: '手動並べ替え用プロパティ',
@@ -1174,7 +1175,7 @@ export const STRINGS_JA = {
             },
             groupNotes: {
                 name: 'デフォルトのグループ化',
-                desc: 'カスタムは frontmatter で定義されたヘッダーを表示します。日付はノートを日付でグループ化します。フォルダはノートをフォルダでグループ化します。タグとプロパティビューでは、フォルダが選択されている場合は日付グループが使用されます。',
+                desc: 'カスタムは frontmatter で定義されたヘッダーを表示します。日付はノートを日付でグループ化します。フォルダはノートをフォルダでグループ化します。タグとプロパティビューでは、フォルダが選択されている場合は日付グループが使用されます。frontmatter プロパティの値によるグループ化は、リストペインの並べ替えメニューからビューごとに利用できます。',
                 options: {
                     custom: 'カスタム',
                     date: '日付',
@@ -1187,7 +1188,7 @@ export const STRINGS_JA = {
             },
             stickyGroupHeaders: {
                 name: 'グループヘッダーを固定',
-                desc: 'スクロール中も現在の日付・フォルダ・ピン留めセクションのヘッダーを表示し続けます。'
+                desc: 'スクロール中も現在の日付・フォルダ・プロパティ・ピン留めセクションのヘッダーを表示し続けます。'
             },
             showFolderGroupPaths: {
                 name: 'サブフォルダーのパスを表示',

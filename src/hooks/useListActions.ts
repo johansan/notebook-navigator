@@ -24,7 +24,14 @@ import { useSettingsState, useSettingsUpdate } from '../context/SettingsContext'
 import { useUXPreferenceActions, useUXPreferences } from '../context/UXPreferencesContext';
 import { strings } from '../i18n';
 import { ConfirmModal } from '../modals/ConfirmModal';
-import type { ListNoteGroupingOption, ListSortOverrideValue, NotebookNavigatorSettings, SortOption } from '../settings/types';
+import { createPropertyGroupingOption, getPropertyGroupingDirection, getPropertyGroupingKey } from '../settings/types';
+import type {
+    ListNoteGroupingBaseOption,
+    ListNoteGroupingOption,
+    ListSortOverrideValue,
+    NotebookNavigatorSettings,
+    SortOption
+} from '../settings/types';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
 import {
     areListSortOverridesEqual,
@@ -67,7 +74,12 @@ import { buildPropertyKeyNodeId, parsePropertyNodeId } from '../utils/propertyTr
 import { getFilesForNavigationSelection } from '../utils/selectionUtils';
 import { findVaultProfileById } from '../utils/vaultProfiles';
 import { casefold, ensureRecord, sanitizeRecord } from '../utils/recordUtils';
-import { resolveEffectiveListGroupingForSort, resolveListGrouping } from '../utils/listGrouping';
+import {
+    areListGroupingOptionsEqual,
+    areListGroupingOptionsSameKind,
+    resolveEffectiveListGroupingForSort,
+    resolveListGrouping
+} from '../utils/listGrouping';
 import { getErrorMessage } from '../utils/errorUtils';
 import { showNotice } from '../utils/noticeUtils';
 import { registerActiveFileWorkspaceListeners } from '../utils/workspaceActiveFileEvents';
@@ -1209,10 +1221,11 @@ export function useListActions({
                 changed = true;
             }
 
-            if (hasCurrentGroupOverride) {
-                if (!groupByKey.has(key)) {
+            if (effectiveSelectionGroupOverride !== undefined) {
+                const savedGroupBy = groupByKey.get(key);
+                if (savedGroupBy === undefined) {
                     missingRequired = true;
-                } else if (groupByKey.get(key) !== effectiveSelectionGroupOverride) {
+                } else if (!areListGroupingOptionsEqual(savedGroupBy, effectiveSelectionGroupOverride)) {
                     changed = true;
                 }
             } else if (groupByKey.has(key)) {
@@ -1677,6 +1690,37 @@ export function useListActions({
                 });
             });
 
+            // Without configured property keys the property sort entries above render nothing, so a
+            // disabled placeholder keeps the feature visible, matching the disabled manual sort entry.
+            if (propertySortKeys.length === 0) {
+                menu.addItem(item => {
+                    item.setTitle(getSortFieldLabel('property')).setIcon(getSortFieldMenuIcon('property')).setDisabled(true);
+                });
+            }
+
+            menu.addSeparator();
+
+            (['asc', 'desc'] as const).forEach(direction => {
+                const isDefaultDirection = defaultDirection === direction;
+                menu.addItem(item => {
+                    const option = buildSortOption(currentField, direction);
+                    item.setTitle(withDefaultSuffix(sortDirectionLabels[direction], isDefaultDirection))
+                        .setIcon(getSortIconName(option))
+                        .setDisabled(isManualSortActive)
+                        .setChecked(currentDirection === direction)
+                        .onClick(() => {
+                            if (isManualSortActive) {
+                                return;
+                            }
+                            applySort(currentField, direction, currentField === 'property' ? currentSortSpec.propertyKey : undefined);
+                        });
+                });
+            });
+
+            menu.addSeparator();
+
+            // The manual sort toggle and its actions sit in their own separated cluster after the
+            // direction entries because those entries apply to the sort fields but not to manual sort.
             menu.addItem(item => {
                 const isDefaultField = defaultField === 'property' && isManualSortPropertyKey(settings, defaultSortSpec.propertyKey);
                 item.setTitle(withDefaultSuffix(strings.paneHeader.manualSort, isDefaultField))
@@ -1717,25 +1761,6 @@ export function useListActions({
 
             menu.addSeparator();
 
-            (['asc', 'desc'] as const).forEach(direction => {
-                const isDefaultDirection = defaultDirection === direction;
-                menu.addItem(item => {
-                    const option = buildSortOption(currentField, direction);
-                    item.setTitle(withDefaultSuffix(sortDirectionLabels[direction], isDefaultDirection))
-                        .setIcon(getSortIconName(option))
-                        .setDisabled(isManualSortActive)
-                        .setChecked(currentDirection === direction)
-                        .onClick(() => {
-                            if (isManualSortActive) {
-                                return;
-                            }
-                            applySort(currentField, direction, currentField === 'property' ? currentSortSpec.propertyKey : undefined);
-                        });
-                });
-            });
-
-            menu.addSeparator();
-
             menu.addItem(item => {
                 item.setTitle(strings.folderAppearance.groupBy).setIcon('lucide-layers').setDisabled(true);
             });
@@ -1748,16 +1773,14 @@ export function useListActions({
             });
             const isGroupOptionDisabled = (option: ListNoteGroupingOption): boolean =>
                 isManualSortActive || (option === 'date' && !isDateSortOption(currentSort));
-
-            const groupOptions: ListNoteGroupingOption[] = hasFolderSelection ? ['custom', 'date', 'folder'] : ['custom', 'date'];
-            groupOptions.forEach(option => {
-                const isDisabled = isGroupOptionDisabled(option);
-                const isDefaultGroup = option === groupingInfo.defaultGrouping;
+            const addGroupOptionItem = (option: ListNoteGroupingOption, title: string, icon: string, isDisabled: boolean): void => {
+                const isDefaultGroup = areListGroupingOptionsEqual(option, groupingInfo.defaultGrouping);
                 menu.addItem(item => {
-                    item.setTitle(`    ${withDefaultSuffix(strings.settings.items.groupNotes.options[option], isDefaultGroup)}`)
-                        .setIcon(getGroupingIcon(option))
+                    // Same-kind comparison keeps a property entry checked when only its group order direction differs.
+                    item.setTitle(`    ${withDefaultSuffix(title, isDefaultGroup)}`)
+                        .setIcon(icon)
                         .setDisabled(isDisabled)
-                        .setChecked(effectiveCurrentGroup === option)
+                        .setChecked(areListGroupingOptionsSameKind(effectiveCurrentGroup, option))
                         .onClick(() => {
                             if (isDisabled) {
                                 return;
@@ -1768,7 +1791,61 @@ export function useListActions({
                             });
                         });
                 });
+            };
+
+            const groupOptions: ListNoteGroupingBaseOption[] = hasFolderSelection ? ['custom', 'date', 'folder'] : ['custom', 'date'];
+            groupOptions.forEach(option => {
+                addGroupOptionItem(
+                    option,
+                    strings.settings.items.groupNotes.options[option],
+                    getGroupingIcon(option),
+                    isGroupOptionDisabled(option)
+                );
             });
+
+            // The properties registered for property sort double as grouping choices, mirroring the sort field list above.
+            // Switching the grouping property keeps the current group order direction, matching Obsidian Bases.
+            const effectiveGroupPropertyKey = getPropertyGroupingKey(effectiveCurrentGroup);
+            const effectiveGroupDirection = getPropertyGroupingDirection(effectiveCurrentGroup) ?? 'asc';
+            propertySortKeys.forEach(propertyKey => {
+                addGroupOptionItem(
+                    createPropertyGroupingOption(propertyKey, effectiveGroupDirection),
+                    getSortFieldLabel('property', propertyKey),
+                    getSortFieldMenuIcon('property', propertyKey),
+                    isManualSortActive
+                );
+            });
+
+            // Without configured property keys the property grouping entries above render nothing, so a
+            // disabled placeholder keeps the feature visible, matching the disabled manual sort entry.
+            if (propertySortKeys.length === 0) {
+                menu.addItem(item => {
+                    item.setTitle(`    ${getSortFieldLabel('property')}`)
+                        .setIcon(getSortFieldMenuIcon('property'))
+                        .setDisabled(true);
+                });
+            }
+
+            // Group order direction applies only to property grouping; date and folder groups keep their fixed order.
+            if (effectiveGroupPropertyKey !== null) {
+                menu.addSeparator();
+                (['asc', 'desc'] as const).forEach(direction => {
+                    menu.addItem(item => {
+                        item.setTitle(`    ${sortDirectionLabels[direction]}`)
+                            .setIcon(direction === 'desc' ? 'lucide-sort-desc' : 'lucide-sort-asc')
+                            .setChecked(effectiveGroupDirection === direction)
+                            .onClick(() => {
+                                if (effectiveGroupDirection === direction) {
+                                    return;
+                                }
+                                runAsyncAction(async () => {
+                                    await setSelectionGroupOverride(createPropertyGroupingOption(effectiveGroupPropertyKey, direction));
+                                    app.workspace.requestSaveLayout();
+                                });
+                            });
+                    });
+                });
+            }
 
             if (canApplyToDescendants) {
                 menu.addSeparator();

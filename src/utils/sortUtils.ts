@@ -178,6 +178,39 @@ export function getPropertySortValueFromRecord(frontmatter: unknown, propertyKey
     return joined.length > 0 ? joined : null;
 }
 
+export interface PropertyGroupingValue {
+    parts: string[];
+    /**
+     * Set when the raw frontmatter value is a finite scalar number. Number-keyed groups compare
+     * numerically, matching how Obsidian Bases compares number-keyed groups, and order before
+     * text groups; quoted numeric strings and lists stay null and use natural string comparison.
+     */
+    numericValue: number | null;
+}
+
+/**
+ * Extracts the frontmatter value used for property grouping.
+ * Returns null when the property is missing or empty. A single-element list produces the
+ * same parts as its scalar value, so `[value]` and `value` land in the same group,
+ * matching how Obsidian Bases compares list values against scalars.
+ */
+export function getPropertyGroupingValueFromRecord(frontmatter: unknown, propertyKey: string): PropertyGroupingValue | null {
+    if (!isRecord(frontmatter)) {
+        return null;
+    }
+
+    const rawValue = getMatchingRecordValue(frontmatter, propertyKey);
+    const parts = extractPropertySortParts(rawValue);
+    if (parts.length === 0) {
+        return null;
+    }
+
+    return {
+        parts,
+        numericValue: typeof rawValue === 'number' && Number.isFinite(rawValue) ? rawValue : null
+    };
+}
+
 export function replacePropertySortKey(value: string, oldKeyNormalized: string, newKeyDisplay: string | null): string {
     return normalizePropertySortKeyList(value, (key, normalizedKey) => (normalizedKey === oldKeyNormalized ? newKeyDisplay : key)).join(
         ', '

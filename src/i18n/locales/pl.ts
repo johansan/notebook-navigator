@@ -59,6 +59,7 @@ export const STRINGS_PL = {
             'Przeciągnij, aby zmienić kolejność. Kolejność jest zapisywana jako wartości indeksu liczbowego w atrybucie „{property}”.',
         manualSortNonMarkdownHint: 'Pliki inne niż Markdown są wyświetlane na dole i nie można zmieniać ich kolejności.',
         unsortedSection: 'Nieposortowane',
+        propertyGroupNoValue: 'Brak',
         manualSortDone: 'Gotowe',
         manualSortMultipleWriteFailure: '{count} plików nie powiodło się; pierwszy: {path}: {message}'
     },
@@ -1046,7 +1047,7 @@ export const STRINGS_PL = {
             list: {
                 display: 'Wygląd',
                 groupHeaders: 'Nagłówki grup',
-                propertySort: 'Sortowanie według atrybutów',
+                propertySort: 'Sortowanie i grupowanie według atrybutów',
                 manualSort: 'Sortowanie ręczne',
                 pinnedNotes: 'Przypięte notatki',
                 drawingPreviews: 'Podglądy rysunków'
@@ -1106,8 +1107,8 @@ export const STRINGS_PL = {
                 }
             },
             propertySortKey: {
-                name: 'Atrybuty do sortowania',
-                desc: 'Rozdzielone przecinkami atrybuty frontmatter pokazywane jako opcje sortowania według atrybutów. Tablice są łączone w jeden ciąg. Te atrybuty nie są zmieniane.',
+                name: 'Atrybuty sortowania i grupowania',
+                desc: 'Rozdzielone przecinkami atrybuty frontmatter. Każdy atrybut pojawia się jako opcja sortowania i opcja grupowania w menu sortowania w panelu listy. Te atrybuty nie są zmieniane.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1121,7 +1122,7 @@ export const STRINGS_PL = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Każdy wymieniony powyżej atrybut pojawia się jako opcja sortowania w menu sortowania w panelu listy. Wybranie jednego sortuje notatki według jego wartości frontmatter.'
+                intro: 'Każdy wymieniony powyżej atrybut pojawia się jako opcja sortowania i opcja grupowania w menu sortowania w panelu listy. Sortowanie porządkuje notatki według wartości frontmatter, łącząc tablice w jeden ciąg. Grupowanie zbiera notatki o tej samej wartości pod jednym nagłówkiem; notatki z wartością listową są grupowane według pełnej listy, a notatki bez tego atrybutu trafiają do końcowej grupy „Brak”.'
             },
             manualSortPropertyKey: {
                 name: 'Atrybut sortowania ręcznego',
@@ -1178,7 +1179,7 @@ export const STRINGS_PL = {
             },
             groupNotes: {
                 name: 'Domyślne grupowanie',
-                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i atrybutów używają grup dat, gdy wybrany jest folder.',
+                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i atrybutów używają grup dat, gdy wybrany jest folder. Grupowanie według wartości atrybutu z metadanych jest dostępne osobno dla każdego widoku w menu sortowania w panelu listy.',
                 options: {
                     custom: 'Niestandardowe',
                     date: 'Data',
@@ -1191,7 +1192,7 @@ export const STRINGS_PL = {
             },
             stickyGroupHeaders: {
                 name: 'Przyklejone nagłówki grup',
-                desc: 'Bieżący nagłówek sekcji daty, folderu lub przypiętej pozostaje widoczny podczas przewijania.'
+                desc: 'Bieżący nagłówek sekcji daty, folderu, atrybutu lub przypiętej pozostaje widoczny podczas przewijania.'
             },
             showFolderGroupPaths: {
                 name: 'Pokaż ścieżki podfolderów',

@@ -58,6 +58,7 @@ export const STRINGS_EN = {
         manualSortHint: 'Drag to reorder. The order is saved as numeric index values in the property "{property}".',
         manualSortNonMarkdownHint: 'Non-markdown files are shown at the bottom and cannot be reordered.',
         unsortedSection: 'Unsorted',
+        propertyGroupNoValue: 'None', // Header for the trailing group holding files without the grouping property (English: None)
         manualSortDone: 'Done',
         manualSortMultipleWriteFailure: '{count} files failed; first: {path}: {message}'
     },
@@ -1037,7 +1038,7 @@ export const STRINGS_EN = {
             list: {
                 display: 'Appearance',
                 groupHeaders: 'Group headers',
-                propertySort: 'Property sort',
+                propertySort: 'Property sort and grouping',
                 manualSort: 'Manual sort',
                 pinnedNotes: 'Pinned notes',
                 drawingPreviews: 'Drawing previews'
@@ -1097,8 +1098,8 @@ export const STRINGS_EN = {
                 }
             },
             propertySortKey: {
-                name: 'Properties to sort by',
-                desc: 'Comma-separated frontmatter properties shown as property sort options. Array values are joined into a single string. These properties are not changed.',
+                name: 'Sort and grouping properties',
+                desc: 'Comma-separated frontmatter properties. Each property appears as a sort option and a grouping option in the sort menu in the list pane. These properties are not changed.',
                 placeholder: 'published, author'
             },
             propertySortSecondary: {
@@ -1112,7 +1113,7 @@ export const STRINGS_EN = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Each property listed above appears as a sort option in the sort menu in the list pane. Selecting one sorts notes by its frontmatter value.'
+                intro: 'Each property listed above appears as a sort option and a grouping option in the sort menu in the list pane. Sorting orders notes by the frontmatter value, with array values joined into a single string. Grouping collects notes sharing the same value under one header; notes with a list value group under the full list, and notes missing the property go into a trailing "None" group.'
             },
             manualSortPropertyKey: {
                 name: 'Manual sort property',
@@ -1169,7 +1170,7 @@ export const STRINGS_EN = {
             },
             groupNotes: {
                 name: 'Default grouping',
-                desc: 'Custom shows headers defined in frontmatter. Date groups notes by date. Folder groups notes by folder. Tag and property views use date groups when folder is selected.',
+                desc: 'Custom shows headers defined in frontmatter. Date groups notes by date. Folder groups notes by folder. Tag and property views use date groups when folder is selected. Grouping by a frontmatter property value is available per view from the sort menu in the list pane.',
                 options: {
                     custom: 'Custom',
                     date: 'Date',
@@ -1182,7 +1183,7 @@ export const STRINGS_EN = {
             },
             stickyGroupHeaders: {
                 name: 'Sticky group headers',
-                desc: 'Keep the current date, folder, or pinned section header visible while scrolling.'
+                desc: 'Keep the current date, folder, property, or pinned section header visible while scrolling.'
             },
             showFolderGroupPaths: {
                 name: 'Show subfolder paths',
