@@ -1093,7 +1093,7 @@ export const STRINGS_ES = {
             },
             sortNotesBy: {
                 name: 'Orden predeterminado',
-                desc: 'Elige el orden predeterminado para las notas.',
+                desc: 'Elige el orden predeterminado para las notas. Las propiedades de Propiedades de orden y agrupación aparecen como opciones de orden adicionales.',
                 options: {
                     'modified-desc': 'Fecha de edición (más reciente arriba)',
                     'modified-asc': 'Fecha de edición (más antigua arriba)',
@@ -1119,7 +1119,12 @@ export const STRINGS_ES = {
             propertySortKey: {
                 name: 'Propiedades de orden y agrupación',
                 desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'El orden predeterminado se restableció porque su propiedad ya no está disponible.',
+                    grouping: 'La agrupación predeterminada se restableció porque su propiedad ya no está disponible.',
+                    both: 'El orden predeterminado y la agrupación predeterminada se restablecieron porque sus propiedades ya no están disponibles.'
+                }
             },
             propertySortSecondary: {
                 name: 'Orden secundario',
@@ -1189,7 +1194,7 @@ export const STRINGS_ES = {
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
-                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta. La agrupación por un valor de propiedad del frontmatter está disponible por vista desde el menú de ordenación del panel de lista.',
+                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta. Las propiedades de Propiedades de orden y agrupación aparecen como opciones de agrupación adicionales.',
                 options: {
                     custom: 'Personalizada',
                     date: 'Fecha',

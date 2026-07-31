@@ -1094,7 +1094,7 @@ export const STRINGS_PT_BR = {
             },
             sortNotesBy: {
                 name: 'Ordem de classificação padrão',
-                desc: 'Escolha a ordem de classificação padrão para as notas.',
+                desc: 'Escolha a ordem de classificação padrão para as notas. As propriedades de Propriedades de classificação e agrupamento aparecem como opções de classificação adicionais.',
                 options: {
                     'modified-desc': 'Data de edição (mais recente no topo)',
                     'modified-asc': 'Data de edição (mais antiga no topo)',
@@ -1120,7 +1120,12 @@ export const STRINGS_PT_BR = {
             propertySortKey: {
                 name: 'Propriedades de classificação e agrupamento',
                 desc: 'Propriedades frontmatter separadas por vírgulas. Cada propriedade aparece como uma opção de classificação e uma opção de agrupamento no menu de ordenação no painel de lista. Essas propriedades não são alteradas.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'A ordem de classificação padrão foi redefinida porque sua propriedade não está mais disponível.',
+                    grouping: 'O agrupamento padrão foi redefinido porque sua propriedade não está mais disponível.',
+                    both: 'A ordem de classificação padrão e o agrupamento padrão foram redefinidos porque suas propriedades não estão mais disponíveis.'
+                }
             },
             propertySortSecondary: {
                 name: 'Ordenação secundária',
@@ -1190,7 +1195,7 @@ export const STRINGS_PT_BR = {
             },
             groupNotes: {
                 name: 'Agrupamento padrão',
-                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. Visualizações de tag e propriedade usam grupos de data quando uma pasta está selecionada. O agrupamento por um valor de propriedade do frontmatter está disponível para cada visualização no menu de ordenação no painel de lista.',
+                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. Visualizações de tag e propriedade usam grupos de data quando uma pasta está selecionada. As propriedades de Propriedades de classificação e agrupamento aparecem como opções de agrupamento adicionais.',
                 options: {
                     custom: 'Personalizado',
                     date: 'Data',

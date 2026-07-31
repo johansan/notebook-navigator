@@ -1089,7 +1089,7 @@ export const STRINGS_KO = {
             },
             sortNotesBy: {
                 name: '기본 정렬 순서',
-                desc: '노트의 기본 정렬 순서를 선택하세요.',
+                desc: '노트의 기본 정렬 순서를 선택하세요. 정렬 및 그룹화에 사용할 속성의 속성이 추가 정렬 옵션으로 표시됩니다.',
                 options: {
                     'modified-desc': '수정 날짜 (최신 상위)',
                     'modified-asc': '수정 날짜 (오래된 상위)',
@@ -1115,7 +1115,12 @@ export const STRINGS_KO = {
             propertySortKey: {
                 name: '정렬 및 그룹화에 사용할 속성',
                 desc: '쉼표로 구분된 frontmatter 속성. 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: '속성을 더 이상 사용할 수 없어 기본 정렬 순서가 초기화되었습니다.',
+                    grouping: '속성을 더 이상 사용할 수 없어 기본 그룹화가 초기화되었습니다.',
+                    both: '속성을 더 이상 사용할 수 없어 기본 정렬 순서와 기본 그룹화가 초기화되었습니다.'
+                }
             },
             propertySortSecondary: {
                 name: '보조 정렬',
@@ -1185,7 +1190,7 @@ export const STRINGS_KO = {
             },
             groupNotes: {
                 name: '기본 그룹화',
-                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다. frontmatter 속성 값별 그룹화는 목록 창의 정렬 메뉴에서 보기별로 사용할 수 있습니다.',
+                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다. 정렬 및 그룹화에 사용할 속성의 속성이 추가 그룹화 옵션으로 표시됩니다.',
                 options: {
                     custom: '사용자 지정',
                     date: '날짜',

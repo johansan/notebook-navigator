@@ -96,8 +96,8 @@ import { normalizePropertyKeyNodeId, normalizePropertyNodeId } from '../../utils
 import { normalizeNavigationSeparatorKey } from '../../utils/navigationSeparators';
 import { normalizeUXIconMapRecord } from '../../utils/uxIcons';
 import { sanitizeKeyboardShortcuts } from '../../utils/keyboardShortcuts';
-import { isPropertySortOption, pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
-import { pruneUnavailablePropertyGroupingOverrides } from '../../utils/listGrouping';
+import { pruneUnavailablePropertySortOverrides, reconcileDefaultFolderSort } from '../../utils/sortUtils';
+import { pruneUnavailablePropertyGroupingOverrides, reconcileDefaultNoteGrouping } from '../../utils/listGrouping';
 import { isRecord } from '../../utils/typeGuards';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
 import { isFileTypeIconPreset } from '../../utils/fileTypeIconPresets';
@@ -431,10 +431,15 @@ export class PluginSettingsController {
             Object.prototype.hasOwnProperty.call(storedData, 'manualSortPropertyKey') &&
             typeof storedData['manualSortPropertyKey'] !== 'string'
         );
-        const hadUnavailableDefaultFolderSortInStoredData = Boolean(
+        const hadInvalidDefaultFolderSortInStoredData = Boolean(
             storedData &&
             Object.prototype.hasOwnProperty.call(storedData, 'defaultFolderSort') &&
-            (!isSortOption(storedData['defaultFolderSort']) || isPropertySortOption(storedData['defaultFolderSort']))
+            !isSortOption(storedData['defaultFolderSort'])
+        );
+        const hadInvalidDefaultFolderSortPropertyKeyInStoredData = Boolean(
+            storedData &&
+            Object.prototype.hasOwnProperty.call(storedData, 'defaultFolderSortPropertyKey') &&
+            typeof storedData['defaultFolderSortPropertyKey'] !== 'string'
         );
         const hadLegacyNoneGroupingInStoredData = containsLegacyNoneGroupingInStoredData(storedData);
         const hadLegacyOpenFolderNotesInNewTabInStoredData = Boolean(
@@ -491,8 +496,12 @@ export class PluginSettingsController {
             this.currentSettings.manualSortPropertyKey = DEFAULT_SETTINGS.manualSortPropertyKey;
         }
 
-        if (!isSortOption(this.currentSettings.defaultFolderSort) || isPropertySortOption(this.currentSettings.defaultFolderSort)) {
+        if (!isSortOption(this.currentSettings.defaultFolderSort)) {
             this.currentSettings.defaultFolderSort = DEFAULT_SETTINGS.defaultFolderSort;
+        }
+
+        if (typeof this.currentSettings.defaultFolderSortPropertyKey !== 'string') {
+            this.currentSettings.defaultFolderSortPropertyKey = DEFAULT_SETTINGS.defaultFolderSortPropertyKey;
         }
 
         if (typeof this.currentSettings.manualSortGroupHeaderProperty !== 'string') {
@@ -519,6 +528,10 @@ export class PluginSettingsController {
         this.sanitizeSettingsRecords();
         const prunedUnavailablePropertySortOverrides = pruneUnavailablePropertySortOverrides(this.currentSettings);
         const prunedUnavailablePropertyGroupingOverrides = pruneUnavailablePropertyGroupingOverrides(this.currentSettings);
+        // Load and external sync reconcile the global defaults silently; only direct settings-tab
+        // edits announce a reset, so sync-driven cleanups never surface a notice.
+        const reconciledDefaultFolderSort = reconcileDefaultFolderSort(this.currentSettings);
+        const reconciledDefaultNoteGrouping = reconcileDefaultNoteGrouping(this.currentSettings);
 
         const migratedMomentFormats = migrateMomentDateFormats({
             settings: this.currentSettings,
@@ -689,7 +702,10 @@ export class PluginSettingsController {
             hadPinnedSectionIconInStoredData ||
             hadInvalidPropertySortKeyInStoredData ||
             hadInvalidManualSortPropertyKeyInStoredData ||
-            hadUnavailableDefaultFolderSortInStoredData ||
+            hadInvalidDefaultFolderSortInStoredData ||
+            hadInvalidDefaultFolderSortPropertyKeyInStoredData ||
+            reconciledDefaultFolderSort.changed ||
+            reconciledDefaultNoteGrouping.changed ||
             hadLegacyNoneGroupingInStoredData ||
             hadLegacyOpenFolderNotesInNewTabInStoredData ||
             hadInvalidShiftEnterOpenContextInStoredData ||

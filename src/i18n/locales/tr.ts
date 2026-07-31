@@ -1090,7 +1090,7 @@ export const STRINGS_TR = {
             },
             sortNotesBy: {
                 name: 'Varsayılan sıralama düzeni',
-                desc: 'Notlar için varsayılan sıralama düzenini seçin.',
+                desc: 'Notlar için varsayılan sıralama düzenini seçin. Sıralama ve gruplama özellikleri altındaki özellikler ek sıralama seçenekleri olarak görünür.',
                 options: {
                     'modified-desc': 'Düzenleme tarihi (en yeni üstte)',
                     'modified-asc': 'Düzenleme tarihi (en eski üstte)',
@@ -1116,7 +1116,12 @@ export const STRINGS_TR = {
             propertySortKey: {
                 name: 'Sıralama ve gruplama özellikleri',
                 desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Özelliği artık kullanılamadığı için varsayılan sıralama düzeni sıfırlandı.',
+                    grouping: 'Özelliği artık kullanılamadığı için varsayılan gruplama sıfırlandı.',
+                    both: 'Özellikleri artık kullanılamadığı için varsayılan sıralama düzeni ve varsayılan gruplama sıfırlandı.'
+                }
             },
             propertySortSecondary: {
                 name: 'İkincil sıralama',
@@ -1186,7 +1191,7 @@ export const STRINGS_TR = {
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
-                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır. Bir frontmatter özellik değerine göre gruplama, liste bölmesindeki sıralama menüsünden her görünüm için ayrı ayrı kullanılabilir.",
+                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır. Sıralama ve gruplama özellikleri altındaki özellikler ek gruplama seçenekleri olarak görünür.",
                 options: {
                     custom: 'Özel',
                     date: 'Tarih',

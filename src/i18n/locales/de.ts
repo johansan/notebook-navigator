@@ -1095,7 +1095,7 @@ export const STRINGS_DE = {
             },
             sortNotesBy: {
                 name: 'Standard-Sortierreihenfolge',
-                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen.',
+                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen. Eigenschaften aus Sortier- und Gruppierungseigenschaften erscheinen als zusätzliche Sortieroptionen.',
                 options: {
                     'modified-desc': 'Bearbeitungsdatum (neueste oben)',
                     'modified-asc': 'Bearbeitungsdatum (älteste oben)',
@@ -1121,7 +1121,12 @@ export const STRINGS_DE = {
             propertySortKey: {
                 name: 'Sortier- und Gruppierungseigenschaften',
                 desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Die Standard-Sortierreihenfolge wurde zurückgesetzt, weil ihre Eigenschaft nicht mehr verfügbar ist.',
+                    grouping: 'Die Standardgruppierung wurde zurückgesetzt, weil ihre Eigenschaft nicht mehr verfügbar ist.',
+                    both: 'Standard-Sortierreihenfolge und Standardgruppierung wurden zurückgesetzt, weil ihre Eigenschaften nicht mehr verfügbar sind.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sekundäre Sortierung',
@@ -1191,7 +1196,7 @@ export const STRINGS_DE = {
             },
             groupNotes: {
                 name: 'Standardgruppierung',
-                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist. Die Gruppierung nach einem Frontmatter-Eigenschaftswert ist pro Ansicht über das Sortiermenü im Listenbereich verfügbar.',
+                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist. Eigenschaften aus Sortier- und Gruppierungseigenschaften erscheinen als zusätzliche Gruppierungsoptionen.',
                 options: {
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',

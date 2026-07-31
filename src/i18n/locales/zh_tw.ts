@@ -1084,7 +1084,7 @@ export const STRINGS_ZH_TW = {
             },
             sortNotesBy: {
                 name: '預設排序方式',
-                desc: '選擇筆記的預設排序方式。',
+                desc: '選擇筆記的預設排序方式。「用於排序和分組的屬性」中的屬性會作為額外的排序選項顯示。',
                 options: {
                     'modified-desc': '編輯日期（最新在頂部）',
                     'modified-asc': '編輯日期（最舊在頂部）',
@@ -1110,7 +1110,12 @@ export const STRINGS_ZH_TW = {
             propertySortKey: {
                 name: '用於排序和分組的屬性',
                 desc: '以逗號分隔的 frontmatter 屬性。每個屬性都會在列表面板的排序選單中顯示為排序選項和分組選項。這些屬性不會被變更。',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: '預設排序方式已重設，因為其屬性已不可用。',
+                    grouping: '預設分組已重設，因為其屬性已不可用。',
+                    both: '預設排序方式和預設分組已重設，因為其屬性已不可用。'
+                }
             },
             propertySortSecondary: {
                 name: '次要排序',
@@ -1177,7 +1182,7 @@ export const STRINGS_ZH_TW = {
             },
             groupNotes: {
                 name: '預設分組',
-                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。按 frontmatter 屬性值分組可在列表面板的排序選單中針對每個檢視單獨設定。',
+                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。「用於排序和分組的屬性」中的屬性會作為額外的分組選項顯示。',
                 options: {
                     custom: '自訂',
                     date: '日期',

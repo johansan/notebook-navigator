@@ -1088,7 +1088,7 @@ export const STRINGS_IT = {
             },
             sortNotesBy: {
                 name: 'Ordinamento predefinito',
-                desc: "Scegli l'ordinamento predefinito per le note.",
+                desc: "Scegli l'ordinamento predefinito per le note. Le proprietà di Proprietà di ordinamento e raggruppamento appaiono come opzioni di ordinamento aggiuntive.",
                 options: {
                     'modified-desc': 'Data modifica (più recenti in alto)',
                     'modified-asc': 'Data modifica (più vecchie in alto)',
@@ -1114,7 +1114,12 @@ export const STRINGS_IT = {
             propertySortKey: {
                 name: 'Proprietà di ordinamento e raggruppamento',
                 desc: 'Proprietà frontmatter separate da virgola. Ogni proprietà appare come opzione di ordinamento e opzione di raggruppamento nel menu di ordinamento nel pannello lista. Queste proprietà non vengono modificate.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: "L'ordinamento predefinito è stato ripristinato perché la sua proprietà non è più disponibile.",
+                    grouping: 'Il raggruppamento predefinito è stato ripristinato perché la sua proprietà non è più disponibile.',
+                    both: "L'ordinamento predefinito e il raggruppamento predefinito sono stati ripristinati perché le loro proprietà non sono più disponibili."
+                }
             },
             propertySortSecondary: {
                 name: 'Ordinamento secondario',
@@ -1184,7 +1189,7 @@ export const STRINGS_IT = {
             },
             groupNotes: {
                 name: 'Raggruppamento predefinito',
-                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella. Il raggruppamento per valore di una proprietà frontmatter è disponibile per vista dal menu di ordinamento nel pannello lista.',
+                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella. Le proprietà di Proprietà di ordinamento e raggruppamento appaiono come opzioni di raggruppamento aggiuntive.',
                 options: {
                     custom: 'Personalizzato',
                     date: 'Data',

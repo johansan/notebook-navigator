@@ -507,6 +507,10 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         // Task display settings (showFileTaskProgress, showFileBackgroundUnfinishedTask) are intentionally
         // absent: task extraction always runs (hasMarkdownTaskConsumer), so listing them would stop and
         // requeue the whole pipeline on toggles that cannot change extracted content.
+        // defaultFolderSortPropertyKey is intentionally absent: which non-manual property performs the
+        // default sort does not change extracted content, and every transition that can flip effective
+        // custom grouping also changes defaultFolderSort, propertySortKey, or manualSortPropertyKey,
+        // which are listed. Listing it would rescan the vault when switching between sort properties.
         return [
             'showFilePreview',
             'skipHeadingsInPreview',

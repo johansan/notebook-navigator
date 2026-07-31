@@ -1095,7 +1095,7 @@ export const STRINGS_PL = {
             },
             sortNotesBy: {
                 name: 'Domyślny porządek sortowania',
-                desc: 'Wybierz domyślny porządek sortowania notatek.',
+                desc: 'Wybierz domyślny porządek sortowania notatek. Atrybuty z Atrybuty sortowania i grupowania pojawiają się jako dodatkowe opcje sortowania.',
                 options: {
                     'modified-desc': 'daty edycji (od najnowszych)',
                     'modified-asc': 'daty edycji (od najstarszych)',
@@ -1121,7 +1121,12 @@ export const STRINGS_PL = {
             propertySortKey: {
                 name: 'Atrybuty sortowania i grupowania',
                 desc: 'Rozdzielone przecinkami atrybuty frontmatter. Każdy atrybut pojawia się jako opcja sortowania i opcja grupowania w menu sortowania w panelu listy. Te atrybuty nie są zmieniane.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Domyślny porządek sortowania został zresetowany, ponieważ jego atrybut nie jest już dostępny.',
+                    grouping: 'Domyślne grupowanie zostało zresetowane, ponieważ jego atrybut nie jest już dostępny.',
+                    both: 'Domyślny porządek sortowania i domyślne grupowanie zostały zresetowane, ponieważ ich atrybuty nie są już dostępne.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sortowanie drugorzędne',
@@ -1191,7 +1196,7 @@ export const STRINGS_PL = {
             },
             groupNotes: {
                 name: 'Domyślne grupowanie',
-                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i atrybutów używają grup dat, gdy wybrany jest folder. Grupowanie według wartości atrybutu z metadanych jest dostępne osobno dla każdego widoku w menu sortowania w panelu listy.',
+                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i atrybutów używają grup dat, gdy wybrany jest folder. Atrybuty z Atrybuty sortowania i grupowania pojawiają się jako dodatkowe opcje grupowania.',
                 options: {
                     custom: 'Niestandardowe',
                     date: 'Data',
