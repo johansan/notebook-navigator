@@ -117,6 +117,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New setting: File display > ==Show tasks==. Notes containing tasks show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder. Enabled by default. Colors and font weights for unfinished and completed tasks can be changed with Style Settings.'
         ],
         changed: [
+            'The ==Recent files count== setting now goes up to 50 recent files, up from 10.',
             'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.',
             'The ==Unfinished task icon== setting has been removed and replaced by the new task progress display.'
         ],
