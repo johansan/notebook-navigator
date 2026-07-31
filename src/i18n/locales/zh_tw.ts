@@ -363,6 +363,8 @@ export const STRINGS_ZH_TW = {
             changeBackground: '變更背景',
             excludeFolder: '隱藏資料夾',
             unhideFolder: '顯示資料夾',
+            hideRootFolder: '隱藏根資料夾',
+            showRootFolder: '顯示根資料夾',
             excludeFromDescendants: '在父資料夾中隱藏',
             includeInDescendants: '在父資料夾中顯示',
             hiddenFromParentsIndicator: '已從父資料夾列表中隱藏',
@@ -788,8 +790,6 @@ export const STRINGS_ZH_TW = {
             forbiddenNameCharactersWindows: 'Windows 保留字元不允許使用：<, >, ", \\, |, ?, *。'
         },
         notices: {
-            hideFolder: '已隱藏資料夾：{name}',
-            showFolder: '已顯示資料夾：{name}',
             folderExcludedFromDescendants: '已從父資料夾列表中隱藏：{name}',
             folderIncludedInDescendants: '已在父資料夾列表中顯示：{name}',
             mergeNotes: '已將 {count} 則筆記合併到 {name}'

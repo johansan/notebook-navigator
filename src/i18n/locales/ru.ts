@@ -364,6 +364,8 @@ export const STRINGS_RU = {
             changeBackground: 'Изменить фон',
             excludeFolder: 'Скрыть папку',
             unhideFolder: 'Показать папку',
+            hideRootFolder: 'Скрыть корневую папку',
+            showRootFolder: 'Показать корневую папку',
             excludeFromDescendants: 'Скрыть в родительских папках',
             includeInDescendants: 'Показать в родительских папках',
             hiddenFromParentsIndicator: 'Скрыто из списков родительских папок',
@@ -793,8 +795,6 @@ export const STRINGS_RU = {
             forbiddenNameCharactersWindows: 'Зарезервированные в Windows символы не разрешены: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Папка скрыта: {name}',
-            showFolder: 'Папка показана: {name}',
             folderExcludedFromDescendants: 'Скрыто из списков родительских папок: {name}',
             folderIncludedInDescendants: 'Показано в списках родительских папок: {name}',
             mergeNotes: 'Объединено {count} заметок в {name}'

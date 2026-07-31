@@ -363,6 +363,8 @@ export const STRINGS_JA = {
             changeBackground: '背景色を変更',
             excludeFolder: 'フォルダを非表示',
             unhideFolder: 'フォルダを表示',
+            hideRootFolder: 'ルートフォルダを非表示',
+            showRootFolder: 'ルートフォルダを表示',
             excludeFromDescendants: '親フォルダで非表示',
             includeInDescendants: '親フォルダで表示',
             hiddenFromParentsIndicator: '親フォルダのリストから非表示',
@@ -795,8 +797,6 @@ export const STRINGS_JA = {
             forbiddenNameCharactersWindows: 'Windows で予約されている文字は使用できません: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'フォルダを非表示: {name}',
-            showFolder: 'フォルダを表示: {name}',
             folderExcludedFromDescendants: '親フォルダのリストから非表示: {name}',
             folderIncludedInDescendants: '親フォルダのリストに表示: {name}',
             mergeNotes: '{count} 個のノートを {name} に結合しました'

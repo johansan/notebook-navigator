@@ -364,6 +364,8 @@ export const STRINGS_ID = {
             changeBackground: 'Ubah latar belakang',
             excludeFolder: 'Sembunyikan folder',
             unhideFolder: 'Tampilkan folder',
+            hideRootFolder: 'Sembunyikan folder root',
+            showRootFolder: 'Tampilkan folder root',
             excludeFromDescendants: 'Sembunyikan dari folder induk',
             includeInDescendants: 'Tampilkan di folder induk',
             hiddenFromParentsIndicator: 'Disembunyikan dari daftar folder induk',
@@ -796,8 +798,6 @@ export const STRINGS_ID = {
             forbiddenNameCharactersWindows: 'Karakter yang dipesan di Windows tidak diizinkan: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Folder disembunyikan: {name}',
-            showFolder: 'Folder ditampilkan: {name}',
             folderExcludedFromDescendants: 'Disembunyikan dari daftar folder induk: {name}',
             folderIncludedInDescendants: 'Ditampilkan di daftar folder induk: {name}',
             mergeNotes: 'Menggabungkan {count} catatan menjadi {name}'

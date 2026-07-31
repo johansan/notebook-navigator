@@ -363,6 +363,8 @@ export const STRINGS_EN = {
             changeBackground: 'Change background',
             excludeFolder: 'Hide folder',
             unhideFolder: 'Unhide folder',
+            hideRootFolder: 'Hide root folder',
+            showRootFolder: 'Show root folder',
             excludeFromDescendants: 'Hide from parents',
             includeInDescendants: 'Show in parents',
             hiddenFromParentsIndicator: 'Hidden from parent folder lists',
@@ -790,8 +792,6 @@ export const STRINGS_EN = {
             forbiddenNameCharactersWindows: 'Windows-reserved characters are not allowed: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Folder hidden: {name}',
-            showFolder: 'Folder shown: {name}',
             folderExcludedFromDescendants: 'Hidden from parent folder lists: {name}',
             folderIncludedInDescendants: 'Shown in parent folder lists: {name}',
             mergeNotes: 'Merged {count} notes into {name}'

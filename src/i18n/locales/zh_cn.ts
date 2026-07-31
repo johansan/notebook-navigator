@@ -362,6 +362,8 @@ export const STRINGS_ZH_CN = {
             changeBackground: '更改背景',
             excludeFolder: '隐藏文件夹',
             unhideFolder: '显示文件夹',
+            hideRootFolder: '隐藏根文件夹',
+            showRootFolder: '显示根文件夹',
             excludeFromDescendants: '在父文件夹中隐藏',
             includeInDescendants: '在父文件夹中显示',
             hiddenFromParentsIndicator: '已从父文件夹列表中隐藏',
@@ -787,8 +789,6 @@ export const STRINGS_ZH_CN = {
             forbiddenNameCharactersWindows: 'Windows 保留字符不允许使用：<, >, ", \\, |, ?, *。'
         },
         notices: {
-            hideFolder: '已隐藏文件夹：{name}',
-            showFolder: '已显示文件夹：{name}',
             folderExcludedFromDescendants: '已从父文件夹列表中隐藏：{name}',
             folderIncludedInDescendants: '已在父文件夹列表中显示：{name}',
             mergeNotes: '已将 {count} 个笔记合并到 {name}'

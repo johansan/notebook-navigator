@@ -365,6 +365,8 @@ export const STRINGS_UK = {
             changeBackground: 'Змінити фон',
             excludeFolder: 'Сховати папку',
             unhideFolder: 'Показати папку',
+            hideRootFolder: 'Сховати кореневу папку',
+            showRootFolder: 'Показати кореневу папку',
             excludeFromDescendants: 'Сховати в батьківських папках',
             includeInDescendants: 'Показати в батьківських папках',
             hiddenFromParentsIndicator: 'Сховано зі списків батьківських папок',
@@ -793,8 +795,6 @@ export const STRINGS_UK = {
             forbiddenNameCharactersWindows: 'Зарезервовані в Windows символи не дозволені: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Папку сховано: {name}',
-            showFolder: 'Папку показано: {name}',
             folderExcludedFromDescendants: 'Сховано зі списків батьківських папок: {name}',
             folderIncludedInDescendants: 'Показано у списках батьківських папок: {name}',
             mergeNotes: 'Об’єднано {count} нотаток у {name}'

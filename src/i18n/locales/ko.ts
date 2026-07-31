@@ -362,6 +362,8 @@ export const STRINGS_KO = {
             changeBackground: '배경색 변경',
             excludeFolder: '폴더 숨기기',
             unhideFolder: '폴더 표시',
+            hideRootFolder: '루트 폴더 숨기기',
+            showRootFolder: '루트 폴더 표시',
             excludeFromDescendants: '상위 폴더에서 숨기기',
             includeInDescendants: '상위 폴더에서 표시',
             hiddenFromParentsIndicator: '상위 폴더 목록에서 숨김',
@@ -793,8 +795,6 @@ export const STRINGS_KO = {
             forbiddenNameCharactersWindows: 'Windows에서 예약된 문자는 허용되지 않습니다: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: '폴더 숨김: {name}',
-            showFolder: '폴더 표시: {name}',
             folderExcludedFromDescendants: '상위 폴더 목록에서 숨김: {name}',
             folderIncludedInDescendants: '상위 폴더 목록에 표시됨: {name}',
             mergeNotes: '{count}개 노트를 {name}에 병합했습니다'

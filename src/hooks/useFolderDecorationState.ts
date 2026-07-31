@@ -20,6 +20,7 @@ import { useMemo } from 'react';
 
 import { useMetadataService, useServices } from '../context/ServicesContext';
 import { useActiveProfile, useSettingsState } from '../context/SettingsContext';
+import { useUXPreferences } from '../context/UXPreferencesContext';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import { useFolderNavigationSourceState, type FolderNavigationSourceState } from './useFolderNavigationSourceState';
 import { buildFolderRainbowColorsFromSiblingPaths } from '../utils/navigationRainbow';
@@ -128,11 +129,13 @@ export function useFolderDecorationState(): FolderDecorationState {
     const metadataService = useMetadataService();
     const settings = useSettingsState();
     const activeProfile = useActiveProfile();
+    const uxPreferences = useUXPreferences();
     const source = useFolderNavigationSourceState({
         app,
         settings,
         activeProfile,
-        metadataService
+        metadataService,
+        showHiddenItems: uxPreferences.showHiddenItems
     });
     const isDarkTheme = useThemeMode(app) === 'dark';
     const navRainbowState = useNavigationRainbowState(settings, isDarkTheme);

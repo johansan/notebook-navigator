@@ -366,6 +366,8 @@ export const STRINGS_NL = {
             changeBackground: 'Achtergrond wijzigen',
             excludeFolder: 'Map verbergen',
             unhideFolder: 'Map zichtbaar maken',
+            hideRootFolder: 'Hoofdmap verbergen',
+            showRootFolder: 'Hoofdmap tonen',
             excludeFromDescendants: 'Verbergen in bovenliggende mappen',
             includeInDescendants: 'Weergeven in bovenliggende mappen',
             hiddenFromParentsIndicator: 'Verborgen in lijsten van bovenliggende mappen',
@@ -798,8 +800,6 @@ export const STRINGS_NL = {
             forbiddenNameCharactersWindows: 'Door Windows gereserveerde tekens zijn niet toegestaan: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Map verborgen: {name}',
-            showFolder: 'Map zichtbaar: {name}',
             folderExcludedFromDescendants: 'Verborgen in lijsten van bovenliggende mappen: {name}',
             folderIncludedInDescendants: 'Weergegeven in lijsten van bovenliggende mappen: {name}',
             mergeNotes: '{count} notities samengevoegd in {name}'

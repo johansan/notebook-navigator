@@ -364,6 +364,8 @@ export const STRINGS_DE = {
             changeBackground: 'Hintergrund ändern',
             excludeFolder: 'Ordner verstecken',
             unhideFolder: 'Ordner einblenden',
+            hideRootFolder: 'Wurzelordner verstecken',
+            showRootFolder: 'Wurzelordner anzeigen',
             excludeFromDescendants: 'In übergeordneten Ordnern ausblenden',
             includeInDescendants: 'In übergeordneten Ordnern anzeigen',
             hiddenFromParentsIndicator: 'Aus übergeordneten Ordnerlisten ausgeblendet',
@@ -798,8 +800,6 @@ export const STRINGS_DE = {
             forbiddenNameCharactersWindows: 'Windows-reservierte Zeichen sind nicht erlaubt: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Ordner ausgeblendet: {name}',
-            showFolder: 'Ordner eingeblendet: {name}',
             folderExcludedFromDescendants: 'Aus übergeordneten Ordnerlisten ausgeblendet: {name}',
             folderIncludedInDescendants: 'In übergeordneten Ordnerlisten angezeigt: {name}',
             mergeNotes: '{count} Notizen in {name} zusammengeführt'

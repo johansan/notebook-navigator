@@ -363,6 +363,8 @@ export const STRINGS_TH = {
             changeBackground: 'เปลี่ยนพื้นหลัง',
             excludeFolder: 'ซ่อนโฟลเดอร์',
             unhideFolder: 'เลิกซ่อนโฟลเดอร์',
+            hideRootFolder: 'ซ่อนโฟลเดอร์หลัก',
+            showRootFolder: 'แสดงโฟลเดอร์หลัก',
             excludeFromDescendants: 'ซ่อนจากโฟลเดอร์แม่',
             includeInDescendants: 'แสดงในโฟลเดอร์แม่',
             hiddenFromParentsIndicator: 'ซ่อนจากรายการโฟลเดอร์แม่',
@@ -789,8 +791,6 @@ export const STRINGS_TH = {
             forbiddenNameCharactersWindows: 'อักขระที่ Windows สงวนไว้ไม่อนุญาต: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'ซ่อนโฟลเดอร์แล้ว: {name}',
-            showFolder: 'แสดงโฟลเดอร์แล้ว: {name}',
             folderExcludedFromDescendants: 'ซ่อนจากรายการโฟลเดอร์แม่: {name}',
             folderIncludedInDescendants: 'แสดงในรายการโฟลเดอร์แม่: {name}',
             mergeNotes: 'รวม {count} โน้ตเป็น {name} แล้ว'

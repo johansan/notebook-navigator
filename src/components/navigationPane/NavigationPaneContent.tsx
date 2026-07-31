@@ -68,7 +68,11 @@ import {
     normalizeNavigationPath
 } from '../../utils/navigationIndex';
 import { collectAllTagPaths } from '../../utils/tagTree';
-import { getNavigationExpansionTargetForItem, toggleNavigationExpansionTarget } from '../../utils/navigationExpansion';
+import {
+    getNavigationExpansionTargetForItem,
+    isFolderEffectivelyExpanded,
+    toggleNavigationExpansionTarget
+} from '../../utils/navigationExpansion';
 import type { TagTreeNode } from '../../types/storage';
 import { normalizeNavigationSectionOrderInput } from '../../utils/navigationSections';
 import { compositeWithBase } from '../../utils/colorUtils';
@@ -943,13 +947,20 @@ export const NavigationPane = React.memo(
                 return false;
             }
 
-            const target = getNavigationExpansionTargetForItem(item, { showHiddenItems });
+            const target = getNavigationExpansionTargetForItem(item, { showHiddenItems, showRootFolder: settings.showRootFolder });
             return target
                 ? toggleNavigationExpansionTarget(target, expansionState, expansionDispatch, 'toggle', {
                       collapseOtherBranches: settings.collapseOtherBranchesOnExpand
                   })
                 : false;
-        }, [expansionDispatch, expansionState, getSelectedRenderedItem, settings.collapseOtherBranchesOnExpand, showHiddenItems]);
+        }, [
+            expansionDispatch,
+            expansionState,
+            getSelectedRenderedItem,
+            settings.collapseOtherBranchesOnExpand,
+            settings.showRootFolder,
+            showHiddenItems
+        ]);
 
         useImperativeHandle(
             ref,
@@ -1102,7 +1113,7 @@ export const NavigationPane = React.memo(
                 let isDragSource = false;
                 switch (item.type) {
                     case NavigationPaneItemType.FOLDER:
-                        isExpanded = expansionState.expandedFolders.has(item.data.path);
+                        isExpanded = isFolderEffectivelyExpanded(item.data.path, expansionState.expandedFolders, settings.showRootFolder);
                         break;
                     case NavigationPaneItemType.VIRTUAL_FOLDER: {
                         const virtualFolderId = item.data.id;
@@ -1146,6 +1157,7 @@ export const NavigationPane = React.memo(
                 expansionState,
                 inlineRenameTarget,
                 selectionState,
+                settings.showRootFolder,
                 shortcuts.shortcutsExpanded,
                 shortcuts.recentNotesExpanded,
                 shortcuts.shouldUseShortcutDnd,
