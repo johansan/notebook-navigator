@@ -60,7 +60,8 @@ import {
     getFileItemLayoutState,
     shouldShowExtensionBadgeThumbnail,
     shouldShowFeatureImageArea,
-    shouldShowFileItemParentFolderLine
+    shouldShowFileItemParentFolderLine,
+    shouldShowFileItemTaskProgress
 } from '../utils/listPaneMeasurements';
 import { getIconService, useIconServiceVersion } from '../services/icons';
 import type { AliasSearchMatch, PropertySearchMatch, SearchResultMeta } from '../types/search';
@@ -82,6 +83,7 @@ import { renderTextWithHighlightRanges } from './fileItem/searchHighlightRenderi
 import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
+import { useThemeMode } from '../hooks/useThemeMode';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
@@ -373,6 +375,33 @@ function ParentFolderLabel({
     );
 }
 
+interface TaskProgressMeta {
+    completed: number;
+    total: number;
+    percent: number;
+    isComplete: boolean;
+}
+
+/**
+ * Builds display data for the metadata-line task progress element.
+ * Returns null when the note has no tasks or task counts are not cached yet.
+ */
+function buildTaskProgressMeta(taskTotal: number | null, taskUnfinished: number | null): TaskProgressMeta | null {
+    if (typeof taskTotal !== 'number' || taskTotal <= 0 || typeof taskUnfinished !== 'number') {
+        return null;
+    }
+
+    const completed = Math.min(Math.max(taskTotal - taskUnfinished, 0), taskTotal);
+    return {
+        completed,
+        total: taskTotal,
+        // Unrounded so the bar width reaches 100% only when every task is completed;
+        // rounding would render 999/1000 as a full bar.
+        percent: (completed / taskTotal) * 100,
+        isComplete: completed >= taskTotal
+    };
+}
+
 /**
  * Memoized FileItem component.
  * Renders an individual file item in the file list with preview text and metadata.
@@ -454,9 +483,14 @@ export const FileItem = React.memo(function FileItem({
         ((canShowPropertyPills && settings.showFileProperties && visiblePropertyKeys.size > 0) ||
             (shouldLoadWordCountForDisplay && settings.wordCountTargetProperty.trim().length > 0) ||
             (matchedProperties?.length ?? 0) > 0);
-    const shouldLoadTaskUnfinished =
+    // Compact mode never renders the metadata line, so task progress is not a task-data consumer
+    // there; the background and tooltip consumers apply in both modes. Mirrors the estimator
+    // gating in useListPaneScroll.
+    const shouldLoadTaskCounts =
         isMarkdownFile &&
-        (settings.showFileIconUnfinishedTask || settings.showFileBackgroundUnfinishedTask || (!isMobile && settings.showTooltips));
+        ((settings.showFileTaskProgress && !isCompactMode) ||
+            settings.showFileBackgroundUnfinishedTask ||
+            (!isMobile && settings.showTooltips));
     const shouldRefreshMetadataVersionOnFeatureImageChange = isMarkdownFile && appearanceSettings.showImage;
     const fileStatMtime = useImageFileResourceVersion(app, file, appearanceSettings.showImage && isRasterImageFile(file));
     const drawingFeatureImageSource = getDrawingFeatureImageSource(app, file);
@@ -471,6 +505,7 @@ export const FileItem = React.memo(function FileItem({
         wordCount,
         characterCountWithSpaces,
         characterCountWithoutSpaces,
+        taskTotal,
         taskUnfinished,
         metadataVersion
     } = useFileItemContentState({
@@ -489,7 +524,7 @@ export const FileItem = React.memo(function FileItem({
             loadProperties: shouldLoadProperties,
             loadWordCount: shouldLoadWordCount,
             loadCharacterCount: shouldLoadCharacterCount,
-            loadTaskUnfinished: shouldLoadTaskUnfinished
+            loadTaskCounts: shouldLoadTaskCounts
         },
         refreshMetadataVersionOnFeatureImageChange: shouldRefreshMetadataVersionOnFeatureImageChange
     });
@@ -534,13 +569,14 @@ export const FileItem = React.memo(function FileItem({
         shouldShowOpenInNewTab || shouldShowPinNote || shouldShowRevealIcon || shouldShowAddTagAction || shouldShowShortcutAction;
     const hasShortcut = typeof shortcutKey === 'string';
     const iconServiceVersion = useIconServiceVersion();
+    // The theme mode only selects the unfinished-task background color, so theme-change
+    // subscriptions are skipped while that setting is off; enabling it re-runs the hook effect,
+    // which re-syncs the mode before the value is consumed.
+    const themeMode = useThemeMode(app, settings.showFileBackgroundUnfinishedTask);
     const showFileIcons = settings.showFileIcons;
     const hasUnfinishedTasks = typeof taskUnfinished === 'number' && taskUnfinished > 0;
-    const showFileIconUnfinishedTask = settings.showFileIconUnfinishedTask && hasUnfinishedTasks;
-    const unfinishedTaskIconId = resolveUXIcon(settings.interfaceIcons, 'file-unfinished-task');
-    const unfinishedTaskLabel = strings.modals.interfaceIcons.items['file-unfinished-task'];
     const unfinishedTaskTooltipText =
-        hasUnfinishedTasks && typeof taskUnfinished === 'number' ? `${unfinishedTaskLabel}: ${taskUnfinished}` : null;
+        hasUnfinishedTasks && typeof taskUnfinished === 'number' ? `${strings.tooltips.unfinishedTasks}: ${taskUnfinished}` : null;
 
     // Get display name from RAM cache (handles frontmatter title)
     const displayName = getFileDisplayName(file);
@@ -569,13 +605,9 @@ export const FileItem = React.memo(function FileItem({
     const shouldShowParentFolderIcon = shouldBuildParentFolderMeta && settings.showParentFolderIcon;
     const shouldShowParentFolderColor = shouldBuildParentFolderMeta && settings.showParentFolderColor;
     const shouldResolveParentFolderDisplayName = shouldBuildParentFolderMeta && !settings.showParentFolderFullPath;
-    const canUseFolderFileDecoration = !showFileIconUnfinishedTask;
-    const shouldResolveFolderIcon = canUseFolderFileDecoration && settings.useFolderIconForFiles && !fileIconId && hasParentFolderSource;
+    const shouldResolveFolderIcon = settings.useFolderIconForFiles && !fileIconId && hasParentFolderSource;
     const shouldResolveFolderColorForFileDecoration =
-        canUseFolderFileDecoration &&
-        !fileColor &&
-        hasParentFolderSource &&
-        (settings.useFolderColorForTitles || settings.useFolderIconForFiles);
+        !fileColor && hasParentFolderSource && (settings.useFolderColorForTitles || settings.useFolderIconForFiles);
     const shouldResolveFolderColorForTitle =
         !settings.colorIconOnly && settings.useFolderColorForTitles && !fileColor && hasParentFolderSource;
     const shouldResolveFolderColor = shouldResolveFolderColorForFileDecoration || shouldResolveFolderColorForTitle;
@@ -609,7 +641,8 @@ export const FileItem = React.memo(function FileItem({
         customBackgroundColor: customFileBackgroundColor,
         taskUnfinished,
         showUnfinishedTaskBackground: settings.showFileBackgroundUnfinishedTask,
-        unfinishedTaskBackgroundColor: settings.unfinishedTaskBackgroundColor,
+        unfinishedTaskBackgroundColor:
+            themeMode === 'dark' ? settings.unfinishedTaskBackgroundColorDark : settings.unfinishedTaskBackgroundColor,
         getSolidBackground
     });
     const fileExtension = file.extension.toLowerCase();
@@ -622,10 +655,6 @@ export const FileItem = React.memo(function FileItem({
     // Determine the actual icon to display, considering custom icon and colorIconOnly setting
     const effectiveFileIconId = useMemo(() => {
         void metadataVersion;
-        if (showFileIconUnfinishedTask) {
-            return unfinishedTaskIconId;
-        }
-
         return resolveFileIconId(
             file,
             {
@@ -661,9 +690,7 @@ export const FileItem = React.memo(function FileItem({
         settings.fileTypeIconPreset,
         settings.fileTypeIconMap,
         settings.showCategoryIcons,
-        settings.showFilenameMatchIcons,
-        showFileIconUnfinishedTask,
-        unfinishedTaskIconId
+        settings.showFilenameMatchIcons
     ]);
     const fileTitleColor = !settings.colorIconOnly
         ? (fileColor ?? (settings.useFolderColorForTitles ? folderListColor : undefined))
@@ -685,10 +712,9 @@ export const FileItem = React.memo(function FileItem({
 
     // Determines whether to display the file icon based on icon availability
     const shouldShowFileIcon = showFileIcons && Boolean(effectiveFileIconId);
-    const fileIconHasColor = Boolean(fileIconColor) && !showFileIconUnfinishedTask;
-    const fileIconStyle = fileIconColor && !showFileIconUnfinishedTask ? ({ color: fileIconColor } as React.CSSProperties) : undefined;
-    const fileIconClassName = showFileIconUnfinishedTask ? 'nn-file-icon nn-file-icon-unfinished-task' : 'nn-file-icon';
-    const dragIconColor = showFileIconUnfinishedTask ? undefined : (fileIconColor ?? undefined);
+    const fileIconHasColor = Boolean(fileIconColor);
+    const fileIconStyle = fileIconColor ? ({ color: fileIconColor } as React.CSSProperties) : undefined;
+    const dragIconColor = fileIconColor ?? undefined;
     const shouldShowCompactExtensionBadge = isCompactMode && (isBaseFile || isCanvasFile);
     const wordCountDisplayText =
         shouldShowWordCount && file.extension === 'md'
@@ -947,7 +973,47 @@ export const FileItem = React.memo(function FileItem({
                 onReveal={settings.parentFolderClickRevealsFile ? revealFileInNavigation : undefined}
             />
         ) : null;
-    const shouldShowMetadataLine = shouldShowDateForItem || parentFolderMeta !== null;
+
+    // Visibility must match the virtualizer height estimate in resolveListFileRowHeightInputs.
+    const taskProgressMeta = shouldShowFileItemTaskProgress({
+        showTaskProgress: settings.showFileTaskProgress,
+        hideWhenComplete: settings.hideFileTaskProgressWhenComplete,
+        isPinned,
+        taskTotal,
+        taskUnfinished
+    })
+        ? buildTaskProgressMeta(taskTotal, taskUnfinished)
+        : null;
+
+    // Render task icon plus optional progress bar and completed/total count if the note contains tasks.
+    // The icon always renders; its color follows the complete state through the container color.
+    const renderTaskProgress = () => {
+        if (!taskProgressMeta) {
+            return null;
+        }
+
+        const showBar = settings.showFileTaskProgressBar;
+        const showCount = settings.showFileTaskProgressCount;
+        return (
+            <div
+                className={taskProgressMeta.isComplete ? 'nn-file-task-progress nn-file-task-progress--complete' : 'nn-file-task-progress'}
+                style={showBar ? ({ '--nn-file-task-progress-width': `${taskProgressMeta.percent}%` } as React.CSSProperties) : undefined}
+                // Renders the trailing dot separator toward the date, mirroring the parent folder's leading dot
+                data-dot-separator={shouldShowDateForItem ? 'true' : 'false'}
+            >
+                <ServiceIcon iconId="square-check" className="nn-file-task-progress-icon" aria-hidden={true} />
+                {showBar ? (
+                    <div className="nn-file-task-progress-track">
+                        <div className="nn-file-task-progress-fill" />
+                    </div>
+                ) : null}
+                {showCount ? (
+                    <span className="nn-file-task-progress-count">{`${taskProgressMeta.completed}/${taskProgressMeta.total}`}</span>
+                ) : null}
+            </div>
+        );
+    };
+    const shouldShowMetadataLine = shouldShowDateForItem || taskProgressMeta !== null || parentFolderMeta !== null;
 
     // Reset image hidden state when the feature image URL changes
     useEffect(() => {
@@ -1368,14 +1434,9 @@ export const FileItem = React.memo(function FileItem({
                             {shouldShowFileIcon ? (
                                 <span
                                     ref={fileIconRef}
-                                    className={fileIconClassName}
+                                    className="nn-file-icon"
                                     data-has-color={fileIconHasColor ? 'true' : 'false'}
                                     style={fileIconStyle}
-                                    title={
-                                        !isMobile && !settings.showTooltips && showFileIconUnfinishedTask
-                                            ? (unfinishedTaskTooltipText ?? undefined)
-                                            : undefined
-                                    }
                                 />
                             ) : null}
                         </div>
@@ -1414,9 +1475,10 @@ export const FileItem = React.memo(function FileItem({
                                 {/* Pills */}
                                 {renderedPillRows}
 
-                                {/* Date + Parent folder share the metadata line */}
+                                {/* Task progress + Date + Parent folder share the metadata line */}
                                 {shouldShowMetadataLine && (
                                     <div className="nn-file-second-line">
+                                        {renderTaskProgress()}
                                         {shouldShowDateForItem && <div className="nn-file-date">{displayDate}</div>}
                                         {renderParentFolder()}
                                     </div>

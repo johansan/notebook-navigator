@@ -113,10 +113,12 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New search syntax: quoted literal terms. You can now start a search term with a double quote to match it literally against note names and aliases instead of being read as a filter: `"#work"` finds notes with `#work` in the name instead of filtering on the tag. Use `-"term"` to exclude matches.',
             'You can now check the vault root for notes while ==Show root folder== is off: the `Show hidden items` toolbar button reveals the root folder dimmed at the top of the tree, and the `Search whole vault` command works while it is shown.',
             'New context menu entries on the vault root folder: `Hide root folder` and `Show root folder`. You can now toggle the ==Show root folder== setting directly from the tree.',
-            'New options in the file context menu `Copy` submenu: `Copy note link` (`[[link]]`), `Copy note link as footnote` (`^[[[link]]]`), and `Copy note embed` (`![[link]]`).'
+            'New options in the file context menu `Copy` submenu: `Copy note link` (`[[link]]`), `Copy note link as footnote` (`^[[[link]]]`), and `Copy note embed` (`![[link]]`).',
+            'New setting: File display > ==Show tasks==. Notes containing tasks show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder. Enabled by default. Colors and font weights for unfinished and completed tasks can be changed with Style Settings.'
         ],
         changed: [
-            'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.'
+            'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.',
+            'The ==Unfinished task icon== setting has been removed and replaced by the new task progress display.'
         ],
         fixed: [
             'When a note had a creation date in the future (for example from a frontmatter `created` property), the `Previous 7 days` group header appeared twice in the list pane, and stray headers then showed up in other folders until Obsidian was restarted. Notes dated in the future now group under a new `Future` group.'

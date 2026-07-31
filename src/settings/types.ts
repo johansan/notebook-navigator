@@ -760,9 +760,13 @@ export interface NotebookNavigatorSettings {
     frontmatterDateFormat: string;
 
     // Notes tab
-    showFileIconUnfinishedTask: boolean;
+    showFileTaskProgress: boolean;
+    showFileTaskProgressBar: boolean;
+    showFileTaskProgressCount: boolean;
+    hideFileTaskProgressWhenComplete: boolean;
     showFileBackgroundUnfinishedTask: boolean;
     unfinishedTaskBackgroundColor: string;
+    unfinishedTaskBackgroundColorDark: string;
     showFileIcons: boolean;
     useFolderIconForFiles: boolean;
     showFilenameMatchIcons: boolean;

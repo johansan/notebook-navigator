@@ -538,7 +538,6 @@ export const STRINGS_ES = {
                 'nav-properties': 'Propiedades',
                 'nav-property': 'Propiedad',
                 'nav-property-value': 'Valor',
-                'file-unfinished-task': 'Tareas pendientes',
                 'file-word-count': 'Conteo de palabras',
                 'file-character-count': 'Recuento de caracteres'
             }
@@ -969,7 +968,8 @@ export const STRINGS_ES = {
         files: 'archivos',
         folder: 'carpeta',
         folders: 'carpetas',
-        wordCount: 'Recuento de palabras'
+        wordCount: 'Recuento de palabras',
+        unfinishedTasks: 'Tareas pendientes'
     },
 
     fileCounts: {
@@ -1226,15 +1226,27 @@ export const STRINGS_ES = {
             },
             showFileIcons: {
                 name: 'Mostrar iconos de archivo',
-                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono de tareas pendientes > icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
+                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
             },
             useFolderIcon: {
                 name: 'Usar icono de carpeta',
                 desc: 'Mostrar el icono de la carpeta principal cuando no hay un icono de archivo personalizado. El color de la carpeta se usa cuando no hay un color de archivo personalizado.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icono de tareas pendientes',
-                desc: 'Mostrar un icono de tarea cuando una nota tiene tareas pendientes.'
+            showFileTaskProgress: {
+                name: 'Mostrar tareas',
+                desc: 'Mostrar el estado de las tareas con una barra de progreso y un número de tareas opcionales. Los colores de las tareas pendientes y completadas se pueden definir por separado con el plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostrar tareas: barra de progreso',
+                desc: 'Mostrar una barra de progreso junto al icono de tarea.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostrar tareas: número de tareas',
+                desc: 'Mostrar el número de tareas completadas y el total de tareas, por ejemplo 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostrar tareas: ocultar al completar',
+                desc: 'Ocultar el progreso de tareas cuando todas las tareas de una nota están completadas.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fondo de tareas pendientes',

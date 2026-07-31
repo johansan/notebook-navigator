@@ -274,6 +274,8 @@ export interface FileContentChange {
         properties?: FileData['properties'];
     };
     changeType?: 'metadata' | 'content' | 'both';
+    /** Normalized counters before this update; present whenever either task counter is published in changes. */
+    previousTaskCounters?: Pick<FileData, 'taskTotal' | 'taskUnfinished'>;
     /** Normalized property keys whose tree membership changed; omitted when the writer cannot provide a projection. */
     changedPropertyKeys?: string[];
     /** True when metadata.name changes between persisted values */

@@ -118,6 +118,7 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+    delete mutableSettings.showFileIconUnfinishedTask;
 
     const storedNoteGrouping = storedData ? storedData['noteGrouping'] : undefined;
 

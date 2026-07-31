@@ -539,7 +539,6 @@ export const STRINGS_PT_BR = {
                 'nav-properties': 'Propriedades',
                 'nav-property': 'Propriedade',
                 'nav-property-value': 'Valor',
-                'file-unfinished-task': 'Tarefas inacabadas',
                 'file-word-count': 'Contagem de palavras',
                 'file-character-count': 'Contagem de caracteres'
             }
@@ -970,7 +969,8 @@ export const STRINGS_PT_BR = {
         files: 'arquivos',
         folder: 'pasta',
         folders: 'pastas',
-        wordCount: 'Contagem de palavras'
+        wordCount: 'Contagem de palavras',
+        unfinishedTasks: 'Tarefas inacabadas'
     },
 
     fileCounts: {
@@ -1227,15 +1227,27 @@ export const STRINGS_PT_BR = {
             },
             showFileIcons: {
                 name: 'Mostrar ícones de arquivo',
-                desc: 'Exibir ícones de arquivo com espaçamento alinhado à esquerda. Desativar remove tanto ícones quanto recuo. Prioridade: ícone de tarefas inacabadas > ícone personalizado > ícone de pasta > ícone de nome de arquivo > ícone de tipo de arquivo > ícone padrão.'
+                desc: 'Exibir ícones de arquivo com espaçamento alinhado à esquerda. Desativar remove tanto ícones quanto recuo. Prioridade: ícone personalizado > ícone de pasta > ícone de nome de arquivo > ícone de tipo de arquivo > ícone padrão.'
             },
             useFolderIcon: {
                 name: 'Usar ícone de pasta',
                 desc: 'Exibir o ícone da pasta pai quando não há um ícone de arquivo personalizado definido. A cor da pasta é usada quando não há uma cor de arquivo personalizada definida.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ícone de tarefas inacabadas',
-                desc: 'Exibir um ícone de tarefa quando uma nota possui tarefas inacabadas.'
+            showFileTaskProgress: {
+                name: 'Mostrar tarefas',
+                desc: 'Exibir o status das tarefas com barra de progresso e contagem de tarefas opcionais. As cores das tarefas inacabadas e concluídas podem ser definidas separadamente com o plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostrar tarefas: barra de progresso',
+                desc: 'Exibir uma barra de progresso ao lado do ícone de tarefas.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostrar tarefas: contagem de tarefas',
+                desc: 'Exibir o número de tarefas concluídas e o total de tarefas, por exemplo 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostrar tarefas: ocultar quando concluídas',
+                desc: 'Ocultar o progresso das tarefas quando todas as tarefas de uma nota estiverem concluídas.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fundo de tarefas inacabadas',

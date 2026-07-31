@@ -537,7 +537,6 @@ export const STRINGS_IT = {
                 'nav-properties': 'Proprietà',
                 'nav-property': 'Proprietà',
                 'nav-property-value': 'Valore',
-                'file-unfinished-task': 'Attività incomplete',
                 'file-word-count': 'Conteggio parole',
                 'file-character-count': 'Conteggio caratteri'
             }
@@ -964,7 +963,8 @@ export const STRINGS_IT = {
         files: 'file',
         folder: 'cartella',
         folders: 'cartelle',
-        wordCount: 'Conteggio parole'
+        wordCount: 'Conteggio parole',
+        unfinishedTasks: 'Attività incomplete'
     },
 
     fileCounts: {
@@ -1221,15 +1221,27 @@ export const STRINGS_IT = {
             },
             showFileIcons: {
                 name: 'Mostra icone file',
-                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona attività incomplete > icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
+                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
             },
             useFolderIcon: {
                 name: 'Usa icona cartella',
                 desc: "Visualizza l'icona della cartella genitore quando non è impostata un'icona file personalizzata. Il colore della cartella viene usato quando non è impostato un colore file personalizzato."
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icona attività incomplete',
-                desc: "Mostra un'icona di attività quando una nota ha attività incomplete."
+            showFileTaskProgress: {
+                name: 'Mostra attività',
+                desc: 'Mostra lo stato delle attività con barra di avanzamento e numero di attività opzionali. I colori delle attività incomplete e completate possono essere impostati separatamente con il plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostra attività: barra di avanzamento',
+                desc: "Mostra una barra di avanzamento accanto all'icona attività."
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostra attività: numero di attività',
+                desc: 'Mostra il numero di attività completate e totali, ad esempio 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostra attività: nascondi al completamento',
+                desc: "Nasconde l'avanzamento delle attività quando tutte le attività di una nota sono completate."
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Sfondo attività incomplete',

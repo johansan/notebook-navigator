@@ -539,7 +539,6 @@ export const STRINGS_FR = {
                 'nav-properties': 'Propriétés',
                 'nav-property': 'Propriété',
                 'nav-property-value': 'Valeur',
-                'file-unfinished-task': 'Tâches inachevées',
                 'file-word-count': 'Nombre de mots',
                 'file-character-count': 'Nombre de caractères'
             }
@@ -971,7 +970,8 @@ export const STRINGS_FR = {
         files: 'fichiers',
         folder: 'dossier',
         folders: 'dossiers',
-        wordCount: 'Nombre de mots'
+        wordCount: 'Nombre de mots',
+        unfinishedTasks: 'Tâches inachevées'
     },
 
     fileCounts: {
@@ -1229,15 +1229,27 @@ export const STRINGS_FR = {
             },
             showFileIcons: {
                 name: 'Afficher les icônes de fichier',
-                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône de tâches inachevées > icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
             },
             useFolderIcon: {
                 name: "Utiliser l'icône du dossier",
                 desc: "Afficher l'icône du dossier parent lorsqu'aucune icône de fichier personnalisée n'est définie. La couleur du dossier est utilisée lorsqu'aucune couleur de fichier personnalisée n'est définie."
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icône de tâches inachevées',
-                desc: "Afficher une icône de tâche lorsqu'une note contient des tâches inachevées."
+            showFileTaskProgress: {
+                name: 'Afficher les tâches',
+                desc: "Afficher l'état des tâches avec une barre de progression et un nombre de tâches facultatifs. Les couleurs des tâches inachevées et terminées peuvent être définies séparément avec le plugin Style Settings."
+            },
+            showFileTaskProgressBar: {
+                name: 'Afficher les tâches : barre de progression',
+                desc: "Afficher une barre de progression à côté de l'icône de tâche."
+            },
+            showFileTaskProgressCount: {
+                name: 'Afficher les tâches : nombre de tâches',
+                desc: 'Afficher le nombre de tâches terminées et le nombre total de tâches, par exemple 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Afficher les tâches : masquer une fois terminées',
+                desc: "Masquer la progression des tâches lorsque toutes les tâches d'une note sont terminées."
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fond de tâches inachevées',

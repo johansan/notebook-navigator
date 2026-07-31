@@ -565,14 +565,6 @@ settings:
         level: 2
         collapsed: false
     -
-        id: nn-theme-file-task-icon-color
-        title: Unfinished task icon color
-        description: Icon color for notes with unfinished tasks.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
         id: nn-theme-file-name-color
         title: File name color
         description: Text color for file names.
@@ -584,6 +576,22 @@ settings:
         id: nn-theme-file-preview-color
         title: File preview text color
         description: Text color for content preview.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-task-color
+        title: File task color
+        description: Icon, bar, and count color for notes with unfinished tasks.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-task-complete-color
+        title: File task color (complete)
+        description: Icon, bar, and count color when all tasks in a note are completed.
         type: variable-themed-color
         format: hex
         default-light: '#'
@@ -975,6 +983,24 @@ settings:
         id: nn-theme-file-preview-font-weight
         title: File preview font weight
         description: Font weight for file preview text.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-task-font-weight
+        title: Task font weight
+        description: Font weight for task counts in notes with unfinished tasks.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-task-complete-font-weight
+        title: Task font weight (complete)
+        description: Font weight for task counts when all tasks in a note are completed.
         type: variable-number-slider
         default: 400
         min: 100

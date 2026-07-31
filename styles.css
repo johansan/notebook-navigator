@@ -264,7 +264,9 @@ body {
     /* -- File Items -- */
     --nn-theme-file-name-color: var(--nn-theme-foreground);
     --nn-theme-file-preview-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-task-icon-color: var(--nn-theme-navitem-icon-color);
+    /* --nn-theme-file-task-color and --nn-theme-file-task-complete-color are
+       intentionally not declared here: task progress rules use var() fallbacks to detect whether
+       a theme or Style Settings set them, so customized colors can persist on selected rows. */
     --nn-theme-file-feature-border-radius: 4px;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);
     --nn-theme-file-word-count-color: var(--nn-theme-foreground-faded);
@@ -313,6 +315,8 @@ body {
     --nn-theme-file-preview-font-weight: 400;
     --nn-theme-file-date-font-weight: 400;
     --nn-theme-file-word-count-font-weight: 400;
+    --nn-theme-file-task-font-weight: 400;
+    --nn-theme-file-task-complete-font-weight: 400;
     --nn-theme-file-parent-font-weight: 400;
     --nn-theme-file-tag-font-weight: 400;
 
@@ -4090,14 +4094,6 @@ button.nn-navigation-calendar-day {
     color: var(--nn-theme-navitem-selected-icon-color);
 }
 
-.nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
-    color: var(--nn-theme-file-task-icon-color);
-}
-
-.nn-file.nn-selected .nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
-    color: var(--nn-theme-file-task-icon-color);
-}
-
 /* Quick actions panel - horizontal container for action icons */
 .nn-quick-actions-panel {
     position: absolute;
@@ -4174,13 +4170,104 @@ button.nn-navigation-calendar-day {
     line-height: var(--nn-file-single-text-line-height);
 }
 
-/* Date + parent folder (same line): match legacy spacing when dot separator is disabled. */
-.nn-file-second-line > .nn-file-date + .nn-parent-folder[data-dot-separator='false'] {
+/* Task progress - task icon with optional fixed-width bar and completed/total task count.
+   The container color drives the dot separator, icon, and count; track and fill read the same variable.
+   The task color variables are intentionally unset by default: the var() fallbacks detect whether a
+   theme or Style Settings customized them. Customized colors persist on selected rows (see list-tags.css),
+   while the uncustomized default follows the date color in each selection state. */
+.nn-file-task-progress {
+    --nn-file-task-progress-current-color: var(--nn-theme-file-task-color, var(--nn-theme-file-date-color));
+    --nn-file-task-progress-current-weight: var(--nn-theme-file-task-font-weight);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    line-height: var(--nn-file-single-text-line-height);
+    color: var(--nn-file-task-progress-current-color);
+}
+
+/* All tasks completed: color and weight default to the unfinished values, so completion reads
+   only from the count showing equal numbers unless a theme customizes the complete variables. */
+.nn-file-task-progress--complete {
+    --nn-file-task-progress-current-color: var(
+        --nn-theme-file-task-complete-color,
+        var(--nn-theme-file-task-color, var(--nn-theme-file-date-color))
+    );
+    --nn-file-task-progress-current-weight: var(--nn-theme-file-task-complete-font-weight);
+}
+
+/* Task icon inherits the current color so it reflects the complete state when bar and count are hidden. */
+.nn-file-task-progress-icon {
+    width: calc(var(--icon-size) * 0.8);
+    height: calc(var(--icon-size) * 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* The icon has no font weight, so its stroke width tracks the state weight variable instead:
+   weight 400 maps to the lucide default stroke of 2, weight 600 to 2.5, keeping the icon's
+   visual boldness in sync with the count text. */
+.nn-file-task-progress-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: calc(2px + (var(--nn-file-task-progress-current-weight) - 400) * 0.0025px);
+}
+
+/* Bar width stays fixed regardless of task count; only the fill percentage changes. */
+.nn-file-task-progress-track {
+    position: relative;
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+/* Track background derives from the current color so themed colors tint track, fill, and count together. */
+.nn-file-task-progress-track::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--nn-file-task-progress-current-color);
+    opacity: 0.25;
+}
+
+.nn-file-task-progress-fill {
+    position: relative;
+    width: var(--nn-file-task-progress-width, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--nn-file-task-progress-current-color);
+}
+
+.nn-file-task-progress-count {
+    font-size: var(--nn-file-small-size-mobile, var(--nn-file-small-size));
+    font-weight: var(--nn-file-task-progress-current-weight);
+    white-space: nowrap;
+}
+
+/* Task progress followed by the date: trailing dot separator. The dot is a flex item inside
+   the task element - the same mechanism as the parent folder's leading dot - so both dots get
+   identical box geometry and flex centering. Placing it inside the date's inline text instead
+   would tie it to baseline math and misalign it against the flex-centered folder dot. */
+.nn-file-task-progress[data-dot-separator='true']::after {
+    content: '•';
+    flex-shrink: 0;
+    font-size: 0.65em;
+    color: var(--nn-theme-file-date-color);
+}
+
+/* Parent folder after date or task progress (same line): match legacy spacing when dot separator is disabled. */
+.nn-file-second-line > .nn-file-date + .nn-parent-folder[data-dot-separator='false'],
+.nn-file-second-line > .nn-file-task-progress + .nn-parent-folder[data-dot-separator='false'] {
     margin-inline-start: 8px;
 }
 
-/* Date + parent folder (same line): dot separator */
-.nn-file-second-line > .nn-file-date + .nn-parent-folder[data-dot-separator='true']::before {
+/* Parent folder after date or task progress (same line): dot separator */
+.nn-file-second-line > .nn-file-date + .nn-parent-folder[data-dot-separator='true']::before,
+.nn-file-second-line > .nn-file-task-progress + .nn-parent-folder[data-dot-separator='true']::before {
     content: '•';
     flex-shrink: 0;
     margin-inline-end: 4px;
@@ -4417,6 +4504,24 @@ button.nn-navigation-calendar-day {
 
 .nn-file.nn-selected .nn-file-date {
     color: var(--nn-selected-file-date-color);
+}
+
+/* Selected rows: customized task colors persist (like custom tag colors); only the
+   uncustomized default falls back to the selected date color. */
+.nn-file.nn-selected .nn-file-task-progress {
+    --nn-file-task-progress-current-color: var(--nn-theme-file-task-color, var(--nn-selected-file-date-color));
+}
+
+/* The trailing dot separator stays neutral like the date, not the task color. */
+.nn-file.nn-selected .nn-file-task-progress[data-dot-separator='true']::after {
+    color: var(--nn-selected-file-date-color);
+}
+
+.nn-file.nn-selected .nn-file-task-progress--complete {
+    --nn-file-task-progress-current-color: var(
+        --nn-theme-file-task-complete-color,
+        var(--nn-theme-file-task-color, var(--nn-selected-file-date-color))
+    );
 }
 
 .nn-file.nn-selected .nn-file-word-count-suffix {
@@ -9586,14 +9691,6 @@ settings:
         level: 2
         collapsed: false
     -
-        id: nn-theme-file-task-icon-color
-        title: Unfinished task icon color
-        description: Icon color for notes with unfinished tasks.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
         id: nn-theme-file-name-color
         title: File name color
         description: Text color for file names.
@@ -9605,6 +9702,22 @@ settings:
         id: nn-theme-file-preview-color
         title: File preview text color
         description: Text color for content preview.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-task-color
+        title: File task color
+        description: Icon, bar, and count color for notes with unfinished tasks.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-task-complete-color
+        title: File task color (complete)
+        description: Icon, bar, and count color when all tasks in a note are completed.
         type: variable-themed-color
         format: hex
         default-light: '#'
@@ -9996,6 +10109,24 @@ settings:
         id: nn-theme-file-preview-font-weight
         title: File preview font weight
         description: Font weight for file preview text.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-task-font-weight
+        title: Task font weight
+        description: Font weight for task counts in notes with unfinished tasks.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-task-complete-font-weight
+        title: Task font weight (complete)
+        description: Font weight for task counts when all tasks in a note are completed.
         type: variable-number-slider
         default: 400
         min: 100

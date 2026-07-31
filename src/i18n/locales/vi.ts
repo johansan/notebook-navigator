@@ -537,7 +537,6 @@ export const STRINGS_VI = {
                 'nav-properties': 'Thuộc tính',
                 'nav-property': 'Thuộc tính',
                 'nav-property-value': 'Giá trị',
-                'file-unfinished-task': 'Nhiệm vụ chưa hoàn thành',
                 'file-word-count': 'Số từ',
                 'file-character-count': 'Số ký tự'
             }
@@ -969,7 +968,8 @@ export const STRINGS_VI = {
         files: 'tệp',
         folder: 'thư mục',
         folders: 'thư mục',
-        wordCount: 'Số từ'
+        wordCount: 'Số từ',
+        unfinishedTasks: 'Nhiệm vụ chưa hoàn thành'
     },
 
     fileCounts: {
@@ -1226,15 +1226,27 @@ export const STRINGS_VI = {
             },
             showFileIcons: {
                 name: 'Hiện biểu tượng tệp',
-                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng tác vụ chưa hoàn thành > biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
+                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
             },
             useFolderIcon: {
                 name: 'Dùng biểu tượng thư mục',
                 desc: 'Hiển thị biểu tượng của thư mục cha khi không có biểu tượng tệp tùy chỉnh được đặt. Màu thư mục được dùng khi không có màu tệp tùy chỉnh được đặt.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Biểu tượng nhiệm vụ chưa hoàn thành',
-                desc: 'Hiển thị biểu tượng nhiệm vụ khi ghi chú có nhiệm vụ chưa hoàn thành.'
+            showFileTaskProgress: {
+                name: 'Hiển thị nhiệm vụ',
+                desc: 'Hiển thị trạng thái nhiệm vụ với thanh tiến độ và số nhiệm vụ tùy chọn. Màu cho nhiệm vụ chưa hoàn thành và nhiệm vụ đã hoàn thành có thể được đặt riêng bằng plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Hiển thị nhiệm vụ: thanh tiến độ',
+                desc: 'Hiển thị thanh tiến độ bên cạnh biểu tượng nhiệm vụ.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Hiển thị nhiệm vụ: số nhiệm vụ',
+                desc: 'Hiển thị số nhiệm vụ đã hoàn thành và tổng số nhiệm vụ, ví dụ 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Hiển thị nhiệm vụ: ẩn khi hoàn thành',
+                desc: 'Ẩn tiến độ nhiệm vụ khi tất cả nhiệm vụ trong ghi chú đã hoàn thành.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Nền nhiệm vụ chưa hoàn thành',

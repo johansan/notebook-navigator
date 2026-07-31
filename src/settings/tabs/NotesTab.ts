@@ -23,6 +23,7 @@ import { showNotice } from '../../utils/noticeUtils';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
+import { attachColorSwatchSetting } from '../colorSwatchSetting';
 import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import { isFeatureImagePixelSizeSetting, isFeatureImageSizeSetting, showsCharacterCount, showsWordCount } from '../types';
@@ -61,33 +62,6 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
     const { plugin } = context;
 
     return [
-        createGroupDefinition(strings.settings.groups.notes.tasks, [
-            createToggleDefinition('showFileIconUnfinishedTask', {
-                name: strings.settings.items.showFileIconUnfinishedTask.name,
-                desc: strings.settings.items.showFileIconUnfinishedTask.desc
-            }),
-            createToggleDefinition('showFileBackgroundUnfinishedTask', {
-                name: strings.settings.items.showFileBackgroundUnfinishedTask.name,
-                desc: strings.settings.items.showFileBackgroundUnfinishedTask.desc
-            }),
-            createRenderDefinition({
-                name: strings.settings.items.unfinishedTaskBackgroundColor.name,
-                desc: strings.settings.items.unfinishedTaskBackgroundColor.desc,
-                visible: () => plugin.settings.showFileBackgroundUnfinishedTask,
-                render: setting =>
-                    renderColorSetting(setting, context, {
-                        name: strings.settings.items.unfinishedTaskBackgroundColor.name,
-                        desc: strings.settings.items.unfinishedTaskBackgroundColor.desc,
-                        access: {
-                            getValue: () => plugin.settings.unfinishedTaskBackgroundColor,
-                            setValue: value => {
-                                plugin.settings.unfinishedTaskBackgroundColor = value;
-                            },
-                            defaultValue: DEFAULT_SETTINGS.unfinishedTaskBackgroundColor
-                        }
-                    })
-            })
-        ]),
         createGroupDefinition(strings.settings.groups.notes.icon, [
             createToggleDefinition('showFileIcons', {
                 name: strings.settings.items.showFileIcons.name,
@@ -356,6 +330,55 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 visible: () => plugin.settings.showFileProperties
             })
         ]),
+        createGroupDefinition(strings.settings.groups.notes.tasks, [
+            createToggleDefinition('showFileTaskProgress', {
+                name: strings.settings.items.showFileTaskProgress.name,
+                desc: strings.settings.items.showFileTaskProgress.desc
+            }),
+            createToggleDefinition('showFileTaskProgressCount', {
+                name: strings.settings.items.showFileTaskProgressCount.name,
+                desc: strings.settings.items.showFileTaskProgressCount.desc,
+                visible: () => plugin.settings.showFileTaskProgress
+            }),
+            createToggleDefinition('showFileTaskProgressBar', {
+                name: strings.settings.items.showFileTaskProgressBar.name,
+                desc: strings.settings.items.showFileTaskProgressBar.desc,
+                visible: () => plugin.settings.showFileTaskProgress
+            }),
+            createToggleDefinition('hideFileTaskProgressWhenComplete', {
+                name: strings.settings.items.hideFileTaskProgressWhenComplete.name,
+                desc: strings.settings.items.hideFileTaskProgressWhenComplete.desc,
+                visible: () => plugin.settings.showFileTaskProgress
+            }),
+            createToggleDefinition('showFileBackgroundUnfinishedTask', {
+                name: strings.settings.items.showFileBackgroundUnfinishedTask.name,
+                desc: strings.settings.items.showFileBackgroundUnfinishedTask.desc
+            }),
+            createRenderDefinition({
+                name: strings.settings.items.unfinishedTaskBackgroundColor.name,
+                desc: strings.settings.items.unfinishedTaskBackgroundColor.desc,
+                visible: () => plugin.settings.showFileBackgroundUnfinishedTask,
+                render: setting =>
+                    renderColorSetting(setting, context, {
+                        name: strings.settings.items.unfinishedTaskBackgroundColor.name,
+                        desc: strings.settings.items.unfinishedTaskBackgroundColor.desc,
+                        access: {
+                            getValue: () => plugin.settings.unfinishedTaskBackgroundColor,
+                            setValue: value => {
+                                plugin.settings.unfinishedTaskBackgroundColor = value;
+                            },
+                            defaultValue: DEFAULT_SETTINGS.unfinishedTaskBackgroundColor
+                        },
+                        darkAccess: {
+                            getValue: () => plugin.settings.unfinishedTaskBackgroundColorDark,
+                            setValue: value => {
+                                plugin.settings.unfinishedTaskBackgroundColorDark = value;
+                            },
+                            defaultValue: DEFAULT_SETTINGS.unfinishedTaskBackgroundColorDark
+                        }
+                    })
+            })
+        ]),
         createGroupDefinition(strings.settings.groups.notes.date, [
             createToggleDefinition('showFileDate', {
                 name: strings.settings.items.showFileDate.name,
@@ -461,71 +484,18 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
 function renderColorSetting(
     setting: Setting,
     context: SettingsTabContext,
-    params: { name: string; desc: string; access: ColorSettingAccess }
+    params: { name: string; desc: string; access: ColorSettingAccess; darkAccess?: ColorSettingAccess }
 ): void {
-    const { app, plugin } = context;
-
-    setting.setName(params.name).setDesc(params.desc);
-
-    const previewEl = setting.controlEl.createDiv({ cls: 'nn-setting-color-preview' });
-    const swatchButtonEl = previewEl.createEl('button', {
-        cls: 'nn-setting-color-swatch-button',
-        attr: {
-            type: 'button',
-            'aria-label': params.name
-        }
+    attachColorSwatchSetting({
+        app: context.app,
+        plugin: context.plugin,
+        setting,
+        name: params.name,
+        desc: params.desc,
+        access: params.access,
+        darkAccess: params.darkAccess,
+        showRestoreDefault: true
     });
-    const swatchEl = swatchButtonEl.createDiv({ cls: 'nn-setting-color-swatch' });
-
-    const renderValue = () => {
-        const current = params.access.getValue();
-        swatchEl.style.backgroundColor = current;
-        swatchButtonEl.setAttribute('title', current);
-    };
-
-    swatchButtonEl.addEventListener('click', () => {
-        runAsyncAction(async () => {
-            if (!plugin.metadataService) {
-                showNotice(strings.common.unknownError, { variant: 'warning' });
-                return;
-            }
-
-            const { ColorPickerModal } = await import('../../modals/ColorPickerModal');
-            const modal = new ColorPickerModal(app, {
-                title: params.name,
-                initialColor: params.access.getValue(),
-                settingsProvider: plugin.metadataService.getSettingsProvider(),
-                onChooseColor: async color => {
-                    const nextValue = typeof color === 'string' && color.trim().length > 0 ? color.trim() : params.access.defaultValue;
-                    params.access.setValue(nextValue);
-                    await plugin.saveSettingsAndUpdate();
-                    renderValue();
-                }
-            });
-
-            modal.open();
-        });
-    });
-
-    setting.addExtraButton(button => {
-        button
-            .setIcon('lucide-rotate-ccw')
-            .setTooltip(`${strings.common.restoreDefault} (${params.access.defaultValue})`)
-            .onClick(() => {
-                runAsyncAction(async () => {
-                    const current = params.access.getValue();
-                    if (current === params.access.defaultValue) {
-                        return;
-                    }
-
-                    params.access.setValue(params.access.defaultValue);
-                    await plugin.saveSettingsAndUpdate();
-                    renderValue();
-                });
-            });
-    });
-
-    renderValue();
 }
 
 function getFileTypeIconPresetOptions(context: SettingsTabContext): Record<string, FileTypeIconPresetOption> {

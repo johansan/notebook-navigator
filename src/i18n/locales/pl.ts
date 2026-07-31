@@ -540,7 +540,6 @@ export const STRINGS_PL = {
                 'nav-properties': 'Atrybuty',
                 'nav-property': 'Atrybut',
                 'nav-property-value': 'Wartość',
-                'file-unfinished-task': 'Nieukończone zadania',
                 'file-word-count': 'Liczba słów',
                 'file-character-count': 'Liczba znaków'
             }
@@ -971,7 +970,8 @@ export const STRINGS_PL = {
         files: 'pliki',
         folder: 'folder',
         folders: 'foldery',
-        wordCount: 'Liczba słów'
+        wordCount: 'Liczba słów',
+        unfinishedTasks: 'Nieukończone zadania'
     },
 
     fileCounts: {
@@ -1228,15 +1228,27 @@ export const STRINGS_PL = {
             },
             showFileIcons: {
                 name: 'Pokaż ikonki plików',
-                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka nieukończonych zadań > ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
             },
             useFolderIcon: {
                 name: 'Użyj ikonki folderu',
                 desc: 'Wyświetla ikonkę folderu nadrzędnego, gdy nie ustawiono niestandardowej ikonki pliku. Kolor folderu jest używany, gdy nie ustawiono niestandardowego koloru pliku.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ikona nieukończonych zadań',
-                desc: 'Wyświetla ikonkę, gdy notatka zawiera niezakończone zadania.'
+            showFileTaskProgress: {
+                name: 'Pokaż zadania',
+                desc: 'Wyświetla status zadań z opcjonalnym paskiem postępu i liczbą zadań. Kolory zadań nieukończonych i ukończonych można ustawić osobno we wtyczce Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Pokaż zadania: pasek postępu',
+                desc: 'Wyświetla pasek postępu obok ikonki zadań.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Pokaż zadania: liczba zadań',
+                desc: 'Wyświetla liczbę ukończonych i wszystkich zadań, na przykład 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Pokaż zadania: ukryj po ukończeniu',
+                desc: 'Ukrywa postęp zadań, gdy wszystkie zadania w notatce są ukończone.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Tło nieukończonych zadań',

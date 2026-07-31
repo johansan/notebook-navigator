@@ -536,7 +536,6 @@ export const STRINGS_EN = {
                 'nav-properties': 'Properties',
                 'nav-property': 'Property',
                 'nav-property-value': 'Value',
-                'file-unfinished-task': 'Unfinished tasks',
                 'file-word-count': 'Word count',
                 'file-character-count': 'Character count'
             }
@@ -962,7 +961,8 @@ export const STRINGS_EN = {
         files: 'files',
         folder: 'folder',
         folders: 'folders',
-        wordCount: 'Word count'
+        wordCount: 'Word count',
+        unfinishedTasks: 'Unfinished tasks'
     },
 
     fileCounts: {
@@ -1219,15 +1219,27 @@ export const STRINGS_EN = {
             },
             showFileIcons: {
                 name: 'Show file icons',
-                desc: 'Display file icons with left-aligned spacing. Disabling removes both icons and indentation. Priority: unfinished tasks icon > custom icon > folder icon > file name icon > file type icon > default icon.'
+                desc: 'Display file icons with left-aligned spacing. Disabling removes both icons and indentation. Priority: custom icon > folder icon > file name icon > file type icon > default icon.'
             },
             useFolderIcon: {
                 name: 'Use folder icon',
                 desc: 'Display the parent folder icon when no custom file icon is set. Folder color is used when no custom file color is set.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Unfinished task icon',
-                desc: 'Display a task icon when a note has unfinished tasks.'
+            showFileTaskProgress: {
+                name: 'Show tasks',
+                desc: 'Display task status with an optional progress bar and task count. Colors for unfinished and completed tasks can be set individually with the Style Settings plugin.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Show tasks: progress bar',
+                desc: 'Display a progress bar next to the task icon.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Show tasks: task count',
+                desc: 'Display the number of completed and total tasks, such as 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Show tasks: hide when completed',
+                desc: 'Hide the task progress when all tasks in a note are completed.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Unfinished task background',

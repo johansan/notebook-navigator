@@ -534,7 +534,6 @@ export const STRINGS_ZH_CN = {
                 'nav-properties': '属性',
                 'nav-property': '属性',
                 'nav-property-value': '值',
-                'file-unfinished-task': '未完成任务',
                 'file-word-count': '字数统计',
                 'file-character-count': '字符数'
             }
@@ -959,7 +958,8 @@ export const STRINGS_ZH_CN = {
         files: '个文件',
         folder: '个文件夹',
         folders: '个文件夹',
-        wordCount: '字数'
+        wordCount: '字数',
+        unfinishedTasks: '未完成任务'
     },
 
     fileCounts: {
@@ -1213,15 +1213,27 @@ export const STRINGS_ZH_CN = {
             },
             showFileIcons: {
                 name: '显示文件图标',
-                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：未完成任务图标 > 自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
             },
             useFolderIcon: {
                 name: '使用文件夹图标',
                 desc: '当未设置自定义文件图标时显示父文件夹图标。当未设置自定义文件颜色时使用文件夹颜色。'
             },
-            showFileIconUnfinishedTask: {
-                name: '未完成任务图标',
-                desc: '当笔记包含未完成任务时显示任务图标。'
+            showFileTaskProgress: {
+                name: '显示任务',
+                desc: '显示任务状态，进度条和任务数量可选。未完成任务和已完成任务的颜色可通过 Style Settings 插件分别设置。'
+            },
+            showFileTaskProgressBar: {
+                name: '显示任务：进度条',
+                desc: '在任务图标旁边显示进度条。'
+            },
+            showFileTaskProgressCount: {
+                name: '显示任务：任务数量',
+                desc: '显示已完成任务数和任务总数，例如 3/7。'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: '显示任务：全部完成时隐藏',
+                desc: '当笔记中的所有任务都已完成时隐藏任务进度。'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '未完成任务背景',

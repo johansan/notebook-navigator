@@ -59,8 +59,8 @@ export const NAV_RAINBOW_DEFAULTS: NavRainbowSettings = {
         enabled: false,
         firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
         lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
+        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
+        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
         transitionStyle: 'rgb'
     },
 
@@ -68,8 +68,8 @@ export const NAV_RAINBOW_DEFAULTS: NavRainbowSettings = {
         enabled: false,
         firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
         lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
+        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
+        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
         transitionStyle: 'rgb'
     },
 
@@ -338,9 +338,13 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     frontmatterDateFormat: '',
 
     // Notes tab
-    showFileIconUnfinishedTask: false,
+    showFileTaskProgress: true,
+    showFileTaskProgressBar: true,
+    showFileTaskProgressCount: true,
+    hideFileTaskProgressWhenComplete: false,
     showFileBackgroundUnfinishedTask: false,
     unfinishedTaskBackgroundColor: UNFINISHED_TASK_BACKGROUND_COLOR_DEFAULT,
+    unfinishedTaskBackgroundColorDark: UNFINISHED_TASK_BACKGROUND_COLOR_DEFAULT,
     showFileIcons: true,
     useFolderIconForFiles: false,
     showFilenameMatchIcons: false,
