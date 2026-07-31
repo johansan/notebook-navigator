@@ -363,6 +363,8 @@ export const STRINGS_IT = {
             changeBackground: 'Cambia sfondo',
             excludeFolder: 'Nascondi cartella',
             unhideFolder: 'Mostra cartella',
+            hideRootFolder: 'Nascondi cartella root',
+            showRootFolder: 'Mostra cartella root',
             excludeFromDescendants: 'Nascondi dalle cartelle superiori',
             includeInDescendants: 'Mostra nelle cartelle superiori',
             hiddenFromParentsIndicator: 'Nascosta dagli elenchi delle cartelle superiori',
@@ -792,8 +794,6 @@ export const STRINGS_IT = {
             forbiddenNameCharactersWindows: 'I caratteri riservati di Windows non sono consentiti: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Cartella nascosta: {name}',
-            showFolder: 'Cartella mostrata: {name}',
             folderExcludedFromDescendants: 'Nascosta dagli elenchi delle cartelle superiori: {name}',
             folderIncludedInDescendants: 'Mostrata negli elenchi delle cartelle superiori: {name}',
             mergeNotes: 'Unite {count} note in {name}'

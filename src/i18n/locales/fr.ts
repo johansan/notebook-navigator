@@ -365,6 +365,8 @@ export const STRINGS_FR = {
             changeBackground: 'Changer l’arrière-plan',
             excludeFolder: 'Masquer le dossier',
             unhideFolder: 'Afficher le dossier',
+            hideRootFolder: 'Masquer le dossier racine',
+            showRootFolder: 'Afficher le dossier racine',
             excludeFromDescendants: 'Masquer dans les dossiers parents',
             includeInDescendants: 'Afficher dans les dossiers parents',
             hiddenFromParentsIndicator: 'Masqué dans les listes des dossiers parents',
@@ -799,8 +801,6 @@ export const STRINGS_FR = {
             forbiddenNameCharactersWindows: 'Les caractères réservés à Windows ne sont pas autorisés : <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Dossier masqué : {name}',
-            showFolder: 'Dossier affiché : {name}',
             folderExcludedFromDescendants: 'Masqué dans les listes des dossiers parents : {name}',
             folderIncludedInDescendants: 'Affiché dans les listes des dossiers parents : {name}',
             mergeNotes: '{count} notes fusionnées dans {name}'

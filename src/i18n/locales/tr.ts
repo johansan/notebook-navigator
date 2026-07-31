@@ -364,6 +364,8 @@ export const STRINGS_TR = {
             changeBackground: 'Arka planı değiştir',
             excludeFolder: 'Klasörü gizle',
             unhideFolder: 'Klasörü göster',
+            hideRootFolder: 'Kök klasörü gizle',
+            showRootFolder: 'Kök klasörü göster',
             excludeFromDescendants: 'Üst klasörlerde gizle',
             includeInDescendants: 'Üst klasörlerde göster',
             hiddenFromParentsIndicator: 'Üst klasör listelerinde gizli',
@@ -794,8 +796,6 @@ export const STRINGS_TR = {
             forbiddenNameCharactersWindows: 'Windows için ayrılmış karakterlere izin verilmez: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Klasör gizlendi: {name}',
-            showFolder: 'Klasör gösterildi: {name}',
             folderExcludedFromDescendants: 'Üst klasör listelerinde gizli: {name}',
             folderIncludedInDescendants: 'Üst klasör listelerinde gösteriliyor: {name}',
             mergeNotes: '{count} not {name} içine birleştirildi'

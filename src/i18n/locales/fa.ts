@@ -363,6 +363,8 @@ export const STRINGS_FA = {
             changeBackground: 'تغییر پس‌زمینه',
             excludeFolder: 'مخفی کردن پوشه',
             unhideFolder: 'آشکار کردن پوشه',
+            hideRootFolder: 'مخفی کردن پوشه اصلی',
+            showRootFolder: 'نمایش پوشه اصلی',
             excludeFromDescendants: 'مخفی کردن از پوشه‌های والد',
             includeInDescendants: 'نمایش در پوشه‌های والد',
             hiddenFromParentsIndicator: 'از فهرست‌های پوشه‌های والد مخفی شده است',
@@ -796,8 +798,6 @@ export const STRINGS_FA = {
             forbiddenNameCharactersWindows: 'کاراکترهای رزرو شده در Windows مجاز نیستند: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'پوشه مخفی شد: {name}',
-            showFolder: 'پوشه نمایش داده شد: {name}',
             folderExcludedFromDescendants: 'از فهرست‌های پوشه‌های والد مخفی شد: {name}',
             folderIncludedInDescendants: 'در فهرست‌های پوشه‌های والد نمایش داده شد: {name}',
             mergeNotes: '{count} یادداشت در {name} ادغام شد'

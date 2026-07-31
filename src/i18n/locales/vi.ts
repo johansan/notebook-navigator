@@ -363,6 +363,8 @@ export const STRINGS_VI = {
             changeBackground: 'Đổi nền',
             excludeFolder: 'Ẩn thư mục',
             unhideFolder: 'Hiện thư mục',
+            hideRootFolder: 'Ẩn thư mục gốc',
+            showRootFolder: 'Hiện thư mục gốc',
             excludeFromDescendants: 'Ẩn khỏi thư mục cha',
             includeInDescendants: 'Hiện trong thư mục cha',
             hiddenFromParentsIndicator: 'Đã ẩn khỏi danh sách thư mục cha',
@@ -797,8 +799,6 @@ export const STRINGS_VI = {
             forbiddenNameCharactersWindows: 'Ký tự được Windows dành riêng không được phép: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Đã ẩn thư mục: {name}',
-            showFolder: 'Đã hiện thư mục: {name}',
             folderExcludedFromDescendants: 'Đã ẩn khỏi danh sách thư mục cha: {name}',
             folderIncludedInDescendants: 'Đã hiện trong danh sách thư mục cha: {name}',
             mergeNotes: 'Đã hợp nhất {count} ghi chú vào {name}'

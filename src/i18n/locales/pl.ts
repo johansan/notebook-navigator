@@ -364,6 +364,8 @@ export const STRINGS_PL = {
             changeBackground: 'Zmień tło',
             excludeFolder: 'Ukryj folder',
             unhideFolder: 'Pokaż folder',
+            hideRootFolder: 'Ukryj folder główny',
+            showRootFolder: 'Pokaż folder główny',
             excludeFromDescendants: 'Ukryj w folderach nadrzędnych',
             includeInDescendants: 'Pokaż w folderach nadrzędnych',
             hiddenFromParentsIndicator: 'Ukryte na listach folderów nadrzędnych',
@@ -799,8 +801,6 @@ export const STRINGS_PL = {
             forbiddenNameCharactersWindows: 'Znaki zarezerwowane przez system Windows są niedozwolone: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Ukryty folder: {name}',
-            showFolder: 'Widoczny folder: {name}',
             folderExcludedFromDescendants: 'Ukryte na listach folderów nadrzędnych: {name}',
             folderIncludedInDescendants: 'Pokazane na listach folderów nadrzędnych: {name}',
             mergeNotes: 'Scalono {count} notatek w {name}'

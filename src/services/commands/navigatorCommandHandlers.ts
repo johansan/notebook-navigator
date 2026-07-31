@@ -1585,7 +1585,8 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         id: 'search-vault',
         name: strings.commands.searchVaultRoot,
         checkCallback: (checking: boolean) => {
-            if (!plugin.settings.showRootFolder) {
+            // The root folder is selectable when the setting shows it or when show hidden items reveals it
+            if (!plugin.settings.showRootFolder && !plugin.getUXPreferences().showHiddenItems) {
                 return false;
             }
 

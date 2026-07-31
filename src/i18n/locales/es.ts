@@ -364,6 +364,8 @@ export const STRINGS_ES = {
             changeBackground: 'Cambiar fondo',
             excludeFolder: 'Ocultar carpeta',
             unhideFolder: 'Mostrar carpeta',
+            hideRootFolder: 'Ocultar carpeta raíz',
+            showRootFolder: 'Mostrar carpeta raíz',
             excludeFromDescendants: 'Ocultar en carpetas superiores',
             includeInDescendants: 'Mostrar en carpetas superiores',
             hiddenFromParentsIndicator: 'Oculta en listas de carpetas superiores',
@@ -797,8 +799,6 @@ export const STRINGS_ES = {
             forbiddenNameCharactersWindows: 'Los caracteres reservados de Windows no están permitidos: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Carpeta oculta: {name}',
-            showFolder: 'Carpeta mostrada: {name}',
             folderExcludedFromDescendants: 'Oculta en listas de carpetas superiores: {name}',
             folderIncludedInDescendants: 'Visible en listas de carpetas superiores: {name}',
             mergeNotes: 'Se combinaron {count} notas en {name}'

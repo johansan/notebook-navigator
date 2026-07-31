@@ -365,6 +365,8 @@ export const STRINGS_PT_BR = {
             changeBackground: 'Alterar plano de fundo',
             excludeFolder: 'Ocultar pasta',
             unhideFolder: 'Reexibir pasta',
+            hideRootFolder: 'Ocultar pasta raiz',
+            showRootFolder: 'Mostrar pasta raiz',
             excludeFromDescendants: 'Ocultar nas pastas superiores',
             includeInDescendants: 'Mostrar nas pastas superiores',
             hiddenFromParentsIndicator: 'Oculta nas listas das pastas superiores',
@@ -798,8 +800,6 @@ export const STRINGS_PT_BR = {
             forbiddenNameCharactersWindows: 'Caracteres reservados do Windows não são permitidos: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Pasta oculta: {name}',
-            showFolder: 'Pasta exibida: {name}',
             folderExcludedFromDescendants: 'Oculta nas listas das pastas superiores: {name}',
             folderIncludedInDescendants: 'Mostrada nas listas das pastas superiores: {name}',
             mergeNotes: '{count} notas mescladas em {name}'

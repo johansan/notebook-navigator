@@ -363,6 +363,8 @@ export const STRINGS_AR = {
             changeBackground: 'تغيير الخلفية',
             excludeFolder: 'إخفاء المجلد',
             unhideFolder: 'إظهار المجلد',
+            hideRootFolder: 'إخفاء المجلد الجذري',
+            showRootFolder: 'إظهار المجلد الجذري',
             excludeFromDescendants: 'إخفاء من المجلدات الأصلية',
             includeInDescendants: 'إظهار في المجلدات الأصلية',
             hiddenFromParentsIndicator: 'مخفى من قوائم المجلدات الأصلية',
@@ -791,8 +793,6 @@ export const STRINGS_AR = {
             forbiddenNameCharactersWindows: 'أحرف Windows المحجوزة غير مسموح بها: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'تم إخفاء المجلد: {name}',
-            showFolder: 'تم إظهار المجلد: {name}',
             folderExcludedFromDescendants: 'مخفى من قوائم المجلدات الأصلية: {name}',
             folderIncludedInDescendants: 'ظاهر في قوائم المجلدات الأصلية: {name}',
             mergeNotes: 'تم دمج {count} ملاحظة في {name}'
