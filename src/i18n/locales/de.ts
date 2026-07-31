@@ -538,7 +538,6 @@ export const STRINGS_DE = {
                 'nav-properties': 'Eigenschaften',
                 'nav-property': 'Eigenschaft',
                 'nav-property-value': 'Wert',
-                'file-unfinished-task': 'Unerledigte Aufgaben',
                 'file-word-count': 'Wortanzahl',
                 'file-character-count': 'Zeichenanzahl'
             }
@@ -971,7 +970,8 @@ export const STRINGS_DE = {
         files: 'Dateien',
         folder: 'Ordner',
         folders: 'Ordner',
-        wordCount: 'Wortanzahl'
+        wordCount: 'Wortanzahl',
+        unfinishedTasks: 'Unerledigte Aufgaben'
     },
 
     fileCounts: {
@@ -1228,15 +1228,27 @@ export const STRINGS_DE = {
             },
             showFileIcons: {
                 name: 'Dateisymbole anzeigen',
-                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Unerledigte-Aufgaben-Symbol > Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
             },
             useFolderIcon: {
                 name: 'Ordnersymbol verwenden',
                 desc: 'Das Symbol des übergeordneten Ordners anzeigen, wenn kein benutzerdefiniertes Dateisymbol festgelegt ist. Die Ordnerfarbe wird verwendet, wenn keine benutzerdefinierte Dateifarbe festgelegt ist.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Unerledigte-Aufgaben-Symbol',
-                desc: 'Ein Aufgabensymbol anzeigen, wenn eine Notiz unerledigte Aufgaben enthält.'
+            showFileTaskProgress: {
+                name: 'Aufgaben anzeigen',
+                desc: 'Den Aufgabenstatus mit optionalem Fortschrittsbalken und optionaler Aufgabenanzahl anzeigen. Farben für unerledigte und erledigte Aufgaben können im Style-Settings-Plugin einzeln festgelegt werden.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Aufgaben anzeigen: Fortschrittsbalken',
+                desc: 'Einen Fortschrittsbalken neben dem Aufgabensymbol anzeigen.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Aufgaben anzeigen: Aufgabenanzahl',
+                desc: 'Die Anzahl der erledigten und die Gesamtzahl der Aufgaben anzeigen, z. B. 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Aufgaben anzeigen: bei Abschluss ausblenden',
+                desc: 'Den Aufgabenfortschritt ausblenden, wenn alle Aufgaben einer Notiz erledigt sind.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Unerledigte-Aufgaben-Hintergrund',

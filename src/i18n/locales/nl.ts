@@ -540,7 +540,6 @@ export const STRINGS_NL = {
                 'nav-properties': 'Eigenschappen',
                 'nav-property': 'Eigenschap',
                 'nav-property-value': 'Waarde',
-                'file-unfinished-task': 'Onvoltooide taken',
                 'file-word-count': 'Aantal woorden',
                 'file-character-count': 'Aantal tekens'
             }
@@ -970,7 +969,8 @@ export const STRINGS_NL = {
         files: 'bestanden',
         folder: 'map',
         folders: 'mappen',
-        wordCount: 'Aantal woorden'
+        wordCount: 'Aantal woorden',
+        unfinishedTasks: 'Onvoltooide taken'
     },
 
     fileCounts: {
@@ -1227,15 +1227,27 @@ export const STRINGS_NL = {
             },
             showFileIcons: {
                 name: 'Bestandspictogrammen tonen',
-                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: onvoltooide taken-pictogram > aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
+                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
             },
             useFolderIcon: {
                 name: 'Mappictogram gebruiken',
                 desc: 'Het pictogram van de bovenliggende map weergeven wanneer er geen aangepast bestandspictogram is ingesteld. De mapkleur wordt gebruikt wanneer er geen aangepaste bestandskleur is ingesteld.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Onvoltooide taken-pictogram',
-                desc: 'Een taakpictogram weergeven wanneer een notitie onvoltooide taken bevat.'
+            showFileTaskProgress: {
+                name: 'Taken tonen',
+                desc: 'De taakstatus weergeven met optionele voortgangsbalk en optioneel aantal taken. Kleuren voor onvoltooide en voltooide taken kunnen afzonderlijk worden ingesteld met de Style Settings-plugin.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Taken tonen: voortgangsbalk',
+                desc: 'Een voortgangsbalk naast het taakpictogram weergeven.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Taken tonen: aantal taken',
+                desc: 'Het aantal voltooide en totale taken weergeven, bijvoorbeeld 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Taken tonen: verbergen wanneer voltooid',
+                desc: 'De taakvoortgang verbergen wanneer alle taken in een notitie voltooid zijn.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Onvoltooide taken-achtergrond',

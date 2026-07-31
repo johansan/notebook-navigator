@@ -535,7 +535,6 @@ export const STRINGS_ZH_TW = {
                 'nav-properties': '屬性',
                 'nav-property': '屬性',
                 'nav-property-value': '值',
-                'file-unfinished-task': '未完成任務',
                 'file-word-count': '字數統計',
                 'file-character-count': '字元數'
             }
@@ -960,7 +959,8 @@ export const STRINGS_ZH_TW = {
         files: '個檔案',
         folder: '個資料夾',
         folders: '個資料夾',
-        wordCount: '字數'
+        wordCount: '字數',
+        unfinishedTasks: '未完成任務'
     },
 
     fileCounts: {
@@ -1214,15 +1214,27 @@ export const STRINGS_ZH_TW = {
             },
             showFileIcons: {
                 name: '顯示檔案圖示',
-                desc: '顯示檔案圖示並保留左對齊間距。停用後將移除圖示和縮排。優先順序：未完成任務圖示 > 自訂圖示 > 資料夾圖示 > 檔名圖示 > 檔案類型圖示 > 預設圖示。'
+                desc: '顯示檔案圖示並保留左對齊間距。停用後將移除圖示和縮排。優先順序：自訂圖示 > 資料夾圖示 > 檔名圖示 > 檔案類型圖示 > 預設圖示。'
             },
             useFolderIcon: {
                 name: '使用資料夾圖示',
                 desc: '當未設定自訂檔案圖示時顯示父資料夾圖示。當未設定自訂檔案顏色時使用資料夾顏色。'
             },
-            showFileIconUnfinishedTask: {
-                name: '未完成任務圖示',
-                desc: '當筆記包含未完成任務時顯示任務圖示。'
+            showFileTaskProgress: {
+                name: '顯示任務',
+                desc: '顯示任務狀態，進度條和任務數量為可選。未完成任務和已完成任務的顏色可透過 Style Settings 外掛分別設定。'
+            },
+            showFileTaskProgressBar: {
+                name: '顯示任務：進度條',
+                desc: '在任務圖示旁邊顯示進度條。'
+            },
+            showFileTaskProgressCount: {
+                name: '顯示任務：任務數量',
+                desc: '顯示已完成任務數和任務總數，例如 3/7。'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: '顯示任務：全部完成時隱藏',
+                desc: '當筆記中的所有任務都已完成時隱藏任務進度。'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '未完成任務背景',

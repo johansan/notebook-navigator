@@ -201,7 +201,8 @@ Border variables apply to navigation rows, file rows, count badges, and file pil
 | ------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------- |
 | `--nn-theme-file-name-color`                      | `var(--nn-theme-foreground)`                  | Text color for file names                                       |
 | `--nn-theme-file-preview-color`                   | `var(--nn-theme-foreground-muted)`            | Text color for content preview                                  |
-| `--nn-theme-file-task-icon-color`                 | `var(--nn-theme-navitem-icon-color)`          | Icon color for notes with unfinished tasks                      |
+| `--nn-theme-file-task-color`                      | unset, falls back to `--nn-theme-file-date-color` | Task color for notes with unfinished tasks; set values also apply on selected rows |
+| `--nn-theme-file-task-complete-color`             | unset, falls back to `--nn-theme-file-task-color` | Task color when all tasks in a note are completed; set values also apply on selected rows |
 | `--nn-theme-file-feature-border-radius`           | `4px`                                         | Corner radius for feature images (0-32px)                       |
 | `--nn-theme-file-date-color`                      | `var(--nn-theme-foreground-faded)`            | Text color for creation or modification dates                   |
 | `--nn-theme-file-word-count-color`                | `var(--nn-theme-foreground-faded)`            | Text color for word count suffixes                             |
@@ -248,6 +249,8 @@ navigation pane background. In `primary` and `secondary` background modes, both 
 | `--nn-theme-file-name-font-weight`              | `600`   | Font weight for file names                           |
 | `--nn-theme-file-compact-name-font-weight`      | `400`   | Font weight for file names in compact mode           |
 | `--nn-theme-file-preview-font-weight`           | `400`   | Font weight for file preview text                    |
+| `--nn-theme-file-task-font-weight`              | `400`   | Font weight for task counts in notes with unfinished tasks |
+| `--nn-theme-file-task-complete-font-weight`     | `400`   | Font weight for task counts when all tasks in a note are completed |
 | `--nn-theme-file-date-font-weight`              | `400`   | Font weight for file dates                           |
 | `--nn-theme-file-word-count-font-weight`        | `400`   | Font weight for word count suffixes                  |
 | `--nn-theme-file-parent-font-weight`            | `400`   | Font weight for parent folder path                   |
@@ -396,7 +399,8 @@ body {
   /* File items */
   --nn-theme-file-name-color: #a9b7c6;
   --nn-theme-file-preview-color: #7f8b91;
-  --nn-theme-file-task-icon-color: #afb1b3;
+  --nn-theme-file-task-color: #afb1b3;
+  --nn-theme-file-task-complete-color: #6a8759;
   --nn-theme-file-feature-border-radius: 3px;
   --nn-theme-file-date-color: #6a8759;
   --nn-theme-file-word-count-color: #6a8759;

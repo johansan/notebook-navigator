@@ -535,7 +535,6 @@ export const STRINGS_KO = {
                 'nav-properties': '속성',
                 'nav-property': '속성',
                 'nav-property-value': '값',
-                'file-unfinished-task': '미완료 작업',
                 'file-word-count': '단어 수',
                 'file-character-count': '문자 수'
             }
@@ -965,7 +964,8 @@ export const STRINGS_KO = {
         files: '파일',
         folder: '폴더',
         folders: '폴더',
-        wordCount: '단어 수'
+        wordCount: '단어 수',
+        unfinishedTasks: '미완료 작업'
     },
 
     fileCounts: {
@@ -1222,15 +1222,27 @@ export const STRINGS_KO = {
             },
             showFileIcons: {
                 name: '파일 아이콘 표시',
-                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 미완료 작업 아이콘 > 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
             },
             useFolderIcon: {
                 name: '폴더 아이콘 사용',
                 desc: '사용자 지정 파일 아이콘이 설정되지 않은 경우 상위 폴더 아이콘을 표시합니다. 사용자 지정 파일 색상이 설정되지 않은 경우 폴더 색상이 사용됩니다.'
             },
-            showFileIconUnfinishedTask: {
-                name: '미완료 작업 아이콘',
-                desc: '노트에 미완료 작업이 있을 때 작업 아이콘을 표시합니다.'
+            showFileTaskProgress: {
+                name: '작업 표시',
+                desc: '작업 상태를 표시하며 진행률 표시줄과 작업 수는 선택적으로 표시합니다. 미완료 작업과 완료된 작업의 색상은 Style Settings 플러그인에서 개별적으로 설정할 수 있습니다.'
+            },
+            showFileTaskProgressBar: {
+                name: '작업 표시: 진행률 표시줄',
+                desc: '작업 아이콘 옆에 진행률 표시줄을 표시합니다.'
+            },
+            showFileTaskProgressCount: {
+                name: '작업 표시: 작업 수',
+                desc: '완료된 작업 수와 전체 작업 수를 표시합니다(예: 3/7).'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: '작업 표시: 완료 시 숨기기',
+                desc: '노트의 모든 작업이 완료되면 작업 진행률을 숨깁니다.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '미완료 작업 배경',

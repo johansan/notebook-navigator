@@ -150,6 +150,7 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                 let metadataNameChanged = false;
                 let metadataDecorationChanged = false;
                 let changedPropertyKeys: string[] | undefined;
+                let previousTaskCounters: FileContentChange['previousTaskCounters'];
                 let hasContentChanges = false;
                 const providerField = provider ? getProviderProcessedMtimeField(provider) : null;
                 const shouldApplyProviderContent =
@@ -192,13 +193,26 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                     }
                     const hasTaskUpdate = guardedUpdate.taskTotal !== undefined || guardedUpdate.taskUnfinished !== undefined;
                     if (hasTaskUpdate) {
-                        // Task counters must be written together; normalization preserves pair semantics.
+                        // Counters are persisted as a pair, but notifications publish fields independently because
+                        // unfinished-task consumers would otherwise refresh on total-only changes.
                         const normalizedTaskCounters = normalizeTaskCounters(guardedUpdate.taskTotal, guardedUpdate.taskUnfinished);
                         newData.taskTotal = normalizedTaskCounters.taskTotal;
                         newData.taskUnfinished = normalizedTaskCounters.taskUnfinished;
-                        changes.taskTotal = normalizedTaskCounters.taskTotal;
-                        changes.taskUnfinished = normalizedTaskCounters.taskUnfinished;
-                        hasContentChanges = true;
+                        const taskTotalChanged = existing.taskTotal !== normalizedTaskCounters.taskTotal;
+                        const taskUnfinishedChanged = existing.taskUnfinished !== normalizedTaskCounters.taskUnfinished;
+                        if (taskTotalChanged || taskUnfinishedChanged) {
+                            previousTaskCounters = {
+                                taskTotal: existing.taskTotal,
+                                taskUnfinished: existing.taskUnfinished
+                            };
+                            if (taskTotalChanged) {
+                                changes.taskTotal = normalizedTaskCounters.taskTotal;
+                            }
+                            if (taskUnfinishedChanged) {
+                                changes.taskUnfinished = normalizedTaskCounters.taskUnfinished;
+                            }
+                            hasContentChanges = true;
+                        }
                     }
                     if (guardedUpdate.properties !== undefined) {
                         changedPropertyKeys = getChangedPropertyKeys(existing.properties, guardedUpdate.properties);
@@ -342,6 +356,9 @@ export async function runBatchUpdateFileContentAndProviderProcessedMtimes(
                         const hasMetadataUpdates = changes.metadata !== undefined || changes.tags !== undefined;
                         const updateType = hasContentUpdates && hasMetadataUpdates ? 'both' : hasContentUpdates ? 'content' : 'metadata';
                         const contentChange: FileContentChange = { path, changes, changeType: updateType };
+                        if (previousTaskCounters) {
+                            contentChange.previousTaskCounters = previousTaskCounters;
+                        }
                         if (changes.properties !== undefined) {
                             contentChange.changedPropertyKeys = changedPropertyKeys;
                         }

@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, Modal, Setting, setIcon } from 'obsidian';
+import { App, Modal, Setting } from 'obsidian';
 import type NotebookNavigatorPlugin from '../main';
 import { strings } from '../i18n';
-import { runAsyncAction } from '../utils/async';
+import { attachColorSwatchSetting } from '../settings/colorSwatchSetting';
 import {
     isNavRainbowScope,
     isNavRainbowTransitionStyle,
@@ -329,123 +329,25 @@ export class NavRainbowSectionModal extends Modal {
         access: ColorSettingAccess;
         separateThemeColors: boolean;
     }): void {
-        const setting = new Setting(params.containerEl).setName(params.name).setDesc(params.desc);
-        const previewEl = setting.controlEl.createDiv({ cls: 'nn-setting-color-preview' });
-        const createThemedSwatchButton = (theme: 'light' | 'dark'): { buttonEl: HTMLButtonElement; swatchEl: HTMLDivElement } => {
-            const isDark = theme === 'dark';
-            const themeLabel = isDark ? strings.common.darkMode : strings.common.lightMode;
-            const buttonEl = previewEl.createEl('button', {
-                cls: `nn-setting-color-swatch-button${isDark ? ' nn-setting-color-swatch-button-dark' : ''}`,
-                attr: {
-                    type: 'button',
-                    'aria-label': `${params.name} (${themeLabel})`
-                }
-            });
-            const swatchEl = buttonEl.createDiv({ cls: 'nn-setting-color-swatch' });
-            return { buttonEl, swatchEl };
-        };
-        const createSingleSwatchButton = (): { buttonEl: HTMLButtonElement; swatchEl: HTMLDivElement } => {
-            const buttonEl = previewEl.createEl('button', {
-                cls: 'nn-setting-color-swatch-button',
-                attr: {
-                    type: 'button',
-                    'aria-label': params.name
-                }
-            });
-            const swatchEl = buttonEl.createDiv({ cls: 'nn-setting-color-swatch' });
-            return { buttonEl, swatchEl };
-        };
-        const lightSwatch = params.separateThemeColors ? createThemedSwatchButton('light') : null;
-        const copyLightToDarkButton =
-            params.separateThemeColors && lightSwatch
-                ? previewEl.createEl('button', {
-                      cls: 'clickable-icon nn-setting-color-copy-button',
-                      attr: {
-                          type: 'button',
-                          'aria-label': strings.settings.items.navRainbowCopyLightToDark,
-                          title: strings.settings.items.navRainbowCopyLightToDark
-                      }
-                  })
-                : null;
-        const darkSwatch = params.separateThemeColors ? createThemedSwatchButton('dark') : null;
-        const singleSwatch = params.separateThemeColors ? null : createSingleSwatchButton();
-
-        if (copyLightToDarkButton) {
-            setIcon(copyLightToDarkButton, 'arrow-right');
-        }
-
-        const openColorPicker = (theme: 'light' | 'dark' | 'single') => {
-            runAsyncAction(async () => {
-                if (!this.plugin.metadataService) {
-                    return;
-                }
-
-                const metadataService = this.plugin.metadataService;
-                const { ColorPickerModal } = await import('./ColorPickerModal');
-                const isDark = theme === 'dark';
-                const isSingle = theme === 'single';
-                const themeLabel = isDark ? strings.common.darkMode : strings.common.lightMode;
-                const initialColor = isDark ? params.access.getDarkValue() : params.access.getLightValue();
-                const defaultValue = isDark ? params.access.darkDefaultValue : params.access.lightDefaultValue;
-                const modal = new ColorPickerModal(this.app, {
-                    title: isSingle ? params.name : `${params.name} (${themeLabel})`,
-                    initialColor,
-                    settingsProvider: metadataService.getSettingsProvider(),
-                    onChooseColor: async color => {
-                        const nextValue = typeof color === 'string' && color.trim().length > 0 ? color.trim() : defaultValue;
-                        if (isDark) {
-                            params.access.setDarkValue(nextValue);
-                        } else {
-                            params.access.setLightValue(nextValue);
-                        }
-                        await this.plugin.saveSettingsAndUpdate();
-                        renderValue();
-                    }
-                });
-
-                modal.open();
-            });
-        };
-
-        if (singleSwatch) {
-            singleSwatch.buttonEl.addEventListener('click', () => openColorPicker('single'));
-        } else {
-            lightSwatch?.buttonEl.addEventListener('click', () => openColorPicker('light'));
-            darkSwatch?.buttonEl.addEventListener('click', () => openColorPicker('dark'));
-            copyLightToDarkButton?.addEventListener('click', () => {
-                runAsyncAction(async () => {
-                    const lightColor = params.access.getLightValue();
-                    if (params.access.getDarkValue() === lightColor) {
-                        return;
-                    }
-
-                    params.access.setDarkValue(lightColor);
-                    await this.plugin.saveSettingsAndUpdate();
-                    renderValue();
-                });
-            });
-        }
-
-        const renderValue = () => {
-            const lightColor = params.access.getLightValue();
-            if (singleSwatch) {
-                singleSwatch.swatchEl.style.backgroundColor = lightColor;
-                singleSwatch.buttonEl.setAttribute('title', lightColor);
-                return;
-            }
-
-            if (!lightSwatch || !darkSwatch) {
-                return;
-            }
-
-            lightSwatch.swatchEl.style.backgroundColor = lightColor;
-            lightSwatch.buttonEl.setAttribute('title', `${strings.common.lightMode}: ${lightColor}`);
-
-            const darkColor = params.access.getDarkValue();
-            darkSwatch.swatchEl.style.backgroundColor = darkColor;
-            darkSwatch.buttonEl.setAttribute('title', `${strings.common.darkMode}: ${darkColor}`);
-        };
-
-        renderValue();
+        attachColorSwatchSetting({
+            app: this.app,
+            plugin: this.plugin,
+            setting: new Setting(params.containerEl),
+            name: params.name,
+            desc: params.desc,
+            access: {
+                getValue: params.access.getLightValue,
+                setValue: params.access.setLightValue,
+                defaultValue: params.access.lightDefaultValue
+            },
+            darkAccess: params.separateThemeColors
+                ? {
+                      getValue: params.access.getDarkValue,
+                      setValue: params.access.setDarkValue,
+                      defaultValue: params.access.darkDefaultValue
+                  }
+                : undefined,
+            showRestoreDefault: true
+        });
     }
 }

@@ -504,6 +504,9 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
     }
 
     getRelevantSettings(): (keyof NotebookNavigatorSettings)[] {
+        // Task display settings (showFileTaskProgress, showFileBackgroundUnfinishedTask) are intentionally
+        // absent: task extraction always runs (hasMarkdownTaskConsumer), so listing them would stop and
+        // requeue the whole pipeline on toggles that cannot change extracted content.
         return [
             'showFilePreview',
             'skipHeadingsInPreview',
@@ -521,8 +524,6 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             'textCountDisplay',
             'showTooltips',
             'showTooltipWordCount',
-            'showFileIconUnfinishedTask',
-            'showFileBackgroundUnfinishedTask',
             'calendarEnabled',
             'manualSortGroupHeaderProperty',
             'manualSortPropertyKey',

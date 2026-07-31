@@ -538,7 +538,6 @@ export const STRINGS_ID = {
                 'nav-properties': 'Properti',
                 'nav-property': 'Properti',
                 'nav-property-value': 'Nilai',
-                'file-unfinished-task': 'Tugas belum selesai',
                 'file-word-count': 'Jumlah kata',
                 'file-character-count': 'Jumlah karakter'
             }
@@ -968,7 +967,8 @@ export const STRINGS_ID = {
         files: 'file',
         folder: 'folder',
         folders: 'folder',
-        wordCount: 'Jumlah kata'
+        wordCount: 'Jumlah kata',
+        unfinishedTasks: 'Tugas belum selesai'
     },
 
     fileCounts: {
@@ -1225,15 +1225,27 @@ export const STRINGS_ID = {
             },
             showFileIcons: {
                 name: 'Tampilkan ikon file',
-                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon tugas belum selesai > ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
+                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
             },
             useFolderIcon: {
                 name: 'Gunakan ikon folder',
                 desc: 'Tampilkan ikon folder induk saat tidak ada ikon file kustom yang ditetapkan. Warna folder digunakan saat tidak ada warna file kustom yang ditetapkan.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ikon tugas belum selesai',
-                desc: 'Tampilkan ikon tugas saat catatan memiliki tugas yang belum selesai.'
+            showFileTaskProgress: {
+                name: 'Tampilkan tugas',
+                desc: 'Tampilkan status tugas dengan bilah progres dan jumlah tugas opsional. Warna untuk tugas yang belum selesai dan tugas yang selesai dapat diatur secara terpisah dengan plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Tampilkan tugas: bilah progres',
+                desc: 'Tampilkan bilah progres di samping ikon tugas.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Tampilkan tugas: jumlah tugas',
+                desc: 'Tampilkan jumlah tugas yang selesai dan total tugas, misalnya 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Tampilkan tugas: sembunyikan saat selesai',
+                desc: 'Sembunyikan progres tugas saat semua tugas dalam catatan selesai.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Latar belakang tugas belum selesai',

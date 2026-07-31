@@ -450,6 +450,9 @@ export class PluginSettingsController {
             Object.prototype.hasOwnProperty.call(storedData, 'cmdCtrlEnterOpenContext') &&
             !isEnterKeyAction(storedData['cmdCtrlEnterOpenContext'])
         );
+        const hadMissingDarkTaskBackgroundColorInStoredData = Boolean(
+            storedData && !Object.prototype.hasOwnProperty.call(storedData, 'unfinishedTaskBackgroundColorDark')
+        );
         const storedSettings = storedData as Partial<NotebookNavigatorSettings> | null;
         this.shouldPersistDesktopScale = Boolean(storedData && 'desktopScale' in storedData);
         this.shouldPersistMobileScale = Boolean(storedData && 'mobileScale' in storedData);
@@ -655,6 +658,13 @@ export class PluginSettingsController {
         applyLegacyShortcutsMigration({ settings: this.currentSettings, legacyShortcuts });
         const migratedShortcutNegationSyntax = migrateSearchShortcutNegationSyntax({ settings: this.currentSettings });
         this.normalizeIconSettings();
+        // Stored data from before the dark task background setting existed lacks the key, and the
+        // defaults merge above already filled it with the default color. Seed it from the light color
+        // before normalization so upgraded vaults keep the same background in both themes; a malformed
+        // light value is cleaned up by normalizeTaskSettings afterwards.
+        if (hadMissingDarkTaskBackgroundColorInStoredData) {
+            this.currentSettings.unfinishedTaskBackgroundColorDark = this.currentSettings.unfinishedTaskBackgroundColor;
+        }
         this.normalizeTaskSettings();
         this.normalizeFileIconMapSettings();
         this.normalizeInterfaceIconsSettings();
@@ -684,6 +694,7 @@ export class PluginSettingsController {
             hadLegacyOpenFolderNotesInNewTabInStoredData ||
             hadInvalidShiftEnterOpenContextInStoredData ||
             hadInvalidCmdCtrlEnterOpenContextInStoredData ||
+            hadMissingDarkTaskBackgroundColorInStoredData ||
             prunedUnavailablePropertySortOverrides ||
             prunedUnavailablePropertyGroupingOverrides ||
             uiScaleMigrated ||
@@ -1256,8 +1267,20 @@ export class PluginSettingsController {
     }
 
     private normalizeTaskSettings(): void {
-        if (typeof this.currentSettings.showFileIconUnfinishedTask !== 'boolean') {
-            this.currentSettings.showFileIconUnfinishedTask = DEFAULT_SETTINGS.showFileIconUnfinishedTask;
+        if (typeof this.currentSettings.showFileTaskProgress !== 'boolean') {
+            this.currentSettings.showFileTaskProgress = DEFAULT_SETTINGS.showFileTaskProgress;
+        }
+
+        if (typeof this.currentSettings.showFileTaskProgressBar !== 'boolean') {
+            this.currentSettings.showFileTaskProgressBar = DEFAULT_SETTINGS.showFileTaskProgressBar;
+        }
+
+        if (typeof this.currentSettings.showFileTaskProgressCount !== 'boolean') {
+            this.currentSettings.showFileTaskProgressCount = DEFAULT_SETTINGS.showFileTaskProgressCount;
+        }
+
+        if (typeof this.currentSettings.hideFileTaskProgressWhenComplete !== 'boolean') {
+            this.currentSettings.hideFileTaskProgressWhenComplete = DEFAULT_SETTINGS.hideFileTaskProgressWhenComplete;
         }
 
         if (typeof this.currentSettings.showFileBackgroundUnfinishedTask !== 'boolean') {
@@ -1267,6 +1290,15 @@ export class PluginSettingsController {
         this.currentSettings.unfinishedTaskBackgroundColor = resolveTaskBackgroundColor(
             this.currentSettings.unfinishedTaskBackgroundColor,
             DEFAULT_SETTINGS.unfinishedTaskBackgroundColor
+        );
+
+        // A malformed or empty dark color falls back to the light color rather than the default
+        // so both themes stay consistent. Vaults from before the dark setting existed are handled
+        // in applySettingsRecord, which seeds the missing key from the light color before this runs,
+        // because the defaults merge has already replaced the missing value by this point.
+        this.currentSettings.unfinishedTaskBackgroundColorDark = resolveTaskBackgroundColor(
+            this.currentSettings.unfinishedTaskBackgroundColorDark,
+            this.currentSettings.unfinishedTaskBackgroundColor
         );
     }
 

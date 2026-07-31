@@ -537,7 +537,6 @@ export const STRINGS_JA = {
                 'nav-properties': 'プロパティ',
                 'nav-property': 'プロパティ',
                 'nav-property-value': '値',
-                'file-unfinished-task': '未完了タスク',
                 'file-word-count': '単語数',
                 'file-character-count': '文字数'
             }
@@ -967,7 +966,8 @@ export const STRINGS_JA = {
         files: 'ファイル',
         folder: 'フォルダ',
         folders: 'フォルダ',
-        wordCount: '単語数'
+        wordCount: '単語数',
+        unfinishedTasks: '未完了タスク'
     },
 
     fileCounts: {
@@ -1224,15 +1224,27 @@ export const STRINGS_JA = {
             },
             showFileIcons: {
                 name: 'ファイルアイコンを表示',
-                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: 未完了タスクアイコン > カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
+                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
             },
             useFolderIcon: {
                 name: 'フォルダアイコンを使用',
                 desc: 'カスタムファイルアイコンが設定されていない場合に親フォルダのアイコンを表示します。カスタムファイル色が設定されていない場合はフォルダの色が使用されます。'
             },
-            showFileIconUnfinishedTask: {
-                name: '未完了タスクアイコン',
-                desc: 'ノートに未完了のタスクがある場合にタスクアイコンを表示します。'
+            showFileTaskProgress: {
+                name: 'タスクを表示',
+                desc: 'タスクの状態を表示します。進捗バーとタスク数は任意で表示できます。未完了タスクと完了タスクの色はStyle Settingsプラグインで個別に設定できます。'
+            },
+            showFileTaskProgressBar: {
+                name: 'タスクを表示: 進捗バー',
+                desc: 'タスクアイコンの横に進捗バーを表示します。'
+            },
+            showFileTaskProgressCount: {
+                name: 'タスクを表示: タスク数',
+                desc: '完了タスク数と総タスク数を表示します（例: 3/7）。'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'タスクを表示: 完了時に非表示',
+                desc: 'ノートのすべてのタスクが完了したらタスク進捗を非表示にします。'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '未完了タスク背景',

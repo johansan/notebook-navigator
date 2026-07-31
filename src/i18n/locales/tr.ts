@@ -537,7 +537,6 @@ export const STRINGS_TR = {
                 'nav-properties': 'Özellikler',
                 'nav-property': 'Özellik',
                 'nav-property-value': 'Değer',
-                'file-unfinished-task': 'Tamamlanmamış görevler',
                 'file-word-count': 'Kelime sayısı',
                 'file-character-count': 'Karakter sayısı'
             }
@@ -966,7 +965,8 @@ export const STRINGS_TR = {
         files: 'dosya',
         folder: 'klasör',
         folders: 'klasör',
-        wordCount: 'Kelime sayısı'
+        wordCount: 'Kelime sayısı',
+        unfinishedTasks: 'Tamamlanmamış görevler'
     },
 
     fileCounts: {
@@ -1223,15 +1223,27 @@ export const STRINGS_TR = {
             },
             showFileIcons: {
                 name: 'Dosya simgelerini göster',
-                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: tamamlanmamış görev simgesi > özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
+                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
             },
             useFolderIcon: {
                 name: 'Klasör simgesini kullan',
                 desc: 'Özel dosya simgesi ayarlanmadığında üst klasörün simgesini görüntüler. Özel dosya rengi ayarlanmadığında klasör rengi kullanılır.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Tamamlanmamış görev simgesi',
-                desc: 'Bir notta tamamlanmamış görevler olduğunda görev simgesi gösterir.'
+            showFileTaskProgress: {
+                name: 'Görevleri göster',
+                desc: 'Görev durumunu isteğe bağlı ilerleme çubuğu ve görev sayısıyla gösterir. Tamamlanmamış ve tamamlanmış görevlerin renkleri Style Settings eklentisiyle ayrı ayrı ayarlanabilir.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Görevleri göster: ilerleme çubuğu',
+                desc: 'Görev simgesinin yanında ilerleme çubuğu gösterir.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Görevleri göster: görev sayısı',
+                desc: 'Tamamlanan ve toplam görev sayısını gösterir, örneğin 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Görevleri göster: tamamlanınca gizle',
+                desc: 'Bir nottaki tüm görevler tamamlandığında görev ilerlemesini gizler.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Tamamlanmamış görev arka planı',
