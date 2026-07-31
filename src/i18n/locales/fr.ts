@@ -1096,7 +1096,7 @@ export const STRINGS_FR = {
             },
             sortNotesBy: {
                 name: 'Ordre de tri par défaut',
-                desc: "Choisissez l'ordre de tri par défaut des notes.",
+                desc: "Choisissez l'ordre de tri par défaut des notes. Les propriétés de Propriétés de tri et de regroupement apparaissent comme options de tri supplémentaires.",
                 options: {
                     'modified-desc': 'Date de modification (plus récente en haut)',
                     'modified-asc': 'Date de modification (plus ancienne en haut)',
@@ -1122,7 +1122,12 @@ export const STRINGS_FR = {
             propertySortKey: {
                 name: 'Propriétés de tri et de regroupement',
                 desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: "L'ordre de tri par défaut a été réinitialisé car sa propriété n'est plus disponible.",
+                    grouping: "Le regroupement par défaut a été réinitialisé car sa propriété n'est plus disponible.",
+                    both: "L'ordre de tri par défaut et le regroupement par défaut ont été réinitialisés car leurs propriétés ne sont plus disponibles."
+                }
             },
             propertySortSecondary: {
                 name: 'Tri secondaire',
@@ -1192,7 +1197,7 @@ export const STRINGS_FR = {
             },
             groupNotes: {
                 name: 'Regroupement par défaut',
-                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné. Le regroupement par valeur de propriété frontmatter est disponible par vue depuis le menu de tri du panneau de liste.',
+                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné. Les propriétés de Propriétés de tri et de regroupement apparaissent comme options de regroupement supplémentaires.',
                 options: {
                     custom: 'Personnalisé',
                     date: 'Date',

@@ -1086,7 +1086,7 @@ export const STRINGS_EN = {
             },
             sortNotesBy: {
                 name: 'Default sort order',
-                desc: 'Choose the default sort order for notes.',
+                desc: 'Choose the default sort order for notes. Properties from Sort and grouping properties appear as additional sort options.',
                 options: {
                     'modified-desc': 'Date edited (newest on top)',
                     'modified-asc': 'Date edited (oldest on top)',
@@ -1112,7 +1112,12 @@ export const STRINGS_EN = {
             propertySortKey: {
                 name: 'Sort and grouping properties',
                 desc: 'Comma-separated frontmatter properties. Each property appears as a sort option and a grouping option in the sort menu in the list pane. These properties are not changed.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Default sort order was reset because its property is no longer available.',
+                    grouping: 'Default grouping was reset because its property is no longer available.',
+                    both: 'Default sort order and default grouping were reset because their properties are no longer available.'
+                }
             },
             propertySortSecondary: {
                 name: 'Secondary sort',
@@ -1182,7 +1187,7 @@ export const STRINGS_EN = {
             },
             groupNotes: {
                 name: 'Default grouping',
-                desc: 'Custom shows headers defined in frontmatter. Date groups notes by date. Folder groups notes by folder. Tag and property views use date groups when folder is selected. Grouping by a frontmatter property value is available per view from the sort menu in the list pane.',
+                desc: 'Custom shows headers defined in frontmatter. Date groups notes by date. Folder groups notes by folder. Tag and property views use date groups when folder is selected. Properties from Sort and grouping properties appear as additional grouping options.',
                 options: {
                     custom: 'Custom',
                     date: 'Date',

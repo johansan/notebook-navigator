@@ -29,8 +29,13 @@ import { runAsyncAction } from '../utils/async';
 import { removePropertyField, renamePropertyField } from '../utils/propertyUtils';
 import { isRecord } from '../utils/typeGuards';
 import { buildPropertyKeyNodeId } from '../utils/propertyTree';
-import { replacePropertySortKey, SORT_OVERRIDE_RECORD_KEYS } from '../utils/sortUtils';
-import { updatePropertyGroupingOverrideKeys } from '../utils/listGrouping';
+import {
+    reconcileDefaultFolderSort,
+    replacePropertySortKey,
+    SORT_OVERRIDE_RECORD_KEYS,
+    updateDefaultFolderSortPropertyKey
+} from '../utils/sortUtils';
+import { reconcileDefaultNoteGrouping, updateDefaultNoteGroupingKey, updatePropertyGroupingOverrideKeys } from '../utils/listGrouping';
 import { buildUsageSummaryFromPaths, renderAffectedFilesPreview, yieldToEventLoop } from './operations/OperationBatchUtils';
 import { PropertyFileMutations } from './propertyOperations/PropertyFileMutations';
 import type { PropertyKeyDeleteEventPayload, PropertyKeyRenameEventPayload } from './propertyOperations/types';
@@ -707,6 +712,13 @@ export class PropertyOperations {
         changed = updateManualSortGroupHeaderPropertySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updatePropertyGroupingOverrideKeys(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updateDefaultFolderSortPropertyKey(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updateDefaultNoteGroupingKey(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        // The rename can move a default onto the manual-sort key (or vice versa), which the
+        // rewrites above cannot detect; reconcile silently so the defaults never persist a key
+        // the settings dropdowns exclude.
+        changed = reconcileDefaultFolderSort(settings).changed || changed;
+        changed = reconcileDefaultNoteGrouping(settings).changed || changed;
 
         if (newKeyNormalized) {
             changed = this.migratePropertyMetadataAfterRename(settings, oldKeyNormalized, newKeyNormalized) || changed;
@@ -730,6 +742,13 @@ export class PropertyOperations {
         changed = updateManualSortGroupHeaderPropertySetting(settings, normalizedKey, null) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, normalizedKey, null) || changed;
         changed = updatePropertyGroupingOverrideKeys(settings, normalizedKey, null) || changed;
+        changed = updateDefaultFolderSortPropertyKey(settings, normalizedKey, null) || changed;
+        changed = updateDefaultNoteGroupingKey(settings, normalizedKey, null) || changed;
+        // Deleting the manual-sort key can make previously excluded configured keys available and
+        // the delete rewrites above only match the deleted key; reconcile to keep the defaults
+        // consistent with the updated key lists.
+        changed = reconcileDefaultFolderSort(settings).changed || changed;
+        changed = reconcileDefaultNoteGrouping(settings).changed || changed;
 
         changed = this.removePropertyMetadataForDeletedKey(settings, normalizedKey) || changed;
 

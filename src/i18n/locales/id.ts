@@ -1092,7 +1092,7 @@ export const STRINGS_ID = {
             },
             sortNotesBy: {
                 name: 'Urutan default',
-                desc: 'Pilih urutan default untuk catatan.',
+                desc: 'Pilih urutan default untuk catatan. Properti dari Properti urutan dan pengelompokan muncul sebagai opsi urutan tambahan.',
                 options: {
                     'modified-desc': 'Tanggal diedit (terbaru di atas)',
                     'modified-asc': 'Tanggal diedit (terlama di atas)',
@@ -1118,7 +1118,12 @@ export const STRINGS_ID = {
             propertySortKey: {
                 name: 'Properti urutan dan pengelompokan',
                 desc: 'Properti frontmatter yang dipisahkan koma. Setiap properti muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Properti ini tidak diubah.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Urutan default direset karena propertinya tidak lagi tersedia.',
+                    grouping: 'Pengelompokan default direset karena propertinya tidak lagi tersedia.',
+                    both: 'Urutan default dan pengelompokan default direset karena propertinya tidak lagi tersedia.'
+                }
             },
             propertySortSecondary: {
                 name: 'Urutan sekunder',
@@ -1188,7 +1193,7 @@ export const STRINGS_ID = {
             },
             groupNotes: {
                 name: 'Pengelompokan default',
-                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih. Pengelompokan berdasarkan nilai properti frontmatter tersedia per tampilan dari menu urutan di panel daftar.',
+                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih. Properti dari Properti urutan dan pengelompokan muncul sebagai opsi pengelompokan tambahan.',
                 options: {
                     custom: 'Kustom',
                     date: 'Tanggal',

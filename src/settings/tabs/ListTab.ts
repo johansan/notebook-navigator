@@ -21,13 +21,30 @@ import type { SettingDefinitionItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
-import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../types';
+import {
+    createPropertyGroupingOption,
+    getPropertyGroupingDirection,
+    getPropertyGroupingKey,
+    MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS,
+    normalizeListNoteGroupingOption,
+    PROPERTY_SORT_SECONDARY_OPTIONS,
+    SORT_OPTIONS
+} from '../types';
+import type { NotebookNavigatorSettings, SortOption } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
 import { usesMobileChrome } from '../../utils/paneLayout';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
-import { pruneUnavailablePropertySortOverrides } from '../../utils/sortUtils';
-import { pruneUnavailablePropertyGroupingOverrides } from '../../utils/listGrouping';
+import { casefold } from '../../utils/recordUtils';
+import { showNotice } from '../../utils/noticeUtils';
+import {
+    getAvailablePropertySortKeys,
+    isPropertySortOption,
+    pruneUnavailablePropertySortOverrides,
+    reconcileDefaultFolderSort,
+    type SortDirection
+} from '../../utils/sortUtils';
+import { pruneUnavailablePropertyGroupingOverrides, reconcileDefaultNoteGrouping } from '../../utils/listGrouping';
 import { getManualSortGroupHeaderPropertyKey, isValidManualSortPropertyKey, normalizeManualSortPropertyKey } from '../../utils/manualSort';
 import { formatPixelSliderValue, renderSliderSetting } from './SliderSetting';
 import { renderToolbarButtonsSetting } from './ToolbarButtonsSetting';
@@ -105,21 +122,17 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.includeDescendantNotes.desc,
                 render: setting => renderIncludeDescendantNotesSetting(setting, context)
             }),
-            createDropdownDefinition('defaultFolderSort', {
+            createRenderDefinition({
                 name: strings.settings.items.sortNotesBy.name,
                 desc: strings.settings.items.sortNotesBy.desc,
                 aliases: Object.values(strings.settings.items.sortNotesBy.options),
-                options: createDefaultFolderSortOptions()
+                render: setting => renderDefaultFolderSortSetting(setting, context)
             }),
-            createDropdownDefinition('noteGrouping', {
+            createRenderDefinition({
                 name: strings.settings.items.groupNotes.name,
                 desc: strings.settings.items.groupNotes.desc,
                 aliases: Object.values(strings.settings.items.groupNotes.options),
-                options: {
-                    custom: strings.settings.items.groupNotes.options.custom,
-                    date: strings.settings.items.groupNotes.options.date,
-                    folder: strings.settings.items.groupNotes.options.folder
-                }
+                render: setting => renderNoteGroupingSetting(setting, context)
             }),
             createToggleDefinition('showCurrentFolderFilesAtBottom', {
                 name: strings.settings.items.showCurrentFolderFilesAtBottom.name,
@@ -287,15 +300,174 @@ function createListAppearanceDefinitionGroup(context: SettingsTabContext): Setti
     return createGroupDefinition(strings.settings.groups.list.display, items);
 }
 
-function createDefaultFolderSortOptions(): Record<string, string> {
-    const options: Record<string, string> = {};
-    SORT_OPTIONS.forEach(option => {
-        if (option === 'property-asc' || option === 'property-desc') {
-            return;
-        }
-        options[option] = strings.settings.items.sortNotesBy.options[option];
-    });
-    return options;
+const BIDI_ISOLATE_START = '\u2068'; // First Strong Isolate
+const BIDI_ISOLATE_END = '\u2069'; // Pop Directional Isolate
+
+function isolateBidiText(value: string): string {
+    // Keeps user-authored LTR property keys from reordering quotes and punctuation inside RTL labels.
+    return `${BIDI_ISOLATE_START}${value}${BIDI_ISOLATE_END}`;
+}
+
+function getPropertyDropdownOptionLabel(propertyKey: string, direction: SortDirection): string {
+    const fieldLabel = `${strings.settings.items.sortNotesBy.fields.property} \u2018${isolateBidiText(propertyKey)}\u2019`;
+    return `${fieldLabel} (${strings.settings.items.sortNotesBy.directions[direction]})`;
+}
+
+/**
+ * Renders the default sort order dropdown with the built-in sort options plus one ascending and
+ * one descending entry per configured sort/grouping property. A property entry writes both
+ * defaultFolderSort and defaultFolderSortPropertyKey; built-in entries clear the property key.
+ * Entries rebuild on every settings update so edits to the configured property list are
+ * reflected while the tab stays open.
+ */
+export function renderDefaultFolderSortSetting(setting: Setting, context: SettingsTabContext): void {
+    const { plugin } = context;
+
+    setting
+        .setName(strings.settings.items.sortNotesBy.name)
+        .setDesc(strings.settings.items.sortNotesBy.desc)
+        .addDropdown(dropdown => {
+            // Maps dropdown option ids to the settings pair they select. Property entries use
+            // index-based ids so decoding never parses the property key out of the id (keys may
+            // contain any characters, including separators).
+            let selections = new Map<string, { option: SortOption; propertyKey: string }>();
+
+            const getSelectedId = (): string => {
+                const currentOption = plugin.settings.defaultFolderSort;
+                if (!isPropertySortOption(currentOption)) {
+                    return currentOption;
+                }
+
+                const currentPropertyKey = casefold(plugin.settings.defaultFolderSortPropertyKey);
+                for (const [id, selection] of selections) {
+                    if (selection.option === currentOption && casefold(selection.propertyKey) === currentPropertyKey) {
+                        return id;
+                    }
+                }
+                // Reconciliation resets unavailable property defaults, so a missing entry only occurs
+                // transiently; display the stock default rather than an empty selection.
+                return DEFAULT_SETTINGS.defaultFolderSort;
+            };
+
+            const rebuildOptions = (): void => {
+                selections = new Map();
+                dropdown.selectEl.empty();
+                SORT_OPTIONS.forEach(option => {
+                    if (isPropertySortOption(option)) {
+                        return;
+                    }
+                    selections.set(option, { option, propertyKey: '' });
+                    dropdown.addOption(option, strings.settings.items.sortNotesBy.options[option]);
+                });
+                getAvailablePropertySortKeys(plugin.settings).forEach((propertyKey, index) => {
+                    (['asc', 'desc'] as const).forEach(direction => {
+                        const option: SortOption = direction === 'asc' ? 'property-asc' : 'property-desc';
+                        const id = `${option}:${index}`;
+                        selections.set(id, { option, propertyKey });
+                        dropdown.addOption(id, getPropertyDropdownOptionLabel(propertyKey, direction));
+                    });
+                });
+                dropdown.setValue(getSelectedId());
+            };
+
+            dropdown.onChange(value => {
+                const selection = selections.get(value);
+                if (!selection) {
+                    return;
+                }
+                if (
+                    plugin.settings.defaultFolderSort === selection.option &&
+                    plugin.settings.defaultFolderSortPropertyKey === selection.propertyKey
+                ) {
+                    return;
+                }
+                plugin.settings.defaultFolderSort = selection.option;
+                plugin.settings.defaultFolderSortPropertyKey = selection.propertyKey;
+                runAsyncAction(() => plugin.saveSettingsAndUpdate());
+            });
+
+            rebuildOptions();
+            context.registerSettingsUpdateListener('list-pane-default-folder-sort', rebuildOptions);
+        });
+}
+
+/**
+ * Renders the default grouping dropdown with the base grouping modes plus one ascending and one
+ * descending entry per configured sort/grouping property. Property entries store the same
+ * `property:<key>` encoding used by per-view grouping overrides. Entries rebuild on every
+ * settings update so edits to the configured property list are reflected while the tab stays open.
+ */
+export function renderNoteGroupingSetting(setting: Setting, context: SettingsTabContext): void {
+    const { plugin } = context;
+
+    setting
+        .setName(strings.settings.items.groupNotes.name)
+        .setDesc(strings.settings.items.groupNotes.desc)
+        .addDropdown(dropdown => {
+            const getSelectedValue = (): string => {
+                const grouping = plugin.settings.noteGrouping;
+                const propertyKey = getPropertyGroupingKey(grouping);
+                if (propertyKey === null) {
+                    return grouping;
+                }
+
+                // Entries are generated from the configured list, so match the stored key
+                // case-insensitively against it to select the generated entry.
+                const direction = getPropertyGroupingDirection(grouping) ?? 'asc';
+                const matchedKey = getAvailablePropertySortKeys(plugin.settings).find(
+                    availableKey => casefold(availableKey) === casefold(propertyKey)
+                );
+                // Reconciliation resets unavailable property groupings, so a missing entry only occurs
+                // transiently; display the stock default rather than an empty selection.
+                return matchedKey ? createPropertyGroupingOption(matchedKey, direction) : DEFAULT_SETTINGS.noteGrouping;
+            };
+
+            const rebuildOptions = (): void => {
+                dropdown.selectEl.empty();
+                (['custom', 'date', 'folder'] as const).forEach(option => {
+                    dropdown.addOption(option, strings.settings.items.groupNotes.options[option]);
+                });
+                getAvailablePropertySortKeys(plugin.settings).forEach(propertyKey => {
+                    (['asc', 'desc'] as const).forEach(direction => {
+                        dropdown.addOption(
+                            createPropertyGroupingOption(propertyKey, direction),
+                            getPropertyDropdownOptionLabel(propertyKey, direction)
+                        );
+                    });
+                });
+                dropdown.setValue(getSelectedValue());
+            };
+
+            dropdown.onChange(value => {
+                const normalized = normalizeListNoteGroupingOption(value);
+                if (!normalized || plugin.settings.noteGrouping === normalized) {
+                    return;
+                }
+                plugin.settings.noteGrouping = normalized;
+                runAsyncAction(() => plugin.saveSettingsAndUpdate());
+            });
+
+            rebuildOptions();
+            context.registerSettingsUpdateListener('list-pane-note-grouping', rebuildOptions);
+        });
+}
+
+/**
+ * Reconciles the global sort and grouping defaults after the configured sort/grouping properties
+ * changed through a settings-tab edit, announcing a reset with a notice. Load and sync paths
+ * reconcile silently in the settings controller instead.
+ */
+export function reconcileDefaultsAfterPropertyKeysEdit(settings: NotebookNavigatorSettings): void {
+    const sortResult = reconcileDefaultFolderSort(settings);
+    const groupingResult = reconcileDefaultNoteGrouping(settings);
+    const notices = strings.settings.items.propertySortKey.defaultsResetNotices;
+    if (sortResult.reset && groupingResult.reset) {
+        showNotice(notices.both);
+    } else if (sortResult.reset) {
+        showNotice(notices.sort);
+    } else if (groupingResult.reset) {
+        showNotice(notices.grouping);
+    }
 }
 
 function createPropertySortSecondaryOptions(): Record<string, string> {
@@ -426,6 +598,7 @@ function renderPropertySortKeySetting(setting: Setting, context: SettingsTabCont
                 plugin.settings.propertySortKey = value;
                 pruneUnavailablePropertySortOverrides(plugin.settings);
                 pruneUnavailablePropertyGroupingOverrides(plugin.settings);
+                reconcileDefaultsAfterPropertyKeysEdit(plugin.settings);
                 context.refreshSettingsDomState();
                 await plugin.saveSettingsAndUpdate();
             };
@@ -466,6 +639,7 @@ function renderManualSortPropertyKeySetting(setting: Setting, context: SettingsT
                 plugin.settings.manualSortPropertyKey = value;
                 pruneUnavailablePropertySortOverrides(plugin.settings);
                 pruneUnavailablePropertyGroupingOverrides(plugin.settings);
+                reconcileDefaultsAfterPropertyKeysEdit(plugin.settings);
                 await plugin.saveSettingsAndUpdate();
             };
 

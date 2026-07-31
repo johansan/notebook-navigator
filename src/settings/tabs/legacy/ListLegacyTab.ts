@@ -16,19 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DropdownComponent, Platform, Setting, setIcon } from 'obsidian';
+import { Platform, Setting, setIcon } from 'obsidian';
 import { strings } from '../../../i18n';
 import { DEFAULT_SETTINGS } from '../../defaultSettings';
-import {
-    isListDisplayMode,
-    normalizeListNoteGroupingBaseOption,
-    isListPaneTitleOption,
-    isManualSortNewNotePlacement,
-    isPropertySortSecondaryOption,
-    isSortOption
-} from '../../types';
-import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS, SORT_OPTIONS } from '../../types';
+import { isListDisplayMode, isListPaneTitleOption, isManualSortNewNotePlacement, isPropertySortSecondaryOption } from '../../types';
+import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
+import { reconcileDefaultsAfterPropertyKeysEdit, renderDefaultFolderSortSetting, renderNoteGroupingSetting } from '../ListTab';
 import { runAsyncAction } from '../../../utils/async';
 import { usesMobileChrome } from '../../../utils/paneLayout';
 import { createSettingGroupFactory } from '../../settingGroups';
@@ -195,49 +189,11 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     addSettingSyncModeToggle({ setting: includeDescendantNotesSetting, plugin, settingId: 'includeDescendantNotes' });
 
     organizationGroup.addSetting(setting => {
-        setting
-            .setName(strings.settings.items.sortNotesBy.name)
-            .setDesc(strings.settings.items.sortNotesBy.desc)
-            .addDropdown((dropdown: DropdownComponent) => {
-                SORT_OPTIONS.forEach(option => {
-                    if (option === 'property-asc' || option === 'property-desc') {
-                        return;
-                    }
-                    dropdown.addOption(option, strings.settings.items.sortNotesBy.options[option]);
-                });
-                const defaultFolderSort =
-                    plugin.settings.defaultFolderSort === 'property-asc' || plugin.settings.defaultFolderSort === 'property-desc'
-                        ? DEFAULT_SETTINGS.defaultFolderSort
-                        : plugin.settings.defaultFolderSort;
-                return dropdown.setValue(defaultFolderSort).onChange(async value => {
-                    if (!isSortOption(value)) {
-                        return;
-                    }
-                    plugin.settings.defaultFolderSort = value;
-                    await plugin.saveSettingsAndUpdate();
-                });
-            });
+        renderDefaultFolderSortSetting(setting, context);
     });
 
     organizationGroup.addSetting(setting => {
-        setting
-            .setName(strings.settings.items.groupNotes.name)
-            .setDesc(strings.settings.items.groupNotes.desc)
-            .addDropdown(dropdown =>
-                dropdown
-                    .addOption('custom', strings.settings.items.groupNotes.options.custom)
-                    .addOption('date', strings.settings.items.groupNotes.options.date)
-                    .addOption('folder', strings.settings.items.groupNotes.options.folder)
-                    .setValue(plugin.settings.noteGrouping)
-                    .onChange(async value => {
-                        const baseOption = normalizeListNoteGroupingBaseOption(value);
-                        if (!baseOption) {
-                            return;
-                        }
-                        plugin.settings.noteGrouping = baseOption;
-                        await plugin.saveSettingsAndUpdate();
-                    })
-            );
+        renderNoteGroupingSetting(setting, context);
     });
 
     addToggleSetting(
@@ -351,6 +307,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     plugin.settings.propertySortKey = value;
                     pruneUnavailablePropertySortOverrides(plugin.settings);
                     pruneUnavailablePropertyGroupingOverrides(plugin.settings);
+                    reconcileDefaultsAfterPropertyKeysEdit(plugin.settings);
                     refreshPropertySortSecondaryVisibility();
                     await plugin.saveSettingsAndUpdate();
                 };
@@ -417,6 +374,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     plugin.settings.manualSortPropertyKey = value;
                     pruneUnavailablePropertySortOverrides(plugin.settings);
                     pruneUnavailablePropertyGroupingOverrides(plugin.settings);
+                    reconcileDefaultsAfterPropertyKeysEdit(plugin.settings);
                     await plugin.saveSettingsAndUpdate();
                 };
 

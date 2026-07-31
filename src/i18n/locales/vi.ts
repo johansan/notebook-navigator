@@ -1093,7 +1093,7 @@ export const STRINGS_VI = {
             },
             sortNotesBy: {
                 name: 'Thứ tự sắp xếp mặc định',
-                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú.',
+                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú. Các thuộc tính từ Thuộc tính sắp xếp và nhóm xuất hiện dưới dạng tùy chọn sắp xếp bổ sung.',
                 options: {
                     'modified-desc': 'Ngày sửa (mới nhất trên)',
                     'modified-asc': 'Ngày sửa (cũ nhất trên)',
@@ -1119,7 +1119,12 @@ export const STRINGS_VI = {
             propertySortKey: {
                 name: 'Thuộc tính sắp xếp và nhóm',
                 desc: 'Các thuộc tính frontmatter phân cách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Thứ tự sắp xếp mặc định đã được đặt lại vì thuộc tính của nó không còn khả dụng.',
+                    grouping: 'Nhóm mặc định đã được đặt lại vì thuộc tính của nó không còn khả dụng.',
+                    both: 'Thứ tự sắp xếp mặc định và nhóm mặc định đã được đặt lại vì thuộc tính của chúng không còn khả dụng.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sắp xếp phụ',
@@ -1189,7 +1194,7 @@ export const STRINGS_VI = {
             },
             groupNotes: {
                 name: 'Nhóm mặc định',
-                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn. Nhóm theo giá trị thuộc tính frontmatter khả dụng riêng cho từng chế độ xem từ menu sắp xếp trong ngăn danh sách.',
+                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn. Các thuộc tính từ Thuộc tính sắp xếp và nhóm xuất hiện dưới dạng tùy chọn nhóm bổ sung.',
                 options: {
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',

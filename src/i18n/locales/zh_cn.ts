@@ -1083,7 +1083,7 @@ export const STRINGS_ZH_CN = {
             },
             sortNotesBy: {
                 name: '默认排序方式',
-                desc: '选择笔记的默认排序方式。',
+                desc: '选择笔记的默认排序方式。“用于排序和分组的属性”中的属性会作为额外的排序选项显示。',
                 options: {
                     'modified-desc': '编辑日期（最新在顶部）',
                     'modified-asc': '编辑日期（最旧在顶部）',
@@ -1109,7 +1109,12 @@ export const STRINGS_ZH_CN = {
             propertySortKey: {
                 name: '用于排序和分组的属性',
                 desc: '以逗号分隔的 frontmatter 属性。每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。这些属性不会被更改。',
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: '默认排序方式已重置，因为其属性已不可用。',
+                    grouping: '默认分组已重置，因为其属性已不可用。',
+                    both: '默认排序方式和默认分组已重置，因为其属性已不可用。'
+                }
             },
             propertySortSecondary: {
                 name: '次要排序',
@@ -1176,7 +1181,7 @@ export const STRINGS_ZH_CN = {
             },
             groupNotes: {
                 name: '默认分组',
-                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。按 frontmatter 属性值分组可在列表窗格的排序菜单中针对每个视图单独设置。',
+                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。“用于排序和分组的属性”中的属性会作为额外的分组选项显示。',
                 options: {
                     custom: '自定义',
                     date: '日期',

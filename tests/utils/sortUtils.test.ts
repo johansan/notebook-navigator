@@ -3,6 +3,7 @@ import {
     appendPropertySortKey,
     areListSortOverridesEqual,
     compareByAlphaSortOrder,
+    getAvailablePropertySortKeys,
     getEffectiveListSort,
     getEffectiveSortOption,
     getListSortToolbarIconId,
@@ -11,11 +12,14 @@ import {
     getSortIcon,
     parsePropertySortKeys,
     pruneUnavailablePropertySortOverrides,
+    reconcileDefaultFolderSort,
     replacePropertySortKey,
     resolveFolderChildSortOrder,
+    resolveListSort,
     sortFiles,
     shouldRefreshOnFileModifyForSort,
-    shouldRefreshOnMetadataChangeForSort
+    shouldRefreshOnMetadataChangeForSort,
+    updateDefaultFolderSortPropertyKey
 } from '../../src/utils/sortUtils';
 import type { AlphaSortOrder } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
@@ -679,5 +683,126 @@ describe('property sort keys', () => {
         expect(changed).toBe(true);
         expect(settings.folderSortOverrides.Books).toBeUndefined();
         expect(settings.folderSortOverrides.Manual).toEqual({ option: 'property-asc', propertyKey: 'Sort_Index' });
+    });
+});
+
+describe('default property sort', () => {
+    it('excludes the manual sort key from the available property sort keys', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = `published, ${settings.manualSortPropertyKey}, downloaded`;
+
+        expect(getAvailablePropertySortKeys(settings)).toEqual(['published', 'downloaded']);
+    });
+
+    it('resolves the default sort through the companion property key', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'published, downloaded';
+        settings.defaultFolderSort = 'property-desc';
+        settings.defaultFolderSortPropertyKey = 'Downloaded';
+
+        expect(resolveListSort(settings)).toEqual({
+            option: 'property-desc',
+            propertyKey: 'downloaded',
+            propertySortSecondary: settings.propertySortSecondary
+        });
+    });
+
+    it('keeps per-view override keys independent of the default property key', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'published, downloaded';
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = 'downloaded';
+
+        expect(resolveListSort(settings, { option: 'property-asc', propertyKey: 'published' }).propertyKey).toBe('published');
+        // Legacy bare-string overrides keep the historical first-configured-property behavior.
+        expect(resolveListSort(settings, 'property-asc').propertyKey).toBe('published');
+    });
+
+    it('falls back to the first configured key when the companion key is transiently unavailable', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'published';
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = 'downloaded';
+
+        expect(resolveListSort(settings).propertyKey).toBe('published');
+    });
+});
+
+describe('reconcileDefaultFolderSort', () => {
+    it('keeps property defaults whose companion key is configured, matching case-insensitively', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'Published, downloaded';
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = 'published';
+
+        expect(reconcileDefaultFolderSort(settings)).toEqual({ changed: false, reset: false });
+        expect(settings.defaultFolderSort).toBe('property-asc');
+        expect(settings.defaultFolderSortPropertyKey).toBe('published');
+    });
+
+    it('resets property defaults whose companion key is not configured', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'downloaded';
+        settings.defaultFolderSort = 'property-desc';
+        settings.defaultFolderSortPropertyKey = 'published';
+
+        expect(reconcileDefaultFolderSort(settings)).toEqual({ changed: true, reset: true });
+        expect(settings.defaultFolderSort).toBe(DEFAULT_SETTINGS.defaultFolderSort);
+        expect(settings.defaultFolderSortPropertyKey).toBe('');
+    });
+
+    it('resets property defaults referencing the manual sort key', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = settings.manualSortPropertyKey;
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = settings.manualSortPropertyKey;
+
+        expect(reconcileDefaultFolderSort(settings)).toEqual({ changed: true, reset: true });
+        expect(settings.defaultFolderSort).toBe(DEFAULT_SETTINGS.defaultFolderSort);
+    });
+
+    it('clears a stale companion key left behind by a built-in default without reporting a reset', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.defaultFolderSort = 'title-asc';
+        settings.defaultFolderSortPropertyKey = 'published';
+
+        expect(reconcileDefaultFolderSort(settings)).toEqual({ changed: true, reset: false });
+        expect(settings.defaultFolderSort).toBe('title-asc');
+        expect(settings.defaultFolderSortPropertyKey).toBe('');
+    });
+});
+
+describe('updateDefaultFolderSortPropertyKey', () => {
+    it('rewrites the companion key on rename and keeps the sort direction', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.defaultFolderSort = 'property-desc';
+        settings.defaultFolderSortPropertyKey = 'Status';
+
+        expect(updateDefaultFolderSortPropertyKey(settings, 'status', 'Stage')).toBe(true);
+        expect(settings.defaultFolderSort).toBe('property-desc');
+        expect(settings.defaultFolderSortPropertyKey).toBe('Stage');
+    });
+
+    it('resets the default sort when the companion key is deleted', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = 'status';
+
+        expect(updateDefaultFolderSortPropertyKey(settings, 'status', null)).toBe(true);
+        expect(settings.defaultFolderSort).toBe(DEFAULT_SETTINGS.defaultFolderSort);
+        expect(settings.defaultFolderSortPropertyKey).toBe('');
+    });
+
+    it('ignores renames of other keys and built-in defaults', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.defaultFolderSort = 'property-asc';
+        settings.defaultFolderSortPropertyKey = 'status';
+
+        expect(updateDefaultFolderSortPropertyKey(settings, 'genre', 'Stage')).toBe(false);
+        expect(settings.defaultFolderSortPropertyKey).toBe('status');
+
+        settings.defaultFolderSort = 'modified-desc';
+        settings.defaultFolderSortPropertyKey = '';
+        expect(updateDefaultFolderSortPropertyKey(settings, 'status', 'Stage')).toBe(false);
     });
 });

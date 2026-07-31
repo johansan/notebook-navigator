@@ -1094,7 +1094,7 @@ export const STRINGS_NL = {
             },
             sortNotesBy: {
                 name: 'Standaard sorteervolgorde',
-                desc: 'Kies de standaard sorteervolgorde voor notities.',
+                desc: 'Kies de standaard sorteervolgorde voor notities. Eigenschappen uit Sorteer- en groeperingseigenschappen verschijnen als extra sorteeropties.',
                 options: {
                     'modified-desc': 'Datum bewerkt (nieuwste bovenaan)',
                     'modified-asc': 'Datum bewerkt (oudste bovenaan)',
@@ -1120,7 +1120,12 @@ export const STRINGS_NL = {
             propertySortKey: {
                 name: 'Sorteer- en groeperingseigenschappen',
                 desc: "Door komma's gescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.",
-                placeholder: 'published, author'
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'De standaard sorteervolgorde is teruggezet omdat de eigenschap niet meer beschikbaar is.',
+                    grouping: 'De standaardgroepering is teruggezet omdat de eigenschap niet meer beschikbaar is.',
+                    both: 'De standaard sorteervolgorde en standaardgroepering zijn teruggezet omdat hun eigenschappen niet meer beschikbaar zijn.'
+                }
             },
             propertySortSecondary: {
                 name: 'Secundaire sortering',
@@ -1190,7 +1195,7 @@ export const STRINGS_NL = {
             },
             groupNotes: {
                 name: 'Standaard groepering',
-                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd. Groeperen op een frontmatter-eigenschapswaarde is per weergave beschikbaar via het sorteermenu in het lijstpaneel.',
+                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd. Eigenschappen uit Sorteer- en groeperingseigenschappen verschijnen als extra groeperingsopties.',
                 options: {
                     custom: 'Aangepast',
                     date: 'Datum',

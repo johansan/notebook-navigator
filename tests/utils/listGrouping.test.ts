@@ -23,7 +23,6 @@ import {
     createPropertyGroupingOption,
     getPropertyGroupingDirection,
     getPropertyGroupingKey,
-    normalizeListNoteGroupingBaseOption,
     normalizeListNoteGroupingOption
 } from '../../src/settings/types';
 import { ItemType } from '../../src/types';
@@ -33,8 +32,10 @@ import {
     areListGroupingOptionsSameKind,
     hasEffectiveCustomListGrouping,
     pruneUnavailablePropertyGroupingOverrides,
+    reconcileDefaultNoteGrouping,
     resolveEffectiveListGroupingForSort,
     resolveListGrouping,
+    updateDefaultNoteGroupingKey,
     updatePropertyGroupingOverrideKeys
 } from '../../src/utils/listGrouping';
 
@@ -236,12 +237,12 @@ describe('property grouping option encoding', () => {
         expect(normalizeListNoteGroupingOption('date')).toBe('date');
     });
 
-    it('rejects property encodings for the vault-wide default grouping', () => {
-        expect(normalizeListNoteGroupingBaseOption('property:status')).toBeNull();
-        expect(normalizeListNoteGroupingBaseOption('property-desc:status')).toBeNull();
-        expect(normalizeListNoteGroupingBaseOption('none')).toBe('custom');
-        expect(normalizeListNoteGroupingBaseOption('folder')).toBe('folder');
-        expect(normalizeListNoteGroupingBaseOption('date')).toBe('date');
+    it('accepts property encodings for the vault-wide default grouping', () => {
+        expect(normalizeListNoteGroupingOption('property:status')).toBe('property:status');
+        expect(normalizeListNoteGroupingOption('property-desc:status')).toBe('property-desc:status');
+        expect(normalizeListNoteGroupingOption('none')).toBe('custom');
+        expect(normalizeListNoteGroupingOption('folder')).toBe('folder');
+        expect(normalizeListNoteGroupingOption('date')).toBe('date');
     });
 
     it('compares property grouping options case-insensitively including direction', () => {
@@ -392,5 +393,72 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.folderSortOverrides.Projects = 'title-asc';
 
         expect(hasEffectiveCustomListGrouping(settings)).toBe(false);
+    });
+});
+
+describe('reconcileDefaultNoteGrouping', () => {
+    it('keeps property groupings whose key is configured, matching case-insensitively', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'Status, genre';
+        settings.noteGrouping = 'property:status';
+
+        expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: false, reset: false });
+        expect(settings.noteGrouping).toBe('property:status');
+    });
+
+    it('resets property groupings whose key is not configured', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = 'genre';
+        settings.noteGrouping = 'property-desc:status';
+
+        expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: true, reset: true });
+        expect(settings.noteGrouping).toBe(DEFAULT_SETTINGS.noteGrouping);
+    });
+
+    it('resets property groupings referencing the manual sort key', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertySortKey = settings.manualSortPropertyKey;
+        settings.noteGrouping = createPropertyGroupingOption(settings.manualSortPropertyKey);
+
+        expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: true, reset: true });
+        expect(settings.noteGrouping).toBe(DEFAULT_SETTINGS.noteGrouping);
+    });
+
+    it('leaves base grouping modes untouched', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'folder';
+
+        expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: false, reset: false });
+        expect(settings.noteGrouping).toBe('folder');
+    });
+});
+
+describe('updateDefaultNoteGroupingKey', () => {
+    it('rewrites the default grouping key on rename and keeps the direction', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'property-desc:status';
+
+        expect(updateDefaultNoteGroupingKey(settings, 'status', 'Stage')).toBe(true);
+        expect(settings.noteGrouping).toBe('property-desc:Stage');
+    });
+
+    it('resets the default grouping when the key is deleted', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'property:status';
+
+        expect(updateDefaultNoteGroupingKey(settings, 'status', null)).toBe(true);
+        expect(settings.noteGrouping).toBe(DEFAULT_SETTINGS.noteGrouping);
+    });
+
+    it('ignores renames of other keys and base grouping modes', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'property:status';
+
+        expect(updateDefaultNoteGroupingKey(settings, 'genre', 'Stage')).toBe(false);
+        expect(settings.noteGrouping).toBe('property:status');
+
+        settings.noteGrouping = 'date';
+        expect(updateDefaultNoteGroupingKey(settings, 'status', 'Stage')).toBe(false);
+        expect(settings.noteGrouping).toBe('date');
     });
 });

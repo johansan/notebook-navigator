@@ -193,8 +193,6 @@ const STRING_SETTING_KEYS = [
     'alphabeticalDateMode',
     'listPaneTitle',
     'defaultListMode',
-    'defaultFolderSort',
-    'noteGrouping',
     'propertySortSecondary',
     'manualSortNewNotePlacement',
     'collapseBehavior'
@@ -225,17 +223,6 @@ const STRING_SETTING_OPTIONS: Partial<Record<NativeStringControlKey, readonly st
     alphabeticalDateMode: ['created', 'modified'],
     listPaneTitle: ['header', 'list', 'hidden'],
     defaultListMode: ['standard', 'compact'],
-    defaultFolderSort: [
-        'modified-desc',
-        'modified-asc',
-        'created-desc',
-        'created-asc',
-        'title-asc',
-        'title-desc',
-        'filename-asc',
-        'filename-desc'
-    ],
-    noteGrouping: ['custom', 'date', 'folder'],
     propertySortSecondary: ['title', 'filename', 'created', 'modified'],
     manualSortNewNotePlacement: ['top', 'bottom', 'below-selected-note', 'unsorted'],
     collapseBehavior: ['all', 'folders-only', 'tags-only', 'properties-only']

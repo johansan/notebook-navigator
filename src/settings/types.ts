@@ -468,12 +468,8 @@ export function createPropertyGroupingOption(propertyKey: string, direction: Pro
     return `${prefix}${propertyKey.trim()}`;
 }
 
-/**
- * Validates the vault-wide default grouping, which never supports property grouping.
- * Property grouping is a per-view override, so the global default rejects property
- * encodings that appearance overrides accept.
- */
-export function normalizeListNoteGroupingBaseOption(value: unknown): ListNoteGroupingBaseOption | null {
+/** Validates a base grouping mode, mapping the legacy `none` value to `custom`. */
+function normalizeListNoteGroupingBaseOption(value: unknown): ListNoteGroupingBaseOption | null {
     if (value === 'none') {
         return 'custom';
     }
@@ -723,6 +719,13 @@ export interface NotebookNavigatorSettings {
     defaultListMode: ListDisplayMode;
     includeDescendantNotes: boolean;
     defaultFolderSort: SortOption;
+    /**
+     * Frontmatter key used when defaultFolderSort is a property sort. Stored separately because
+     * defaultFolderSort stays a scalar string for native settings controls and settings transfer.
+     * Empty for built-in sorts. Must match an entry in propertySortKey; reconciliation resets both
+     * fields to defaults when the key is removed from the configured list.
+     */
+    defaultFolderSortPropertyKey: string;
     propertySortKey: string;
     propertySortSecondary: PropertySortSecondaryOption;
     manualSortPropertyKey: string;
@@ -731,8 +734,10 @@ export interface NotebookNavigatorSettings {
     confirmBeforeManualSort: boolean;
     revealFileOnListChanges: boolean;
     listPaneTitle: ListPaneTitleOption;
-    // The vault-wide default supports only the base modes; property grouping is a per-view override.
-    noteGrouping: ListNoteGroupingBaseOption;
+    // Supports base modes and property grouping encoded as `property:<key>` / `property-desc:<key>`.
+    // Property keys must match an entry in propertySortKey; reconciliation resets to the default
+    // grouping when the key is removed from the configured list.
+    noteGrouping: ListNoteGroupingOption;
     showSelectedNavigationPills: boolean;
     stickyGroupHeaders: boolean;
     showFolderGroupPaths: boolean;
