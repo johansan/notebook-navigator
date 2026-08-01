@@ -364,6 +364,8 @@ export const STRINGS_PT = {
             changeBackground: 'Alterar fundo',
             excludeFolder: 'Ocultar pasta',
             unhideFolder: 'Mostrar pasta',
+            hideRootFolder: 'Ocultar pasta raiz',
+            showRootFolder: 'Mostrar pasta raiz',
             excludeFromDescendants: 'Ocultar nas pastas principais',
             includeInDescendants: 'Mostrar nas pastas principais',
             hiddenFromParentsIndicator: 'Oculta nas listas das pastas principais',
@@ -536,7 +538,6 @@ export const STRINGS_PT = {
                 'nav-properties': 'Propriedades',
                 'nav-property': 'Propriedade',
                 'nav-property-value': 'Valor',
-                'file-unfinished-task': 'Tarefas inacabadas',
                 'file-word-count': 'Contagem de palavras',
                 'file-character-count': 'Contagem de caracteres'
             }
@@ -796,8 +797,6 @@ export const STRINGS_PT = {
             forbiddenNameCharactersWindows: 'Caracteres reservados do Windows não são permitidos: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Pasta ocultada: {name}',
-            showFolder: 'Pasta mostrada: {name}',
             folderExcludedFromDescendants: 'Oculta nas listas das pastas principais: {name}',
             folderIncludedInDescendants: 'Mostrada nas listas das pastas principais: {name}',
             mergeNotes: 'Unidas {count} notas em {name}'
@@ -968,7 +967,8 @@ export const STRINGS_PT = {
         files: 'ficheiros',
         folder: 'pasta',
         folders: 'pastas',
-        wordCount: 'Contagem de palavras'
+        wordCount: 'Contagem de palavras',
+        unfinishedTasks: 'Tarefas inacabadas'
     },
 
     fileCounts: {
@@ -1055,8 +1055,8 @@ export const STRINGS_PT = {
             },
             list: {
                 display: 'Aparência',
+                sortAndGroup: 'Ordenação e agrupamento',
                 groupHeaders: 'Cabeçalhos de grupo',
-                propertySort: 'Ordenação e agrupamento por propriedade',
                 manualSort: 'Ordenação manual',
                 pinnedNotes: 'Notas fixadas',
                 drawingPreviews: 'Pré-visualizações de desenhos'
@@ -1092,20 +1092,18 @@ export const STRINGS_PT = {
             },
             sortNotesBy: {
                 name: 'Ordem de ordenação predefinida',
-                desc: 'Escolha a ordem de ordenação predefinida para notas.',
-                options: {
-                    'modified-desc': 'Data de edição (mais recente no topo)',
-                    'modified-asc': 'Data de edição (mais antiga no topo)',
-                    'created-desc': 'Data de criação (mais recente no topo)',
-                    'created-asc': 'Data de criação (mais antiga no topo)',
-                    'title-asc': 'Título (A no topo)',
-                    'title-desc': 'Título (Z no topo)',
-                    'filename-asc': 'Nome do ficheiro (A no topo)',
-                    'filename-desc': 'Nome do ficheiro (Z no topo)'
-                },
+                desc: 'Escolha a ordem de ordenação predefinida para notas. As propriedades de Propriedades de ordenação aparecem como opções de ordenação adicionais.',
                 directions: {
                     asc: 'Ascendente',
                     desc: 'Descendente'
+                },
+                dateDirections: {
+                    desc: 'Mais recente no topo',
+                    asc: 'Mais antiga no topo'
+                },
+                textDirections: {
+                    asc: 'A no topo',
+                    desc: 'Z no topo'
                 },
                 fields: {
                     modified: 'Data de edição',
@@ -1115,10 +1113,24 @@ export const STRINGS_PT = {
                     property: 'Propriedade'
                 }
             },
+            defaultSortDirection: {
+                name: 'Direção de ordenação'
+            },
+            defaultGroupingDirection: {
+                name: 'Direção de agrupamento',
+                options: {
+                    follow: 'Seguir a ordenação'
+                }
+            },
             propertySortKey: {
-                name: 'Propriedades de ordenação e agrupamento',
-                desc: 'Propriedades frontmatter separadas por vírgulas. Cada propriedade aparece como uma opção de ordenação e uma opção de agrupamento no menu de ordenação do painel de lista. Estas propriedades não são alteradas.',
-                placeholder: 'published, author'
+                name: 'Propriedades de ordenação',
+                desc: 'Propriedades do frontmatter separadas por vírgulas. Cada propriedade aparece como opção de ordenação na definição Ordem de ordenação predefinida e no menu de ordenação do painel de lista. Estas propriedades não são alteradas.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'A ordem de ordenação predefinida foi reposta porque a sua propriedade já não está disponível.',
+                    grouping: 'O agrupamento predefinido foi reposto porque a sua propriedade já não está disponível.',
+                    both: 'A ordem de ordenação predefinida e o agrupamento predefinido foram repostos porque as suas propriedades já não estão disponíveis.'
+                }
             },
             propertySortSecondary: {
                 name: 'Ordenação secundária',
@@ -1131,7 +1143,19 @@ export const STRINGS_PT = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Cada propriedade listada acima aparece como uma opção de ordenação e uma opção de agrupamento no menu de ordenação do painel de lista. A ordenação ordena as notas pelo valor do frontmatter, com os valores de array juntos numa única cadeia. O agrupamento reúne as notas que partilham o mesmo valor sob um cabeçalho; as notas com um valor de lista são agrupadas pela lista completa, e as notas sem a propriedade ficam num grupo "Nenhum" no final.'
+                intro: 'Como funcionam a ordenação e o agrupamento por propriedade:',
+                items: [
+                    '**Ordenação:** Escolher uma propriedade como Prioridade ordena as notas pelos respetivos valores de Prioridade.',
+                    '**Agrupamento:** Escolher uma propriedade como Estado cria um cabeçalho para cada valor de Estado. As notas com o mesmo Estado aparecem sob o mesmo cabeçalho.',
+                    '**Vários valores:** Se uma propriedade contiver uma lista, o Notebook Navigator usa a lista completa. Por exemplo, se Tópicos contiver Livros e História, a nota é ordenada ou agrupada usando «Livros, História», e não cada tópico separadamente.',
+                    '**Valores em falta:** Ao agrupar, as notas sem a propriedade aparecem sob **Nenhum** no final.',
+                    '**Vistas de etiqueta e propriedade:** Quando o agrupamento **Pasta** está selecionado, são apresentados cabeçalhos de data em vez disso.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Propriedades de agrupamento',
+                desc: 'Propriedades do frontmatter separadas por vírgulas. Cada propriedade aparece como opção de agrupamento na definição Agrupamento predefinido e no menu de ordenação do painel de lista. Estas propriedades não são alteradas.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Propriedade de ordenação manual',
@@ -1188,7 +1212,11 @@ export const STRINGS_PT = {
             },
             groupNotes: {
                 name: 'Agrupamento predefinido',
-                desc: 'Personalizado mostra cabeçalhos definidos no frontmatter. Data agrupa as notas por data. Pasta agrupa as notas por pasta. As vistas de etiqueta e propriedade usam grupos de data quando uma pasta está selecionada. O agrupamento por um valor de propriedade do frontmatter está disponível para cada vista no menu de ordenação do painel de lista.',
+                desc: 'Os **cabeçalhos** anotam a lista ordenada sem alterar a sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: os grupos de pastas e propriedades são ordenados por si próprios e as notas dentro de cada grupo seguem a ordem de ordenação.',
+                families: {
+                    headers: 'Cabeçalhos',
+                    groups: 'Grupos'
+                },
                 options: {
                     custom: 'Personalizado',
                     date: 'Data',
@@ -1225,15 +1253,27 @@ export const STRINGS_PT = {
             },
             showFileIcons: {
                 name: 'Mostrar ícones de ficheiros',
-                desc: 'Exibir ícones de ficheiros com espaçamento alinhado à esquerda. Desativar remove ícones e indentação. Prioridade: ícone de tarefas inacabadas > ícone personalizado > ícone de pasta > ícone de nome de ficheiro > ícone de tipo de ficheiro > ícone predefinido.'
+                desc: 'Exibir ícones de ficheiros com espaçamento alinhado à esquerda. Desativar remove ícones e indentação. Prioridade: ícone personalizado > ícone de pasta > ícone de nome de ficheiro > ícone de tipo de ficheiro > ícone predefinido.'
             },
             useFolderIcon: {
                 name: 'Usar ícone de pasta',
                 desc: 'Exibir o ícone da pasta pai quando não está definido um ícone de ficheiro personalizado. A cor da pasta é usada quando não está definida uma cor de ficheiro personalizada.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ícone de tarefas inacabadas',
-                desc: 'Apresentar um ícone de tarefa quando uma nota tem tarefas inacabadas.'
+            showFileTaskProgress: {
+                name: 'Mostrar tarefas',
+                desc: 'Apresentar o estado das tarefas com barra de progresso e contagem de tarefas opcionais. As cores das tarefas inacabadas e concluídas podem ser definidas separadamente com o plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostrar tarefas: barra de progresso',
+                desc: 'Apresentar uma barra de progresso junto ao ícone de tarefas.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostrar tarefas: contagem de tarefas',
+                desc: 'Apresentar o número de tarefas concluídas e o total de tarefas, por exemplo 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostrar tarefas: ocultar quando concluídas',
+                desc: 'Ocultar o progresso das tarefas quando todas as tarefas de uma nota estão concluídas.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fundo de tarefas inacabadas',

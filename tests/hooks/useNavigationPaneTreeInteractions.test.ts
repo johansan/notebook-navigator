@@ -369,4 +369,57 @@ describe('useNavigationPaneTreeInteractions', () => {
 
         expect(uiDispatch).not.toHaveBeenCalledWith({ type: 'ACTIVATE_PANE', target: 'files' });
     });
+
+    it('ignores recursive expansion toggles for a root locked open by hidden-item visibility', () => {
+        const app = new App();
+        const rootFolder = createTestFolder(app, '/');
+        addChildFolder(app, rootFolder, 'Projects');
+        const expansionDispatch = vi.fn();
+        let captured: NavigationPaneTreeInteractionsResult | null = null;
+
+        function Harness() {
+            captured = useNavigationPaneTreeInteractions({
+                app,
+                commandQueue: null,
+                settings: {
+                    ...DEFAULT_SETTINGS,
+                    showRootFolder: false
+                },
+                uiState: { singlePane: false },
+                expansionState: {
+                    expandedFolders: new Set(['/']),
+                    expandedTags: new Set(),
+                    expandedProperties: new Set(),
+                    expandedVirtualFolders: new Set()
+                },
+                expansionDispatch,
+                selectionState: createSelectionState(),
+                selectionDispatch: vi.fn(),
+                uiDispatch: vi.fn(),
+                propertyTreeService: null,
+                tagTree: new Map(),
+                propertyTree: new Map(),
+                tagsVirtualFolderHasChildren: false,
+                setShortcutsExpanded: vi.fn(),
+                setRecentNotesExpanded: vi.fn(),
+                clearActiveShortcut: vi.fn(),
+                openFolderNoteInRightSidebar: vi.fn(),
+                onModifySearchWithTag: vi.fn(),
+                onModifySearchWithProperty: vi.fn()
+            });
+            return null;
+        }
+
+        renderToStaticMarkup(React.createElement(Harness));
+
+        expect(captured).not.toBeNull();
+        if (!captured) {
+            throw new Error('Expected hook result');
+        }
+        const result = captured as NavigationPaneTreeInteractionsResult;
+
+        result.handleFolderToggleAllSiblings(rootFolder);
+
+        expect(expansionDispatch).not.toHaveBeenCalled();
+    });
 });

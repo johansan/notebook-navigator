@@ -363,6 +363,8 @@ export const STRINGS_VI = {
             changeBackground: 'Đổi nền',
             excludeFolder: 'Ẩn thư mục',
             unhideFolder: 'Hiện thư mục',
+            hideRootFolder: 'Ẩn thư mục gốc',
+            showRootFolder: 'Hiện thư mục gốc',
             excludeFromDescendants: 'Ẩn khỏi thư mục cha',
             includeInDescendants: 'Hiện trong thư mục cha',
             hiddenFromParentsIndicator: 'Đã ẩn khỏi danh sách thư mục cha',
@@ -535,7 +537,6 @@ export const STRINGS_VI = {
                 'nav-properties': 'Thuộc tính',
                 'nav-property': 'Thuộc tính',
                 'nav-property-value': 'Giá trị',
-                'file-unfinished-task': 'Nhiệm vụ chưa hoàn thành',
                 'file-word-count': 'Số từ',
                 'file-character-count': 'Số ký tự'
             }
@@ -797,8 +798,6 @@ export const STRINGS_VI = {
             forbiddenNameCharactersWindows: 'Ký tự được Windows dành riêng không được phép: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Đã ẩn thư mục: {name}',
-            showFolder: 'Đã hiện thư mục: {name}',
             folderExcludedFromDescendants: 'Đã ẩn khỏi danh sách thư mục cha: {name}',
             folderIncludedInDescendants: 'Đã hiện trong danh sách thư mục cha: {name}',
             mergeNotes: 'Đã hợp nhất {count} ghi chú vào {name}'
@@ -969,7 +968,8 @@ export const STRINGS_VI = {
         files: 'tệp',
         folder: 'thư mục',
         folders: 'thư mục',
-        wordCount: 'Số từ'
+        wordCount: 'Số từ',
+        unfinishedTasks: 'Nhiệm vụ chưa hoàn thành'
     },
 
     fileCounts: {
@@ -1056,8 +1056,8 @@ export const STRINGS_VI = {
             },
             list: {
                 display: 'Giao diện',
+                sortAndGroup: 'Sắp xếp và nhóm',
                 groupHeaders: 'Header nhóm',
-                propertySort: 'Sắp xếp và nhóm theo thuộc tính',
                 manualSort: 'Sắp xếp thủ công',
                 pinnedNotes: 'Ghi chú đã ghim',
                 drawingPreviews: 'Xem trước bản vẽ'
@@ -1093,20 +1093,18 @@ export const STRINGS_VI = {
             },
             sortNotesBy: {
                 name: 'Thứ tự sắp xếp mặc định',
-                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú.',
-                options: {
-                    'modified-desc': 'Ngày sửa (mới nhất trên)',
-                    'modified-asc': 'Ngày sửa (cũ nhất trên)',
-                    'created-desc': 'Ngày tạo (mới nhất trên)',
-                    'created-asc': 'Ngày tạo (cũ nhất trên)',
-                    'title-asc': 'Tiêu đề (A trên)',
-                    'title-desc': 'Tiêu đề (Z trên)',
-                    'filename-asc': 'Tên tệp (A trên)',
-                    'filename-desc': 'Tên tệp (Z trên)'
-                },
+                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú. Các thuộc tính từ Thuộc tính sắp xếp xuất hiện dưới dạng tùy chọn sắp xếp bổ sung.',
                 directions: {
                     asc: 'Tăng dần',
                     desc: 'Giảm dần'
+                },
+                dateDirections: {
+                    desc: 'Mới nhất trên',
+                    asc: 'Cũ nhất trên'
+                },
+                textDirections: {
+                    asc: 'A trên',
+                    desc: 'Z trên'
                 },
                 fields: {
                     modified: 'Ngày sửa',
@@ -1116,10 +1114,24 @@ export const STRINGS_VI = {
                     property: 'Thuộc tính'
                 }
             },
+            defaultSortDirection: {
+                name: 'Hướng sắp xếp'
+            },
+            defaultGroupingDirection: {
+                name: 'Hướng nhóm',
+                options: {
+                    follow: 'Theo thứ tự sắp xếp'
+                }
+            },
             propertySortKey: {
-                name: 'Thuộc tính sắp xếp và nhóm',
-                desc: 'Các thuộc tính frontmatter phân cách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
-                placeholder: 'published, author'
+                name: 'Thuộc tính sắp xếp',
+                desc: 'Các thuộc tính frontmatter phân tách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp trong cài đặt Thứ tự sắp xếp mặc định và trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Thứ tự sắp xếp mặc định đã được đặt lại vì thuộc tính của nó không còn khả dụng.',
+                    grouping: 'Nhóm mặc định đã được đặt lại vì thuộc tính của nó không còn khả dụng.',
+                    both: 'Thứ tự sắp xếp mặc định và nhóm mặc định đã được đặt lại vì thuộc tính của chúng không còn khả dụng.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sắp xếp phụ',
@@ -1132,7 +1144,19 @@ export const STRINGS_VI = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Mỗi thuộc tính được liệt kê ở trên xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Sắp xếp sẽ xếp thứ tự ghi chú theo giá trị frontmatter, với các giá trị mảng được kết hợp thành một chuỗi. Nhóm sẽ gom các ghi chú có cùng giá trị dưới một header; ghi chú có giá trị dạng danh sách được nhóm theo toàn bộ danh sách, còn các ghi chú thiếu thuộc tính này nằm trong nhóm "Không có" ở cuối.'
+                intro: 'Cách sắp xếp và nhóm theo một thuộc tính hoạt động:',
+                items: [
+                    '**Sắp xếp:** Chọn một thuộc tính như Ưu tiên sẽ sắp xếp ghi chú theo giá trị Ưu tiên của chúng.',
+                    '**Nhóm:** Chọn một thuộc tính như Trạng thái sẽ tạo một tiêu đề cho mỗi giá trị Trạng thái. Các ghi chú có cùng Trạng thái xuất hiện dưới cùng một tiêu đề.',
+                    '**Nhiều giá trị:** Nếu một thuộc tính chứa danh sách, Notebook Navigator sử dụng toàn bộ danh sách. Ví dụ, nếu Chủ đề chứa Sách và Lịch sử, ghi chú sẽ được sắp xếp hoặc nhóm bằng “Sách, Lịch sử”, chứ không theo từng chủ đề riêng biệt.',
+                    '**Giá trị bị thiếu:** Khi nhóm, các ghi chú không có thuộc tính sẽ xuất hiện dưới **Không có** ở cuối.',
+                    '**Chế độ xem thẻ và thuộc tính:** Khi chọn nhóm theo **Thư mục**, tiêu đề ngày sẽ được hiển thị thay thế.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Thuộc tính nhóm',
+                desc: 'Các thuộc tính frontmatter phân tách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn nhóm trong cài đặt Nhóm mặc định và trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Thuộc tính sắp xếp thủ công',
@@ -1189,7 +1213,11 @@ export const STRINGS_VI = {
             },
             groupNotes: {
                 name: 'Nhóm mặc định',
-                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn. Nhóm theo giá trị thuộc tính frontmatter khả dụng riêng cho từng chế độ xem từ menu sắp xếp trong ngăn danh sách.',
+                desc: '**Tiêu đề** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị tiêu đề được định nghĩa trong frontmatter và Ngày chèn tiêu đề ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
+                families: {
+                    headers: 'Tiêu đề',
+                    groups: 'Nhóm'
+                },
                 options: {
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',
@@ -1226,15 +1254,27 @@ export const STRINGS_VI = {
             },
             showFileIcons: {
                 name: 'Hiện biểu tượng tệp',
-                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng tác vụ chưa hoàn thành > biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
+                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
             },
             useFolderIcon: {
                 name: 'Dùng biểu tượng thư mục',
                 desc: 'Hiển thị biểu tượng của thư mục cha khi không có biểu tượng tệp tùy chỉnh được đặt. Màu thư mục được dùng khi không có màu tệp tùy chỉnh được đặt.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Biểu tượng nhiệm vụ chưa hoàn thành',
-                desc: 'Hiển thị biểu tượng nhiệm vụ khi ghi chú có nhiệm vụ chưa hoàn thành.'
+            showFileTaskProgress: {
+                name: 'Hiển thị nhiệm vụ',
+                desc: 'Hiển thị trạng thái nhiệm vụ với thanh tiến độ và số nhiệm vụ tùy chọn. Màu cho nhiệm vụ chưa hoàn thành và nhiệm vụ đã hoàn thành có thể được đặt riêng bằng plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Hiển thị nhiệm vụ: thanh tiến độ',
+                desc: 'Hiển thị thanh tiến độ bên cạnh biểu tượng nhiệm vụ.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Hiển thị nhiệm vụ: số nhiệm vụ',
+                desc: 'Hiển thị số nhiệm vụ đã hoàn thành và tổng số nhiệm vụ, ví dụ 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Hiển thị nhiệm vụ: ẩn khi hoàn thành',
+                desc: 'Ẩn tiến độ nhiệm vụ khi tất cả nhiệm vụ trong ghi chú đã hoàn thành.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Nền nhiệm vụ chưa hoàn thành',

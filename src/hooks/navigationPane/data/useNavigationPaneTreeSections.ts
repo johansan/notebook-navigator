@@ -17,7 +17,7 @@
  */
 
 import { useMemo } from 'react';
-import type { App } from 'obsidian';
+import type { App, TFolder } from 'obsidian';
 import type { IPropertyTreeProvider } from '../../../interfaces/IPropertyTreeProvider';
 import type { ITagTreeProvider } from '../../../interfaces/ITagTreeProvider';
 import { strings } from '../../../i18n';
@@ -219,17 +219,30 @@ export function useNavigationPaneTreeSections({
     propertyTreeService
 }: UseNavigationPaneTreeSectionsParams): NavigationPaneTreeSectionsResult {
     const folderItems = useMemo(() => {
-        return flattenFolderTree(sourceState.rootFolders, expansionState.expandedFolders, sourceState.hiddenFolders, 0, new Set(), {
+        // A root folder present while the setting is off is only visible through the show hidden items
+        // toggle. It renders as excluded and always expanded: it has no persisted expansion entry, and a
+        // collapsed root would hide the entire folder tree. Deriving this from the root folder list instead
+        // of the toggle keeps the frame where the list has not caught up with a toggle change consistent.
+        const rootRevealedAsHiddenItem = !settings.showRootFolder && sourceState.rootFolders.some(folder => folder.path === '/');
+        const expandedFolders = rootRevealedAsHiddenItem
+            ? new Set(expansionState.expandedFolders).add('/')
+            : expansionState.expandedFolders;
+        const baseFolderExclusion = sourceState.folderExclusionByFolderNote;
+        const isFolderExcluded = rootRevealedAsHiddenItem
+            ? (folder: TFolder) => (folder.path === '/' ? true : (baseFolderExclusion?.(folder) ?? false))
+            : baseFolderExclusion;
+        return flattenFolderTree(sourceState.rootFolders, expandedFolders, sourceState.hiddenFolders, 0, new Set(), {
             rootOrderMap: sourceState.rootFolderOrderMap,
             defaultSortOrder: settings.folderSortOrder,
             childSortOrderOverrides: settings.folderTreeSortOverrides,
             getFolderSortName: sourceState.getFolderSortName,
-            isFolderExcluded: sourceState.folderExclusionByFolderNote
+            isFolderExcluded
         });
     }, [
         expansionState.expandedFolders,
         settings.folderSortOrder,
         settings.folderTreeSortOverrides,
+        settings.showRootFolder,
         sourceState.folderExclusionByFolderNote,
         sourceState.getFolderSortName,
         sourceState.hiddenFolders,

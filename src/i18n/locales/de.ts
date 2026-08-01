@@ -364,6 +364,8 @@ export const STRINGS_DE = {
             changeBackground: 'Hintergrund ändern',
             excludeFolder: 'Ordner verstecken',
             unhideFolder: 'Ordner einblenden',
+            hideRootFolder: 'Wurzelordner verstecken',
+            showRootFolder: 'Wurzelordner anzeigen',
             excludeFromDescendants: 'In übergeordneten Ordnern ausblenden',
             includeInDescendants: 'In übergeordneten Ordnern anzeigen',
             hiddenFromParentsIndicator: 'Aus übergeordneten Ordnerlisten ausgeblendet',
@@ -536,7 +538,6 @@ export const STRINGS_DE = {
                 'nav-properties': 'Eigenschaften',
                 'nav-property': 'Eigenschaft',
                 'nav-property-value': 'Wert',
-                'file-unfinished-task': 'Unerledigte Aufgaben',
                 'file-word-count': 'Wortanzahl',
                 'file-character-count': 'Zeichenanzahl'
             }
@@ -798,8 +799,6 @@ export const STRINGS_DE = {
             forbiddenNameCharactersWindows: 'Windows-reservierte Zeichen sind nicht erlaubt: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Ordner ausgeblendet: {name}',
-            showFolder: 'Ordner eingeblendet: {name}',
             folderExcludedFromDescendants: 'Aus übergeordneten Ordnerlisten ausgeblendet: {name}',
             folderIncludedInDescendants: 'In übergeordneten Ordnerlisten angezeigt: {name}',
             mergeNotes: '{count} Notizen in {name} zusammengeführt'
@@ -971,7 +970,8 @@ export const STRINGS_DE = {
         files: 'Dateien',
         folder: 'Ordner',
         folders: 'Ordner',
-        wordCount: 'Wortanzahl'
+        wordCount: 'Wortanzahl',
+        unfinishedTasks: 'Unerledigte Aufgaben'
     },
 
     fileCounts: {
@@ -1058,8 +1058,8 @@ export const STRINGS_DE = {
             },
             list: {
                 display: 'Darstellung',
+                sortAndGroup: 'Sortierung & Gruppierung',
                 groupHeaders: 'Gruppenüberschriften',
-                propertySort: 'Eigenschaftssortierung und -gruppierung',
                 manualSort: 'Manuelle Sortierung',
                 pinnedNotes: 'Angeheftete Notizen',
                 drawingPreviews: 'Zeichnungsvorschauen'
@@ -1095,20 +1095,18 @@ export const STRINGS_DE = {
             },
             sortNotesBy: {
                 name: 'Standard-Sortierreihenfolge',
-                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen.',
-                options: {
-                    'modified-desc': 'Bearbeitungsdatum (neueste oben)',
-                    'modified-asc': 'Bearbeitungsdatum (älteste oben)',
-                    'created-desc': 'Erstellungsdatum (neueste oben)',
-                    'created-asc': 'Erstellungsdatum (älteste oben)',
-                    'title-asc': 'Titel (A oben)',
-                    'title-desc': 'Titel (Z oben)',
-                    'filename-asc': 'Dateiname (A oben)',
-                    'filename-desc': 'Dateiname (Z oben)'
-                },
+                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen. Eigenschaften aus Sortiereigenschaften erscheinen als zusätzliche Sortieroptionen.',
                 directions: {
                     asc: 'Aufsteigend',
                     desc: 'Absteigend'
+                },
+                dateDirections: {
+                    desc: 'Neueste oben',
+                    asc: 'Älteste oben'
+                },
+                textDirections: {
+                    asc: 'A oben',
+                    desc: 'Z oben'
                 },
                 fields: {
                     modified: 'Bearbeitungsdatum',
@@ -1118,10 +1116,24 @@ export const STRINGS_DE = {
                     property: 'Eigenschaft'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sortierrichtung'
+            },
+            defaultGroupingDirection: {
+                name: 'Gruppierungsrichtung',
+                options: {
+                    follow: 'Sortierreihenfolge folgen'
+                }
+            },
             propertySortKey: {
-                name: 'Sortier- und Gruppierungseigenschaften',
-                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
-                placeholder: 'published, author'
+                name: 'Sortiereigenschaften',
+                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption in der Einstellung Standard-Sortierreihenfolge und im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Die Standard-Sortierreihenfolge wurde zurückgesetzt, weil ihre Eigenschaft nicht mehr verfügbar ist.',
+                    grouping: 'Die Standardgruppierung wurde zurückgesetzt, weil ihre Eigenschaft nicht mehr verfügbar ist.',
+                    both: 'Standard-Sortierreihenfolge und Standardgruppierung wurden zurückgesetzt, weil ihre Eigenschaften nicht mehr verfügbar sind.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sekundäre Sortierung',
@@ -1134,7 +1146,19 @@ export const STRINGS_DE = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Jede oben aufgeführte Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Die Sortierung ordnet Notizen nach ihrem Frontmatter-Wert, wobei Array-Werte zu einer einzelnen Zeichenkette zusammengefügt werden. Die Gruppierung fasst Notizen mit demselben Wert unter einer Überschrift zusammen; Notizen mit einem Listenwert werden unter der vollständigen Liste gruppiert, und Notizen ohne die Eigenschaft stehen in einer abschließenden Gruppe „Keine".'
+                intro: 'So funktionieren Sortierung und Gruppierung nach einer Eigenschaft:',
+                items: [
+                    '**Sortierung:** Die Auswahl einer Eigenschaft wie Priorität sortiert Notizen nach ihren Prioritätswerten.',
+                    '**Gruppierung:** Die Auswahl einer Eigenschaft wie Status erstellt für jeden Statuswert eine Überschrift. Notizen mit demselben Status erscheinen unter derselben Überschrift.',
+                    '**Mehrere Werte:** Wenn eine Eigenschaft eine Liste enthält, verwendet Notebook Navigator die vollständige Liste. Enthält Themen zum Beispiel Bücher und Geschichte, wird die Notiz anhand von „Bücher, Geschichte“ sortiert oder gruppiert und nicht nach jedem Thema einzeln.',
+                    '**Fehlende Werte:** Beim Gruppieren erscheinen Notizen ohne die Eigenschaft am Ende unter **Keine**.',
+                    '**Tag- und Eigenschaftsansichten:** Wenn **Ordner** als Gruppierung ausgewählt ist, werden stattdessen Datumsüberschriften angezeigt.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Gruppierungseigenschaften',
+                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Gruppierungsoption in der Einstellung Standardgruppierung und im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschaft für manuelle Sortierung',
@@ -1191,7 +1215,11 @@ export const STRINGS_DE = {
             },
             groupNotes: {
                 name: 'Standardgruppierung',
-                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist. Die Gruppierung nach einem Frontmatter-Eigenschaftswert ist pro Ansicht über das Sortiermenü im Listenbereich verfügbar.',
+                desc: '**Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
+                families: {
+                    headers: 'Überschriften',
+                    groups: 'Gruppen'
+                },
                 options: {
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',
@@ -1228,15 +1256,27 @@ export const STRINGS_DE = {
             },
             showFileIcons: {
                 name: 'Dateisymbole anzeigen',
-                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Unerledigte-Aufgaben-Symbol > Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
             },
             useFolderIcon: {
                 name: 'Ordnersymbol verwenden',
                 desc: 'Das Symbol des übergeordneten Ordners anzeigen, wenn kein benutzerdefiniertes Dateisymbol festgelegt ist. Die Ordnerfarbe wird verwendet, wenn keine benutzerdefinierte Dateifarbe festgelegt ist.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Unerledigte-Aufgaben-Symbol',
-                desc: 'Ein Aufgabensymbol anzeigen, wenn eine Notiz unerledigte Aufgaben enthält.'
+            showFileTaskProgress: {
+                name: 'Aufgaben anzeigen',
+                desc: 'Den Aufgabenstatus mit optionalem Fortschrittsbalken und optionaler Aufgabenanzahl anzeigen. Farben für unerledigte und erledigte Aufgaben können im Style-Settings-Plugin einzeln festgelegt werden.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Aufgaben anzeigen: Fortschrittsbalken',
+                desc: 'Einen Fortschrittsbalken neben dem Aufgabensymbol anzeigen.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Aufgaben anzeigen: Aufgabenanzahl',
+                desc: 'Die Anzahl der erledigten und die Gesamtzahl der Aufgaben anzeigen, z. B. 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Aufgaben anzeigen: bei Abschluss ausblenden',
+                desc: 'Den Aufgabenfortschritt ausblenden, wenn alle Aufgaben einer Notiz erledigt sind.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Unerledigte-Aufgaben-Hintergrund',

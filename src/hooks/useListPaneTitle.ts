@@ -37,6 +37,7 @@ import { resolveUXIcon } from '../utils/uxIcons';
 import { buildPropertyKeyNodeId, parsePropertyNodeId, type PropertySelectionNodeId } from '../utils/propertyTree';
 import { resolveFolderDisplayName, resolveFolderDisplayPathSegments } from '../utils/folderDisplayName';
 import { resolveRootFolderNoteSourceName } from '../utils/folderNoteLookup';
+import { isFolderEffectivelyExpanded } from '../utils/navigationExpansion';
 
 const FOLDER_NOTE_EXTENSIONS = Object.values(FOLDER_NOTE_TYPE_EXTENSIONS);
 
@@ -243,7 +244,7 @@ export function useListPaneTitle(): UseListPaneTitleResult {
             const excludedFolders = hiddenFolders;
             const showHiddenFolders = showHiddenItems;
             const hasChildren = hasSubfolders(folder, excludedFolders, showHiddenFolders);
-            const isExpanded = expansionState.expandedFolders.has(folder.path);
+            const isExpanded = isFolderEffectivelyExpanded(folder.path, expansionState.expandedFolders, settings.showRootFolder);
             return hasChildren && isExpanded
                 ? resolveUXIcon(settings.interfaceIcons, 'nav-folder-open')
                 : resolveUXIcon(settings.interfaceIcons, 'nav-folder-closed');
@@ -292,6 +293,7 @@ export function useListPaneTitle(): UseListPaneTitleResult {
         settings.interfaceIcons,
         settings.showFolderIcons,
         settings.showPropertyIcons,
+        settings.showRootFolder,
         settings.showTagIcons,
         metadataVersion
     ]);

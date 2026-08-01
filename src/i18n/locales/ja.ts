@@ -363,6 +363,8 @@ export const STRINGS_JA = {
             changeBackground: '背景色を変更',
             excludeFolder: 'フォルダを非表示',
             unhideFolder: 'フォルダを表示',
+            hideRootFolder: 'ルートフォルダを非表示',
+            showRootFolder: 'ルートフォルダを表示',
             excludeFromDescendants: '親フォルダで非表示',
             includeInDescendants: '親フォルダで表示',
             hiddenFromParentsIndicator: '親フォルダのリストから非表示',
@@ -535,7 +537,6 @@ export const STRINGS_JA = {
                 'nav-properties': 'プロパティ',
                 'nav-property': 'プロパティ',
                 'nav-property-value': '値',
-                'file-unfinished-task': '未完了タスク',
                 'file-word-count': '単語数',
                 'file-character-count': '文字数'
             }
@@ -795,8 +796,6 @@ export const STRINGS_JA = {
             forbiddenNameCharactersWindows: 'Windows で予約されている文字は使用できません: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'フォルダを非表示: {name}',
-            showFolder: 'フォルダを表示: {name}',
             folderExcludedFromDescendants: '親フォルダのリストから非表示: {name}',
             folderIncludedInDescendants: '親フォルダのリストに表示: {name}',
             mergeNotes: '{count} 個のノートを {name} に結合しました'
@@ -967,7 +966,8 @@ export const STRINGS_JA = {
         files: 'ファイル',
         folder: 'フォルダ',
         folders: 'フォルダ',
-        wordCount: '単語数'
+        wordCount: '単語数',
+        unfinishedTasks: '未完了タスク'
     },
 
     fileCounts: {
@@ -1054,8 +1054,8 @@ export const STRINGS_JA = {
             },
             list: {
                 display: '外観',
+                sortAndGroup: '並べ替えとグループ化',
                 groupHeaders: 'グループヘッダー',
-                propertySort: 'プロパティでの並べ替えとグループ化',
                 manualSort: '手動並べ替え',
                 pinnedNotes: 'ピン留めされたノート',
                 drawingPreviews: '描画プレビュー'
@@ -1091,18 +1091,16 @@ export const STRINGS_JA = {
             },
             sortNotesBy: {
                 name: 'デフォルトの並び順',
-                desc: 'ノートのデフォルトの並び順を選択します。',
-                options: {
-                    'modified-desc': '編集日時（新しいものが上）',
-                    'modified-asc': '編集日時（古いものが上）',
-                    'created-desc': '作成日時（新しいものが上）',
-                    'created-asc': '作成日時（古いものが上）',
-                    'title-asc': 'タイトル（昇順）',
-                    'title-desc': 'タイトル（降順）',
-                    'filename-asc': 'ファイル名（昇順）',
-                    'filename-desc': 'ファイル名（降順）'
-                },
+                desc: 'ノートのデフォルトの並び順を選択します。「並べ替えに使うプロパティ」のプロパティが追加の並び順オプションとして表示されます。',
                 directions: {
+                    asc: '昇順',
+                    desc: '降順'
+                },
+                dateDirections: {
+                    desc: '新しいものが上',
+                    asc: '古いものが上'
+                },
+                textDirections: {
                     asc: '昇順',
                     desc: '降順'
                 },
@@ -1114,10 +1112,24 @@ export const STRINGS_JA = {
                     property: 'プロパティ'
                 }
             },
+            defaultSortDirection: {
+                name: '並び順の方向'
+            },
+            defaultGroupingDirection: {
+                name: 'グループ化の方向',
+                options: {
+                    follow: '並び順に従う'
+                }
+            },
             propertySortKey: {
-                name: '並べ替えとグループ化に使うプロパティ',
-                desc: 'カンマ区切りのfrontmatterプロパティ。各プロパティは、リストペインの並べ替えメニューに並べ替えオプションおよびグループ化オプションとして表示されます。これらのプロパティは変更されません。',
-                placeholder: 'published, author'
+                name: '並べ替えに使うプロパティ',
+                desc: 'カンマ区切りの frontmatter プロパティ。各プロパティは、デフォルトの並び順の設定とリストペインの並べ替えメニューに並べ替えオプションとして表示されます。これらのプロパティは変更されません。',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'プロパティが利用できなくなったため、デフォルトの並び順がリセットされました。',
+                    grouping: 'プロパティが利用できなくなったため、デフォルトのグループ化がリセットされました。',
+                    both: 'プロパティが利用できなくなったため、デフォルトの並び順とグループ化がリセットされました。'
+                }
             },
             propertySortSecondary: {
                 name: '二次ソート',
@@ -1130,7 +1142,19 @@ export const STRINGS_JA = {
                 }
             },
             propertySortInstructions: {
-                intro: '上記の各プロパティは、リストペインの並べ替えメニューに並べ替えオプションおよびグループ化オプションとして表示されます。並べ替えは、フロントマターの値でノートを並べ替え、配列値は 1 つの文字列に結合されます。グループ化は、同じ値を持つノートを 1 つのヘッダーの下にまとめます。リスト値を持つノートはリスト全体でグループ化され、プロパティがないノートは末尾の「なし」グループに入ります。'
+                intro: 'プロパティによる並べ替えとグループ化の仕組み：',
+                items: [
+                    '**並べ替え:** 「優先度」などのプロパティを選ぶと、各ノートの優先度の値で並べ替えられます。',
+                    '**グループ化:** 「ステータス」などのプロパティを選ぶと、ステータスの値ごとにヘッダーが作成されます。同じステータスのノートは同じヘッダーの下に表示されます。',
+                    '**複数の値:** プロパティにリストが含まれる場合、Notebook Navigator はリスト全体を使用します。たとえば、「トピック」に「書籍」と「歴史」が含まれる場合、各トピックを個別に扱わず、「書籍、歴史」を使ってノートを並べ替えまたはグループ化します。',
+                    '**値がない場合:** グループ化すると、プロパティがないノートは末尾の **なし** に表示されます。',
+                    '**タグとプロパティビュー:** **フォルダ** でグループ化すると、代わりに日付ヘッダーが表示されます。'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'グループ化に使うプロパティ',
+                desc: 'カンマ区切りの frontmatter プロパティ。各プロパティは、デフォルトのグループ化の設定とリストペインの並べ替えメニューにグループ化オプションとして表示されます。これらのプロパティは変更されません。',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '手動並べ替え用プロパティ',
@@ -1187,7 +1211,11 @@ export const STRINGS_JA = {
             },
             groupNotes: {
                 name: 'デフォルトのグループ化',
-                desc: 'カスタムは frontmatter で定義されたヘッダーを表示します。日付はノートを日付でグループ化します。フォルダはノートをフォルダでグループ化します。タグとプロパティビューでは、フォルダが選択されている場合は日付グループが使用されます。frontmatter プロパティの値によるグループ化は、リストペインの並べ替えメニューからビューごとに利用できます。',
+                desc: '**ヘッダー**は並び順を変えずに、並べ替えたリストに見出しを付けます。カスタムは frontmatter で定義されたヘッダーを表示し、日付は日付ヘッダーを挿入します。**グループ**はリストを並べ替えます。フォルダとプロパティのグループは独自に並び、各グループ内のノートは並び順に従います。',
+                families: {
+                    headers: 'ヘッダー',
+                    groups: 'グループ'
+                },
                 options: {
                     custom: 'カスタム',
                     date: '日付',
@@ -1224,15 +1252,27 @@ export const STRINGS_JA = {
             },
             showFileIcons: {
                 name: 'ファイルアイコンを表示',
-                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: 未完了タスクアイコン > カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
+                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
             },
             useFolderIcon: {
                 name: 'フォルダアイコンを使用',
                 desc: 'カスタムファイルアイコンが設定されていない場合に親フォルダのアイコンを表示します。カスタムファイル色が設定されていない場合はフォルダの色が使用されます。'
             },
-            showFileIconUnfinishedTask: {
-                name: '未完了タスクアイコン',
-                desc: 'ノートに未完了のタスクがある場合にタスクアイコンを表示します。'
+            showFileTaskProgress: {
+                name: 'タスクを表示',
+                desc: 'タスクの状態を表示します。進捗バーとタスク数は任意で表示できます。未完了タスクと完了タスクの色はStyle Settingsプラグインで個別に設定できます。'
+            },
+            showFileTaskProgressBar: {
+                name: 'タスクを表示: 進捗バー',
+                desc: 'タスクアイコンの横に進捗バーを表示します。'
+            },
+            showFileTaskProgressCount: {
+                name: 'タスクを表示: タスク数',
+                desc: '完了タスク数と総タスク数を表示します（例: 3/7）。'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'タスクを表示: 完了時に非表示',
+                desc: 'ノートのすべてのタスクが完了したらタスク進捗を非表示にします。'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '未完了タスク背景',

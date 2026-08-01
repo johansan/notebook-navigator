@@ -74,6 +74,8 @@ function createRowSizingConfig(overrides: Partial<ListFileRowSizingConfig> = {})
         showFilePropertiesInCompactMode: false,
         characterCountSpaces: 'include',
         showParentFolder: false,
+        showTaskProgress: false,
+        hideTaskProgressWhenComplete: false,
         selectionType: ItemType.FOLDER,
         includeDescendantNotes: false,
         selectedTagToHide: null,
@@ -142,6 +144,8 @@ describe('isListRowHeightAffectingContentChange', () => {
             showWordCountProperty: true,
             showCharacterCountProperty: true,
             characterCountSpaces: 'include',
+            showTaskProgress: false,
+            hideTaskProgressWhenComplete: false,
             ...overrides
         };
     }
@@ -239,6 +243,41 @@ describe('isListRowHeightAffectingContentChange', () => {
                 config
             )
         ).toBe(false);
+    });
+
+    it('remeasures only when task progress crosses its visibility boundary', () => {
+        const showCompletedConfig = createHeightChangeConfig({ showTaskProgress: true });
+        const hideCompletedConfig = createHeightChangeConfig({
+            showTaskProgress: true,
+            hideTaskProgressWhenComplete: true
+        });
+
+        const progressOnlyChange = createContentChange({
+            changes: { taskUnfinished: 2 },
+            previousTaskCounters: { taskTotal: 4, taskUnfinished: 3 }
+        });
+        expect(isListRowHeightAffectingContentChange(progressOnlyChange, showCompletedConfig)).toBe(false);
+        expect(isListRowHeightAffectingContentChange(progressOnlyChange, hideCompletedConfig)).toBe(false);
+
+        const completedTaskAdded = createContentChange({
+            changes: { taskTotal: 1 },
+            previousTaskCounters: { taskTotal: 0, taskUnfinished: 0 }
+        });
+        expect(isListRowHeightAffectingContentChange(completedTaskAdded, showCompletedConfig)).toBe(true);
+        expect(isListRowHeightAffectingContentChange(completedTaskAdded, hideCompletedConfig)).toBe(false);
+
+        const completedNoteBecameIncomplete = createContentChange({
+            changes: { taskUnfinished: 1 },
+            previousTaskCounters: { taskTotal: 4, taskUnfinished: 0 }
+        });
+        expect(isListRowHeightAffectingContentChange(completedNoteBecameIncomplete, showCompletedConfig)).toBe(false);
+        expect(isListRowHeightAffectingContentChange(completedNoteBecameIncomplete, hideCompletedConfig)).toBe(true);
+
+        const countersCleared = createContentChange({
+            changes: { taskTotal: null, taskUnfinished: null },
+            previousTaskCounters: { taskTotal: 4, taskUnfinished: 1 }
+        });
+        expect(isListRowHeightAffectingContentChange(countersCleared, showCompletedConfig)).toBe(true);
     });
 });
 

@@ -364,6 +364,8 @@ export const STRINGS_TR = {
             changeBackground: 'Arka planı değiştir',
             excludeFolder: 'Klasörü gizle',
             unhideFolder: 'Klasörü göster',
+            hideRootFolder: 'Kök klasörü gizle',
+            showRootFolder: 'Kök klasörü göster',
             excludeFromDescendants: 'Üst klasörlerde gizle',
             includeInDescendants: 'Üst klasörlerde göster',
             hiddenFromParentsIndicator: 'Üst klasör listelerinde gizli',
@@ -535,7 +537,6 @@ export const STRINGS_TR = {
                 'nav-properties': 'Özellikler',
                 'nav-property': 'Özellik',
                 'nav-property-value': 'Değer',
-                'file-unfinished-task': 'Tamamlanmamış görevler',
                 'file-word-count': 'Kelime sayısı',
                 'file-character-count': 'Karakter sayısı'
             }
@@ -794,8 +795,6 @@ export const STRINGS_TR = {
             forbiddenNameCharactersWindows: 'Windows için ayrılmış karakterlere izin verilmez: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Klasör gizlendi: {name}',
-            showFolder: 'Klasör gösterildi: {name}',
             folderExcludedFromDescendants: 'Üst klasör listelerinde gizli: {name}',
             folderIncludedInDescendants: 'Üst klasör listelerinde gösteriliyor: {name}',
             mergeNotes: '{count} not {name} içine birleştirildi'
@@ -966,7 +965,8 @@ export const STRINGS_TR = {
         files: 'dosya',
         folder: 'klasör',
         folders: 'klasör',
-        wordCount: 'Kelime sayısı'
+        wordCount: 'Kelime sayısı',
+        unfinishedTasks: 'Tamamlanmamış görevler'
     },
 
     fileCounts: {
@@ -1053,8 +1053,8 @@ export const STRINGS_TR = {
             },
             list: {
                 display: 'Görünüm',
+                sortAndGroup: 'Sıralama ve gruplama',
                 groupHeaders: 'Grup başlıkları',
-                propertySort: 'Özelliğe göre sıralama ve gruplama',
                 manualSort: 'Manuel sıralama',
                 pinnedNotes: 'Sabitlenmiş notlar',
                 drawingPreviews: 'Çizim önizlemeleri'
@@ -1090,20 +1090,18 @@ export const STRINGS_TR = {
             },
             sortNotesBy: {
                 name: 'Varsayılan sıralama düzeni',
-                desc: 'Notlar için varsayılan sıralama düzenini seçin.',
-                options: {
-                    'modified-desc': 'Düzenleme tarihi (en yeni üstte)',
-                    'modified-asc': 'Düzenleme tarihi (en eski üstte)',
-                    'created-desc': 'Oluşturma tarihi (en yeni üstte)',
-                    'created-asc': 'Oluşturma tarihi (en eski üstte)',
-                    'title-asc': 'Başlık (A üstte)',
-                    'title-desc': 'Başlık (Z üstte)',
-                    'filename-asc': 'Dosya adı (A üstte)',
-                    'filename-desc': 'Dosya adı (Z üstte)'
-                },
+                desc: 'Notlar için varsayılan sıralama düzenini seçin. Sıralama özellikleri altındaki özellikler ek sıralama seçenekleri olarak görünür.',
                 directions: {
                     asc: 'Artan',
                     desc: 'Azalan'
+                },
+                dateDirections: {
+                    desc: 'En yeni üstte',
+                    asc: 'En eski üstte'
+                },
+                textDirections: {
+                    asc: 'A üstte',
+                    desc: 'Z üstte'
                 },
                 fields: {
                     modified: 'Düzenleme tarihi',
@@ -1113,10 +1111,24 @@ export const STRINGS_TR = {
                     property: 'Özellik'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sıralama yönü'
+            },
+            defaultGroupingDirection: {
+                name: 'Gruplama yönü',
+                options: {
+                    follow: 'Sıralamayı izle'
+                }
+            },
             propertySortKey: {
-                name: 'Sıralama ve gruplama özellikleri',
-                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
-                placeholder: 'published, author'
+                name: 'Sıralama özellikleri',
+                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, Varsayılan sıralama düzeni ayarında ve liste bölmesindeki sıralama menüsünde bir sıralama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Özelliği artık kullanılamadığı için varsayılan sıralama düzeni sıfırlandı.',
+                    grouping: 'Özelliği artık kullanılamadığı için varsayılan gruplama sıfırlandı.',
+                    both: 'Özellikleri artık kullanılamadığı için varsayılan sıralama düzeni ve varsayılan gruplama sıfırlandı.'
+                }
             },
             propertySortSecondary: {
                 name: 'İkincil sıralama',
@@ -1129,7 +1141,19 @@ export const STRINGS_TR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Yukarıda listelenen her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Sıralama, notları frontmatter değerine göre sıralar ve dizi değerleri tek bir dizede birleştirilir. Gruplama, aynı değeri paylaşan notları tek bir başlık altında toplar; liste değerine sahip notlar tam listeye göre gruplanır ve özelliği olmayan notlar sondaki "Yok" grubunda yer alır.'
+                intro: 'Bir özelliğe göre sıralama ve gruplama şöyle çalışır:',
+                items: [
+                    '**Sıralama:** Öncelik gibi bir özellik seçildiğinde notlar, Öncelik değerlerine göre sıralanır.',
+                    '**Gruplama:** Durum gibi bir özellik seçildiğinde her Durum değeri için bir başlık oluşturulur. Aynı Duruma sahip notlar aynı başlığın altında görünür.',
+                    '**Birden fazla değer:** Bir özellik liste içeriyorsa Notebook Navigator listenin tamamını kullanır. Örneğin Konular, Kitaplar ve Tarih değerlerini içeriyorsa not “Kitaplar, Tarih” kullanılarak sıralanır veya gruplanır; her konu ayrı ayrı kullanılmaz.',
+                    '**Eksik değerler:** Gruplama sırasında özelliği olmayan notlar sonda **Yok** altında görünür.',
+                    '**Etiket ve özellik görünümleri:** **Klasör** gruplaması seçildiğinde bunun yerine tarih başlıkları gösterilir.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Gruplama özellikleri',
+                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, Varsayılan gruplama ayarında ve liste bölmesindeki sıralama menüsünde bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Manuel sıralama özelliği',
@@ -1186,7 +1210,11 @@ export const STRINGS_TR = {
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
-                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır. Bir frontmatter özellik değerine göre gruplama, liste bölmesindeki sıralama menüsünden her görünüm için ayrı ayrı kullanılabilir.",
+                desc: "**Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
+                families: {
+                    headers: 'Başlıklar',
+                    groups: 'Gruplar'
+                },
                 options: {
                     custom: 'Özel',
                     date: 'Tarih',
@@ -1223,15 +1251,27 @@ export const STRINGS_TR = {
             },
             showFileIcons: {
                 name: 'Dosya simgelerini göster',
-                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: tamamlanmamış görev simgesi > özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
+                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
             },
             useFolderIcon: {
                 name: 'Klasör simgesini kullan',
                 desc: 'Özel dosya simgesi ayarlanmadığında üst klasörün simgesini görüntüler. Özel dosya rengi ayarlanmadığında klasör rengi kullanılır.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Tamamlanmamış görev simgesi',
-                desc: 'Bir notta tamamlanmamış görevler olduğunda görev simgesi gösterir.'
+            showFileTaskProgress: {
+                name: 'Görevleri göster',
+                desc: 'Görev durumunu isteğe bağlı ilerleme çubuğu ve görev sayısıyla gösterir. Tamamlanmamış ve tamamlanmış görevlerin renkleri Style Settings eklentisiyle ayrı ayrı ayarlanabilir.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Görevleri göster: ilerleme çubuğu',
+                desc: 'Görev simgesinin yanında ilerleme çubuğu gösterir.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Görevleri göster: görev sayısı',
+                desc: 'Tamamlanan ve toplam görev sayısını gösterir, örneğin 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Görevleri göster: tamamlanınca gizle',
+                desc: 'Bir nottaki tüm görevler tamamlandığında görev ilerlemesini gizler.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Tamamlanmamış görev arka planı',

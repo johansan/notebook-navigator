@@ -53,7 +53,7 @@ import {
     isPropertyTreeNodeId,
     type PropertySelectionNodeId
 } from '../utils/propertyTree';
-import { expandNavigationTreeItems } from '../utils/navigationExpansion';
+import { expandNavigationTreeItems, isFolderEffectivelyExpanded, isFolderExpansionLocked } from '../utils/navigationExpansion';
 
 interface UseNavigatorRevealOptions {
     app: App;
@@ -196,10 +196,11 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             }
 
             const root = app.vault.getRoot();
-            const rootPath = root?.path ?? '/';
+            // Show hidden items reveals a root folder hidden by the setting, making it a valid reveal target
+            const rootFolderVisible = settings.showRootFolder || uxPreferences.showHiddenItems;
 
             const isFolderVisible = (candidate: TFolder): boolean => {
-                if (!settings.showRootFolder && root && candidate === root) {
+                if (!rootFolderVisible && root && candidate === root) {
                     return false;
                 }
 
@@ -209,14 +210,7 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                     if (!parent) {
                         break;
                     }
-                    const parentIsRoot = root && parent.path === rootPath;
-
-                    if (parentIsRoot && !settings.showRootFolder) {
-                        current = parent;
-                        continue;
-                    }
-
-                    if (!expansionState.expandedFolders.has(parent.path)) {
+                    if (!isFolderEffectivelyExpanded(parent.path, expansionState.expandedFolders, settings.showRootFolder)) {
                         return false;
                     }
 
@@ -232,29 +226,31 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             }
 
             if (!current) {
-                const fallback = settings.showRootFolder ? (root ?? folder) : folder;
+                const fallback = rootFolderVisible ? (root ?? folder) : folder;
                 return { target: fallback, expandAncestors: false };
             }
 
-            if (!settings.showRootFolder && root && current === root) {
+            if (!rootFolderVisible && root && current === root) {
                 return { target: folder, expandAncestors: false };
             }
 
             return { target: current, expandAncestors: false };
         },
-        [includeDescendantNotes, settings.showRootFolder, expansionState.expandedFolders, app]
+        [includeDescendantNotes, settings.showRootFolder, uxPreferences.showHiddenItems, expansionState.expandedFolders, app]
     );
 
     const expandFolderPaths = useCallback(
         (folderPaths: string[]) => {
+            // The locked root is expanded through derived render state. Persisting it here can turn
+            // a branch replacement into a root-only set and collapse unrelated visible folders.
             expandNavigationTreeItems({
                 type: 'folder',
-                ids: folderPaths,
+                ids: folderPaths.filter(path => !isFolderExpansionLocked(path, settings.showRootFolder)),
                 collapseOtherBranches: settings.collapseOtherBranchesOnExpand,
                 dispatch: expansionDispatch
             });
         },
-        [expansionDispatch, settings.collapseOtherBranchesOnExpand]
+        [expansionDispatch, settings.collapseOtherBranchesOnExpand, settings.showRootFolder]
     );
 
     const expandTagPaths = useCallback(
@@ -319,7 +315,11 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             }
 
             const shouldExpandFolders =
-                foldersToExpand.length > 0 && (expandAncestors || foldersToExpand.some(path => !expansionState.expandedFolders.has(path)));
+                foldersToExpand.length > 0 &&
+                (expandAncestors ||
+                    foldersToExpand.some(
+                        path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
+                    ));
 
             if (shouldExpandFolders) {
                 // Expand collapsed ancestors to ensure the folder becomes visible in navigation pane
@@ -355,7 +355,8 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             navigationPaneRef,
             getRevealTargetFolder,
             includeDescendantNotes,
-            handleHiddenFileReveal
+            handleHiddenFileReveal,
+            settings.showRootFolder
         ]
     );
 
@@ -666,7 +667,11 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                             }
                         }
 
-                        if (foldersToExpand.some(path => !expansionState.expandedFolders.has(path))) {
+                        if (
+                            foldersToExpand.some(
+                                path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
+                            )
+                        ) {
                             expandFolderPaths(foldersToExpand);
                         }
                     }
@@ -682,7 +687,11 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                         currentFolder = currentFolder.parent;
                     }
 
-                    if (foldersToExpand.some(path => !expansionState.expandedFolders.has(path))) {
+                    if (
+                        foldersToExpand.some(
+                            path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
+                        )
+                    ) {
                         expandFolderPaths(foldersToExpand);
                     }
                 }
@@ -769,7 +778,9 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             }
 
             // Expand folders if needed
-            const needsExpansion = foldersToExpand.some(path => !expansionState.expandedFolders.has(path));
+            const needsExpansion = foldersToExpand.some(
+                path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
+            );
             if (needsExpansion) {
                 expandFolderPaths(foldersToExpand);
             }
@@ -811,7 +822,8 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             uiState,
             navigationPaneRef,
             focusNavigationPane,
-            focusFilesPane
+            focusFilesPane,
+            settings.showRootFolder
         ]
     );
 

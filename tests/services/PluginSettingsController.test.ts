@@ -417,7 +417,13 @@ describe('PluginSettingsController.loadSettingsAtStartup', () => {
         let attempts = 0;
         const { controller, saveData, loadDataMock } = createController(async () => {
             attempts += 1;
-            return attempts < 3 ? null : { recentNotesCount: 17 };
+            return attempts < 3
+                ? null
+                : {
+                      recentNotesCount: 17,
+                      unfinishedTaskBackgroundColorDark: DEFAULT_SETTINGS.unfinishedTaskBackgroundColorDark,
+                      propertyGroupKey: ''
+                  };
         });
 
         await expect(controller.loadSettingsAtStartup({ maxAttempts: 4, retryDelayMs: 0 })).resolves.toBe('loaded');
@@ -469,7 +475,14 @@ describe('PluginSettingsController.loadSettingsAtStartup', () => {
     });
 
     it('loads a valid record after an unavailable attempt', async () => {
-        const results: unknown[] = [undefined, { recentNotesCount: 23 }];
+        const results: unknown[] = [
+            undefined,
+            {
+                recentNotesCount: 23,
+                unfinishedTaskBackgroundColorDark: DEFAULT_SETTINGS.unfinishedTaskBackgroundColorDark,
+                propertyGroupKey: ''
+            }
+        ];
         const { controller, saveData, loadDataMock } = createController(async () => results.shift());
 
         await expect(controller.loadSettingsAtStartup({ maxAttempts: 3, retryDelayMs: 0 })).resolves.toBe('loaded');
@@ -477,6 +490,18 @@ describe('PluginSettingsController.loadSettingsAtStartup', () => {
         expect(loadDataMock).toHaveBeenCalledTimes(2);
         expect(controller.settings.recentNotesCount).toBe(23);
         expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('seeds the grouping property list from the sorting list for pre-split settings files', async () => {
+        const { controller, saveData } = createController(async () => ({
+            propertySortKey: 'status, priority',
+            unfinishedTaskBackgroundColorDark: DEFAULT_SETTINGS.unfinishedTaskBackgroundColorDark
+        }));
+
+        await expect(controller.loadSettingsAtStartup({ maxAttempts: 1, retryDelayMs: 0 })).resolves.toBe('loaded');
+
+        expect(controller.settings.propertyGroupKey).toBe('status, priority');
+        expect(saveData).toHaveBeenCalled();
     });
 
     it('cancels startup loading without applying defaults or waiting for another attempt', async () => {
@@ -541,6 +566,26 @@ describe('PluginSettingsController.applySettingsRecord', () => {
         expect(controller.settings.propertySortKey).toBe(DEFAULT_SETTINGS.propertySortKey);
         expect(loadDataMock).not.toHaveBeenCalled();
         expect(saveData).not.toHaveBeenCalled();
+    });
+
+    it('seeds the dark task background color from the light color when the stored key is missing', () => {
+        const { controller } = createController();
+
+        const needsCleanup = controller.applySettingsRecord({ unfinishedTaskBackgroundColor: '#336699' }, { isFirstLaunch: false });
+
+        expect(controller.settings.unfinishedTaskBackgroundColorDark).toBe('#336699');
+        expect(needsCleanup).toBe(true);
+    });
+
+    it('keeps a stored dark task background color independent of the light color', () => {
+        const { controller } = createController();
+
+        controller.applySettingsRecord(
+            { unfinishedTaskBackgroundColor: '#336699', unfinishedTaskBackgroundColorDark: '#112233' },
+            { isFirstLaunch: false }
+        );
+
+        expect(controller.settings.unfinishedTaskBackgroundColorDark).toBe('#112233');
     });
 
     it('applies an empty record as defaults for reset', () => {
