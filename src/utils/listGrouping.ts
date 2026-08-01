@@ -17,17 +17,45 @@
  */
 
 import { ItemType } from '../types';
-import { createPropertyGroupingOption, getPropertyGroupingDirection, getPropertyGroupingKey } from '../settings/types';
+import { createPropertyGroupingOption, getPropertyGroupingKey, getPropertyGroupingOrder } from '../settings/types';
 import type { ListNoteGroupingOption, ListSortOverrideValue, NotebookNavigatorSettings, SortOption } from '../settings/types';
+import { DEFAULT_SETTINGS } from '../settings/defaultSettings';
+import type { PropertyGroupingDirection } from '../settings/types';
 import { casefold } from './recordUtils';
 import {
-    getManualSortPropertyKey,
+    getSortDirection,
     getSortField,
     isDateSortOption,
     isManualSortPropertyKey,
     parsePropertySortKeys,
-    resolveListSort
+    replacePropertySortKey,
+    resolveListSort,
+    type DefaultReconcileResult
 } from './sortUtils';
+
+/**
+ * Returns the configured grouping property keys available as grouping choices.
+ * The manual-sort property is excluded because manual sort has its own menu entry and is never
+ * offered as a grouping choice.
+ */
+export function getAvailablePropertyGroupKeys(
+    settings: Pick<NotebookNavigatorSettings, 'propertyGroupKey' | 'manualSortPropertyKey'>
+): string[] {
+    return parsePropertySortKeys(settings.propertyGroupKey).filter(propertyKey => !isManualSortPropertyKey(settings, propertyKey));
+}
+
+/**
+ * Resolves the direction used to arrange property groups. A stored `follow` order borrows the
+ * direction from the effective sort option, so sorting and grouping by the same property behaves
+ * like chunking the sorted list; fixed `asc`/`desc` orders are returned unchanged.
+ */
+export function resolvePropertyGroupingDirection(groupBy: ListNoteGroupingOption, sortOption: SortOption): PropertyGroupingDirection {
+    const order = getPropertyGroupingOrder(groupBy);
+    if (order === 'asc' || order === 'desc') {
+        return order;
+    }
+    return getSortDirection(sortOption);
+}
 
 interface ResolveListGroupingParams {
     settings: Pick<NotebookNavigatorSettings, 'noteGrouping' | 'folderAppearances' | 'tagAppearances' | 'propertyAppearances'>;
@@ -91,10 +119,7 @@ export function areListGroupingOptionsEqual(left: ListNoteGroupingOption, right:
         return false;
     }
 
-    return (
-        casefold(leftPropertyKey) === casefold(rightPropertyKey) &&
-        getPropertyGroupingDirection(left) === getPropertyGroupingDirection(right)
-    );
+    return casefold(leftPropertyKey) === casefold(rightPropertyKey) && getPropertyGroupingOrder(left) === getPropertyGroupingOrder(right);
 }
 
 /** Compares grouping options ignoring group order direction, so a direction change stays on the same grouping property. */
@@ -115,17 +140,12 @@ export function areListGroupingOptionsSameKind(left: ListNoteGroupingOption, rig
 const APPEARANCE_RECORD_KEYS = ['folderAppearances', 'tagAppearances', 'propertyAppearances'] as const;
 
 /**
- * Removes property grouping overrides whose key is no longer configured in the property sort list.
+ * Removes property grouping overrides whose key is no longer configured in the grouping property list.
  * The manual sort key never appears as a grouping choice, so overrides referencing it are removed too.
  * Returns true when at least one appearance record changed; callers persist the settings on change.
  */
 export function pruneUnavailablePropertyGroupingOverrides(settings: NotebookNavigatorSettings): boolean {
-    const manualSortPropertyKey = casefold(getManualSortPropertyKey(settings));
-    const availablePropertyKeys = new Set(
-        parsePropertySortKeys(settings.propertySortKey)
-            .map(propertyKey => casefold(propertyKey))
-            .filter(propertyKey => propertyKey !== manualSortPropertyKey)
-    );
+    const availablePropertyKeys = new Set(getAvailablePropertyGroupKeys(settings).map(propertyKey => casefold(propertyKey)));
     let changed = false;
 
     APPEARANCE_RECORD_KEYS.forEach(recordKey => {
@@ -177,10 +197,7 @@ export function updatePropertyGroupingOverrideKeys(
             }
 
             if (newKeyDisplay) {
-                appearance.groupBy = createPropertyGroupingOption(
-                    newKeyDisplay,
-                    getPropertyGroupingDirection(appearance?.groupBy) ?? 'asc'
-                );
+                appearance.groupBy = createPropertyGroupingOption(newKeyDisplay, getPropertyGroupingOrder(appearance?.groupBy) ?? 'asc');
             } else {
                 delete appearance.groupBy;
                 // A grouping-only appearance becomes an empty object; drop the entry so no
@@ -194,6 +211,71 @@ export function updatePropertyGroupingOverrideKeys(
     });
 
     return changed;
+}
+
+/**
+ * Validates the default note grouping against the configured grouping properties.
+ * A property grouping whose key is missing from the configured list (or points at the manual-sort
+ * property) resets to the stock default grouping rather than retargeting another property, so
+ * removing a property never silently changes how the vault is grouped.
+ */
+export function reconcileDefaultNoteGrouping(settings: NotebookNavigatorSettings): DefaultReconcileResult {
+    const propertyKey = getPropertyGroupingKey(settings.noteGrouping);
+    if (propertyKey === null) {
+        return { changed: false, reset: false };
+    }
+
+    const availablePropertyKeys = new Set(getAvailablePropertyGroupKeys(settings).map(availableKey => casefold(availableKey)));
+    if (availablePropertyKeys.has(casefold(propertyKey))) {
+        return { changed: false, reset: false };
+    }
+
+    settings.noteGrouping = DEFAULT_SETTINGS.noteGrouping;
+    return { changed: true, reset: true };
+}
+
+/**
+ * Rewrites the default note grouping after a frontmatter key rename, or resets it to the stock
+ * default grouping when the key is deleted (newKeyDisplay is null). Returns true when settings changed.
+ */
+export function updateDefaultNoteGroupingKey(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    const propertyKey = getPropertyGroupingKey(settings.noteGrouping);
+    if (propertyKey === null || casefold(propertyKey) !== oldKeyNormalized) {
+        return false;
+    }
+
+    if (newKeyDisplay) {
+        settings.noteGrouping = createPropertyGroupingOption(newKeyDisplay, getPropertyGroupingOrder(settings.noteGrouping) ?? 'asc');
+    } else {
+        settings.noteGrouping = DEFAULT_SETTINGS.noteGrouping;
+    }
+    return true;
+}
+
+/**
+ * Rewrites the configured grouping property list after a frontmatter key rename, or removes the
+ * key when deleted (newKeyDisplay is null). Returns true when the list changed.
+ */
+export function updatePropertyGroupKeySetting(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    if (!settings.propertyGroupKey.trim()) {
+        return false;
+    }
+
+    const nextValue = replacePropertySortKey(settings.propertyGroupKey, oldKeyNormalized, newKeyDisplay);
+    if (nextValue === settings.propertyGroupKey) {
+        return false;
+    }
+
+    settings.propertyGroupKey = nextValue;
+    return true;
 }
 
 export function resolveListGroupingOverride({

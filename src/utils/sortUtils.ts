@@ -27,6 +27,7 @@ import {
     type PropertySortSecondaryOption
 } from '../settings/types';
 import { NavigationItemType, ItemType, type ItemType as ItemTypeValue } from '../types';
+import { DEFAULT_SETTINGS } from '../settings/defaultSettings';
 import { casefold, getMatchingRecordValue } from './recordUtils';
 import { isRecord } from './typeGuards';
 import type { UXIconId } from './uxIcons';
@@ -128,6 +129,17 @@ export function appendPropertySortKey(value: unknown, propertyKey: string): stri
     }
 
     return [...keys, key].join(', ');
+}
+
+/**
+ * Returns the configured sorting property keys available as sort choices.
+ * The manual-sort property is excluded because manual sort has its own menu entry and is never
+ * offered as a regular property sort choice.
+ */
+export function getAvailablePropertySortKeys(
+    settings: Pick<NotebookNavigatorSettings, 'propertySortKey' | 'manualSortPropertyKey'>
+): string[] {
+    return parsePropertySortKeys(settings.propertySortKey).filter(propertyKey => !isManualSortPropertyKey(settings, propertyKey));
 }
 
 export function getManualSortPropertyKey(settings: Pick<NotebookNavigatorSettings, 'manualSortPropertyKey'>): string {
@@ -237,6 +249,14 @@ export function getSortField(sortOption: SortOption): SortField {
     return 'property';
 }
 
+/**
+ * Returns the direction selected when the sort field changes. Date fields start with the newest
+ * notes first, while title, file name, and property fields start in ascending order.
+ */
+export function getSortDirectionForFieldChange(field: SortField): SortDirection {
+    return field === 'modified' || field === 'created' ? 'desc' : 'asc';
+}
+
 export function buildSortOption(field: SortField, direction: SortDirection): SortOption {
     return `${field}-${direction}`;
 }
@@ -296,6 +316,66 @@ export function pruneUnavailablePropertySortOverrides(settings: NotebookNavigato
     });
 
     return changed;
+}
+
+export interface DefaultReconcileResult {
+    /** True when any settings field was mutated; callers persist the settings on change. */
+    changed: boolean;
+    /** True when the default was reset to its stock value because its property key is unavailable. */
+    reset: boolean;
+}
+
+/**
+ * Validates the default folder sort against the configured sorting properties.
+ * A property-based default whose key is missing from the configured list (or points at the
+ * manual-sort property) resets both fields to the stock default rather than retargeting another
+ * property, so removing a property never silently changes which property sorts the vault.
+ * A stale companion key left behind by a built-in default is cleared without counting as a reset.
+ */
+export function reconcileDefaultFolderSort(settings: NotebookNavigatorSettings): DefaultReconcileResult {
+    if (!isPropertySortOption(settings.defaultFolderSort)) {
+        if (settings.defaultFolderSortPropertyKey !== '') {
+            settings.defaultFolderSortPropertyKey = '';
+            return { changed: true, reset: false };
+        }
+        return { changed: false, reset: false };
+    }
+
+    const availablePropertyKeys = getAvailablePropertySortKeys(settings);
+    const matchedKey = getMatchingConfiguredPropertySortKey(availablePropertyKeys, settings.defaultFolderSortPropertyKey);
+    if (!matchedKey) {
+        settings.defaultFolderSort = DEFAULT_SETTINGS.defaultFolderSort;
+        settings.defaultFolderSortPropertyKey = DEFAULT_SETTINGS.defaultFolderSortPropertyKey;
+        return { changed: true, reset: true };
+    }
+
+    return { changed: false, reset: false };
+}
+
+/**
+ * Rewrites the default folder sort after a frontmatter key rename, or resets it to the stock
+ * default when the key is deleted (newKeyDisplay is null). Returns true when settings changed.
+ */
+export function updateDefaultFolderSortPropertyKey(
+    settings: NotebookNavigatorSettings,
+    oldKeyNormalized: string,
+    newKeyDisplay: string | null
+): boolean {
+    if (!isPropertySortOption(settings.defaultFolderSort)) {
+        return false;
+    }
+
+    if (casefold(settings.defaultFolderSortPropertyKey.trim()) !== oldKeyNormalized) {
+        return false;
+    }
+
+    if (newKeyDisplay) {
+        settings.defaultFolderSortPropertyKey = newKeyDisplay;
+    } else {
+        settings.defaultFolderSort = DEFAULT_SETTINGS.defaultFolderSort;
+        settings.defaultFolderSortPropertyKey = DEFAULT_SETTINGS.defaultFolderSortPropertyKey;
+    }
+    return true;
 }
 
 function getMatchingConfiguredPropertySortKey(configuredPropertyKeys: readonly string[], propertyKey: string): string {
@@ -504,7 +584,15 @@ export function resolveListSort(settings: NotebookNavigatorSettings, sortOverrid
         typeof normalizedOverride === 'object'
             ? getMatchingAvailablePropertySortKey(configuredPropertyKeys, manualSortPropertyKey, normalizedOverride.propertyKey ?? '')
             : '';
-    const propertyKey = isPropertySortOption(rawOption) ? overridePropertyKey || configuredPropertyKey : '';
+    // A property default resolves through its companion key. Legacy bare-string property overrides
+    // keep the historical first-configured-property behavior, and the first configured property
+    // remains the last-resort fallback for transient states (e.g. sync applied a property list
+    // change before reconciliation ran).
+    const defaultPropertyKey =
+        normalizedOverride === undefined
+            ? getMatchingConfiguredPropertySortKey(configuredPropertyKeys, settings.defaultFolderSortPropertyKey)
+            : '';
+    const propertyKey = isPropertySortOption(rawOption) ? overridePropertyKey || defaultPropertyKey || configuredPropertyKey : '';
     const option = rawOption === 'property-desc' && isManualSortPropertyKey(settings, propertyKey) ? 'property-asc' : rawOption;
 
     return {

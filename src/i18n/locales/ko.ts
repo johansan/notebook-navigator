@@ -362,6 +362,8 @@ export const STRINGS_KO = {
             changeBackground: '배경색 변경',
             excludeFolder: '폴더 숨기기',
             unhideFolder: '폴더 표시',
+            hideRootFolder: '루트 폴더 숨기기',
+            showRootFolder: '루트 폴더 표시',
             excludeFromDescendants: '상위 폴더에서 숨기기',
             includeInDescendants: '상위 폴더에서 표시',
             hiddenFromParentsIndicator: '상위 폴더 목록에서 숨김',
@@ -533,7 +535,6 @@ export const STRINGS_KO = {
                 'nav-properties': '속성',
                 'nav-property': '속성',
                 'nav-property-value': '값',
-                'file-unfinished-task': '미완료 작업',
                 'file-word-count': '단어 수',
                 'file-character-count': '문자 수'
             }
@@ -793,8 +794,6 @@ export const STRINGS_KO = {
             forbiddenNameCharactersWindows: 'Windows에서 예약된 문자는 허용되지 않습니다: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: '폴더 숨김: {name}',
-            showFolder: '폴더 표시: {name}',
             folderExcludedFromDescendants: '상위 폴더 목록에서 숨김: {name}',
             folderIncludedInDescendants: '상위 폴더 목록에 표시됨: {name}',
             mergeNotes: '{count}개 노트를 {name}에 병합했습니다'
@@ -965,7 +964,8 @@ export const STRINGS_KO = {
         files: '파일',
         folder: '폴더',
         folders: '폴더',
-        wordCount: '단어 수'
+        wordCount: '단어 수',
+        unfinishedTasks: '미완료 작업'
     },
 
     fileCounts: {
@@ -1052,8 +1052,8 @@ export const STRINGS_KO = {
             },
             list: {
                 display: '모양',
+                sortAndGroup: '정렬 및 그룹화',
                 groupHeaders: '그룹 머리글',
-                propertySort: '속성 정렬 및 그룹화',
                 manualSort: '수동 정렬',
                 pinnedNotes: '고정된 노트',
                 drawingPreviews: '그림 미리보기'
@@ -1089,20 +1089,18 @@ export const STRINGS_KO = {
             },
             sortNotesBy: {
                 name: '기본 정렬 순서',
-                desc: '노트의 기본 정렬 순서를 선택하세요.',
-                options: {
-                    'modified-desc': '수정 날짜 (최신 상위)',
-                    'modified-asc': '수정 날짜 (오래된 상위)',
-                    'created-desc': '생성 날짜 (최신 상위)',
-                    'created-asc': '생성 날짜 (오래된 상위)',
-                    'title-asc': '제목 (가나다 상위)',
-                    'title-desc': '제목 (역순 상위)',
-                    'filename-asc': '파일 이름 (가나다 상위)',
-                    'filename-desc': '파일 이름 (역순 상위)'
-                },
+                desc: '노트의 기본 정렬 순서를 선택하세요. 정렬에 사용할 속성의 속성이 추가 정렬 옵션으로 표시됩니다.',
                 directions: {
                     asc: '오름차순',
                     desc: '내림차순'
+                },
+                dateDirections: {
+                    desc: '최신 상위',
+                    asc: '오래된 상위'
+                },
+                textDirections: {
+                    asc: '가나다 상위',
+                    desc: '역순 상위'
                 },
                 fields: {
                     modified: '수정 날짜',
@@ -1112,10 +1110,24 @@ export const STRINGS_KO = {
                     property: '속성'
                 }
             },
+            defaultSortDirection: {
+                name: '정렬 방향'
+            },
+            defaultGroupingDirection: {
+                name: '그룹화 방향',
+                options: {
+                    follow: '정렬 순서 따르기'
+                }
+            },
             propertySortKey: {
-                name: '정렬 및 그룹화에 사용할 속성',
-                desc: '쉼표로 구분된 frontmatter 속성. 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
-                placeholder: 'published, author'
+                name: '정렬에 사용할 속성',
+                desc: '쉼표로 구분된 frontmatter 속성입니다. 각 속성은 기본 정렬 순서 설정과 목록 창의 정렬 메뉴에 정렬 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: '속성을 더 이상 사용할 수 없어 기본 정렬 순서가 초기화되었습니다.',
+                    grouping: '속성을 더 이상 사용할 수 없어 기본 그룹화가 초기화되었습니다.',
+                    both: '속성을 더 이상 사용할 수 없어 기본 정렬 순서와 기본 그룹화가 초기화되었습니다.'
+                }
             },
             propertySortSecondary: {
                 name: '보조 정렬',
@@ -1128,7 +1140,19 @@ export const STRINGS_KO = {
                 }
             },
             propertySortInstructions: {
-                intro: '위에 나열된 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 정렬은 frontmatter 값으로 노트를 정렬하며, 배열 값은 하나의 문자열로 결합됩니다. 그룹화는 같은 값을 가진 노트를 하나의 머리글 아래에 모읍니다. 목록 값을 가진 노트는 전체 목록으로 그룹화되고, 속성이 없는 노트는 마지막의 "없음" 그룹에 들어갑니다.'
+                intro: '속성을 기준으로 정렬하고 그룹화하는 방식:',
+                items: [
+                    '**정렬:** 우선순위와 같은 속성을 선택하면 각 노트의 우선순위 값에 따라 정렬됩니다.',
+                    '**그룹화:** 상태와 같은 속성을 선택하면 상태 값마다 머리글이 만들어집니다. 상태가 같은 노트는 같은 머리글 아래에 표시됩니다.',
+                    '**여러 값:** 속성에 목록이 포함된 경우 Notebook Navigator는 전체 목록을 사용합니다. 예를 들어 주제에 책과 역사가 포함되어 있으면 각 주제를 따로 처리하지 않고 “책, 역사”를 사용하여 노트를 정렬하거나 그룹화합니다.',
+                    '**누락된 값:** 그룹화할 때 속성이 없는 노트는 마지막의 **없음** 아래에 표시됩니다.',
+                    '**태그 및 속성 보기:** **폴더** 그룹화를 선택하면 날짜 머리글이 대신 표시됩니다.'
+                ]
+            },
+            propertyGroupKey: {
+                name: '그룹화에 사용할 속성',
+                desc: '쉼표로 구분된 frontmatter 속성입니다. 각 속성은 기본 그룹화 설정과 목록 창의 정렬 메뉴에 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '수동 정렬 속성',
@@ -1185,7 +1209,11 @@ export const STRINGS_KO = {
             },
             groupNotes: {
                 name: '기본 그룹화',
-                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다. frontmatter 속성 값별 그룹화는 목록 창의 정렬 메뉴에서 보기별로 사용할 수 있습니다.',
+                desc: '**머리글**은 순서를 바꾸지 않고 정렬된 목록에 표시를 더합니다. 사용자 지정은 frontmatter에 정의된 머리글을 표시하고, 날짜는 날짜 머리글을 삽입합니다. **그룹**은 목록을 다시 정렬합니다. 폴더와 속성 그룹은 자체적으로 정렬되며 각 그룹 내의 노트는 정렬 순서를 따릅니다.',
+                families: {
+                    headers: '머리글',
+                    groups: '그룹'
+                },
                 options: {
                     custom: '사용자 지정',
                     date: '날짜',
@@ -1222,15 +1250,27 @@ export const STRINGS_KO = {
             },
             showFileIcons: {
                 name: '파일 아이콘 표시',
-                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 미완료 작업 아이콘 > 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
             },
             useFolderIcon: {
                 name: '폴더 아이콘 사용',
                 desc: '사용자 지정 파일 아이콘이 설정되지 않은 경우 상위 폴더 아이콘을 표시합니다. 사용자 지정 파일 색상이 설정되지 않은 경우 폴더 색상이 사용됩니다.'
             },
-            showFileIconUnfinishedTask: {
-                name: '미완료 작업 아이콘',
-                desc: '노트에 미완료 작업이 있을 때 작업 아이콘을 표시합니다.'
+            showFileTaskProgress: {
+                name: '작업 표시',
+                desc: '작업 상태를 표시하며 진행률 표시줄과 작업 수는 선택적으로 표시합니다. 미완료 작업과 완료된 작업의 색상은 Style Settings 플러그인에서 개별적으로 설정할 수 있습니다.'
+            },
+            showFileTaskProgressBar: {
+                name: '작업 표시: 진행률 표시줄',
+                desc: '작업 아이콘 옆에 진행률 표시줄을 표시합니다.'
+            },
+            showFileTaskProgressCount: {
+                name: '작업 표시: 작업 수',
+                desc: '완료된 작업 수와 전체 작업 수를 표시합니다(예: 3/7).'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: '작업 표시: 완료 시 숨기기',
+                desc: '노트의 모든 작업이 완료되면 작업 진행률을 숨깁니다.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '미완료 작업 배경',

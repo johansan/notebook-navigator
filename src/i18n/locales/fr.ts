@@ -365,6 +365,8 @@ export const STRINGS_FR = {
             changeBackground: 'Changer l’arrière-plan',
             excludeFolder: 'Masquer le dossier',
             unhideFolder: 'Afficher le dossier',
+            hideRootFolder: 'Masquer le dossier racine',
+            showRootFolder: 'Afficher le dossier racine',
             excludeFromDescendants: 'Masquer dans les dossiers parents',
             includeInDescendants: 'Afficher dans les dossiers parents',
             hiddenFromParentsIndicator: 'Masqué dans les listes des dossiers parents',
@@ -537,7 +539,6 @@ export const STRINGS_FR = {
                 'nav-properties': 'Propriétés',
                 'nav-property': 'Propriété',
                 'nav-property-value': 'Valeur',
-                'file-unfinished-task': 'Tâches inachevées',
                 'file-word-count': 'Nombre de mots',
                 'file-character-count': 'Nombre de caractères'
             }
@@ -799,8 +800,6 @@ export const STRINGS_FR = {
             forbiddenNameCharactersWindows: 'Les caractères réservés à Windows ne sont pas autorisés : <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Dossier masqué : {name}',
-            showFolder: 'Dossier affiché : {name}',
             folderExcludedFromDescendants: 'Masqué dans les listes des dossiers parents : {name}',
             folderIncludedInDescendants: 'Affiché dans les listes des dossiers parents : {name}',
             mergeNotes: '{count} notes fusionnées dans {name}'
@@ -971,7 +970,8 @@ export const STRINGS_FR = {
         files: 'fichiers',
         folder: 'dossier',
         folders: 'dossiers',
-        wordCount: 'Nombre de mots'
+        wordCount: 'Nombre de mots',
+        unfinishedTasks: 'Tâches inachevées'
     },
 
     fileCounts: {
@@ -1059,8 +1059,8 @@ export const STRINGS_FR = {
             },
             list: {
                 display: 'Apparence',
+                sortAndGroup: 'Tri et regroupement',
                 groupHeaders: 'En-têtes de groupe',
-                propertySort: 'Tri et regroupement par propriété',
                 manualSort: 'Tri manuel',
                 pinnedNotes: 'Notes épinglées',
                 drawingPreviews: 'Aperçus des dessins'
@@ -1096,20 +1096,18 @@ export const STRINGS_FR = {
             },
             sortNotesBy: {
                 name: 'Ordre de tri par défaut',
-                desc: "Choisissez l'ordre de tri par défaut des notes.",
-                options: {
-                    'modified-desc': 'Date de modification (plus récente en haut)',
-                    'modified-asc': 'Date de modification (plus ancienne en haut)',
-                    'created-desc': 'Date de création (plus récente en haut)',
-                    'created-asc': 'Date de création (plus ancienne en haut)',
-                    'title-asc': 'Titre (A en haut)',
-                    'title-desc': 'Titre (Z en haut)',
-                    'filename-asc': 'Nom de fichier (A en haut)',
-                    'filename-desc': 'Nom de fichier (Z en haut)'
-                },
+                desc: "Choisissez l'ordre de tri par défaut des notes. Les propriétés de Propriétés de tri apparaissent comme options de tri supplémentaires.",
                 directions: {
                     asc: 'Croissant',
                     desc: 'Décroissant'
+                },
+                dateDirections: {
+                    desc: 'Plus récente en haut',
+                    asc: 'Plus ancienne en haut'
+                },
+                textDirections: {
+                    asc: 'A en haut',
+                    desc: 'Z en haut'
                 },
                 fields: {
                     modified: 'Date de modification',
@@ -1119,10 +1117,24 @@ export const STRINGS_FR = {
                     property: 'Propriété'
                 }
             },
+            defaultSortDirection: {
+                name: 'Direction du tri'
+            },
+            defaultGroupingDirection: {
+                name: 'Direction de regroupement',
+                options: {
+                    follow: "Suivre l'ordre de tri"
+                }
+            },
             propertySortKey: {
-                name: 'Propriétés de tri et de regroupement',
-                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
-                placeholder: 'published, author'
+                name: 'Propriétés de tri',
+                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri dans le réglage Ordre de tri par défaut et dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: "L'ordre de tri par défaut a été réinitialisé car sa propriété n'est plus disponible.",
+                    grouping: "Le regroupement par défaut a été réinitialisé car sa propriété n'est plus disponible.",
+                    both: "L'ordre de tri par défaut et le regroupement par défaut ont été réinitialisés car leurs propriétés ne sont plus disponibles."
+                }
             },
             propertySortSecondary: {
                 name: 'Tri secondaire',
@@ -1135,7 +1147,19 @@ export const STRINGS_FR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Chaque propriété listée ci-dessus apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Le tri ordonne les notes selon la valeur frontmatter, les valeurs de tableau étant jointes en une seule chaîne. Le regroupement rassemble les notes partageant la même valeur sous un même en-tête ; les notes avec une valeur de liste sont regroupées sous la liste complète, et les notes sans la propriété sont placées dans un groupe « Aucun » à la fin.'
+                intro: 'Fonctionnement du tri et du regroupement par propriété :',
+                items: [
+                    '**Tri :** Choisir une propriété comme Priorité trie les notes selon leur valeur de Priorité.',
+                    '**Regroupement :** Choisir une propriété comme Statut crée un en-tête pour chaque valeur de Statut. Les notes ayant le même Statut apparaissent sous le même en-tête.',
+                    '**Valeurs multiples :** Si une propriété contient une liste, Notebook Navigator utilise la liste complète. Par exemple, si Sujets contient Livres et Histoire, la note est triée ou regroupée selon « Livres, Histoire », et non selon chaque sujet séparément.',
+                    '**Valeurs manquantes :** Lors du regroupement, les notes sans cette propriété apparaissent sous **Aucun** à la fin.',
+                    '**Vues par étiquette et par propriété :** Lorsque le regroupement **Dossier** est sélectionné, des en-têtes de date sont affichés à la place.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Propriétés de regroupement',
+                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de regroupement dans le réglage Regroupement par défaut et dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Propriété de tri manuel',
@@ -1192,7 +1216,11 @@ export const STRINGS_FR = {
             },
             groupNotes: {
                 name: 'Regroupement par défaut',
-                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné. Le regroupement par valeur de propriété frontmatter est disponible par vue depuis le menu de tri du panneau de liste.',
+                desc: "Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
+                families: {
+                    headers: 'En-têtes',
+                    groups: 'Groupes'
+                },
                 options: {
                     custom: 'Personnalisé',
                     date: 'Date',
@@ -1229,15 +1257,27 @@ export const STRINGS_FR = {
             },
             showFileIcons: {
                 name: 'Afficher les icônes de fichier',
-                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône de tâches inachevées > icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
             },
             useFolderIcon: {
                 name: "Utiliser l'icône du dossier",
                 desc: "Afficher l'icône du dossier parent lorsqu'aucune icône de fichier personnalisée n'est définie. La couleur du dossier est utilisée lorsqu'aucune couleur de fichier personnalisée n'est définie."
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icône de tâches inachevées',
-                desc: "Afficher une icône de tâche lorsqu'une note contient des tâches inachevées."
+            showFileTaskProgress: {
+                name: 'Afficher les tâches',
+                desc: "Afficher l'état des tâches avec une barre de progression et un nombre de tâches facultatifs. Les couleurs des tâches inachevées et terminées peuvent être définies séparément avec le plugin Style Settings."
+            },
+            showFileTaskProgressBar: {
+                name: 'Afficher les tâches : barre de progression',
+                desc: "Afficher une barre de progression à côté de l'icône de tâche."
+            },
+            showFileTaskProgressCount: {
+                name: 'Afficher les tâches : nombre de tâches',
+                desc: 'Afficher le nombre de tâches terminées et le nombre total de tâches, par exemple 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Afficher les tâches : masquer une fois terminées',
+                desc: "Masquer la progression des tâches lorsque toutes les tâches d'une note sont terminées."
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fond de tâches inachevées',

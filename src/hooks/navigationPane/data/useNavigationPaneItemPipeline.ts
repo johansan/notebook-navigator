@@ -270,7 +270,10 @@ export function useNavigationPaneItemPipeline({
 
             if (descriptor.type === 'folder') {
                 if (descriptor.path === '/') {
-                    useSectionSpacerForRootFolder = settings.showRootFolder;
+                    // The root separator follows the effective root visibility; gating on the setting alone
+                    // would make the root context menu separator action have no visible effect while show
+                    // hidden items reveals the root
+                    useSectionSpacerForRootFolder = settings.showRootFolder || showHiddenItems;
                 } else {
                     folderSeparators.add(descriptor.path);
                 }
@@ -305,7 +308,7 @@ export function useNavigationPaneItemPipeline({
             useSectionSpacerForRootFolder,
             hasAnySeparators
         };
-    }, [navigationSeparatorSnapshot, propertiesSectionActive, settings.showAllTagsFolder, settings.showRootFolder]);
+    }, [navigationSeparatorSnapshot, propertiesSectionActive, settings.showAllTagsFolder, settings.showRootFolder, showHiddenItems]);
 
     const itemsWithSeparators = useMemo(() => {
         const {
@@ -593,7 +596,9 @@ export function useNavigationPaneItemPipeline({
         const tagRootLevel = settings.showAllTagsFolder ? 1 : 0;
         const propertyRootLevel = settings.showAllPropertiesFolder ? 1 : 0;
         return insertRootSpacing(filteredItemsForDisplay, settings.rootLevelSpacing, {
-            showRootFolder: settings.showRootFolder,
+            // Show hidden items reveals the vault root, which nests top-level folders one level deeper;
+            // spacing candidates must follow the effective root visibility or root spacers disappear
+            showRootFolder: settings.showRootFolder || showHiddenItems,
             tagRootLevel,
             propertyRootLevel
         });
@@ -602,7 +607,8 @@ export function useNavigationPaneItemPipeline({
         settings.rootLevelSpacing,
         settings.showAllPropertiesFolder,
         settings.showAllTagsFolder,
-        settings.showRootFolder
+        settings.showRootFolder,
+        showHiddenItems
     ]);
 
     const pathToIndex = useMemo(() => buildNavigationPathIndexMap(itemsWithRootSpacing), [itemsWithRootSpacing]);

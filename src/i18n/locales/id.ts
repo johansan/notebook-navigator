@@ -364,6 +364,8 @@ export const STRINGS_ID = {
             changeBackground: 'Ubah latar belakang',
             excludeFolder: 'Sembunyikan folder',
             unhideFolder: 'Tampilkan folder',
+            hideRootFolder: 'Sembunyikan folder root',
+            showRootFolder: 'Tampilkan folder root',
             excludeFromDescendants: 'Sembunyikan dari folder induk',
             includeInDescendants: 'Tampilkan di folder induk',
             hiddenFromParentsIndicator: 'Disembunyikan dari daftar folder induk',
@@ -536,7 +538,6 @@ export const STRINGS_ID = {
                 'nav-properties': 'Properti',
                 'nav-property': 'Properti',
                 'nav-property-value': 'Nilai',
-                'file-unfinished-task': 'Tugas belum selesai',
                 'file-word-count': 'Jumlah kata',
                 'file-character-count': 'Jumlah karakter'
             }
@@ -796,8 +797,6 @@ export const STRINGS_ID = {
             forbiddenNameCharactersWindows: 'Karakter yang dipesan di Windows tidak diizinkan: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Folder disembunyikan: {name}',
-            showFolder: 'Folder ditampilkan: {name}',
             folderExcludedFromDescendants: 'Disembunyikan dari daftar folder induk: {name}',
             folderIncludedInDescendants: 'Ditampilkan di daftar folder induk: {name}',
             mergeNotes: 'Menggabungkan {count} catatan menjadi {name}'
@@ -968,7 +967,8 @@ export const STRINGS_ID = {
         files: 'file',
         folder: 'folder',
         folders: 'folder',
-        wordCount: 'Jumlah kata'
+        wordCount: 'Jumlah kata',
+        unfinishedTasks: 'Tugas belum selesai'
     },
 
     fileCounts: {
@@ -1055,8 +1055,8 @@ export const STRINGS_ID = {
             },
             list: {
                 display: 'Tampilan',
+                sortAndGroup: 'Urutan & pengelompokan',
                 groupHeaders: 'Header grup',
-                propertySort: 'Urutan dan pengelompokan properti',
                 manualSort: 'Urutan manual',
                 pinnedNotes: 'Catatan yang disematkan',
                 drawingPreviews: 'Pratinjau gambar'
@@ -1092,20 +1092,18 @@ export const STRINGS_ID = {
             },
             sortNotesBy: {
                 name: 'Urutan default',
-                desc: 'Pilih urutan default untuk catatan.',
-                options: {
-                    'modified-desc': 'Tanggal diedit (terbaru di atas)',
-                    'modified-asc': 'Tanggal diedit (terlama di atas)',
-                    'created-desc': 'Tanggal dibuat (terbaru di atas)',
-                    'created-asc': 'Tanggal dibuat (terlama di atas)',
-                    'title-asc': 'Judul (A di atas)',
-                    'title-desc': 'Judul (Z di atas)',
-                    'filename-asc': 'Nama file (A di atas)',
-                    'filename-desc': 'Nama file (Z di atas)'
-                },
+                desc: 'Pilih urutan default untuk catatan. Properti dari Properti urutan muncul sebagai opsi urutan tambahan.',
                 directions: {
                     asc: 'Menaik',
                     desc: 'Menurun'
+                },
+                dateDirections: {
+                    desc: 'Terbaru di atas',
+                    asc: 'Terlama di atas'
+                },
+                textDirections: {
+                    asc: 'A di atas',
+                    desc: 'Z di atas'
                 },
                 fields: {
                     modified: 'Tanggal diedit',
@@ -1115,10 +1113,24 @@ export const STRINGS_ID = {
                     property: 'Properti'
                 }
             },
+            defaultSortDirection: {
+                name: 'Arah urutan'
+            },
+            defaultGroupingDirection: {
+                name: 'Arah pengelompokan',
+                options: {
+                    follow: 'Ikuti urutan'
+                }
+            },
             propertySortKey: {
-                name: 'Properti urutan dan pengelompokan',
-                desc: 'Properti frontmatter yang dipisahkan koma. Setiap properti muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Properti ini tidak diubah.',
-                placeholder: 'published, author'
+                name: 'Properti urutan',
+                desc: 'Properti frontmatter dipisahkan koma. Setiap properti muncul sebagai opsi urutan di pengaturan Urutan default dan di menu urutan pada panel daftar. Properti ini tidak diubah.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Urutan default direset karena propertinya tidak lagi tersedia.',
+                    grouping: 'Pengelompokan default direset karena propertinya tidak lagi tersedia.',
+                    both: 'Urutan default dan pengelompokan default direset karena propertinya tidak lagi tersedia.'
+                }
             },
             propertySortSecondary: {
                 name: 'Urutan sekunder',
@@ -1131,7 +1143,19 @@ export const STRINGS_ID = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Setiap properti yang tercantum di atas muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Pengurutan mengurutkan catatan berdasarkan nilai frontmatter, dengan nilai array digabungkan menjadi satu string. Pengelompokan mengumpulkan catatan dengan nilai yang sama di bawah satu header; catatan dengan nilai daftar dikelompokkan di bawah daftar lengkap, dan catatan yang tidak memiliki properti tersebut masuk ke grup "Tidak ada" di bagian akhir.'
+                intro: 'Cara kerja pengurutan dan pengelompokan berdasarkan properti:',
+                items: [
+                    '**Pengurutan:** Memilih properti seperti Prioritas akan mengurutkan catatan berdasarkan nilai Prioritasnya.',
+                    '**Pengelompokan:** Memilih properti seperti Status akan membuat satu header untuk setiap nilai Status. Catatan dengan Status yang sama muncul di bawah header yang sama.',
+                    '**Beberapa nilai:** Jika properti berisi daftar, Notebook Navigator menggunakan seluruh daftar. Misalnya, jika Topik berisi Buku dan Sejarah, catatan diurutkan atau dikelompokkan menggunakan “Buku, Sejarah”, bukan setiap topik secara terpisah.',
+                    '**Nilai yang tidak ada:** Saat mengelompokkan, catatan tanpa properti tersebut muncul di bawah **Tidak ada** di bagian akhir.',
+                    '**Tampilan tag dan properti:** Saat pengelompokan **Folder** dipilih, header tanggal ditampilkan sebagai gantinya.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Properti pengelompokan',
+                desc: 'Properti frontmatter dipisahkan koma. Setiap properti muncul sebagai opsi pengelompokan di pengaturan Pengelompokan default dan di menu urutan pada panel daftar. Properti ini tidak diubah.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Properti urutan manual',
@@ -1188,7 +1212,11 @@ export const STRINGS_ID = {
             },
             groupNotes: {
                 name: 'Pengelompokan default',
-                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih. Pengelompokan berdasarkan nilai properti frontmatter tersedia per tampilan dari menu urutan di panel daftar.',
+                desc: '**Header** memberi anotasi pada daftar yang sudah diurutkan tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
+                families: {
+                    headers: 'Header',
+                    groups: 'Grup'
+                },
                 options: {
                     custom: 'Kustom',
                     date: 'Tanggal',
@@ -1225,15 +1253,27 @@ export const STRINGS_ID = {
             },
             showFileIcons: {
                 name: 'Tampilkan ikon file',
-                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon tugas belum selesai > ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
+                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
             },
             useFolderIcon: {
                 name: 'Gunakan ikon folder',
                 desc: 'Tampilkan ikon folder induk saat tidak ada ikon file kustom yang ditetapkan. Warna folder digunakan saat tidak ada warna file kustom yang ditetapkan.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ikon tugas belum selesai',
-                desc: 'Tampilkan ikon tugas saat catatan memiliki tugas yang belum selesai.'
+            showFileTaskProgress: {
+                name: 'Tampilkan tugas',
+                desc: 'Tampilkan status tugas dengan bilah progres dan jumlah tugas opsional. Warna untuk tugas yang belum selesai dan tugas yang selesai dapat diatur secara terpisah dengan plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Tampilkan tugas: bilah progres',
+                desc: 'Tampilkan bilah progres di samping ikon tugas.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Tampilkan tugas: jumlah tugas',
+                desc: 'Tampilkan jumlah tugas yang selesai dan total tugas, misalnya 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Tampilkan tugas: sembunyikan saat selesai',
+                desc: 'Sembunyikan progres tugas saat semua tugas dalam catatan selesai.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Latar belakang tugas belum selesai',

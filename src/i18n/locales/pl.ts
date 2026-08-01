@@ -364,6 +364,8 @@ export const STRINGS_PL = {
             changeBackground: 'Zmień tło',
             excludeFolder: 'Ukryj folder',
             unhideFolder: 'Pokaż folder',
+            hideRootFolder: 'Ukryj folder główny',
+            showRootFolder: 'Pokaż folder główny',
             excludeFromDescendants: 'Ukryj w folderach nadrzędnych',
             includeInDescendants: 'Pokaż w folderach nadrzędnych',
             hiddenFromParentsIndicator: 'Ukryte na listach folderów nadrzędnych',
@@ -538,7 +540,6 @@ export const STRINGS_PL = {
                 'nav-properties': 'Atrybuty',
                 'nav-property': 'Atrybut',
                 'nav-property-value': 'Wartość',
-                'file-unfinished-task': 'Nieukończone zadania',
                 'file-word-count': 'Liczba słów',
                 'file-character-count': 'Liczba znaków'
             }
@@ -799,8 +800,6 @@ export const STRINGS_PL = {
             forbiddenNameCharactersWindows: 'Znaki zarezerwowane przez system Windows są niedozwolone: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Ukryty folder: {name}',
-            showFolder: 'Widoczny folder: {name}',
             folderExcludedFromDescendants: 'Ukryte na listach folderów nadrzędnych: {name}',
             folderIncludedInDescendants: 'Pokazane na listach folderów nadrzędnych: {name}',
             mergeNotes: 'Scalono {count} notatek w {name}'
@@ -971,7 +970,8 @@ export const STRINGS_PL = {
         files: 'pliki',
         folder: 'folder',
         folders: 'foldery',
-        wordCount: 'Liczba słów'
+        wordCount: 'Liczba słów',
+        unfinishedTasks: 'Nieukończone zadania'
     },
 
     fileCounts: {
@@ -1058,8 +1058,8 @@ export const STRINGS_PL = {
             },
             list: {
                 display: 'Wygląd',
+                sortAndGroup: 'Sortowanie i grupowanie',
                 groupHeaders: 'Nagłówki grup',
-                propertySort: 'Sortowanie i grupowanie według atrybutów',
                 manualSort: 'Sortowanie ręczne',
                 pinnedNotes: 'Przypięte notatki',
                 drawingPreviews: 'Podglądy rysunków'
@@ -1095,20 +1095,18 @@ export const STRINGS_PL = {
             },
             sortNotesBy: {
                 name: 'Domyślny porządek sortowania',
-                desc: 'Wybierz domyślny porządek sortowania notatek.',
-                options: {
-                    'modified-desc': 'daty edycji (od najnowszych)',
-                    'modified-asc': 'daty edycji (od najstarszych)',
-                    'created-desc': 'daty utworzenia (od najnowszych)',
-                    'created-asc': 'daty utworzenia (od najstarszych)',
-                    'title-asc': 'tytułu (od A do Z)',
-                    'title-desc': 'tytułu (od Z do A)',
-                    'filename-asc': 'nazwy (od A do Z)',
-                    'filename-desc': 'nazwy (od Z do A)'
-                },
+                desc: 'Wybierz domyślny porządek sortowania notatek. Atrybuty z Atrybuty sortowania pojawiają się jako dodatkowe opcje sortowania.',
                 directions: {
                     asc: 'Rosnąco',
                     desc: 'Malejąco'
+                },
+                dateDirections: {
+                    desc: 'Od najnowszych',
+                    asc: 'Od najstarszych'
+                },
+                textDirections: {
+                    asc: 'Od A do Z',
+                    desc: 'Od Z do A'
                 },
                 fields: {
                     modified: 'Data edycji',
@@ -1118,10 +1116,24 @@ export const STRINGS_PL = {
                     property: 'Atrybut'
                 }
             },
+            defaultSortDirection: {
+                name: 'Kierunek sortowania'
+            },
+            defaultGroupingDirection: {
+                name: 'Kierunek grupowania',
+                options: {
+                    follow: 'Zgodnie z sortowaniem'
+                }
+            },
             propertySortKey: {
-                name: 'Atrybuty sortowania i grupowania',
-                desc: 'Rozdzielone przecinkami atrybuty frontmatter. Każdy atrybut pojawia się jako opcja sortowania i opcja grupowania w menu sortowania w panelu listy. Te atrybuty nie są zmieniane.',
-                placeholder: 'published, author'
+                name: 'Atrybuty sortowania',
+                desc: 'Atrybuty frontmatter rozdzielone przecinkami. Każdy atrybut pojawia się jako opcja sortowania w ustawieniu Domyślny porządek sortowania i w menu sortowania w panelu listy. Te atrybuty nie są zmieniane.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'Domyślny porządek sortowania został zresetowany, ponieważ jego atrybut nie jest już dostępny.',
+                    grouping: 'Domyślne grupowanie zostało zresetowane, ponieważ jego atrybut nie jest już dostępny.',
+                    both: 'Domyślny porządek sortowania i domyślne grupowanie zostały zresetowane, ponieważ ich atrybuty nie są już dostępne.'
+                }
             },
             propertySortSecondary: {
                 name: 'Sortowanie drugorzędne',
@@ -1134,7 +1146,19 @@ export const STRINGS_PL = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Każdy wymieniony powyżej atrybut pojawia się jako opcja sortowania i opcja grupowania w menu sortowania w panelu listy. Sortowanie porządkuje notatki według wartości frontmatter, łącząc tablice w jeden ciąg. Grupowanie zbiera notatki o tej samej wartości pod jednym nagłówkiem; notatki z wartością listową są grupowane według pełnej listy, a notatki bez tego atrybutu trafiają do końcowej grupy „Brak”.'
+                intro: 'Jak działa sortowanie i grupowanie według atrybutu:',
+                items: [
+                    '**Sortowanie:** Wybranie atrybutu, takiego jak Priorytet, sortuje notatki według ich wartości Priorytetu.',
+                    '**Grupowanie:** Wybranie atrybutu, takiego jak Status, tworzy nagłówek dla każdej wartości Statusu. Notatki z tym samym Statusem są wyświetlane pod tym samym nagłówkiem.',
+                    '**Wiele wartości:** Jeśli atrybut zawiera listę, Notebook Navigator używa całej listy. Na przykład, jeśli Tematy zawierają Książki i Historię, notatka jest sortowana lub grupowana według „Książki, Historia”, a nie według każdego tematu osobno.',
+                    '**Brakujące wartości:** Podczas grupowania notatki bez tego atrybutu są wyświetlane na końcu pod **Brak**.',
+                    '**Widoki tagów i atrybutów:** Po wybraniu grupowania **Folder** zamiast tego wyświetlane są nagłówki dat.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Atrybuty grupowania',
+                desc: 'Atrybuty frontmatter rozdzielone przecinkami. Każdy atrybut pojawia się jako opcja grupowania w ustawieniu Domyślne grupowanie i w menu sortowania w panelu listy. Te atrybuty nie są zmieniane.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Atrybut sortowania ręcznego',
@@ -1191,7 +1215,11 @@ export const STRINGS_PL = {
             },
             groupNotes: {
                 name: 'Domyślne grupowanie',
-                desc: 'Niestandardowe wyświetla nagłówki zdefiniowane w metadanych. Data grupuje notatki według daty. Folder grupuje notatki według folderu. Widoki tagów i atrybutów używają grup dat, gdy wybrany jest folder. Grupowanie według wartości atrybutu z metadanych jest dostępne osobno dla każdego widoku w menu sortowania w panelu listy.',
+                desc: '**Nagłówki** opisują posortowaną listę bez zmiany jej kolejności: Niestandardowe wyświetla nagłówki zdefiniowane w metadanych, a Data wstawia nagłówki dat. **Grupy** zmieniają kolejność listy: grupy folderów i atrybutów są porządkowane osobno, a notatki w każdej grupie zachowują porządek sortowania.',
+                families: {
+                    headers: 'Nagłówki',
+                    groups: 'Grupy'
+                },
                 options: {
                     custom: 'Niestandardowe',
                     date: 'Data',
@@ -1228,15 +1256,27 @@ export const STRINGS_PL = {
             },
             showFileIcons: {
                 name: 'Pokaż ikonki plików',
-                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka nieukończonych zadań > ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
             },
             useFolderIcon: {
                 name: 'Użyj ikonki folderu',
                 desc: 'Wyświetla ikonkę folderu nadrzędnego, gdy nie ustawiono niestandardowej ikonki pliku. Kolor folderu jest używany, gdy nie ustawiono niestandardowego koloru pliku.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Ikona nieukończonych zadań',
-                desc: 'Wyświetla ikonkę, gdy notatka zawiera niezakończone zadania.'
+            showFileTaskProgress: {
+                name: 'Pokaż zadania',
+                desc: 'Wyświetla status zadań z opcjonalnym paskiem postępu i liczbą zadań. Kolory zadań nieukończonych i ukończonych można ustawić osobno we wtyczce Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Pokaż zadania: pasek postępu',
+                desc: 'Wyświetla pasek postępu obok ikonki zadań.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Pokaż zadania: liczba zadań',
+                desc: 'Wyświetla liczbę ukończonych i wszystkich zadań, na przykład 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Pokaż zadania: ukryj po ukończeniu',
+                desc: 'Ukrywa postęp zadań, gdy wszystkie zadania w notatce są ukończone.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Tło nieukończonych zadań',

@@ -24,7 +24,7 @@ describe('resolveUXIcon', () => {
         expect(resolveUXIcon(undefined, 'nav-tags')).toBe('tags');
         expect(resolveUXIcon(undefined, 'nav-tag')).toBe('tag');
         expect(resolveUXIcon(undefined, 'list-pinned')).toBe('');
-        expect(resolveUXIcon(undefined, 'file-unfinished-task')).toBe('circle-alert');
+        expect(resolveUXIcon(undefined, 'file-word-count')).toBe('sigma');
     });
 
     it('deserializes Iconize formatted overrides', () => {

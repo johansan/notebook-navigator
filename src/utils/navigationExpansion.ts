@@ -53,6 +53,23 @@ interface NavigationExpansionTargetState {
     canCollapse: boolean;
 }
 
+/**
+ * The root row is locked open when Show root folder is off. It can still be
+ * rendered by Show hidden items, but its persisted expansion bit must not control
+ * row interactions because collapsing it would hide the folder tree.
+ */
+export function isFolderExpansionLocked(folderPath: string, showRootFolder: boolean): boolean {
+    return folderPath === '/' && !showRootFolder;
+}
+
+/**
+ * Returns the expansion state used by rendering and interactions. A locked root
+ * stays open independently of any expansion state retained from when it was visible.
+ */
+export function isFolderEffectivelyExpanded(folderPath: string, expandedFolders: ReadonlySet<string>, showRootFolder: boolean): boolean {
+    return isFolderExpansionLocked(folderPath, showRootFolder) || expandedFolders.has(folderPath);
+}
+
 function getTargetExpandedState(target: NavigationExpansionTarget, expansionState: NavigationExpansionSets): boolean {
     switch (target.type) {
         case 'folder':
@@ -154,15 +171,23 @@ export function expandNavigationTreeItems({ type, ids, collapseOtherBranches, di
     dispatch(buildExpandItemsAction(type, ids, collapseOtherBranches));
 }
 
-export function getFolderAncestorPaths(folder: TFolder): string[] {
+/**
+ * Returns ancestors in root-to-parent order. Locked-root callers omit the root so
+ * branch replacement cannot persist a synthetic root expansion.
+ */
+export function getFolderAncestorPaths(folder: TFolder, options?: { includeRootFolder?: boolean }): string[] {
     const ancestorPaths: string[] = [];
     let currentFolder: TFolder | null = folder.parent;
 
     while (currentFolder) {
-        ancestorPaths.unshift(currentFolder.path);
         if (currentFolder.path === '/') {
+            if (options?.includeRootFolder !== false) {
+                ancestorPaths.unshift(currentFolder.path);
+            }
             break;
         }
+
+        ancestorPaths.unshift(currentFolder.path);
         currentFolder = currentFolder.parent;
     }
 
@@ -189,18 +214,21 @@ export function getPropertyAncestorNodeIds(propertyNodeId: string): string[] {
 
 export function getNavigationExpansionTargetForItem(
     item: CombinedNavigationItem,
-    options: { showHiddenItems: boolean }
+    options: { showHiddenItems: boolean; showRootFolder: boolean }
 ): NavigationExpansionTarget | null {
     switch (item.type) {
         case NavigationPaneItemType.FOLDER:
             if (!(item.data instanceof TFolder)) {
                 return null;
             }
+            if (isFolderExpansionLocked(item.data.path, options.showRootFolder)) {
+                return null;
+            }
             return {
                 type: 'folder',
                 id: item.data.path,
                 hasChildren: hasSubfolders(item.data, item.parsedExcludedFolders ?? [], options.showHiddenItems),
-                ancestorIds: getFolderAncestorPaths(item.data)
+                ancestorIds: getFolderAncestorPaths(item.data, { includeRootFolder: options.showRootFolder })
             };
         case NavigationPaneItemType.TAG:
             return {
