@@ -107,14 +107,22 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.1',
-        date: '2026-08-03',
+        date: '2026-08-02',
         showOnUpdate: true,
+        bannerUrl: true,
+        bannerClickable: true,
+        info: "Lots of nice new things in this release! First up is a new **task display** in the list pane (see screenshot above). As usual you can customize everything and disable it if you don't want it.\n\nFor you power users out there you can finally set **sort by property** and **group by property** as default across the entire vault.\n\nAnd I know many of you have wanted this for a while now - if you hide the root folder **you can now temporarily show the root folder with Show hidden items**.\n\nHave a great day and thank you for using Notebook Navigator!",
         new: [
-            'New search syntax: quoted literal terms. A search term that opens with a double quote is matched literally against note names and aliases instead of being read as a filter. For example, `".F"` finds notes with `.F` in the name, while unquoted `.F` still filters on properties starting with `f`. Use `-".F"` to exclude matches. Previously, quotes around a term were ignored, so `"#work"` behaved like the tag filter `#work`.',
-            'New file context menu options in the `Copy` submenu: `Copy note link` copies a link to the file (`[[link]]`), `Copy note link as footnote` copies the link wrapped in an inline footnote (`^[[[link]]]`), and `Copy note embed` copies the link as an embed that displays the file content inline (`![[link]]`).'
+            'Much better task display in the list pane! Notes containing tasks now show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder! Everything is optional of course, but this is now enabled by default. You will find all related settings in File display > ==Show tasks==. If you want a green color for completed tasks you can change this with the Style Settings plugin.',
+            '==Default sorting and grouping== was rebuilt from the ground up, and you can now finally use frontmatter properties for default sorting and grouping. You will find all the new related settings in List pane > Sort & group. There are many small QoL improvements too, like changing from a date / descending sort order to file name now also changes sort order to ascending, which is what most users expect.',
+            'In search, you can now use ==double quotes== to match it literally against note names and aliases instead of being read as a filter: `"#work"` finds notes with `#work` in the name instead of filtering on the tag. Use `-"term"` to exclude matches.',
+            'You can quickly ==show the root folder if it is hidden==: the `Show hidden items` toolbar button now reveals the root folder dimmed at the top of the tree, and the `Search whole vault` command works while it is shown. You can also right click the root vault folder to quickly hide and show it with the new context menu options.',
+            'New copy options in the file menu: `Copy note link` (`[[link]]`), `Copy note link as footnote` (`^[[[link]]]`), and `Copy note embed` (`![[link]]`) - just makes working with note links easier.'
         ],
         changed: [
-            'I finally took the time to clean up the Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The navigation pane sliders `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` are merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.'
+            'I finally took the time to clean up the entire ==Style Settings== panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. Give it a go and let me know what you think!',
+            'The ==Recent files count== setting now goes up to **50 files**, up from 10.',
+            'The ==Unfinished task icon== setting was removed and replaced by the new task progress display.'
         ],
         fixed: [
             'When a note had a creation date in the future (for example from a frontmatter `created` property), the `Previous 7 days` group header appeared twice in the list pane, and stray headers then showed up in other folders until Obsidian was restarted. Notes dated in the future now group under a new `Future` group.'

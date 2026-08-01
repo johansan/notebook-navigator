@@ -366,6 +366,8 @@ export const STRINGS_NL = {
             changeBackground: 'Achtergrond wijzigen',
             excludeFolder: 'Map verbergen',
             unhideFolder: 'Map zichtbaar maken',
+            hideRootFolder: 'Hoofdmap verbergen',
+            showRootFolder: 'Hoofdmap tonen',
             excludeFromDescendants: 'Verbergen in bovenliggende mappen',
             includeInDescendants: 'Weergeven in bovenliggende mappen',
             hiddenFromParentsIndicator: 'Verborgen in lijsten van bovenliggende mappen',
@@ -538,7 +540,6 @@ export const STRINGS_NL = {
                 'nav-properties': 'Eigenschappen',
                 'nav-property': 'Eigenschap',
                 'nav-property-value': 'Waarde',
-                'file-unfinished-task': 'Onvoltooide taken',
                 'file-word-count': 'Aantal woorden',
                 'file-character-count': 'Aantal tekens'
             }
@@ -798,8 +799,6 @@ export const STRINGS_NL = {
             forbiddenNameCharactersWindows: 'Door Windows gereserveerde tekens zijn niet toegestaan: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Map verborgen: {name}',
-            showFolder: 'Map zichtbaar: {name}',
             folderExcludedFromDescendants: 'Verborgen in lijsten van bovenliggende mappen: {name}',
             folderIncludedInDescendants: 'Weergegeven in lijsten van bovenliggende mappen: {name}',
             mergeNotes: '{count} notities samengevoegd in {name}'
@@ -970,7 +969,8 @@ export const STRINGS_NL = {
         files: 'bestanden',
         folder: 'map',
         folders: 'mappen',
-        wordCount: 'Aantal woorden'
+        wordCount: 'Aantal woorden',
+        unfinishedTasks: 'Onvoltooide taken'
     },
 
     fileCounts: {
@@ -1057,8 +1057,8 @@ export const STRINGS_NL = {
             },
             list: {
                 display: 'Uiterlijk',
+                sortAndGroup: 'Sorteren & groeperen',
                 groupHeaders: 'Groepskoppen',
-                propertySort: 'Sorteren en groeperen op eigenschap',
                 manualSort: 'Handmatig sorteren',
                 pinnedNotes: 'Vastgezette notities',
                 drawingPreviews: 'Tekeningvoorbeelden'
@@ -1094,20 +1094,18 @@ export const STRINGS_NL = {
             },
             sortNotesBy: {
                 name: 'Standaard sorteervolgorde',
-                desc: 'Kies de standaard sorteervolgorde voor notities.',
-                options: {
-                    'modified-desc': 'Datum bewerkt (nieuwste bovenaan)',
-                    'modified-asc': 'Datum bewerkt (oudste bovenaan)',
-                    'created-desc': 'Datum gemaakt (nieuwste bovenaan)',
-                    'created-asc': 'Datum gemaakt (oudste bovenaan)',
-                    'title-asc': 'Titel (A bovenaan)',
-                    'title-desc': 'Titel (Z bovenaan)',
-                    'filename-asc': 'Bestandsnaam (A bovenaan)',
-                    'filename-desc': 'Bestandsnaam (Z bovenaan)'
-                },
+                desc: 'Kies de standaard sorteervolgorde voor notities. Eigenschappen uit Sorteereigenschappen verschijnen als extra sorteeropties.',
                 directions: {
                     asc: 'Oplopend',
                     desc: 'Aflopend'
+                },
+                dateDirections: {
+                    desc: 'Nieuwste bovenaan',
+                    asc: 'Oudste bovenaan'
+                },
+                textDirections: {
+                    asc: 'A bovenaan',
+                    desc: 'Z bovenaan'
                 },
                 fields: {
                     modified: 'Datum bewerkt',
@@ -1117,10 +1115,24 @@ export const STRINGS_NL = {
                     property: 'Eigenschap'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sorteerrichting'
+            },
+            defaultGroupingDirection: {
+                name: 'Groeperingsrichting',
+                options: {
+                    follow: 'Sorteervolgorde volgen'
+                }
+            },
             propertySortKey: {
-                name: 'Sorteer- en groeperingseigenschappen',
-                desc: "Door komma's gescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.",
-                placeholder: 'published, author'
+                name: 'Sorteereigenschappen',
+                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie in de instelling Standaard sorteervolgorde en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'De standaard sorteervolgorde is teruggezet omdat de eigenschap niet meer beschikbaar is.',
+                    grouping: 'De standaardgroepering is teruggezet omdat de eigenschap niet meer beschikbaar is.',
+                    both: 'De standaard sorteervolgorde en standaardgroepering zijn teruggezet omdat hun eigenschappen niet meer beschikbaar zijn.'
+                }
             },
             propertySortSecondary: {
                 name: 'Secundaire sortering',
@@ -1133,7 +1145,19 @@ export const STRINGS_NL = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Elke hierboven vermelde eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Sorteren ordent notities op de frontmatter-waarde, waarbij arraywaarden worden samengevoegd tot één string. Groeperen verzamelt notities met dezelfde waarde onder één kop; notities met een lijstwaarde worden gegroepeerd onder de volledige lijst, en notities zonder de eigenschap komen in een afsluitende groep "Geen".'
+                intro: 'Zo werken sorteren en groeperen op een eigenschap:',
+                items: [
+                    '**Sorteren:** Als je een eigenschap zoals Prioriteit kiest, worden notities gesorteerd op hun Prioriteitswaarde.',
+                    '**Groeperen:** Als je een eigenschap zoals Status kiest, wordt voor elke Statuswaarde een kop gemaakt. Notities met dezelfde Status verschijnen onder dezelfde kop.',
+                    '**Meerdere waarden:** Als een eigenschap een lijst bevat, gebruikt Notebook Navigator de volledige lijst. Als Onderwerpen bijvoorbeeld Boeken en Geschiedenis bevat, wordt de notitie gesorteerd of gegroepeerd op ‘Boeken, Geschiedenis’, niet op elk onderwerp afzonderlijk.',
+                    '**Ontbrekende waarden:** Bij groeperen verschijnen notities zonder de eigenschap onderaan onder **Geen**.',
+                    '**Tag- en eigenschapweergaven:** Als groeperen op **Map** is geselecteerd, worden in plaats daarvan datumkoppen weergegeven.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Groeperingseigenschappen',
+                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als groeperingsoptie in de instelling Standaardgroepering en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschap voor handmatig sorteren',
@@ -1190,7 +1214,11 @@ export const STRINGS_NL = {
             },
             groupNotes: {
                 name: 'Standaard groepering',
-                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd. Groeperen op een frontmatter-eigenschapswaarde is per weergave beschikbaar via het sorteermenu in het lijstpaneel.',
+                desc: '**Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
+                families: {
+                    headers: 'Koppen',
+                    groups: 'Groepen'
+                },
                 options: {
                     custom: 'Aangepast',
                     date: 'Datum',
@@ -1227,15 +1255,27 @@ export const STRINGS_NL = {
             },
             showFileIcons: {
                 name: 'Bestandspictogrammen tonen',
-                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: onvoltooide taken-pictogram > aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
+                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
             },
             useFolderIcon: {
                 name: 'Mappictogram gebruiken',
                 desc: 'Het pictogram van de bovenliggende map weergeven wanneer er geen aangepast bestandspictogram is ingesteld. De mapkleur wordt gebruikt wanneer er geen aangepaste bestandskleur is ingesteld.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Onvoltooide taken-pictogram',
-                desc: 'Een taakpictogram weergeven wanneer een notitie onvoltooide taken bevat.'
+            showFileTaskProgress: {
+                name: 'Taken tonen',
+                desc: 'De taakstatus weergeven met optionele voortgangsbalk en optioneel aantal taken. Kleuren voor onvoltooide en voltooide taken kunnen afzonderlijk worden ingesteld met de Style Settings-plugin.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Taken tonen: voortgangsbalk',
+                desc: 'Een voortgangsbalk naast het taakpictogram weergeven.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Taken tonen: aantal taken',
+                desc: 'Het aantal voltooide en totale taken weergeven, bijvoorbeeld 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Taken tonen: verbergen wanneer voltooid',
+                desc: 'De taakvoortgang verbergen wanneer alle taken in een notitie voltooid zijn.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Onvoltooide taken-achtergrond',

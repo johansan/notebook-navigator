@@ -362,6 +362,8 @@ export const STRINGS_ZH_CN = {
             changeBackground: '更改背景',
             excludeFolder: '隐藏文件夹',
             unhideFolder: '显示文件夹',
+            hideRootFolder: '隐藏根文件夹',
+            showRootFolder: '显示根文件夹',
             excludeFromDescendants: '在父文件夹中隐藏',
             includeInDescendants: '在父文件夹中显示',
             hiddenFromParentsIndicator: '已从父文件夹列表中隐藏',
@@ -532,7 +534,6 @@ export const STRINGS_ZH_CN = {
                 'nav-properties': '属性',
                 'nav-property': '属性',
                 'nav-property-value': '值',
-                'file-unfinished-task': '未完成任务',
                 'file-word-count': '字数统计',
                 'file-character-count': '字符数'
             }
@@ -787,8 +788,6 @@ export const STRINGS_ZH_CN = {
             forbiddenNameCharactersWindows: 'Windows 保留字符不允许使用：<, >, ", \\, |, ?, *。'
         },
         notices: {
-            hideFolder: '已隐藏文件夹：{name}',
-            showFolder: '已显示文件夹：{name}',
             folderExcludedFromDescendants: '已从父文件夹列表中隐藏：{name}',
             folderIncludedInDescendants: '已在父文件夹列表中显示：{name}',
             mergeNotes: '已将 {count} 个笔记合并到 {name}'
@@ -959,7 +958,8 @@ export const STRINGS_ZH_CN = {
         files: '个文件',
         folder: '个文件夹',
         folders: '个文件夹',
-        wordCount: '字数'
+        wordCount: '字数',
+        unfinishedTasks: '未完成任务'
     },
 
     fileCounts: {
@@ -1046,8 +1046,8 @@ export const STRINGS_ZH_CN = {
             },
             list: {
                 display: '外观',
+                sortAndGroup: '排序与分组',
                 groupHeaders: '分组标题',
-                propertySort: '属性排序与分组',
                 manualSort: '手动排序',
                 pinnedNotes: '固定笔记',
                 drawingPreviews: '绘图预览'
@@ -1083,18 +1083,16 @@ export const STRINGS_ZH_CN = {
             },
             sortNotesBy: {
                 name: '默认排序方式',
-                desc: '选择笔记的默认排序方式。',
-                options: {
-                    'modified-desc': '编辑日期（最新在顶部）',
-                    'modified-asc': '编辑日期（最旧在顶部）',
-                    'created-desc': '创建日期（最新在顶部）',
-                    'created-asc': '创建日期（最旧在顶部）',
-                    'title-asc': '标题（升序）',
-                    'title-desc': '标题（降序）',
-                    'filename-asc': '文件名（升序）',
-                    'filename-desc': '文件名（降序）'
-                },
+                desc: '选择笔记的默认排序方式。“用于排序的属性”中的属性会作为额外的排序选项显示。',
                 directions: {
+                    asc: '升序',
+                    desc: '降序'
+                },
+                dateDirections: {
+                    desc: '最新在顶部',
+                    asc: '最旧在顶部'
+                },
+                textDirections: {
                     asc: '升序',
                     desc: '降序'
                 },
@@ -1106,10 +1104,24 @@ export const STRINGS_ZH_CN = {
                     property: '属性'
                 }
             },
+            defaultSortDirection: {
+                name: '排序方向'
+            },
+            defaultGroupingDirection: {
+                name: '分组方向',
+                options: {
+                    follow: '跟随排序'
+                }
+            },
             propertySortKey: {
-                name: '用于排序和分组的属性',
-                desc: '以逗号分隔的 frontmatter 属性。每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。这些属性不会被更改。',
-                placeholder: 'published, author'
+                name: '用于排序的属性',
+                desc: '以逗号分隔的 frontmatter 属性。每个属性会作为排序选项显示在默认排序方式设置和列表窗格的排序菜单中。这些属性不会被更改。',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: '默认排序方式已重置，因为其属性已不可用。',
+                    grouping: '默认分组已重置，因为其属性已不可用。',
+                    both: '默认排序方式和默认分组已重置，因为其属性已不可用。'
+                }
             },
             propertySortSecondary: {
                 name: '次要排序',
@@ -1122,7 +1134,19 @@ export const STRINGS_ZH_CN = {
                 }
             },
             propertySortInstructions: {
-                intro: '上面列出的每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。排序会按 frontmatter 值排列笔记，数组值会合并为单一字符串。分组会将具有相同值的笔记归入同一标题下；具有列表值的笔记按完整列表分组，缺少该属性的笔记归入末尾的"无"分组。'
+                intro: '按属性排序和分组的工作方式：',
+                items: [
+                    '**排序：** 选择“优先级”等属性后，笔记会按各自的优先级值排序。',
+                    '**分组：** 选择“状态”等属性后，每个状态值都会创建一个标题。状态相同的笔记会显示在同一标题下。',
+                    '**多个值：** 如果属性包含列表，Notebook Navigator 会使用完整列表。例如，如果“主题”包含“书籍”和“历史”，笔记会按“书籍, 历史”这个完整列表排序或分组，而不会分别按每个主题处理。',
+                    '**缺少值：** 分组时，没有该属性的笔记会显示在末尾的 **无** 下。',
+                    '**标签和属性视图：** 选择 **文件夹** 分组后，会改为显示日期标题。'
+                ]
+            },
+            propertyGroupKey: {
+                name: '用于分组的属性',
+                desc: '以逗号分隔的 frontmatter 属性。每个属性会作为分组选项显示在默认分组设置和列表窗格的排序菜单中。这些属性不会被更改。',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '手动排序属性',
@@ -1176,7 +1200,11 @@ export const STRINGS_ZH_CN = {
             },
             groupNotes: {
                 name: '默认分组',
-                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。按 frontmatter 属性值分组可在列表窗格的排序菜单中针对每个视图单独设置。',
+                desc: '**标题**在不改变顺序的情况下为已排序的列表添加标注：自定义显示在 frontmatter 中定义的标题，日期插入日期标题。**分组**会重新排列列表：文件夹和属性分组按自身顺序排列，每个分组内的笔记遵循排序方式。',
+                families: {
+                    headers: '标题',
+                    groups: '分组'
+                },
                 options: {
                     custom: '自定义',
                     date: '日期',
@@ -1213,15 +1241,27 @@ export const STRINGS_ZH_CN = {
             },
             showFileIcons: {
                 name: '显示文件图标',
-                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：未完成任务图标 > 自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
             },
             useFolderIcon: {
                 name: '使用文件夹图标',
                 desc: '当未设置自定义文件图标时显示父文件夹图标。当未设置自定义文件颜色时使用文件夹颜色。'
             },
-            showFileIconUnfinishedTask: {
-                name: '未完成任务图标',
-                desc: '当笔记包含未完成任务时显示任务图标。'
+            showFileTaskProgress: {
+                name: '显示任务',
+                desc: '显示任务状态，进度条和任务数量可选。未完成任务和已完成任务的颜色可通过 Style Settings 插件分别设置。'
+            },
+            showFileTaskProgressBar: {
+                name: '显示任务：进度条',
+                desc: '在任务图标旁边显示进度条。'
+            },
+            showFileTaskProgressCount: {
+                name: '显示任务：任务数量',
+                desc: '显示已完成任务数和任务总数，例如 3/7。'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: '显示任务：全部完成时隐藏',
+                desc: '当笔记中的所有任务都已完成时隐藏任务进度。'
             },
             showFileBackgroundUnfinishedTask: {
                 name: '未完成任务背景',

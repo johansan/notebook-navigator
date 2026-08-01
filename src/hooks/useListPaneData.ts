@@ -267,6 +267,7 @@ export function useListPaneData({
         settings.filterPinnedByFolder,
         settings.pinnedNotes,
         settings.defaultFolderSort,
+        settings.defaultFolderSortPropertyKey,
         settings.propertySortKey,
         settings.manualSortPropertyKey,
         settings.propertySortSecondary,
