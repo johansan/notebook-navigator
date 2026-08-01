@@ -325,7 +325,6 @@ export class AppearanceModal extends Modal {
      * Modal preview behavior:
      *
      * - The modal captures the persistent item state when opened. It does not follow later item events.
-     * - Temporary states, such as unfinished-task icons, are ignored.
      * - A custom icon takes priority over the default icon.
      * - Folders, tags, properties, and navigation sections show their normal default icon when no custom icon exists.
      * - The vault root always shows its current custom or default icon.

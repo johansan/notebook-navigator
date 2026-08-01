@@ -66,6 +66,8 @@ npm run build:styles
 
 - Reads import order from `src/styles/index.css`
 - Concatenates files from `src/styles/sections/*`
+- Validates theming variables, defaults, grouping, ordering, Style Settings exclusions, and the complete example against
+  `docs/theming-guide.md`
 - Writes the generated `styles.css` file only when content changes
 - Used by `npm run build`, `npm run lint:styles`, and `./scripts/build.sh`
 
@@ -223,39 +225,3 @@ Runs the icon pack updater from `icon-assets/scripts/update-icon-packs.ts`.
 - Uses `npx tsx` to run the TypeScript updater
 - Supports updating all packs or selected pack IDs
 - Supports check-only, forced update, and local manifest regeneration modes
-
-## benchmark-startup.mjs
-
-Builds a temporary production bundle and measures plugin startup load paths with Obsidian and Electron mocked.
-
-**Usage:**
-
-```bash
-node scripts/benchmark-startup.mjs
-node scripts/benchmark-startup.mjs --samples=100 --language=zh-CN
-node scripts/benchmark-startup.mjs --mode=onload
-node scripts/benchmark-startup.mjs --target=es2022 --charset=utf8
-```
-
-**Features:**
-
-- Defaults to `--samples=25`, `--language=en`, `--mode=require`, `--target=es2022`, and `--charset=utf8`
-- Reports bundle bytes, gzip bytes, timing summaries, top input groups, and top input files as JSON
-- Uses `--mode=onload` to include mocked plugin `onload()` execution
-
-## benchmark-edit-hotpath.mjs
-
-Runs local benchmarks for edit-time metadata, list refresh, and calendar refresh hot paths.
-
-**Usage:**
-
-```bash
-node scripts/benchmark-edit-hotpath.mjs
-node scripts/benchmark-edit-hotpath.mjs --samples=100
-```
-
-**Features:**
-
-- Defaults to `--samples=50`
-- Bundles a temporary runner with the test Obsidian stub
-- Reports median, p95, mean, min, and max timings for each scenario

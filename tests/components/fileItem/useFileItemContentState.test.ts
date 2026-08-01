@@ -55,7 +55,7 @@ const LOAD_ALL_CONTENT = {
     shouldLoadProperties: true,
     shouldLoadWordCount: true,
     shouldLoadCharacterCount: true,
-    shouldLoadTaskUnfinished: true
+    shouldLoadTaskCounts: true
 } as const;
 
 const SKIP_ALL_CONTENT = {
@@ -65,7 +65,7 @@ const SKIP_ALL_CONTENT = {
     shouldLoadProperties: false,
     shouldLoadWordCount: false,
     shouldLoadCharacterCount: false,
-    shouldLoadTaskUnfinished: false
+    shouldLoadTaskCounts: false
 } as const;
 
 function createContentBox(patch?: Partial<FileItemContentBox>): FileItemContentBox {
@@ -78,6 +78,7 @@ function createContentBox(patch?: Partial<FileItemContentBox>): FileItemContentB
         wordCount: 100,
         characterCountWithSpaces: 1000,
         characterCountWithoutSpaces: 850,
+        taskTotal: 2,
         taskUnfinished: 1,
         metadataVersion: 3,
         ...(patch ?? {})
@@ -95,6 +96,7 @@ describe('useFileItemContentState helpers', () => {
                 featureImageStatus: 'has',
                 properties,
                 wordCount: 321,
+                taskTotal: 3,
                 taskUnfinished: 2
             })
         );
@@ -112,6 +114,7 @@ describe('useFileItemContentState helpers', () => {
         expect(snapshot.featureImageKey).toBe('feature-1');
         expect(snapshot.featureImageStatus).toBe('has');
         expect(snapshot.wordCount).toBe(321);
+        expect(snapshot.taskTotal).toBe(3);
         expect(snapshot.taskUnfinished).toBe(2);
         expect(snapshot.properties).toEqual(properties);
         expect(snapshot.properties).not.toBe(properties);
@@ -153,7 +156,7 @@ describe('useFileItemContentState helpers', () => {
                 loadProperties: false,
                 loadWordCount: false,
                 loadCharacterCount: false,
-                loadTaskUnfinished: false
+                loadTaskCounts: false
             }
         });
 
@@ -167,6 +170,7 @@ describe('useFileItemContentState helpers', () => {
             wordCount: null,
             characterCountWithSpaces: null,
             characterCountWithoutSpaces: null,
+            taskTotal: null,
             taskUnfinished: null
         });
         expect(getCachedPreviewText).not.toHaveBeenCalled();
@@ -199,7 +203,7 @@ describe('useFileItemContentState helpers', () => {
                 loadProperties: false,
                 loadWordCount: true,
                 loadCharacterCount: false,
-                loadTaskUnfinished: false
+                loadTaskCounts: false
             }
         });
 
@@ -209,6 +213,7 @@ describe('useFileItemContentState helpers', () => {
         expect(snapshot.wordCount).toBe(321);
         expect(snapshot.characterCountWithSpaces).toBeNull();
         expect(snapshot.characterCountWithoutSpaces).toBeNull();
+        expect(snapshot.taskTotal).toBeNull();
         expect(snapshot.taskUnfinished).toBeNull();
     });
 
@@ -315,6 +320,7 @@ describe('useFileItemContentState helpers', () => {
                 wordCount: 222,
                 characterCountWithSpaces: 1234,
                 characterCountWithoutSpaces: 999,
+                taskTotal: 6,
                 taskUnfinished: 4
             },
             ...LOAD_ALL_CONTENT,
@@ -331,6 +337,7 @@ describe('useFileItemContentState helpers', () => {
             wordCount: 222,
             characterCountWithSpaces: 1234,
             characterCountWithoutSpaces: 999,
+            taskTotal: 6,
             taskUnfinished: 4,
             metadataVersion: 3
         });
@@ -356,6 +363,7 @@ describe('useFileItemContentState helpers', () => {
                 wordCount: prev.wordCount,
                 characterCountWithSpaces: prev.characterCountWithSpaces,
                 characterCountWithoutSpaces: prev.characterCountWithoutSpaces,
+                taskTotal: prev.taskTotal,
                 taskUnfinished: prev.taskUnfinished
             },
             ...LOAD_ALL_CONTENT,
@@ -381,6 +389,7 @@ describe('useFileItemContentState helpers', () => {
                 wordCount: 999,
                 characterCountWithSpaces: 9999,
                 characterCountWithoutSpaces: 8888,
+                taskTotal: 9,
                 taskUnfinished: 9
             },
             ...SKIP_ALL_CONTENT,
@@ -443,6 +452,7 @@ describe('useFileItemContentState helpers', () => {
             featureImageUrl: null,
             properties: null,
             wordCount: 11,
+            taskTotal: 2,
             taskUnfinished: 1
         };
         const appliedSnapshots: FileItemCacheSnapshot[] = [];

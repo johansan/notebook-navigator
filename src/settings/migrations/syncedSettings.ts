@@ -34,7 +34,7 @@ import {
     isTextCountPlacement,
     normalizeNarrowSidebarLayout,
     normalizeAppearanceGroupBy,
-    normalizeListNoteGroupingBaseOption
+    normalizeListNoteGroupingOption
 } from '../types';
 import { normalizeCalendarCustomRootFolder } from '../../utils/calendarCustomNotePatterns';
 import { normalizeFolderNoteNamePattern } from '../../utils/folderNoteName';
@@ -118,6 +118,7 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+    delete mutableSettings.showFileIconUnfinishedTask;
 
     const storedNoteGrouping = storedData ? storedData['noteGrouping'] : undefined;
 
@@ -184,8 +185,9 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings['mobileHomepage'];
     delete mutableSettings['useMobileHomepage'];
 
-    // The global default rejects property encodings; only appearance overrides accept them.
-    settings.noteGrouping = normalizeListNoteGroupingBaseOption(settings.noteGrouping) ?? defaultSettings.noteGrouping;
+    // The global default accepts the same property encodings as appearance overrides; whether the
+    // encoded key is still configured is reconciled by the settings controller after migration.
+    settings.noteGrouping = normalizeListNoteGroupingOption(settings.noteGrouping) ?? defaultSettings.noteGrouping;
 
     const normalizeAppearanceGrouping = (collection: Record<string, FolderAppearance> | undefined): void => {
         if (!collection) {

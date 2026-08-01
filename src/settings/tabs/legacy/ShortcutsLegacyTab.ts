@@ -136,7 +136,7 @@ function renderRecentNotesCountSetting(setting: Setting, context: SettingsTabCon
         value: plugin.settings.recentNotesCount,
         defaultValue: DEFAULT_SETTINGS.recentNotesCount,
         min: 1,
-        max: 10,
+        max: 50,
         step: 1,
         onChange: async value => {
             plugin.settings.recentNotesCount = value;

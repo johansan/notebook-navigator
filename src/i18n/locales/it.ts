@@ -363,6 +363,8 @@ export const STRINGS_IT = {
             changeBackground: 'Cambia sfondo',
             excludeFolder: 'Nascondi cartella',
             unhideFolder: 'Mostra cartella',
+            hideRootFolder: 'Nascondi cartella root',
+            showRootFolder: 'Mostra cartella root',
             excludeFromDescendants: 'Nascondi dalle cartelle superiori',
             includeInDescendants: 'Mostra nelle cartelle superiori',
             hiddenFromParentsIndicator: 'Nascosta dagli elenchi delle cartelle superiori',
@@ -535,7 +537,6 @@ export const STRINGS_IT = {
                 'nav-properties': 'Proprietà',
                 'nav-property': 'Proprietà',
                 'nav-property-value': 'Valore',
-                'file-unfinished-task': 'Attività incomplete',
                 'file-word-count': 'Conteggio parole',
                 'file-character-count': 'Conteggio caratteri'
             }
@@ -792,8 +793,6 @@ export const STRINGS_IT = {
             forbiddenNameCharactersWindows: 'I caratteri riservati di Windows non sono consentiti: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Cartella nascosta: {name}',
-            showFolder: 'Cartella mostrata: {name}',
             folderExcludedFromDescendants: 'Nascosta dagli elenchi delle cartelle superiori: {name}',
             folderIncludedInDescendants: 'Mostrata negli elenchi delle cartelle superiori: {name}',
             mergeNotes: 'Unite {count} note in {name}'
@@ -964,7 +963,8 @@ export const STRINGS_IT = {
         files: 'file',
         folder: 'cartella',
         folders: 'cartelle',
-        wordCount: 'Conteggio parole'
+        wordCount: 'Conteggio parole',
+        unfinishedTasks: 'Attività incomplete'
     },
 
     fileCounts: {
@@ -1051,8 +1051,8 @@ export const STRINGS_IT = {
             },
             list: {
                 display: 'Aspetto',
+                sortAndGroup: 'Ordinamento e raggruppamento',
                 groupHeaders: 'Intestazioni di gruppo',
-                propertySort: 'Ordinamento e raggruppamento per proprietà',
                 manualSort: 'Ordinamento manuale',
                 pinnedNotes: 'Note fissate',
                 drawingPreviews: 'Anteprime dei disegni'
@@ -1088,20 +1088,18 @@ export const STRINGS_IT = {
             },
             sortNotesBy: {
                 name: 'Ordinamento predefinito',
-                desc: "Scegli l'ordinamento predefinito per le note.",
-                options: {
-                    'modified-desc': 'Data modifica (più recenti in alto)',
-                    'modified-asc': 'Data modifica (più vecchie in alto)',
-                    'created-desc': 'Data creazione (più recenti in alto)',
-                    'created-asc': 'Data creazione (più vecchie in alto)',
-                    'title-asc': 'Titolo (A in alto)',
-                    'title-desc': 'Titolo (Z in alto)',
-                    'filename-asc': 'Nome file (A in alto)',
-                    'filename-desc': 'Nome file (Z in alto)'
-                },
+                desc: "Scegli l'ordinamento predefinito per le note. Le proprietà di Proprietà di ordinamento appaiono come opzioni di ordinamento aggiuntive.",
                 directions: {
                     asc: 'Crescente',
                     desc: 'Decrescente'
+                },
+                dateDirections: {
+                    desc: 'Più recenti in alto',
+                    asc: 'Più vecchie in alto'
+                },
+                textDirections: {
+                    asc: 'A in alto',
+                    desc: 'Z in alto'
                 },
                 fields: {
                     modified: 'Data di modifica',
@@ -1111,10 +1109,24 @@ export const STRINGS_IT = {
                     property: 'Proprietà'
                 }
             },
+            defaultSortDirection: {
+                name: 'Direzione di ordinamento'
+            },
+            defaultGroupingDirection: {
+                name: 'Direzione di raggruppamento',
+                options: {
+                    follow: "Segui l'ordinamento"
+                }
+            },
             propertySortKey: {
-                name: 'Proprietà di ordinamento e raggruppamento',
-                desc: 'Proprietà frontmatter separate da virgola. Ogni proprietà appare come opzione di ordinamento e opzione di raggruppamento nel menu di ordinamento nel pannello lista. Queste proprietà non vengono modificate.',
-                placeholder: 'published, author'
+                name: 'Proprietà di ordinamento',
+                desc: "Proprietà frontmatter separate da virgole. Ogni proprietà appare come opzione di ordinamento nell'impostazione Ordinamento predefinito e nel menu di ordinamento nel pannello lista. Queste proprietà non vengono modificate.",
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: "L'ordinamento predefinito è stato ripristinato perché la sua proprietà non è più disponibile.",
+                    grouping: 'Il raggruppamento predefinito è stato ripristinato perché la sua proprietà non è più disponibile.',
+                    both: "L'ordinamento predefinito e il raggruppamento predefinito sono stati ripristinati perché le loro proprietà non sono più disponibili."
+                }
             },
             propertySortSecondary: {
                 name: 'Ordinamento secondario',
@@ -1127,7 +1139,19 @@ export const STRINGS_IT = {
                 }
             },
             propertySortInstructions: {
-                intro: "Ogni proprietà elencata sopra appare come opzione di ordinamento e come opzione di raggruppamento nel menu di ordinamento nel pannello lista. L'ordinamento dispone le note in base al valore frontmatter, unendo i valori array in una singola stringa. Il raggruppamento raccoglie le note che condividono lo stesso valore sotto un'unica intestazione; le note con un valore elenco vengono raggruppate sotto l'elenco completo, e le note prive della proprietà finiscono in un gruppo finale \"Nessuno\"."
+                intro: "Come funzionano l'ordinamento e il raggruppamento per proprietà:",
+                items: [
+                    '**Ordinamento:** Scegliere una proprietà come Priorità ordina le note in base ai rispettivi valori di Priorità.',
+                    "**Raggruppamento:** Scegliere una proprietà come Stato crea un'intestazione per ogni valore di Stato. Le note con lo stesso Stato vengono mostrate sotto la stessa intestazione.",
+                    "**Valori multipli:** Se una proprietà contiene un elenco, Notebook Navigator usa l'elenco completo. Ad esempio, se Argomenti contiene Libri e Storia, la nota viene ordinata o raggruppata usando «Libri, Storia», non ogni argomento separatamente.",
+                    '**Valori mancanti:** Durante il raggruppamento, le note prive della proprietà vengono mostrate sotto **Nessuno** alla fine.',
+                    '**Viste per tag e proprietà:** Quando viene selezionato il raggruppamento **Cartella**, vengono mostrate invece intestazioni di data.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Proprietà di raggruppamento',
+                desc: "Proprietà frontmatter separate da virgole. Ogni proprietà appare come opzione di raggruppamento nell'impostazione Raggruppamento predefinito e nel menu di ordinamento nel pannello lista. Queste proprietà non vengono modificate.",
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Proprietà ordinamento manuale',
@@ -1184,7 +1208,11 @@ export const STRINGS_IT = {
             },
             groupNotes: {
                 name: 'Raggruppamento predefinito',
-                desc: 'Personalizzato mostra le intestazioni definite nel frontmatter. Data raggruppa le note per data. Cartella raggruppa le note per cartella. Le viste per tag e proprietà usano gruppi per data quando è selezionata una cartella. Il raggruppamento per valore di una proprietà frontmatter è disponibile per vista dal menu di ordinamento nel pannello lista.',
+                desc: "Le **intestazioni** annotano l'elenco ordinato senza cambiarne l'ordine: Personalizzato mostra le intestazioni definite nel frontmatter e Data inserisce intestazioni di data. I **gruppi** riordinano l'elenco: i gruppi di cartelle e proprietà sono ordinati autonomamente e le note in ogni gruppo seguono l'ordinamento.",
+                families: {
+                    headers: 'Intestazioni',
+                    groups: 'Gruppi'
+                },
                 options: {
                     custom: 'Personalizzato',
                     date: 'Data',
@@ -1221,15 +1249,27 @@ export const STRINGS_IT = {
             },
             showFileIcons: {
                 name: 'Mostra icone file',
-                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona attività incomplete > icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
+                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
             },
             useFolderIcon: {
                 name: 'Usa icona cartella',
                 desc: "Visualizza l'icona della cartella genitore quando non è impostata un'icona file personalizzata. Il colore della cartella viene usato quando non è impostato un colore file personalizzato."
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icona attività incomplete',
-                desc: "Mostra un'icona di attività quando una nota ha attività incomplete."
+            showFileTaskProgress: {
+                name: 'Mostra attività',
+                desc: 'Mostra lo stato delle attività con barra di avanzamento e numero di attività opzionali. I colori delle attività incomplete e completate possono essere impostati separatamente con il plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostra attività: barra di avanzamento',
+                desc: "Mostra una barra di avanzamento accanto all'icona attività."
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostra attività: numero di attività',
+                desc: 'Mostra il numero di attività completate e totali, ad esempio 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostra attività: nascondi al completamento',
+                desc: "Nasconde l'avanzamento delle attività quando tutte le attività di una nota sono completate."
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Sfondo attività incomplete',

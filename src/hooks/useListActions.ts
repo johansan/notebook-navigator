@@ -24,30 +24,25 @@ import { useSettingsState, useSettingsUpdate } from '../context/SettingsContext'
 import { useUXPreferenceActions, useUXPreferences } from '../context/UXPreferencesContext';
 import { strings } from '../i18n';
 import { ConfirmModal } from '../modals/ConfirmModal';
-import { createPropertyGroupingOption, getPropertyGroupingDirection, getPropertyGroupingKey } from '../settings/types';
-import type {
-    ListNoteGroupingBaseOption,
-    ListNoteGroupingOption,
-    ListSortOverrideValue,
-    NotebookNavigatorSettings,
-    SortOption
-} from '../settings/types';
+import { createPropertyGroupingOption, getPropertyGroupingKey, getPropertyGroupingOrder } from '../settings/types';
+import type { ListNoteGroupingOption, ListSortOverrideValue, NotebookNavigatorSettings, PropertyGroupingOrder } from '../settings/types';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
 import {
     areListSortOverridesEqual,
     buildSortOption,
     cloneListSortOverride,
     createListSortOverride,
+    getAvailablePropertySortKeys,
     getListSortFieldIconId,
     getListSortToolbarIconId,
     getListSortOverrideForSelection,
     getManualSortPropertyKey,
     getSortDirection,
+    getSortDirectionForFieldChange,
     getSortField,
     getSortIcon as getSortIconName,
     isManualSortPropertyKey,
     isDateSortOption,
-    parsePropertySortKeys,
     resolveListSort,
     type SortDirection,
     type SortField
@@ -77,6 +72,7 @@ import { casefold, ensureRecord, sanitizeRecord } from '../utils/recordUtils';
 import {
     areListGroupingOptionsEqual,
     areListGroupingOptionsSameKind,
+    getAvailablePropertyGroupKeys,
     resolveEffectiveListGroupingForSort,
     resolveListGrouping
 } from '../utils/listGrouping';
@@ -1005,15 +1001,9 @@ export function useListActions({
     ]);
 
     const applyManualSortForProperty = useCallback(
-        async (propertyKey: string, target: SelectionSortTarget, clearSortOverride: boolean) => {
+        async (propertyKey: string, target: SelectionSortTarget) => {
             await updateSettings(current => {
-                if (clearSortOverride) {
-                    const sortOverrides = getSortOverridesForTarget(current, target);
-                    delete sortOverrides[target.key];
-                    setSortOverridesForTarget(current, target, sortOverrides);
-                } else {
-                    setSortOverrideForTarget(current, target, createListSortOverride('property-asc', propertyKey));
-                }
+                setSortOverrideForTarget(current, target, createListSortOverride('property-asc', propertyKey));
 
                 const appearances =
                     target.type === ItemType.FOLDER
@@ -1126,11 +1116,6 @@ export function useListActions({
 
         const currentSortSpec = resolveListSort(settings, selectionSortOverride);
         const isCurrentManualSort = isManualSortPropertyKey(settings, currentSortSpec.propertyKey);
-        const defaultSortSpec = resolveListSort(settings);
-        const shouldClearManualSortOverride =
-            defaultSortSpec.option === 'property-asc' &&
-            isManualSortPropertyKey(settings, defaultSortSpec.propertyKey) &&
-            samePropertySortKey(defaultSortSpec.propertyKey, normalizedPropertyKey);
         const initialFiles = getManualSortInitialFiles(target, selectionSortOverride);
         const propertyStats = getManualSortPropertyStats(app, initialFiles, normalizedPropertyKey);
         const allMarkdownFilesHaveValidManualSortRanks =
@@ -1149,7 +1134,7 @@ export function useListActions({
                 }
             }
 
-            await applyManualSortForProperty(normalizedPropertyKey, target, shouldClearManualSortOverride);
+            await applyManualSortForProperty(normalizedPropertyKey, target);
         };
 
         if (shouldConfirmManualSort) {
@@ -1592,9 +1577,7 @@ export function useListActions({
             const defaultDirection = getSortDirection(defaultSortSpec.option);
             const defaultField = getSortField(defaultSortSpec.option);
             const manualSortPropertyKey = getManualSortPropertyKey(settings);
-            const propertySortKeys = parsePropertySortKeys(settings.propertySortKey).filter(
-                propertyKey => !isManualSortPropertyKey(settings, propertyKey)
-            );
+            const propertySortKeys = getAvailablePropertySortKeys(settings);
             const hasManualSortPropertyKey = isValidManualSortPropertyKey(manualSortPropertyKey);
             const manualSortPropertyFiles = hasManualSortPropertyKey && selectionSortTarget ? getManualSortPropertyRemovalFiles() : [];
             const manualSortPropertyCount = hasManualSortPropertyKey
@@ -1625,17 +1608,6 @@ export function useListActions({
             };
             const withDefaultSuffix = (label: string, isDefault: boolean): string =>
                 isDefault ? `${label} ${strings.folderAppearance.defaultSuffix}` : label;
-            const isDefaultSort = (option: SortOption, propertyKey?: string): boolean => {
-                if (option !== defaultSortSpec.option) {
-                    return false;
-                }
-
-                if (getSortField(option) !== 'property') {
-                    return true;
-                }
-
-                return samePropertySortKey(propertyKey ?? '', defaultSortSpec.propertyKey);
-            };
             const getSortFieldMenuIcon = (field: SortField, propertyKey?: string): string => {
                 if (field === 'property') {
                     const propertyMenuIcon = resolveIconForMenu(resolvePropertySortIcon(propertyKey ?? ''));
@@ -1646,21 +1618,45 @@ export function useListActions({
 
                 return resolveUXIconForMenu(settings.interfaceIcons, getListSortFieldIconId(field));
             };
+            // Only non-default entries call this; default-marked entries route through
+            // clearSortOverride instead, so applying always stores an override.
             const applySort = (field: SortField, direction: SortDirection, propertyKey?: string) => {
                 const option = buildSortOption(field, direction);
-                const applySortOverride = async () => {
-                    if (isDefaultSort(option, propertyKey)) {
-                        await removeSelectionSortOverride();
-                    } else {
-                        await setSelectionSortOverride(createListSortOverride(option, propertyKey));
-                    }
+                runAsyncAction(async () => {
+                    await setSelectionSortOverride(createListSortOverride(option, propertyKey));
                     app.workspace.requestSaveLayout();
-                };
-
-                runAsyncAction(applySortOverride);
+                });
+            };
+            // Field changes start dates with newest first and text/property fields in ascending
+            // order. The direction entries below remain available as explicit overrides.
+            const applySortField = (field: SortField, propertyKey?: string) => {
+                applySort(field, getSortDirectionForFieldChange(field), propertyKey);
             };
             const hasSelectionSortOverride = selectionSortOverride !== undefined;
             const isViewUsingDefaults = !hasSelectionSortOverride && !hasSelectionGroupOverride;
+            // Every entry marked as default clears the stored override on click, returning the
+            // view fully to the default sort. Without a stored override the view already follows
+            // the default, so the click saves nothing.
+            const clearSortOverride = () => {
+                if (!hasSelectionSortOverride) {
+                    return;
+                }
+                runAsyncAction(async () => {
+                    await removeSelectionSortOverride();
+                    app.workspace.requestSaveLayout();
+                });
+            };
+            // Same rule for the grouping entries below: default-marked entries clear the stored
+            // grouping override on click.
+            const clearGroupOverride = () => {
+                if (!hasSelectionGroupOverride) {
+                    return;
+                }
+                runAsyncAction(async () => {
+                    await setSelectionGroupOverride(undefined);
+                    app.workspace.requestSaveLayout();
+                });
+            };
 
             menu.addItem(item => {
                 item.setTitle(strings.folderAppearance.sortBy).setIcon('lucide-arrow-up-down').setDisabled(true);
@@ -1668,24 +1664,40 @@ export function useListActions({
 
             (['modified', 'created', 'title', 'filename'] as const).forEach(field => {
                 const isDefaultField = defaultField === field;
+                const isCurrentField = currentField === field;
                 menu.addItem(item => {
                     item.setTitle(withDefaultSuffix(getSortFieldLabel(field), isDefaultField))
                         .setIcon(getSortFieldMenuIcon(field))
-                        .setChecked(currentField === field)
+                        .setChecked(isCurrentField)
                         .onClick(() => {
-                            applySort(field, currentDirection);
+                            if (isDefaultField) {
+                                clearSortOverride();
+                                return;
+                            }
+                            if (isCurrentField) {
+                                return;
+                            }
+                            applySortField(field);
                         });
                 });
             });
 
             propertySortKeys.forEach(propertyKey => {
                 const isDefaultField = defaultField === 'property' && samePropertySortKey(defaultSortSpec.propertyKey, propertyKey);
+                const isCurrentField = currentField === 'property' && samePropertySortKey(currentSortSpec.propertyKey, propertyKey);
                 menu.addItem(item => {
                     item.setTitle(withDefaultSuffix(getSortFieldLabel('property', propertyKey), isDefaultField))
                         .setIcon(getSortFieldMenuIcon('property', propertyKey))
-                        .setChecked(currentField === 'property' && samePropertySortKey(currentSortSpec.propertyKey, propertyKey))
+                        .setChecked(isCurrentField)
                         .onClick(() => {
-                            applySort('property', currentDirection, propertyKey);
+                            if (isDefaultField) {
+                                clearSortOverride();
+                                return;
+                            }
+                            if (isCurrentField) {
+                                return;
+                            }
+                            applySortField('property', propertyKey);
                         });
                 });
             });
@@ -1712,6 +1724,10 @@ export function useListActions({
                             if (isManualSortActive) {
                                 return;
                             }
+                            if (isDefaultDirection) {
+                                clearSortOverride();
+                                return;
+                            }
                             applySort(currentField, direction, currentField === 'property' ? currentSortSpec.propertyKey : undefined);
                         });
                 });
@@ -1721,9 +1737,10 @@ export function useListActions({
 
             // The manual sort toggle and its actions sit in their own separated cluster after the
             // direction entries because those entries apply to the sort fields but not to manual sort.
+            // Manual sort never carries a default marker: reconciliation prevents the default sort
+            // from resolving to the manual-sort property, so this entry always stores an override.
             menu.addItem(item => {
-                const isDefaultField = defaultField === 'property' && isManualSortPropertyKey(settings, defaultSortSpec.propertyKey);
-                item.setTitle(withDefaultSuffix(strings.paneHeader.manualSort, isDefaultField))
+                item.setTitle(strings.paneHeader.manualSort)
                     .setIcon('lucide-list-ordered')
                     .setDisabled(!hasManualSortPropertyKey)
                     .setChecked(isManualSortActive)
@@ -1774,10 +1791,14 @@ export function useListActions({
             const isGroupOptionDisabled = (option: ListNoteGroupingOption): boolean =>
                 isManualSortActive || (option === 'date' && !isDateSortOption(currentSort));
             const addGroupOptionItem = (option: ListNoteGroupingOption, title: string, icon: string, isDisabled: boolean): void => {
-                const isDefaultGroup = areListGroupingOptionsEqual(option, groupingInfo.defaultGrouping);
+                // Clicking the entry marked as default clears the stored override entirely, so the
+                // view returns to the global default including its group order direction. Same-kind
+                // comparison marks the default property entry even when only the current direction
+                // differs; for base modes it is identical to exact comparison.
+                const isDefaultGroupKind = areListGroupingOptionsSameKind(option, groupingInfo.defaultGrouping);
                 menu.addItem(item => {
                     // Same-kind comparison keeps a property entry checked when only its group order direction differs.
-                    item.setTitle(`    ${withDefaultSuffix(title, isDefaultGroup)}`)
+                    item.setTitle(`    ${withDefaultSuffix(title, isDefaultGroupKind)}`)
                         .setIcon(icon)
                         .setDisabled(isDisabled)
                         .setChecked(areListGroupingOptionsSameKind(effectiveCurrentGroup, option))
@@ -1785,16 +1806,21 @@ export function useListActions({
                             if (isDisabled) {
                                 return;
                             }
+                            if (isDefaultGroupKind) {
+                                clearGroupOverride();
+                                return;
+                            }
                             runAsyncAction(async () => {
-                                await setSelectionGroupOverride(isDefaultGroup ? undefined : option);
+                                await setSelectionGroupOverride(option);
                                 app.workspace.requestSaveLayout();
                             });
                         });
                 });
             };
 
-            const groupOptions: ListNoteGroupingBaseOption[] = hasFolderSelection ? ['custom', 'date', 'folder'] : ['custom', 'date'];
-            groupOptions.forEach(option => {
+            // Custom and Date annotate the sorted list with headers; the separator below splits
+            // them from the entries that partition the list into ordered groups.
+            (['custom', 'date'] as const).forEach(option => {
                 addGroupOptionItem(
                     option,
                     strings.settings.items.groupNotes.options[option],
@@ -1803,13 +1829,25 @@ export function useListActions({
                 );
             });
 
-            // The properties registered for property sort double as grouping choices, mirroring the sort field list above.
-            // Switching the grouping property keeps the current group order direction, matching Obsidian Bases.
-            const effectiveGroupPropertyKey = getPropertyGroupingKey(effectiveCurrentGroup);
-            const effectiveGroupDirection = getPropertyGroupingDirection(effectiveCurrentGroup) ?? 'asc';
-            propertySortKeys.forEach(propertyKey => {
+            menu.addSeparator();
+
+            if (hasFolderSelection) {
                 addGroupOptionItem(
-                    createPropertyGroupingOption(propertyKey, effectiveGroupDirection),
+                    'folder',
+                    strings.settings.items.groupNotes.options.folder,
+                    getGroupingIcon('folder'),
+                    isGroupOptionDisabled('folder')
+                );
+            }
+
+            // The configured grouping properties provide the grouping choices, mirroring the sort field list above.
+            // Switching the grouping property keeps the current group order, matching Obsidian Bases.
+            const effectiveGroupPropertyKey = getPropertyGroupingKey(effectiveCurrentGroup);
+            const effectiveGroupOrder = getPropertyGroupingOrder(effectiveCurrentGroup) ?? 'follow';
+            const propertyGroupKeys = getAvailablePropertyGroupKeys(settings);
+            propertyGroupKeys.forEach(propertyKey => {
+                addGroupOptionItem(
+                    createPropertyGroupingOption(propertyKey, effectiveGroupOrder),
                     getSortFieldLabel('property', propertyKey),
                     getSortFieldMenuIcon('property', propertyKey),
                     isManualSortActive
@@ -1818,7 +1856,7 @@ export function useListActions({
 
             // Without configured property keys the property grouping entries above render nothing, so a
             // disabled placeholder keeps the feature visible, matching the disabled manual sort entry.
-            if (propertySortKeys.length === 0) {
+            if (propertyGroupKeys.length === 0) {
                 menu.addItem(item => {
                     item.setTitle(`    ${getSortFieldLabel('property')}`)
                         .setIcon(getSortFieldMenuIcon('property'))
@@ -1826,20 +1864,40 @@ export function useListActions({
                 });
             }
 
-            // Group order direction applies only to property grouping; date and folder groups keep their fixed order.
+            // Group order applies only to property grouping; date and folder groups keep their fixed order.
             if (effectiveGroupPropertyKey !== null) {
                 menu.addSeparator();
-                (['asc', 'desc'] as const).forEach(direction => {
+                // The default marker follows the default grouping's order independent of its
+                // property key, matching how the sort menu marks its default direction.
+                const defaultGroupOrder = getPropertyGroupingOrder(groupingInfo.defaultGrouping);
+                const groupOrderLabels: Record<PropertyGroupingOrder, string> = {
+                    follow: strings.settings.items.defaultGroupingDirection.options.follow,
+                    asc: sortDirectionLabels.asc,
+                    desc: sortDirectionLabels.desc
+                };
+                const groupOrderIcons: Record<PropertyGroupingOrder, string> = {
+                    follow: 'lucide-arrow-up-down',
+                    asc: 'lucide-sort-asc',
+                    desc: 'lucide-sort-desc'
+                };
+                (['follow', 'asc', 'desc'] as const).forEach(order => {
+                    const orderOption = createPropertyGroupingOption(effectiveGroupPropertyKey, order);
+                    const isDefaultOrder = defaultGroupOrder === order;
                     menu.addItem(item => {
-                        item.setTitle(`    ${sortDirectionLabels[direction]}`)
-                            .setIcon(direction === 'desc' ? 'lucide-sort-desc' : 'lucide-sort-asc')
-                            .setChecked(effectiveGroupDirection === direction)
+                        item.setTitle(`    ${withDefaultSuffix(groupOrderLabels[order], isDefaultOrder)}`)
+                            .setIcon(groupOrderIcons[order])
+                            .setChecked(effectiveGroupOrder === order)
                             .onClick(() => {
-                                if (effectiveGroupDirection === direction) {
+                                if (isDefaultOrder) {
+                                    clearGroupOverride();
+                                    return;
+                                }
+                                // Re-clicking the checked non-default order changes nothing.
+                                if (effectiveGroupOrder === order) {
                                     return;
                                 }
                                 runAsyncAction(async () => {
-                                    await setSelectionGroupOverride(createPropertyGroupingOption(effectiveGroupPropertyKey, direction));
+                                    await setSelectionGroupOverride(orderOption);
                                     app.workspace.requestSaveLayout();
                                 });
                             });

@@ -23,6 +23,7 @@ import type { SettingsTabContext } from '../SettingsTabContext';
 import { runAsyncAction } from '../../../utils/async';
 import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
+import { attachColorSwatchSetting } from '../../colorSwatchSetting';
 import { createDependentSettingsSection, setElementVisible, wireToggleSettingWithDependentSection } from '../../dependentSettings';
 import { DEFAULT_SETTINGS } from '../../defaultSettings';
 import {
@@ -95,13 +96,13 @@ export function renderNotesTab(context: SettingsTabContext): void {
     const { app, containerEl, plugin } = context;
 
     const createGroup = createSettingGroupFactory(containerEl);
-    const tasksGroup = createGroup(strings.settings.groups.notes.tasks);
     const iconGroup = createGroup(strings.settings.groups.notes.icon);
     const titleGroup = createGroup(strings.settings.groups.notes.title);
     const previewTextGroup = createGroup(strings.settings.groups.notes.previewText);
     const featureImageGroup = createGroup(strings.settings.groups.notes.featureImage);
     const tagsGroup = createGroup(strings.settings.groups.notes.tags);
     const notePropertyGroup = createGroup(strings.settings.groups.notes.properties);
+    const tasksGroup = createGroup(strings.settings.groups.notes.tasks);
     const dateGroup = createGroup(strings.settings.groups.notes.date);
     const parentFolderGroup = createGroup(strings.settings.groups.notes.parentFolder);
     const wordCountGroup = createGroup(strings.settings.groups.notes.wordCount);
@@ -115,83 +116,67 @@ export function renderNotesTab(context: SettingsTabContext): void {
         }
     };
 
-    const createColorSetting = (params: { containerEl: HTMLElement; name: string; desc: string; access: ColorSettingAccess }): void => {
-        const setting = new Setting(params.containerEl).setName(params.name).setDesc(params.desc);
-
-        const previewEl = setting.controlEl.createDiv({ cls: 'nn-setting-color-preview' });
-        const swatchButtonEl = previewEl.createEl('button', {
-            cls: 'nn-setting-color-swatch-button',
-            attr: {
-                type: 'button',
-                'aria-label': params.name
-            }
-        });
-        const swatchEl = swatchButtonEl.createDiv({ cls: 'nn-setting-color-swatch' });
-
-        const renderValue = () => {
-            const current = params.access.getValue();
-            swatchEl.style.backgroundColor = current;
-            swatchButtonEl.setAttribute('title', current);
-        };
-
-        const openColorPicker = () => {
-            runAsyncAction(async () => {
-                if (!plugin.metadataService) {
-                    showNotice(strings.common.unknownError, { variant: 'warning' });
-                    return;
-                }
-
-                const { ColorPickerModal } = await import('../../../modals/ColorPickerModal');
-                const modal = new ColorPickerModal(app, {
-                    title: params.name,
-                    initialColor: params.access.getValue(),
-                    settingsProvider: plugin.metadataService.getSettingsProvider(),
-                    onChooseColor: async color => {
-                        const nextValue = typeof color === 'string' && color.trim().length > 0 ? color.trim() : params.access.defaultValue;
-                        params.access.setValue(nextValue);
-                        await plugin.saveSettingsAndUpdate();
-                        renderValue();
-                    }
-                });
-
-                modal.open();
-            });
-        };
-
-        swatchButtonEl.addEventListener('click', openColorPicker);
-
-        renderValue();
-
-        setting.addExtraButton(button => {
-            button
-                .setIcon('lucide-rotate-ccw')
-                .setTooltip(`${strings.common.restoreDefault} (${params.access.defaultValue})`)
-                .onClick(() => {
-                    runAsyncAction(async () => {
-                        const current = params.access.getValue();
-                        if (current === params.access.defaultValue) {
-                            return;
-                        }
-
-                        params.access.setValue(params.access.defaultValue);
-                        await plugin.saveSettingsAndUpdate();
-                        renderValue();
-                    });
-                });
+    const createColorSetting = (params: {
+        containerEl: HTMLElement;
+        name: string;
+        desc: string;
+        access: ColorSettingAccess;
+        darkAccess?: ColorSettingAccess;
+    }): void => {
+        attachColorSwatchSetting({
+            app,
+            plugin,
+            setting: new Setting(params.containerEl),
+            name: params.name,
+            desc: params.desc,
+            access: params.access,
+            darkAccess: params.darkAccess,
+            showRestoreDefault: true
         });
     };
 
-    tasksGroup.addSetting(setting => {
-        setting
-            .setName(strings.settings.items.showFileIconUnfinishedTask.name)
-            .setDesc(strings.settings.items.showFileIconUnfinishedTask.desc)
-            .addToggle(toggle =>
-                toggle.setValue(plugin.settings.showFileIconUnfinishedTask).onChange(async value => {
-                    plugin.settings.showFileIconUnfinishedTask = value;
-                    await plugin.saveSettingsAndUpdate();
-                })
-            );
+    const showFileTaskProgressSetting = tasksGroup.addSetting(setting => {
+        setting.setName(strings.settings.items.showFileTaskProgress.name).setDesc(strings.settings.items.showFileTaskProgress.desc);
     });
+
+    const taskProgressSettingsEl = wireToggleSettingWithDependentSection(
+        showFileTaskProgressSetting,
+        () => plugin.settings.showFileTaskProgress,
+        async value => {
+            plugin.settings.showFileTaskProgress = value;
+            await plugin.saveSettingsAndUpdate();
+        }
+    );
+
+    new Setting(taskProgressSettingsEl)
+        .setName(strings.settings.items.showFileTaskProgressCount.name)
+        .setDesc(strings.settings.items.showFileTaskProgressCount.desc)
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.showFileTaskProgressCount).onChange(async value => {
+                plugin.settings.showFileTaskProgressCount = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
+    new Setting(taskProgressSettingsEl)
+        .setName(strings.settings.items.showFileTaskProgressBar.name)
+        .setDesc(strings.settings.items.showFileTaskProgressBar.desc)
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.showFileTaskProgressBar).onChange(async value => {
+                plugin.settings.showFileTaskProgressBar = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
+    new Setting(taskProgressSettingsEl)
+        .setName(strings.settings.items.hideFileTaskProgressWhenComplete.name)
+        .setDesc(strings.settings.items.hideFileTaskProgressWhenComplete.desc)
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.hideFileTaskProgressWhenComplete).onChange(async value => {
+                plugin.settings.hideFileTaskProgressWhenComplete = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
 
     const showFileBackgroundUnfinishedTaskSetting = tasksGroup.addSetting(setting => {
         setting
@@ -218,6 +203,13 @@ export function renderNotesTab(context: SettingsTabContext): void {
                 plugin.settings.unfinishedTaskBackgroundColor = value;
             },
             defaultValue: DEFAULT_SETTINGS.unfinishedTaskBackgroundColor
+        },
+        darkAccess: {
+            getValue: () => plugin.settings.unfinishedTaskBackgroundColorDark,
+            setValue: value => {
+                plugin.settings.unfinishedTaskBackgroundColorDark = value;
+            },
+            defaultValue: DEFAULT_SETTINGS.unfinishedTaskBackgroundColorDark
         }
     });
 

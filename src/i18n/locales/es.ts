@@ -364,6 +364,8 @@ export const STRINGS_ES = {
             changeBackground: 'Cambiar fondo',
             excludeFolder: 'Ocultar carpeta',
             unhideFolder: 'Mostrar carpeta',
+            hideRootFolder: 'Ocultar carpeta raíz',
+            showRootFolder: 'Mostrar carpeta raíz',
             excludeFromDescendants: 'Ocultar en carpetas superiores',
             includeInDescendants: 'Mostrar en carpetas superiores',
             hiddenFromParentsIndicator: 'Oculta en listas de carpetas superiores',
@@ -536,7 +538,6 @@ export const STRINGS_ES = {
                 'nav-properties': 'Propiedades',
                 'nav-property': 'Propiedad',
                 'nav-property-value': 'Valor',
-                'file-unfinished-task': 'Tareas pendientes',
                 'file-word-count': 'Conteo de palabras',
                 'file-character-count': 'Recuento de caracteres'
             }
@@ -797,8 +798,6 @@ export const STRINGS_ES = {
             forbiddenNameCharactersWindows: 'Los caracteres reservados de Windows no están permitidos: <, >, ", \\, |, ?, *.'
         },
         notices: {
-            hideFolder: 'Carpeta oculta: {name}',
-            showFolder: 'Carpeta mostrada: {name}',
             folderExcludedFromDescendants: 'Oculta en listas de carpetas superiores: {name}',
             folderIncludedInDescendants: 'Visible en listas de carpetas superiores: {name}',
             mergeNotes: 'Se combinaron {count} notas en {name}'
@@ -969,7 +968,8 @@ export const STRINGS_ES = {
         files: 'archivos',
         folder: 'carpeta',
         folders: 'carpetas',
-        wordCount: 'Recuento de palabras'
+        wordCount: 'Recuento de palabras',
+        unfinishedTasks: 'Tareas pendientes'
     },
 
     fileCounts: {
@@ -1056,8 +1056,8 @@ export const STRINGS_ES = {
             },
             list: {
                 display: 'Apariencia',
+                sortAndGroup: 'Orden y agrupación',
                 groupHeaders: 'Encabezados de grupo',
-                propertySort: 'Orden y agrupación por propiedad',
                 manualSort: 'Orden manual',
                 pinnedNotes: 'Notas fijadas',
                 drawingPreviews: 'Vistas previas de dibujos'
@@ -1093,20 +1093,18 @@ export const STRINGS_ES = {
             },
             sortNotesBy: {
                 name: 'Orden predeterminado',
-                desc: 'Elige el orden predeterminado para las notas.',
-                options: {
-                    'modified-desc': 'Fecha de edición (más reciente arriba)',
-                    'modified-asc': 'Fecha de edición (más antigua arriba)',
-                    'created-desc': 'Fecha de creación (más reciente arriba)',
-                    'created-asc': 'Fecha de creación (más antigua arriba)',
-                    'title-asc': 'Título (A arriba)',
-                    'title-desc': 'Título (Z arriba)',
-                    'filename-asc': 'Nombre de archivo (A arriba)',
-                    'filename-desc': 'Nombre de archivo (Z arriba)'
-                },
+                desc: 'Elige el orden predeterminado para las notas. Las propiedades de Propiedades de orden aparecen como opciones de orden adicionales.',
                 directions: {
                     asc: 'Ascendente',
                     desc: 'Descendente'
+                },
+                dateDirections: {
+                    desc: 'Más reciente arriba',
+                    asc: 'Más antigua arriba'
+                },
+                textDirections: {
+                    asc: 'A arriba',
+                    desc: 'Z arriba'
                 },
                 fields: {
                     modified: 'Fecha de edición',
@@ -1116,10 +1114,24 @@ export const STRINGS_ES = {
                     property: 'Propiedad'
                 }
             },
+            defaultSortDirection: {
+                name: 'Dirección de orden'
+            },
+            defaultGroupingDirection: {
+                name: 'Dirección de agrupación',
+                options: {
+                    follow: 'Seguir el orden de clasificación'
+                }
+            },
             propertySortKey: {
-                name: 'Propiedades de orden y agrupación',
-                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
-                placeholder: 'published, author'
+                name: 'Propiedades de orden',
+                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden en el ajuste Orden predeterminado y en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
+                placeholder: 'published, author',
+                defaultsResetNotices: {
+                    sort: 'El orden predeterminado se restableció porque su propiedad ya no está disponible.',
+                    grouping: 'La agrupación predeterminada se restableció porque su propiedad ya no está disponible.',
+                    both: 'El orden predeterminado y la agrupación predeterminada se restablecieron porque sus propiedades ya no están disponibles.'
+                }
             },
             propertySortSecondary: {
                 name: 'Orden secundario',
@@ -1132,7 +1144,19 @@ export const STRINGS_ES = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Cada propiedad listada arriba aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. La ordenación ordena las notas por el valor del frontmatter, uniendo los valores de matriz en una sola cadena. La agrupación reúne las notas que comparten el mismo valor bajo un mismo encabezado; las notas con un valor de lista se agrupan bajo la lista completa, y las notas sin la propiedad quedan en un grupo final "Ninguno".'
+                intro: 'Cómo funcionan la ordenación y la agrupación por una propiedad:',
+                items: [
+                    '**Ordenación:** Elegir una propiedad como Prioridad ordena las notas por sus valores de Prioridad.',
+                    '**Agrupación:** Elegir una propiedad como Estado crea un encabezado para cada valor de Estado. Las notas con el mismo Estado aparecen bajo el mismo encabezado.',
+                    '**Varios valores:** Si una propiedad contiene una lista, Notebook Navigator usa la lista completa. Por ejemplo, si Temas contiene Libros e Historia, ordena o agrupa la nota usando «Libros, Historia», no cada tema por separado.',
+                    '**Valores ausentes:** Al agrupar, las notas sin la propiedad aparecen al final bajo **Ninguno**.',
+                    '**Vistas de etiquetas y propiedades:** Cuando se selecciona la agrupación **Carpeta**, se muestran encabezados de fecha en su lugar.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Propiedades de agrupación',
+                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de agrupación en el ajuste Agrupación predeterminada y en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Propiedad de orden manual',
@@ -1189,7 +1213,11 @@ export const STRINGS_ES = {
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
-                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta. La agrupación por un valor de propiedad del frontmatter está disponible por vista desde el menú de ordenación del panel de lista.',
+                desc: 'Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
+                families: {
+                    headers: 'Encabezados',
+                    groups: 'Grupos'
+                },
                 options: {
                     custom: 'Personalizada',
                     date: 'Fecha',
@@ -1226,15 +1254,27 @@ export const STRINGS_ES = {
             },
             showFileIcons: {
                 name: 'Mostrar iconos de archivo',
-                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono de tareas pendientes > icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
+                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
             },
             useFolderIcon: {
                 name: 'Usar icono de carpeta',
                 desc: 'Mostrar el icono de la carpeta principal cuando no hay un icono de archivo personalizado. El color de la carpeta se usa cuando no hay un color de archivo personalizado.'
             },
-            showFileIconUnfinishedTask: {
-                name: 'Icono de tareas pendientes',
-                desc: 'Mostrar un icono de tarea cuando una nota tiene tareas pendientes.'
+            showFileTaskProgress: {
+                name: 'Mostrar tareas',
+                desc: 'Mostrar el estado de las tareas con una barra de progreso y un número de tareas opcionales. Los colores de las tareas pendientes y completadas se pueden definir por separado con el plugin Style Settings.'
+            },
+            showFileTaskProgressBar: {
+                name: 'Mostrar tareas: barra de progreso',
+                desc: 'Mostrar una barra de progreso junto al icono de tarea.'
+            },
+            showFileTaskProgressCount: {
+                name: 'Mostrar tareas: número de tareas',
+                desc: 'Mostrar el número de tareas completadas y el total de tareas, por ejemplo 3/7.'
+            },
+            hideFileTaskProgressWhenComplete: {
+                name: 'Mostrar tareas: ocultar al completar',
+                desc: 'Ocultar el progreso de tareas cuando todas las tareas de una nota están completadas.'
             },
             showFileBackgroundUnfinishedTask: {
                 name: 'Fondo de tareas pendientes',
