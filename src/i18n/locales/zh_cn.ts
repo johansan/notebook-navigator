@@ -1046,8 +1046,8 @@ export const STRINGS_ZH_CN = {
             },
             list: {
                 display: '外观',
+                sortAndGroup: '排序与分组',
                 groupHeaders: '分组标题',
-                propertySort: '属性排序与分组',
                 manualSort: '手动排序',
                 pinnedNotes: '固定笔记',
                 drawingPreviews: '绘图预览'
@@ -1083,18 +1083,16 @@ export const STRINGS_ZH_CN = {
             },
             sortNotesBy: {
                 name: '默认排序方式',
-                desc: '选择笔记的默认排序方式。“用于排序和分组的属性”中的属性会作为额外的排序选项显示。',
-                options: {
-                    'modified-desc': '编辑日期（最新在顶部）',
-                    'modified-asc': '编辑日期（最旧在顶部）',
-                    'created-desc': '创建日期（最新在顶部）',
-                    'created-asc': '创建日期（最旧在顶部）',
-                    'title-asc': '标题（升序）',
-                    'title-desc': '标题（降序）',
-                    'filename-asc': '文件名（升序）',
-                    'filename-desc': '文件名（降序）'
-                },
+                desc: '选择笔记的默认排序方式。“用于排序的属性”中的属性会作为额外的排序选项显示。',
                 directions: {
+                    asc: '升序',
+                    desc: '降序'
+                },
+                dateDirections: {
+                    desc: '最新在顶部',
+                    asc: '最旧在顶部'
+                },
+                textDirections: {
                     asc: '升序',
                     desc: '降序'
                 },
@@ -1106,9 +1104,18 @@ export const STRINGS_ZH_CN = {
                     property: '属性'
                 }
             },
+            defaultSortDirection: {
+                name: '排序方向'
+            },
+            defaultGroupingDirection: {
+                name: '分组方向',
+                options: {
+                    follow: '跟随排序'
+                }
+            },
             propertySortKey: {
-                name: '用于排序和分组的属性',
-                desc: '以逗号分隔的 frontmatter 属性。每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。这些属性不会被更改。',
+                name: '用于排序的属性',
+                desc: '以逗号分隔的 frontmatter 属性。每个属性会作为排序选项显示在默认排序方式设置和列表窗格的排序菜单中。这些属性不会被更改。',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: '默认排序方式已重置，因为其属性已不可用。',
@@ -1127,7 +1134,19 @@ export const STRINGS_ZH_CN = {
                 }
             },
             propertySortInstructions: {
-                intro: '上面列出的每个属性会在列表窗格的排序菜单中作为排序选项和分组选项显示。排序会按 frontmatter 值排列笔记，数组值会合并为单一字符串。分组会将具有相同值的笔记归入同一标题下；具有列表值的笔记按完整列表分组，缺少该属性的笔记归入末尾的"无"分组。'
+                intro: '按属性排序和分组的工作方式：',
+                items: [
+                    '**排序：** 选择“优先级”等属性后，笔记会按各自的优先级值排序。',
+                    '**分组：** 选择“状态”等属性后，每个状态值都会创建一个标题。状态相同的笔记会显示在同一标题下。',
+                    '**多个值：** 如果属性包含列表，Notebook Navigator 会使用完整列表。例如，如果“主题”包含“书籍”和“历史”，笔记会按“书籍, 历史”这个完整列表排序或分组，而不会分别按每个主题处理。',
+                    '**缺少值：** 分组时，没有该属性的笔记会显示在末尾的 **无** 下。',
+                    '**标签和属性视图：** 选择 **文件夹** 分组后，会改为显示日期标题。'
+                ]
+            },
+            propertyGroupKey: {
+                name: '用于分组的属性',
+                desc: '以逗号分隔的 frontmatter 属性。每个属性会作为分组选项显示在默认分组设置和列表窗格的排序菜单中。这些属性不会被更改。',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '手动排序属性',
@@ -1181,7 +1200,11 @@ export const STRINGS_ZH_CN = {
             },
             groupNotes: {
                 name: '默认分组',
-                desc: '自定义显示在 frontmatter 中定义的标题。日期按日期对笔记分组。文件夹按文件夹对笔记分组。当选择文件夹时，标签和属性视图使用日期分组。“用于排序和分组的属性”中的属性会作为额外的分组选项显示。',
+                desc: '**标题**在不改变顺序的情况下为已排序的列表添加标注：自定义显示在 frontmatter 中定义的标题，日期插入日期标题。**分组**会重新排列列表：文件夹和属性分组按自身顺序排列，每个分组内的笔记遵循排序方式。',
+                families: {
+                    headers: '标题',
+                    groups: '分组'
+                },
                 options: {
                     custom: '自定义',
                     date: '日期',

@@ -85,9 +85,10 @@ export function buildListGroupCollapseKeyPrefix({
         scope = `folder:${encodeKeyPart(selectedFolderPath ?? '/')}`;
     }
 
-    // Property grouping keys drop the direction prefix so collapse state survives flipping the group order.
+    // Property grouping keys normalize to the ascending prefix so collapse state survives
+    // flipping or following the group order.
     const propertyGroupingKey = getPropertyGroupingKey(groupingMode);
-    const scopeGroupingMode = propertyGroupingKey !== null ? createPropertyGroupingOption(propertyGroupingKey) : groupingMode;
+    const scopeGroupingMode = propertyGroupingKey !== null ? createPropertyGroupingOption(propertyGroupingKey, 'asc') : groupingMode;
 
     return `scope=${scope};group=${encodeKeyPart(scopeGroupingMode)};id=`;
 }

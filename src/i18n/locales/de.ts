@@ -1058,8 +1058,8 @@ export const STRINGS_DE = {
             },
             list: {
                 display: 'Darstellung',
+                sortAndGroup: 'Sortierung & Gruppierung',
                 groupHeaders: 'Gruppenüberschriften',
-                propertySort: 'Eigenschaftssortierung und -gruppierung',
                 manualSort: 'Manuelle Sortierung',
                 pinnedNotes: 'Angeheftete Notizen',
                 drawingPreviews: 'Zeichnungsvorschauen'
@@ -1095,20 +1095,18 @@ export const STRINGS_DE = {
             },
             sortNotesBy: {
                 name: 'Standard-Sortierreihenfolge',
-                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen. Eigenschaften aus Sortier- und Gruppierungseigenschaften erscheinen als zusätzliche Sortieroptionen.',
-                options: {
-                    'modified-desc': 'Bearbeitungsdatum (neueste oben)',
-                    'modified-asc': 'Bearbeitungsdatum (älteste oben)',
-                    'created-desc': 'Erstellungsdatum (neueste oben)',
-                    'created-asc': 'Erstellungsdatum (älteste oben)',
-                    'title-asc': 'Titel (A oben)',
-                    'title-desc': 'Titel (Z oben)',
-                    'filename-asc': 'Dateiname (A oben)',
-                    'filename-desc': 'Dateiname (Z oben)'
-                },
+                desc: 'Wählen Sie die Standard-Sortierreihenfolge für Notizen. Eigenschaften aus Sortiereigenschaften erscheinen als zusätzliche Sortieroptionen.',
                 directions: {
                     asc: 'Aufsteigend',
                     desc: 'Absteigend'
+                },
+                dateDirections: {
+                    desc: 'Neueste oben',
+                    asc: 'Älteste oben'
+                },
+                textDirections: {
+                    asc: 'A oben',
+                    desc: 'Z oben'
                 },
                 fields: {
                     modified: 'Bearbeitungsdatum',
@@ -1118,9 +1116,18 @@ export const STRINGS_DE = {
                     property: 'Eigenschaft'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sortierrichtung'
+            },
+            defaultGroupingDirection: {
+                name: 'Gruppierungsrichtung',
+                options: {
+                    follow: 'Sortierreihenfolge folgen'
+                }
+            },
             propertySortKey: {
-                name: 'Sortier- und Gruppierungseigenschaften',
-                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
+                name: 'Sortiereigenschaften',
+                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Sortieroption in der Einstellung Standard-Sortierreihenfolge und im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'Die Standard-Sortierreihenfolge wurde zurückgesetzt, weil ihre Eigenschaft nicht mehr verfügbar ist.',
@@ -1139,7 +1146,19 @@ export const STRINGS_DE = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Jede oben aufgeführte Eigenschaft erscheint als Sortieroption und als Gruppierungsoption im Sortiermenü des Listenbereichs. Die Sortierung ordnet Notizen nach ihrem Frontmatter-Wert, wobei Array-Werte zu einer einzelnen Zeichenkette zusammengefügt werden. Die Gruppierung fasst Notizen mit demselben Wert unter einer Überschrift zusammen; Notizen mit einem Listenwert werden unter der vollständigen Liste gruppiert, und Notizen ohne die Eigenschaft stehen in einer abschließenden Gruppe „Keine".'
+                intro: 'So funktionieren Sortierung und Gruppierung nach einer Eigenschaft:',
+                items: [
+                    '**Sortierung:** Die Auswahl einer Eigenschaft wie Priorität sortiert Notizen nach ihren Prioritätswerten.',
+                    '**Gruppierung:** Die Auswahl einer Eigenschaft wie Status erstellt für jeden Statuswert eine Überschrift. Notizen mit demselben Status erscheinen unter derselben Überschrift.',
+                    '**Mehrere Werte:** Wenn eine Eigenschaft eine Liste enthält, verwendet Notebook Navigator die vollständige Liste. Enthält Themen zum Beispiel Bücher und Geschichte, wird die Notiz anhand von „Bücher, Geschichte“ sortiert oder gruppiert und nicht nach jedem Thema einzeln.',
+                    '**Fehlende Werte:** Beim Gruppieren erscheinen Notizen ohne die Eigenschaft am Ende unter **Keine**.',
+                    '**Tag- und Eigenschaftsansichten:** Wenn **Ordner** als Gruppierung ausgewählt ist, werden stattdessen Datumsüberschriften angezeigt.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Gruppierungseigenschaften',
+                desc: 'Kommagetrennte Frontmatter-Eigenschaften. Jede Eigenschaft erscheint als Gruppierungsoption in der Einstellung Standardgruppierung und im Sortiermenü des Listenbereichs. Diese Eigenschaften werden nicht geändert.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschaft für manuelle Sortierung',
@@ -1196,7 +1215,11 @@ export const STRINGS_DE = {
             },
             groupNotes: {
                 name: 'Standardgruppierung',
-                desc: 'Benutzerdefiniert zeigt im Frontmatter definierte Überschriften. Datum gruppiert Notizen nach Datum. Ordner gruppiert Notizen nach Ordner. Tag- und Eigenschaftsansichten verwenden Datumsgruppen, wenn Ordner ausgewählt ist. Eigenschaften aus Sortier- und Gruppierungseigenschaften erscheinen als zusätzliche Gruppierungsoptionen.',
+                desc: '**Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
+                families: {
+                    headers: 'Überschriften',
+                    groups: 'Gruppen'
+                },
                 options: {
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',

@@ -1059,8 +1059,8 @@ export const STRINGS_FR = {
             },
             list: {
                 display: 'Apparence',
+                sortAndGroup: 'Tri et regroupement',
                 groupHeaders: 'En-têtes de groupe',
-                propertySort: 'Tri et regroupement par propriété',
                 manualSort: 'Tri manuel',
                 pinnedNotes: 'Notes épinglées',
                 drawingPreviews: 'Aperçus des dessins'
@@ -1096,20 +1096,18 @@ export const STRINGS_FR = {
             },
             sortNotesBy: {
                 name: 'Ordre de tri par défaut',
-                desc: "Choisissez l'ordre de tri par défaut des notes. Les propriétés de Propriétés de tri et de regroupement apparaissent comme options de tri supplémentaires.",
-                options: {
-                    'modified-desc': 'Date de modification (plus récente en haut)',
-                    'modified-asc': 'Date de modification (plus ancienne en haut)',
-                    'created-desc': 'Date de création (plus récente en haut)',
-                    'created-asc': 'Date de création (plus ancienne en haut)',
-                    'title-asc': 'Titre (A en haut)',
-                    'title-desc': 'Titre (Z en haut)',
-                    'filename-asc': 'Nom de fichier (A en haut)',
-                    'filename-desc': 'Nom de fichier (Z en haut)'
-                },
+                desc: "Choisissez l'ordre de tri par défaut des notes. Les propriétés de Propriétés de tri apparaissent comme options de tri supplémentaires.",
                 directions: {
                     asc: 'Croissant',
                     desc: 'Décroissant'
+                },
+                dateDirections: {
+                    desc: 'Plus récente en haut',
+                    asc: 'Plus ancienne en haut'
+                },
+                textDirections: {
+                    asc: 'A en haut',
+                    desc: 'Z en haut'
                 },
                 fields: {
                     modified: 'Date de modification',
@@ -1119,9 +1117,18 @@ export const STRINGS_FR = {
                     property: 'Propriété'
                 }
             },
+            defaultSortDirection: {
+                name: 'Direction du tri'
+            },
+            defaultGroupingDirection: {
+                name: 'Direction de regroupement',
+                options: {
+                    follow: "Suivre l'ordre de tri"
+                }
+            },
             propertySortKey: {
-                name: 'Propriétés de tri et de regroupement',
-                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
+                name: 'Propriétés de tri',
+                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de tri dans le réglage Ordre de tri par défaut et dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: "L'ordre de tri par défaut a été réinitialisé car sa propriété n'est plus disponible.",
@@ -1140,7 +1147,19 @@ export const STRINGS_FR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Chaque propriété listée ci-dessus apparaît comme option de tri et comme option de regroupement dans le menu de tri du panneau de liste. Le tri ordonne les notes selon la valeur frontmatter, les valeurs de tableau étant jointes en une seule chaîne. Le regroupement rassemble les notes partageant la même valeur sous un même en-tête ; les notes avec une valeur de liste sont regroupées sous la liste complète, et les notes sans la propriété sont placées dans un groupe « Aucun » à la fin.'
+                intro: 'Fonctionnement du tri et du regroupement par propriété :',
+                items: [
+                    '**Tri :** Choisir une propriété comme Priorité trie les notes selon leur valeur de Priorité.',
+                    '**Regroupement :** Choisir une propriété comme Statut crée un en-tête pour chaque valeur de Statut. Les notes ayant le même Statut apparaissent sous le même en-tête.',
+                    '**Valeurs multiples :** Si une propriété contient une liste, Notebook Navigator utilise la liste complète. Par exemple, si Sujets contient Livres et Histoire, la note est triée ou regroupée selon « Livres, Histoire », et non selon chaque sujet séparément.',
+                    '**Valeurs manquantes :** Lors du regroupement, les notes sans cette propriété apparaissent sous **Aucun** à la fin.',
+                    '**Vues par étiquette et par propriété :** Lorsque le regroupement **Dossier** est sélectionné, des en-têtes de date sont affichés à la place.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Propriétés de regroupement',
+                desc: 'Propriétés frontmatter séparées par des virgules. Chaque propriété apparaît comme option de regroupement dans le réglage Regroupement par défaut et dans le menu de tri du panneau de liste. Ces propriétés ne sont pas modifiées.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Propriété de tri manuel',
@@ -1197,7 +1216,11 @@ export const STRINGS_FR = {
             },
             groupNotes: {
                 name: 'Regroupement par défaut',
-                desc: 'Personnalisé affiche les en-têtes définis dans le frontmatter. Date regroupe les notes par date. Dossier regroupe les notes par dossier. Les vues par étiquette et par propriété utilisent des groupes de dates lorsque dossier est sélectionné. Les propriétés de Propriétés de tri et de regroupement apparaissent comme options de regroupement supplémentaires.',
+                desc: "Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
+                families: {
+                    headers: 'En-têtes',
+                    groups: 'Groupes'
+                },
                 options: {
                     custom: 'Personnalisé',
                     date: 'Date',

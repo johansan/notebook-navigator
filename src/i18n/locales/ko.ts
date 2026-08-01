@@ -1052,8 +1052,8 @@ export const STRINGS_KO = {
             },
             list: {
                 display: '모양',
+                sortAndGroup: '정렬 및 그룹화',
                 groupHeaders: '그룹 머리글',
-                propertySort: '속성 정렬 및 그룹화',
                 manualSort: '수동 정렬',
                 pinnedNotes: '고정된 노트',
                 drawingPreviews: '그림 미리보기'
@@ -1089,20 +1089,18 @@ export const STRINGS_KO = {
             },
             sortNotesBy: {
                 name: '기본 정렬 순서',
-                desc: '노트의 기본 정렬 순서를 선택하세요. 정렬 및 그룹화에 사용할 속성의 속성이 추가 정렬 옵션으로 표시됩니다.',
-                options: {
-                    'modified-desc': '수정 날짜 (최신 상위)',
-                    'modified-asc': '수정 날짜 (오래된 상위)',
-                    'created-desc': '생성 날짜 (최신 상위)',
-                    'created-asc': '생성 날짜 (오래된 상위)',
-                    'title-asc': '제목 (가나다 상위)',
-                    'title-desc': '제목 (역순 상위)',
-                    'filename-asc': '파일 이름 (가나다 상위)',
-                    'filename-desc': '파일 이름 (역순 상위)'
-                },
+                desc: '노트의 기본 정렬 순서를 선택하세요. 정렬에 사용할 속성의 속성이 추가 정렬 옵션으로 표시됩니다.',
                 directions: {
                     asc: '오름차순',
                     desc: '내림차순'
+                },
+                dateDirections: {
+                    desc: '최신 상위',
+                    asc: '오래된 상위'
+                },
+                textDirections: {
+                    asc: '가나다 상위',
+                    desc: '역순 상위'
                 },
                 fields: {
                     modified: '수정 날짜',
@@ -1112,9 +1110,18 @@ export const STRINGS_KO = {
                     property: '속성'
                 }
             },
+            defaultSortDirection: {
+                name: '정렬 방향'
+            },
+            defaultGroupingDirection: {
+                name: '그룹화 방향',
+                options: {
+                    follow: '정렬 순서 따르기'
+                }
+            },
             propertySortKey: {
-                name: '정렬 및 그룹화에 사용할 속성',
-                desc: '쉼표로 구분된 frontmatter 속성. 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
+                name: '정렬에 사용할 속성',
+                desc: '쉼표로 구분된 frontmatter 속성입니다. 각 속성은 기본 정렬 순서 설정과 목록 창의 정렬 메뉴에 정렬 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: '속성을 더 이상 사용할 수 없어 기본 정렬 순서가 초기화되었습니다.',
@@ -1133,7 +1140,19 @@ export const STRINGS_KO = {
                 }
             },
             propertySortInstructions: {
-                intro: '위에 나열된 각 속성은 목록 창의 정렬 메뉴에 정렬 옵션과 그룹화 옵션으로 표시됩니다. 정렬은 frontmatter 값으로 노트를 정렬하며, 배열 값은 하나의 문자열로 결합됩니다. 그룹화는 같은 값을 가진 노트를 하나의 머리글 아래에 모읍니다. 목록 값을 가진 노트는 전체 목록으로 그룹화되고, 속성이 없는 노트는 마지막의 "없음" 그룹에 들어갑니다.'
+                intro: '속성을 기준으로 정렬하고 그룹화하는 방식:',
+                items: [
+                    '**정렬:** 우선순위와 같은 속성을 선택하면 각 노트의 우선순위 값에 따라 정렬됩니다.',
+                    '**그룹화:** 상태와 같은 속성을 선택하면 상태 값마다 머리글이 만들어집니다. 상태가 같은 노트는 같은 머리글 아래에 표시됩니다.',
+                    '**여러 값:** 속성에 목록이 포함된 경우 Notebook Navigator는 전체 목록을 사용합니다. 예를 들어 주제에 책과 역사가 포함되어 있으면 각 주제를 따로 처리하지 않고 “책, 역사”를 사용하여 노트를 정렬하거나 그룹화합니다.',
+                    '**누락된 값:** 그룹화할 때 속성이 없는 노트는 마지막의 **없음** 아래에 표시됩니다.',
+                    '**태그 및 속성 보기:** **폴더** 그룹화를 선택하면 날짜 머리글이 대신 표시됩니다.'
+                ]
+            },
+            propertyGroupKey: {
+                name: '그룹화에 사용할 속성',
+                desc: '쉼표로 구분된 frontmatter 속성입니다. 각 속성은 기본 그룹화 설정과 목록 창의 정렬 메뉴에 그룹화 옵션으로 표시됩니다. 이 속성들은 변경되지 않습니다.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '수동 정렬 속성',
@@ -1190,7 +1209,11 @@ export const STRINGS_KO = {
             },
             groupNotes: {
                 name: '기본 그룹화',
-                desc: '사용자 지정은 frontmatter에 정의된 머리글을 표시합니다. 날짜는 노트를 날짜별로 그룹화합니다. 폴더는 노트를 폴더별로 그룹화합니다. 태그와 속성 보기는 폴더가 선택되어 있으면 날짜 그룹을 사용합니다. 정렬 및 그룹화에 사용할 속성의 속성이 추가 그룹화 옵션으로 표시됩니다.',
+                desc: '**머리글**은 순서를 바꾸지 않고 정렬된 목록에 표시를 더합니다. 사용자 지정은 frontmatter에 정의된 머리글을 표시하고, 날짜는 날짜 머리글을 삽입합니다. **그룹**은 목록을 다시 정렬합니다. 폴더와 속성 그룹은 자체적으로 정렬되며 각 그룹 내의 노트는 정렬 순서를 따릅니다.',
+                families: {
+                    headers: '머리글',
+                    groups: '그룹'
+                },
                 options: {
                     custom: '사용자 지정',
                     date: '날짜',

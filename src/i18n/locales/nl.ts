@@ -1057,8 +1057,8 @@ export const STRINGS_NL = {
             },
             list: {
                 display: 'Uiterlijk',
+                sortAndGroup: 'Sorteren & groeperen',
                 groupHeaders: 'Groepskoppen',
-                propertySort: 'Sorteren en groeperen op eigenschap',
                 manualSort: 'Handmatig sorteren',
                 pinnedNotes: 'Vastgezette notities',
                 drawingPreviews: 'Tekeningvoorbeelden'
@@ -1094,20 +1094,18 @@ export const STRINGS_NL = {
             },
             sortNotesBy: {
                 name: 'Standaard sorteervolgorde',
-                desc: 'Kies de standaard sorteervolgorde voor notities. Eigenschappen uit Sorteer- en groeperingseigenschappen verschijnen als extra sorteeropties.',
-                options: {
-                    'modified-desc': 'Datum bewerkt (nieuwste bovenaan)',
-                    'modified-asc': 'Datum bewerkt (oudste bovenaan)',
-                    'created-desc': 'Datum gemaakt (nieuwste bovenaan)',
-                    'created-asc': 'Datum gemaakt (oudste bovenaan)',
-                    'title-asc': 'Titel (A bovenaan)',
-                    'title-desc': 'Titel (Z bovenaan)',
-                    'filename-asc': 'Bestandsnaam (A bovenaan)',
-                    'filename-desc': 'Bestandsnaam (Z bovenaan)'
-                },
+                desc: 'Kies de standaard sorteervolgorde voor notities. Eigenschappen uit Sorteereigenschappen verschijnen als extra sorteeropties.',
                 directions: {
                     asc: 'Oplopend',
                     desc: 'Aflopend'
+                },
+                dateDirections: {
+                    desc: 'Nieuwste bovenaan',
+                    asc: 'Oudste bovenaan'
+                },
+                textDirections: {
+                    asc: 'A bovenaan',
+                    desc: 'Z bovenaan'
                 },
                 fields: {
                     modified: 'Datum bewerkt',
@@ -1117,9 +1115,18 @@ export const STRINGS_NL = {
                     property: 'Eigenschap'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sorteerrichting'
+            },
+            defaultGroupingDirection: {
+                name: 'Groeperingsrichting',
+                options: {
+                    follow: 'Sorteervolgorde volgen'
+                }
+            },
             propertySortKey: {
-                name: 'Sorteer- en groeperingseigenschappen',
-                desc: "Door komma's gescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.",
+                name: 'Sorteereigenschappen',
+                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als sorteeroptie in de instelling Standaard sorteervolgorde en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'De standaard sorteervolgorde is teruggezet omdat de eigenschap niet meer beschikbaar is.',
@@ -1138,7 +1145,19 @@ export const STRINGS_NL = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Elke hierboven vermelde eigenschap verschijnt als sorteeroptie en als groeperingsoptie in het sorteermenu van het lijstpaneel. Sorteren ordent notities op de frontmatter-waarde, waarbij arraywaarden worden samengevoegd tot één string. Groeperen verzamelt notities met dezelfde waarde onder één kop; notities met een lijstwaarde worden gegroepeerd onder de volledige lijst, en notities zonder de eigenschap komen in een afsluitende groep "Geen".'
+                intro: 'Zo werken sorteren en groeperen op een eigenschap:',
+                items: [
+                    '**Sorteren:** Als je een eigenschap zoals Prioriteit kiest, worden notities gesorteerd op hun Prioriteitswaarde.',
+                    '**Groeperen:** Als je een eigenschap zoals Status kiest, wordt voor elke Statuswaarde een kop gemaakt. Notities met dezelfde Status verschijnen onder dezelfde kop.',
+                    '**Meerdere waarden:** Als een eigenschap een lijst bevat, gebruikt Notebook Navigator de volledige lijst. Als Onderwerpen bijvoorbeeld Boeken en Geschiedenis bevat, wordt de notitie gesorteerd of gegroepeerd op ‘Boeken, Geschiedenis’, niet op elk onderwerp afzonderlijk.',
+                    '**Ontbrekende waarden:** Bij groeperen verschijnen notities zonder de eigenschap onderaan onder **Geen**.',
+                    '**Tag- en eigenschapweergaven:** Als groeperen op **Map** is geselecteerd, worden in plaats daarvan datumkoppen weergegeven.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Groeperingseigenschappen',
+                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als groeperingsoptie in de instelling Standaardgroepering en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Eigenschap voor handmatig sorteren',
@@ -1195,7 +1214,11 @@ export const STRINGS_NL = {
             },
             groupNotes: {
                 name: 'Standaard groepering',
-                desc: 'Aangepast toont koppen gedefinieerd in frontmatter. Datum groepeert notities op datum. Map groepeert notities op map. Tag- en eigenschapweergaven gebruiken datumgroepen wanneer een map is geselecteerd. Eigenschappen uit Sorteer- en groeperingseigenschappen verschijnen als extra groeperingsopties.',
+                desc: '**Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
+                families: {
+                    headers: 'Koppen',
+                    groups: 'Groepen'
+                },
                 options: {
                     custom: 'Aangepast',
                     date: 'Datum',
