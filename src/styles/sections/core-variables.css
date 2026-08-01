@@ -138,13 +138,13 @@ body {
        Notebook Navigator Theme Variables
        ======================================================================== */
 
-    /* -- Theme Foreground -- */
+    /* -- Foreground colors -- */
     --nn-theme-foreground: var(--text-normal);
     --nn-theme-foreground-muted: color-mix(in srgb, var(--nn-theme-foreground) 70%, transparent);
     --nn-theme-foreground-faded: color-mix(in srgb, var(--nn-theme-foreground) 50%, transparent);
     --nn-theme-foreground-faint: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
 
-    /* -- Navigation Pane -- */
+    /* -- Navigation pane -- */
     --nn-theme-nav-bg: var(--background-secondary);
     --nn-theme-nav-separator-color: var(--nn-theme-foreground);
     --nn-theme-nav-separator-background: linear-gradient(
@@ -160,140 +160,120 @@ body {
     --nn-theme-nav-leader-color: var(--nn-theme-foreground-faded);
     --nn-theme-pinned-shortcut-shadow-color: rgba(0, 0, 0, 0.03);
 
-    /* -- Navigation Calendar -- */
-    --nn-theme-calendar-header-color: var(--nn-theme-foreground);
-    --nn-theme-calendar-weekday-color: var(--nn-theme-foreground-muted);
-    --nn-theme-calendar-week-color: var(--nn-theme-foreground-muted);
-    --nn-theme-calendar-day-in-month-color: var(--nn-theme-foreground);
-    --nn-theme-calendar-day-outside-month-color: var(--nn-theme-foreground-faded);
-    --nn-theme-calendar-weekend-bg: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
-    --nn-theme-calendar-hover-bg: var(--background-modifier-hover);
-    --nn-theme-calendar-note-indicator-color: var(--nn-theme-foreground-faded);
-    --nn-theme-calendar-unfinished-task-indicator-color: var(--nn-theme-calendar-note-indicator-color);
-    --nn-theme-calendar-feature-image-text-color: white;
-    --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.05);
-    --nn-theme-calendar-day-today-color: var(--nn-theme-calendar-day-in-month-color);
-    --nn-theme-calendar-day-today-bg: var(--text-selection);
-    --nn-theme-calendar-day-active-border-color: var(--interactive-accent);
-    --nn-theme-calendar-day-active-border-width: 3px;
-
-    /* -- Folder & Tag Items -- */
+    /* -- Navigation items -- */
     --nn-theme-navitem-chevron-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-icon-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-name-color: var(--nn-theme-foreground);
     --nn-theme-navitem-file-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-count-color: var(--nn-theme-foreground-muted);
-    --nn-theme-navitem-count-bg: transparent;
-    --nn-theme-navitem-count-border-radius: 8px;
+    --nn-theme-navitem-name-font-weight: 400;
+    --nn-theme-navitem-custom-color-name-font-weight: 600;
+    --nn-theme-navitem-folder-note-name-decoration: underline;
+    --nn-theme-navitem-folder-note-name-hover-decoration: underline;
     --nn-theme-navitem-border-radius: 4px;
     --nn-theme-navitem-border-width: 0px;
-    --nn-theme-navitem-count-border-width: 0px;
     --nn-theme-navitem-custom-border-color: transparent;
-    --nn-theme-navitem-hover-border-color: transparent;
-    --nn-theme-navitem-selected-border-color: transparent;
-    --nn-theme-navitem-selected-inactive-border-color: var(--nn-theme-navitem-selected-border-color);
-    --nn-theme-navitem-count-border-color: transparent;
-    --nn-theme-navitem-selected-count-border-color: var(--nn-theme-navitem-count-border-color);
-    --nn-theme-navitem-selected-inactive-count-border-color: var(--nn-theme-navitem-selected-count-border-color);
     --nn-theme-navitem-hover-bg: var(--background-modifier-hover);
-    --nn-theme-navitem-selected-bg: var(--text-selection);
-    --nn-theme-navitem-selected-chevron-color: var(--nn-theme-navitem-chevron-color);
-    --nn-theme-navitem-selected-icon-color: var(--nn-theme-navitem-icon-color);
-    --nn-theme-navitem-selected-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-selected-count-color: var(--nn-theme-navitem-count-color);
-    --nn-theme-navitem-selected-count-bg: var(--nn-theme-navitem-count-bg);
-    --nn-theme-navitem-selected-inactive-bg: var(--background-modifier-hover);
-    --nn-theme-navitem-selected-inactive-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-selected-inactive-chevron-color: var(--nn-theme-navitem-selected-chevron-color);
-    --nn-theme-navitem-selected-inactive-icon-color: var(--nn-theme-navitem-selected-icon-color);
-    --nn-theme-navitem-selected-inactive-count-color: var(--nn-theme-navitem-selected-count-color);
-    --nn-theme-navitem-selected-inactive-count-bg: var(--nn-theme-navitem-selected-count-bg);
+    --nn-theme-navitem-hover-border-color: transparent;
     --nn-theme-tag-positive-bg: #00800033;
     --nn-theme-tag-negative-bg: #ff000033;
 
-    /* -- Navigation Item Text Styling -- */
-    --nn-theme-navitem-name-font-weight: 400;
-    --nn-theme-navitem-custom-color-name-font-weight: 600;
+    /* -- Navigation selection -- */
+    --nn-theme-navitem-selected-bg: var(--text-selection);
+    --nn-theme-navitem-selected-border-color: transparent;
+    --nn-theme-navitem-selected-chevron-color: var(--nn-theme-navitem-chevron-color);
+    --nn-theme-navitem-selected-icon-color: var(--nn-theme-navitem-icon-color);
+    --nn-theme-navitem-selected-name-color: var(--nn-theme-navitem-name-color);
+    --nn-theme-navitem-selected-inactive-bg: var(--background-modifier-hover);
+    --nn-theme-navitem-selected-inactive-border-color: var(--nn-theme-navitem-selected-border-color);
+    --nn-theme-navitem-selected-inactive-chevron-color: var(--nn-theme-navitem-selected-chevron-color);
+    --nn-theme-navitem-selected-inactive-icon-color: var(--nn-theme-navitem-selected-icon-color);
+    --nn-theme-navitem-selected-inactive-name-color: var(--nn-theme-navitem-name-color);
+
+    /* -- File counts -- */
+    --nn-theme-navitem-count-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-count-font-weight: 400;
-    --nn-theme-navitem-folder-note-name-decoration: underline;
-    --nn-theme-navitem-folder-note-name-hover-decoration: underline;
+    --nn-theme-navitem-count-bg: transparent;
+    --nn-theme-navitem-count-border-radius: 8px;
+    --nn-theme-navitem-count-border-width: 0px;
+    --nn-theme-navitem-count-border-color: transparent;
+    --nn-theme-navitem-selected-count-color: var(--nn-theme-navitem-count-color);
+    --nn-theme-navitem-selected-count-bg: var(--nn-theme-navitem-count-bg);
+    --nn-theme-navitem-selected-count-border-color: var(--nn-theme-navitem-count-border-color);
+    --nn-theme-navitem-selected-inactive-count-color: var(--nn-theme-navitem-selected-count-color);
+    --nn-theme-navitem-selected-inactive-count-bg: var(--nn-theme-navitem-selected-count-bg);
+    --nn-theme-navitem-selected-inactive-count-border-color: var(--nn-theme-navitem-selected-count-border-color);
 
-    /* -- Pane Divider -- */
-    --nn-theme-divider-border-color: var(--divider-color);
-    --nn-theme-divider-resize-handle-hover-bg: var(--interactive-accent);
-
-    /* -- List Pane (Files) -- */
+    /* -- List pane -- */
     --nn-theme-list-bg: var(--background-primary);
-    --nn-theme-list-header-icon-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-header-breadcrumb-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-header-breadcrumb-font-weight: 600;
     --nn-theme-list-search-active-bg: var(--text-highlight-bg);
     --nn-theme-list-search-border-color: var(--background-modifier-border);
-    --nn-theme-list-heading-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-heading-font-weight: 600;
-    --nn-theme-list-group-header-color: var(--nn-theme-foreground-muted);
     --nn-theme-list-separator-color: var(--background-modifier-border);
 
-    /* -- File Items -- */
+    /* -- Group headers -- */
+    --nn-theme-list-group-header-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-group-header-font-weight: 600;
+
+    /* -- File items -- */
     --nn-theme-file-name-color: var(--nn-theme-foreground);
+    --nn-theme-file-name-font-weight: 600;
+    --nn-theme-file-compact-name-font-weight: 400;
     --nn-theme-file-preview-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-preview-font-weight: 400;
     /* --nn-theme-file-task-color and --nn-theme-file-task-complete-color are
        intentionally not declared here: task progress rules use var() fallbacks to detect whether
        a theme or Style Settings set them, so customized colors can persist on selected rows. */
-    --nn-theme-file-feature-border-radius: 4px;
+    --nn-theme-file-task-font-weight: 400;
+    --nn-theme-file-task-complete-font-weight: 400;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-date-font-weight: 400;
     --nn-theme-file-word-count-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-word-count-font-weight: 400;
     --nn-theme-file-parent-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-tag-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-tag-border-color: color-mix(in srgb, var(--nn-theme-foreground) 30%, transparent);
-    --nn-theme-file-property-border-color: var(--nn-theme-file-tag-border-color);
-    --nn-theme-file-selected-tag-border-color: var(--nn-theme-file-tag-border-color);
-    --nn-theme-file-selected-property-border-color: var(--nn-theme-file-property-border-color);
-    --nn-theme-file-tag-custom-color-text-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-file-tag-bg: transparent;
-    --nn-theme-file-property-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-property-bg: transparent;
-    --nn-theme-file-tag-border-radius: 10px;
-    --nn-theme-file-property-border-radius: 10px;
+    --nn-theme-file-parent-font-weight: 400;
+    --nn-theme-file-feature-border-radius: 4px;
     --nn-theme-file-border-radius: 8px;
-    --nn-theme-file-border-width: 0px;
-    --nn-theme-file-pill-border-width: 1px;
-    --nn-theme-file-selected-border-color: transparent;
-    --nn-theme-file-selected-inactive-border-color: var(--nn-theme-file-selected-border-color);
+
+    /* -- File selection -- */
     --nn-theme-file-selected-bg: var(--text-selection);
+    --nn-theme-file-border-width: 0px;
+    --nn-theme-file-selected-border-color: transparent;
     --nn-theme-file-selected-name-color: var(--nn-theme-file-name-color);
     --nn-theme-file-selected-preview-color: var(--nn-theme-file-preview-color);
     --nn-theme-file-selected-date-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-word-count-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-parent-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-tag-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-tag-bg: var(--nn-theme-file-tag-bg);
-    --nn-theme-file-selected-property-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-property-bg: var(--nn-theme-file-property-bg);
     --nn-theme-file-selected-inactive-bg: var(--background-modifier-hover);
+    --nn-theme-file-selected-inactive-border-color: var(--nn-theme-file-selected-border-color);
     --nn-theme-file-selected-inactive-name-color: var(--nn-theme-file-selected-name-color);
     --nn-theme-file-selected-inactive-preview-color: var(--nn-theme-file-selected-preview-color);
     --nn-theme-file-selected-inactive-date-color: var(--nn-theme-file-selected-date-color);
     --nn-theme-file-selected-inactive-word-count-color: var(--nn-theme-file-selected-word-count-color);
     --nn-theme-file-selected-inactive-parent-color: var(--nn-theme-file-selected-parent-color);
+
+    /* -- Tag and property pills -- */
+    --nn-theme-file-tag-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-tag-custom-color-text-color: var(--nn-theme-navitem-name-color);
+    --nn-theme-file-property-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-tag-font-weight: 400;
+    --nn-theme-file-tag-bg: transparent;
+    --nn-theme-file-tag-border-radius: 10px;
+    --nn-theme-file-property-bg: transparent;
+    --nn-theme-file-property-border-radius: 10px;
+    --nn-theme-file-pill-border-width: 1px;
+    --nn-theme-file-tag-border-color: color-mix(in srgb, var(--nn-theme-foreground) 30%, transparent);
+    --nn-theme-file-property-border-color: var(--nn-theme-file-tag-border-color);
+    --nn-theme-file-selected-tag-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-selected-tag-bg: var(--nn-theme-file-tag-bg);
+    --nn-theme-file-selected-tag-border-color: var(--nn-theme-file-tag-border-color);
+    --nn-theme-file-selected-property-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-selected-property-bg: var(--nn-theme-file-property-bg);
+    --nn-theme-file-selected-property-border-color: var(--nn-theme-file-property-border-color);
     --nn-theme-file-selected-inactive-tag-color: var(--nn-theme-file-selected-tag-color);
     --nn-theme-file-selected-inactive-tag-bg: var(--nn-theme-file-tag-bg);
     --nn-theme-file-selected-inactive-property-color: var(--nn-theme-file-selected-property-color);
     --nn-theme-file-selected-inactive-property-bg: var(--nn-theme-file-property-bg);
 
-    /* -- File Item Text Styling -- */
-    --nn-theme-list-group-header-font-weight: 600;
-    --nn-theme-file-name-font-weight: 600;
-    --nn-theme-file-compact-name-font-weight: 400;
-    --nn-theme-file-preview-font-weight: 400;
-    --nn-theme-file-date-font-weight: 400;
-    --nn-theme-file-word-count-font-weight: 400;
-    --nn-theme-file-task-font-weight: 400;
-    --nn-theme-file-task-complete-font-weight: 400;
-    --nn-theme-file-parent-font-weight: 400;
-    --nn-theme-file-tag-font-weight: 400;
-
-    /* -- Quick Actions -- */
+    /* -- Quick actions -- */
     --nn-theme-quick-actions-bg: color-mix(in srgb, var(--background-primary) 95%, transparent);
     --nn-theme-quick-actions-border: var(--background-modifier-border);
     --nn-theme-quick-actions-border-radius: 4px;
@@ -301,22 +281,60 @@ body {
     --nn-theme-quick-actions-icon-hover-color: var(--nn-theme-foreground);
     --nn-theme-quick-actions-separator-color: var(--background-modifier-border);
 
-    /* -- Header Buttons -- */
+    /* -- Pane headers and titles -- */
+
+    /* Pane titles */
+    --nn-theme-list-heading-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-heading-font-weight: 600;
+
+    /* Pane headers */
+    --nn-theme-list-header-icon-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-header-breadcrumb-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-header-breadcrumb-font-weight: 600;
+
+    /* Header buttons */
     --nn-theme-header-button-icon-color: var(--icon-color);
     --nn-theme-header-button-hover-bg: var(--background-modifier-hover);
     --nn-theme-header-button-active-bg: var(--background-modifier-hover);
     --nn-theme-header-button-active-icon-color: var(--text-normal);
     --nn-theme-header-button-disabled-icon-color: var(--icon-color);
 
-    /* -- Mobile Styles -- */
+    /* -- Calendar -- */
+
+    /* Calendar labels */
+    --nn-theme-calendar-header-color: var(--nn-theme-foreground);
+    --nn-theme-calendar-weekday-color: var(--nn-theme-foreground-muted);
+    --nn-theme-calendar-week-color: var(--nn-theme-foreground-muted);
+    --nn-theme-calendar-day-in-month-color: var(--nn-theme-foreground);
+    --nn-theme-calendar-day-outside-month-color: var(--nn-theme-foreground-faded);
+
+    /* Day states */
+    --nn-theme-calendar-weekend-bg: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
+    --nn-theme-calendar-hover-bg: var(--background-modifier-hover);
+    --nn-theme-calendar-day-today-color: var(--nn-theme-calendar-day-in-month-color);
+    --nn-theme-calendar-day-today-bg: var(--text-selection);
+    --nn-theme-calendar-day-active-border-color: var(--interactive-accent);
+    --nn-theme-calendar-day-active-border-width: 3px;
+
+    /* Indicators and feature images */
+    --nn-theme-calendar-note-indicator-color: var(--nn-theme-foreground-faded);
+    --nn-theme-calendar-unfinished-task-indicator-color: var(--nn-theme-calendar-note-indicator-color);
+    --nn-theme-calendar-feature-image-text-color: white;
+    --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.05);
+
+    /* -- Pane divider -- */
+    --nn-theme-divider-border-color: var(--divider-color);
+    --nn-theme-divider-resize-handle-hover-bg: var(--interactive-accent);
+
+    /* -- Mobile -- */
     --nn-theme-mobile-bg: var(--mobile-sidebar-background);
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
+    --nn-theme-mobile-toolbar-glass-bg: var(--background-primary);
     --nn-theme-mobile-toolbar-button-icon-color: var(--link-color);
     --nn-theme-mobile-toolbar-button-active-bg: var(--background-modifier-hover);
     --nn-theme-mobile-toolbar-button-active-icon-color: var(--link-color);
-    --nn-theme-mobile-toolbar-glass-bg: var(--background-primary);
 
     /* -- File Separator -- */
     --nn-separator-height: 1px;

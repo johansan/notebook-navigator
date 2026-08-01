@@ -165,13 +165,13 @@ body {
        Notebook Navigator Theme Variables
        ======================================================================== */
 
-    /* -- Theme Foreground -- */
+    /* -- Foreground colors -- */
     --nn-theme-foreground: var(--text-normal);
     --nn-theme-foreground-muted: color-mix(in srgb, var(--nn-theme-foreground) 70%, transparent);
     --nn-theme-foreground-faded: color-mix(in srgb, var(--nn-theme-foreground) 50%, transparent);
     --nn-theme-foreground-faint: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
 
-    /* -- Navigation Pane -- */
+    /* -- Navigation pane -- */
     --nn-theme-nav-bg: var(--background-secondary);
     --nn-theme-nav-separator-color: var(--nn-theme-foreground);
     --nn-theme-nav-separator-background: linear-gradient(
@@ -187,140 +187,120 @@ body {
     --nn-theme-nav-leader-color: var(--nn-theme-foreground-faded);
     --nn-theme-pinned-shortcut-shadow-color: rgba(0, 0, 0, 0.03);
 
-    /* -- Navigation Calendar -- */
-    --nn-theme-calendar-header-color: var(--nn-theme-foreground);
-    --nn-theme-calendar-weekday-color: var(--nn-theme-foreground-muted);
-    --nn-theme-calendar-week-color: var(--nn-theme-foreground-muted);
-    --nn-theme-calendar-day-in-month-color: var(--nn-theme-foreground);
-    --nn-theme-calendar-day-outside-month-color: var(--nn-theme-foreground-faded);
-    --nn-theme-calendar-weekend-bg: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
-    --nn-theme-calendar-hover-bg: var(--background-modifier-hover);
-    --nn-theme-calendar-note-indicator-color: var(--nn-theme-foreground-faded);
-    --nn-theme-calendar-unfinished-task-indicator-color: var(--nn-theme-calendar-note-indicator-color);
-    --nn-theme-calendar-feature-image-text-color: white;
-    --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.05);
-    --nn-theme-calendar-day-today-color: var(--nn-theme-calendar-day-in-month-color);
-    --nn-theme-calendar-day-today-bg: var(--text-selection);
-    --nn-theme-calendar-day-active-border-color: var(--interactive-accent);
-    --nn-theme-calendar-day-active-border-width: 3px;
-
-    /* -- Folder & Tag Items -- */
+    /* -- Navigation items -- */
     --nn-theme-navitem-chevron-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-icon-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-name-color: var(--nn-theme-foreground);
     --nn-theme-navitem-file-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-count-color: var(--nn-theme-foreground-muted);
-    --nn-theme-navitem-count-bg: transparent;
-    --nn-theme-navitem-count-border-radius: 8px;
+    --nn-theme-navitem-name-font-weight: 400;
+    --nn-theme-navitem-custom-color-name-font-weight: 600;
+    --nn-theme-navitem-folder-note-name-decoration: underline;
+    --nn-theme-navitem-folder-note-name-hover-decoration: underline;
     --nn-theme-navitem-border-radius: 4px;
     --nn-theme-navitem-border-width: 0px;
-    --nn-theme-navitem-count-border-width: 0px;
     --nn-theme-navitem-custom-border-color: transparent;
-    --nn-theme-navitem-hover-border-color: transparent;
-    --nn-theme-navitem-selected-border-color: transparent;
-    --nn-theme-navitem-selected-inactive-border-color: var(--nn-theme-navitem-selected-border-color);
-    --nn-theme-navitem-count-border-color: transparent;
-    --nn-theme-navitem-selected-count-border-color: var(--nn-theme-navitem-count-border-color);
-    --nn-theme-navitem-selected-inactive-count-border-color: var(--nn-theme-navitem-selected-count-border-color);
     --nn-theme-navitem-hover-bg: var(--background-modifier-hover);
-    --nn-theme-navitem-selected-bg: var(--text-selection);
-    --nn-theme-navitem-selected-chevron-color: var(--nn-theme-navitem-chevron-color);
-    --nn-theme-navitem-selected-icon-color: var(--nn-theme-navitem-icon-color);
-    --nn-theme-navitem-selected-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-selected-count-color: var(--nn-theme-navitem-count-color);
-    --nn-theme-navitem-selected-count-bg: var(--nn-theme-navitem-count-bg);
-    --nn-theme-navitem-selected-inactive-bg: var(--background-modifier-hover);
-    --nn-theme-navitem-selected-inactive-name-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-navitem-selected-inactive-chevron-color: var(--nn-theme-navitem-selected-chevron-color);
-    --nn-theme-navitem-selected-inactive-icon-color: var(--nn-theme-navitem-selected-icon-color);
-    --nn-theme-navitem-selected-inactive-count-color: var(--nn-theme-navitem-selected-count-color);
-    --nn-theme-navitem-selected-inactive-count-bg: var(--nn-theme-navitem-selected-count-bg);
+    --nn-theme-navitem-hover-border-color: transparent;
     --nn-theme-tag-positive-bg: #00800033;
     --nn-theme-tag-negative-bg: #ff000033;
 
-    /* -- Navigation Item Text Styling -- */
-    --nn-theme-navitem-name-font-weight: 400;
-    --nn-theme-navitem-custom-color-name-font-weight: 600;
+    /* -- Navigation selection -- */
+    --nn-theme-navitem-selected-bg: var(--text-selection);
+    --nn-theme-navitem-selected-border-color: transparent;
+    --nn-theme-navitem-selected-chevron-color: var(--nn-theme-navitem-chevron-color);
+    --nn-theme-navitem-selected-icon-color: var(--nn-theme-navitem-icon-color);
+    --nn-theme-navitem-selected-name-color: var(--nn-theme-navitem-name-color);
+    --nn-theme-navitem-selected-inactive-bg: var(--background-modifier-hover);
+    --nn-theme-navitem-selected-inactive-border-color: var(--nn-theme-navitem-selected-border-color);
+    --nn-theme-navitem-selected-inactive-chevron-color: var(--nn-theme-navitem-selected-chevron-color);
+    --nn-theme-navitem-selected-inactive-icon-color: var(--nn-theme-navitem-selected-icon-color);
+    --nn-theme-navitem-selected-inactive-name-color: var(--nn-theme-navitem-name-color);
+
+    /* -- File counts -- */
+    --nn-theme-navitem-count-color: var(--nn-theme-foreground-muted);
     --nn-theme-navitem-count-font-weight: 400;
-    --nn-theme-navitem-folder-note-name-decoration: underline;
-    --nn-theme-navitem-folder-note-name-hover-decoration: underline;
+    --nn-theme-navitem-count-bg: transparent;
+    --nn-theme-navitem-count-border-radius: 8px;
+    --nn-theme-navitem-count-border-width: 0px;
+    --nn-theme-navitem-count-border-color: transparent;
+    --nn-theme-navitem-selected-count-color: var(--nn-theme-navitem-count-color);
+    --nn-theme-navitem-selected-count-bg: var(--nn-theme-navitem-count-bg);
+    --nn-theme-navitem-selected-count-border-color: var(--nn-theme-navitem-count-border-color);
+    --nn-theme-navitem-selected-inactive-count-color: var(--nn-theme-navitem-selected-count-color);
+    --nn-theme-navitem-selected-inactive-count-bg: var(--nn-theme-navitem-selected-count-bg);
+    --nn-theme-navitem-selected-inactive-count-border-color: var(--nn-theme-navitem-selected-count-border-color);
 
-    /* -- Pane Divider -- */
-    --nn-theme-divider-border-color: var(--divider-color);
-    --nn-theme-divider-resize-handle-hover-bg: var(--interactive-accent);
-
-    /* -- List Pane (Files) -- */
+    /* -- List pane -- */
     --nn-theme-list-bg: var(--background-primary);
-    --nn-theme-list-header-icon-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-header-breadcrumb-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-header-breadcrumb-font-weight: 600;
     --nn-theme-list-search-active-bg: var(--text-highlight-bg);
     --nn-theme-list-search-border-color: var(--background-modifier-border);
-    --nn-theme-list-heading-color: var(--nn-theme-foreground-muted);
-    --nn-theme-list-heading-font-weight: 600;
-    --nn-theme-list-group-header-color: var(--nn-theme-foreground-muted);
     --nn-theme-list-separator-color: var(--background-modifier-border);
 
-    /* -- File Items -- */
+    /* -- Group headers -- */
+    --nn-theme-list-group-header-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-group-header-font-weight: 600;
+
+    /* -- File items -- */
     --nn-theme-file-name-color: var(--nn-theme-foreground);
+    --nn-theme-file-name-font-weight: 600;
+    --nn-theme-file-compact-name-font-weight: 400;
     --nn-theme-file-preview-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-preview-font-weight: 400;
     /* --nn-theme-file-task-color and --nn-theme-file-task-complete-color are
        intentionally not declared here: task progress rules use var() fallbacks to detect whether
        a theme or Style Settings set them, so customized colors can persist on selected rows. */
-    --nn-theme-file-feature-border-radius: 4px;
+    --nn-theme-file-task-font-weight: 400;
+    --nn-theme-file-task-complete-font-weight: 400;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-date-font-weight: 400;
     --nn-theme-file-word-count-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-word-count-font-weight: 400;
     --nn-theme-file-parent-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-tag-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-tag-border-color: color-mix(in srgb, var(--nn-theme-foreground) 30%, transparent);
-    --nn-theme-file-property-border-color: var(--nn-theme-file-tag-border-color);
-    --nn-theme-file-selected-tag-border-color: var(--nn-theme-file-tag-border-color);
-    --nn-theme-file-selected-property-border-color: var(--nn-theme-file-property-border-color);
-    --nn-theme-file-tag-custom-color-text-color: var(--nn-theme-navitem-name-color);
-    --nn-theme-file-tag-bg: transparent;
-    --nn-theme-file-property-color: var(--nn-theme-foreground-faded);
-    --nn-theme-file-property-bg: transparent;
-    --nn-theme-file-tag-border-radius: 10px;
-    --nn-theme-file-property-border-radius: 10px;
+    --nn-theme-file-parent-font-weight: 400;
+    --nn-theme-file-feature-border-radius: 4px;
     --nn-theme-file-border-radius: 8px;
-    --nn-theme-file-border-width: 0px;
-    --nn-theme-file-pill-border-width: 1px;
-    --nn-theme-file-selected-border-color: transparent;
-    --nn-theme-file-selected-inactive-border-color: var(--nn-theme-file-selected-border-color);
+
+    /* -- File selection -- */
     --nn-theme-file-selected-bg: var(--text-selection);
+    --nn-theme-file-border-width: 0px;
+    --nn-theme-file-selected-border-color: transparent;
     --nn-theme-file-selected-name-color: var(--nn-theme-file-name-color);
     --nn-theme-file-selected-preview-color: var(--nn-theme-file-preview-color);
     --nn-theme-file-selected-date-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-word-count-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-selected-parent-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-tag-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-tag-bg: var(--nn-theme-file-tag-bg);
-    --nn-theme-file-selected-property-color: var(--nn-theme-foreground-muted);
-    --nn-theme-file-selected-property-bg: var(--nn-theme-file-property-bg);
     --nn-theme-file-selected-inactive-bg: var(--background-modifier-hover);
+    --nn-theme-file-selected-inactive-border-color: var(--nn-theme-file-selected-border-color);
     --nn-theme-file-selected-inactive-name-color: var(--nn-theme-file-selected-name-color);
     --nn-theme-file-selected-inactive-preview-color: var(--nn-theme-file-selected-preview-color);
     --nn-theme-file-selected-inactive-date-color: var(--nn-theme-file-selected-date-color);
     --nn-theme-file-selected-inactive-word-count-color: var(--nn-theme-file-selected-word-count-color);
     --nn-theme-file-selected-inactive-parent-color: var(--nn-theme-file-selected-parent-color);
+
+    /* -- Tag and property pills -- */
+    --nn-theme-file-tag-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-tag-custom-color-text-color: var(--nn-theme-navitem-name-color);
+    --nn-theme-file-property-color: var(--nn-theme-foreground-faded);
+    --nn-theme-file-tag-font-weight: 400;
+    --nn-theme-file-tag-bg: transparent;
+    --nn-theme-file-tag-border-radius: 10px;
+    --nn-theme-file-property-bg: transparent;
+    --nn-theme-file-property-border-radius: 10px;
+    --nn-theme-file-pill-border-width: 1px;
+    --nn-theme-file-tag-border-color: color-mix(in srgb, var(--nn-theme-foreground) 30%, transparent);
+    --nn-theme-file-property-border-color: var(--nn-theme-file-tag-border-color);
+    --nn-theme-file-selected-tag-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-selected-tag-bg: var(--nn-theme-file-tag-bg);
+    --nn-theme-file-selected-tag-border-color: var(--nn-theme-file-tag-border-color);
+    --nn-theme-file-selected-property-color: var(--nn-theme-foreground-muted);
+    --nn-theme-file-selected-property-bg: var(--nn-theme-file-property-bg);
+    --nn-theme-file-selected-property-border-color: var(--nn-theme-file-property-border-color);
     --nn-theme-file-selected-inactive-tag-color: var(--nn-theme-file-selected-tag-color);
     --nn-theme-file-selected-inactive-tag-bg: var(--nn-theme-file-tag-bg);
     --nn-theme-file-selected-inactive-property-color: var(--nn-theme-file-selected-property-color);
     --nn-theme-file-selected-inactive-property-bg: var(--nn-theme-file-property-bg);
 
-    /* -- File Item Text Styling -- */
-    --nn-theme-list-group-header-font-weight: 600;
-    --nn-theme-file-name-font-weight: 600;
-    --nn-theme-file-compact-name-font-weight: 400;
-    --nn-theme-file-preview-font-weight: 400;
-    --nn-theme-file-date-font-weight: 400;
-    --nn-theme-file-word-count-font-weight: 400;
-    --nn-theme-file-task-font-weight: 400;
-    --nn-theme-file-task-complete-font-weight: 400;
-    --nn-theme-file-parent-font-weight: 400;
-    --nn-theme-file-tag-font-weight: 400;
-
-    /* -- Quick Actions -- */
+    /* -- Quick actions -- */
     --nn-theme-quick-actions-bg: color-mix(in srgb, var(--background-primary) 95%, transparent);
     --nn-theme-quick-actions-border: var(--background-modifier-border);
     --nn-theme-quick-actions-border-radius: 4px;
@@ -328,22 +308,60 @@ body {
     --nn-theme-quick-actions-icon-hover-color: var(--nn-theme-foreground);
     --nn-theme-quick-actions-separator-color: var(--background-modifier-border);
 
-    /* -- Header Buttons -- */
+    /* -- Pane headers and titles -- */
+
+    /* Pane titles */
+    --nn-theme-list-heading-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-heading-font-weight: 600;
+
+    /* Pane headers */
+    --nn-theme-list-header-icon-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-header-breadcrumb-color: var(--nn-theme-foreground-muted);
+    --nn-theme-list-header-breadcrumb-font-weight: 600;
+
+    /* Header buttons */
     --nn-theme-header-button-icon-color: var(--icon-color);
     --nn-theme-header-button-hover-bg: var(--background-modifier-hover);
     --nn-theme-header-button-active-bg: var(--background-modifier-hover);
     --nn-theme-header-button-active-icon-color: var(--text-normal);
     --nn-theme-header-button-disabled-icon-color: var(--icon-color);
 
-    /* -- Mobile Styles -- */
+    /* -- Calendar -- */
+
+    /* Calendar labels */
+    --nn-theme-calendar-header-color: var(--nn-theme-foreground);
+    --nn-theme-calendar-weekday-color: var(--nn-theme-foreground-muted);
+    --nn-theme-calendar-week-color: var(--nn-theme-foreground-muted);
+    --nn-theme-calendar-day-in-month-color: var(--nn-theme-foreground);
+    --nn-theme-calendar-day-outside-month-color: var(--nn-theme-foreground-faded);
+
+    /* Day states */
+    --nn-theme-calendar-weekend-bg: color-mix(in srgb, var(--nn-theme-foreground) 10%, transparent);
+    --nn-theme-calendar-hover-bg: var(--background-modifier-hover);
+    --nn-theme-calendar-day-today-color: var(--nn-theme-calendar-day-in-month-color);
+    --nn-theme-calendar-day-today-bg: var(--text-selection);
+    --nn-theme-calendar-day-active-border-color: var(--interactive-accent);
+    --nn-theme-calendar-day-active-border-width: 3px;
+
+    /* Indicators and feature images */
+    --nn-theme-calendar-note-indicator-color: var(--nn-theme-foreground-faded);
+    --nn-theme-calendar-unfinished-task-indicator-color: var(--nn-theme-calendar-note-indicator-color);
+    --nn-theme-calendar-feature-image-text-color: white;
+    --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.05);
+
+    /* -- Pane divider -- */
+    --nn-theme-divider-border-color: var(--divider-color);
+    --nn-theme-divider-resize-handle-hover-bg: var(--interactive-accent);
+
+    /* -- Mobile -- */
     --nn-theme-mobile-bg: var(--mobile-sidebar-background);
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
+    --nn-theme-mobile-toolbar-glass-bg: var(--background-primary);
     --nn-theme-mobile-toolbar-button-icon-color: var(--link-color);
     --nn-theme-mobile-toolbar-button-active-bg: var(--background-modifier-hover);
     --nn-theme-mobile-toolbar-button-active-icon-color: var(--link-color);
-    --nn-theme-mobile-toolbar-glass-bg: var(--background-primary);
 
     /* -- File Separator -- */
     --nn-separator-height: 1px;
@@ -9140,7 +9158,7 @@ settings:
         collapsed: true
     -
         id: nn-theme-foreground
-        title: Base foreground
+        title: Base foreground color
         description: Base foreground color.
         type: variable-themed-color
         format: hex
@@ -9148,7 +9166,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-foreground-muted
-        title: Muted foreground
+        title: Muted foreground color
         description: Muted foreground color.
         type: variable-themed-color
         format: hex
@@ -9156,7 +9174,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-foreground-faded
-        title: Faded foreground
+        title: Faded foreground color
         description: Faded foreground color.
         type: variable-themed-color
         format: hex
@@ -9164,7 +9182,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-foreground-faint
-        title: Faint foreground
+        title: Faint foreground color
         description: Faint foreground color.
         type: variable-themed-color
         format: hex
@@ -9222,12 +9240,13 @@ settings:
     -
         id: nn-nav-pane-items-heading
         title: Navigation items
+        description: Custom-color weight and folder-note decoration also apply when these items appear in the list pane.
         type: heading
         level: 2
         collapsed: false
     -
         id: nn-theme-navitem-chevron-color
-        title: Expand/collapse arrow color
+        title: Item expand/collapse arrow color
         description: Color for expand/collapse arrows.
         type: variable-themed-color
         format: hex
@@ -9235,7 +9254,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-icon-color
-        title: Icon color
+        title: Item icon color
         description: Icon color for navigation items.
         type: variable-themed-color
         format: hex
@@ -9243,7 +9262,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-name-color
-        title: Text color
+        title: Item name color
         description: Text color for navigation item names.
         type: variable-themed-color
         format: hex
@@ -9251,12 +9270,62 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-file-name-color
-        title: File text color
+        title: File name color
         description: Text color for file shortcuts and recent files. Defaults to the navigation item text color.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
+    -
+        id: nn-theme-navitem-name-font-weight
+        title: Item name font weight
+        description: Font weight of folder, tag, property, note, and section names, including shortcuts and recent files.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-navitem-custom-color-name-font-weight
+        title: Custom color text weight
+        description: Font weight for custom or rainbow-colored names, group headers, parent folders, and tag pills.
+        type: variable-number-slider
+        default: 600
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-navitem-folder-note-name-decoration
+        title: Folder note text decoration
+        description: Text decoration for folder note names wherever they are shown.
+        type: variable-select
+        default: underline
+        options:
+          -
+            label: None
+            value: none
+          -
+            label: Underline
+            value: underline
+          -
+            label: Dotted underline
+            value: underline dotted
+    -
+        id: nn-theme-navitem-folder-note-name-hover-decoration
+        title: Folder note text decoration (hover)
+        description: Text decoration when hovering folder note names.
+        type: variable-select
+        default: underline
+        options:
+          -
+            label: None
+            value: none
+          -
+            label: Underline
+            value: underline
+          -
+            label: Dotted underline
+            value: underline dotted
     -
         id: nn-theme-navitem-border-radius
         title: Item border radius
@@ -9279,7 +9348,7 @@ settings:
         step: 1
     -
         id: nn-theme-navitem-custom-border-color
-        title: Custom background border color
+        title: Item border color (custom background)
         description: Border color on navigation items with custom backgrounds.
         type: variable-themed-color
         opacity: true
@@ -9288,15 +9357,15 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-hover-bg
-        title: Hover background
-        description: Item hover background color.
+        title: Item background (hover)
+        description: Item hover background color (desktop only).
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-navitem-hover-border-color
-        title: Hover border color
+        title: Item border color (hover)
         description: Border color on hovered navigation items.
         type: variable-themed-color
         opacity: true
@@ -9305,7 +9374,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-tag-positive-bg
-        title: Tag highlight (include)
+        title: Tag highlight background (include)
         description: Background color for positive tag highlights and tag drop targets.
         type: variable-themed-color
         format: hex
@@ -9313,7 +9382,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-tag-negative-bg
-        title: Tag highlight (exclude)
+        title: Tag highlight background (exclude)
         description: Background color for negative tag highlights and the untagged drop target.
         type: variable-themed-color
         format: hex
@@ -9321,13 +9390,13 @@ settings:
         default-dark: '#'
     -
         id: nn-nav-selection-heading
-        title: Selection
+        title: Navigation selection
         type: heading
         level: 2
         collapsed: false
     -
         id: nn-theme-navitem-selected-bg
-        title: Selection background
+        title: Selected item background
         description: Selected item background color.
         type: variable-themed-color
         format: hex
@@ -9335,7 +9404,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-border-color
-        title: Selection border color
+        title: Selected item border color
         description: Border color on selected navigation items.
         type: variable-themed-color
         opacity: true
@@ -9344,7 +9413,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-chevron-color
-        title: Selected chevron color
+        title: Selected item expand/collapse arrow color
         description: Expand/collapse arrow color when item is selected.
         type: variable-themed-color
         format: hex
@@ -9352,7 +9421,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-icon-color
-        title: Selected icon color
+        title: Selected item icon color
         description: Icon color when item is selected.
         type: variable-themed-color
         format: hex
@@ -9360,7 +9429,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-name-color
-        title: Selected name color
+        title: Selected item name color
         description: Name color when selected.
         type: variable-themed-color
         format: hex
@@ -9368,7 +9437,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-bg
-        title: Selection background (inactive)
+        title: Selected item background (inactive)
         description: Selected item background color when pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9376,7 +9445,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-border-color
-        title: Selection border color (inactive)
+        title: Selected item border color (inactive)
         description: Border color on selected navigation items when pane is inactive.
         type: variable-themed-color
         opacity: true
@@ -9385,7 +9454,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-chevron-color
-        title: Selected chevron color (inactive)
+        title: Selected item expand/collapse arrow color (inactive)
         description: Expand/collapse arrow color when item is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9393,7 +9462,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-icon-color
-        title: Selected icon color (inactive)
+        title: Selected item icon color (inactive)
         description: Icon color when item is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9401,7 +9470,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-name-color
-        title: Selected name color (inactive)
+        title: Selected item name color (inactive)
         description: Name color when selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9421,6 +9490,15 @@ settings:
         format: hex
         default-light: '#'
         default-dark: '#'
+    -
+        id: nn-theme-navitem-count-font-weight
+        title: File count font weight
+        description: Font weight for file count badges.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
     -
         id: nn-theme-navitem-count-bg
         title: File count background
@@ -9459,17 +9537,8 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
-        id: nn-theme-navitem-count-font-weight
-        title: File count font weight
-        description: Font weight for file count badges.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
         id: nn-theme-navitem-selected-count-color
-        title: Selected count text color
+        title: Selected file count text color
         description: File count text color when item is selected.
         type: variable-themed-color
         format: hex
@@ -9477,7 +9546,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-count-bg
-        title: Selected count background
+        title: Selected file count background
         description: File count background color when selected.
         type: variable-themed-color
         format: hex
@@ -9494,7 +9563,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-count-color
-        title: Selected count text color (inactive)
+        title: Selected file count text color (inactive)
         description: File count text color when item is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9502,7 +9571,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-navitem-selected-inactive-count-bg
-        title: Selected count background (inactive)
+        title: Selected file count background (inactive)
         description: File count background color when item is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9518,65 +9587,9 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
-        id: nn-navitem-text-styling-heading
-        title: Text styling
-        type: heading
-        level: 2
-        collapsed: false
-    -
-        id: nn-theme-navitem-name-font-weight
-        title: Name weight
-        description: Font weight of folder, tag, property, note, and section names, including shortcuts and recent files.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-custom-color-name-font-weight
-        title: Custom color name weight
-        description: Font weight of names with custom or rainbow colors (overrides name weight).
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-navitem-folder-note-name-decoration
-        title: Folder note decoration
-        description: Text decoration for folders with notes.
-        type: variable-select
-        default: underline
-        options:
-          -
-            label: None
-            value: none
-          -
-            label: Underline
-            value: underline
-          -
-            label: Dotted underline
-            value: underline dotted
-    -
-        id: nn-theme-navitem-folder-note-name-hover-decoration
-        title: Folder note hover decoration
-        description: Text decoration when hovering folders with notes.
-        type: variable-select
-        default: underline
-        options:
-          -
-            label: None
-            value: none
-          -
-            label: Underline
-            value: underline
-          -
-            label: Dotted underline
-            value: underline dotted
-    -
         id: nn-file-list-heading
         title: List pane
-        description: Customize the file list appearance.
+        description: Customize the file list appearance. Search icon and supporting text are under Pane headers and titles.
         type: heading
         level: 1
         collapsed: true
@@ -9590,15 +9603,15 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-list-search-active-bg
-        title: Search field active background
-        description: Background color for the search field when a search query is active (desktop only).
+        title: Search field background (active)
+        description: Background color for the search field when a search query is active.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-list-search-border-color
-        title: Search border color
+        title: Search field border color
         description: Border and focus ring color for the search field.
         type: variable-themed-color
         opacity: true
@@ -9607,60 +9620,12 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-list-separator-color
-        title: List separator color
+        title: File separator color
         description: Divider line color between files.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
-    -
-        id: nn-list-header-heading
-        title: List header
-        type: heading
-        level: 2
-        collapsed: false
-    -
-        id: nn-theme-list-heading-color
-        title: List heading text color
-        description: Text color for the list pane title area and vault title.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-list-heading-font-weight
-        title: List heading font weight
-        description: Font weight for the list pane title area and vault title.
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-list-header-icon-color
-        title: List header icon color
-        description: Color for the folder/tag icon shown beside the desktop list header breadcrumb.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-list-header-breadcrumb-color
-        title: List header breadcrumb color
-        description: Text color for the breadcrumb path in the desktop list header.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-list-header-breadcrumb-font-weight
-        title: List header breadcrumb font weight
-        description: Font weight for breadcrumb text in the desktop list header.
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
     -
         id: nn-list-group-headers-heading
         title: Group headers
@@ -9677,7 +9642,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-list-group-header-font-weight
-        title: Group header font weight
+        title: Group header text font weight
         description: Font weight for date groups and pinned section.
         type: variable-number-slider
         default: 600
@@ -9699,13 +9664,40 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-name-font-weight
+        title: File name font weight
+        description: Font weight for file names.
+        type: variable-number-slider
+        default: 600
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-theme-file-compact-name-font-weight
+        title: File name font weight (compact mode)
+        description: Font weight for file names in compact mode.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
         id: nn-theme-file-preview-color
-        title: File preview text color
+        title: File preview color
         description: Text color for content preview.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
+    -
+        id: nn-theme-file-preview-font-weight
+        title: File preview font weight
+        description: Font weight for file preview text.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
     -
         id: nn-theme-file-task-color
         title: File task color
@@ -9715,6 +9707,15 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-task-font-weight
+        title: File task weight
+        description: Weight for task counts and icons in notes with unfinished tasks.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
         id: nn-theme-file-task-complete-color
         title: File task color (complete)
         description: Icon, bar, and count color when all tasks in a note are completed.
@@ -9722,6 +9723,15 @@ settings:
         format: hex
         default-light: '#'
         default-dark: '#'
+    -
+        id: nn-theme-file-task-complete-font-weight
+        title: File task weight (complete)
+        description: Weight for task counts and icons when all tasks in a note are completed.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
     -
         id: nn-theme-file-date-color
         title: File date color
@@ -9731,6 +9741,15 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-date-font-weight
+        title: File date font weight
+        description: Font weight for file dates.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
         id: nn-theme-file-word-count-color
         title: File word count color
         description: Text color for word count suffixes.
@@ -9739,6 +9758,15 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-word-count-font-weight
+        title: File word count font weight
+        description: Font weight for word count suffixes.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
         id: nn-theme-file-parent-color
         title: File parent folder color
         description: Text color for parent folder path (when showing subfolders).
@@ -9746,6 +9774,15 @@ settings:
         format: hex
         default-light: '#'
         default-dark: '#'
+    -
+        id: nn-theme-file-parent-font-weight
+        title: File parent folder font weight
+        description: Font weight for parent folder path.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
     -
         id: nn-theme-file-feature-border-radius
         title: Feature image border radius
@@ -9768,13 +9805,13 @@ settings:
         step: 1
     -
         id: nn-list-selection-heading
-        title: Selection
+        title: File selection
         type: heading
         level: 2
         collapsed: false
     -
         id: nn-theme-file-selected-bg
-        title: Selection background
+        title: Selected file background
         description: Selected file background color.
         type: variable-themed-color
         format: hex
@@ -9782,7 +9819,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-border-width
-        title: Selection border width
+        title: Selected file border width
         description: Border width on selected file items.
         type: variable-number-slider
         default: 0
@@ -9792,7 +9829,7 @@ settings:
         step: 1
     -
         id: nn-theme-file-selected-border-color
-        title: Selection border color
+        title: Selected file border color
         description: Border color on selected file items.
         type: variable-themed-color
         opacity: true
@@ -9841,7 +9878,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-bg
-        title: Selection background (inactive)
+        title: Selected file background (inactive)
         description: Selected file background color when pane is inactive.
         type: variable-themed-color
         format: hex
@@ -9849,7 +9886,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-border-color
-        title: Selection border color (inactive)
+        title: Selected file border color (inactive)
         description: Border color on selected file items when pane is inactive.
         type: variable-themed-color
         opacity: true
@@ -9898,30 +9935,47 @@ settings:
         default-dark: '#'
     -
         id: nn-list-pills-heading
-        title: Tag & property pills
+        title: Tag and property pills
         type: heading
         level: 2
         collapsed: false
     -
         id: nn-theme-file-tag-color
-        title: File tag text color
-        description: Text color for tag pills.
+        title: Tag pill text color
+        description: Default text color for tag pills without custom colors.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-file-tag-custom-color-text-color
-        title: Custom tag text color
-        description: Text color for tags with custom colors.
+        title: Tag pill text color (custom background)
+        description: Text color for tag pills with a custom background but no custom text color.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-file-property-color
+        title: Property pill text color
+        description: Default text color for property pills.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-file-tag-font-weight
+        title: Tag and property pill text font weight
+        description: Font weight for tag and property pill text without custom text colors.
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
         id: nn-theme-file-tag-bg
-        title: File tag background
-        description: Background color for tag pills.
+        title: Tag pill background
+        description: Default background color for tag pills without custom backgrounds.
         type: variable-themed-color
         format: hex
         default-light: '#'
@@ -9937,24 +9991,16 @@ settings:
         max: 10
         step: 1
     -
-        id: nn-theme-file-property-color
-        title: Custom property text color
-        description: Text color for custom property pill.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
         id: nn-theme-file-property-bg
-        title: Custom property background
-        description: Background color for custom property pill.
+        title: Property pill background
+        description: Default background color for property pills.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-file-property-border-radius
-        title: Custom property pill border radius
+        title: Property pill border radius
         description: Corner radius for custom property pills.
         type: variable-number-slider
         default: 10
@@ -9964,7 +10010,7 @@ settings:
         step: 1
     -
         id: nn-theme-file-pill-border-width
-        title: Pill border width
+        title: Tag and property pill border width
         description: Border width on tag and custom property pills.
         type: variable-number-slider
         default: 1
@@ -9983,25 +10029,16 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-property-border-color
-        title: Custom property pill border color
-        description: Border color on custom property pills without custom colors.
+        title: Property pill border color
+        description: Border color on property pills without custom colors.
         type: variable-themed-color
         opacity: true
         format: rgb
         default-light: '#'
         default-dark: '#'
     -
-        id: nn-theme-file-tag-font-weight
-        title: Tag text font weight
-        description: Font weight for tag pill text.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
         id: nn-theme-file-selected-tag-color
-        title: Selected file tag text color
+        title: Selected tag pill text color
         description: Text color for tag pills when selected.
         type: variable-themed-color
         format: hex
@@ -10009,7 +10046,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-tag-bg
-        title: Selected file tag background
+        title: Selected tag pill background
         description: Background color for tag pills when selected.
         type: variable-themed-color
         format: hex
@@ -10026,24 +10063,24 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-property-color
-        title: Selected custom property text color
-        description: Text color for custom property pill when selected.
+        title: Selected property pill text color
+        description: Text color for property pills when selected.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-file-selected-property-bg
-        title: Selected custom property background
-        description: Background color for custom property pill when selected.
+        title: Selected property pill background
+        description: Background color for property pills when selected.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-file-selected-property-border-color
-        title: Selected custom property pill border color
-        description: Border color on custom property pills without custom colors in selected files.
+        title: Selected property pill border color
+        description: Border color on property pills without custom colors in selected files.
         type: variable-themed-color
         opacity: true
         format: rgb
@@ -10051,7 +10088,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-tag-color
-        title: Selected file tag text color (inactive)
+        title: Selected tag pill text color (inactive)
         description: Tag text color when file is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -10059,7 +10096,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-tag-bg
-        title: Selected file tag background (inactive)
+        title: Selected tag pill background (inactive)
         description: Tag background color when file is selected and pane is inactive.
         type: variable-themed-color
         format: hex
@@ -10067,107 +10104,30 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-property-color
-        title: Selected custom property text color (inactive)
-        description: Text color for custom property pill when file is selected and pane is inactive.
+        title: Selected property pill text color (inactive)
+        description: Text color for property pills when file is selected and pane is inactive.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-file-selected-inactive-property-bg
-        title: Selected custom property background (inactive)
-        description: Background color for custom property pill when file is selected and pane is inactive.
+        title: Selected property pill background (inactive)
+        description: Background color for property pills when file is selected and pane is inactive.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
-        id: nn-file-text-styling-heading
-        title: Text styling
-        type: heading
-        level: 2
-        collapsed: false
-    -
-        id: nn-theme-file-name-font-weight
-        title: File name font weight
-        description: Font weight for file names.
-        type: variable-number-slider
-        default: 600
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-compact-name-font-weight
-        title: File name font weight (compact mode)
-        description: Font weight for file names in compact mode.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-preview-font-weight
-        title: File preview font weight
-        description: Font weight for file preview text.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-task-font-weight
-        title: Task font weight
-        description: Font weight for task counts in notes with unfinished tasks.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-task-complete-font-weight
-        title: Task font weight (complete)
-        description: Font weight for task counts when all tasks in a note are completed.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-date-font-weight
-        title: Date font weight
-        description: Font weight for file dates.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-word-count-font-weight
-        title: Word count font weight
-        description: Font weight for word count suffixes.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
-        id: nn-theme-file-parent-font-weight
-        title: Parent folder font weight
-        description: Font weight for parent folder path.
-        type: variable-number-slider
-        default: 400
-        min: 100
-        max: 900
-        step: 100
-    -
         id: nn-theme-quick-actions-heading
         title: Quick actions
+        description: Quick actions are shown on desktop.
         type: heading
         level: 2
         collapsed: false
     -
         id: nn-theme-quick-actions-bg
-        title: Toolbar background
+        title: Quick actions toolbar background
         description: Background color of quick actions toolbar (supports transparency).
         type: variable-themed-color
         opacity: true
@@ -10176,7 +10136,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-quick-actions-border
-        title: Toolbar border color
+        title: Quick actions toolbar border color
         description: Border color of quick actions toolbar.
         type: variable-themed-color
         opacity: true
@@ -10185,7 +10145,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-quick-actions-border-radius
-        title: Toolbar border radius
+        title: Quick actions toolbar border radius
         description: Corner radius for quick actions panel.
         type: variable-number-slider
         default: 4
@@ -10195,7 +10155,7 @@ settings:
         step: 1
     -
         id: nn-theme-quick-actions-icon-color
-        title: Icon color
+        title: Quick actions toolbar icon color
         description: Icon color for quick action buttons.
         type: variable-themed-color
         format: hex
@@ -10203,7 +10163,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-quick-actions-icon-hover-color
-        title: Icon hover color
+        title: Quick actions toolbar icon color (hover)
         description: Icon color when hovering quick action buttons.
         type: variable-themed-color
         format: hex
@@ -10211,22 +10171,82 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-quick-actions-separator-color
-        title: Separator color
+        title: Quick actions toolbar separator color
         description: Divider color between quick action buttons.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
-        id: nn-header-heading
-        title: Header buttons
-        description: Buttons in the navigation pane and list pane headers.
+        id: nn-pane-headings-heading
+        title: Pane headers and titles
+        description: Shared titles, headers, and header buttons in the navigation and list panes.
         type: heading
         level: 1
         collapsed: true
     -
+        id: nn-pane-titles-heading
+        title: Pane titles
+        type: heading
+        level: 2
+        collapsed: false
+    -
+        id: nn-theme-list-heading-color
+        title: Pane title text color
+        description: Text color for the list pane title and navigation pane vault title.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-list-heading-font-weight
+        title: Pane title font weight
+        description: Font weight for the list pane title and navigation pane vault title.
+        type: variable-number-slider
+        default: 600
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-list-header-heading
+        title: Pane headers
+        type: heading
+        level: 2
+        collapsed: false
+    -
+        id: nn-theme-list-header-icon-color
+        title: Pane header icon color
+        description: Color for folder, tag, and property icons in pane headers and for the search field icon.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-list-header-breadcrumb-color
+        title: Pane header text color
+        description: Text color for pane header titles, breadcrumbs, and search field supporting text.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-list-header-breadcrumb-font-weight
+        title: Pane header text font weight
+        description: Font weight for pane header titles and breadcrumbs.
+        type: variable-number-slider
+        default: 600
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: nn-header-heading
+        title: Header buttons
+        type: heading
+        level: 2
+        collapsed: false
+    -
         id: nn-theme-header-button-icon-color
-        title: Button icon color
+        title: Header button icon color
         description: Default icon color for header buttons.
         type: variable-themed-color
         format: hex
@@ -10234,7 +10254,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-header-button-hover-bg
-        title: Button hover background
+        title: Header button background (hover)
         description: Background color when hovering header buttons.
         type: variable-themed-color
         format: hex
@@ -10242,23 +10262,23 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-header-button-active-bg
-        title: Button active background
-        description: Background color for active/toggled header buttons.
+        title: Header button background (active)
+        description: Background color for active header buttons.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-header-button-active-icon-color
-        title: Button active icon color
-        description: Icon color for active/toggled header buttons.
+        title: Header button icon color (active)
+        description: Icon color for active header buttons.
         type: variable-themed-color
         format: hex
         default-light: '#'
         default-dark: '#'
     -
         id: nn-theme-header-button-disabled-icon-color
-        title: Button disabled icon color
+        title: Header button icon color (disabled)
         description: Icon color for disabled header buttons.
         type: variable-themed-color
         format: hex
@@ -10271,6 +10291,12 @@ settings:
         type: heading
         level: 1
         collapsed: true
+    -
+        id: nn-calendar-labels-heading
+        title: Calendar labels
+        type: heading
+        level: 2
+        collapsed: false
     -
         id: nn-theme-calendar-header-color
         title: Header text color
@@ -10312,6 +10338,12 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-calendar-day-states-heading
+        title: Day states
+        type: heading
+        level: 2
+        collapsed: false
+    -
         id: nn-theme-calendar-weekend-bg
         title: Weekend day background
         description: Background color for weekend day cells.
@@ -10325,39 +10357,6 @@ settings:
         description: Background color when hovering calendar buttons and days.
         type: variable-themed-color
         format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-calendar-note-indicator-color
-        title: Daily note indicator
-        description: Color for the dot indicator shown on dates with a daily note.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-calendar-unfinished-task-indicator-color
-        title: Unfinished task indicator
-        description: Color for the hollow indicator shown on dates with unfinished tasks.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-calendar-feature-image-text-color
-        title: Feature image text color
-        description: Text color for dates with feature images.
-        type: variable-themed-color
-        format: hex
-        default-light: '#'
-        default-dark: '#'
-    -
-        id: nn-theme-calendar-feature-image-overlay-color
-        title: Feature image overlay color
-        description: Adds a color overlay to darken or tint feature images in calendar days and months. Set separate colors for light and dark mode.
-        type: variable-themed-color
-        opacity: true
-        format: rgb
         default-light: '#'
         default-dark: '#'
     -
@@ -10396,16 +10395,55 @@ settings:
         max: 4
         step: 1
     -
+        id: nn-calendar-indicators-heading
+        title: Indicators and feature images
+        type: heading
+        level: 2
+        collapsed: false
+    -
+        id: nn-theme-calendar-note-indicator-color
+        title: Daily note indicator color
+        description: Color for the dot indicator shown on dates with a daily note.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-calendar-unfinished-task-indicator-color
+        title: Unfinished task indicator color
+        description: Color for the hollow indicator shown on dates with unfinished tasks.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-calendar-feature-image-text-color
+        title: Feature image text color
+        description: Text color for dates with feature images.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-calendar-feature-image-overlay-color
+        title: Feature image overlay color
+        description: Adds a color overlay to darken or tint feature images in calendar days and months. Set separate colors for light and dark mode.
+        type: variable-themed-color
+        opacity: true
+        format: rgb
+        default-light: '#'
+        default-dark: '#'
+    -
         id: nn-theme-pane-divider-heading
         title: Pane divider
-        description: Vertical divider between navigation and file list panes.
+        description: Divider between navigation and file list panes in dual-pane layouts.
         type: heading
         level: 1
         collapsed: true
     -
         id: nn-theme-divider-border-color
-        title: Divider border color
-        description: Color of the vertical border between panes.
+        title: Pane divider border color
+        description: Border color between panes in horizontal and vertical split layouts.
         type: variable-themed-color
         opacity: true
         format: rgb
@@ -10413,7 +10451,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-divider-resize-handle-hover-bg
-        title: Resize handle hover background
+        title: Pane divider resize handle background (hover)
         description: Background color when hovering the pane divider to resize.
         type: variable-themed-color
         format: hex
@@ -10428,7 +10466,7 @@ settings:
         collapsed: true
     -
         id: nn-theme-mobile-bg
-        title: Mobile pane background
+        title: Pane background
         description: Background color of navigation and list panes on mobile.
         type: variable-themed-color
         format: hex
@@ -10436,7 +10474,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-mobile-list-header-link-color
-        title: Mobile header link color
+        title: Header link color
         description: Color for back button and clickable breadcrumb segments on mobile.
         type: variable-themed-color
         format: hex
@@ -10444,7 +10482,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-mobile-list-header-breadcrumb-color
-        title: Mobile header breadcrumb color
+        title: Header breadcrumb color
         description: Color for current folder and separators in breadcrumb on mobile.
         type: variable-themed-color
         format: hex
@@ -10452,7 +10490,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-mobile-list-header-breadcrumb-font-weight
-        title: Mobile breadcrumb font weight
+        title: Header breadcrumb font weight
         description: Font weight for mobile header breadcrumb.
         type: variable-number-slider
         default: 600
@@ -10478,7 +10516,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-mobile-toolbar-button-active-bg
-        title: Toolbar button active background
+        title: Toolbar button background (active)
         description: Background color for active toolbar button.
         type: variable-themed-color
         format: hex
@@ -10486,7 +10524,7 @@ settings:
         default-dark: '#'
     -
         id: nn-theme-mobile-toolbar-button-active-icon-color
-        title: Toolbar button active icon color
+        title: Toolbar button icon color (active)
         description: Icon color for active toolbar button.
         type: variable-themed-color
         format: hex
