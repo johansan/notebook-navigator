@@ -1047,8 +1047,8 @@ export const STRINGS_ZH_TW = {
             },
             list: {
                 display: '外觀',
+                sortAndGroup: '排序與分組',
                 groupHeaders: '群組標題',
-                propertySort: '屬性排序與分組',
                 manualSort: '手動排序',
                 pinnedNotes: '釘選筆記',
                 drawingPreviews: '繪圖預覽'
@@ -1084,18 +1084,16 @@ export const STRINGS_ZH_TW = {
             },
             sortNotesBy: {
                 name: '預設排序方式',
-                desc: '選擇筆記的預設排序方式。「用於排序和分組的屬性」中的屬性會作為額外的排序選項顯示。',
-                options: {
-                    'modified-desc': '編輯日期（最新在頂部）',
-                    'modified-asc': '編輯日期（最舊在頂部）',
-                    'created-desc': '建立日期（最新在頂部）',
-                    'created-asc': '建立日期（最舊在頂部）',
-                    'title-asc': '標題（升序）',
-                    'title-desc': '標題（降序）',
-                    'filename-asc': '檔案名稱（升序）',
-                    'filename-desc': '檔案名稱（降序）'
-                },
+                desc: '選擇筆記的預設排序方式。「用於排序的屬性」中的屬性會作為額外的排序選項顯示。',
                 directions: {
+                    asc: '升序',
+                    desc: '降序'
+                },
+                dateDirections: {
+                    desc: '最新在頂部',
+                    asc: '最舊在頂部'
+                },
+                textDirections: {
                     asc: '升序',
                     desc: '降序'
                 },
@@ -1107,9 +1105,18 @@ export const STRINGS_ZH_TW = {
                     property: '屬性'
                 }
             },
+            defaultSortDirection: {
+                name: '排序方向'
+            },
+            defaultGroupingDirection: {
+                name: '分組方向',
+                options: {
+                    follow: '跟隨排序'
+                }
+            },
             propertySortKey: {
-                name: '用於排序和分組的屬性',
-                desc: '以逗號分隔的 frontmatter 屬性。每個屬性都會在列表面板的排序選單中顯示為排序選項和分組選項。這些屬性不會被變更。',
+                name: '用於排序的屬性',
+                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為排序選項顯示在預設排序方式設定和列表面板的排序選單中。這些屬性不會被更改。',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: '預設排序方式已重設，因為其屬性已不可用。',
@@ -1128,7 +1135,19 @@ export const STRINGS_ZH_TW = {
                 }
             },
             propertySortInstructions: {
-                intro: '上面列出的每個屬性都會在列表面板的排序選單中顯示為排序選項和分組選項。排序會依 frontmatter 值排列筆記，陣列值會合併為單一字串。分組會將具有相同值的筆記集中在同一個標題下；具有清單值的筆記會依完整清單分組，缺少該屬性的筆記會歸入最後的「無」群組。'
+                intro: '依屬性排序和分組的運作方式：',
+                items: [
+                    '**排序：** 選擇「優先順序」等屬性後，筆記會依各自的優先順序值排序。',
+                    '**分組：** 選擇「狀態」等屬性後，每個狀態值都會建立一個標題。狀態相同的筆記會顯示在同一個標題下。',
+                    '**多個值：** 如果屬性包含清單，Notebook Navigator 會使用完整清單。例如，如果「主題」包含「書籍」和「歷史」，筆記會依「書籍, 歷史」這個完整清單排序或分組，而不會分別處理每個主題。',
+                    '**缺少值：** 分組時，沒有該屬性的筆記會顯示在最後的 **無** 下。',
+                    '**標籤和屬性檢視：** 選擇 **資料夾** 分組後，會改為顯示日期標題。'
+                ]
+            },
+            propertyGroupKey: {
+                name: '用於分組的屬性',
+                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為分組選項顯示在預設分組設定和列表面板的排序選單中。這些屬性不會被更改。',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: '手動排序屬性',
@@ -1182,7 +1201,11 @@ export const STRINGS_ZH_TW = {
             },
             groupNotes: {
                 name: '預設分組',
-                desc: '自訂顯示在 frontmatter 中定義的標題。日期按日期分組筆記。資料夾按資料夾分組筆記。選擇資料夾時，標籤和屬性檢視使用日期分組。「用於排序和分組的屬性」中的屬性會作為額外的分組選項顯示。',
+                desc: '**標題**在不改變順序的情況下為已排序的列表加上標註：自訂顯示在 frontmatter 中定義的標題，日期插入日期標題。**分組**會重新排列列表：資料夾和屬性分組按自身順序排列，每個分組內的筆記遵循排序方式。',
+                families: {
+                    headers: '標題',
+                    groups: '分組'
+                },
                 options: {
                     custom: '自訂',
                     date: '日期',

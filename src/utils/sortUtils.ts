@@ -132,9 +132,9 @@ export function appendPropertySortKey(value: unknown, propertyKey: string): stri
 }
 
 /**
- * Returns the configured sort/grouping property keys available as sort and grouping choices.
+ * Returns the configured sorting property keys available as sort choices.
  * The manual-sort property is excluded because manual sort has its own menu entry and is never
- * offered as a regular property sort or grouping choice.
+ * offered as a regular property sort choice.
  */
 export function getAvailablePropertySortKeys(
     settings: Pick<NotebookNavigatorSettings, 'propertySortKey' | 'manualSortPropertyKey'>
@@ -249,6 +249,14 @@ export function getSortField(sortOption: SortOption): SortField {
     return 'property';
 }
 
+/**
+ * Returns the direction selected when the sort field changes. Date fields start with the newest
+ * notes first, while title, file name, and property fields start in ascending order.
+ */
+export function getSortDirectionForFieldChange(field: SortField): SortDirection {
+    return field === 'modified' || field === 'created' ? 'desc' : 'asc';
+}
+
 export function buildSortOption(field: SortField, direction: SortDirection): SortOption {
     return `${field}-${direction}`;
 }
@@ -318,7 +326,7 @@ export interface DefaultReconcileResult {
 }
 
 /**
- * Validates the default folder sort against the configured sort/grouping properties.
+ * Validates the default folder sort against the configured sorting properties.
  * A property-based default whose key is missing from the configured list (or points at the
  * manual-sort property) resets both fields to the stock default rather than retargeting another
  * property, so removing a property never silently changes which property sorts the vault.

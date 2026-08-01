@@ -10,6 +10,7 @@ import {
     getMatchingPropertySortKey,
     getPropertySortValueFromRecord,
     getSortIcon,
+    getSortDirectionForFieldChange,
     parsePropertySortKeys,
     pruneUnavailablePropertySortOverrides,
     reconcileDefaultFolderSort,
@@ -221,6 +222,19 @@ describe('sortFiles', () => {
         );
 
         expect(files.map(file => file.basename)).toEqual(['a', 'b']);
+    });
+});
+
+describe('sort direction after changing fields', () => {
+    it('starts date fields with newest on top', () => {
+        expect(getSortDirectionForFieldChange('modified')).toBe('desc');
+        expect(getSortDirectionForFieldChange('created')).toBe('desc');
+    });
+
+    it('starts text and property fields in ascending order', () => {
+        expect(getSortDirectionForFieldChange('title')).toBe('asc');
+        expect(getSortDirectionForFieldChange('filename')).toBe('asc');
+        expect(getSortDirectionForFieldChange('property')).toBe('asc');
     });
 });
 

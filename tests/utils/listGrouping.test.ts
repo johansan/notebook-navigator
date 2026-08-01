@@ -21,7 +21,7 @@ import type { NotebookNavigatorSettings } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import {
     createPropertyGroupingOption,
-    getPropertyGroupingDirection,
+    getPropertyGroupingOrder,
     getPropertyGroupingKey,
     normalizeListNoteGroupingOption
 } from '../../src/settings/types';
@@ -35,7 +35,9 @@ import {
     reconcileDefaultNoteGrouping,
     resolveEffectiveListGroupingForSort,
     resolveListGrouping,
+    resolvePropertyGroupingDirection,
     updateDefaultNoteGroupingKey,
+    updatePropertyGroupKeySetting,
     updatePropertyGroupingOverrideKeys
 } from '../../src/utils/listGrouping';
 
@@ -175,7 +177,7 @@ describe('resolveEffectiveListGroupingForSort', () => {
     });
 
     it('keeps property grouping under every sort and selection type', () => {
-        const groupBy = createPropertyGroupingOption('status');
+        const groupBy = createPropertyGroupingOption('status', 'asc');
         (['modified-desc', 'title-asc', 'property-asc'] as const).forEach(sortOption => {
             expect(
                 resolveEffectiveListGroupingForSort({
@@ -197,7 +199,7 @@ describe('resolveEffectiveListGroupingForSort', () => {
     it('locks manual sort to custom groups even with property grouping', () => {
         expect(
             resolveEffectiveListGroupingForSort({
-                groupBy: createPropertyGroupingOption('status'),
+                groupBy: createPropertyGroupingOption('status', 'asc'),
                 sortOption: 'property-asc',
                 selectionType: ItemType.FOLDER,
                 isManualSortActive: true
@@ -216,16 +218,18 @@ describe('property grouping option encoding', () => {
     });
 
     it('extracts the group order direction from the prefix', () => {
-        expect(getPropertyGroupingDirection('property:status')).toBe('asc');
-        expect(getPropertyGroupingDirection('property-desc:status')).toBe('desc');
-        expect(getPropertyGroupingDirection('folder')).toBeNull();
+        expect(getPropertyGroupingOrder('property:status')).toBe('asc');
+        expect(getPropertyGroupingOrder('property-desc:status')).toBe('desc');
+        expect(getPropertyGroupingOrder('property-follow:status')).toBe('follow');
+        expect(getPropertyGroupingOrder('folder')).toBeNull();
         expect(createPropertyGroupingOption('status', 'desc')).toBe('property-desc:status');
-        expect(createPropertyGroupingOption('status')).toBe('property:status');
+        expect(createPropertyGroupingOption('status', 'asc')).toBe('property:status');
+        expect(createPropertyGroupingOption('status', 'follow')).toBe('property-follow:status');
     });
 
     it('keeps keys containing separator characters intact under both prefixes', () => {
         expect(getPropertyGroupingKey('property:-desc:odd')).toBe('-desc:odd');
-        expect(getPropertyGroupingDirection('property:-desc:odd')).toBe('asc');
+        expect(getPropertyGroupingOrder('property:-desc:odd')).toBe('asc');
     });
 
     it('normalizes property grouping options to trimmed canonical form', () => {
@@ -264,7 +268,7 @@ describe('property grouping option encoding', () => {
 describe('pruneUnavailablePropertyGroupingOverrides', () => {
     it('removes overrides for unregistered keys and keeps the rest', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = 'status, genre';
+        settings.propertyGroupKey = 'status, genre';
         settings.folderAppearances.Projects = { groupBy: 'property:status' };
         settings.folderAppearances.Archive = { groupBy: 'property:removed' };
         settings.folderAppearances.Mixed = { groupBy: 'property:removed', mode: 'compact' };
@@ -280,8 +284,8 @@ describe('pruneUnavailablePropertyGroupingOverrides', () => {
 
     it('removes overrides referencing the manual sort key', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = `status, ${settings.manualSortPropertyKey}`;
-        settings.folderAppearances.Projects = { groupBy: createPropertyGroupingOption(settings.manualSortPropertyKey) };
+        settings.propertyGroupKey = `status, ${settings.manualSortPropertyKey}`;
+        settings.folderAppearances.Projects = { groupBy: createPropertyGroupingOption(settings.manualSortPropertyKey, 'asc') };
 
         expect(pruneUnavailablePropertyGroupingOverrides(settings)).toBe(true);
         expect(settings.folderAppearances.Projects).toBeUndefined();
@@ -289,7 +293,7 @@ describe('pruneUnavailablePropertyGroupingOverrides', () => {
 
     it('reports no change when every override is available', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = 'status';
+        settings.propertyGroupKey = 'status';
         settings.folderAppearances.Projects = { groupBy: 'property:Status' };
 
         expect(pruneUnavailablePropertyGroupingOverrides(settings)).toBe(false);
@@ -399,7 +403,7 @@ describe('hasEffectiveCustomListGrouping', () => {
 describe('reconcileDefaultNoteGrouping', () => {
     it('keeps property groupings whose key is configured, matching case-insensitively', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = 'Status, genre';
+        settings.propertyGroupKey = 'Status, genre';
         settings.noteGrouping = 'property:status';
 
         expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: false, reset: false });
@@ -408,7 +412,7 @@ describe('reconcileDefaultNoteGrouping', () => {
 
     it('resets property groupings whose key is not configured', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = 'genre';
+        settings.propertyGroupKey = 'genre';
         settings.noteGrouping = 'property-desc:status';
 
         expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: true, reset: true });
@@ -417,8 +421,8 @@ describe('reconcileDefaultNoteGrouping', () => {
 
     it('resets property groupings referencing the manual sort key', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
-        settings.propertySortKey = settings.manualSortPropertyKey;
-        settings.noteGrouping = createPropertyGroupingOption(settings.manualSortPropertyKey);
+        settings.propertyGroupKey = settings.manualSortPropertyKey;
+        settings.noteGrouping = createPropertyGroupingOption(settings.manualSortPropertyKey, 'asc');
 
         expect(reconcileDefaultNoteGrouping(settings)).toEqual({ changed: true, reset: true });
         expect(settings.noteGrouping).toBe(DEFAULT_SETTINGS.noteGrouping);
@@ -460,5 +464,42 @@ describe('updateDefaultNoteGroupingKey', () => {
         settings.noteGrouping = 'date';
         expect(updateDefaultNoteGroupingKey(settings, 'status', 'Stage')).toBe(false);
         expect(settings.noteGrouping).toBe('date');
+    });
+});
+
+describe('resolvePropertyGroupingDirection', () => {
+    it('borrows the sort direction for follow-sort group orders', () => {
+        expect(resolvePropertyGroupingDirection('property-follow:status', 'modified-desc')).toBe('desc');
+        expect(resolvePropertyGroupingDirection('property-follow:status', 'title-asc')).toBe('asc');
+        expect(resolvePropertyGroupingDirection('property-follow:status', 'property-desc')).toBe('desc');
+    });
+
+    it('returns fixed group orders unchanged regardless of the sort direction', () => {
+        expect(resolvePropertyGroupingDirection('property:status', 'modified-desc')).toBe('asc');
+        expect(resolvePropertyGroupingDirection('property-desc:status', 'title-asc')).toBe('desc');
+    });
+});
+
+describe('updatePropertyGroupKeySetting', () => {
+    it('rewrites the configured grouping list on rename and removes the key on delete', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertyGroupKey = 'status, genre';
+
+        expect(updatePropertyGroupKeySetting(settings, 'status', 'Stage')).toBe(true);
+        expect(settings.propertyGroupKey).toBe('Stage, genre');
+
+        expect(updatePropertyGroupKeySetting(settings, 'genre', null)).toBe(true);
+        expect(settings.propertyGroupKey).toBe('Stage');
+    });
+
+    it('reports no change for unknown keys and empty lists', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.propertyGroupKey = 'status';
+
+        expect(updatePropertyGroupKeySetting(settings, 'genre', 'Stage')).toBe(false);
+        expect(settings.propertyGroupKey).toBe('status');
+
+        settings.propertyGroupKey = '';
+        expect(updatePropertyGroupKeySetting(settings, 'status', 'Stage')).toBe(false);
     });
 });

@@ -1049,8 +1049,8 @@ export const STRINGS_EN = {
             },
             list: {
                 display: 'Appearance',
+                sortAndGroup: 'Sort & group',
                 groupHeaders: 'Group headers',
-                propertySort: 'Property sort and grouping',
                 manualSort: 'Manual sort',
                 pinnedNotes: 'Pinned notes',
                 drawingPreviews: 'Drawing previews'
@@ -1086,20 +1086,18 @@ export const STRINGS_EN = {
             },
             sortNotesBy: {
                 name: 'Default sort order',
-                desc: 'Choose the default sort order for notes. Properties from Sort and grouping properties appear as additional sort options.',
-                options: {
-                    'modified-desc': 'Date edited (newest on top)',
-                    'modified-asc': 'Date edited (oldest on top)',
-                    'created-desc': 'Date created (newest on top)',
-                    'created-asc': 'Date created (oldest on top)',
-                    'title-asc': 'Title (A on top)',
-                    'title-desc': 'Title (Z on top)',
-                    'filename-asc': 'File name (A on top)',
-                    'filename-desc': 'File name (Z on top)'
-                },
+                desc: 'Choose the default sort order for notes. Properties from Sorting properties appear as additional sort options.',
                 directions: {
                     asc: 'Ascending',
                     desc: 'Descending'
+                },
+                dateDirections: {
+                    desc: 'Newest on top',
+                    asc: 'Oldest on top'
+                },
+                textDirections: {
+                    asc: 'A on top',
+                    desc: 'Z on top'
                 },
                 fields: {
                     modified: 'Date edited',
@@ -1109,9 +1107,18 @@ export const STRINGS_EN = {
                     property: 'Property'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sort direction'
+            },
+            defaultGroupingDirection: {
+                name: 'Grouping direction',
+                options: {
+                    follow: 'Follow sort order'
+                }
+            },
             propertySortKey: {
-                name: 'Sort and grouping properties',
-                desc: 'Comma-separated frontmatter properties. Each property appears as a sort option and a grouping option in the sort menu in the list pane. These properties are not changed.',
+                name: 'Sorting properties',
+                desc: 'Comma-separated frontmatter properties. Each property appears as a sort option in the Default sort order setting and in the sort menu in the list pane. These properties are not changed.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'Default sort order was reset because its property is no longer available.',
@@ -1130,7 +1137,19 @@ export const STRINGS_EN = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Each property listed above appears as a sort option and a grouping option in the sort menu in the list pane. Sorting orders notes by the frontmatter value, with array values joined into a single string. Grouping collects notes sharing the same value under one header; notes with a list value group under the full list, and notes missing the property go into a trailing "None" group.'
+                intro: 'How sorting and grouping by a property work:',
+                items: [
+                    '**Sorting:** Choosing a property such as Priority sorts notes by their Priority values.',
+                    '**Grouping:** Choosing a property such as Status creates a heading for each value. Notes with the same Status appear below the same heading.',
+                    '**Multiple values:** If a property contains a list, Notebook Navigator uses the full list. For example, if Topics contains Books and History, it sorts or groups the note using “Books, History”, not each topic separately.',
+                    '**Missing values:** When grouping, notes without the property appear under **None** at the end.',
+                    '**Tag and property views:** When **Folder** grouping is selected, date headings are shown instead.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Grouping properties',
+                desc: 'Comma-separated frontmatter properties. Each property appears as a grouping option in the Default grouping setting and in the sort menu in the list pane. These properties are not changed.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Manual sort property',
@@ -1187,7 +1206,11 @@ export const STRINGS_EN = {
             },
             groupNotes: {
                 name: 'Default grouping',
-                desc: 'Custom shows headers defined in frontmatter. Date groups notes by date. Folder groups notes by folder. Tag and property views use date groups when folder is selected. Properties from Sort and grouping properties appear as additional grouping options.',
+                desc: '**Headers** annotate the sorted list without changing its order: Custom shows headers defined in frontmatter, and Date inserts date headers. **Groups** reorder the list: folder and property groups are ordered on their own, and notes inside each group follow the sort order.',
+                families: {
+                    headers: 'Headers',
+                    groups: 'Groups'
+                },
                 options: {
                     custom: 'Custom',
                     date: 'Date',

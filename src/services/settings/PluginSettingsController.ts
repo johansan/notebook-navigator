@@ -441,6 +441,16 @@ export class PluginSettingsController {
             Object.prototype.hasOwnProperty.call(storedData, 'defaultFolderSortPropertyKey') &&
             typeof storedData['defaultFolderSortPropertyKey'] !== 'string'
         );
+        const hadInvalidPropertyGroupKeyInStoredData = Boolean(
+            storedData &&
+            Object.prototype.hasOwnProperty.call(storedData, 'propertyGroupKey') &&
+            typeof storedData['propertyGroupKey'] !== 'string'
+        );
+        // Pre-split configurations stored one combined sort-and-grouping property list. Seeding the
+        // grouping list from it keeps existing grouping choices and overrides working after upgrade.
+        const hadMissingPropertyGroupKeyInStoredData = Boolean(
+            storedData && !Object.prototype.hasOwnProperty.call(storedData, 'propertyGroupKey')
+        );
         const hadLegacyNoneGroupingInStoredData = containsLegacyNoneGroupingInStoredData(storedData);
         const hadLegacyOpenFolderNotesInNewTabInStoredData = Boolean(
             storedData && Object.prototype.hasOwnProperty.call(storedData, 'openFolderNotesInNewTab')
@@ -490,6 +500,16 @@ export class PluginSettingsController {
 
         if (typeof this.currentSettings.propertySortKey !== 'string') {
             this.currentSettings.propertySortKey = DEFAULT_SETTINGS.propertySortKey;
+        }
+
+        if (typeof this.currentSettings.propertyGroupKey !== 'string') {
+            this.currentSettings.propertyGroupKey = DEFAULT_SETTINGS.propertyGroupKey;
+        }
+
+        // The seed must run before grouping overrides are pruned, otherwise every property
+        // grouping override would be removed against the empty post-upgrade grouping list.
+        if (hadMissingPropertyGroupKeyInStoredData) {
+            this.currentSettings.propertyGroupKey = this.currentSettings.propertySortKey;
         }
 
         if (typeof this.currentSettings.manualSortPropertyKey !== 'string') {
@@ -704,6 +724,8 @@ export class PluginSettingsController {
             hadInvalidManualSortPropertyKeyInStoredData ||
             hadInvalidDefaultFolderSortInStoredData ||
             hadInvalidDefaultFolderSortPropertyKeyInStoredData ||
+            hadInvalidPropertyGroupKeyInStoredData ||
+            hadMissingPropertyGroupKeyInStoredData ||
             reconciledDefaultFolderSort.changed ||
             reconciledDefaultNoteGrouping.changed ||
             hadLegacyNoneGroupingInStoredData ||

@@ -534,6 +534,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             'noteGrouping',
             'defaultFolderSort',
             'propertySortKey',
+            'propertyGroupKey',
             'folderSortOverrides',
             'tagSortOverrides',
             'propertySortOverrides',

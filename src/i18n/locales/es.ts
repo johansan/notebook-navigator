@@ -1056,8 +1056,8 @@ export const STRINGS_ES = {
             },
             list: {
                 display: 'Apariencia',
+                sortAndGroup: 'Orden y agrupación',
                 groupHeaders: 'Encabezados de grupo',
-                propertySort: 'Orden y agrupación por propiedad',
                 manualSort: 'Orden manual',
                 pinnedNotes: 'Notas fijadas',
                 drawingPreviews: 'Vistas previas de dibujos'
@@ -1093,20 +1093,18 @@ export const STRINGS_ES = {
             },
             sortNotesBy: {
                 name: 'Orden predeterminado',
-                desc: 'Elige el orden predeterminado para las notas. Las propiedades de Propiedades de orden y agrupación aparecen como opciones de orden adicionales.',
-                options: {
-                    'modified-desc': 'Fecha de edición (más reciente arriba)',
-                    'modified-asc': 'Fecha de edición (más antigua arriba)',
-                    'created-desc': 'Fecha de creación (más reciente arriba)',
-                    'created-asc': 'Fecha de creación (más antigua arriba)',
-                    'title-asc': 'Título (A arriba)',
-                    'title-desc': 'Título (Z arriba)',
-                    'filename-asc': 'Nombre de archivo (A arriba)',
-                    'filename-desc': 'Nombre de archivo (Z arriba)'
-                },
+                desc: 'Elige el orden predeterminado para las notas. Las propiedades de Propiedades de orden aparecen como opciones de orden adicionales.',
                 directions: {
                     asc: 'Ascendente',
                     desc: 'Descendente'
+                },
+                dateDirections: {
+                    desc: 'Más reciente arriba',
+                    asc: 'Más antigua arriba'
+                },
+                textDirections: {
+                    asc: 'A arriba',
+                    desc: 'Z arriba'
                 },
                 fields: {
                     modified: 'Fecha de edición',
@@ -1116,9 +1114,18 @@ export const STRINGS_ES = {
                     property: 'Propiedad'
                 }
             },
+            defaultSortDirection: {
+                name: 'Dirección de orden'
+            },
+            defaultGroupingDirection: {
+                name: 'Dirección de agrupación',
+                options: {
+                    follow: 'Seguir el orden de clasificación'
+                }
+            },
             propertySortKey: {
-                name: 'Propiedades de orden y agrupación',
-                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
+                name: 'Propiedades de orden',
+                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de orden en el ajuste Orden predeterminado y en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'El orden predeterminado se restableció porque su propiedad ya no está disponible.',
@@ -1137,7 +1144,19 @@ export const STRINGS_ES = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Cada propiedad listada arriba aparece como una opción de orden y una opción de agrupación en el menú de ordenación del panel de lista. La ordenación ordena las notas por el valor del frontmatter, uniendo los valores de matriz en una sola cadena. La agrupación reúne las notas que comparten el mismo valor bajo un mismo encabezado; las notas con un valor de lista se agrupan bajo la lista completa, y las notas sin la propiedad quedan en un grupo final "Ninguno".'
+                intro: 'Cómo funcionan la ordenación y la agrupación por una propiedad:',
+                items: [
+                    '**Ordenación:** Elegir una propiedad como Prioridad ordena las notas por sus valores de Prioridad.',
+                    '**Agrupación:** Elegir una propiedad como Estado crea un encabezado para cada valor de Estado. Las notas con el mismo Estado aparecen bajo el mismo encabezado.',
+                    '**Varios valores:** Si una propiedad contiene una lista, Notebook Navigator usa la lista completa. Por ejemplo, si Temas contiene Libros e Historia, ordena o agrupa la nota usando «Libros, Historia», no cada tema por separado.',
+                    '**Valores ausentes:** Al agrupar, las notas sin la propiedad aparecen al final bajo **Ninguno**.',
+                    '**Vistas de etiquetas y propiedades:** Cuando se selecciona la agrupación **Carpeta**, se muestran encabezados de fecha en su lugar.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Propiedades de agrupación',
+                desc: 'Propiedades del frontmatter separadas por comas. Cada propiedad aparece como una opción de agrupación en el ajuste Agrupación predeterminada y en el menú de ordenación del panel de lista. Estas propiedades no se modifican.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Propiedad de orden manual',
@@ -1194,7 +1213,11 @@ export const STRINGS_ES = {
             },
             groupNotes: {
                 name: 'Agrupación predeterminada',
-                desc: 'Personalizada muestra los encabezados definidos en el frontmatter. Fecha agrupa las notas por fecha. Carpeta agrupa las notas por carpeta. Las vistas de etiquetas y propiedades usan grupos por fecha cuando se selecciona carpeta. Las propiedades de Propiedades de orden y agrupación aparecen como opciones de agrupación adicionales.',
+                desc: 'Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
+                families: {
+                    headers: 'Encabezados',
+                    groups: 'Grupos'
+                },
                 options: {
                     custom: 'Personalizada',
                     date: 'Fecha',

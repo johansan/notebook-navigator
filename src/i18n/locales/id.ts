@@ -1055,8 +1055,8 @@ export const STRINGS_ID = {
             },
             list: {
                 display: 'Tampilan',
+                sortAndGroup: 'Urutan & pengelompokan',
                 groupHeaders: 'Header grup',
-                propertySort: 'Urutan dan pengelompokan properti',
                 manualSort: 'Urutan manual',
                 pinnedNotes: 'Catatan yang disematkan',
                 drawingPreviews: 'Pratinjau gambar'
@@ -1092,20 +1092,18 @@ export const STRINGS_ID = {
             },
             sortNotesBy: {
                 name: 'Urutan default',
-                desc: 'Pilih urutan default untuk catatan. Properti dari Properti urutan dan pengelompokan muncul sebagai opsi urutan tambahan.',
-                options: {
-                    'modified-desc': 'Tanggal diedit (terbaru di atas)',
-                    'modified-asc': 'Tanggal diedit (terlama di atas)',
-                    'created-desc': 'Tanggal dibuat (terbaru di atas)',
-                    'created-asc': 'Tanggal dibuat (terlama di atas)',
-                    'title-asc': 'Judul (A di atas)',
-                    'title-desc': 'Judul (Z di atas)',
-                    'filename-asc': 'Nama file (A di atas)',
-                    'filename-desc': 'Nama file (Z di atas)'
-                },
+                desc: 'Pilih urutan default untuk catatan. Properti dari Properti urutan muncul sebagai opsi urutan tambahan.',
                 directions: {
                     asc: 'Menaik',
                     desc: 'Menurun'
+                },
+                dateDirections: {
+                    desc: 'Terbaru di atas',
+                    asc: 'Terlama di atas'
+                },
+                textDirections: {
+                    asc: 'A di atas',
+                    desc: 'Z di atas'
                 },
                 fields: {
                     modified: 'Tanggal diedit',
@@ -1115,9 +1113,18 @@ export const STRINGS_ID = {
                     property: 'Properti'
                 }
             },
+            defaultSortDirection: {
+                name: 'Arah urutan'
+            },
+            defaultGroupingDirection: {
+                name: 'Arah pengelompokan',
+                options: {
+                    follow: 'Ikuti urutan'
+                }
+            },
             propertySortKey: {
-                name: 'Properti urutan dan pengelompokan',
-                desc: 'Properti frontmatter yang dipisahkan koma. Setiap properti muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Properti ini tidak diubah.',
+                name: 'Properti urutan',
+                desc: 'Properti frontmatter dipisahkan koma. Setiap properti muncul sebagai opsi urutan di pengaturan Urutan default dan di menu urutan pada panel daftar. Properti ini tidak diubah.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'Urutan default direset karena propertinya tidak lagi tersedia.',
@@ -1136,7 +1143,19 @@ export const STRINGS_ID = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Setiap properti yang tercantum di atas muncul sebagai opsi urutan dan opsi pengelompokan di menu urutan pada panel daftar. Pengurutan mengurutkan catatan berdasarkan nilai frontmatter, dengan nilai array digabungkan menjadi satu string. Pengelompokan mengumpulkan catatan dengan nilai yang sama di bawah satu header; catatan dengan nilai daftar dikelompokkan di bawah daftar lengkap, dan catatan yang tidak memiliki properti tersebut masuk ke grup "Tidak ada" di bagian akhir.'
+                intro: 'Cara kerja pengurutan dan pengelompokan berdasarkan properti:',
+                items: [
+                    '**Pengurutan:** Memilih properti seperti Prioritas akan mengurutkan catatan berdasarkan nilai Prioritasnya.',
+                    '**Pengelompokan:** Memilih properti seperti Status akan membuat satu header untuk setiap nilai Status. Catatan dengan Status yang sama muncul di bawah header yang sama.',
+                    '**Beberapa nilai:** Jika properti berisi daftar, Notebook Navigator menggunakan seluruh daftar. Misalnya, jika Topik berisi Buku dan Sejarah, catatan diurutkan atau dikelompokkan menggunakan “Buku, Sejarah”, bukan setiap topik secara terpisah.',
+                    '**Nilai yang tidak ada:** Saat mengelompokkan, catatan tanpa properti tersebut muncul di bawah **Tidak ada** di bagian akhir.',
+                    '**Tampilan tag dan properti:** Saat pengelompokan **Folder** dipilih, header tanggal ditampilkan sebagai gantinya.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Properti pengelompokan',
+                desc: 'Properti frontmatter dipisahkan koma. Setiap properti muncul sebagai opsi pengelompokan di pengaturan Pengelompokan default dan di menu urutan pada panel daftar. Properti ini tidak diubah.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Properti urutan manual',
@@ -1193,7 +1212,11 @@ export const STRINGS_ID = {
             },
             groupNotes: {
                 name: 'Pengelompokan default',
-                desc: 'Kustom menampilkan header yang didefinisikan dalam frontmatter. Tanggal mengelompokkan catatan berdasarkan tanggal. Folder mengelompokkan catatan berdasarkan folder. Tampilan tag dan properti menggunakan grup tanggal saat folder dipilih. Properti dari Properti urutan dan pengelompokan muncul sebagai opsi pengelompokan tambahan.',
+                desc: '**Header** memberi anotasi pada daftar yang sudah diurutkan tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
+                families: {
+                    headers: 'Header',
+                    groups: 'Grup'
+                },
                 options: {
                     custom: 'Kustom',
                     date: 'Tanggal',

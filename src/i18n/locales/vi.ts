@@ -1056,8 +1056,8 @@ export const STRINGS_VI = {
             },
             list: {
                 display: 'Giao diện',
+                sortAndGroup: 'Sắp xếp và nhóm',
                 groupHeaders: 'Header nhóm',
-                propertySort: 'Sắp xếp và nhóm theo thuộc tính',
                 manualSort: 'Sắp xếp thủ công',
                 pinnedNotes: 'Ghi chú đã ghim',
                 drawingPreviews: 'Xem trước bản vẽ'
@@ -1093,20 +1093,18 @@ export const STRINGS_VI = {
             },
             sortNotesBy: {
                 name: 'Thứ tự sắp xếp mặc định',
-                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú. Các thuộc tính từ Thuộc tính sắp xếp và nhóm xuất hiện dưới dạng tùy chọn sắp xếp bổ sung.',
-                options: {
-                    'modified-desc': 'Ngày sửa (mới nhất trên)',
-                    'modified-asc': 'Ngày sửa (cũ nhất trên)',
-                    'created-desc': 'Ngày tạo (mới nhất trên)',
-                    'created-asc': 'Ngày tạo (cũ nhất trên)',
-                    'title-asc': 'Tiêu đề (A trên)',
-                    'title-desc': 'Tiêu đề (Z trên)',
-                    'filename-asc': 'Tên tệp (A trên)',
-                    'filename-desc': 'Tên tệp (Z trên)'
-                },
+                desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú. Các thuộc tính từ Thuộc tính sắp xếp xuất hiện dưới dạng tùy chọn sắp xếp bổ sung.',
                 directions: {
                     asc: 'Tăng dần',
                     desc: 'Giảm dần'
+                },
+                dateDirections: {
+                    desc: 'Mới nhất trên',
+                    asc: 'Cũ nhất trên'
+                },
+                textDirections: {
+                    asc: 'A trên',
+                    desc: 'Z trên'
                 },
                 fields: {
                     modified: 'Ngày sửa',
@@ -1116,9 +1114,18 @@ export const STRINGS_VI = {
                     property: 'Thuộc tính'
                 }
             },
+            defaultSortDirection: {
+                name: 'Hướng sắp xếp'
+            },
+            defaultGroupingDirection: {
+                name: 'Hướng nhóm',
+                options: {
+                    follow: 'Theo thứ tự sắp xếp'
+                }
+            },
             propertySortKey: {
-                name: 'Thuộc tính sắp xếp và nhóm',
-                desc: 'Các thuộc tính frontmatter phân cách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
+                name: 'Thuộc tính sắp xếp',
+                desc: 'Các thuộc tính frontmatter phân tách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn sắp xếp trong cài đặt Thứ tự sắp xếp mặc định và trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'Thứ tự sắp xếp mặc định đã được đặt lại vì thuộc tính của nó không còn khả dụng.',
@@ -1137,7 +1144,19 @@ export const STRINGS_VI = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Mỗi thuộc tính được liệt kê ở trên xuất hiện làm tùy chọn sắp xếp và tùy chọn nhóm trong menu sắp xếp ở ngăn danh sách. Sắp xếp sẽ xếp thứ tự ghi chú theo giá trị frontmatter, với các giá trị mảng được kết hợp thành một chuỗi. Nhóm sẽ gom các ghi chú có cùng giá trị dưới một header; ghi chú có giá trị dạng danh sách được nhóm theo toàn bộ danh sách, còn các ghi chú thiếu thuộc tính này nằm trong nhóm "Không có" ở cuối.'
+                intro: 'Cách sắp xếp và nhóm theo một thuộc tính hoạt động:',
+                items: [
+                    '**Sắp xếp:** Chọn một thuộc tính như Ưu tiên sẽ sắp xếp ghi chú theo giá trị Ưu tiên của chúng.',
+                    '**Nhóm:** Chọn một thuộc tính như Trạng thái sẽ tạo một tiêu đề cho mỗi giá trị Trạng thái. Các ghi chú có cùng Trạng thái xuất hiện dưới cùng một tiêu đề.',
+                    '**Nhiều giá trị:** Nếu một thuộc tính chứa danh sách, Notebook Navigator sử dụng toàn bộ danh sách. Ví dụ, nếu Chủ đề chứa Sách và Lịch sử, ghi chú sẽ được sắp xếp hoặc nhóm bằng “Sách, Lịch sử”, chứ không theo từng chủ đề riêng biệt.',
+                    '**Giá trị bị thiếu:** Khi nhóm, các ghi chú không có thuộc tính sẽ xuất hiện dưới **Không có** ở cuối.',
+                    '**Chế độ xem thẻ và thuộc tính:** Khi chọn nhóm theo **Thư mục**, tiêu đề ngày sẽ được hiển thị thay thế.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Thuộc tính nhóm',
+                desc: 'Các thuộc tính frontmatter phân tách bằng dấu phẩy. Mỗi thuộc tính xuất hiện làm tùy chọn nhóm trong cài đặt Nhóm mặc định và trong menu sắp xếp ở ngăn danh sách. Các thuộc tính này không bị thay đổi.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Thuộc tính sắp xếp thủ công',
@@ -1194,7 +1213,11 @@ export const STRINGS_VI = {
             },
             groupNotes: {
                 name: 'Nhóm mặc định',
-                desc: 'Tùy chỉnh hiển thị header được định nghĩa trong frontmatter. Ngày nhóm ghi chú theo ngày. Thư mục nhóm ghi chú theo thư mục. Chế độ xem thẻ và thuộc tính dùng nhóm ngày khi thư mục được chọn. Các thuộc tính từ Thuộc tính sắp xếp và nhóm xuất hiện dưới dạng tùy chọn nhóm bổ sung.',
+                desc: '**Tiêu đề** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị tiêu đề được định nghĩa trong frontmatter và Ngày chèn tiêu đề ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
+                families: {
+                    headers: 'Tiêu đề',
+                    groups: 'Nhóm'
+                },
                 options: {
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',

@@ -35,7 +35,12 @@ import {
     SORT_OVERRIDE_RECORD_KEYS,
     updateDefaultFolderSortPropertyKey
 } from '../utils/sortUtils';
-import { reconcileDefaultNoteGrouping, updateDefaultNoteGroupingKey, updatePropertyGroupingOverrideKeys } from '../utils/listGrouping';
+import {
+    reconcileDefaultNoteGrouping,
+    updateDefaultNoteGroupingKey,
+    updatePropertyGroupKeySetting,
+    updatePropertyGroupingOverrideKeys
+} from '../utils/listGrouping';
 import { buildUsageSummaryFromPaths, renderAffectedFilesPreview, yieldToEventLoop } from './operations/OperationBatchUtils';
 import { PropertyFileMutations } from './propertyOperations/PropertyFileMutations';
 import type { PropertyKeyDeleteEventPayload, PropertyKeyRenameEventPayload } from './propertyOperations/types';
@@ -708,6 +713,7 @@ export class PropertyOperations {
         changed = setActivePropertyFields(settings, nextPropertyFields) || changed;
 
         changed = updatePropertySortKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
+        changed = updatePropertyGroupKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateManualSortPropertyKeySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateManualSortGroupHeaderPropertySetting(settings, oldKeyNormalized, newKeyDisplay) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, oldKeyNormalized, newKeyDisplay) || changed;
@@ -738,6 +744,7 @@ export class PropertyOperations {
         changed = setActivePropertyFields(settings, nextPropertyFields) || changed;
 
         changed = updatePropertySortKeySetting(settings, normalizedKey, null) || changed;
+        changed = updatePropertyGroupKeySetting(settings, normalizedKey, null) || changed;
         changed = updateManualSortPropertyKeySetting(settings, normalizedKey, null) || changed;
         changed = updateManualSortGroupHeaderPropertySetting(settings, normalizedKey, null) || changed;
         changed = updateSortOverridePropertyKeySettings(settings, normalizedKey, null) || changed;

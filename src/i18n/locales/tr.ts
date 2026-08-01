@@ -1053,8 +1053,8 @@ export const STRINGS_TR = {
             },
             list: {
                 display: 'Görünüm',
+                sortAndGroup: 'Sıralama ve gruplama',
                 groupHeaders: 'Grup başlıkları',
-                propertySort: 'Özelliğe göre sıralama ve gruplama',
                 manualSort: 'Manuel sıralama',
                 pinnedNotes: 'Sabitlenmiş notlar',
                 drawingPreviews: 'Çizim önizlemeleri'
@@ -1090,20 +1090,18 @@ export const STRINGS_TR = {
             },
             sortNotesBy: {
                 name: 'Varsayılan sıralama düzeni',
-                desc: 'Notlar için varsayılan sıralama düzenini seçin. Sıralama ve gruplama özellikleri altındaki özellikler ek sıralama seçenekleri olarak görünür.',
-                options: {
-                    'modified-desc': 'Düzenleme tarihi (en yeni üstte)',
-                    'modified-asc': 'Düzenleme tarihi (en eski üstte)',
-                    'created-desc': 'Oluşturma tarihi (en yeni üstte)',
-                    'created-asc': 'Oluşturma tarihi (en eski üstte)',
-                    'title-asc': 'Başlık (A üstte)',
-                    'title-desc': 'Başlık (Z üstte)',
-                    'filename-asc': 'Dosya adı (A üstte)',
-                    'filename-desc': 'Dosya adı (Z üstte)'
-                },
+                desc: 'Notlar için varsayılan sıralama düzenini seçin. Sıralama özellikleri altındaki özellikler ek sıralama seçenekleri olarak görünür.',
                 directions: {
                     asc: 'Artan',
                     desc: 'Azalan'
+                },
+                dateDirections: {
+                    desc: 'En yeni üstte',
+                    asc: 'En eski üstte'
+                },
+                textDirections: {
+                    asc: 'A üstte',
+                    desc: 'Z üstte'
                 },
                 fields: {
                     modified: 'Düzenleme tarihi',
@@ -1113,9 +1111,18 @@ export const STRINGS_TR = {
                     property: 'Özellik'
                 }
             },
+            defaultSortDirection: {
+                name: 'Sıralama yönü'
+            },
+            defaultGroupingDirection: {
+                name: 'Gruplama yönü',
+                options: {
+                    follow: 'Sıralamayı izle'
+                }
+            },
             propertySortKey: {
-                name: 'Sıralama ve gruplama özellikleri',
-                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
+                name: 'Sıralama özellikleri',
+                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, Varsayılan sıralama düzeni ayarında ve liste bölmesindeki sıralama menüsünde bir sıralama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'Özelliği artık kullanılamadığı için varsayılan sıralama düzeni sıfırlandı.',
@@ -1134,7 +1141,19 @@ export const STRINGS_TR = {
                 }
             },
             propertySortInstructions: {
-                intro: 'Yukarıda listelenen her özellik, liste bölmesindeki sıralama menüsünde bir sıralama seçeneği ve bir gruplama seçeneği olarak görünür. Sıralama, notları frontmatter değerine göre sıralar ve dizi değerleri tek bir dizede birleştirilir. Gruplama, aynı değeri paylaşan notları tek bir başlık altında toplar; liste değerine sahip notlar tam listeye göre gruplanır ve özelliği olmayan notlar sondaki "Yok" grubunda yer alır.'
+                intro: 'Bir özelliğe göre sıralama ve gruplama şöyle çalışır:',
+                items: [
+                    '**Sıralama:** Öncelik gibi bir özellik seçildiğinde notlar, Öncelik değerlerine göre sıralanır.',
+                    '**Gruplama:** Durum gibi bir özellik seçildiğinde her Durum değeri için bir başlık oluşturulur. Aynı Duruma sahip notlar aynı başlığın altında görünür.',
+                    '**Birden fazla değer:** Bir özellik liste içeriyorsa Notebook Navigator listenin tamamını kullanır. Örneğin Konular, Kitaplar ve Tarih değerlerini içeriyorsa not “Kitaplar, Tarih” kullanılarak sıralanır veya gruplanır; her konu ayrı ayrı kullanılmaz.',
+                    '**Eksik değerler:** Gruplama sırasında özelliği olmayan notlar sonda **Yok** altında görünür.',
+                    '**Etiket ve özellik görünümleri:** **Klasör** gruplaması seçildiğinde bunun yerine tarih başlıkları gösterilir.'
+                ]
+            },
+            propertyGroupKey: {
+                name: 'Gruplama özellikleri',
+                desc: 'Virgülle ayrılmış frontmatter özellikleri. Her özellik, Varsayılan gruplama ayarında ve liste bölmesindeki sıralama menüsünde bir gruplama seçeneği olarak görünür. Bu özellikler değiştirilmez.',
+                placeholder: 'status, genre'
             },
             manualSortPropertyKey: {
                 name: 'Manuel sıralama özelliği',
@@ -1191,7 +1210,11 @@ export const STRINGS_TR = {
             },
             groupNotes: {
                 name: 'Varsayılan gruplama',
-                desc: "Özel, frontmatter'da tanımlanan başlıkları gösterir. Tarih, notları tarihe göre gruplar. Klasör, notları klasöre göre gruplar. Etiket ve özellik görünümleri, klasör seçildiğinde tarih gruplarını kullanır. Sıralama ve gruplama özellikleri altındaki özellikler ek gruplama seçenekleri olarak görünür.",
+                desc: "**Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
+                families: {
+                    headers: 'Başlıklar',
+                    groups: 'Gruplar'
+                },
                 options: {
                     custom: 'Özel',
                     date: 'Tarih',
