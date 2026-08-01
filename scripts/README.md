@@ -66,6 +66,8 @@ npm run build:styles
 
 - Reads import order from `src/styles/index.css`
 - Concatenates files from `src/styles/sections/*`
+- Validates theming variables, defaults, grouping, ordering, Style Settings exclusions, and the complete example against
+  `docs/theming-guide.md`
 - Writes the generated `styles.css` file only when content changes
 - Used by `npm run build`, `npm run lint:styles`, and `./scripts/build.sh`
 

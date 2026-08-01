@@ -119,7 +119,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New copy options in the file menu: `Copy note link` (`[[link]]`), `Copy note link as footnote` (`^[[[link]]]`), and `Copy note embed` (`![[link]]`) - just makes working with note links easier.'
         ],
         changed: [
-            'I finally took the time to clean up the entire Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The five navigation pane settings `Default folder/tag weight`, `Default file name weight`, `Custom color folder/tag weight`, `Custom color file name weight`, and `Folder note weight` were merged into ==Name weight== and ==Custom color name weight==, which apply to all names in the navigation pane. Saved values are not affected.',
+            'I finally took the time to clean up the entire Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The five navigation pane settings ==Default folder/tag weight==, ==Default file name weight==, ==Custom color folder/tag weight==, ==Custom color file name weight==, and ==Folder note weight== were merged into ==Item name font weight== and ==Custom color text weight==. These settings cover navigation item names, and ==Custom color text weight== also applies to custom-colored group headers, parent folders, and tag and property pills. Saved values are not affected.',
             'The ==Recent files count== setting now goes up to 50 files, up from 10.',
             'The ==Unfinished task icon== setting was removed and replaced by the new task progress display.'
         ],
