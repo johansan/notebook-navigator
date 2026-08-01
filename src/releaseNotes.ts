@@ -110,7 +110,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-02',
         showOnUpdate: true,
         bannerUrl: true,
-        info: "Lots of nice new things in this release! First up is a new **task display** in the list pane (see screenshot above). As usual you can customize everything and disable it if you don't want it.\n\nFor you power users out there you can finally set group and sort by properties as default across the entire vault. And I know many of you want this - if you hide the root folder you can now temporarily show it with Show hidden items. Have a great day and thank you for using Notebook Navigator!",
+        bannerClickable: true,
+        info: "Lots of nice new things in this release! First up is a new **task display** in the list pane (see screenshot above). As usual you can customize everything and disable it if you don't want it.\n\nFor you power users out there you can finally set **sort by property** and **group by property** as default across the entire vault.\n\nAnd I know many of you have wanted this for a while now - if you hide the root folder **you can now temporarily show the root folder with Show hidden items**.\n\nHave a great day and thank you for using Notebook Navigator!",
         new: [
             'Much better task display in the list pane! Notes containing tasks now show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder! Everything is optional of course, but this is now enabled by default. You will find all related settings in File display > ==Show tasks==. If you want a green color for completed tasks you can change this with the Style Settings plugin.',
             '==Default sorting and grouping== was rebuilt from the ground up, and you can now finally use frontmatter properties for default sorting and grouping. You will find all the new related settings in List pane > Sort & group. There are many small QoL improvements too, like changing from a date / descending sort order to file name now also changes sort order to ascending, which is what most users expect.',
@@ -119,8 +120,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New copy options in the file menu: `Copy note link` (`[[link]]`), `Copy note link as footnote` (`^[[[link]]]`), and `Copy note embed` (`![[link]]`) - just makes working with note links easier.'
         ],
         changed: [
-            'I finally took the time to clean up the entire Style Settings panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. The five navigation pane settings ==Default folder/tag weight==, ==Default file name weight==, ==Custom color folder/tag weight==, ==Custom color file name weight==, and ==Folder note weight== were merged into ==Item name font weight== and ==Custom color text weight==. These settings cover navigation item names, and ==Custom color text weight== also applies to custom-colored group headers, parent folders, and tag and property pills. Saved values are not affected.',
-            'The ==Recent files count== setting now goes up to 50 files, up from 10.',
+            'I finally took the time to clean up the entire ==Style Settings== panel. Settings are now grouped by pane and element, and border settings sit next to the elements they style. Give it a go and let me know what you think!',
+            'The ==Recent files count== setting now goes up to **50 files**, up from 10.',
             'The ==Unfinished task icon== setting was removed and replaced by the new task progress display.'
         ],
         fixed: [
