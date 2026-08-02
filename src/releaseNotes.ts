@@ -110,7 +110,6 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-02',
         showOnUpdate: true,
         bannerUrl: true,
-        bannerClickable: true,
         info: "Lots of nice new things in this release! First up is a new **task display** in the list pane (see screenshot above). As usual you can customize everything and disable it if you don't want it.\n\nFor you power users out there you can finally set **sort by property** and **group by property** as default across the entire vault.\n\nAnd I know many of you have wanted this for a while now - if you hide the root folder **you can now temporarily show the root folder with Show hidden items**.\n\nHave a great day and thank you for using Notebook Navigator!",
         new: [
             'Much better task display in the list pane! Notes containing tasks now show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder! Everything is optional of course, but this is now enabled by default. You will find all related settings in File display > ==Show tasks==. If you want a green color for completed tasks you can change this with the Style Settings plugin.',
