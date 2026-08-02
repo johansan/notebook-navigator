@@ -90,7 +90,6 @@ import { DateUtils } from '../utils/dateUtils';
 import type { NavigateToFolderOptions, RevealPropertyOptions, RevealTagOptions } from '../hooks/useNavigatorReveal';
 import type { FileItemPillDecorationModel } from '../utils/fileItemPillDecoration';
 import type { FileItemPillOrderModel } from '../utils/fileItemPillOrder';
-import { compositeWithBase } from '../utils/colorUtils';
 import { runAsyncAction } from '../utils/async';
 import { getFilesForNavigationSelection, getPinnedSectionCollapseKey } from '../utils/selectionUtils';
 import { buildListGroupCollapseKeyPrefix } from '../utils/listGroupCollapse';
@@ -332,12 +331,11 @@ export const ListPane = React.memo(
         // Android uses toolbar at top, iOS at bottom
         const isAndroid = Platform.isAndroidApp;
         /** Maps semi-transparent theme color variables to computed opaque equivalents (see constants/surfaceColorMappings). */
-        const { color: listSurfaceColor, version: listSurfaceVersion } = useSurfaceColorVariables(listPaneRef, {
+        const { getSolidBackground } = useSurfaceColorVariables(listPaneRef, {
             app,
             rootContainerRef: props.rootContainerRef,
             variables: LIST_PANE_SURFACE_COLOR_MAPPINGS
         });
-        const solidBackgroundCacheRef = useRef<Map<string, string | undefined>>(new Map());
         const [calendarWeekCount, setCalendarWeekCount] = useState<number>(() => settings.calendarWeeksToShow);
         const [isListScrolling, setIsListScrolling] = useState(false);
         const [hoveredFilePath, setHoveredFilePath] = useState<string | null>(null);
@@ -384,31 +382,6 @@ export const ListPane = React.memo(
                 setCalendarWeekCount(settings.calendarWeeksToShow);
             }
         }, [settings.calendarWeeksToShow]);
-
-        useEffect(() => {
-            solidBackgroundCacheRef.current.clear();
-        }, [listSurfaceColor, listSurfaceVersion]);
-
-        const getSolidBackground = useMemo(() => {
-            return (color?: string | null) => {
-                void listSurfaceVersion;
-                if (!color) {
-                    return undefined;
-                }
-                const trimmed = color.trim();
-                if (!trimmed) {
-                    return undefined;
-                }
-                const cache = solidBackgroundCacheRef.current;
-                if (cache.has(trimmed)) {
-                    return cache.get(trimmed);
-                }
-                const pane = listPaneRef.current;
-                const solidColor = compositeWithBase(listSurfaceColor, trimmed, { container: pane ?? null });
-                cache.set(trimmed, solidColor);
-                return solidColor;
-            };
-        }, [listSurfaceColor, listSurfaceVersion]);
 
         const shouldUseFloatingToolbars = useMobileChrome && Platform.isIosApp && settings.useFloatingToolbars;
         const scrollPaddingEnd = useMemo(() => {
