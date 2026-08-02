@@ -112,8 +112,9 @@ class names and counts use `useMemo`, and DOM measurements (navigation item heig
 applied via effects in `NotebookNavigatorComponent`, `useMeasuredElementHeight`, and `useNavigatorScale` so render output
 stays pure.
 
-Both panes use `useSurfaceColorVariables` to map semi-transparent theme variables to solid equivalents and expose surface
-colors used for background compositing.
+Both panes use `useSurfaceColorVariables` to map semi-transparent theme variables to solid equivalents. The hook owns a
+generation-scoped background resolver, so cached composites are replaced before pane rows render after a surface or color
+revision.
 
 ## Component Hierarchy
 
