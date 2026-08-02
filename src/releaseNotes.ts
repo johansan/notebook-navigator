@@ -130,7 +130,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'The ==Unfinished task icon== setting was removed and replaced by the new task progress display.'
         ],
         fixed: [
-            'When a note had a creation date in the future (for example from a frontmatter `created` property), the `Previous 7 days` group header appeared twice in the list pane, and stray headers then showed up in other folders until Obsidian was restarted. Notes dated in the future now group under a new `Future` group.'
+            'When a note had a creation date in the future (for example from a frontmatter `created` property), the `Previous 7 days` group header appeared twice in the list pane, and stray headers then showed up in other folders until Obsidian was restarted. Notes dated in the future now group under a new `Future` group.',
+            'Fixed note backgrounds in list pane with transparency keeping their dark-mode color after switching to light mode.'
         ]
     },
     {
