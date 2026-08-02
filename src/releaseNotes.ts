@@ -106,6 +106,12 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.2',
+        date: '2026-08-02',
+        showOnUpdate: true,
+        info: 'Quick fix for the new task display so it also works with pinned items.'
+    },
+    {
         version: '3.3.1',
         date: '2026-08-02',
         showOnUpdate: true,
