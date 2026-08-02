@@ -722,6 +722,18 @@
     max-height: calc(var(--nn-file-multiline-text-line-height) * var(--preview-rows, 1));
 }
 
+/* Pinned task progress and preview share one secondary row. */
+.nn-file-second-line--pinned {
+    overflow: hidden;
+}
+
+.nn-file-second-line--pinned .nn-file-preview {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+}
+
 /* Parent folder indicator shown under file names */
 .nn-parent-folder {
     font-size: var(--nn-file-small-size-mobile, var(--nn-file-small-size));

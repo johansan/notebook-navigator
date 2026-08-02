@@ -28,7 +28,8 @@ import {
     getPropertyRowCount,
     shouldShowExtensionBadgeThumbnail,
     shouldShowFeatureImageArea,
-    shouldShowFileItemParentFolderLine
+    shouldShowFileItemParentFolderLine,
+    shouldShowFileItemTaskProgress
 } from '../../src/utils/listPaneMeasurements';
 import { ItemType } from '../../src/types';
 import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
@@ -514,6 +515,51 @@ describe('listPaneMeasurements layout helpers', () => {
                 visiblePillRowCount: 0
             })
         ).toBe(desktopHeights.basePadding + desktopHeights.titleLineHeight + desktopHeights.multilineTextLineHeight);
+    });
+
+    it('keeps pinned task progress and preview in one secondary row', () => {
+        const layoutState = getFileItemLayoutState({
+            showDate: true,
+            showPreview: true,
+            showImage: false,
+            isPinned: true,
+            hasPreviewContent: true,
+            showFeatureImageArea: false,
+            hasVisiblePillRows: false
+        });
+
+        expect(
+            calculateNormalListFileRowHeightEstimate({
+                heights: desktopHeights,
+                titleRows: 1,
+                previewRows: 1,
+                layoutState,
+                showFeatureImageArea: false,
+                showExtensionBadgeThumbnail: false,
+                showParentFolderLine: false,
+                showTaskProgressLine: true,
+                visiblePillRowCount: 0
+            })
+        ).toBe(desktopHeights.basePadding + desktopHeights.titleLineHeight + desktopHeights.singleTextLineHeight);
+    });
+
+    it('shows task progress for positive task counts and respects the completed-task setting', () => {
+        expect(
+            shouldShowFileItemTaskProgress({
+                showTaskProgress: true,
+                hideWhenComplete: false,
+                taskTotal: 4,
+                taskUnfinished: 2
+            })
+        ).toBe(true);
+        expect(
+            shouldShowFileItemTaskProgress({
+                showTaskProgress: true,
+                hideWhenComplete: true,
+                taskTotal: 4,
+                taskUnfinished: 0
+            })
+        ).toBe(false);
     });
 
     it('does not show the pinned preview slot when preview text is disabled', () => {
