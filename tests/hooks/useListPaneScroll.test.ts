@@ -429,6 +429,24 @@ describe('resolveListFileRowHeightInputs', () => {
         expect(inputs.visiblePillRowCount).toBe(1);
         expect(db.getFile).toHaveBeenCalledWith(file.path);
     });
+
+    it('includes task progress in pinned markdown row measurements', () => {
+        const app = new App();
+        const file = createTestTFile('Notes/Pinned.md');
+        const db = createDb({ taskTotal: 4, taskUnfinished: 2 });
+
+        const inputs = resolveListFileRowHeightInputs({
+            app,
+            db: db as unknown as IndexedDBStorage,
+            hasPreview: () => true,
+            item: createFileItem(file, { isPinned: true }),
+            file,
+            config: createRowSizingConfig({ showTaskProgress: true })
+        });
+
+        expect(inputs.showTaskProgressLine).toBe(true);
+        expect(db.getFile).toHaveBeenCalledWith(file.path);
+    });
 });
 
 describe('createRemeasureScheduler', () => {

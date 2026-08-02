@@ -929,6 +929,34 @@ export function compositeWithBase(
     return formatRgb(blended);
 }
 
+export type SolidBackgroundResolver = (color?: string | null) => string | undefined;
+
+/**
+ * Creates a cached background resolver for one surface generation.
+ * Callers must replace the resolver before rendering consumers after the surface or a CSS-backed
+ * color revision changes; otherwise cached opaque colors would still contain the previous surface.
+ */
+export function createSolidBackgroundResolver(surfaceColor: RGBA | null, getContainer: () => HTMLElement | null): SolidBackgroundResolver {
+    const cache = new Map<string, string | undefined>();
+
+    return color => {
+        if (!color) {
+            return undefined;
+        }
+        const trimmed = color.trim();
+        if (!trimmed) {
+            return undefined;
+        }
+        if (cache.has(trimmed)) {
+            return cache.get(trimmed);
+        }
+
+        const solidColor = compositeWithBase(surfaceColor, trimmed, { container: getContainer() });
+        cache.set(trimmed, solidColor);
+        return solidColor;
+    };
+}
+
 // ============================================================================
 // File Row Background Resolution
 // ============================================================================

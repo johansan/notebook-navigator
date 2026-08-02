@@ -265,6 +265,7 @@ export function getTagPillDisplayName(tag: string, showFileTagAncestors: boolean
 
 export interface FileItemLayoutState {
     isCompactMode: boolean;
+    isPinned: boolean;
     shouldShowMultilinePreview: boolean;
     shouldReplaceEmptyPreviewWithPills: boolean;
     shouldShowDateForItem: boolean;
@@ -320,6 +321,7 @@ export function getFileItemLayoutState({
 
     return {
         isCompactMode,
+        isPinned,
         shouldShowMultilinePreview,
         shouldReplaceEmptyPreviewWithPills,
         shouldShowDateForItem,
@@ -377,9 +379,19 @@ export function calculateNormalListFileRowHeightEstimate({
         return heights.basePadding + applyFeatureImageFloor(titleContentHeight + contentLineHeight);
     }
 
-    const reservedPreviewSlotHeight = Math.max(previewSlotHeight, replacementPreviewSlotHeight);
+    // Pinned rows place task progress and the one-line preview beside each other, so both
+    // occupy one secondary line. Adding their heights would make the virtual row taller
+    // than the rendered two-line layout and leave empty space below the item.
+    const sharesPinnedSecondaryLine = layoutState.isPinned && showTaskProgressLine && hasPreviewSlot;
+    const reservedPreviewSlotHeight = sharesPinnedSecondaryLine
+        ? Math.max(previewSlotHeight, metadataLineHeight)
+        : Math.max(previewSlotHeight, replacementPreviewSlotHeight);
     const reserveImageMetadataLine = hasImageTextArea && !layoutState.isPinnedImageRow;
-    const reservedMetadataLineHeight = reserveImageMetadataLine ? heights.singleTextLineHeight : metadataLineHeight;
+    const reservedMetadataLineHeight = sharesPinnedSecondaryLine
+        ? 0
+        : reserveImageMetadataLine
+          ? heights.singleTextLineHeight
+          : metadataLineHeight;
     const reservedEmptyMetadataLineHeight = reserveImageMetadataLine && metadataLineHeight === 0 ? reservedMetadataLineHeight : 0;
     const richContentHeight = titleContentHeight + reservedPreviewSlotHeight + reservedMetadataLineHeight;
     const pillRowsHeight = heights.tagRowHeight * pillRowCount;
@@ -422,25 +434,22 @@ export function estimateFileRowHeight(inputs: FileRowHeightInputs, config: FileR
 }
 
 /**
- * Shared visibility rule for the task progress element on the file metadata line.
- * Used by both FileItem rendering and the list pane height estimator; the two must
- * agree or virtualized rows get wrong height estimates. Pinned rows suppress the
- * metadata line entirely, so task progress is suppressed there as well.
+ * Shared visibility rule for task progress in standard metadata lines and pinned
+ * secondary lines. FileItem rendering and the list pane height estimator must agree
+ * or virtualized rows get wrong height estimates.
  */
 export function shouldShowFileItemTaskProgress({
     showTaskProgress,
     hideWhenComplete,
-    isPinned,
     taskTotal,
     taskUnfinished
 }: {
     showTaskProgress: boolean;
     hideWhenComplete: boolean;
-    isPinned: boolean;
     taskTotal: number | null | undefined;
     taskUnfinished: number | null | undefined;
 }): boolean {
-    if (!showTaskProgress || isPinned || typeof taskTotal !== 'number' || taskTotal <= 0) {
+    if (!showTaskProgress || typeof taskTotal !== 'number' || taskTotal <= 0) {
         return false;
     }
 

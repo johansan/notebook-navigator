@@ -418,19 +418,15 @@ export function isListRowHeightAffectingContentChange(
         // an explicit pending state and must not be treated as an absent field.
         const nextTaskTotal = changes.taskTotal !== undefined ? changes.taskTotal : previousTaskCounters.taskTotal;
         const nextTaskUnfinished = changes.taskUnfinished !== undefined ? changes.taskUnfinished : previousTaskCounters.taskUnfinished;
-        // Pinning does not change during a counter update. Comparing both states as unpinned detects the shared
-        // visibility boundary; pinned rows can only receive a conservative remeasurement at that boundary.
         const wasTaskProgressVisible = shouldShowFileItemTaskProgress({
             showTaskProgress: true,
             hideWhenComplete: config.hideTaskProgressWhenComplete,
-            isPinned: false,
             taskTotal: previousTaskCounters.taskTotal,
             taskUnfinished: previousTaskCounters.taskUnfinished
         });
         const isTaskProgressVisible = shouldShowFileItemTaskProgress({
             showTaskProgress: true,
             hideWhenComplete: config.hideTaskProgressWhenComplete,
-            isPinned: false,
             taskTotal: nextTaskTotal,
             taskUnfinished: nextTaskUnfinished
         });
@@ -576,7 +572,6 @@ export function resolveListFileRowHeightInputs({
     const showTaskProgressLine = shouldShowFileItemTaskProgress({
         showTaskProgress: config.showTaskProgress,
         hideWhenComplete: config.hideTaskProgressWhenComplete,
-        isPinned: Boolean(item.isPinned),
         taskTotal: file.extension === 'md' ? (fileRecord?.taskTotal ?? null) : null,
         taskUnfinished: file.extension === 'md' ? (fileRecord?.taskUnfinished ?? null) : null
     });

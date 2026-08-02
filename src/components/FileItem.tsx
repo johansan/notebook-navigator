@@ -383,7 +383,7 @@ interface TaskProgressMeta {
 }
 
 /**
- * Builds display data for the metadata-line task progress element.
+ * Builds display data for the task progress element.
  * Returns null when the note has no tasks or task counts are not cached yet.
  */
 function buildTaskProgressMeta(taskTotal: number | null, taskUnfinished: number | null): TaskProgressMeta | null {
@@ -978,7 +978,6 @@ export const FileItem = React.memo(function FileItem({
     const taskProgressMeta = shouldShowFileItemTaskProgress({
         showTaskProgress: settings.showFileTaskProgress,
         hideWhenComplete: settings.hideFileTaskProgressWhenComplete,
-        isPinned,
         taskTotal,
         taskUnfinished
     })
@@ -987,7 +986,7 @@ export const FileItem = React.memo(function FileItem({
 
     // Render task icon plus optional progress bar and completed/total count if the note contains tasks.
     // The icon always renders; its color follows the complete state through the container color.
-    const renderTaskProgress = () => {
+    const renderTaskProgress = (showDotSeparator: boolean) => {
         if (!taskProgressMeta) {
             return null;
         }
@@ -998,8 +997,9 @@ export const FileItem = React.memo(function FileItem({
             <div
                 className={taskProgressMeta.isComplete ? 'nn-file-task-progress nn-file-task-progress--complete' : 'nn-file-task-progress'}
                 style={showBar ? ({ '--nn-file-task-progress-width': `${taskProgressMeta.percent}%` } as React.CSSProperties) : undefined}
-                // Renders the trailing dot separator toward the date, mirroring the parent folder's leading dot
-                data-dot-separator={shouldShowDateForItem ? 'true' : 'false'}
+                // Standard rows separate task progress from the date with a dot. Pinned rows pass false because
+                // their preview follows task progress directly on the shared secondary line.
+                data-dot-separator={showDotSeparator ? 'true' : 'false'}
             >
                 <ServiceIcon iconId="square-check" className="nn-file-task-progress-icon" aria-hidden={true} />
                 {showBar ? (
@@ -1014,6 +1014,7 @@ export const FileItem = React.memo(function FileItem({
         );
     };
     const shouldShowMetadataLine = shouldShowDateForItem || taskProgressMeta !== null || parentFolderMeta !== null;
+    const shouldShowPinnedSecondaryLine = isPinned && (taskProgressMeta !== null || shouldShowMultilinePreview);
 
     // Reset image hidden state when the feature image URL changes
     useEffect(() => {
@@ -1465,8 +1466,23 @@ export const FileItem = React.memo(function FileItem({
                             <div className="nn-file-text-content">
                                 {fileTitleElement}
 
-                                {/* Multi-row preview clamps to the configured row count. */}
-                                {shouldShowMultilinePreview && (
+                                {/* Pinned task progress and preview share one line without a dot separator. */}
+                                {shouldShowPinnedSecondaryLine && (
+                                    <div className="nn-file-second-line nn-file-second-line--pinned">
+                                        {renderTaskProgress(false)}
+                                        {shouldShowMultilinePreview && (
+                                            <div
+                                                className="nn-file-preview"
+                                                style={{ '--preview-rows': pinnedPreviewRows } as React.CSSProperties}
+                                            >
+                                                {highlightedPreview}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Non-pinned previews clamp to the configured row count. */}
+                                {!isPinned && shouldShowMultilinePreview && (
                                     <div className="nn-file-preview" style={{ '--preview-rows': pinnedPreviewRows } as React.CSSProperties}>
                                         {highlightedPreview}
                                     </div>
@@ -1476,9 +1492,9 @@ export const FileItem = React.memo(function FileItem({
                                 {renderedPillRows}
 
                                 {/* Task progress + Date + Parent folder share the metadata line */}
-                                {shouldShowMetadataLine && (
+                                {!isPinned && shouldShowMetadataLine && (
                                     <div className="nn-file-second-line">
-                                        {renderTaskProgress()}
+                                        {renderTaskProgress(shouldShowDateForItem)}
                                         {shouldShowDateForItem && <div className="nn-file-date">{displayDate}</div>}
                                         {renderParentFolder()}
                                     </div>
