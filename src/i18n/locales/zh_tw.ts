@@ -1622,7 +1622,9 @@ export const STRINGS_ZH_TW = {
                 momentDescSuffix:
                     ' 設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作 > 範本中設定範本資料夾位置。',
                 templaterSupportInstalled: '✅ 已安裝 Templater 外掛，支援完整範本功能。',
-                templaterSupportMissing: '⚠️ 安裝 Templater 外掛以支援完整範本功能。',
+                templaterSupportMissing: '⚠️ 安裝 Templater 外掛以支援範本功能。',
+                templateTokenNoticeLabel: '重要！',
+                templateTokenNotice: '範本功能需要 Templater 外掛。{{date}} 與 {{title}} 等內建格式僅在{source}設定為{option}時可用。',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '目前語法：{path}',
                 parsingError: '模式必須能格式化並重新解析為完整日期（年、月、日）。'

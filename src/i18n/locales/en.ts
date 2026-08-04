@@ -1627,7 +1627,10 @@ export const STRINGS_EN = {
                 momentDescSuffix:
                     '. Wrap subfolder names in brackets, e.g., [Work]/YYYY. Click template icon to set template. Set template folder location in File operations > Templates.',
                 templaterSupportInstalled: '✅ Templater plugin is installed with full template support.',
-                templaterSupportMissing: '⚠️ Install Templater plugin for full template support.',
+                templaterSupportMissing: '⚠️ Install Templater plugin for template support.',
+                templateTokenNoticeLabel: 'Important!',
+                templateTokenNotice:
+                    'Template support requires the Templater plugin. Built-in formats such as {{date}} and {{title}} can only be used when {source} is set to {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Current syntax: {path}',
                 parsingError: 'Pattern must format and parse back to a full date (year, month, day).'

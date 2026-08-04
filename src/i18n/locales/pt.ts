@@ -1634,7 +1634,10 @@ export const STRINGS_PT = {
                 momentDescSuffix:
                     '. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de ficheiros > Modelos.',
                 templaterSupportInstalled: '✅ O plug-in Templater está instalado com suporte completo de modelos.',
-                templaterSupportMissing: '⚠️ Instale o plug-in Templater para suporte completo de modelos.',
+                templaterSupportMissing: '⚠️ Instale o plug-in Templater para suporte de modelos.',
+                templateTokenNoticeLabel: 'Importante!',
+                templateTokenNotice:
+                    'O suporte de modelos requer o plug-in Templater. Formatos integrados como {{date}} e {{title}} só funcionam quando {source} está definido como {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintaxe atual: {path}',
                 parsingError: 'O padrão deve ser formatado e analisado novamente como uma data completa (ano, mês, dia).'

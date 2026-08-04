@@ -1627,7 +1627,10 @@ export const STRINGS_TH = {
                 momentDescSuffix:
                     ' ใส่ชื่อโฟลเดอร์ย่อยในวงเล็บเหลี่ยม เช่น [Work]/YYYY คลิกไอคอนเทมเพลตเพื่อตั้งค่าเทมเพลต ตั้งค่าตำแหน่งโฟลเดอร์เทมเพลตในการดำเนินการกับไฟล์ > เทมเพลต',
                 templaterSupportInstalled: '✅ ติดตั้งปลั๊กอิน Templater พร้อมการรองรับเทมเพลตเต็มรูปแบบแล้ว',
-                templaterSupportMissing: '⚠️ ติดตั้งปลั๊กอิน Templater เพื่อใช้การรองรับเทมเพลตเต็มรูปแบบ',
+                templaterSupportMissing: '⚠️ ติดตั้งปลั๊กอิน Templater เพื่อใช้การรองรับเทมเพลต',
+                templateTokenNoticeLabel: 'สำคัญ!',
+                templateTokenNotice:
+                    'การรองรับเทมเพลตต้องใช้ปลั๊กอิน Templater รูปแบบในตัว เช่น {{date}} และ {{title}} ใช้ได้เฉพาะเมื่อตั้ง {source} เป็น {option}',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'รูปแบบปัจจุบัน: {path}',
                 parsingError: 'แพทเทิร์นต้องสามารถฟอร์แมตและพาร์สกลับเป็นวันที่แบบเต็ม (ปี เดือน วัน) ได้'

@@ -1632,7 +1632,10 @@ export const STRINGS_JA = {
                 momentDescSuffix:
                     'を使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作 > テンプレートで設定してください。',
                 templaterSupportInstalled: '✅ Templater プラグインがインストールされており、テンプレートの完全サポートが利用できます。',
-                templaterSupportMissing: '⚠️ テンプレートの完全サポートを利用するには、Templater プラグインをインストールしてください。',
+                templaterSupportMissing: '⚠️ テンプレートのサポートを利用するには、Templater プラグインをインストールしてください。',
+                templateTokenNoticeLabel: '重要！',
+                templateTokenNotice:
+                    'テンプレートのサポートには Templater プラグインが必要です。{{date}} や {{title}} などの組み込み形式は、{source} が {option} に設定されている場合にのみ使用できます。',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '現在の構文: {path}',
                 parsingError: 'パターンは完全な日付（年、月、日）としてフォーマットされ、再度パースできる必要があります。'

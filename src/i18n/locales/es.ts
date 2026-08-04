@@ -1635,7 +1635,10 @@ export const STRINGS_ES = {
                 momentDescSuffix:
                     '. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos > Plantillas.',
                 templaterSupportInstalled: '✅ El plugin Templater está instalado con soporte completo de plantillas.',
-                templaterSupportMissing: '⚠️ Instala el plugin Templater para obtener soporte completo de plantillas.',
+                templaterSupportMissing: '⚠️ Instala el plugin Templater para obtener soporte de plantillas.',
+                templateTokenNoticeLabel: '¡Importante!',
+                templateTokenNotice:
+                    'El soporte de plantillas requiere el plugin Templater. Los formatos integrados como {{date}} y {{title}} solo funcionan cuando {source} está configurado como {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintaxis actual: {path}',
                 parsingError: 'El patrón debe formatear y volver a analizarse como una fecha completa (año, mes, día).'

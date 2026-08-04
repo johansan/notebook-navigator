@@ -1634,7 +1634,10 @@ export const STRINGS_FA = {
                 momentDescSuffix:
                     '. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی نماد قالب کلیک کنید تا قالب تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
                 templaterSupportInstalled: '✅ افزونه Templater با پشتیبانی کامل از قالب‌ها نصب شده است.',
-                templaterSupportMissing: '⚠️ برای پشتیبانی کامل از قالب‌ها، افزونه Templater را نصب کنید.',
+                templaterSupportMissing: '⚠️ برای پشتیبانی از قالب‌ها، افزونه Templater را نصب کنید.',
+                templateTokenNoticeLabel: 'مهم!',
+                templateTokenNotice:
+                    'پشتیبانی از قالب‌ها به افزونه Templater نیاز دارد. قالب‌های داخلی مانند {{date}} و {{title}} فقط زمانی کار می‌کنند که {source} روی {option} تنظیم شده باشد.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'نحوه نگارش فعلی: {path}',
                 parsingError: 'الگو باید بتواند به یک تاریخ کامل (سال، ماه، روز) قالب‌بندی شود و دوباره به همان تاریخ تجزیه شود.'

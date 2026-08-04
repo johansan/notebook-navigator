@@ -1638,7 +1638,10 @@ export const STRINGS_FR = {
                 momentDescSuffix:
                     ". Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers > Modèles.",
                 templaterSupportInstalled: '✅ Le plugin Templater est installé avec la prise en charge complète des modèles.',
-                templaterSupportMissing: '⚠️ Installez le plugin Templater pour la prise en charge complète des modèles.',
+                templaterSupportMissing: '⚠️ Installez le plugin Templater pour la prise en charge des modèles.',
+                templateTokenNoticeLabel: 'Important !',
+                templateTokenNotice:
+                    'La prise en charge des modèles nécessite le plugin Templater. Les formats intégrés comme {{date}} et {{title}} fonctionnent uniquement lorsque {source} est défini sur {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Syntaxe actuelle : {path}',
                 parsingError: 'Le modèle doit pouvoir être formaté et ré-analysé comme une date complète (année, mois, jour).'

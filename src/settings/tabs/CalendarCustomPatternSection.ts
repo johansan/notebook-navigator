@@ -476,7 +476,21 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
             ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
             : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
-        description.append(createEl('br'), createEl('br'), createEl('strong', { text: templaterSupportText }));
+        // Built-in formats such as {{date}} are only applied when daily notes come from the Daily Notes core plugin,
+        // so this section leaves them literally. The setting name and option label are substituted from the dropdown
+        // strings so the notice keeps matching the control it refers to in every locale.
+        const tokenNoticeText = strings.settings.items.calendarCustomFilePattern.templateTokenNotice
+            .replace('{source}', strings.settings.items.calendarIntegrationMode.name)
+            .replace('{option}', strings.settings.items.calendarIntegrationMode.options.dailyNotes);
+        description.append(
+            createEl('br'),
+            createEl('br'),
+            createEl('strong', { text: templaterSupportText }),
+            createEl('br'),
+            createEl('br'),
+            createEl('strong', { text: strings.settings.items.calendarCustomFilePattern.templateTokenNoticeLabel }),
+            ` ${tokenNoticeText}`
+        );
         setting.descEl.append(description);
     };
 

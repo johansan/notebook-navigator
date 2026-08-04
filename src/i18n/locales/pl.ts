@@ -1637,7 +1637,10 @@ export const STRINGS_PL = {
                 momentDescSuffix:
                     '. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach > Szablony.',
                 templaterSupportInstalled: '✅ Wtyczka Templater jest zainstalowana i zapewnia pełną obsługę szablonów.',
-                templaterSupportMissing: '⚠️ Zainstaluj wtyczkę Templater, aby uzyskać pełną obsługę szablonów.',
+                templaterSupportMissing: '⚠️ Zainstaluj wtyczkę Templater, aby uzyskać obsługę szablonów.',
+                templateTokenNoticeLabel: 'Ważne!',
+                templateTokenNotice:
+                    'Obsługa szablonów wymaga wtyczki Templater. Wbudowane formaty, takie jak {{date}} i {{title}}, działają tylko wtedy, gdy {source} jest ustawione na {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Aktywna składnia: {path}',
                 parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać kompletną datę (rok, miesiąc, dzień).'
