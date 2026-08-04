@@ -1628,7 +1628,10 @@ export const STRINGS_AR = {
                 momentDescSuffix:
                     '. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات > قوالب.',
                 templaterSupportInstalled: '✅ تم تثبيت إضافة Templater مع دعم كامل للقوالب.',
-                templaterSupportMissing: '⚠️ ثبّت إضافة Templater للحصول على دعم كامل للقوالب.',
+                templaterSupportMissing: '⚠️ ثبّت إضافة Templater للحصول على دعم القوالب.',
+                templateTokenNoticeLabel: 'مهم!',
+                templateTokenNotice:
+                    'دعم القوالب يتطلب إضافة Templater. الصيغ المدمجة مثل {{date}} و {{title}} لا تعمل إلا عندما يكون {source} مضبوطًا على {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'الصيغة الحالية: {path}',
                 parsingError: 'يجب أن يقوم النمط بتنسيق التاريخ ثم تحليله مرة أخرى كتاريخ كامل (السنة، الشهر، اليوم).'

@@ -1632,7 +1632,10 @@ export const STRINGS_TR = {
                 momentDescSuffix:
                     ' kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri > Şablonlar bölümünden ayarlayın.',
                 templaterSupportInstalled: '✅ Templater eklentisi tam şablon desteğiyle yüklü.',
-                templaterSupportMissing: '⚠️ Tam şablon desteği için Templater eklentisini yükleyin.',
+                templaterSupportMissing: '⚠️ Şablon desteği için Templater eklentisini yükleyin.',
+                templateTokenNoticeLabel: 'Önemli!',
+                templateTokenNotice:
+                    'Şablon desteği Templater eklentisini gerektirir. {{date}} ve {{title}} gibi yerleşik biçimler yalnızca {source} ayarı {option} olarak seçildiğinde kullanılabilir.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Geçerli sözdizimi: {path}',
                 parsingError: 'Desen, tam bir tarih (yıl, ay, gün) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.'

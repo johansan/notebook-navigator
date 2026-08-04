@@ -1636,7 +1636,10 @@ export const STRINGS_NL = {
                 momentDescSuffix:
                     '. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen > Sjablonen.',
                 templaterSupportInstalled: '✅ De Templater-plug-in is geïnstalleerd met volledige sjabloonondersteuning.',
-                templaterSupportMissing: '⚠️ Installeer de Templater-plug-in voor volledige sjabloonondersteuning.',
+                templaterSupportMissing: '⚠️ Installeer de Templater-plug-in voor sjabloonondersteuning.',
+                templateTokenNoticeLabel: 'Belangrijk!',
+                templateTokenNotice:
+                    'Sjabloonondersteuning vereist de Templater-plug-in. Ingebouwde formaten zoals {{date}} en {{title}} werken alleen wanneer {source} is ingesteld op {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Huidige syntaxis: {path}',
                 parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige datum (jaar, maand, dag).'

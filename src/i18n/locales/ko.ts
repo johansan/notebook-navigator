@@ -1630,7 +1630,10 @@ export const STRINGS_KO = {
                 momentDescSuffix:
                     '을 사용하여 경로 지정. 하위 폴더 이름은 대괄호로 감싸세요, 예: [Work]/YYYY. 템플릿 아이콘을 클릭하여 템플릿을 설정하세요. 템플릿 폴더 위치는 파일 작업 > 템플릿에서 설정하세요.',
                 templaterSupportInstalled: '✅ Templater 플러그인이 설치되어 전체 템플릿 지원을 사용할 수 있습니다.',
-                templaterSupportMissing: '⚠️ 전체 템플릿 지원을 사용하려면 Templater 플러그인을 설치하세요.',
+                templaterSupportMissing: '⚠️ 템플릿 지원을 사용하려면 Templater 플러그인을 설치하세요.',
+                templateTokenNoticeLabel: '중요!',
+                templateTokenNotice:
+                    '템플릿 지원에는 Templater 플러그인이 필요합니다. {{date}}, {{title}} 같은 기본 형식은 {source}이(가) {option}으로 설정된 경우에만 사용할 수 있습니다.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '현재 구문: {path}',
                 parsingError: '패턴은 전체 날짜(연, 월, 일)로 포맷되고 다시 파싱될 수 있어야 합니다.'

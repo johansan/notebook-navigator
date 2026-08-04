@@ -1634,7 +1634,10 @@ export const STRINGS_ID = {
                 momentDescSuffix:
                     '. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder templat di Operasi file > Templat.',
                 templaterSupportInstalled: '✅ Plugin Templater terpasang dengan dukungan template penuh.',
-                templaterSupportMissing: '⚠️ Pasang plugin Templater untuk dukungan template penuh.',
+                templaterSupportMissing: '⚠️ Pasang plugin Templater untuk dukungan template.',
+                templateTokenNoticeLabel: 'Penting!',
+                templateTokenNotice:
+                    'Dukungan template memerlukan plugin Templater. Format bawaan seperti {{date}} dan {{title}} hanya berfungsi jika {source} disetel ke {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintaks saat ini: {path}',
                 parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai tanggal lengkap (tahun, bulan, hari).'

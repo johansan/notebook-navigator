@@ -1637,7 +1637,10 @@ export const STRINGS_DE = {
                 momentDescSuffix:
                     '. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicken Sie auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen > Vorlagen festlegen.',
                 templaterSupportInstalled: '✅ Das Templater-Plugin ist mit voller Vorlagenunterstützung installiert.',
-                templaterSupportMissing: '⚠️ Installieren Sie das Templater-Plugin für volle Vorlagenunterstützung.',
+                templaterSupportMissing: '⚠️ Installieren Sie das Templater-Plugin für Vorlagenunterstützung.',
+                templateTokenNoticeLabel: 'Wichtig!',
+                templateTokenNotice:
+                    'Vorlagenunterstützung erfordert das Templater-Plugin. Integrierte Formate wie {{date}} und {{title}} funktionieren nur, wenn {source} auf {option} gesetzt ist.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Aktuelle Syntax: {path}',
                 parsingError: 'Das Muster muss als vollständiges Datum (Jahr, Monat, Tag) formatiert und wieder geparst werden können.'

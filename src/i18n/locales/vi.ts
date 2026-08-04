@@ -1635,7 +1635,10 @@ export const STRINGS_VI = {
                 momentDescSuffix:
                     '. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp > Mẫu.',
                 templaterSupportInstalled: '✅ Plugin Templater đã được cài đặt với hỗ trợ mẫu đầy đủ.',
-                templaterSupportMissing: '⚠️ Cài đặt plugin Templater để hỗ trợ mẫu đầy đủ.',
+                templaterSupportMissing: '⚠️ Cài đặt plugin Templater để hỗ trợ mẫu.',
+                templateTokenNoticeLabel: 'Quan trọng!',
+                templateTokenNotice:
+                    'Hỗ trợ mẫu yêu cầu plugin Templater. Các định dạng tích hợp như {{date}} và {{title}} chỉ dùng được khi {source} được đặt thành {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Cú pháp hiện tại: {path}',
                 parsingError: 'Mẫu phải có thể định dạng và phân tích lại thành một ngày đầy đủ (năm, tháng, ngày).'

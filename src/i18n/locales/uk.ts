@@ -1631,7 +1631,10 @@ export const STRINGS_UK = {
                 momentDescSuffix:
                     '. Беріть назви підпапок у квадратні дужки, напр. [Work]/YYYY. Натисніть на іконку шаблону, щоб задати шаблон. Вкажіть розташування теки шаблонів у Операції з файлами > Шаблони.',
                 templaterSupportInstalled: '✅ Плагін Templater встановлено з повною підтримкою шаблонів.',
-                templaterSupportMissing: '⚠️ Установіть плагін Templater для повної підтримки шаблонів.',
+                templaterSupportMissing: '⚠️ Установіть плагін Templater для підтримки шаблонів.',
+                templateTokenNoticeLabel: 'Важливо!',
+                templateTokenNotice:
+                    'Підтримка шаблонів потребує плагіна Templater. Вбудовані формати, такі як {{date}} і {{title}}, працюють лише коли для параметра {source} вибрано значення {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Поточний синтаксис: {path}',
                 parsingError: 'Шаблон має форматуватися і знову розбиратися як повна дата (рік, місяць, день).'

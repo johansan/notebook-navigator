@@ -1631,7 +1631,10 @@ export const STRINGS_RU = {
                 momentDescSuffix:
                     '. Заключайте названия подпапок в скобки, напр. [Work]/YYYY. Нажмите на значок шаблона, чтобы задать шаблон. Укажите расположение папки шаблонов в Операции с файлами > Шаблоны.',
                 templaterSupportInstalled: '✅ Плагин Templater установлен с полной поддержкой шаблонов.',
-                templaterSupportMissing: '⚠️ Установите плагин Templater для полной поддержки шаблонов.',
+                templaterSupportMissing: '⚠️ Установите плагин Templater для поддержки шаблонов.',
+                templateTokenNoticeLabel: 'Важно!',
+                templateTokenNotice:
+                    'Поддержка шаблонов требует плагина Templater. Встроенные форматы, такие как {{date}} и {{title}}, работают только когда для параметра {source} выбрано значение {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Текущий синтаксис: {path}',
                 parsingError: 'Шаблон должен форматироваться и разбираться обратно как полная дата (год, месяц, день).'

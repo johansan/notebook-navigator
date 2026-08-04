@@ -1630,7 +1630,10 @@ export const STRINGS_IT = {
                 momentDescSuffix:
                     ". Racchiudi i nomi delle sottocartelle tra parentesi quadre, es. [Work]/YYYY. Clicca sull'icona del modello per impostare un modello. Impostare la posizione della cartella modelli in Operazioni sui file > Modelli.",
                 templaterSupportInstalled: '✅ Il plugin Templater è installato con supporto completo ai modelli.',
-                templaterSupportMissing: '⚠️ Installa il plugin Templater per il supporto completo ai modelli.',
+                templaterSupportMissing: '⚠️ Installa il plugin Templater per il supporto ai modelli.',
+                templateTokenNoticeLabel: 'Importante!',
+                templateTokenNotice:
+                    'Il supporto ai modelli richiede il plugin Templater. I formati integrati come {{date}} e {{title}} funzionano solo quando {source} è impostato su {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintassi attuale: {path}',
                 parsingError: 'Il modello deve poter essere formattato e rianalizzato come una data completa (anno, mese, giorno).'

@@ -1621,7 +1621,9 @@ export const STRINGS_ZH_CN = {
                 momentDescSuffix:
                     ' 设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
                 templaterSupportInstalled: '✅ 已安装 Templater 插件，支持完整模板功能。',
-                templaterSupportMissing: '⚠️ 安装 Templater 插件以支持完整模板功能。',
+                templaterSupportMissing: '⚠️ 安装 Templater 插件以支持模板功能。',
+                templateTokenNoticeLabel: '重要！',
+                templateTokenNotice: '模板功能需要 Templater 插件。{{date}} 和 {{title}} 等内置格式仅在{source}设置为{option}时可用。',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '当前语法：{path}',
                 parsingError: '模式必须能格式化并重新解析为完整日期（年、月、日）。'
