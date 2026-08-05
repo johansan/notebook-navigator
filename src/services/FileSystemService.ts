@@ -108,7 +108,7 @@ interface ApplyPropertyNodeResult {
 /**
  * Serialized value shape written into frontmatter.
  */
-type PropertyNodeAssignmentValueKind = 'boolean' | 'string';
+type PropertyNodeAssignmentValueKind = 'empty' | 'boolean' | 'string';
 
 /**
  * Normalized property write request derived from a tree node id.
@@ -118,7 +118,7 @@ interface ResolvedPropertyNodeAssignment {
     nodeKind: 'key' | 'value';
     desiredValue: string | null;
     normalizedDesiredValue: string | null;
-    writeValue: boolean | string;
+    writeValue: null | boolean | string;
     writeValueKind: PropertyNodeAssignmentValueKind;
 }
 
@@ -444,8 +444,8 @@ export class FileSystemOperations {
                 nodeKind,
                 desiredValue,
                 normalizedDesiredValue,
-                writeValue: true,
-                writeValueKind: 'boolean'
+                writeValue: null,
+                writeValueKind: 'empty'
             };
         }
 
@@ -913,7 +913,7 @@ export class FileSystemOperations {
 
     /**
      * Applies a property key/value node to one or more markdown files.
-     * Key nodes set `key: true`.
+     * Key nodes set `key: null`, which Obsidian serializes as an empty YAML value.
      * Value nodes set `key: value`, replacing the current value. When the current value is a string array, replaces it with a single item array.
      */
     async applyPropertyNodeToFiles(propertyNodeId: string, files: readonly TFile[]): Promise<ApplyPropertyNodeResult> {
@@ -957,11 +957,13 @@ export class FileSystemOperations {
                     const currentValue = frontmatter[targetPropertyKey];
 
                     if (assignment.nodeKind === 'key') {
-                        if (currentValue === true || currentValue === null) {
+                        if (currentValue === null) {
                             return;
                         }
 
-                        frontmatter[targetPropertyKey] = true;
+                        // Boolean values have their own child nodes, so a key node must remain empty;
+                        // otherwise Obsidian flags the assigned `true` when the registered type is not checkbox.
+                        frontmatter[targetPropertyKey] = null;
                         didChange = true;
                         return;
                     }
