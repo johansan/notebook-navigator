@@ -538,6 +538,7 @@ export const STRINGS_ES = {
                 'nav-properties': 'Propiedades',
                 'nav-property': 'Propiedad',
                 'nav-property-value': 'Valor',
+                'file-unfinished-task': 'Tareas',
                 'file-word-count': 'Conteo de palabras',
                 'file-character-count': 'Recuento de caracteres'
             }
@@ -1254,7 +1255,16 @@ export const STRINGS_ES = {
             },
             showFileIcons: {
                 name: 'Mostrar iconos de archivo',
-                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
+                desc: 'Mostrar iconos de archivo con espaciado alineado a la izquierda. Desactivar elimina tanto iconos como sangría. Prioridad: icono de tareas pendientes > icono personalizado > icono de carpeta > icono de nombre de archivo > icono de tipo de archivo > icono predeterminado.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Icono de tareas pendientes',
+                desc: 'Reemplazar el icono del archivo cuando una nota tiene tareas pendientes.',
+                options: {
+                    none: 'Desactivado',
+                    compact: 'Modo compacto',
+                    all: 'Estándar y compacto'
+                }
             },
             useFolderIcon: {
                 name: 'Usar icono de carpeta',

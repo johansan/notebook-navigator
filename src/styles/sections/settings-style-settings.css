@@ -557,7 +557,7 @@ settings:
     -
         id: nn-theme-file-task-color
         title: File task color
-        description: Icon, bar, and count color for notes with unfinished tasks.
+        description: Color for the task display and replacement file icon in notes with unfinished tasks.
         type: variable-themed-color
         format: hex
         default-light: '#'

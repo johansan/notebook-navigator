@@ -539,6 +539,7 @@ export const STRINGS_FR = {
                 'nav-properties': 'Propriétés',
                 'nav-property': 'Propriété',
                 'nav-property-value': 'Valeur',
+                'file-unfinished-task': 'Tâches',
                 'file-word-count': 'Nombre de mots',
                 'file-character-count': 'Nombre de caractères'
             }
@@ -1257,7 +1258,16 @@ export const STRINGS_FR = {
             },
             showFileIcons: {
                 name: 'Afficher les icônes de fichier',
-                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône de tâches inachevées > icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+            },
+            unfinishedTaskIcon: {
+                name: 'Icône de tâches inachevées',
+                desc: "Remplacer l'icône du fichier lorsqu'une note contient des tâches inachevées.",
+                options: {
+                    none: 'Désactivé',
+                    compact: 'Mode compact',
+                    all: 'Standard et compact'
+                }
             },
             useFolderIcon: {
                 name: "Utiliser l'icône du dossier",

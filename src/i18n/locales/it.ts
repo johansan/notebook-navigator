@@ -537,6 +537,7 @@ export const STRINGS_IT = {
                 'nav-properties': 'Proprietà',
                 'nav-property': 'Proprietà',
                 'nav-property-value': 'Valore',
+                'file-unfinished-task': 'Attività',
                 'file-word-count': 'Conteggio parole',
                 'file-character-count': 'Conteggio caratteri'
             }
@@ -1249,7 +1250,16 @@ export const STRINGS_IT = {
             },
             showFileIcons: {
                 name: 'Mostra icone file',
-                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
+                desc: 'Visualizza icone file con spaziatura allineata a sinistra. Disabilitando rimuove sia icone che indentazione. Priorità: icona attività incomplete > icona personalizzata > icona cartella > icona nome file > icona tipo file > icona predefinita.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Icona attività incomplete',
+                desc: "Sostituisci l'icona del file quando una nota contiene attività incomplete.",
+                options: {
+                    none: 'Disabilitato',
+                    compact: 'Modalità compatta',
+                    all: 'Standard e compatta'
+                }
             },
             useFolderIcon: {
                 name: 'Usa icona cartella',

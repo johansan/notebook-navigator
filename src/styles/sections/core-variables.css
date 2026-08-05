@@ -220,8 +220,8 @@ body {
     --nn-theme-file-preview-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-preview-font-weight: 400;
     /* --nn-theme-file-task-color and --nn-theme-file-task-complete-color are
-       intentionally not declared here: task progress rules use var() fallbacks to detect whether
-       a theme or Style Settings set them, so customized colors can persist on selected rows. */
+       intentionally not declared here: task progress and replacement icon rules use var() fallbacks
+       to detect whether a theme or Style Settings set them, so customized colors can persist on selected rows. */
     --nn-theme-file-task-font-weight: 400;
     --nn-theme-file-task-complete-font-weight: 400;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);

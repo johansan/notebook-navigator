@@ -535,6 +535,7 @@ export const STRINGS_KO = {
                 'nav-properties': '속성',
                 'nav-property': '속성',
                 'nav-property-value': '값',
+                'file-unfinished-task': '작업',
                 'file-word-count': '단어 수',
                 'file-character-count': '문자 수'
             }
@@ -1250,7 +1251,16 @@ export const STRINGS_KO = {
             },
             showFileIcons: {
                 name: '파일 아이콘 표시',
-                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 미완료 작업 아이콘 > 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+            },
+            unfinishedTaskIcon: {
+                name: '미완료 작업 아이콘',
+                desc: '노트에 미완료 작업이 있을 때 파일 아이콘을 바꿉니다.',
+                options: {
+                    none: '비활성화',
+                    compact: '컴팩트 모드',
+                    all: '표준 및 컴팩트'
+                }
             },
             useFolderIcon: {
                 name: '폴더 아이콘 사용',
