@@ -30,6 +30,7 @@ import {
     isCharacterCountSpaces,
     isFeatureImagePixelSizeSetting,
     isFeatureImageSizeSetting,
+    isUnfinishedTaskIconMode,
     isTextCountDisplay,
     isTextCountPlacement,
     showsCharacterCount,
@@ -225,6 +226,24 @@ export function renderNotesTab(context: SettingsTabContext): void {
             await plugin.saveSettingsAndUpdate();
         }
     );
+
+    new Setting(fileIconDependentSettingsEl)
+        .setName(strings.settings.items.unfinishedTaskIcon.name)
+        .setDesc(strings.settings.items.unfinishedTaskIcon.desc)
+        .addDropdown(dropdown =>
+            dropdown
+                .addOption('none', strings.settings.items.unfinishedTaskIcon.options.none)
+                .addOption('compact', strings.settings.items.unfinishedTaskIcon.options.compact)
+                .addOption('all', strings.settings.items.unfinishedTaskIcon.options.all)
+                .setValue(plugin.settings.unfinishedTaskIcon)
+                .onChange(async value => {
+                    if (!isUnfinishedTaskIconMode(value)) {
+                        return;
+                    }
+                    plugin.settings.unfinishedTaskIcon = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+        );
 
     let updateFileNameIconMapVisibility: (() => void) | null = null;
     let updateFileTypeIconMapVisibility: (() => void) | null = null;

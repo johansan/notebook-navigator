@@ -348,6 +348,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     unfinishedTaskBackgroundColor: UNFINISHED_TASK_BACKGROUND_COLOR_DEFAULT,
     unfinishedTaskBackgroundColorDark: UNFINISHED_TASK_BACKGROUND_COLOR_DEFAULT,
     showFileIcons: true,
+    unfinishedTaskIcon: 'compact',
     useFolderIconForFiles: false,
     showFilenameMatchIcons: false,
     fileNameIconMap: sanitizeRecord<string>(undefined),

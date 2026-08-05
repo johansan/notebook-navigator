@@ -190,6 +190,26 @@ describe('PluginSettingsController.loadSettings', () => {
         expect(savedSettings.openFolderNotesInNewTab).toBeUndefined();
     });
 
+    it('migrates the legacy unfinished task icon toggle to both list modes', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                showFileIconUnfinishedTask: true
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.unfinishedTaskIcon).toBe('all');
+        expect(saveData).toHaveBeenCalledTimes(1);
+        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(savedSettings.unfinishedTaskIcon).toBe('all');
+        expect(savedSettings.showFileIconUnfinishedTask).toBeUndefined();
+    });
+
     it('persists cleanup when legacy folder color title setting is migrated', async () => {
         const saveData = vi.fn().mockResolvedValue(undefined);
         const controller = new PluginSettingsController({

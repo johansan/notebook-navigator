@@ -537,6 +537,7 @@ export const STRINGS_JA = {
                 'nav-properties': 'プロパティ',
                 'nav-property': 'プロパティ',
                 'nav-property-value': '値',
+                'file-unfinished-task': 'タスク',
                 'file-word-count': '単語数',
                 'file-character-count': '文字数'
             }
@@ -1252,7 +1253,16 @@ export const STRINGS_JA = {
             },
             showFileIcons: {
                 name: 'ファイルアイコンを表示',
-                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
+                desc: 'ファイルアイコンを左寄せ間隔で表示。無効化するとアイコンとインデントの両方が削除されます。優先順位: 未完了タスクアイコン > カスタムアイコン > フォルダアイコン > ファイル名アイコン > ファイルタイプアイコン > デフォルトアイコン。'
+            },
+            unfinishedTaskIcon: {
+                name: '未完了タスクアイコン',
+                desc: 'ノートに未完了のタスクがある場合にファイルアイコンを置き換えます。',
+                options: {
+                    none: '無効',
+                    compact: 'コンパクトモード',
+                    all: '標準とコンパクト'
+                }
             },
             useFolderIcon: {
                 name: 'フォルダアイコンを使用',

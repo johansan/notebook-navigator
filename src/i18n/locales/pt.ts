@@ -538,6 +538,7 @@ export const STRINGS_PT = {
                 'nav-properties': 'Propriedades',
                 'nav-property': 'Propriedade',
                 'nav-property-value': 'Valor',
+                'file-unfinished-task': 'Tarefas',
                 'file-word-count': 'Contagem de palavras',
                 'file-character-count': 'Contagem de caracteres'
             }
@@ -1253,7 +1254,16 @@ export const STRINGS_PT = {
             },
             showFileIcons: {
                 name: 'Mostrar ícones de ficheiros',
-                desc: 'Exibir ícones de ficheiros com espaçamento alinhado à esquerda. Desativar remove ícones e indentação. Prioridade: ícone personalizado > ícone de pasta > ícone de nome de ficheiro > ícone de tipo de ficheiro > ícone predefinido.'
+                desc: 'Exibir ícones de ficheiros com espaçamento alinhado à esquerda. Desativar remove ícones e indentação. Prioridade: ícone de tarefas inacabadas > ícone personalizado > ícone de pasta > ícone de nome de ficheiro > ícone de tipo de ficheiro > ícone predefinido.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Ícone de tarefas inacabadas',
+                desc: 'Substituir o ícone do ficheiro quando uma nota tem tarefas inacabadas.',
+                options: {
+                    none: 'Desativado',
+                    compact: 'Modo compacto',
+                    all: 'Padrão e compacto'
+                }
             },
             useFolderIcon: {
                 name: 'Usar ícone de pasta',

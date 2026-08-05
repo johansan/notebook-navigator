@@ -534,6 +534,7 @@ export const STRINGS_ZH_CN = {
                 'nav-properties': '属性',
                 'nav-property': '属性',
                 'nav-property-value': '值',
+                'file-unfinished-task': '任务',
                 'file-word-count': '字数统计',
                 'file-character-count': '字符数'
             }
@@ -1241,7 +1242,16 @@ export const STRINGS_ZH_CN = {
             },
             showFileIcons: {
                 name: '显示文件图标',
-                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：未完成任务图标 > 自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+            },
+            unfinishedTaskIcon: {
+                name: '未完成任务图标',
+                desc: '当笔记包含未完成任务时替换文件图标。',
+                options: {
+                    none: '已禁用',
+                    compact: '紧凑模式',
+                    all: '标准和紧凑'
+                }
             },
             useFolderIcon: {
                 name: '使用文件夹图标',

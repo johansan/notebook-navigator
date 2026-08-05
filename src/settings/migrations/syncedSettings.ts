@@ -118,6 +118,12 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+
+    const legacyShowFileIconUnfinishedTask = mutableSettings.showFileIconUnfinishedTask;
+    if (typeof storedData?.['unfinishedTaskIcon'] === 'undefined' && typeof legacyShowFileIconUnfinishedTask === 'boolean') {
+        // The legacy toggle affected standard and compact rows, so enabled values map to both modes.
+        settings.unfinishedTaskIcon = legacyShowFileIconUnfinishedTask ? 'all' : 'none';
+    }
     delete mutableSettings.showFileIconUnfinishedTask;
 
     const storedNoteGrouping = storedData ? storedData['noteGrouping'] : undefined;

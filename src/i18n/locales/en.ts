@@ -536,6 +536,7 @@ export const STRINGS_EN = {
                 'nav-properties': 'Properties',
                 'nav-property': 'Property',
                 'nav-property-value': 'Value',
+                'file-unfinished-task': 'Tasks',
                 'file-word-count': 'Word count',
                 'file-character-count': 'Character count'
             }
@@ -1247,7 +1248,16 @@ export const STRINGS_EN = {
             },
             showFileIcons: {
                 name: 'Show file icons',
-                desc: 'Display file icons with left-aligned spacing. Disabling removes both icons and indentation. Priority: custom icon > folder icon > file name icon > file type icon > default icon.'
+                desc: 'Display file icons with left-aligned spacing. Disabling removes both icons and indentation. Priority: unfinished task icon > custom icon > folder icon > file name icon > file type icon > default icon.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Unfinished task icon',
+                desc: 'Replace the file icon when a note has unfinished tasks.',
+                options: {
+                    none: 'Disabled',
+                    compact: 'Compact mode',
+                    all: 'Standard and compact'
+                }
             },
             useFolderIcon: {
                 name: 'Use folder icon',

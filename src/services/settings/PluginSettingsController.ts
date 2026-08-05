@@ -60,6 +60,7 @@ import {
     isHomepageSource,
     isMouseBackForwardAction,
     isManualSortNewNotePlacement,
+    isUnfinishedTaskIconMode,
     isPropertySortSecondaryOption,
     isNarrowSidebarTriggerMode,
     normalizeNarrowSidebarLayout,
@@ -496,6 +497,9 @@ export class PluginSettingsController {
         const hadShowPinnedGroupHeaderInStoredData = Boolean(
             storedData && Object.prototype.hasOwnProperty.call(storedData, 'showPinnedGroupHeader')
         );
+        const hadLegacyUnfinishedTaskIconInStoredData = Boolean(
+            storedData && Object.prototype.hasOwnProperty.call(storedData, 'showFileIconUnfinishedTask')
+        );
         const storedInterfaceIcons = storedData?.['interfaceIcons'];
         const hadPinnedSectionIconInStoredData = Boolean(
             isRecord(storedInterfaceIcons) && Object.prototype.hasOwnProperty.call(storedInterfaceIcons, 'pinned-section')
@@ -802,6 +806,7 @@ export class PluginSettingsController {
             hadLegacyFolderColorTitleSettingInStoredData ||
             hadShowPinnedIconInStoredData ||
             hadShowPinnedGroupHeaderInStoredData ||
+            hadLegacyUnfinishedTaskIconInStoredData ||
             hadPinnedSectionIconInStoredData ||
             hadInvalidPropertySortKeyInStoredData ||
             hadInvalidManualSortPropertyKeyInStoredData ||
@@ -1395,6 +1400,10 @@ export class PluginSettingsController {
     }
 
     private normalizeTaskSettings(): void {
+        if (!isUnfinishedTaskIconMode(this.currentSettings.unfinishedTaskIcon)) {
+            this.currentSettings.unfinishedTaskIcon = DEFAULT_SETTINGS.unfinishedTaskIcon;
+        }
+
         if (typeof this.currentSettings.showFileTaskProgress !== 'boolean') {
             this.currentSettings.showFileTaskProgress = DEFAULT_SETTINGS.showFileTaskProgress;
         }

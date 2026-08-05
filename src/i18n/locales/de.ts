@@ -538,6 +538,7 @@ export const STRINGS_DE = {
                 'nav-properties': 'Eigenschaften',
                 'nav-property': 'Eigenschaft',
                 'nav-property-value': 'Wert',
+                'file-unfinished-task': 'Aufgaben',
                 'file-word-count': 'Wortanzahl',
                 'file-character-count': 'Zeichenanzahl'
             }
@@ -1256,7 +1257,16 @@ export const STRINGS_DE = {
             },
             showFileIcons: {
                 name: 'Dateisymbole anzeigen',
-                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Unerledigte-Aufgaben-Symbol > Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Unerledigte-Aufgaben-Symbol',
+                desc: 'Das Dateisymbol ersetzen, wenn eine Notiz unerledigte Aufgaben enthält.',
+                options: {
+                    none: 'Deaktiviert',
+                    compact: 'Kompaktmodus',
+                    all: 'Standard und kompakt'
+                }
             },
             useFolderIcon: {
                 name: 'Ordnersymbol verwenden',

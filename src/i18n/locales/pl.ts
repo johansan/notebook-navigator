@@ -540,6 +540,7 @@ export const STRINGS_PL = {
                 'nav-properties': 'Atrybuty',
                 'nav-property': 'Atrybut',
                 'nav-property-value': 'Wartość',
+                'file-unfinished-task': 'Zadania',
                 'file-word-count': 'Liczba słów',
                 'file-character-count': 'Liczba znaków'
             }
@@ -1256,7 +1257,16 @@ export const STRINGS_PL = {
             },
             showFileIcons: {
                 name: 'Pokaż ikonki plików',
-                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka nieukończonych zadań > ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Ikonka nieukończonych zadań',
+                desc: 'Zastępuje ikonkę pliku, gdy notatka zawiera nieukończone zadania.',
+                options: {
+                    none: 'Wyłączone',
+                    compact: 'Tryb kompaktowy',
+                    all: 'Standardowy i kompaktowy'
+                }
             },
             useFolderIcon: {
                 name: 'Użyj ikonki folderu',
