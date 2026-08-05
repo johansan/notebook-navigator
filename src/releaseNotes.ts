@@ -24,11 +24,12 @@
  *
  * 1. On plugin load, it compares the current version with the last shown version
  * 2. If version increased, it shows all release notes between versions
- * 3. If downgraded or same version, it shows the latest 5 releases
+ * 3. Same or downgraded versions never auto-display
  * 4. Individual releases can be marked with showOnUpdate: false to skip auto-display
  * 5. Users can always manually access release notes via plugin settings
  *
- * The lastShownVersion is stored in plugin settings to track what the user has seen.
+ * The lastShownVersion is stored in synced settings and device-local storage. The greater value is
+ * used so synced devices normally share one display while stale settings cannot repeat it locally.
  */
 
 import { compareVersions } from './utils/versionUtils';
@@ -105,6 +106,12 @@ export interface ReleaseNote {
  * 2. Categorize features into: new, improved, changed, or fixed arrays
  */
 const RELEASE_NOTES: ReleaseNote[] = [
+    {
+        version: '3.3.3',
+        date: '2026-08-09',
+        showOnUpdate: true,
+        fixed: ["Fixed an issue where the `What's new` dialog repeatedly reappeared on some sync providers."]
+    },
     {
         version: '3.3.2',
         date: '2026-08-02',

@@ -101,6 +101,7 @@ import { pruneUnavailablePropertyGroupingOverrides, reconcileDefaultNoteGrouping
 import { isRecord } from '../../utils/typeGuards';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
 import { isFileTypeIconPreset } from '../../utils/fileTypeIconPresets';
+import { compareVersions } from '../../utils/versionUtils';
 import {
     MAX_PANE_TRANSITION_DURATION_MS,
     MIN_PANE_TRANSITION_DURATION_MS,
@@ -144,6 +145,25 @@ export type StartupSettingsLoadResult = 'first-launch' | 'loaded' | 'missing' | 
 // Keep the startup grace period below Obsidian's slow-plugin warning while polling for a settings file from sync.
 const STARTUP_SETTINGS_RETRY_ATTEMPTS = 4;
 const STARTUP_SETTINGS_RETRY_DELAY_MS = 500;
+const NUMERIC_VERSION_MARKER_PATTERN = /^\d+(?:\.\d+)*$/;
+
+function normalizeVersionMarker(value: unknown): string {
+    if (typeof value !== 'string') {
+        return '';
+    }
+
+    const trimmed = value.trim();
+    if (!NUMERIC_VERSION_MARKER_PATTERN.test(trimmed)) {
+        return '';
+    }
+
+    const hasInvalidSegment = trimmed.split('.').some(segment => !Number.isSafeInteger(Number(segment)));
+    return hasInvalidSegment ? '' : trimmed;
+}
+
+function selectNewerVersion(first: string, second: string): string {
+    return compareVersions(first, second) >= 0 ? first : second;
+}
 
 function resolveTaskBackgroundColor(value: unknown, fallback: string): string {
     if (typeof value !== 'string') {
@@ -216,6 +236,65 @@ export class PluginSettingsController {
 
     public set settings(settings: NotebookNavigatorSettings) {
         this.currentSettings = settings;
+    }
+
+    /**
+     * Returns the greatest version observed in synced settings or on this device. The synced
+     * marker suppresses the dialog on other devices after synchronization, while the local marker
+     * prevents a stale whole-file settings write from making this device show the release again.
+     */
+    public getLastShownVersion(): string {
+        const resolution = this.resolveLastShownVersion(this.currentSettings.lastShownVersion);
+        this.currentSettings.lastShownVersion = resolution.version;
+        return resolution.version;
+    }
+
+    /**
+     * Advances both markers without allowing either to regress. The local marker is written first
+     * because it must still prevent a repeated dialog when the following data.json save fails or is
+     * later overwritten by a stale device.
+     *
+     * @returns `true` when the version advanced and synced settings need to be saved; otherwise
+     * existing local and synced state is retained without a settings write.
+     */
+    public advanceLastShownVersion(version: string): boolean {
+        const candidate = normalizeVersionMarker(version);
+        const currentVersion = this.getLastShownVersion();
+        if (!candidate || compareVersions(candidate, currentVersion) <= 0) {
+            return false;
+        }
+
+        localStorage.set(this.options.keys.lastShownVersionKey, candidate);
+        this.currentSettings.lastShownVersion = candidate;
+        return true;
+    }
+
+    /**
+     * Reconciles the two markers and promotes a newer synced value into local storage.
+     *
+     * @returns `version` as the marker to apply in memory. `needsSyncedRepair` is `true` when
+     * data.json contained an invalid or older value that must be replaced; otherwise the synced
+     * value already represents the effective marker and is left untouched.
+     */
+    private resolveLastShownVersion(syncedValue: unknown): { version: string; needsSyncedRepair: boolean } {
+        const syncedVersion = normalizeVersionMarker(syncedValue);
+        const localValue = localStorage.get<unknown>(this.options.keys.lastShownVersionKey);
+        const localVersion = normalizeVersionMarker(localValue);
+        const version = selectNewerVersion(syncedVersion, localVersion);
+
+        if (version && localValue !== version) {
+            localStorage.set(this.options.keys.lastShownVersionKey, version);
+        } else if (!version && localValue !== null && localValue !== undefined) {
+            // Invalid local markers must be removed because leaving one in place would make the
+            // next startup repeat the same failed reconciliation.
+            localStorage.remove(this.options.keys.lastShownVersionKey);
+        }
+
+        const syncedValueWasInvalid = syncedValue !== undefined && syncedValue !== syncedVersion;
+        return {
+            version,
+            needsSyncedRepair: syncedValueWasInvalid || compareVersions(version, syncedVersion) > 0
+        };
     }
 
     public getSyncMode(settingId: SyncModeSettingId): SettingSyncMode {
@@ -475,6 +554,10 @@ export class PluginSettingsController {
         // Deep-clone the defaults so later in-place normalization (e.g. ensureVaultProfiles) cannot mutate DEFAULT_SETTINGS
         // through nested references when stored data omits a key.
         this.currentSettings = { ...structuredClone(DEFAULT_SETTINGS), ...(storedSettings ?? {}) };
+        const lastShownVersionResolution = isFirstLaunch
+            ? { version: normalizeVersionMarker(this.currentSettings.lastShownVersion), needsSyncedRepair: false }
+            : this.resolveLastShownVersion(this.currentSettings.lastShownVersion);
+        this.currentSettings.lastShownVersion = lastShownVersionResolution.version;
         const hadLegacySearchProviderInSettings = Boolean(storedData && 'searchProvider' in storedData);
         const hadLegacyLastAnnouncedReleaseInSettings = Boolean(storedData && 'lastAnnouncedRelease' in storedData);
         const storedSearchProvider = localStorage.get<unknown>(this.options.keys.searchProviderKey);
@@ -739,7 +822,11 @@ export class PluginSettingsController {
             migratedMomentFormats ||
             migratedShortcutNegationSyntax;
 
-        return needsPersistedCleanup;
+        // A local marker newer than data.json repairs the shared high-water mark so other devices
+        // normally skip the dialog too. The local marker remains authoritative if sync regresses it again.
+        const needsLastShownVersionRepair = lastShownVersionResolution.needsSyncedRepair;
+
+        return needsPersistedCleanup || needsLastShownVersionRepair;
     }
 
     public normalizeTagSettings(): void {
@@ -885,6 +972,9 @@ export class PluginSettingsController {
     }
 
     public getPersistableSettings(): NotebookNavigatorSettings {
+        // Every whole-file settings write carries at least this device's marker. Without this merge,
+        // an unrelated setting change could serialize an older in-memory value back into data.json.
+        this.currentSettings.lastShownVersion = this.getLastShownVersion();
         const rest = { ...this.currentSettings } as Record<string, unknown>;
         this.removeNonPersistableSettings(rest);
 

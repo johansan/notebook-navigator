@@ -1454,6 +1454,17 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.onSettingsUpdate();
     }
 
+    /**
+     * Records a displayed What's new version locally before persisting the shared marker. The
+     * controller rejects older versions so a delayed modal callback cannot regress either marker.
+     */
+    public async advanceLastShownVersion(version: string): Promise<void> {
+        if (!this.settingsController.advanceLastShownVersion(version)) {
+            return;
+        }
+        await this.saveSettingsAndUpdate();
+    }
+
     public createSettingsTransferJson(): string {
         return JSON.stringify(createModifiedSettingsTransfer(this.settings, this.manifest.version), null, 2);
     }
@@ -1923,22 +1934,20 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         // Get current version from manifest
         const currentVersion = this.manifest.version;
 
-        // Get last shown version from settings
-        const lastShownVersion = this.settings.lastShownVersion;
+        // The greater local or synced marker prevents stale settings files from re-showing a release.
+        const lastShownVersion = this.settingsController.getLastShownVersion();
 
         // Initialize lastShownVersion on first install.
         if (!lastShownVersion) {
             if (isFirstLaunch) {
-                this.settings.lastShownVersion = currentVersion;
-                await this.saveSettingsAndUpdate();
+                await this.advanceLastShownVersion(currentVersion);
                 return;
             }
 
             const { getLatestReleaseNotes, isReleaseAutoDisplayEnabled } = await import('./releaseNotes');
 
             if (!isReleaseAutoDisplayEnabled(currentVersion)) {
-                this.settings.lastShownVersion = currentVersion;
-                await this.saveSettingsAndUpdate();
+                await this.advanceLastShownVersion(currentVersion);
                 return;
             }
 
@@ -1950,59 +1959,36 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
                 window.setTimeout(() => {
                     // Wrap in runAsyncAction to handle async without blocking callback
                     runAsyncAction(async () => {
-                        this.settings.lastShownVersion = currentVersion;
-                        await this.saveSettingsAndUpdate();
+                        await this.advanceLastShownVersion(currentVersion);
                     });
                 }, 1000);
             }).open();
             return;
         }
 
-        // Check if version has changed
-        if (lastShownVersion !== currentVersion) {
-            // Import release notes helpers dynamically
-            const {
-                getReleaseNotesBetweenVersions,
-                getLatestReleaseNotes,
-                compareVersions,
-                isReleaseAutoDisplayEnabled,
-                shouldAutoDisplayReleaseNotesForUpdate
-            } = await import('./releaseNotes');
-
-            const isUpgrade = compareVersions(currentVersion, lastShownVersion) > 0;
-            if (isUpgrade) {
-                // For upgrades, auto-display is enabled when any release note in (lastShownVersion, currentVersion]
-                // has showOnUpdate not explicitly set to false.
-                if (!shouldAutoDisplayReleaseNotesForUpdate(lastShownVersion, currentVersion)) {
-                    return;
-                }
-            } else if (!isReleaseAutoDisplayEnabled(currentVersion)) {
-                return;
-            }
-
-            const { WhatsNewModal } = await import('./modals/WhatsNewModal');
-
-            // Get release notes between versions
-            let releaseNotes;
-            if (isUpgrade) {
-                // Show notes from last shown to current
-                releaseNotes = getReleaseNotesBetweenVersions(lastShownVersion, currentVersion);
-            } else {
-                // Downgraded or same version - just show latest 5 releases
-                releaseNotes = getLatestReleaseNotes();
-            }
-
-            // Show the info modal when version changes
-            new WhatsNewModal(this.app, releaseNotes, () => {
-                // Save version after 1 second delay when user closes the modal
-                window.setTimeout(() => {
-                    // Wrap in runAsyncAction to handle async without blocking callback
-                    runAsyncAction(async () => {
-                        this.settings.lastShownVersion = currentVersion;
-                        await this.saveSettingsAndUpdate();
-                    });
-                }, 1000);
-            }).open();
+        // A newer shared marker can come from a device running a newer plugin version. Downgrades
+        // never auto-display because recording the older version would reopen the dialog elsewhere.
+        const { getReleaseNotesBetweenVersions, compareVersions, shouldAutoDisplayReleaseNotesForUpdate } = await import('./releaseNotes');
+        if (compareVersions(currentVersion, lastShownVersion) <= 0) {
+            return;
         }
+
+        // Auto-display when any release in the upgrade path opts in.
+        if (!shouldAutoDisplayReleaseNotesForUpdate(lastShownVersion, currentVersion)) {
+            return;
+        }
+
+        const { WhatsNewModal } = await import('./modals/WhatsNewModal');
+        const releaseNotes = getReleaseNotesBetweenVersions(lastShownVersion, currentVersion);
+
+        new WhatsNewModal(this.app, releaseNotes, () => {
+            // Save version after 1 second delay when user closes the modal
+            window.setTimeout(() => {
+                // Wrap in runAsyncAction to handle async without blocking callback
+                runAsyncAction(async () => {
+                    await this.advanceLastShownVersion(currentVersion);
+                });
+            }, 1000);
+        }).open();
     }
 }
