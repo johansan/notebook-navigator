@@ -171,6 +171,7 @@ and cache version/migration markers.
 - Cache version markers: `STORAGE_KEYS.databaseSchemaVersionKey`, `STORAGE_KEYS.databaseContentVersionKey`.
 - Frontmatter metadata cache signature: `STORAGE_KEYS.frontmatterMetadataCacheSignatureKey` (signature of the frontmatter metadata settings that produced the cached `metadata` fields; see `src/utils/frontmatterMetadataCache.ts`).
 - Cache rebuild notice marker: `STORAGE_KEYS.cacheRebuildNoticeKey`.
+- Device-local What's new floor: `STORAGE_KEYS.lastShownVersionKey`.
 - Device-local diagnostics and one-off action preferences.
 - Local storage schema marker: `STORAGE_KEYS.localStorageVersionKey` (`LOCALSTORAGE_VERSION` in `src/utils/localStorage.ts`).
 
@@ -213,6 +214,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
   cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
   debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
+  lastShownVersionKey: 'notebook-navigator-last-shown-version',
   pdfProcessingDiagnosticKey: 'notebook-navigator-pdf-processing-diagnostic',
   localStorageVersionKey: 'notebook-navigator-localstorage-version',
   vaultProfileKey: 'notebook-navigator-vault-profile',
@@ -286,7 +288,7 @@ React render paths.
 - File icon/color/background settings maps used as fallback and migration sources when frontmatter metadata writes are unavailable.
 - Pinned notes (`pinnedNotes`) keyed by file path with separate `folder` / `tag` / `property` contexts.
 - External icon provider enablement (`externalIconProviders`) and keyboard shortcut configuration (`keyboardShortcuts`).
-- Runtime metadata maps and ordering: navigation separators, root folder/tag/property order, custom vault name, custom colors, and release tracking.
+- Runtime metadata maps and ordering: navigation separators, root folder/tag/property order, custom vault name, custom colors, and the synced What's new high-water mark.
 
 #### Sync modes and local mirrors
 

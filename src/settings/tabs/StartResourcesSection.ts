@@ -64,8 +64,7 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
                         new WhatsNewModal(context.app, latestNotes, () => {
                             window.setTimeout(() => {
                                 runAsyncAction(async () => {
-                                    plugin.settings.lastShownVersion = pluginVersion;
-                                    await plugin.saveSettingsAndUpdate();
+                                    await plugin.advanceLastShownVersion(pluginVersion);
                                 });
                             }, 1000);
                         }).open();
@@ -164,8 +163,7 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
                                     new WhatsNewModal(context.app, latestNotes, () => {
                                         window.setTimeout(() => {
                                             runAsyncAction(async () => {
-                                                plugin.settings.lastShownVersion = pluginVersion;
-                                                await plugin.saveSettingsAndUpdate();
+                                                await plugin.advanceLastShownVersion(pluginVersion);
                                             });
                                         }, 1000);
                                     }).open();

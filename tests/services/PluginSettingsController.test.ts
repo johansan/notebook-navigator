@@ -37,7 +37,7 @@ const { mockLocalStorageStore, localStorageInit, localStorageGet, localStorageSe
 vi.mock('../../src/utils/localStorage', () => {
     return {
         LEGACY_STORAGE_KEYS: ['notebook-navigator-file-cache'],
-        LOCALSTORAGE_VERSION: 2,
+        LOCALSTORAGE_VERSION: 3,
         localStorage: {
             init: localStorageInit,
             get: localStorageGet,
@@ -377,6 +377,67 @@ describe('PluginSettingsController.loadSettings result classification', () => {
         expect(controller.settings.recentNotesCount).toBe(23);
     });
 
+    it('keeps a synced marker locally and repairs a later synced regression', async () => {
+        let stored: unknown = { lastShownVersion: '3.3.2' };
+        const { controller, saveData } = createController(async () => stored);
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.lastShownVersionKey)).toBe('3.3.2');
+
+        saveData.mockClear();
+        stored = { lastShownVersion: '3.3.1' };
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        expect(saveData).toHaveBeenCalledTimes(1);
+        const persisted = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(persisted.lastShownVersion).toBe('3.3.2');
+    });
+
+    it('uses the device-local marker as the floor after a restart with regressed synced settings', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.lastShownVersionKey, '3.3.2');
+        const { controller, saveData } = createController(async () => ({ lastShownVersion: '3.3.1' }));
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        const persisted = saveData.mock.calls[saveData.mock.calls.length - 1][0] as Record<string, unknown>;
+        expect(persisted.lastShownVersion).toBe('3.3.2');
+    });
+
+    it('cleans up a malformed synced marker instead of promoting it locally', async () => {
+        const { controller, saveData } = createController(async () => ({ lastShownVersion: '999.invalid' }));
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('');
+        expect(mockLocalStorageStore.has(STORAGE_KEYS.lastShownVersionKey)).toBe(false);
+        const persisted = saveData.mock.calls[saveData.mock.calls.length - 1][0] as Record<string, unknown>;
+        expect(persisted.lastShownVersion).toBe('');
+    });
+
+    it('replaces a malformed local marker with a valid synced marker', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.lastShownVersionKey, '999.invalid');
+        const { controller } = createController(async () => ({ lastShownVersion: '3.3.2' }));
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.lastShownVersionKey)).toBe('3.3.2');
+    });
+
+    it('removes a malformed local marker when no valid synced marker exists', async () => {
+        mockLocalStorageStore.set(STORAGE_KEYS.lastShownVersionKey, '999.invalid');
+        const { controller } = createController(async () => ({ lastShownVersion: '' }));
+
+        await expect(controller.loadSettings()).resolves.toBe('loaded');
+
+        expect(controller.settings.lastShownVersion).toBe('');
+        expect(mockLocalStorageStore.has(STORAGE_KEYS.lastShownVersionKey)).toBe(false);
+    });
+
     it('preserves first-launch settings when a later load returns missing data', async () => {
         const { controller, saveData } = createController(async () => null);
 
@@ -698,6 +759,45 @@ describe('PluginSettingsController.applySettingsRecord', () => {
 });
 
 describe('PluginSettingsController.saveSettings', () => {
+    it('merges the device-local marker into every whole-file settings save', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn().mockResolvedValue(null),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.lastShownVersion = '3.3.1';
+        controller.settings = settings;
+        mockLocalStorageStore.set(STORAGE_KEYS.lastShownVersionKey, '3.3.2');
+
+        await controller.saveSettings();
+
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        const persisted = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(persisted.lastShownVersion).toBe('3.3.2');
+    });
+
+    it('advances the local and synced markers without allowing a regression', () => {
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn().mockResolvedValue(null),
+            saveData: vi.fn().mockResolvedValue(undefined),
+            mirrorUXPreferences: vi.fn()
+        });
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.lastShownVersion = '3.3.1';
+        controller.settings = settings;
+
+        expect(controller.advanceLastShownVersion('3.3.2')).toBe(true);
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.lastShownVersionKey)).toBe('3.3.2');
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+        expect(controller.advanceLastShownVersion('3.3.1')).toBe(false);
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.lastShownVersionKey)).toBe('3.3.2');
+        expect(controller.settings.lastShownVersion).toBe('3.3.2');
+    });
+
     it('updates local homepage storage when homepage is local', async () => {
         let storedData: Record<string, unknown> | null = null;
 

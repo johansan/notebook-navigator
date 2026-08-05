@@ -28,6 +28,9 @@ const NON_TRANSFERABLE_SETTING_KEYS = new Set([
     'recentColors',
     'lastReleaseCheckAt',
     'latestKnownRelease',
+    // Importing another device's release marker could mark unseen notes as shown or regress the
+    // shared high-water mark before the local floor repairs it.
+    'lastShownVersion',
     'searchProvider',
     'showCalendar',
     'calendarCustomPromptForTitle',
