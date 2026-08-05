@@ -114,6 +114,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Notes with unfinished tasks had no task indicator in compact mode after the old icon setting was removed. The new File display > Icon > ==Unfinished task icon== setting can replace file icons in compact mode or in both list modes. Default set to enabled for compact mode.'
         ],
         fixed: [
+            'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
             "Fixed an issue where the `What's new` dialog repeatedly reappeared on some sync providers.",
             'When you created a note with `New note` from a property in the navigation pane, there was a bug that set the property value to `true`, even when it was a text property. New notes now start with an empty property value.'
         ]
