@@ -24,7 +24,12 @@ import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
 import type { FileData, PropertyItem } from '../../src/storage/IndexedDBStorage';
 import { PropertyTreeService } from '../../src/services/PropertyTreeService';
-import { buildPropertyTreeFromDatabase, buildPropertyValueNodeId, normalizePropertyTreeValuePath } from '../../src/utils/propertyTree';
+import {
+    buildPropertyKeyNodeId,
+    buildPropertyTreeFromDatabase,
+    buildPropertyValueNodeId,
+    normalizePropertyTreeValuePath
+} from '../../src/utils/propertyTree';
 import type { PropertyTreeDatabaseLike } from '../../src/utils/propertyTree';
 import { createTestTFile } from '../utils/createTestTFile';
 
@@ -113,6 +118,69 @@ function createOperations(app: App, propertyTreeService: PropertyTreeService): F
 }
 
 describe('FileSystemOperations property assignment', () => {
+    it('writes an empty value when applying a property key node', async () => {
+        const app = new App();
+        const target = createFile('Target.md', {});
+        const propertyTreeService = new PropertyTreeService();
+        propertyTreeService.updatePropertyTree(
+            buildPropertyTreeFromDatabase(
+                createMockDb([
+                    {
+                        path: 'Source.md',
+                        properties: [{ fieldKey: 'Categories', value: 'Reference', valueKind: 'string' }]
+                    }
+                ])
+            )
+        );
+
+        app.fileManager.processFrontMatter = vi.fn((file: TFile, callback: (frontmatter: Record<string, unknown>) => void) => {
+            callback((file as TFile & { frontmatter: Record<string, unknown> }).frontmatter);
+            return Promise.resolve();
+        });
+
+        const operations = createOperations(app, propertyTreeService);
+
+        await expect(operations.applyPropertyNodeToFiles(buildPropertyKeyNodeId('categories'), [target])).resolves.toEqual({
+            updated: 1,
+            skipped: 0
+        });
+        expect(target.frontmatter).toEqual({ Categories: null });
+    });
+
+    it('creates a note with an empty value when invoked from a property key node', async () => {
+        const app = new App();
+        const createdFile = createFile('Untitled.md', {});
+        const openFile = vi.fn().mockResolvedValue(undefined);
+        const propertyTreeService = new PropertyTreeService();
+        propertyTreeService.updatePropertyTree(
+            buildPropertyTreeFromDatabase(
+                createMockDb([
+                    {
+                        path: 'Source.md',
+                        properties: [{ fieldKey: 'Categories', value: 'Reference', valueKind: 'string' }]
+                    }
+                ])
+            )
+        );
+
+        app.fileManager.getNewFileParent = vi.fn(() => app.vault.getRoot());
+        app.fileManager.createNewMarkdownFile = vi.fn().mockResolvedValue(createdFile);
+        app.fileManager.processFrontMatter = vi.fn((file: TFile, callback: (frontmatter: Record<string, unknown>) => void) => {
+            callback((file as TFile & { frontmatter: Record<string, unknown> }).frontmatter);
+            return Promise.resolve();
+        });
+        app.workspace = {
+            getActiveFile: vi.fn(() => null),
+            getLeaf: vi.fn(() => ({ openFile }))
+        } as unknown as App['workspace'];
+
+        const operations = createOperations(app, propertyTreeService);
+
+        await expect(operations.createNewFileForProperty(buildPropertyKeyNodeId('categories'))).resolves.toBe(createdFile);
+        expect(createdFile.frontmatter).toEqual({ Categories: null });
+        expect(openFile).toHaveBeenCalledWith(createdFile, { state: { mode: 'source' }, active: true });
+    });
+
     it('writes the original wiki-link value when applying a property value node', async () => {
         const rawValue = '[[Mini-Tasks]]';
         const app = new App();
