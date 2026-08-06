@@ -416,6 +416,18 @@ export function areListSortOverridesEqual(a: ListSortOverrideValue | undefined, 
     return getListSortOverrideSignature(a) === getListSortOverrideSignature(b);
 }
 
+/**
+ * Returns undefined when the complete selected sort matches the complete default, signaling that
+ * the existing override should be removed. A match requires the field, direction, and property key
+ * to agree; sharing only one component retains the selected sort as an override.
+ */
+export function resolveListSortOverrideForDefault(
+    selectedSort: ListSortOverrideValue,
+    defaultSort: ListSortOverrideValue
+): ListSortOverrideValue | undefined {
+    return areListSortOverridesEqual(selectedSort, defaultSort) ? undefined : selectedSort;
+}
+
 export function shouldRefreshOnFileModifyForSort(sortOption: SortOption, propertySortSecondary: PropertySortSecondaryOption): boolean {
     return sortOption.startsWith('modified') || (isPropertySortOption(sortOption) && propertySortSecondary === 'modified');
 }
