@@ -110,16 +110,15 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.3',
         date: '2026-08-06',
         showOnUpdate: true,
-        info: 'This is mainly a small maintenance release, adding back the unfinished task icon setting for those of you who used it in compact mode.'
         new: [
-            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Seems many of you used it, especially in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes, you'll find it in File display > Icon > ==Unfinished task icon==. Default set to enabled for compact mode.'
+            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Unfortunately this meant no way of checking unfinished tasks in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes. You'll find it at File display > Icon > ==Unfinished task icon==. Default set to compact mode."
         ],
         fixed: [
-            'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
+            'Fixed selecting the default sort direction or property group order resetting the selected sort field or grouping property (issue was introduced with the new group and sort settings in 3.3.1).',
             "Fixed an issue where the `What's new` dialog repeatedly reappeared on some sync providers.",
-            'Fixed `New note` setting a property to `true` when you created the note from a property name, such as `Categories`, instead of from one of its values. The new property is now empty.',
             'Fixed renamed notes disappearing from the list when viewing a tag until you switched to another tag and back.',
-            'Fixed selecting the default sort direction or property group order also resetting the selected sort field or grouping property.'
+            'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
+            'Fixed `New note` setting a property to `true` when you created the note from a property name, such as `Categories`, instead of from one of its values. The new property is now empty.'
         ]
     },
     {
