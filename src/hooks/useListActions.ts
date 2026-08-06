@@ -44,6 +44,7 @@ import {
     isManualSortPropertyKey,
     isDateSortOption,
     resolveListSort,
+    resolveListSortOverrideForDefault,
     type SortDirection,
     type SortField
 } from '../utils/sortUtils';
@@ -74,7 +75,8 @@ import {
     areListGroupingOptionsSameKind,
     getAvailablePropertyGroupKeys,
     resolveEffectiveListGroupingForSort,
-    resolveListGrouping
+    resolveListGrouping,
+    resolveListGroupingOverrideForDefault
 } from '../utils/listGrouping';
 import { getErrorMessage } from '../utils/errorUtils';
 import { showNotice } from '../utils/noticeUtils';
@@ -1618,12 +1620,20 @@ export function useListActions({
 
                 return resolveUXIconForMenu(settings.interfaceIcons, getListSortFieldIconId(field));
             };
-            // Only non-default entries call this; default-marked entries route through
-            // clearSortOverride instead, so applying always stores an override.
+            const defaultSortOverride = createListSortOverride(defaultSortSpec.option, defaultSortSpec.propertyKey);
+            // Field and direction share one persisted value, so an override is removed only when
+            // the complete selection matches the default. Comparing either component alone would
+            // also reset the other component when its default-marked entry is clicked.
             const applySort = (field: SortField, direction: SortDirection, propertyKey?: string) => {
                 const option = buildSortOption(field, direction);
+                const selectedSort = createListSortOverride(option, propertyKey);
+                const nextOverride = resolveListSortOverrideForDefault(selectedSort, defaultSortOverride);
                 runAsyncAction(async () => {
-                    await setSelectionSortOverride(createListSortOverride(option, propertyKey));
+                    if (nextOverride === undefined) {
+                        await removeSelectionSortOverride();
+                    } else {
+                        await setSelectionSortOverride(nextOverride);
+                    }
                     app.workspace.requestSaveLayout();
                 });
             };
@@ -1634,29 +1644,6 @@ export function useListActions({
             };
             const hasSelectionSortOverride = selectionSortOverride !== undefined;
             const isViewUsingDefaults = !hasSelectionSortOverride && !hasSelectionGroupOverride;
-            // Every entry marked as default clears the stored override on click, returning the
-            // view fully to the default sort. Without a stored override the view already follows
-            // the default, so the click saves nothing.
-            const clearSortOverride = () => {
-                if (!hasSelectionSortOverride) {
-                    return;
-                }
-                runAsyncAction(async () => {
-                    await removeSelectionSortOverride();
-                    app.workspace.requestSaveLayout();
-                });
-            };
-            // Same rule for the grouping entries below: default-marked entries clear the stored
-            // grouping override on click.
-            const clearGroupOverride = () => {
-                if (!hasSelectionGroupOverride) {
-                    return;
-                }
-                runAsyncAction(async () => {
-                    await setSelectionGroupOverride(undefined);
-                    app.workspace.requestSaveLayout();
-                });
-            };
 
             menu.addItem(item => {
                 item.setTitle(strings.folderAppearance.sortBy).setIcon('lucide-arrow-up-down').setDisabled(true);
@@ -1670,10 +1657,6 @@ export function useListActions({
                         .setIcon(getSortFieldMenuIcon(field))
                         .setChecked(isCurrentField)
                         .onClick(() => {
-                            if (isDefaultField) {
-                                clearSortOverride();
-                                return;
-                            }
                             if (isCurrentField) {
                                 return;
                             }
@@ -1690,10 +1673,6 @@ export function useListActions({
                         .setIcon(getSortFieldMenuIcon('property', propertyKey))
                         .setChecked(isCurrentField)
                         .onClick(() => {
-                            if (isDefaultField) {
-                                clearSortOverride();
-                                return;
-                            }
                             if (isCurrentField) {
                                 return;
                             }
@@ -1722,10 +1701,6 @@ export function useListActions({
                         .setChecked(currentDirection === direction)
                         .onClick(() => {
                             if (isManualSortActive) {
-                                return;
-                            }
-                            if (isDefaultDirection) {
-                                clearSortOverride();
                                 return;
                             }
                             applySort(currentField, direction, currentField === 'property' ? currentSortSpec.propertyKey : undefined);
@@ -1790,11 +1765,18 @@ export function useListActions({
             });
             const isGroupOptionDisabled = (option: ListNoteGroupingOption): boolean =>
                 isManualSortActive || (option === 'date' && !isDateSortOption(currentSort));
+            // Group property and order share one persisted value, matching the composite handling
+            // above for sort field and direction.
+            const applyGrouping = (option: ListNoteGroupingOption) => {
+                const nextOverride = resolveListGroupingOverrideForDefault(option, groupingInfo.defaultGrouping);
+                runAsyncAction(async () => {
+                    await setSelectionGroupOverride(nextOverride);
+                    app.workspace.requestSaveLayout();
+                });
+            };
             const addGroupOptionItem = (option: ListNoteGroupingOption, title: string, icon: string, isDisabled: boolean): void => {
-                // Clicking the entry marked as default clears the stored override entirely, so the
-                // view returns to the global default including its group order direction. Same-kind
-                // comparison marks the default property entry even when only the current direction
-                // differs; for base modes it is identical to exact comparison.
+                // Same-kind comparison marks the default property entry even when only the current
+                // order differs; persistence still compares the complete grouping value.
                 const isDefaultGroupKind = areListGroupingOptionsSameKind(option, groupingInfo.defaultGrouping);
                 menu.addItem(item => {
                     // Same-kind comparison keeps a property entry checked when only its group order direction differs.
@@ -1806,14 +1788,7 @@ export function useListActions({
                             if (isDisabled) {
                                 return;
                             }
-                            if (isDefaultGroupKind) {
-                                clearGroupOverride();
-                                return;
-                            }
-                            runAsyncAction(async () => {
-                                await setSelectionGroupOverride(option);
-                                app.workspace.requestSaveLayout();
-                            });
+                            applyGrouping(option);
                         });
                 });
             };
@@ -1888,18 +1863,11 @@ export function useListActions({
                             .setIcon(groupOrderIcons[order])
                             .setChecked(effectiveGroupOrder === order)
                             .onClick(() => {
-                                if (isDefaultOrder) {
-                                    clearGroupOverride();
-                                    return;
-                                }
-                                // Re-clicking the checked non-default order changes nothing.
+                                // Re-clicking the checked order keeps the current grouping property and order unchanged.
                                 if (effectiveGroupOrder === order) {
                                     return;
                                 }
-                                runAsyncAction(async () => {
-                                    await setSelectionGroupOverride(orderOption);
-                                    app.workspace.requestSaveLayout();
-                                });
+                                applyGrouping(orderOption);
                             });
                     });
                 });

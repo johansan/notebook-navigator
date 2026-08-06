@@ -35,6 +35,7 @@ import {
     reconcileDefaultNoteGrouping,
     resolveEffectiveListGroupingForSort,
     resolveListGrouping,
+    resolveListGroupingOverrideForDefault,
     resolvePropertyGroupingDirection,
     updateDefaultNoteGroupingKey,
     updatePropertyGroupKeySetting,
@@ -262,6 +263,16 @@ describe('property grouping option encoding', () => {
         expect(areListGroupingOptionsSameKind('property:status', 'property:genre')).toBe(false);
         expect(areListGroupingOptionsSameKind('date', 'date')).toBe(true);
         expect(areListGroupingOptionsSameKind('property:status', 'custom')).toBe(false);
+    });
+
+    it('retains a grouping override when only one component matches the default', () => {
+        expect(resolveListGroupingOverrideForDefault('property:genre', 'property:status')).toBe('property:genre');
+        expect(resolveListGroupingOverrideForDefault('property-desc:status', 'property:status')).toBe('property-desc:status');
+    });
+
+    it('removes a grouping override when the complete selection matches the default', () => {
+        expect(resolveListGroupingOverrideForDefault('property:Status', 'property:status')).toBeUndefined();
+        expect(resolveListGroupingOverrideForDefault('date', 'date')).toBeUndefined();
     });
 });
 
