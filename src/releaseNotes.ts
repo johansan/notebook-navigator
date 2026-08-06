@@ -116,7 +116,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         fixed: [
             'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
             "Fixed an issue where the `What's new` dialog repeatedly reappeared on some sync providers.",
-            'When you created a note with `New note` from a property in the navigation pane, there was a bug that set the property value to `true`, even when it was a text property. New notes now start with an empty property value.'
+            'When you created a note with `New note` from a property in the navigation pane, there was a bug that set the property value to `true`, even when it was a text property. New notes now start with an empty property value.',
+            'Fixed renamed notes disappearing from the list when viewing a tag until you switched to another tag and back.'
         ]
     },
     {
