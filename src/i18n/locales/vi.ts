@@ -1594,6 +1594,10 @@ export const STRINGS_VI = {
                 name: 'Hiển thị quý',
                 desc: 'Thêm nhãn quý vào tiêu đề lịch.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Hiển thị ngày của các tháng khác',
+                desc: 'Hiển thị các ngày của tháng trước và tháng sau khi lịch hiển thị trọn một tháng.'
+            },
             calendarShowYearCalendar: {
                 name: 'Hiển thị lịch năm',
                 desc: 'Hiển thị điều hướng năm và lưới tháng trong thanh bên phải.'

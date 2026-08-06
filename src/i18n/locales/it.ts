@@ -1589,6 +1589,10 @@ export const STRINGS_IT = {
                 name: 'Mostra trimestre',
                 desc: "Aggiungi un'etichetta del trimestre nell'intestazione del calendario."
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Mostra i giorni degli altri mesi',
+                desc: 'Mostra i giorni del mese precedente e del mese successivo quando il calendario mostra un mese intero.'
+            },
             calendarShowYearCalendar: {
                 name: 'Mostra calendario annuale',
                 desc: 'Mostra la navigazione annuale e la griglia dei mesi nella barra laterale destra.'

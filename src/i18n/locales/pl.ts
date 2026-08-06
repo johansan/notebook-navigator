@@ -1596,6 +1596,10 @@ export const STRINGS_PL = {
                 name: 'Pokaż kwartał',
                 desc: 'Dodaje etykietę kwartału w nagłówku kalendarza.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Pokaż dni z innych miesięcy',
+                desc: 'Pokazuje dni poprzedniego i następnego miesiąca, gdy kalendarz wyświetla pełny miesiąc.'
+            },
             calendarShowYearCalendar: {
                 name: 'Pokaż kalendarz roczny',
                 desc: 'Wyświetla nawigację roczną i siatkę miesięczną w prawym pasku bocznym.'

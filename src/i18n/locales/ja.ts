@@ -1591,6 +1591,10 @@ export const STRINGS_JA = {
                 name: '四半期を表示',
                 desc: 'カレンダーヘッダーに四半期ラベルを追加します。'
             },
+            calendarShowOutsideMonthDays: {
+                name: '他の月の日を表示',
+                desc: 'カレンダーが1か月全体を表示するときに、前月と翌月の日を表示します。'
+            },
             calendarShowYearCalendar: {
                 name: '年間カレンダーを表示',
                 desc: '右サイドバーに年ナビゲーションと月グリッドを表示します。'

@@ -1580,6 +1580,10 @@ export const STRINGS_ZH_CN = {
                 name: '显示季度',
                 desc: '在日历标题中添加季度标签。'
             },
+            calendarShowOutsideMonthDays: {
+                name: '显示其他月份的日期',
+                desc: '当日历显示整月时，显示上个月和下个月的日期。'
+            },
             calendarShowYearCalendar: {
                 name: '显示年历',
                 desc: '在右侧边栏中显示年份导航和月份网格。'

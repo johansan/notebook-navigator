@@ -85,6 +85,10 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 name: strings.settings.items.calendarHighlightToday.name,
                 desc: strings.settings.items.calendarHighlightToday.desc
             }),
+            createToggleDefinition('calendarShowOutsideMonthDays', {
+                name: strings.settings.items.calendarShowOutsideMonthDays.name,
+                desc: strings.settings.items.calendarShowOutsideMonthDays.desc
+            }),
             createToggleDefinition('calendarShowFeatureImage', {
                 name: strings.settings.items.calendarShowFeatureImage.name,
                 desc: strings.settings.items.calendarShowFeatureImage.desc

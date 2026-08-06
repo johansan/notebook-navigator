@@ -111,7 +111,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-06',
         showOnUpdate: true,
         new: [
-            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Unfortunately this meant no way of checking unfinished tasks in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes. You'll find it at File display > Icon > ==Unfinished task icon==. Default set to compact mode."
+            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Unfortunately this meant no way of checking unfinished tasks in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes. You'll find it at File display > Icon > ==Unfinished task icon==. Default set to compact mode.",
+            'New setting: Calendar > ==Show days from other months==. You can now leave the days before and after the current month empty, so only the days of the month are shown. Only applies when calendar is showing a full month. Enabled by default.'
         ],
         fixed: [
             'Fixed selecting the default sort direction or property group order resetting the selected sort field or grouping property (issue was introduced with the new group and sort settings in 3.3.1).',

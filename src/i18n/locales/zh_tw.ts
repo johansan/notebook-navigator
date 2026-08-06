@@ -1581,6 +1581,10 @@ export const STRINGS_ZH_TW = {
                 name: '顯示季度',
                 desc: '在行事曆標題中新增季度標籤。'
             },
+            calendarShowOutsideMonthDays: {
+                name: '顯示其他月份的日期',
+                desc: '當行事曆顯示整月時，顯示上個月與下個月的日期。'
+            },
             calendarShowYearCalendar: {
                 name: '顯示年曆',
                 desc: '在右側邊欄中顯示年份導覽和月份網格。'

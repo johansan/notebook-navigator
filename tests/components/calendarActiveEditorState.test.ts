@@ -102,6 +102,7 @@ describe('calendar active editor state', () => {
                 weekStartsOn: 1,
                 trailingSpacerWeekCount: 0,
                 weeks: [{ key: 'week-2026-W14', weekNumber: 14, days: [] }],
+                hideOutsideMonthDays: false,
                 weekNotesEnabled: true,
                 weekNoteTargetsByKey: new Map([
                     [
@@ -169,6 +170,7 @@ describe('calendar active editor state', () => {
                         ]
                     }
                 ],
+                hideOutsideMonthDays: false,
                 weekNotesEnabled: false,
                 weekNoteTargetsByKey: new Map(),
                 weekUnfinishedTaskCountByKey: new Map(),
@@ -199,6 +201,57 @@ describe('calendar active editor state', () => {
         expect(html).not.toContain('has-daily-note');
         expect(html).not.toContain('has-unfinished-tasks');
         expect(html).not.toContain('Hidden title');
+    });
+
+    it('hides the week number and row separator when every day in the week is hidden', () => {
+        const hiddenDays = Array.from({ length: 7 }, (_value, dayIndex) => ({
+            date: createCalendarDayMoment(),
+            iso: `2026-07-${String(dayIndex + 1).padStart(2, '0')}`,
+            inMonth: false,
+            note: {
+                existingFile: null,
+                visibleFile: null,
+                isHidden: false,
+                targetPath: null
+            }
+        }));
+        const html = renderToStaticMarkup(
+            React.createElement(CalendarGrid, {
+                activeEditorFilePath: null,
+                showWeekNumbers: true,
+                weekdays: [],
+                weekStartsOn: 1,
+                trailingSpacerWeekCount: 0,
+                weeks: [{ key: 'week-2026-W27', weekNumber: 27, days: hiddenDays }],
+                hideOutsideMonthDays: true,
+                weekNotesEnabled: false,
+                weekNoteTargetsByKey: new Map(),
+                weekUnfinishedTaskCountByKey: new Map(),
+                displayLocale: 'en',
+                calendarWeekendDays: 'sat-sun',
+                todayIso: null,
+                unfinishedTaskCountByIso: new Map(),
+                featureImageUrls: {},
+                featureImageKeysByIso: new Map(),
+                frontmatterTitlesByPath: new Map(),
+                dateFormat: 'YYYY-MM-DD',
+                isMobile: false,
+                canCreateDayNotes: true,
+                onShowTooltip: () => {},
+                onHideTooltip: () => {},
+                onDayClick: () => {},
+                onDayMouseDown: () => {},
+                onDayContextMenu: () => {},
+                onWeekClick: () => {},
+                onWeekMouseDown: () => {},
+                onWeekLabelClick: () => {},
+                onWeekContextMenu: () => {}
+            })
+        );
+
+        expect(html).not.toContain('nn-navigation-calendar-weeknumber-button');
+        expect(html.match(/nn-navigation-calendar-weeknumber-divider/g)).toHaveLength(1);
+        expect(html.match(/nn-navigation-calendar-day-spacer/g)).toHaveLength(7);
     });
 
     it('renders an active outline on the year period button in the year panel', () => {

@@ -1589,6 +1589,10 @@ export const STRINGS_KO = {
                 name: '분기 표시',
                 desc: '캘린더 헤더에 분기 레이블을 추가합니다.'
             },
+            calendarShowOutsideMonthDays: {
+                name: '다른 달의 날짜 표시',
+                desc: '캘린더가 한 달 전체를 표시할 때 이전 달과 다음 달의 날짜를 표시합니다.'
+            },
             calendarShowYearCalendar: {
                 name: '연간 캘린더 표시',
                 desc: '오른쪽 사이드바에 연도 탐색 및 월 그리드를 표시합니다.'

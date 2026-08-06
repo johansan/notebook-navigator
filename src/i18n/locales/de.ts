@@ -1596,6 +1596,10 @@ export const STRINGS_DE = {
                 name: 'Quartal anzeigen',
                 desc: 'Quartalbezeichnung im Kalender-Header hinzufügen.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Tage aus anderen Monaten anzeigen',
+                desc: 'Tage des vorherigen und nächsten Monats anzeigen, wenn der Kalender einen ganzen Monat anzeigt.'
+            },
             calendarShowYearCalendar: {
                 name: 'Jahreskalender anzeigen',
                 desc: 'Jahresnavigation und Monatsraster in der rechten Seitenleiste anzeigen.'

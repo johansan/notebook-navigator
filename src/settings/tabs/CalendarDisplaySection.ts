@@ -206,6 +206,19 @@ export function renderCalendarDisplaySections(
     appearanceGroup
         .addSetting(setting => {
             setting
+                .setName(strings.settings.items.calendarShowOutsideMonthDays.name)
+                .setDesc(strings.settings.items.calendarShowOutsideMonthDays.desc);
+        })
+        .addToggle(toggle =>
+            toggle.setValue(plugin.settings.calendarShowOutsideMonthDays).onChange(async value => {
+                plugin.settings.calendarShowOutsideMonthDays = value;
+                await plugin.saveSettingsAndUpdate();
+            })
+        );
+
+    appearanceGroup
+        .addSetting(setting => {
+            setting
                 .setName(strings.settings.items.calendarShowFeatureImage.name)
                 .setDesc(strings.settings.items.calendarShowFeatureImage.desc);
         })

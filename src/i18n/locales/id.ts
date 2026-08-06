@@ -1593,6 +1593,10 @@ export const STRINGS_ID = {
                 name: 'Tampilkan kuartal',
                 desc: 'Tambahkan label kuartal di header kalender.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Tampilkan hari dari bulan lain',
+                desc: 'Tampilkan hari dari bulan sebelumnya dan bulan berikutnya saat kalender menampilkan satu bulan penuh.'
+            },
             calendarShowYearCalendar: {
                 name: 'Tampilkan kalender tahunan',
                 desc: 'Tampilkan navigasi tahun dan kisi bulan di bilah sisi kanan.'
