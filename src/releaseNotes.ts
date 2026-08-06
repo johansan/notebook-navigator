@@ -108,10 +108,11 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.3',
-        date: '2026-08-09',
+        date: '2026-08-06',
         showOnUpdate: true,
+        info: 'This is mainly a small maintenance release, adding back the unfinished task icon setting for those of you who used it in compact mode.'
         new: [
-            'Notes with unfinished tasks had no task indicator in compact mode after the old icon setting was removed. The new File display > Icon > ==Unfinished task icon== setting can replace file icons in compact mode or in both list modes. Default set to enabled for compact mode.'
+            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Seems many of you used it, especially in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes, you'll find it in File display > Icon > ==Unfinished task icon==. Default set to enabled for compact mode.'
         ],
         fixed: [
             'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
