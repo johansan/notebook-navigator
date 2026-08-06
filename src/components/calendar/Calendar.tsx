@@ -89,6 +89,16 @@ export interface CalendarProps {
 
 type HeaderPeriodKind = Extract<CalendarNoteKind, 'month' | 'quarter' | 'year'>;
 
+// Days outside the displayed month render as empty cells when they are hidden, so they carry no note.
+// Every lookup built from the week days (feature images, task indicators, frontmatter titles, visible
+// note files) therefore skips them, and no content is loaded for cells that are not rendered.
+const HIDDEN_DAY_NOTE_TARGET: CalendarNoteTarget = {
+    existingFile: null,
+    visibleFile: null,
+    isHidden: false,
+    targetPath: null
+};
+
 interface CalendarYearMonthBaseEntry {
     date: MomentInstance;
     dayFiles: TFile[];
@@ -191,6 +201,10 @@ export function Calendar({
     const hasTagVisibilityRules = activeProfile.hiddenFileTags.length > 0;
     const customCalendarRootFolderSettings = useMemo(() => ({ calendarCustomRootFolder: periodicNotesFolder }), [periodicNotesFolder]);
     const weeksToShowSetting = weeksToShowOverride ?? settings.calendarWeeksToShow;
+    // Only the full month grid starts at the first week of the month, so hiding days from the previous
+    // and next month leaves the remaining days on their weekday columns. Shorter week windows are
+    // centered on the cursor date and would blank most of their cells, so they always show every day.
+    const hideOutsideMonthDays = !settings.calendarShowOutsideMonthDays && clamp(weeksToShowSetting, 1, 6) === 6;
     const fileCache = useFileCacheOptional();
     const [dbFallback, setDbFallback] = useState(() => getDBInstanceOrNull());
     const db = fileCache?.getDB() ?? dbFallback;
@@ -919,7 +933,7 @@ export function Calendar({
                 const date = weekStart.clone().add(dayOffset, 'day').locale(displayLocale);
                 const inMonth = date.month() === targetMonth && date.year() === targetYear;
                 const iso = formatIsoDate(date);
-                const note = getExistingDayNoteTarget(date);
+                const note = !inMonth && hideOutsideMonthDays ? HIDDEN_DAY_NOTE_TARGET : getExistingDayNoteTarget(date);
 
                 days.push({ date, iso, inMonth, note });
             }
@@ -938,6 +952,7 @@ export function Calendar({
         displayLocale,
         effectiveWeekMode,
         getExistingDayNoteTarget,
+        hideOutsideMonthDays,
         isRightSidebar,
         momentApi,
         vaultVersion,
@@ -2018,6 +2033,7 @@ export function Calendar({
                     weekStartsOn={weekStartsOn}
                     trailingSpacerWeekCount={trailingSpacerWeekCount}
                     weeks={weeks}
+                    hideOutsideMonthDays={hideOutsideMonthDays}
                     weekNotesEnabled={weekNotesEnabled}
                     weekNoteTargetsByKey={weekNoteTargetsByKey}
                     weekUnfinishedTaskCountByKey={weekUnfinishedTaskCountByKey}

@@ -1586,6 +1586,10 @@ export const STRINGS_EN = {
                 name: 'Show quarter',
                 desc: 'Add a quarter label in the calendar header.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Show days from other months',
+                desc: 'Show days from the previous and next month when the calendar displays a full month.'
+            },
             calendarShowYearCalendar: {
                 name: 'Show year calendar',
                 desc: 'Display year navigation and month grid in the right sidebar.'

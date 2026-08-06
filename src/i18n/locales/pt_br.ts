@@ -1595,6 +1595,10 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar trimestre',
                 desc: 'Adicionar uma etiqueta de trimestre no cabeçalho do calendário.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Mostrar dias de outros meses',
+                desc: 'Mostrar os dias do mês anterior e do mês seguinte quando o calendário exibe um mês completo.'
+            },
             calendarShowYearCalendar: {
                 name: 'Mostrar calendário anual',
                 desc: 'Exibir navegação anual e grade de meses na barra lateral direita.'

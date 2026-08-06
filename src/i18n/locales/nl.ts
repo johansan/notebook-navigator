@@ -1595,6 +1595,10 @@ export const STRINGS_NL = {
                 name: 'Kwartaal tonen',
                 desc: 'Voeg een kwartaallabel toe in de kalender-header.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Dagen uit andere maanden tonen',
+                desc: 'Toon dagen uit de vorige en volgende maand wanneer de kalender een volledige maand toont.'
+            },
             calendarShowYearCalendar: {
                 name: 'Jaarkalender tonen',
                 desc: 'Jaarnavigatie en maandraster weergeven in de rechter zijbalk.'

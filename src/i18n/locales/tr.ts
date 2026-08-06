@@ -1591,6 +1591,10 @@ export const STRINGS_TR = {
                 name: 'Çeyreği göster',
                 desc: 'Takvim başlığına çeyrek etiketi ekle.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Diğer ayların günlerini göster',
+                desc: 'Takvim tam bir ayı gösterirken önceki ve sonraki ayın günlerini göster.'
+            },
             calendarShowYearCalendar: {
                 name: 'Yıllık takvimi göster',
                 desc: 'Sağ kenar çubuğunda yıl gezintisi ve ay ızgarası göster.'

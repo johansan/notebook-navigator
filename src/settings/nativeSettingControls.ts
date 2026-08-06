@@ -112,6 +112,7 @@ const BOOLEAN_SETTING_KEYS = [
     'calendarShowTasks',
     'calendarShowWeekNumber',
     'calendarShowQuarter',
+    'calendarShowOutsideMonthDays',
     'calendarShowYearCalendar',
     'useFrontmatterMetadata',
     'checkForUpdatesOnStart',

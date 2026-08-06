@@ -866,6 +866,7 @@ export interface NotebookNavigatorSettings {
     calendarMonthHighlights: Record<string, string>;
     calendarShowWeekNumber: boolean;
     calendarShowQuarter: boolean;
+    calendarShowOutsideMonthDays: boolean;
     calendarShowYearCalendar: boolean;
     calendarLeftPlacement: CalendarLeftPlacement;
     calendarWeeksToShow: CalendarWeeksToShow;

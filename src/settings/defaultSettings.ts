@@ -413,6 +413,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     calendarMonthHighlights: sanitizeRecord<string>(undefined),
     calendarShowWeekNumber: false,
     calendarShowQuarter: false,
+    calendarShowOutsideMonthDays: true,
     calendarShowYearCalendar: true,
     calendarLeftPlacement: 'navigation',
     calendarWeeksToShow: 1,
