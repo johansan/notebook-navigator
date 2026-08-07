@@ -812,46 +812,49 @@ export const FileItem = React.memo(function FileItem({
                     } as React.CSSProperties
                 }
             >
-                {highlightedName}
-                {matchedAliases && matchedAliases.length > 0 ? (
-                    <span className="nn-file-alias-match">
-                        <ObsidianIcon name="lucide-forward" className="nn-file-alias-match-icon" aria-hidden={true} />
-                        <span>
-                            {matchedAliases.map((matchedAlias, index) => (
-                                <React.Fragment key={`${matchedAlias.value}-${index}`}>
-                                    {index > 0 ? ', ' : null}
-                                    {renderAliasSearchMatch(matchedAlias)}
-                                </React.Fragment>
-                            ))}
-                        </span>
-                    </span>
-                ) : null}
-                {propertySearchEvidenceGroups.length > 0 ? (
-                    <span className="nn-file-property-search-evidence">
-                        <ServiceIcon
-                            iconId={propertySearchEvidenceIconId}
-                            className="nn-file-property-search-evidence-icon"
-                            aria-hidden={true}
-                        />
-                        {propertySearchEvidenceGroups.map((group, groupIndex) => (
-                            <React.Fragment key={casefold(group.propertyKey)}>
-                                {groupIndex > 0 ? '; ' : null}
-                                <span className="nn-file-property-search-evidence-key">{renderPropertySearchEvidenceKey(group)}</span>
-                                {group.values.length > 0 ? ': ' : null}
-                                {group.values.map((value, valueIndex) => (
-                                    <React.Fragment key={`${value.displayValue}-${valueIndex}`}>
-                                        {valueIndex > 0 ? ', ' : null}
-                                        {renderPropertySearchEvidenceValue(value)}
+                {/* Keep the label and suffix separate so CSS snippets can lay them out independently. */}
+                <span className="nn-file-name-label">
+                    {highlightedName}
+                    {matchedAliases && matchedAliases.length > 0 ? (
+                        <span className="nn-file-alias-match">
+                            <ObsidianIcon name="lucide-forward" className="nn-file-alias-match-icon" aria-hidden={true} />
+                            <span>
+                                {matchedAliases.map((matchedAlias, index) => (
+                                    <React.Fragment key={`${matchedAlias.value}-${index}`}>
+                                        {index > 0 ? ', ' : null}
+                                        {renderAliasSearchMatch(matchedAlias)}
                                     </React.Fragment>
                                 ))}
-                                {group.hiddenValueCount > 0 ? ` +${group.hiddenValueCount}` : null}
-                            </React.Fragment>
-                        ))}
-                        {propertySearchEvidenceHiddenGroupCount > 0 ? `; +${propertySearchEvidenceHiddenGroupCount}` : null}
-                    </span>
-                ) : null}
-                {shouldShowCountInTitle ? <span className="nn-file-word-count-suffix"> ({titleCountDisplayText})</span> : null}
-                {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
+                            </span>
+                        </span>
+                    ) : null}
+                    {propertySearchEvidenceGroups.length > 0 ? (
+                        <span className="nn-file-property-search-evidence">
+                            <ServiceIcon
+                                iconId={propertySearchEvidenceIconId}
+                                className="nn-file-property-search-evidence-icon"
+                                aria-hidden={true}
+                            />
+                            {propertySearchEvidenceGroups.map((group, groupIndex) => (
+                                <React.Fragment key={casefold(group.propertyKey)}>
+                                    {groupIndex > 0 ? '; ' : null}
+                                    <span className="nn-file-property-search-evidence-key">{renderPropertySearchEvidenceKey(group)}</span>
+                                    {group.values.length > 0 ? ': ' : null}
+                                    {group.values.map((value, valueIndex) => (
+                                        <React.Fragment key={`${value.displayValue}-${valueIndex}`}>
+                                            {valueIndex > 0 ? ', ' : null}
+                                            {renderPropertySearchEvidenceValue(value)}
+                                        </React.Fragment>
+                                    ))}
+                                    {group.hiddenValueCount > 0 ? ` +${group.hiddenValueCount}` : null}
+                                </React.Fragment>
+                            ))}
+                            {propertySearchEvidenceHiddenGroupCount > 0 ? `; +${propertySearchEvidenceHiddenGroupCount}` : null}
+                        </span>
+                    ) : null}
+                    {extensionSuffix.length > 0 && <span className="nn-file-ext-suffix">{extensionSuffix}</span>}
+                </span>
+                {shouldShowCountInTitle ? <span className="nn-file-name-suffix"> ({titleCountDisplayText})</span> : null}
             </div>
         );
     })();
