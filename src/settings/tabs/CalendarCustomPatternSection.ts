@@ -142,53 +142,53 @@ export function createCalendarCustomPatternSettingDefinitions(
     renderers: CalendarCustomPatternRenderers,
     visible: () => boolean
 ): SettingDefinitionRender[] {
-    const templateAlias = strings.settings.items.calendarTemplateFile.current.replace('{name}', '').trim();
+    const templateAlias = strings.settings.items.periodicNoteTemplateFile.current.replace('{name}', '').trim();
 
     return [
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomRootFolder.name,
-            desc: strings.settings.items.calendarCustomRootFolder.desc,
-            aliases: [strings.settings.items.calendarCustomRootFolder.placeholder],
+            name: strings.settings.items.periodicNotesRootFolder.name,
+            desc: strings.settings.items.periodicNotesRootFolder.desc,
+            aliases: [strings.settings.items.periodicNotesRootFolder.placeholder],
             visible,
             render: setting => renderers.renderRootFolderSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomFilePattern.name,
-            desc: strings.settings.items.calendarCustomFilePattern.desc,
+            name: strings.settings.items.calendarDailyNotePattern.name,
+            desc: strings.settings.items.calendarDailyNotePattern.desc,
             aliases: [
-                strings.settings.items.calendarCustomFilePattern.placeholder,
-                strings.settings.items.calendarCustomFilePattern.momentLinkText,
+                strings.settings.items.calendarDailyNotePattern.placeholder,
+                strings.settings.items.calendarPeriodicNotePatterns.momentLinkText,
                 templateAlias
             ],
             visible,
             render: setting => renderers.renderDailyPatternSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomWeekPattern.name,
+            name: strings.settings.items.calendarWeeklyNotePattern.name,
             aliases: [DEFAULT_CALENDAR_CUSTOM_WEEK_PATTERN, templateAlias],
             visible,
             render: setting => renderers.renderWeeklyPatternSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomMonthPattern.name,
+            name: strings.settings.items.calendarMonthlyNotePattern.name,
             aliases: [DEFAULT_CALENDAR_CUSTOM_MONTH_PATTERN, templateAlias],
             visible,
             render: setting => renderers.renderMonthlyPatternSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomQuarterPattern.name,
+            name: strings.settings.items.calendarQuarterlyNotePattern.name,
             aliases: [DEFAULT_CALENDAR_CUSTOM_QUARTER_PATTERN, templateAlias],
             visible,
             render: setting => renderers.renderQuarterlyPatternSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomYearPattern.name,
+            name: strings.settings.items.calendarYearlyNotePattern.name,
             aliases: [DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN, templateAlias],
             visible,
             render: setting => renderers.renderYearlyPatternSetting(setting)
         }),
         createRenderDefinition({
-            name: strings.settings.items.calendarCustomFilePattern.momentLinkText,
+            name: strings.settings.items.calendarPeriodicNotePatterns.momentLinkText,
             searchable: false,
             visible,
             render: setting => renderers.renderPatternInfoSetting(setting)
@@ -225,9 +225,9 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
     const renderRootFolderSetting = (setting: Setting): (() => void) => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.calendarCustomRootFolder.name,
-            strings.settings.items.calendarCustomRootFolder.desc,
-            strings.settings.items.calendarCustomRootFolder.placeholder,
+            strings.settings.items.periodicNotesRootFolder.name,
+            strings.settings.items.periodicNotesRootFolder.desc,
+            strings.settings.items.periodicNotesRootFolder.placeholder,
             () => getActiveProfile().periodicNotesFolder,
             value => {
                 getActiveProfile().periodicNotesFolder = normalizeCalendarCustomRootFolder(value);
@@ -317,8 +317,8 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
 
     const renderDailyPatternSetting = (setting: Setting): (() => void) => {
         const target = createCalendarCustomPatternSetting(setting, {
-            name: strings.settings.items.calendarCustomFilePattern.name,
-            placeholder: strings.settings.items.calendarCustomFilePattern.placeholder,
+            name: strings.settings.items.calendarDailyNotePattern.name,
+            placeholder: strings.settings.items.calendarDailyNotePattern.placeholder,
             getValue: () => normalizeCalendarCustomFilePattern(plugin.settings.calendarCustomFilePattern),
             setValue: value => {
                 plugin.settings.calendarCustomFilePattern = normalizeCalendarCustomFilePattern(value);
@@ -346,7 +346,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
 
     const renderWeeklyPatternSetting = (setting: Setting): (() => void) => {
         const target = createCalendarCustomPatternSetting(setting, {
-            name: strings.settings.items.calendarCustomWeekPattern.name,
+            name: strings.settings.items.calendarWeeklyNotePattern.name,
             placeholder: DEFAULT_CALENDAR_CUSTOM_WEEK_PATTERN,
             getValue: () => normalizeCalendarCustomFilePattern(plugin.settings.calendarCustomWeekPattern, ''),
             setValue: value => {
@@ -379,7 +379,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
 
     const renderMonthlyPatternSetting = (setting: Setting): (() => void) => {
         const target = createCalendarCustomPatternSetting(setting, {
-            name: strings.settings.items.calendarCustomMonthPattern.name,
+            name: strings.settings.items.calendarMonthlyNotePattern.name,
             placeholder: DEFAULT_CALENDAR_CUSTOM_MONTH_PATTERN,
             getValue: () => normalizeCalendarCustomFilePattern(plugin.settings.calendarCustomMonthPattern, ''),
             setValue: value => {
@@ -408,7 +408,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
 
     const renderQuarterlyPatternSetting = (setting: Setting): (() => void) => {
         const target = createCalendarCustomPatternSetting(setting, {
-            name: strings.settings.items.calendarCustomQuarterPattern.name,
+            name: strings.settings.items.calendarQuarterlyNotePattern.name,
             placeholder: DEFAULT_CALENDAR_CUSTOM_QUARTER_PATTERN,
             getValue: () => normalizeCalendarCustomFilePattern(plugin.settings.calendarCustomQuarterPattern, ''),
             setValue: value => {
@@ -437,7 +437,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
 
     const renderYearlyPatternSetting = (setting: Setting): (() => void) => {
         const target = createCalendarCustomPatternSetting(setting, {
-            name: strings.settings.items.calendarCustomYearPattern.name,
+            name: strings.settings.items.calendarYearlyNotePattern.name,
             placeholder: DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN,
             getValue: () => normalizeCalendarCustomFilePattern(plugin.settings.calendarCustomYearPattern, ''),
             setValue: value => {
@@ -469,26 +469,26 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         setting.settingEl.addClass('nn-setting-info-container');
         setting.descEl.empty();
         const description = createInlineExternalLinkText({
-            prefix: strings.settings.items.calendarCustomFilePattern.momentDescPrefix,
-            link: { text: strings.settings.items.calendarCustomFilePattern.momentLinkText, href: MOMENT_FORMAT_DOCS_URL },
-            suffix: strings.settings.items.calendarCustomFilePattern.momentDescSuffix
+            prefix: strings.settings.items.calendarPeriodicNotePatterns.momentDescPrefix,
+            link: { text: strings.settings.items.calendarPeriodicNotePatterns.momentLinkText, href: MOMENT_FORMAT_DOCS_URL },
+            suffix: strings.settings.items.calendarPeriodicNotePatterns.momentDescSuffix
         });
         const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-            ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-            : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+            ? strings.settings.items.templaterSupport.installed
+            : strings.settings.items.templaterSupport.missing;
         // Built-in formats such as {{date}} are only applied when daily notes come from the Daily Notes core plugin,
         // so this section leaves them literally. The setting name and option label are substituted from the dropdown
         // strings so the notice keeps matching the control it refers to in every locale.
-        const tokenNoticeText = strings.settings.items.calendarCustomFilePattern.templateTokenNotice
-            .replace('{source}', strings.settings.items.calendarIntegrationMode.name)
-            .replace('{option}', strings.settings.items.calendarIntegrationMode.options.dailyNotes);
+        const tokenNoticeText = strings.settings.items.calendarPeriodicNotePatterns.templateTokenNotice
+            .replace('{source}', strings.settings.items.dailyNoteSource.name)
+            .replace('{option}', strings.settings.items.dailyNoteSource.options.dailyNotes);
         description.append(
             createEl('br'),
             createEl('br'),
             createEl('strong', { text: templaterSupportText }),
             createEl('br'),
             createEl('br'),
-            createEl('strong', { text: strings.settings.items.calendarCustomFilePattern.templateTokenNoticeLabel }),
+            createEl('strong', { text: strings.settings.items.calendarPeriodicNotePatterns.templateTokenNoticeLabel }),
             ` ${tokenNoticeText}`
         );
         setting.descEl.append(description);
@@ -504,14 +504,14 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             }
 
             const templateName = templatePath ? getTemplateFileName(templatePath) : '-';
-            target.templateTextEl.setText(strings.settings.items.calendarTemplateFile.current.replace('{name}', templateName));
+            target.templateTextEl.setText(strings.settings.items.periodicNoteTemplateFile.current.replace('{name}', templateName));
             setElementVisible(target.templateEl, true);
         });
     };
 
     const renderCalendarCustomPatternPreviews = (): void => {
         const momentApi = getMomentApi();
-        const exampleTemplate = strings.settings.items.calendarCustomFilePattern.example;
+        const exampleTemplate = strings.settings.items.calendarPeriodicNotePatterns.example;
 
         const clearExamples = (): void => {
             getPatternTargets().forEach(target => setExampleText(target, ''));
@@ -632,8 +632,8 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         setElementTextIfPresent(
             calendarCustomWeekPatternWarningEl,
             doesCalendarCustomWeekPatternMixWeekTokenTypes(weekCustomPattern)
-                ? strings.settings.items.calendarCustomWeekPattern.mixedWeekTokensWarning
-                : strings.settings.items.calendarCustomWeekPattern.weekPathMismatchWarning
+                ? strings.settings.items.calendarWeeklyNotePattern.mixedWeekTokensWarning
+                : strings.settings.items.calendarWeeklyNotePattern.weekPathMismatchWarning
         );
         setElementVisibleIfPresent(calendarLocaleWarningEl, true);
         setElementVisibleIfPresent(calendarCustomWeekPatternWarningEl, true);
@@ -664,7 +664,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             const showDailyError = !isCalendarCustomDatePatternValid(dailyCustomPattern, momentApi);
             setElementTextIfPresent(
                 calendarCustomFilePatternErrorEl,
-                showDailyError ? strings.settings.items.calendarCustomFilePattern.parsingError : ''
+                showDailyError ? strings.settings.items.calendarDailyNotePattern.parsingError : ''
             );
             setElementVisibleIfPresent(calendarCustomFilePatternErrorEl, showDailyError);
         }
@@ -675,7 +675,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             const showWeekError = weekPatternRaw.trim() !== '' && !isCalendarCustomWeekPatternValid(weekCustomPattern, momentApi);
             setElementTextIfPresent(
                 calendarCustomWeekPatternErrorEl,
-                showWeekError ? strings.settings.items.calendarCustomWeekPattern.parsingError : ''
+                showWeekError ? strings.settings.items.calendarWeeklyNotePattern.parsingError : ''
             );
             setElementVisibleIfPresent(calendarCustomWeekPatternErrorEl, showWeekError);
         }
@@ -686,7 +686,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             const showMonthError = monthPatternRaw.trim() !== '' && !isCalendarCustomMonthPatternValid(monthCustomPattern, momentApi);
             setElementTextIfPresent(
                 calendarCustomMonthPatternErrorEl,
-                showMonthError ? strings.settings.items.calendarCustomMonthPattern.parsingError : ''
+                showMonthError ? strings.settings.items.calendarMonthlyNotePattern.parsingError : ''
             );
             setElementVisibleIfPresent(calendarCustomMonthPatternErrorEl, showMonthError);
         }
@@ -698,7 +698,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
                 quarterPatternRaw.trim() !== '' && !isCalendarCustomQuarterPatternValid(quarterCustomPattern, momentApi);
             setElementTextIfPresent(
                 calendarCustomQuarterPatternErrorEl,
-                showQuarterError ? strings.settings.items.calendarCustomQuarterPattern.parsingError : ''
+                showQuarterError ? strings.settings.items.calendarQuarterlyNotePattern.parsingError : ''
             );
             setElementVisibleIfPresent(calendarCustomQuarterPatternErrorEl, showQuarterError);
         }
@@ -709,7 +709,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             const showYearError = yearPatternRaw.trim() !== '' && !isCalendarCustomYearPatternValid(yearCustomPattern, momentApi);
             setElementTextIfPresent(
                 calendarCustomYearPatternErrorEl,
-                showYearError ? strings.settings.items.calendarCustomYearPattern.parsingError : ''
+                showYearError ? strings.settings.items.calendarYearlyNotePattern.parsingError : ''
             );
             setElementVisibleIfPresent(calendarCustomYearPatternErrorEl, showYearError);
         }

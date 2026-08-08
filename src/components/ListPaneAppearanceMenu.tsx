@@ -244,6 +244,9 @@ export function showListPaneAppearanceMenu({
     });
 
     menu.addSeparator();
+    menu.addItem(item => {
+        item.setTitle(strings.settings.pages.fileDisplay.label).setIcon('lucide-file-text').setDisabled(true);
+    });
 
     const storedTitleRows = storedFields?.titleRows;
     const effectiveTitleRows = storedTitleRows ?? settings.fileNameRows;
@@ -317,9 +320,6 @@ export function showListPaneAppearanceMenu({
     const visibleToggles = contentToggles.filter(toggle => toggle.available);
     // Property-placed counts render as pills, so the choice is hidden when compact mode hides pills.
     const textCountAvailable = !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode;
-    if (visibleToggles.length > 0 || textCountAvailable) {
-        menu.addSeparator();
-    }
     visibleToggles.forEach(toggle => {
         const stored = storedFields?.[toggle.key];
         const effective = stored ?? toggle.globalDefault;

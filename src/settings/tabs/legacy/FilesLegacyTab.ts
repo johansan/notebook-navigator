@@ -83,13 +83,13 @@ export function renderFilesTab(context: SettingsTabContext, heading?: string): v
             });
     });
 
-    const templatesGroup = createGroup(strings.settings.groups.general.templates);
+    const templatesGroup = createGroup(strings.settings.pages.fileOperations.groups.templates);
     const templateFolderSetting = templatesGroup.addSetting(setting => {
         context.configureDebouncedTextSetting(
             setting,
-            strings.settings.items.calendarTemplateFolder.name,
-            strings.settings.items.calendarTemplateFolder.desc,
-            strings.settings.items.calendarTemplateFolder.placeholder,
+            strings.settings.items.templateFolderLocation.name,
+            strings.settings.items.templateFolderLocation.desc,
+            strings.settings.items.templateFolderLocation.placeholder,
             () => normalizeCalendarCustomRootFolder(plugin.settings.calendarTemplateFolder),
             value => {
                 plugin.settings.calendarTemplateFolder = normalizeCalendarCustomRootFolder(value);
@@ -111,10 +111,10 @@ function renderTemplateFolderInfoSetting(setting: Setting, context: SettingsTabC
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
 
-    setting.descEl.createDiv({ text: strings.settings.items.calendarTemplateFolder.usage });
+    setting.descEl.createDiv({ text: strings.settings.items.templateFolderLocation.usage });
 
     const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-        : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+        ? strings.settings.items.templaterSupport.installed
+        : strings.settings.items.templaterSupport.missing;
     setting.descEl.append(createEl('br'), createEl('strong', { text: templaterSupportText }));
 }

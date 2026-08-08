@@ -88,8 +88,8 @@ export function renderTagsTab(context: SettingsTabContext, heading?: string): vo
     addSettingSyncModeToggle({ setting: tagSortOrderSetting, plugin, settingId: 'tagSortOrder' });
 
     new Setting(tagDependentSettingsEl)
-        .setName(strings.settings.items.showAllTagsFolder.name)
-        .setDesc(strings.settings.items.showAllTagsFolder.desc)
+        .setName(strings.settings.items.showTagsFolder.name)
+        .setDesc(strings.settings.items.showTagsFolder.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.showAllTagsFolder).onChange(async value => {
                 plugin.settings.showAllTagsFolder = value;
@@ -98,8 +98,8 @@ export function renderTagsTab(context: SettingsTabContext, heading?: string): vo
         );
 
     new Setting(tagDependentSettingsEl)
-        .setName(strings.settings.items.showUntagged.name)
-        .setDesc(strings.settings.items.showUntagged.desc)
+        .setName(strings.settings.items.showUntaggedNotes.name)
+        .setDesc(strings.settings.items.showUntaggedNotes.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.showUntagged).onChange(async value => {
                 plugin.settings.showUntagged = value;
@@ -108,8 +108,8 @@ export function renderTagsTab(context: SettingsTabContext, heading?: string): vo
         );
 
     new Setting(tagDependentSettingsEl)
-        .setName(strings.settings.items.scopeTagsToCurrentContext.name)
-        .setDesc(strings.settings.items.scopeTagsToCurrentContext.desc)
+        .setName(strings.settings.items.filterTagsBySelection.name)
+        .setDesc(strings.settings.items.filterTagsBySelection.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.scopeTagsToCurrentContext).onChange(async value => {
                 plugin.settings.scopeTagsToCurrentContext = value;

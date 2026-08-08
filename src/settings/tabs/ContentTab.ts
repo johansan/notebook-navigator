@@ -25,13 +25,13 @@ import { createTagsSettingDefinitions } from './TagsTab';
 
 /** Builds native 1.13 setting definitions for folder display and folder note settings. */
 export function createFoldersAndFolderNotesSettingDefinitions(context: SettingsTabContext): SettingDefinitionItem[] {
-    return createFoldersSettingDefinitions(context, strings.settings.sections.folders);
+    return createFoldersSettingDefinitions(context, strings.settings.pages.foldersAndFolderNotes.groups.folders);
 }
 
 /** Builds native 1.13 setting definitions for tag and property settings. */
 export function createTagsPropertiesSettingDefinitions(context: SettingsTabContext): SettingDefinitionItem[] {
     return [
-        ...createTagsSettingDefinitions(context, strings.settings.sections.tags),
-        ...createPropertiesSettingDefinitions(context, strings.navigationPane.properties)
+        ...createTagsSettingDefinitions(context, strings.settings.pages.tagsAndProperties.groups.tags),
+        ...createPropertiesSettingDefinitions(context, strings.settings.pages.tagsAndProperties.groups.properties)
     ];
 }

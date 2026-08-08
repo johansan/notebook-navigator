@@ -89,8 +89,8 @@ function renderBehaviorSettings(context: SettingsTabContext, createGroup: Create
 
     addToggleSetting(
         behaviorGroup.addSetting,
-        strings.settings.items.createNewNotesInNewTab.name,
-        strings.settings.items.createNewNotesInNewTab.desc,
+        strings.settings.items.openNewNotesInNewTab.name,
+        strings.settings.items.openNewNotesInNewTab.desc,
         () => plugin.settings.createNewNotesInNewTab,
         value => {
             plugin.settings.createNewNotesInNewTab = value;
@@ -143,17 +143,17 @@ function renderBehaviorSettings(context: SettingsTabContext, createGroup: Create
 
 function renderStartupSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const startupGroup = createGroup(strings.settings.groups.general.startup);
+    const startupGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.startup);
 
     startupGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.startView.name)
-            .setDesc(strings.settings.items.startView.desc)
+            .setName(strings.settings.items.defaultStartupView.name)
+            .setDesc(strings.settings.items.defaultStartupView.desc)
             .addDropdown(dropdown => {
                 dropdown
                     .addOptions({
-                        navigation: strings.settings.items.startView.options.navigation,
-                        files: strings.settings.items.startView.options.files
+                        navigation: strings.settings.items.defaultStartupView.options.navigation,
+                        files: strings.settings.items.defaultStartupView.options.listPane
                     })
                     .setValue(plugin.settings.startView)
                     .onChange(async value => {
@@ -279,7 +279,7 @@ function renderStartupSettings(context: SettingsTabContext, createGroup: CreateS
 
 function renderKeyboardNavigationSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const keyboardNavigationGroup = createGroup(strings.settings.groups.general.keyboardNavigation);
+    const keyboardNavigationGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.keyboardNavigation);
 
     keyboardNavigationGroup.addSetting(setting => {
         setting
@@ -321,8 +321,8 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
     };
 
     new Setting(enterToOpenSettingsEl)
-        .setName(strings.settings.items.shiftEnterOpenContext.name)
-        .setDesc(strings.settings.items.shiftEnterOpenContext.desc)
+        .setName(strings.settings.items.shiftEnterAction.name)
+        .setDesc(strings.settings.items.shiftEnterAction.desc)
         .addDropdown(dropdown =>
             dropdown
                 .addOption('tab', strings.contextMenu.file.openInNewTab)
@@ -337,7 +337,7 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
         );
 
     // Platform.isMacOS is also true on iOS/iPadOS devices, which use Cmd-based keyboards
-    const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterOpenContext : strings.settings.items.ctrlEnterOpenContext;
+    const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterAction : strings.settings.items.ctrlEnterAction;
 
     new Setting(enterToOpenSettingsEl)
         .setName(cmdCtrlStrings.name)
@@ -358,7 +358,7 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
 
 function renderMouseButtonSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const mouseButtonsGroup = createGroup(strings.settings.groups.general.mouseButtons);
+    const mouseButtonsGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.mouseButtons);
     const normalizeMouseBackForwardAction = (value: string): MouseBackForwardAction => {
         if (value === 'singlePaneSwitch' || value === 'history') {
             return value;
@@ -372,7 +372,7 @@ function renderMouseButtonSettings(context: SettingsTabContext, createGroup: Cre
             .setDesc(strings.settings.items.mouseBackForwardAction.desc)
             .addDropdown(dropdown =>
                 dropdown
-                    .addOption('none', strings.settings.items.mouseBackForwardAction.options.none)
+                    .addOption('none', strings.settings.items.mouseBackForwardAction.options.systemDefault)
                     .addOption('singlePaneSwitch', strings.settings.items.mouseBackForwardAction.options.singlePaneSwitch)
                     .addOption('history', strings.settings.items.mouseBackForwardAction.options.history)
                     .setValue(plugin.settings.mouseBackForwardAction)
@@ -427,14 +427,14 @@ function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<C
     if (showNarrowSidebarSettings) {
         const narrowSidebarLayoutSetting = group.addSetting(setting => {
             setting
-                .setName(strings.settings.items.narrowSidebarLayout.name)
-                .setDesc(strings.settings.items.narrowSidebarLayout.desc)
+                .setName(strings.settings.items.narrowSidebarBehavior.name)
+                .setDesc(strings.settings.items.narrowSidebarBehavior.desc)
                 .addDropdown(dropdown => {
                     dropdown
                         .addOptions({
-                            none: strings.settings.items.narrowSidebarLayout.options.none,
-                            singlePane: strings.settings.items.narrowSidebarLayout.options.singlePane,
-                            vertical: strings.settings.items.narrowSidebarLayout.options.vertical
+                            none: strings.settings.items.narrowSidebarBehavior.options.none,
+                            singlePane: strings.settings.items.narrowSidebarBehavior.options.singlePane,
+                            vertical: strings.settings.items.narrowSidebarBehavior.options.vertical
                         })
                         .setValue(plugin.settings.narrowSidebarLayout)
                         .onChange(value => {
@@ -450,13 +450,13 @@ function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<C
         if (plugin.settings.narrowSidebarLayout !== 'none') {
             const narrowSidebarTriggerSetting = group.addSetting(setting => {
                 setting
-                    .setName(strings.settings.items.narrowSidebarTrigger.name)
-                    .setDesc(strings.settings.items.narrowSidebarTrigger.desc)
+                    .setName(strings.settings.items.narrowSidebarThresholdMode.name)
+                    .setDesc(strings.settings.items.narrowSidebarThresholdMode.desc)
                     .addDropdown(dropdown => {
                         dropdown
                             .addOptions({
-                                fitPanes: strings.settings.items.narrowSidebarTrigger.options.fitPanes,
-                                customWidth: strings.settings.items.narrowSidebarTrigger.options.customWidth
+                                fitPanes: strings.settings.items.narrowSidebarThresholdMode.options.fitPanes,
+                                customWidth: strings.settings.items.narrowSidebarThresholdMode.options.customWidth
                             })
                             .setValue(plugin.settings.narrowSidebarTriggerMode)
                             .onChange(value => {
@@ -472,14 +472,14 @@ function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<C
         if (plugin.settings.narrowSidebarLayout !== 'none' && plugin.settings.narrowSidebarTriggerMode === 'customWidth') {
             const narrowSidebarCustomWidthSetting = group.addSetting(setting => {
                 renderSliderSetting(setting, {
-                    name: strings.settings.items.narrowSidebarCustomWidth.name,
-                    desc: strings.settings.items.narrowSidebarCustomWidth.desc,
+                    name: strings.settings.items.narrowSidebarThresholdWidth.name,
+                    desc: strings.settings.items.narrowSidebarThresholdWidth.desc,
                     value: plugin.settings.narrowSidebarCustomWidth,
                     defaultValue: NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
                     min: NARROW_SIDEBAR_CUSTOM_WIDTH_MIN,
                     max: NARROW_SIDEBAR_CUSTOM_WIDTH_MAX,
                     step: NARROW_SIDEBAR_CUSTOM_WIDTH_STEP,
-                    resetTooltip: strings.settings.items.narrowSidebarCustomWidth.resetTooltip,
+                    resetTooltip: strings.settings.items.narrowSidebarThresholdWidth.resetTooltip,
                     formatValue: formatPixelSliderValue,
                     onChange: value => {
                         plugin.setNarrowSidebarCustomWidth(value);
@@ -494,20 +494,20 @@ function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<C
 
 function renderDesktopAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const desktopAppearanceGroup = createGroup(strings.settings.groups.general.desktopAppearance);
+    const desktopAppearanceGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.desktopAppearance);
 
     renderDualPaneSettings(context, desktopAppearanceGroup);
 
     desktopAppearanceGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.appearanceBackground.name)
-            .setDesc(strings.settings.items.appearanceBackground.desc)
+            .setName(strings.settings.items.paneBackgroundColor.name)
+            .setDesc(strings.settings.items.paneBackgroundColor.desc)
             .addDropdown(dropdown =>
                 dropdown
                     .addOptions({
-                        separate: strings.settings.items.appearanceBackground.options.separate,
-                        primary: strings.settings.items.appearanceBackground.options.primary,
-                        secondary: strings.settings.items.appearanceBackground.options.secondary
+                        separate: strings.settings.items.paneBackgroundColor.options.separate,
+                        primary: strings.settings.items.paneBackgroundColor.options.listBackground,
+                        secondary: strings.settings.items.paneBackgroundColor.options.navigationBackground
                     })
                     .setValue(plugin.settings.desktopBackground ?? 'separate')
                     .onChange(async value => {
@@ -554,7 +554,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
 
 function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const mobileAppearanceGroup = createGroup(strings.settings.groups.general.mobileAppearance);
+    const mobileAppearanceGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.mobileAppearance);
 
     // Tablets support the dual pane layout, so they get the same pane settings as desktop
     if (Platform.isTablet) {
@@ -565,8 +565,8 @@ function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup
     // Floating toolbars only render with the phone chrome; tablets use the desktop headers
     const useFloatingToolbarsSetting = mobileAppearanceGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.useFloatingToolbars.name)
-            .setDesc(strings.settings.items.useFloatingToolbars.desc)
+            .setName(strings.settings.items.useFloatingToolbarsOnIOS.name)
+            .setDesc(strings.settings.items.useFloatingToolbarsOnIOS.desc)
             .addToggle(toggle =>
                 toggle.setValue(plugin.settings.useFloatingToolbars).onChange(value => {
                     plugin.setUseFloatingToolbars(value);
@@ -579,13 +579,13 @@ function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup
 
 function renderViewSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const viewGroup = createGroup(strings.settings.groups.general.view);
+    const viewGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.appearance);
 
     const initialUIScalePercent = scaleToPercent(plugin.getUIScale());
     const uiScaleSetting = viewGroup.addSetting(setting => {
         renderSliderSetting(setting, {
-            name: strings.settings.items.appearanceScale.name,
-            desc: strings.settings.items.appearanceScale.desc,
+            name: strings.settings.items.zoomLevel.name,
+            desc: strings.settings.items.zoomLevel.desc,
             value: initialUIScalePercent,
             defaultValue: scaleToPercent(DEFAULT_UI_SCALE),
             min: MIN_UI_SCALE_PERCENT,
@@ -602,14 +602,14 @@ function renderViewSettings(context: SettingsTabContext, createGroup: CreateSett
 
     const paneTransitionSetting = viewGroup.addSetting(setting => {
         renderSliderSetting(setting, {
-            name: strings.settings.items.paneTransitionDuration.name,
-            desc: strings.settings.items.paneTransitionDuration.desc,
+            name: strings.settings.items.singlePaneAnimation.name,
+            desc: strings.settings.items.singlePaneAnimation.desc,
             value: plugin.settings.paneTransitionDuration,
             defaultValue: DEFAULT_SETTINGS.paneTransitionDuration,
             min: MIN_PANE_TRANSITION_DURATION_MS,
             max: MAX_PANE_TRANSITION_DURATION_MS,
             step: PANE_TRANSITION_DURATION_STEP_MS,
-            resetTooltip: strings.settings.items.paneTransitionDuration.resetTooltip,
+            resetTooltip: strings.settings.items.singlePaneAnimation.resetTooltip,
             formatValue: value => `${value}ms`,
             onChange: value => {
                 plugin.setPaneTransitionDuration(value);
@@ -633,7 +633,7 @@ function renderViewSettings(context: SettingsTabContext, createGroup: CreateSett
 
 function renderIconSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin, addToggleSetting } = context;
-    const iconsGroup = createGroup(strings.settings.groups.general.icons);
+    const iconsGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.icons);
 
     iconsGroup.addSetting(setting => {
         setting.setName(strings.settings.items.interfaceIcons.name).setDesc(strings.settings.items.interfaceIcons.desc);
@@ -663,8 +663,8 @@ function renderIconSettings(context: SettingsTabContext, createGroup: CreateSett
 
     addToggleSetting(
         iconsGroup.addSetting,
-        strings.settings.items.showIconsColorOnly.name,
-        strings.settings.items.showIconsColorOnly.desc,
+        strings.settings.items.applyColorToIconsOnly.name,
+        strings.settings.items.applyColorToIconsOnly.desc,
         () => plugin.settings.colorIconOnly,
         value => {
             plugin.settings.colorIconOnly = value;
@@ -674,7 +674,7 @@ function renderIconSettings(context: SettingsTabContext, createGroup: CreateSett
 
 function renderFormattingSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin, configureDebouncedTextSetting } = context;
-    const formattingGroup = createGroup(strings.settings.groups.general.formatting);
+    const formattingGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.formatting);
 
     const dateFormatSetting = formattingGroup.addSetting(setting => {
         configureDebouncedTextSetting(

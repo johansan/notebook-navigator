@@ -52,13 +52,13 @@ export function createPropertiesSettingDefinitions(context: SettingsTabContext, 
                 render: setting => renderPropertySortOrderSetting(setting, context)
             }),
             createToggleDefinition('showAllPropertiesFolder', {
-                name: strings.settings.items.showAllPropertiesFolder.name,
-                desc: strings.settings.items.showAllPropertiesFolder.desc,
+                name: strings.settings.items.showPropertiesFolder.name,
+                desc: strings.settings.items.showPropertiesFolder.desc,
                 visible: () => plugin.settings.showProperties
             }),
             createToggleDefinition('scopePropertiesToCurrentContext', {
-                name: strings.settings.items.scopePropertiesToCurrentContext.name,
-                desc: strings.settings.items.scopePropertiesToCurrentContext.desc,
+                name: strings.settings.items.filterPropertiesBySelection.name,
+                desc: strings.settings.items.filterPropertiesBySelection.desc,
                 visible: () => plugin.settings.showProperties
             }),
             createRenderDefinition({

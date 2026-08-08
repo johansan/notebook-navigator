@@ -35,8 +35,8 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
     return [
         createGroupDefinition(undefined, [
             createToggleDefinition('calendarEnabled', {
-                name: strings.settings.items.calendarEnabled.name,
-                desc: strings.settings.items.calendarEnabled.desc
+                name: strings.settings.items.enableCalendar.name,
+                desc: strings.settings.items.enableCalendar.desc
             }),
             createRenderDefinition({
                 name: strings.settings.items.calendarPlacement.name,
@@ -53,7 +53,7 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.calendarShowHiddenItems.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.appearance, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.appearance, [
             createRenderDefinition({
                 name: strings.settings.items.calendarLocale.name,
                 desc: strings.settings.items.calendarLocale.desc,
@@ -73,12 +73,12 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 }
             }),
             createDropdownDefinition('calendarMonthHeadingFormat', {
-                name: strings.settings.items.calendarMonthHeadingFormat.name,
-                desc: strings.settings.items.calendarMonthHeadingFormat.desc,
-                aliases: Object.values(strings.settings.items.calendarMonthHeadingFormat.options),
+                name: strings.settings.items.calendarMonthNameFormat.name,
+                desc: strings.settings.items.calendarMonthNameFormat.desc,
+                aliases: Object.values(strings.settings.items.calendarMonthNameFormat.options),
                 options: {
-                    full: strings.settings.items.calendarMonthHeadingFormat.options.full,
-                    short: strings.settings.items.calendarMonthHeadingFormat.options.short
+                    full: strings.settings.items.calendarMonthNameFormat.options.full,
+                    short: strings.settings.items.calendarMonthNameFormat.options.short
                 }
             }),
             createToggleDefinition('calendarHighlightToday', {
@@ -106,21 +106,21 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.calendarShowQuarter.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.leftSidebar, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.leftSidebar, [
             createRenderDefinition({
-                name: strings.settings.items.calendarLeftPlacement.name,
-                desc: strings.settings.items.calendarLeftPlacement.desc,
-                aliases: Object.values(strings.settings.items.calendarLeftPlacement.options),
+                name: strings.settings.items.calendarSinglePanePlacement.name,
+                desc: strings.settings.items.calendarSinglePanePlacement.desc,
+                aliases: Object.values(strings.settings.items.calendarSinglePanePlacement.options),
                 render: setting => renderCalendarLeftPlacementSetting(setting, context)
             }),
             createRenderDefinition({
-                name: strings.settings.items.calendarWeeksToShow.name,
-                desc: strings.settings.items.calendarWeeksToShow.desc,
-                aliases: Object.values(strings.settings.items.calendarWeeksToShow.options),
+                name: strings.settings.items.calendarLeftSidebarWeeksToShow.name,
+                desc: strings.settings.items.calendarLeftSidebarWeeksToShow.desc,
+                aliases: Object.values(strings.settings.items.calendarLeftSidebarWeeksToShow.options),
                 render: setting => renderCalendarWeeksToShowSetting(setting, context)
             })
         ]),
-        createGroupDefinition(strings.settings.items.calendarPlacement.options.rightSidebar, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.rightSidebar, [
             createToggleDefinition('calendarShowYearCalendar', {
                 name: strings.settings.items.calendarShowYearCalendar.name,
                 desc: strings.settings.items.calendarShowYearCalendar.desc
@@ -184,11 +184,13 @@ function renderCalendarLocaleSetting(setting: Setting, context: SettingsTabConte
 function renderCalendarLeftPlacementSetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
 
-    setting.setName(strings.settings.items.calendarLeftPlacement.name).setDesc(strings.settings.items.calendarLeftPlacement.desc);
+    setting
+        .setName(strings.settings.items.calendarSinglePanePlacement.name)
+        .setDesc(strings.settings.items.calendarSinglePanePlacement.desc);
     setting.addDropdown((dropdown: DropdownComponent) => {
         dropdown
-            .addOption('below', strings.settings.items.calendarLeftPlacement.options.below)
-            .addOption('navigation', strings.settings.items.calendarLeftPlacement.options.navigationPane)
+            .addOption('below', strings.settings.items.calendarSinglePanePlacement.options.belowPanes)
+            .addOption('navigation', strings.settings.items.calendarSinglePanePlacement.options.navigationPane)
             .setValue(plugin.settings.calendarLeftPlacement)
             .onChange(value => {
                 if (!isCalendarLeftPlacement(value)) {
@@ -205,16 +207,18 @@ function renderCalendarLeftPlacementSetting(setting: Setting, context: SettingsT
 function renderCalendarWeeksToShowSetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
 
-    setting.setName(strings.settings.items.calendarWeeksToShow.name).setDesc(strings.settings.items.calendarWeeksToShow.desc);
+    setting
+        .setName(strings.settings.items.calendarLeftSidebarWeeksToShow.name)
+        .setDesc(strings.settings.items.calendarLeftSidebarWeeksToShow.desc);
     setting.addDropdown((dropdown: DropdownComponent) => {
-        dropdown.addOption('1', strings.settings.items.calendarWeeksToShow.options.oneWeek);
+        dropdown.addOption('1', strings.settings.items.calendarLeftSidebarWeeksToShow.options.oneWeek);
         for (let count = 2; count <= 5; count++) {
             dropdown.addOption(
                 String(count),
-                strings.settings.items.calendarWeeksToShow.options.weeksCount.replace('{count}', count.toString())
+                strings.settings.items.calendarLeftSidebarWeeksToShow.options.weeksCount.replace('{count}', count.toString())
             );
         }
-        dropdown.addOption('6', strings.settings.items.calendarWeeksToShow.options.fullMonth);
+        dropdown.addOption('6', strings.settings.items.calendarLeftSidebarWeeksToShow.options.fullMonth);
 
         dropdown.setValue(String(plugin.settings.calendarWeeksToShow)).onChange(value => {
             const parsed = Number.parseInt(value, 10);

@@ -73,6 +73,9 @@ export const STRINGS_ZH_CN = {
         shortcutsHeader: '快捷方式',
         recentFilesHeader: '最近文件', // Header label for recent files section in navigation pane (English: Recent files)
         properties: '属性',
+        folders: '文件夹',
+        tags: '标签',
+        calendar: '导航日历',
         reorderRootFoldersTitle: '重新排列导航',
         reorderRootFoldersHint: '使用箭头或拖动来重新排列',
         vaultRootLabel: '仓库',
@@ -1002,101 +1005,142 @@ export const STRINGS_ZH_CN = {
             exportSuccess: '失败的元数据报告已导出至：{filename}',
             exportFailed: '导出元数据报告失败'
         },
-        sections: {
-            general: '通用',
-            vaultFilters: '显示过滤器',
-            appearanceBehavior: '外观和行为',
-            navigationPane: '导航窗格',
-            calendar: '导航日历',
-            fileOperations: '文件操作',
-            icons: '图标包',
-            folders: '文件夹',
-            folderNotes: '文件夹笔记',
-            folderNoteFiles: '文件夹笔记文件',
-            foldersAndFolderNotes: '文件夹和文件夹笔记',
-            tagsAndProperties: '标签与属性',
-            tags: '标签',
-            listPane: '列表窗格',
-            notes: '文件显示',
-            shortcutsAndRecentFiles: '快捷方式与最近文件',
-            advanced: '高级'
+        index: {
+            label: '通用',
+            description: '发行说明、支持、仓库配置文件、文件类型和属性键。',
+            groups: {
+                vaultSetup: '仓库设置'
+            }
         },
         pageGroups: {
             configuration: '配置',
-            navigationAndContent: '导航窗格',
-            notesAndLists: '列表窗格',
+            navigationPane: '导航窗格',
+            listPane: '列表窗格',
             calendarAndTools: '日历和工具'
         },
-        pageDescriptions: {
-            general: '发行说明、支持、仓库配置文件、文件类型和属性键。',
-            vaultFilters: '隐藏的文件夹、标签、文件、文件标签和属性规则。',
-            appearanceBehavior: '行为、键盘导航、鼠标按钮、外观和格式。',
-            navigationPane: '布局、外观、文件数量、折叠行为和彩虹颜色。',
-            shortcuts: '快捷方式可见性、徽章、最近文件和固定项目。',
-            calendar: '日历显示、日期笔记、模板、区域设置和侧边栏位置。',
-            fileOperations: '模板、删除确认、附件和文件移动冲突行为。',
-            foldersAndFolderNotes: '文件夹显示、文件夹笔记、文件夹笔记模板和文件夹笔记行为。',
-            tagsProperties: '标签和属性部分、图标、排序、范围和继承。',
-            listPane: '排序、分组、列表模式、固定笔记和绘图预览。',
-            frontmatter: '用于显示名称、时间戳、图标和颜色的前置元数据字段。',
-            notes: '标题、预览文本、特色图片、标签、属性、日期、字数和字符数。',
-            iconPacks: '界面图标、文件图标和图标包管理。',
-            advanced: '诊断、元数据清理、导入/导出和重置。'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: '仓库设置',
-                templates: '模板',
-                behavior: '行为',
-                startup: '启动',
-                keyboardNavigation: '键盘导航',
-                mouseButtons: '鼠标按钮',
-                view: '外观',
-                icons: '图标',
-                desktopAppearance: '桌面外观',
-                mobileAppearance: '移动端外观',
-                formatting: '格式'
+        pages: {
+            displayFilters: {
+                label: '显示过滤器',
+                description: '隐藏的文件夹、标签、文件、文件标签和属性规则。'
+            },
+            appearanceAndBehavior: {
+                label: '外观和行为',
+                description: '行为、键盘导航、鼠标按钮、外观和格式。',
+                groups: {
+                    startup: '启动',
+                    keyboardNavigation: '键盘导航',
+                    mouseButtons: '鼠标按钮',
+                    desktopAppearance: '桌面外观',
+                    mobileAppearance: '移动端外观',
+                    appearance: '外观',
+                    icons: '图标',
+                    formatting: '格式'
+                }
+            },
+            navigationPane: {
+                label: '导航窗格',
+                description: '布局、外观、文件数量、折叠行为和彩虹颜色。',
+                groups: {
+                    appearance: '外观',
+                    banner: '横幅',
+                    collapseItems: '折叠项目',
+                    dragAndDrop: '拖放',
+                    fileCounts: '文件数',
+                    rainbowColors: '彩虹颜色'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: '快捷方式与最近文件',
+                description: '快捷方式可见性、徽章、最近文件和固定项目。',
+                groups: {
+                    shortcuts: '快捷方式',
+                    recentFiles: '最近文件'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: '文件夹和文件夹笔记',
+                description: '文件夹显示、文件夹笔记、文件夹笔记模板和文件夹笔记行为。',
+                groups: {
+                    folders: '文件夹',
+                    folderNotes: '文件夹笔记',
+                    folderNoteFiles: '文件夹笔记文件'
+                }
+            },
+            tagsAndProperties: {
+                label: '标签与属性',
+                description: '标签和属性部分、图标、排序、范围和继承。',
+                groups: {
+                    tags: '标签',
+                    properties: '属性'
+                }
+            },
+            listPane: {
+                label: '列表窗格',
+                description: '排序、分组、列表模式、固定笔记和绘图预览。',
+                groups: {
+                    appearance: '外观',
+                    sortAndGroup: '排序与分组',
+                    groupHeaders: '分组标题',
+                    manualSort: '手动排序',
+                    pinnedNotes: '固定笔记',
+                    behavior: '行为',
+                    drawingPreviews: '绘图预览'
+                }
+            },
+            fileOperations: {
+                label: '文件操作',
+                description: '模板、删除确认、附件和文件移动冲突行为。',
+                groups: {
+                    templates: '模板'
+                }
+            },
+            frontmatterFields: {
+                label: '前置元数据字段',
+                description: '用于显示名称、时间戳、图标和颜色的前置元数据字段。'
+            },
+            fileDisplay: {
+                label: '文件显示',
+                description: '标题、预览文本、特色图片、标签、属性、日期、字数和字符数。',
+                groups: {
+                    icon: '图标',
+                    title: '标题',
+                    previewText: '预览文本',
+                    featureImage: '特色图片',
+                    tags: '标签',
+                    properties: '属性',
+                    tasks: '任务',
+                    date: '日期',
+                    parentFolder: '父文件夹',
+                    wordAndCharacterCount: '字数和字符数'
+                }
+            },
+            calendar: {
+                label: '导航日历',
+                description: '日历显示、日期笔记、模板、区域设置和侧边栏位置。',
+                groups: {
+                    appearance: '外观',
+                    leftSidebar: '左侧边栏',
+                    calendarIntegration: '日历集成',
+                    rightSidebar: '右侧边栏'
+                }
+            },
+            iconPacks: {
+                label: '图标包',
+                description: '界面图标、文件图标和图标包管理。'
             },
             advanced: {
-                maintenance: '维护',
-                resetSettings: '重置设置'
-            },
-            navigation: {
-                appearance: '外观',
-                banner: '横幅',
-                collapseItems: '折叠项目',
-                dragAndDrop: '拖放',
-                noteCounts: '文件数',
-                rainbowColors: '彩虹颜色',
-                leftSidebar: '左侧边栏',
-                calendarIntegration: '日历集成'
-            },
-            list: {
-                display: '外观',
-                sortAndGroup: '排序与分组',
-                groupHeaders: '分组标题',
-                manualSort: '手动排序',
-                pinnedNotes: '固定笔记',
-                drawingPreviews: '绘图预览'
-            },
-            notes: {
-                frontmatter: '前置元数据字段',
-                tasks: '任务',
-                icon: '图标',
-                title: '标题',
-                previewText: '预览文本',
-                featureImage: '特色图片',
-                tags: '标签',
-                properties: '属性',
-                date: '日期',
-                parentFolder: '父文件夹',
-                wordCount: '字数和字符数'
+                label: '高级',
+                description: '诊断、元数据清理、导入/导出和重置。',
+                groups: {
+                    maintenance: '维护',
+                    resetSettings: '重置设置'
+                }
             }
         },
         syncMode: {
             notSynced: '（未同步）',
-            switchToSynced: '启用同步',
-            switchToLocal: '禁用同步'
+            enableSync: '启用同步',
+            disableSync: '禁用同步'
         },
         items: {
             listPaneTitle: {
@@ -1104,11 +1148,11 @@ export const STRINGS_ZH_CN = {
                 desc: '选择列表窗格标题的显示位置。',
                 options: {
                     header: '显示在标题栏',
-                    list: '显示在列表窗格',
+                    listPane: '显示在列表窗格',
                     hidden: '不显示'
                 }
             },
-            sortNotesBy: {
+            defaultSortOrder: {
                 name: '默认排序方式',
                 desc: '选择笔记的默认排序方式。“用于排序的属性”中的属性会作为额外的排序选项显示。',
                 directions: {
@@ -1116,18 +1160,18 @@ export const STRINGS_ZH_CN = {
                     desc: '降序'
                 },
                 dateDirections: {
-                    desc: '最新在顶部',
-                    asc: '最旧在顶部'
+                    newestOnTop: '最新在顶部',
+                    oldestOnTop: '最旧在顶部'
                 },
                 textDirections: {
-                    asc: '升序',
-                    desc: '降序'
+                    aOnTop: '升序',
+                    zOnTop: '降序'
                 },
                 fields: {
-                    modified: '编辑日期',
-                    created: '创建日期',
+                    dateEdited: '编辑日期',
+                    dateCreated: '创建日期',
                     title: '标题',
-                    filename: '文件名',
+                    fileName: '文件名',
                     property: '属性'
                 }
             },
@@ -1140,7 +1184,7 @@ export const STRINGS_ZH_CN = {
                     follow: '跟随排序'
                 }
             },
-            propertySortKey: {
+            sortingProperties: {
                 name: '用于排序的属性',
                 desc: '以逗号分隔的 frontmatter 属性。每个属性会作为排序选项显示在默认排序方式设置和列表窗格的排序菜单中。这些属性不会被更改。',
                 placeholder: 'published, author',
@@ -1150,14 +1194,14 @@ export const STRINGS_ZH_CN = {
                     both: '默认排序方式和默认分组已重置，因为其属性已不可用。'
                 }
             },
-            propertySortSecondary: {
+            propertySecondarySort: {
                 name: '次要排序',
                 desc: '与属性排序配合使用，当笔记具有相同的属性值或没有属性值时生效。',
                 options: {
                     title: '标题',
-                    filename: '文件名',
-                    created: '创建日期',
-                    modified: '编辑日期'
+                    fileName: '文件名',
+                    dateCreated: '创建日期',
+                    dateEdited: '编辑日期'
                 }
             },
             propertySortInstructions: {
@@ -1170,16 +1214,16 @@ export const STRINGS_ZH_CN = {
                     '**标签和属性视图：** 选择 **文件夹** 分组后，会改为显示日期标题。'
                 ]
             },
-            propertyGroupKey: {
+            groupingProperties: {
                 name: '用于分组的属性',
                 desc: '以逗号分隔的 frontmatter 属性。每个属性会作为分组选项显示在默认分组设置和列表窗格的排序菜单中。这些属性不会被更改。',
                 placeholder: 'status, genre'
             },
-            manualSortPropertyKey: {
+            manualSortProperty: {
                 name: '手动排序属性',
                 desc: '用于存储手动排序数字索引值的 frontmatter 属性。'
             },
-            manualSortGroupHeaderProperty: {
+            groupHeaderProperty: {
                 name: '分组标题属性',
                 desc: '用于存储自定义分组标题的 frontmatter 属性。'
             },
@@ -1193,7 +1237,7 @@ export const STRINGS_ZH_CN = {
                 options: {
                     top: '顶部',
                     bottom: '底部',
-                    'below-selected-note': '所选笔记下方',
+                    belowSelectedNote: '所选笔记下方',
                     unsorted: '未排序'
                 }
             },
@@ -1209,7 +1253,7 @@ export const STRINGS_ZH_CN = {
                     '在列表窗格中，选择一条笔记或多选若干条，然后按 **Cmd/Ctrl + Arrow Up/Down** 向上或向下移动所选内容。'
                 ]
             },
-            revealFileOnListChanges: {
+            scrollToSelectedFileOnListChanges: {
                 name: '列表变更时滚动到选定文件',
                 desc: '在固定笔记、显示后代笔记、更改文件夹外观或执行文件操作时滚动到选定的文件。'
             },
@@ -1217,15 +1261,15 @@ export const STRINGS_ZH_CN = {
                 name: '显示子文件夹/后代的笔记',
                 desc: '在查看文件夹、标签或属性时包含嵌套子文件夹以及标签和属性后代中的笔记。'
             },
-            limitPinnedToCurrentFolder: {
+            filterPinnedNotesByFolder: {
                 name: '仅在笔记所在文件夹中固定',
                 desc: '固定笔记仅在其所在文件夹中显示为已固定。适用于文件夹笔记或固定笔记较多的情况。不影响标签或属性视图。'
             },
-            separateNoteCounts: {
+            separateFileCounts: {
                 name: '分别显示当前和后代文件计数',
                 desc: '为文件夹、标签和属性以"当前 ▾ 后代"格式显示文件计数。'
             },
-            groupNotes: {
+            defaultGrouping: {
                 name: '默认分组',
                 desc: '**标题**在不改变顺序的情况下为已排序的列表添加标注：自定义显示在 frontmatter 中定义的标题，日期插入日期标题。**分组**会重新排列列表：文件夹和属性分组按自身顺序排列，每个分组内的笔记遵循排序方式。',
                 families: {
@@ -1238,7 +1282,7 @@ export const STRINGS_ZH_CN = {
                     folder: '文件夹'
                 }
             },
-            showSelectedNavigationPills: {
+            alwaysShowAllTagAndPropertyPills: {
                 name: '始终显示所有标签和属性标记',
                 desc: '禁用时，与当前导航选择匹配的标记会被隐藏（例如，浏览"食谱"标签时，"食谱"标签标记会被隐藏）。启用后所有标记始终可见。'
             },
@@ -1246,7 +1290,7 @@ export const STRINGS_ZH_CN = {
                 name: '固定分组标题',
                 desc: '滚动时保持当前日期、文件夹、属性或固定部分的标题可见。'
             },
-            showFolderGroupPaths: {
+            showSubfolderPaths: {
                 name: '显示子文件夹路径',
                 desc: '在列表窗格中按文件夹分组时，显示子文件夹路径，而不是仅显示文件夹名称。'
             },
@@ -1274,9 +1318,9 @@ export const STRINGS_ZH_CN = {
                 name: '未完成任务图标',
                 desc: '当笔记包含未完成任务时替换文件图标。',
                 options: {
-                    none: '已禁用',
+                    disabled: '已禁用',
                     compact: '紧凑模式',
-                    all: '标准和紧凑'
+                    standardAndCompact: '标准和紧凑'
                 }
             },
             useFolderIcon: {
@@ -1299,7 +1343,7 @@ export const STRINGS_ZH_CN = {
                 name: '任务进度：全部完成时隐藏',
                 desc: '当笔记中的所有任务都已完成时隐藏任务进度。'
             },
-            showFileBackgroundUnfinishedTask: {
+            unfinishedTaskBackground: {
                 name: '未完成任务背景',
                 desc: '当笔记包含未完成任务时应用背景颜色。'
             },
@@ -1307,7 +1351,7 @@ export const STRINGS_ZH_CN = {
                 name: '未完成任务背景颜色',
                 desc: '设置笔记包含未完成任务时使用的背景颜色。'
             },
-            showFilenameMatchIcons: {
+            showFileNameIcons: {
                 name: '按文件名设置图标',
                 desc: '根据文件名中的文本分配图标。'
             },
@@ -1317,7 +1361,7 @@ export const STRINGS_ZH_CN = {
                 placeholder: '# 文本=图标\n会议=ph-calendar\n发票=ph-receipt',
                 editTooltip: '编辑映射'
             },
-            showCategoryIcons: {
+            showFileTypeIcons: {
                 name: '按文件类型设置图标',
                 desc: '根据文件扩展名分配图标。'
             },
@@ -1325,7 +1369,7 @@ export const STRINGS_ZH_CN = {
                 name: '文件图标预设',
                 desc: '选择内置图标或图标包预设。自定义扩展名规则会覆盖此预设。',
                 options: {
-                    none: '内置图标'
+                    builtIn: '内置图标'
                 },
                 notInstalledWarning: '未安装此图标包。将改为显示内置图标。'
             },
@@ -1348,11 +1392,11 @@ export const STRINGS_ZH_CN = {
                 name: '显示父文件夹',
                 desc: '为子文件夹、标签或属性中的笔记显示父文件夹名称。'
             },
-            showParentFolderFullPath: {
+            showFolderPath: {
                 name: '显示文件夹路径',
                 desc: '显示相对于所选文件夹的路径，而不是仅显示文件夹名称。标签和属性显示完整路径。'
             },
-            parentFolderClickRevealsFile: {
+            parentFolderClickOpensFolder: {
                 name: '点击父文件夹打开文件夹',
                 desc: '点击父文件夹名称时，在列表面板中打开该文件夹。'
             },
@@ -1380,7 +1424,7 @@ export const STRINGS_ZH_CN = {
                     vertical: '垂直分割'
                 }
             },
-            narrowSidebarLayout: {
+            narrowSidebarBehavior: {
                 name: '侧边栏过窄时',
                 desc: '选择导航窗格和列表窗格无法并排显示时的处理方式。',
                 options: {
@@ -1389,7 +1433,7 @@ export const STRINGS_ZH_CN = {
                     vertical: '切换到垂直分割'
                 }
             },
-            narrowSidebarTrigger: {
+            narrowSidebarThresholdMode: {
                 name: '窄侧边栏阈值',
                 desc: '选择侧边栏宽度阈值的计算方式。',
                 options: {
@@ -1397,41 +1441,41 @@ export const STRINGS_ZH_CN = {
                     customWidth: '自定义宽度'
                 }
             },
-            narrowSidebarCustomWidth: {
+            narrowSidebarThresholdWidth: {
                 name: '窄侧边栏阈值宽度',
                 desc: '当侧边栏窄于此宽度时切换。',
                 resetTooltip: '重置为默认宽度'
             },
-            appearanceBackground: {
+            paneBackgroundColor: {
                 name: '背景色',
                 desc: '为导航窗格和列表窗格选择背景色。',
                 options: {
                     separate: '分开背景',
-                    primary: '使用列表背景',
-                    secondary: '使用导航背景'
+                    listBackground: '使用列表背景',
+                    navigationBackground: '使用导航背景'
                 }
             },
-            appearanceScale: {
+            zoomLevel: {
                 name: '缩放级别',
                 desc: '控制 Notebook Navigator 的整体缩放级别（百分比）。'
             },
-            useFloatingToolbars: {
+            useFloatingToolbarsOnIOS: {
                 name: '在 iOS 上使用浮动工具栏',
                 desc: '仅适用于 iOS。'
             },
-            startView: {
+            defaultStartupView: {
                 name: '默认启动视图',
                 desc: '选择打开 Notebook Navigator 时处于活动状态的窗格。单窗格布局优先显示该窗格；双窗格布局将键盘焦点移至该窗格。',
                 options: {
                     navigation: '导航窗格',
-                    files: '列表窗格'
+                    listPane: '列表窗格'
                 }
             },
             toolbarButtons: {
                 name: '工具栏按钮',
                 desc: '选择在工具栏中显示哪些按钮。隐藏的按钮仍可通过命令和菜单访问。'
             },
-            createNewNotesInNewTab: {
+            openNewNotesInNewTab: {
                 name: '在新标签页中打开新笔记',
                 desc: '启用后，"创建新笔记"命令会在新标签页中打开笔记。禁用后，笔记将替换当前标签页。'
             },
@@ -1451,20 +1495,20 @@ export const STRINGS_ZH_CN = {
                 name: '自动显示：忽略其他窗口的事件',
                 desc: '在其他窗口中操作笔记时不更改活动笔记。'
             },
-            paneTransitionDuration: {
+            singlePaneAnimation: {
                 name: '单窗格动画',
                 desc: '在单窗格模式下切换窗格时的过渡持续时间（毫秒）。',
                 resetTooltip: '重置为默认值'
             },
-            autoSelectFirstFileOnFocusChange: {
+            autoSelectFirstNote: {
                 name: '自动选择第一个笔记',
                 desc: '切换文件夹、标签或属性时自动打开第一个笔记。'
             },
-            skipAutoScroll: {
+            disableShortcutAutoScroll: {
                 name: '禁用快捷方式自动滚动',
                 desc: '点击快捷方式中的项目时不滚动导航面板。'
             },
-            autoExpandNavItems: {
+            expandOnSelection: {
                 name: '选中时展开',
                 desc: '选中时展开文件夹和标签。在单窗格模式下，首次选中展开，再次选中显示文件。'
             },
@@ -1502,16 +1546,16 @@ export const STRINGS_ZH_CN = {
                 name: '快捷方式徽章',
                 desc: '在快捷方式旁边显示的内容。使用"打开快捷方式1-9"命令可直接打开快捷方式。',
                 options: {
-                    index: '位置 (1-9)',
+                    position: '位置 (1-9)',
                     count: '项目计数',
                     none: '无'
                 }
             },
-            showRecentNotes: {
+            showRecentFiles: {
                 name: '显示最近文件',
                 desc: '在导航窗格中显示最近文件部分。'
             },
-            hideRecentNotes: {
+            hideFileTypesFromRecentFiles: {
                 name: '从最近文件中隐藏文件类型',
                 desc: '选择在最近文件部分中隐藏的文件类型。',
                 options: {
@@ -1519,15 +1563,15 @@ export const STRINGS_ZH_CN = {
                     folderNotes: '文件夹笔记'
                 }
             },
-            recentNotesCount: {
+            recentFilesCount: {
                 name: '最近文件数量',
                 desc: '要显示的最近文件数量。'
             },
-            pinRecentNotesWithShortcuts: {
+            pinRecentFilesWithShortcuts: {
                 name: '将最近文件与快捷方式一起固定',
                 desc: '固定快捷方式时包含最近文件。'
             },
-            calendarEnabled: {
+            enableCalendar: {
                 name: '启用日历',
                 desc: '启用 Notebook Navigator 的日历功能。'
             },
@@ -1539,12 +1583,12 @@ export const STRINGS_ZH_CN = {
                     rightSidebar: '右侧边栏'
                 }
             },
-            calendarLeftPlacement: {
+            calendarSinglePanePlacement: {
                 name: '单窗格位置',
                 desc: '单窗格模式下日历显示的位置。',
                 options: {
                     navigationPane: '导航窗格',
-                    below: '窗格下方'
+                    belowPanes: '窗格下方'
                 }
             },
             calendarLocale: {
@@ -1565,7 +1609,7 @@ export const STRINGS_ZH_CN = {
                     thuFri: '周四和周五'
                 }
             },
-            calendarMonthHeadingFormat: {
+            calendarMonthNameFormat: {
                 name: '月份名称格式',
                 desc: '显示完整（一月）或简称（1月）的月份名称。',
                 options: {
@@ -1577,7 +1621,7 @@ export const STRINGS_ZH_CN = {
                 name: '显示信息按钮',
                 desc: '在搜索栏和日历标题中显示信息按钮。'
             },
-            calendarWeeksToShow: {
+            calendarLeftSidebarWeeksToShow: {
                 name: '左侧边栏显示周数',
                 desc: '右侧边栏的日历始终显示完整月份。',
                 options: {
@@ -1622,7 +1666,7 @@ export const STRINGS_ZH_CN = {
                 name: '显示隐藏项目',
                 desc: '启用时，日历始终显示所有日历笔记，包括被仓库配置过滤器隐藏的笔记。'
             },
-            calendarIntegrationMode: {
+            dailyNoteSource: {
                 name: '日记来源',
                 desc: '日历笔记的来源。',
                 options: {
@@ -1642,52 +1686,56 @@ export const STRINGS_ZH_CN = {
                 }
             },
 
-            calendarCustomRootFolder: {
+            periodicNotesRootFolder: {
                 name: '根文件夹',
                 desc: '周期笔记的基础文件夹。日期模式可以包含子文件夹。随所选仓库配置文件更改。',
                 placeholder: 'Personal/Diary'
             },
-            calendarTemplateFolder: {
+            templateFolderLocation: {
                 name: '模板文件夹位置',
                 desc: '模板文件选择器显示此文件夹中的笔记。',
                 placeholder: 'Templates',
                 usage: '用于日历笔记和文件夹笔记。在导航日历 > 日历集成和文件夹和文件夹笔记 > 文件夹笔记文件中配置模板。'
             },
-            calendarCustomFilePattern: {
+            calendarDailyNotePattern: {
                 name: '日记',
                 desc: '使用 Moment 日期格式设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
+                placeholder: 'YYYY/YYYYMMDD',
+                parsingError: '模式必须能格式化并重新解析为完整日期（年、月、日）。'
+            },
+            calendarPeriodicNotePatterns: {
                 momentDescPrefix: '使用 ',
                 momentLinkText: 'Moment 日期格式',
                 momentDescSuffix:
                     ' 设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
-                templaterSupportInstalled: '✅ 已安装 Templater 插件，支持完整模板功能。',
-                templaterSupportMissing: '⚠️ 安装 Templater 插件以支持模板功能。',
                 templateTokenNoticeLabel: '重要！',
                 templateTokenNotice: '模板功能需要 Templater 插件。{{date}} 和 {{title}} 等内置格式仅在{source}设置为{option}时可用。',
-                placeholder: 'YYYY/YYYYMMDD',
-                example: '当前语法：{path}',
-                parsingError: '模式必须能格式化并重新解析为完整日期（年、月、日）。'
+                example: '当前语法：{path}'
             },
-            calendarCustomWeekPattern: {
+            templaterSupport: {
+                installed: '✅ 已安装 Templater 插件，支持完整模板功能。',
+                missing: '⚠️ 安装 Templater 插件以支持模板功能。'
+            },
+            calendarWeeklyNotePattern: {
                 name: '周记',
                 parsingError: '模式必须能格式化并重新解析为完整周（周年、周数）。',
                 weekPathMismatchWarning: '周记路径使用周期笔记语言。请使用匹配的语言，或使用 "GGGG" 与 "WW" 以星期一为基准的周。',
                 mixedWeekTokensWarning:
                     '此模式混用了基于星期一的周标记（"W" 或 "G"）和基于语言的周标记（"w" 或 "g"）。请始终使用同一组：以星期一为基准的周使用 "GGGG" 与 "WW"，如果周记应遵循所选语言设置，则使用 "gggg" 与 "ww"。'
             },
-            calendarCustomMonthPattern: {
+            calendarMonthlyNotePattern: {
                 name: '月记',
                 parsingError: '模式必须能格式化并重新解析为完整月份（年、月）。'
             },
-            calendarCustomQuarterPattern: {
+            calendarQuarterlyNotePattern: {
                 name: '季度笔记',
                 parsingError: '模式必须能格式化并重新解析为完整季度（年、季度）。'
             },
-            calendarCustomYearPattern: {
+            calendarYearlyNotePattern: {
                 name: '年记',
                 parsingError: '模式必须能格式化并重新解析为完整年份（年）。'
             },
-            calendarTemplateFile: {
+            periodicNoteTemplateFile: {
                 current: '模板文件：{name}'
             },
             showTooltips: {
@@ -1708,7 +1756,7 @@ export const STRINGS_ZH_CN = {
                 buttonText: '重置分隔符',
                 notice: '分隔符位置已重置。重启 Obsidian 或重新打开 Notebook Navigator 以应用。'
             },
-            settingsTransfer: {
+            importAndExportSettings: {
                 name: '导入和导出设置',
                 desc: '将 Notebook Navigator 设置导出或导入为 JSON。导入会替换所有设置。',
                 importButtonText: '导入',
@@ -1766,15 +1814,15 @@ export const STRINGS_ZH_CN = {
                 name: '按 Enter 键打开文件',
                 desc: '仅在列表键盘导航时按 Enter 键打开文件。在 macOS 上，这会阻止 Enter 键重命名文件。'
             },
-            shiftEnterOpenContext: {
+            shiftEnterAction: {
                 name: 'Shift+Enter',
                 desc: '选择 Shift+Enter 是打开还是重命名所选文件。'
             },
-            cmdEnterOpenContext: {
+            cmdEnterAction: {
                 name: 'Cmd+Enter',
                 desc: '选择 Cmd+Enter 是打开还是重命名所选文件。'
             },
-            ctrlEnterOpenContext: {
+            ctrlEnterAction: {
                 name: 'Ctrl+Enter',
                 desc: '选择 Ctrl+Enter 是打开还是重命名所选文件。'
             },
@@ -1782,17 +1830,17 @@ export const STRINGS_ZH_CN = {
                 name: '鼠标后退/前进按钮',
                 desc: '桌面端鼠标后退和前进按钮的操作。',
                 options: {
-                    none: '使用系统默认',
+                    systemDefault: '使用系统默认',
                     singlePaneSwitch: '切换面板（单面板）',
                     history: '浏览历史'
                 }
             },
-            excludedNotes: {
+            hideNotesWithPropertyRules: {
                 name: '按属性规则隐藏笔记 (库配置)',
                 desc: '逗号分隔的前置元数据规则列表。使用 `key` 或 `key=value` 条目（例如：status=done, published=true, archived）。',
                 placeholder: 'status=done, published=true, archived'
             },
-            excludedFileNamePatterns: {
+            hideFiles: {
                 name: '隐藏文件 (库配置)',
                 desc: '逗号分隔的文件名模式列表，用于隐藏文件。支持 * 通配符和 / 路径（例如：temp-*、*.png、/assets/*）。',
                 placeholder: 'temp-*, *.png, /assets/*'
@@ -1818,7 +1866,7 @@ export const STRINGS_ZH_CN = {
                     duplicateName: '配置文件名称已存在'
                 }
             },
-            vaultTitle: {
+            vaultTitlePlacement: {
                 name: '库标题位置',
                 desc: '选择库标题显示的位置。',
                 options: {
@@ -1826,7 +1874,7 @@ export const STRINGS_ZH_CN = {
                     navigation: '显示在导航窗格'
                 }
             },
-            excludedFolders: {
+            hideFolders: {
                 name: '隐藏文件夹 (库配置)',
                 desc: '逗号分隔的要隐藏的文件夹列表。名称模式：assets*（以assets开头的文件夹），*_temp（以_temp结尾）。路径模式：/archive（仅根目录archive），/res*（以res开头的根文件夹），/*/temp（一级目录下的temp文件夹），/projects/*（projects内的所有文件夹）。',
                 placeholder: 'templates, assets*, /archive, /res*'
@@ -1836,7 +1884,7 @@ export const STRINGS_ZH_CN = {
                 desc: '逗号分隔的文件夹列表，用于在收集子文件夹中的笔记时跳过这些文件夹。文件夹仍会显示，选择该文件夹时仍会显示其中的笔记。使用与隐藏文件夹相同的模式。',
                 placeholder: '日记, 资源, /archive'
             },
-            fileVisibility: {
+            showFileTypes: {
                 name: '显示文件类型 (库配置)',
                 desc: '过滤在导航器中显示的文件类型。Obsidian不支持的文件类型可能会在外部应用程序中打开。',
                 options: {
@@ -1872,7 +1920,7 @@ export const STRINGS_ZH_CN = {
                 name: '显示日期',
                 desc: '在笔记名称下方显示日期。'
             },
-            alphabeticalDateMode: {
+            dateWhenSortingByName: {
                 name: '按名称排序时',
                 desc: '笔记按字母顺序排序时显示的日期。',
                 options: {
@@ -1884,7 +1932,7 @@ export const STRINGS_ZH_CN = {
                 name: '显示文件标签',
                 desc: '在文件项中显示可点击的标签。'
             },
-            showFileTagAncestors: {
+            showFullTagPaths: {
                 name: '显示完整标签路径',
                 desc: "显示完整的标签层级路径。启用：'ai/openai'，'工作/项目/2024'。禁用：'openai'，'2024'。"
             },
@@ -1892,7 +1940,7 @@ export const STRINGS_ZH_CN = {
                 name: '为文件标签着色',
                 desc: '将标签颜色应用于文件项中的标签徽章。'
             },
-            prioritizeColoredFileTags: {
+            showColoredTagsFirst: {
                 name: '优先显示彩色标签',
                 desc: '将彩色标签排列在其他标签之前。'
             },
@@ -1908,7 +1956,7 @@ export const STRINGS_ZH_CN = {
                 name: '为文件属性着色',
                 desc: '将属性颜色应用到文件项的属性徽章上。'
             },
-            prioritizeColoredFileProperties: {
+            showColoredPropertiesFirst: {
                 name: '优先显示彩色属性',
                 desc: '在文件项中将彩色属性排列在其他属性之前。'
             },
@@ -1916,7 +1964,7 @@ export const STRINGS_ZH_CN = {
                 name: '在精简模式中显示属性',
                 desc: '精简模式启用时显示属性。'
             },
-            textCountDisplay: {
+            textCountType: {
                 name: '计数类型',
                 desc: '选择文件项目中显示哪些文本计数。',
                 options: {
@@ -1946,11 +1994,11 @@ export const STRINGS_ZH_CN = {
                 name: '目标属性',
                 desc: '包含目标字数的前置元数据属性键。留空可隐藏目标。'
             },
-            showWordCountPercentage: {
+            showTargetPercentage: {
                 name: '显示目标百分比',
                 desc: '有目标字数时，仅显示进度百分比。'
             },
-            propertyFields: {
+            propertyKeys: {
                 name: '属性键（保险库配置）',
                 desc: 'Frontmatter 属性键，可按键设置导航和文件列表的可见性。',
                 addButtonTooltip: '配置属性键',
@@ -1962,11 +2010,11 @@ export const STRINGS_ZH_CN = {
                 name: '在单独的行中显示属性',
                 desc: '将每个属性显示在单独的行中。'
             },
-            enablePropertyInternalLinks: {
+            linkPropertyPillsToNotes: {
                 name: '将属性标签链接到笔记',
                 desc: '点击属性标签以打开链接的笔记。'
             },
-            enablePropertyExternalLinks: {
+            linkPropertyPillsToUrls: {
                 name: '将属性标签链接到 URL',
                 desc: '点击属性标签以打开链接的 URL。'
             },
@@ -1986,7 +2034,7 @@ export const STRINGS_ZH_CN = {
                 helpTooltip: '使用 Moment 格式',
                 momentLinkText: 'Moment 格式'
             },
-            showFilePreview: {
+            showNotePreview: {
                 name: '显示笔记预览',
                 desc: '在笔记名称下方显示预览文本。'
             },
@@ -2015,7 +2063,7 @@ export const STRINGS_ZH_CN = {
                 desc: '用于查找预览文本的前置属性的逗号分隔列表。将使用第一个包含文本的属性。',
                 placeholder: 'summary, description, abstract'
             },
-            previewPropertiesFallback: {
+            fallbackToNoteContent: {
                 name: '回退到笔记内容',
                 desc: '当指定的属性都不包含文本时，显示笔记内容作为预览。'
             },
@@ -2030,7 +2078,7 @@ export const STRINGS_ZH_CN = {
                     '5': '5 行'
                 }
             },
-            fileNameRows: {
+            titleRows: {
                 name: '标题行数',
                 desc: '笔记标题显示的行数。',
                 options: {
@@ -2061,22 +2109,22 @@ export const STRINGS_ZH_CN = {
                 desc: '逗号分隔的前置元数据属性列表。包含这些属性的笔记不会存储特色图片。',
                 placeholder: 'private, confidential'
             },
-            featureImageSize: {
+            featureImageDisplaySize: {
                 name: '特色图片显示大小',
                 desc: '笔记列表中特色图片的最大渲染大小。',
                 options: {
-                    standard: '64 px',
-                    large: '96 px',
-                    extraLarge: '128 px'
+                    '64': '64 px',
+                    '96': '96 px',
+                    '128': '128 px'
                 }
             },
             featureImagePixelSize: {
                 name: '特色图片像素大小',
                 desc: '生成存储的特色图片缩略图时使用的分辨率。如果较大的预览看起来模糊，请增大此值。',
                 options: {
-                    standard: '256 x 144 px',
-                    large: '384 x 216 px',
-                    extraLarge: '512 x 288 px'
+                    '256x144': '256 x 144 px',
+                    '384x216': '384 x 216 px',
+                    '512x288': '512 x 288 px'
                 }
             },
 
@@ -2084,7 +2132,7 @@ export const STRINGS_ZH_CN = {
                 name: '下载外部图片',
                 desc: '下载远程图片和 YouTube 缩略图作为特色图片。'
             },
-            hideDrawingPreviewImages: {
+            hideExportedPreviewImages: {
                 name: '隐藏导出的预览图片',
                 desc: '隐藏导出的绘图预览 PNG 文件。开启"显示隐藏项目"以显示它们。'
             },
@@ -2117,11 +2165,11 @@ export const STRINGS_ZH_CN = {
                     alphaDesc: 'Z 到 A'
                 }
             },
-            showNoteCount: {
+            showFileCount: {
                 name: '显示文件数',
                 desc: '在文件夹、标签和属性旁显示文件数量。'
             },
-            showSectionIcons: {
+            showShortcutAndRecentItemIcons: {
                 name: '显示快捷方式和最近项目的图标',
                 desc: '在快捷方式和最近文件分区中的项目旁显示图标。'
             },
@@ -2130,7 +2178,7 @@ export const STRINGS_ZH_CN = {
                 desc: '编辑工具栏、文件夹、标签、属性、固定、搜索和排序图标。',
                 buttonText: '编辑图标'
             },
-            showIconsColorOnly: {
+            applyColorToIconsOnly: {
                 name: '仅对图标应用颜色',
                 desc: '启用时，自定义颜色仅应用于图标。禁用时，颜色将同时应用于图标和文本标签。'
             },
@@ -2138,9 +2186,9 @@ export const STRINGS_ZH_CN = {
                 name: '彩虹颜色模式（仓库配置文件）',
                 desc: '在导航窗格中应用彩虹颜色。',
                 options: {
-                    none: '关闭',
-                    foreground: '文字颜色',
-                    background: '背景颜色'
+                    off: '关闭',
+                    textColor: '文字颜色',
+                    backgroundColor: '背景颜色'
                 }
             },
             navRainbowFirstColor: {
@@ -2163,7 +2211,7 @@ export const STRINGS_ZH_CN = {
                 name: '应用到快捷方式',
                 desc: '将彩虹颜色应用到快捷方式。'
             },
-            navRainbowApplyToRecent: {
+            navRainbowApplyToRecentItems: {
                 name: '应用到最近项目',
                 desc: '将彩虹颜色应用到最近项目。'
             },
@@ -2197,7 +2245,7 @@ export const STRINGS_ZH_CN = {
                 name: '应用到属性',
                 desc: '将彩虹颜色应用到属性。'
             },
-            navRainbowBalanceHueLuminance: {
+            navRainbowConsistentBrightness: {
                 name: '色相间一致的亮度', // (English: Consistent brightness across hues)
                 desc: '在色相过渡期间在起始颜色和结束颜色之间插值亮度。' // (English: Interpolates brightness between the start and end colors during hue transitions.)
             },
@@ -2215,7 +2263,7 @@ export const STRINGS_ZH_CN = {
                     all: '每个级别'
                 }
             },
-            collapseBehavior: {
+            collapseItems: {
                 name: '折叠项目',
                 desc: '选择展开/折叠全部按钮影响的内容。',
                 options: {
@@ -2225,7 +2273,7 @@ export const STRINGS_ZH_CN = {
                     propertiesOnly: '仅属性'
                 }
             },
-            smartCollapse: {
+            keepSelectedItemExpanded: {
                 name: '保持选中项展开',
                 desc: '折叠时，保持选中项及其父级展开。'
             },
@@ -2233,7 +2281,7 @@ export const STRINGS_ZH_CN = {
                 name: '折叠时跳过仓库根目录',
                 desc: '折叠所有项目时，保持仓库根文件夹的当前状态。'
             },
-            navIndent: {
+            treeIndentation: {
                 name: '树形缩进',
                 desc: '调整嵌套文件夹、标签和属性的缩进宽度（像素）。'
             },
@@ -2259,7 +2307,7 @@ export const STRINGS_ZH_CN = {
                     line: '直线'
                 }
             },
-            navRootSpacing: {
+            rootItemSpacing: {
                 name: '根级项目间距',
                 desc: '根级文件夹、标签和属性之间的间距（像素）。'
             },
@@ -2286,15 +2334,15 @@ export const STRINGS_ZH_CN = {
                     highToLow: '从高到低'
                 }
             },
-            showAllTagsFolder: {
+            showTagsFolder: {
                 name: '显示标签文件夹',
                 desc: '将"标签"显示为可折叠文件夹。'
             },
-            showUntagged: {
+            showUntaggedNotes: {
                 name: '显示无标签笔记',
                 desc: '为没有任何标签的笔记显示"无标签"项目。'
             },
-            scopeTagsToCurrentContext: {
+            filterTagsBySelection: {
                 name: '按选择筛选标签',
                 desc: '仅显示所选文件夹或属性中笔记包含的标签。'
             },
@@ -2328,20 +2376,20 @@ export const STRINGS_ZH_CN = {
                     highToLow: '从高到低'
                 }
             },
-            showAllPropertiesFolder: {
+            showPropertiesFolder: {
                 name: '显示属性文件夹',
                 desc: '将"属性"显示为可折叠文件夹。'
             },
-            scopePropertiesToCurrentContext: {
+            filterPropertiesBySelection: {
                 name: '按选择筛选属性',
                 desc: '仅显示所选文件夹或标签中笔记包含的属性。'
             },
-            hiddenTags: {
+            hideTags: {
                 name: '隐藏标签 (库配置)',
                 desc: '逗号分隔的标签模式列表。名称模式：tag*（以...开头）、*tag（以...结尾）。路径模式：archive（标签及其后代）、archive/*（仅后代）、projects/*/drafts（中间通配符）。',
                 placeholder: 'archive*, *draft, projects/*/old'
             },
-            hiddenFileTags: {
+            hideNotesWithTags: {
                 name: '隐藏带标签的笔记 (库配置)',
                 desc: 'Comma-separated list of tag patterns. Notes containing matching tags are hidden. Name patterns: tag* (starting with), *tag (ending with). Path patterns: archive (tag and descendants), archive/* (descendants only), projects/*/drafts (mid-segment wildcard).',
                 placeholder: 'archive*, *draft, projects/*/old'
@@ -2374,7 +2422,7 @@ export const STRINGS_ZH_CN = {
                 desc: '创建文件夹笔记时使用的模板文件。Markdown 模板可以使用 Templater。Canvas 和 Base 模板会作为文件内容复制。在文件操作 > 模板中设置模板文件夹位置。',
                 formatWarning: '模板格式必须与所选文件夹笔记类型匹配：.md、.canvas 或 .base。'
             },
-            enableFolderNoteLinks: {
+            folderNamesOpenFolderNotes: {
                 name: '文件夹名称打开文件夹笔记',
                 desc: '点击文件夹名称会打开其文件夹笔记。关闭时，文件夹笔记仅提供文件夹元数据，例如名称、图标和颜色。'
             },
@@ -2395,7 +2443,7 @@ export const STRINGS_ZH_CN = {
                     rightSidebar: '右侧边栏'
                 }
             },
-            showNearestFolderNoteInSidebar: {
+            showClosestFolderNoteInRightSidebar: {
                 name: '右侧边栏：显示最近的文件夹笔记',
                 desc: '选择文件夹时，右侧边栏会自动显示最近的上级文件夹笔记。'
             },
@@ -2437,7 +2485,7 @@ export const STRINGS_ZH_CN = {
                 indexingTitle: '正在索引仓库...',
                 progress: '正在更新 Notebook Navigator 缓存.'
             },
-            externalIcons: {
+            iconPackManagement: {
                 downloadButton: '下载',
                 downloadingLabel: '正在下载...',
                 removeButton: '移除',
@@ -2449,11 +2497,11 @@ export const STRINGS_ZH_CN = {
                 infoNote:
                     '下载的图标包会在设备之间同步安装状态。图标包保存在每个设备的本地数据库中；同步仅跟踪它们是否应该被下载或移除。图标包从Notebook Navigator仓库下载 (https://github.com/johansan/notebook-navigator/tree/main/icon-assets)。'
             },
-            useFrontmatterDates: {
+            useFrontmatterMetadata: {
                 name: '使用前言元数据',
                 desc: '使用前言设置笔记名称、时间戳、图标和颜色'
             },
-            frontmatterNameField: {
+            frontmatterNameFields: {
                 name: '名称字段（多个）',
                 desc: '逗号分隔的前言字段列表。使用第一个非空值。回退到文件名。',
                 placeholder: 'title, name'
@@ -2473,7 +2521,7 @@ export const STRINGS_ZH_CN = {
                 desc: '背景颜色的前言字段。留空使用存储在设置中的背景颜色。',
                 placeholder: 'background'
             },
-            frontmatterMigration: {
+            migrateIconsAndColorsFromSettings: {
                 name: '从设置迁移图标和颜色',
                 desc: '存储在设置中：{icons} 个图标，{colors} 种颜色。',
                 button: '迁移',
@@ -2493,7 +2541,7 @@ export const STRINGS_ZH_CN = {
                 desc: '修改时间戳的前言字段名称。留空仅使用文件系统日期。',
                 placeholder: 'modified'
             },
-            frontmatterDateFormat: {
+            frontmatterTimestampFormat: {
                 name: '时间戳格式',
                 desc: '用于解析前言中时间戳的格式。留空使用 ISO 8601 解析。',
                 helpTooltip: '使用 Moment 格式',
@@ -2506,12 +2554,12 @@ export const STRINGS_ZH_CN = {
                 buttonText: '❤️ 赞助',
                 coffeeButton: '☕️ 请我喝咖啡'
             },
-            updateCheckOnStart: {
+            checkForNewVersionOnStart: {
                 name: '启动时检查新版本',
                 desc: '启动时检查新的插件版本，当有可用更新时显示通知。检查最多每天一次。',
                 status: '有新版本可用：{version}'
             },
-            debugLogging: {
+            startupDebugLogging: {
                 name: '启动调试日志',
                 desc: '将启动诊断写入保管库根目录中带时间戳的 Markdown 文件，并在启动稳定后停止。该文件可能会同步，并且可能包含文件路径。'
             },

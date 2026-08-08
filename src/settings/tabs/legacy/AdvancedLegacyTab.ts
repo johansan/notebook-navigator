@@ -36,13 +36,13 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
 
     const createGroup = createSettingGroupFactory(containerEl);
     const advancedGroup = createGroup(undefined);
-    const maintenanceGroup = createGroup(strings.settings.groups.advanced.maintenance);
-    const resetGroup = createGroup(strings.settings.groups.advanced.resetSettings);
+    const maintenanceGroup = createGroup(strings.settings.pages.advanced.groups.maintenance);
+    const resetGroup = createGroup(strings.settings.pages.advanced.groups.resetSettings);
 
     advancedGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.updateCheckOnStart.name)
-            .setDesc(strings.settings.items.updateCheckOnStart.desc)
+            .setName(strings.settings.items.checkForNewVersionOnStart.name)
+            .setDesc(strings.settings.items.checkForNewVersionOnStart.desc)
             .addToggle(toggle =>
                 toggle.setValue(plugin.settings.checkForUpdatesOnStart).onChange(async value => {
                     plugin.settings.checkForUpdatesOnStart = value;
@@ -59,8 +59,8 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
 
     advancedGroup.addSetting(setting => {
         setting
-            .setName(getNotSyncedSettingName(strings.settings.items.debugLogging.name))
-            .setDesc(strings.settings.items.debugLogging.desc)
+            .setName(getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name))
+            .setDesc(strings.settings.items.startupDebugLogging.desc)
             .addToggle(toggle =>
                 toggle.setValue(plugin.isDebugLoggingEnabled()).onChange(value => {
                     plugin.setDebugLoggingEnabled(value);
@@ -87,15 +87,15 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
 
     advancedGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.settingsTransfer.name)
-            .setDesc(strings.settings.items.settingsTransfer.desc)
+            .setName(strings.settings.items.importAndExportSettings.name)
+            .setDesc(strings.settings.items.importAndExportSettings.desc)
             .addButton(button =>
-                button.setButtonText(strings.settings.items.settingsTransfer.importButtonText).onClick(() => {
+                button.setButtonText(strings.settings.items.importAndExportSettings.importButtonText).onClick(() => {
                     new SettingsImportModal(context.app, plugin).open();
                 })
             )
             .addButton(button =>
-                button.setButtonText(strings.settings.items.settingsTransfer.exportButtonText).onClick(() => {
+                button.setButtonText(strings.settings.items.importAndExportSettings.exportButtonText).onClick(() => {
                     new SettingsExportModal(context.app, plugin).open();
                 })
             );

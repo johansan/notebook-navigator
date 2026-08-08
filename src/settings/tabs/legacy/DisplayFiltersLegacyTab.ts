@@ -70,9 +70,9 @@ export function renderDisplayFiltersTab(context: SettingsTabContext): void {
     const hiddenFileNamesSetting = filteringGroup.addSetting(setting => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.excludedFileNamePatterns.name,
-            strings.settings.items.excludedFileNamePatterns.desc,
-            strings.settings.items.excludedFileNamePatterns.placeholder,
+            strings.settings.items.hideFiles.name,
+            strings.settings.items.hideFiles.desc,
+            strings.settings.items.hideFiles.placeholder,
             () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileNames ?? []),
             value => {
                 const activeProfile = getActiveProfile();
@@ -90,9 +90,9 @@ export function renderDisplayFiltersTab(context: SettingsTabContext): void {
     const excludedFoldersSetting = filteringGroup.addSetting(setting => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.excludedFolders.name,
-            strings.settings.items.excludedFolders.desc,
-            strings.settings.items.excludedFolders.placeholder,
+            strings.settings.items.hideFolders.name,
+            strings.settings.items.hideFolders.desc,
+            strings.settings.items.hideFolders.placeholder,
             () => formatCommaSeparatedList(getActiveProfile()?.hiddenFolders ?? []),
             value => {
                 const activeProfile = getActiveProfile();
@@ -130,9 +130,9 @@ export function renderDisplayFiltersTab(context: SettingsTabContext): void {
     const hiddenTagsSetting = filteringGroup.addSetting(setting => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.hiddenTags.name,
-            strings.settings.items.hiddenTags.desc,
-            strings.settings.items.hiddenTags.placeholder,
+            strings.settings.items.hideTags.name,
+            strings.settings.items.hideTags.desc,
+            strings.settings.items.hideTags.placeholder,
             () => formatCommaSeparatedList(getActiveProfile()?.hiddenTags ?? []),
             value => {
                 const activeProfile = getActiveProfile();
@@ -153,9 +153,9 @@ export function renderDisplayFiltersTab(context: SettingsTabContext): void {
     const hiddenFileTagsSetting = filteringGroup.addSetting(setting => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.hiddenFileTags.name,
-            strings.settings.items.hiddenFileTags.desc,
-            strings.settings.items.hiddenFileTags.placeholder,
+            strings.settings.items.hideNotesWithTags.name,
+            strings.settings.items.hideNotesWithTags.desc,
+            strings.settings.items.hideNotesWithTags.placeholder,
             () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileTags ?? []),
             value => {
                 const activeProfile = getActiveProfile();
@@ -177,9 +177,9 @@ export function renderDisplayFiltersTab(context: SettingsTabContext): void {
     const excludedFilesSetting = filteringGroup.addSetting(setting => {
         configureDebouncedTextSetting(
             setting,
-            strings.settings.items.excludedNotes.name,
-            strings.settings.items.excludedNotes.desc,
-            strings.settings.items.excludedNotes.placeholder,
+            strings.settings.items.hideNotesWithPropertyRules.name,
+            strings.settings.items.hideNotesWithPropertyRules.desc,
+            strings.settings.items.hideNotesWithPropertyRules.placeholder,
             () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileProperties ?? []),
             value => {
                 const activeProfile = getActiveProfile();

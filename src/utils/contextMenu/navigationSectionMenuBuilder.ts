@@ -445,8 +445,8 @@ export function showNavigationSectionContextMenu({
 
         menu.addItem(item => {
             const title = isTagSection
-                ? strings.settings.items.scopeTagsToCurrentContext.name
-                : strings.settings.items.scopePropertiesToCurrentContext.name;
+                ? strings.settings.items.filterTagsBySelection.name
+                : strings.settings.items.filterPropertiesBySelection.name;
             const checked = isTagSection ? plugin.settings.scopeTagsToCurrentContext : plugin.settings.scopePropertiesToCurrentContext;
 
             item.setTitle(title)

@@ -30,13 +30,13 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
     const { containerEl, plugin, addToggleSetting } = context;
     const createGroup = createSettingGroupFactory(containerEl);
     const sharedGroup = createGroup(undefined);
-    const shortcutsGroup = createGroup(strings.navigationPane.shortcutsHeader);
-    const recentFilesGroup = createGroup(strings.navigationPane.recentFilesHeader);
+    const shortcutsGroup = createGroup(strings.settings.pages.shortcutsAndRecentFiles.groups.shortcuts);
+    const recentFilesGroup = createGroup(strings.settings.pages.shortcutsAndRecentFiles.groups.recentFiles);
 
     addToggleSetting(
         sharedGroup.addSetting,
-        strings.settings.items.showSectionIcons.name,
-        strings.settings.items.showSectionIcons.desc,
+        strings.settings.items.showShortcutAndRecentItemIcons.name,
+        strings.settings.items.showShortcutAndRecentItemIcons.desc,
         () => plugin.settings.showSectionIcons,
         value => {
             plugin.settings.showSectionIcons = value;
@@ -61,7 +61,7 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
         .setDesc(strings.settings.items.shortcutBadgeDisplay.desc)
         .addDropdown((dropdown: DropdownComponent) =>
             dropdown
-                .addOption('index', strings.settings.items.shortcutBadgeDisplay.options.index)
+                .addOption('index', strings.settings.items.shortcutBadgeDisplay.options.position)
                 .addOption('count', strings.settings.items.shortcutBadgeDisplay.options.count)
                 .addOption('none', strings.settings.items.shortcutBadgeDisplay.options.none)
                 .setValue(plugin.settings.shortcutBadgeDisplay)
@@ -75,8 +75,8 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
         );
 
     new Setting(shortcutsDependentSettings)
-        .setName(strings.settings.items.skipAutoScroll.name)
-        .setDesc(strings.settings.items.skipAutoScroll.desc)
+        .setName(strings.settings.items.disableShortcutAutoScroll.name)
+        .setDesc(strings.settings.items.disableShortcutAutoScroll.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.skipAutoScroll).onChange(async value => {
                 plugin.settings.skipAutoScroll = value;
@@ -85,7 +85,7 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
         );
 
     const showRecentNotesSetting = recentFilesGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.showRecentNotes.name).setDesc(strings.settings.items.showRecentNotes.desc);
+        setting.setName(strings.settings.items.showRecentFiles.name).setDesc(strings.settings.items.showRecentFiles.desc);
     });
 
     const recentNotesDependentSettings = wireToggleSettingWithDependentSection(
@@ -98,12 +98,12 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
     );
 
     new Setting(recentNotesDependentSettings)
-        .setName(strings.settings.items.hideRecentNotes.name)
-        .setDesc(strings.settings.items.hideRecentNotes.desc)
+        .setName(strings.settings.items.hideFileTypesFromRecentFiles.name)
+        .setDesc(strings.settings.items.hideFileTypesFromRecentFiles.desc)
         .addDropdown((dropdown: DropdownComponent) =>
             dropdown
-                .addOption('none', strings.settings.items.hideRecentNotes.options.none)
-                .addOption('folder-notes', strings.settings.items.hideRecentNotes.options.folderNotes)
+                .addOption('none', strings.settings.items.hideFileTypesFromRecentFiles.options.none)
+                .addOption('folder-notes', strings.settings.items.hideFileTypesFromRecentFiles.options.folderNotes)
                 .setValue(plugin.settings.hideRecentNotes)
                 .onChange(async value => {
                     if (!isRecentNotesHideMode(value)) {
@@ -115,8 +115,8 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
         );
 
     new Setting(recentNotesDependentSettings)
-        .setName(strings.settings.items.pinRecentNotesWithShortcuts.name)
-        .setDesc(strings.settings.items.pinRecentNotesWithShortcuts.desc)
+        .setName(strings.settings.items.pinRecentFilesWithShortcuts.name)
+        .setDesc(strings.settings.items.pinRecentFilesWithShortcuts.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.pinRecentNotesWithShortcuts).onChange(async value => {
                 plugin.settings.pinRecentNotesWithShortcuts = value;
@@ -131,8 +131,8 @@ function renderRecentNotesCountSetting(setting: Setting, context: SettingsTabCon
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.recentNotesCount.name,
-        desc: strings.settings.items.recentNotesCount.desc,
+        name: strings.settings.items.recentFilesCount.name,
+        desc: strings.settings.items.recentFilesCount.desc,
         value: plugin.settings.recentNotesCount,
         defaultValue: DEFAULT_SETTINGS.recentNotesCount,
         min: 1,

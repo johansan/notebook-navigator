@@ -85,7 +85,7 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
 
     addSettingSyncModeToggle({ setting: folderSortOrderSetting, plugin, settingId: 'folderSortOrder' });
 
-    const folderNotesGroup = createGroup(strings.settings.sections.folderNotes);
+    const folderNotesGroup = createGroup(strings.settings.pages.foldersAndFolderNotes.groups.folderNotes);
 
     let folderNoteFilesGroupRootEl: HTMLElement | null = null;
     const enableFolderNotesSetting = folderNotesGroup.addSetting(setting => {
@@ -127,8 +127,8 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
         });
 
     showNearestFolderNoteSetting = new Setting(folderNotesSettingsEl)
-        .setName(strings.settings.items.showNearestFolderNoteInSidebar.name)
-        .setDesc(strings.settings.items.showNearestFolderNoteInSidebar.desc)
+        .setName(strings.settings.items.showClosestFolderNoteInRightSidebar.name)
+        .setDesc(strings.settings.items.showClosestFolderNoteInRightSidebar.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.showNearestFolderNoteInSidebar).onChange(async value => {
                 plugin.settings.showNearestFolderNoteInSidebar = value;
@@ -138,8 +138,8 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
     setElementVisible(showNearestFolderNoteSetting.settingEl, plugin.settings.folderNoteOpenLocation === 'right-sidebar');
 
     new Setting(folderNotesSettingsEl)
-        .setName(strings.settings.items.enableFolderNoteLinks.name)
-        .setDesc(strings.settings.items.enableFolderNoteLinks.desc)
+        .setName(strings.settings.items.folderNamesOpenFolderNotes.name)
+        .setDesc(strings.settings.items.folderNamesOpenFolderNotes.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.enableFolderNoteLinks).onChange(async value => {
                 plugin.settings.enableFolderNoteLinks = value;
@@ -167,7 +167,7 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
             })
         );
 
-    const folderNoteFilesGroup = createGroup(strings.settings.sections.folderNoteFiles);
+    const folderNoteFilesGroup = createGroup(strings.settings.pages.foldersAndFolderNotes.groups.folderNoteFiles);
     folderNoteFilesGroupRootEl = folderNoteFilesGroup.rootEl;
     setElementVisible(folderNoteFilesGroupRootEl, plugin.settings.enableFolderNotes);
 
@@ -263,7 +263,7 @@ function renderFolderNoteTemplateInfoSetting(setting: Setting, context: Settings
     setting.descEl.empty();
 
     const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-        : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+        ? strings.settings.items.templaterSupport.installed
+        : strings.settings.items.templaterSupport.missing;
     setting.descEl.createEl('strong', { text: templaterSupportText });
 }
