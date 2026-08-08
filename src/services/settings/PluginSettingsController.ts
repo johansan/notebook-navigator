@@ -114,7 +114,7 @@ import {
 import {
     getStoredListPaneAppearanceFields,
     mergeListPaneAppearanceAndGrouping,
-    type FolderAppearance
+    type ListPaneAppearance
 } from '../../settings/listPaneAppearance';
 import { createSyncModeRegistry, type SyncModeRegistry } from './syncModeRegistry';
 import { getDefaultUXPreferences, isUXPreferencesRecord } from './uxPreferences';
@@ -1363,8 +1363,8 @@ export class PluginSettingsController {
         const sanitizeAlphaSortOrderMap = (
             record?: Record<string, 'alpha-asc' | 'alpha-desc'>
         ): Record<string, 'alpha-asc' | 'alpha-desc'> => sanitizeRecord(record, isAlphaSortOrder);
-        const isAppearanceValue = (value: unknown): value is FolderAppearance => isPlainObjectRecordValue(value);
-        const sanitizeAppearanceMap = (record?: Record<string, FolderAppearance>): Record<string, FolderAppearance> => {
+        const isAppearanceValue = (value: unknown): value is ListPaneAppearance => isPlainObjectRecordValue(value);
+        const sanitizeAppearanceMap = (record?: Record<string, ListPaneAppearance>): Record<string, ListPaneAppearance> => {
             const sanitized = sanitizeRecord(record, isAppearanceValue);
             Object.entries(sanitized).forEach(([key, appearance]) => {
                 delete (appearance as Record<string, unknown>)['notePropertyType'];

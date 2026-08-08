@@ -327,8 +327,8 @@ describe('PluginSettingsController.loadSettings', () => {
                         mode: 'standard',
                         titleRows: 2,
                         previewRows: 4,
-                        showFileTags: true,
-                        showFileProperties: false,
+                        showTags: true,
+                        showProperties: false,
                         showTextCount: true,
                         showFilePreview: false,
                         textCountDisplay: 'characters',
@@ -339,7 +339,7 @@ describe('PluginSettingsController.loadSettings', () => {
                         mode: 'dense',
                         titleRows: 9,
                         previewRows: 0,
-                        showFileTags: 'yes',
+                        showTags: 'yes',
                         showTextCount: 'on'
                     }
                 }
@@ -355,8 +355,8 @@ describe('PluginSettingsController.loadSettings', () => {
                 mode: 'standard',
                 titleRows: 2,
                 previewRows: 4,
-                showFileTags: true,
-                showFileProperties: false,
+                showTags: true,
+                showProperties: false,
                 showTextCount: true,
                 groupBy: 'folder'
             }

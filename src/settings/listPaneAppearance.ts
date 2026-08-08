@@ -20,14 +20,14 @@ import { ItemType } from '../types';
 import { resolveListGroupingOverride } from '../utils/listGrouping';
 import {
     resolveTextCountVariant,
-    type FolderAppearance,
     type ListDisplayMode,
     type ListNoteGroupingOption,
+    type ListPaneAppearance,
     type NotebookNavigatorSettings,
     type TextCountDisplay
 } from './types';
 
-export type { FolderAppearance, TagAppearance } from './types';
+export type { ListPaneAppearance } from './types';
 
 export interface ListPaneAppearanceSettings {
     mode: ListDisplayMode;
@@ -48,11 +48,11 @@ export interface ListPaneAppearanceSettings {
  * Both `true` and `false` are persisted so a selection can enable content that
  * the global setting turns off, and hide content that the global setting shows.
  */
-export const LIST_PANE_TOGGLE_KEYS = ['showFileTags', 'showFileProperties', 'showFileTaskProgress', 'showTextCount'] as const;
+export const LIST_PANE_TOGGLE_KEYS = ['showTags', 'showProperties', 'showTaskProgress', 'showTextCount'] as const;
 
 export type ListPaneToggleKey = (typeof LIST_PANE_TOGGLE_KEYS)[number];
 
-export type ListPaneAppearanceFields = Omit<FolderAppearance, 'groupBy'>;
+export type ListPaneAppearanceFields = Omit<ListPaneAppearance, 'groupBy'>;
 
 const LIST_PANE_APPEARANCE_FIELD_KEYS = [
     'mode',
@@ -73,7 +73,7 @@ function isValidPreviewRows(value: unknown): value is number {
  * Returns the stored appearance intent without grouping, dropping invalid and unknown fields.
  * Returns null when the appearance stores no valid field, so callers can delete the record.
  */
-export function getStoredListPaneAppearanceFields(appearance: FolderAppearance | undefined): ListPaneAppearanceFields | null {
+export function getStoredListPaneAppearanceFields(appearance: ListPaneAppearance | undefined): ListPaneAppearanceFields | null {
     if (!appearance) {
         return null;
     }
@@ -97,11 +97,14 @@ export function getStoredListPaneAppearanceFields(appearance: FolderAppearance |
     return Object.keys(normalized).length > 0 ? normalized : null;
 }
 
-export function hasStoredListPaneAppearanceOverride(appearance: FolderAppearance | undefined): boolean {
+export function hasStoredListPaneAppearanceOverride(appearance: ListPaneAppearance | undefined): boolean {
     return getStoredListPaneAppearanceFields(appearance) !== null;
 }
 
-export function areStoredListPaneAppearanceFieldsEqual(left: FolderAppearance | undefined, right: FolderAppearance | undefined): boolean {
+export function areStoredListPaneAppearanceFieldsEqual(
+    left: ListPaneAppearance | undefined,
+    right: ListPaneAppearance | undefined
+): boolean {
     const normalizedLeft = getStoredListPaneAppearanceFields(left);
     const normalizedRight = getStoredListPaneAppearanceFields(right);
     if (!normalizedLeft || !normalizedRight) {
@@ -115,15 +118,15 @@ export function areStoredListPaneAppearanceFieldsEqual(left: FolderAppearance | 
 export function mergeListPaneAppearanceAndGrouping(
     appearanceFields: ListPaneAppearanceFields | null,
     groupBy: ListNoteGroupingOption | undefined
-): FolderAppearance | null {
-    const merged: FolderAppearance = appearanceFields ? { ...appearanceFields } : {};
+): ListPaneAppearance | null {
+    const merged: ListPaneAppearance = appearanceFields ? { ...appearanceFields } : {};
     if (groupBy !== undefined) {
         merged.groupBy = groupBy;
     }
     return Object.keys(merged).length > 0 ? merged : null;
 }
 
-function areAppearanceValuesEqual(left: FolderAppearance, right: FolderAppearance): boolean {
+function areAppearanceValuesEqual(left: ListPaneAppearance, right: ListPaneAppearance): boolean {
     const leftRecord = left as Record<string, unknown>;
     const rightRecord = right as Record<string, unknown>;
     const leftKeys = Object.keys(leftRecord);
@@ -131,7 +134,7 @@ function areAppearanceValuesEqual(left: FolderAppearance, right: FolderAppearanc
     return leftKeys.length === rightKeys.length && leftKeys.every(key => leftRecord[key] === rightRecord[key]);
 }
 
-function areAppearanceMapsEqual<T extends FolderAppearance>(left: Record<string, T>, right: Record<string, T> | undefined): boolean {
+function areAppearanceMapsEqual<T extends ListPaneAppearance>(left: Record<string, T>, right: Record<string, T> | undefined): boolean {
     const rightRecord = right ?? {};
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(rightRecord);
@@ -147,7 +150,7 @@ function areAppearanceMapsEqual<T extends FolderAppearance>(left: Record<string,
     );
 }
 
-function cloneAppearanceMap<T extends FolderAppearance>(map: Record<string, T> | undefined): Record<string, T> {
+function cloneAppearanceMap<T extends ListPaneAppearance>(map: Record<string, T> | undefined): Record<string, T> {
     const cloned = Object.create(null) as Record<string, T>;
     Object.entries(map ?? {}).forEach(([key, value]) => {
         cloned[key] = { ...value };
@@ -160,7 +163,7 @@ function cloneAppearanceMap<T extends FolderAppearance>(map: Record<string, T> |
  * still match. Settings are mutated in place, so reference equality alone cannot detect changes;
  * comparing with the previous clone preserves both mutation isolation and stable context identity.
  */
-export function snapshotListPaneAppearanceMap<T extends FolderAppearance>(
+export function snapshotListPaneAppearanceMap<T extends ListPaneAppearance>(
     map: Record<string, T> | undefined,
     previous?: Record<string, T>
 ): Record<string, T> {
@@ -175,7 +178,7 @@ export function getDefaultListMode(settings: NotebookNavigatorSettings): ListDis
 }
 
 /** Resolve the effective list mode for a stored selection appearance. */
-function resolveListMode({ appearance, defaultMode }: { appearance?: FolderAppearance; defaultMode: ListDisplayMode }): ListDisplayMode {
+function resolveListMode({ appearance, defaultMode }: { appearance?: ListPaneAppearance; defaultMode: ListDisplayMode }): ListDisplayMode {
     if (appearance?.mode === 'compact' || appearance?.mode === 'standard') {
         return appearance.mode;
     }
@@ -197,16 +200,16 @@ export function resolveListPaneAppearance({
     selectionType
 }: {
     settings: NotebookNavigatorSettings;
-    appearance?: FolderAppearance;
+    appearance?: ListPaneAppearance;
     selectionType: ItemType;
 }): ListPaneAppearanceSettings {
     const mode = resolveListMode({ appearance, defaultMode: getDefaultListMode(settings) });
     const isCompact = mode === 'compact';
     const showTags =
-        settings.showTags && (appearance?.showFileTags ?? settings.showFileTags) && (!isCompact || settings.showFileTagsInCompactMode);
+        settings.showTags && (appearance?.showTags ?? settings.showFileTags) && (!isCompact || settings.showFileTagsInCompactMode);
     const showProperties =
-        (appearance?.showFileProperties ?? settings.showFileProperties) && (!isCompact || settings.showFilePropertiesInCompactMode);
-    const showTaskProgress = (appearance?.showFileTaskProgress ?? settings.showFileTaskProgress) && !isCompact;
+        (appearance?.showProperties ?? settings.showFileProperties) && (!isCompact || settings.showFilePropertiesInCompactMode);
+    const showTaskProgress = (appearance?.showTaskProgress ?? settings.showFileTaskProgress) && !isCompact;
     // Property-placed counts render as pills, so they are unavailable when compact mode hides pills.
     const textCountUnavailable = isCompact && settings.textCountPlacement === 'property' && !settings.showFilePropertiesInCompactMode;
     // A selection toggles counts on or off; the global setting decides which counts are shown.

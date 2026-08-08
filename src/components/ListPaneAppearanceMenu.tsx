@@ -23,7 +23,7 @@ import {
     hasStoredListPaneAppearanceOverride,
     mergeListPaneAppearanceAndGrouping,
     resolveListPaneAppearance,
-    type FolderAppearance,
+    type ListPaneAppearance,
     type ListPaneToggleKey
 } from '../settings/listPaneAppearance';
 import { strings } from '../i18n';
@@ -57,8 +57,8 @@ interface AppearanceMenuProps {
 
 interface AppearanceRecordAccessor {
     key: string;
-    getRecord: (settings: NotebookNavigatorSettings) => Record<string, FolderAppearance> | undefined;
-    setRecord: (settings: NotebookNavigatorSettings, next: Record<string, FolderAppearance>) => void;
+    getRecord: (settings: NotebookNavigatorSettings) => Record<string, ListPaneAppearance> | undefined;
+    setRecord: (settings: NotebookNavigatorSettings, next: Record<string, ListPaneAppearance>) => void;
 }
 
 interface ChoiceOption<T> {
@@ -120,7 +120,7 @@ export function showListPaneAppearanceMenu({
     };
     const appearanceAccessor = resolveAppearanceAccessor();
 
-    const updateAppearance = (updates: Partial<FolderAppearance>): void => {
+    const updateAppearance = (updates: Partial<ListPaneAppearance>): void => {
         if (!appearanceAccessor) {
             return;
         }
@@ -129,7 +129,7 @@ export function showListPaneAppearanceMenu({
             updateSettings(currentSettings => {
                 const next = sanitizeRecord(ensureRecord(appearanceAccessor.getRecord(currentSettings)));
                 const currentAppearance = next[appearanceAccessor.key] ?? {};
-                const candidate: FolderAppearance = { ...currentAppearance, ...updates };
+                const candidate: ListPaneAppearance = { ...currentAppearance, ...updates };
                 const normalizedAppearance = mergeListPaneAppearanceAndGrouping(
                     getStoredListPaneAppearanceFields(candidate),
                     candidate.groupBy
@@ -289,7 +289,7 @@ export function showListPaneAppearanceMenu({
     const textCountVariant = resolveTextCountVariant(settings.textCountDisplay);
     const contentToggles: ContentToggle[] = [
         {
-            key: 'showFileTags',
+            key: 'showTags',
             title: strings.folderAppearance.tags,
             icon: resolveUXIconForMenu(settings.interfaceIcons, 'nav-tags'),
             globalDefault: settings.showFileTags,
@@ -297,14 +297,14 @@ export function showListPaneAppearanceMenu({
             available: settings.showTags && (!isCompact || settings.showFileTagsInCompactMode)
         },
         {
-            key: 'showFileProperties',
+            key: 'showProperties',
             title: strings.folderAppearance.properties,
             icon: resolveUXIconForMenu(settings.interfaceIcons, 'nav-properties'),
             globalDefault: settings.showFileProperties,
             available: !isCompact || settings.showFilePropertiesInCompactMode
         },
         {
-            key: 'showFileTaskProgress',
+            key: 'showTaskProgress',
             title: strings.folderAppearance.tasks,
             icon: resolveUXIconForMenu(settings.interfaceIcons, 'file-unfinished-task'),
             globalDefault: settings.showFileTaskProgress,
@@ -339,7 +339,7 @@ export function showListPaneAppearanceMenu({
                 .onClick(() => {
                     // A toggle matching the global setting is stored as inherited, so it follows future global changes.
                     const next = !effective;
-                    const updates: Partial<FolderAppearance> = {};
+                    const updates: Partial<ListPaneAppearance> = {};
                     updates[toggle.key] = next === toggle.globalDefault ? undefined : next;
                     updateAppearance(updates);
                 });
@@ -368,7 +368,7 @@ export function showListPaneAppearanceMenu({
                     if (!hasAppearanceOverride) {
                         return;
                     }
-                    const updates: Partial<FolderAppearance> = {};
+                    const updates: Partial<ListPaneAppearance> = {};
                     if (storedFields) {
                         Object.keys(storedFields).forEach(key => {
                             updates[key as keyof typeof storedFields] = undefined;

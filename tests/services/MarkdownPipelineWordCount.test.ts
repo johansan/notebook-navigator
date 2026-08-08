@@ -94,7 +94,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             showTooltips: false,
             showTooltipWordCount: false,
-            folderAppearances: { Writing: { mode: 'compact', showFileTags: true } }
+            folderAppearances: { Writing: { mode: 'compact', showTags: true } }
         });
         const countsEnabled = createSettings({
             textCountDisplay: 'none',
