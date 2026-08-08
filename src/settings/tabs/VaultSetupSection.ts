@@ -53,7 +53,7 @@ interface VaultSetupRenderers {
 /** Renders the vault setup section inside the General settings page. */
 export function renderGeneralVaultSetupSection(context: SettingsTabContext): void {
     renderVaultSetupSection(context, {
-        heading: strings.settings.groups.general.vaultConfiguration
+        heading: strings.settings.index.groups.vaultSetup
     });
 }
 
@@ -107,7 +107,7 @@ export function createVaultSetupSettingDefinitions(context: SettingsTabContext):
         );
     }
 
-    return [createGroupDefinition(strings.settings.groups.general.vaultConfiguration, items)];
+    return [createGroupDefinition(strings.settings.index.groups.vaultSetup, items)];
 }
 
 function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRenderers {

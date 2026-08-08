@@ -78,7 +78,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 desc: strings.settings.items.collapseOtherBranchesOnExpand.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.collapseItems, [
+        createGroupDefinition(strings.settings.pages.navigationPane.groups.collapseItems, [
             createDropdownDefinition('collapseBehavior', {
                 name: strings.settings.items.collapseBehavior.name,
                 desc: strings.settings.items.collapseBehavior.desc,
@@ -102,7 +102,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
         ...(Platform.isMobile
             ? []
             : [
-                  createGroupDefinition(strings.settings.groups.navigation.dragAndDrop, [
+                  createGroupDefinition(strings.settings.pages.navigationPane.groups.dragAndDrop, [
                       createToggleDefinition('springLoadedFolders', {
                           name: strings.settings.items.springLoadedFolders.name,
                           desc: strings.settings.items.springLoadedFolders.desc
@@ -121,7 +121,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                       })
                   ])
               ]),
-        createGroupDefinition(strings.settings.groups.navigation.rainbowColors, [
+        createGroupDefinition(strings.settings.pages.navigationPane.groups.rainbowColors, [
             createRenderDefinition({
                 name: strings.settings.items.navRainbowMode.name,
                 desc: strings.settings.items.navRainbowMode.desc,
@@ -171,7 +171,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 render: setting => renderNavRainbowToggleSetting(setting, context, 'separateThemeColors')
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.noteCounts, [
+        createGroupDefinition(strings.settings.pages.navigationPane.groups.fileCounts, [
             createToggleDefinition('showNoteCount', {
                 name: strings.settings.items.showNoteCount.name,
                 desc: strings.settings.items.showNoteCount.desc
@@ -182,7 +182,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 visible: () => plugin.settings.showNoteCount
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.banner, [
+        createGroupDefinition(strings.settings.pages.navigationPane.groups.banner, [
             createRenderDefinition({
                 name: strings.settings.items.navigationBanner.name,
                 desc: strings.settings.items.navigationBanner.desc,
@@ -195,7 +195,7 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 render: setting => renderPinNavigationBannerSetting(setting, context)
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.appearance, [
+        createGroupDefinition(strings.settings.pages.navigationPane.groups.appearance, [
             createToggleDefinition('showIndentGuides', {
                 name: strings.settings.items.showIndentGuides.name,
                 desc: strings.settings.items.showIndentGuides.desc

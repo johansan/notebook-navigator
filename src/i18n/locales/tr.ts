@@ -74,6 +74,9 @@ export const STRINGS_TR = {
         shortcutsHeader: 'Kısayollar', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'Son dosyalar', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Özellikler',
+        folders: 'Klasörler',
+        tags: 'Etiketler',
+        calendar: 'Takvim',
         reorderRootFoldersTitle: 'Gezinmeyi yeniden sırala',
         reorderRootFoldersHint: 'Yeniden sıralamak için okları veya sürüklemeyi kullanın',
         vaultRootLabel: 'Kasa',
@@ -1009,95 +1012,137 @@ export const STRINGS_TR = {
             exportSuccess: 'Başarısız meta veri raporu dışa aktarıldı: {filename}',
             exportFailed: 'Meta veri raporu dışa aktarılamadı'
         },
-        sections: {
-            general: 'Genel',
-            vaultFilters: 'Görüntüleme filtreleri',
-            appearanceBehavior: 'Görünüm ve davranış',
-            navigationPane: 'Gezinme paneli',
-            calendar: 'Takvim',
-            fileOperations: 'Dosya işlemleri',
-            icons: 'Simge paketleri',
-            folders: 'Klasörler',
-            folderNotes: 'Klasör notları',
-            folderNoteFiles: 'Klasör notu dosyaları',
-            foldersAndFolderNotes: 'Klasörler ve klasör notları',
-            tagsAndProperties: 'Etiketler ve özellikler',
-            tags: 'Etiketler',
-            listPane: 'Liste paneli',
-            notes: 'Dosya görünümü',
-            shortcutsAndRecentFiles: 'Kısayollar ve son dosyalar',
-            advanced: 'Gelişmiş'
+        index: {
+            label: 'Genel',
+            description: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
+            groups: {
+                vaultSetup: 'Kasa kurulumu'
+            }
         },
         pageGroups: {
             configuration: 'Yapılandırma',
-            navigationAndContent: 'Gezinme paneli',
-            notesAndLists: 'Liste paneli',
+            navigationPane: 'Gezinme paneli',
+            listPane: 'Liste paneli',
             calendarAndTools: 'Takvim ve araçlar'
         },
-        pageDescriptions: {
-            general: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
-            vaultFilters: 'Gizli klasörler, etiketler, dosyalar, dosya etiketleri ve özellik kuralları.',
-            appearanceBehavior: 'Davranış, klavye ile gezinme, fare düğmeleri, görünüm ve biçimlendirme.',
-            navigationPane: 'Yerleşim, görünüm, dosya sayıları, daraltma davranışı ve gökkuşağı renkleri.',
-            shortcuts: 'Kısayol görünürlüğü, rozetler, son dosyalar ve sabitlenmiş öğeler.',
-            calendar: 'Takvim görünümü, tarih notları, şablonlar, yerel ayar ve kenar çubuğu konumu.',
-            fileOperations: 'Şablonlar, silme onayları, ekler ve dosya taşıma çakışma davranışı.',
-            foldersAndFolderNotes: 'Klasör görünümü, klasör notları, klasör notu şablonları ve klasör notu davranışı.',
-            tagsProperties: 'Etiket ve özellik bölümleri, simgeler, sıralama, kapsam ve kalıtım.',
-            listPane: 'Sıralama, gruplama, liste modları, sabitlenmiş notlar ve çizim önizlemeleri.',
-            frontmatter: 'Görüntülenen adlar, zaman damgaları, simgeler ve renkler için frontmatter alanları.',
-            notes: 'Başlıklar, önizleme metni, öne çıkan görseller, etiketler, özellikler, tarihler, kelime sayıları ve karakter sayıları.',
-            iconPacks: 'Arayüz simgeleri, dosya simgeleri ve simge paketi yönetimi.',
-            advanced: 'Tanılama, meta veri temizliği, içe/dışa aktarma ve sıfırlama.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Kasa kurulumu',
-                templates: 'Şablonlar',
-                behavior: 'Davranış',
-                startup: 'Başlangıç',
-                keyboardNavigation: 'Klavye ile gezinme',
-                mouseButtons: 'Fare düğmeleri',
-                view: 'Görünüm',
-                icons: 'Simgeler',
-                desktopAppearance: 'Masaüstü görünümü',
-                mobileAppearance: 'Mobil görünüm',
-                formatting: 'Biçimlendirme'
+        pages: {
+            displayFilters: {
+                label: 'Görüntüleme filtreleri',
+                description: 'Gizli klasörler, etiketler, dosyalar, dosya etiketleri ve özellik kuralları.'
+            },
+            appearanceAndBehavior: {
+                label: 'Görünüm ve davranış',
+                description: 'Davranış, klavye ile gezinme, fare düğmeleri, görünüm ve biçimlendirme.',
+                groups: {
+                    startup: 'Başlangıç',
+                    keyboardNavigation: 'Klavye ile gezinme',
+                    mouseButtons: 'Fare düğmeleri',
+                    desktopAppearance: 'Masaüstü görünümü',
+                    mobileAppearance: 'Mobil görünüm',
+                    appearance: 'Görünüm',
+                    icons: 'Simgeler',
+                    formatting: 'Biçimlendirme'
+                }
+            },
+            navigationPane: {
+                label: 'Gezinme paneli',
+                description: 'Yerleşim, görünüm, dosya sayıları, daraltma davranışı ve gökkuşağı renkleri.',
+                groups: {
+                    appearance: 'Görünüm',
+                    banner: 'Afiş',
+                    collapseItems: 'Öğeleri daralt',
+                    dragAndDrop: 'Sürükle ve bırak',
+                    fileCounts: 'Dosya sayıları',
+                    rainbowColors: 'Gökkuşağı renkleri'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Kısayollar ve son dosyalar',
+                description: 'Kısayol görünürlüğü, rozetler, son dosyalar ve sabitlenmiş öğeler.',
+                groups: {
+                    shortcuts: 'Kısayollar',
+                    recentFiles: 'Son dosyalar'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Klasörler ve klasör notları',
+                description: 'Klasör görünümü, klasör notları, klasör notu şablonları ve klasör notu davranışı.',
+                groups: {
+                    folders: 'Klasörler',
+                    folderNotes: 'Klasör notları',
+                    folderNoteFiles: 'Klasör notu dosyaları'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Etiketler ve özellikler',
+                description: 'Etiket ve özellik bölümleri, simgeler, sıralama, kapsam ve kalıtım.',
+                groups: {
+                    tags: 'Etiketler',
+                    properties: 'Özellikler'
+                }
+            },
+            listPane: {
+                label: 'Liste paneli',
+                description: 'Sıralama, gruplama, liste modları, sabitlenmiş notlar ve çizim önizlemeleri.',
+                groups: {
+                    appearance: 'Görünüm',
+                    sortAndGroup: 'Sıralama ve gruplama',
+                    groupHeaders: 'Grup başlıkları',
+                    manualSort: 'Manuel sıralama',
+                    pinnedNotes: 'Sabitlenmiş notlar',
+                    behavior: 'Davranış',
+                    drawingPreviews: 'Çizim önizlemeleri'
+                }
+            },
+            fileOperations: {
+                label: 'Dosya işlemleri',
+                description: 'Şablonlar, silme onayları, ekler ve dosya taşıma çakışma davranışı.',
+                groups: {
+                    templates: 'Şablonlar'
+                }
+            },
+            frontmatterFields: {
+                label: 'Frontmatter alanları',
+                description: 'Görüntülenen adlar, zaman damgaları, simgeler ve renkler için frontmatter alanları.'
+            },
+            fileDisplay: {
+                label: 'Dosya görünümü',
+                description:
+                    'Başlıklar, önizleme metni, öne çıkan görseller, etiketler, özellikler, tarihler, kelime sayıları ve karakter sayıları.',
+                groups: {
+                    icon: 'Simge',
+                    title: 'Başlık',
+                    previewText: 'Önizleme metni',
+                    featureImage: 'Öne çıkan görsel',
+                    tags: 'Etiketler',
+                    properties: 'Özellikler',
+                    tasks: 'Görevler',
+                    date: 'Tarih',
+                    parentFolder: 'Üst klasör',
+                    wordAndCharacterCount: 'Kelime ve karakter sayısı'
+                }
+            },
+            calendar: {
+                label: 'Takvim',
+                description: 'Takvim görünümü, tarih notları, şablonlar, yerel ayar ve kenar çubuğu konumu.',
+                groups: {
+                    appearance: 'Görünüm',
+                    leftSidebar: 'Sol kenar çubuğu',
+                    calendarIntegration: 'Takvim entegrasyonu',
+                    rightSidebar: 'Sağ kenar çubuğu'
+                }
+            },
+            iconPacks: {
+                label: 'Simge paketleri',
+                description: 'Arayüz simgeleri, dosya simgeleri ve simge paketi yönetimi.'
             },
             advanced: {
-                maintenance: 'Bakım',
-                resetSettings: 'Ayarları sıfırla'
-            },
-            navigation: {
-                appearance: 'Görünüm',
-                banner: 'Afiş',
-                collapseItems: 'Öğeleri daralt',
-                dragAndDrop: 'Sürükle ve bırak',
-                noteCounts: 'Dosya sayıları',
-                rainbowColors: 'Gökkuşağı renkleri',
-                leftSidebar: 'Sol kenar çubuğu',
-                calendarIntegration: 'Takvim entegrasyonu'
-            },
-            list: {
-                display: 'Görünüm',
-                sortAndGroup: 'Sıralama ve gruplama',
-                groupHeaders: 'Grup başlıkları',
-                manualSort: 'Manuel sıralama',
-                pinnedNotes: 'Sabitlenmiş notlar',
-                drawingPreviews: 'Çizim önizlemeleri'
-            },
-            notes: {
-                frontmatter: 'Frontmatter alanları',
-                tasks: 'Görevler',
-                icon: 'Simge',
-                title: 'Başlık',
-                previewText: 'Önizleme metni',
-                featureImage: 'Öne çıkan görsel',
-                tags: 'Etiketler',
-                properties: 'Özellikler',
-                date: 'Tarih',
-                parentFolder: 'Üst klasör',
-                wordCount: 'Kelime ve karakter sayısı'
+                label: 'Gelişmiş',
+                description: 'Tanılama, meta veri temizliği, içe/dışa aktarma ve sıfırlama.',
+                groups: {
+                    maintenance: 'Bakım',
+                    resetSettings: 'Ayarları sıfırla'
+                }
             }
         },
         syncMode: {

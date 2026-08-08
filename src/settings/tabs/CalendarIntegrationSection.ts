@@ -202,7 +202,7 @@ export function createCalendarIntegrationSettingDefinitions(
     };
 
     return [
-        createGroupDefinition(strings.settings.groups.navigation.calendarIntegration, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.calendarIntegration, [
             createRenderDefinition({
                 name: strings.settings.items.calendarIntegrationMode.name,
                 desc: strings.settings.items.calendarIntegrationMode.desc,
@@ -247,7 +247,7 @@ export function renderCalendarIntegrationSection(
     const getActiveProfile = () => getActiveVaultProfile(plugin.settings);
     const resolveSelectedCalendarLocales = createSelectedCalendarLocalesResolver(context);
 
-    const calendarIntegrationGroup = createGroup(strings.settings.groups.navigation.calendarIntegration);
+    const calendarIntegrationGroup = createGroup(strings.settings.pages.calendar.groups.calendarIntegration);
     let renderCalendarIntegrationVisibility = (): void => {};
 
     const calendarIntegrationSetting = calendarIntegrationGroup.addSetting(setting => {

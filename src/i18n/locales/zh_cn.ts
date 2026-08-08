@@ -73,6 +73,9 @@ export const STRINGS_ZH_CN = {
         shortcutsHeader: '快捷方式',
         recentFilesHeader: '最近文件', // Header label for recent files section in navigation pane (English: Recent files)
         properties: '属性',
+        folders: '文件夹',
+        tags: '标签',
+        calendar: '导航日历',
         reorderRootFoldersTitle: '重新排列导航',
         reorderRootFoldersHint: '使用箭头或拖动来重新排列',
         vaultRootLabel: '仓库',
@@ -1002,95 +1005,136 @@ export const STRINGS_ZH_CN = {
             exportSuccess: '失败的元数据报告已导出至：{filename}',
             exportFailed: '导出元数据报告失败'
         },
-        sections: {
-            general: '通用',
-            vaultFilters: '显示过滤器',
-            appearanceBehavior: '外观和行为',
-            navigationPane: '导航窗格',
-            calendar: '导航日历',
-            fileOperations: '文件操作',
-            icons: '图标包',
-            folders: '文件夹',
-            folderNotes: '文件夹笔记',
-            folderNoteFiles: '文件夹笔记文件',
-            foldersAndFolderNotes: '文件夹和文件夹笔记',
-            tagsAndProperties: '标签与属性',
-            tags: '标签',
-            listPane: '列表窗格',
-            notes: '文件显示',
-            shortcutsAndRecentFiles: '快捷方式与最近文件',
-            advanced: '高级'
+        index: {
+            label: '通用',
+            description: '发行说明、支持、仓库配置文件、文件类型和属性键。',
+            groups: {
+                vaultSetup: '仓库设置'
+            }
         },
         pageGroups: {
             configuration: '配置',
-            navigationAndContent: '导航窗格',
-            notesAndLists: '列表窗格',
+            navigationPane: '导航窗格',
+            listPane: '列表窗格',
             calendarAndTools: '日历和工具'
         },
-        pageDescriptions: {
-            general: '发行说明、支持、仓库配置文件、文件类型和属性键。',
-            vaultFilters: '隐藏的文件夹、标签、文件、文件标签和属性规则。',
-            appearanceBehavior: '行为、键盘导航、鼠标按钮、外观和格式。',
-            navigationPane: '布局、外观、文件数量、折叠行为和彩虹颜色。',
-            shortcuts: '快捷方式可见性、徽章、最近文件和固定项目。',
-            calendar: '日历显示、日期笔记、模板、区域设置和侧边栏位置。',
-            fileOperations: '模板、删除确认、附件和文件移动冲突行为。',
-            foldersAndFolderNotes: '文件夹显示、文件夹笔记、文件夹笔记模板和文件夹笔记行为。',
-            tagsProperties: '标签和属性部分、图标、排序、范围和继承。',
-            listPane: '排序、分组、列表模式、固定笔记和绘图预览。',
-            frontmatter: '用于显示名称、时间戳、图标和颜色的前置元数据字段。',
-            notes: '标题、预览文本、特色图片、标签、属性、日期、字数和字符数。',
-            iconPacks: '界面图标、文件图标和图标包管理。',
-            advanced: '诊断、元数据清理、导入/导出和重置。'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: '仓库设置',
-                templates: '模板',
-                behavior: '行为',
-                startup: '启动',
-                keyboardNavigation: '键盘导航',
-                mouseButtons: '鼠标按钮',
-                view: '外观',
-                icons: '图标',
-                desktopAppearance: '桌面外观',
-                mobileAppearance: '移动端外观',
-                formatting: '格式'
+        pages: {
+            displayFilters: {
+                label: '显示过滤器',
+                description: '隐藏的文件夹、标签、文件、文件标签和属性规则。'
+            },
+            appearanceAndBehavior: {
+                label: '外观和行为',
+                description: '行为、键盘导航、鼠标按钮、外观和格式。',
+                groups: {
+                    startup: '启动',
+                    keyboardNavigation: '键盘导航',
+                    mouseButtons: '鼠标按钮',
+                    desktopAppearance: '桌面外观',
+                    mobileAppearance: '移动端外观',
+                    appearance: '外观',
+                    icons: '图标',
+                    formatting: '格式'
+                }
+            },
+            navigationPane: {
+                label: '导航窗格',
+                description: '布局、外观、文件数量、折叠行为和彩虹颜色。',
+                groups: {
+                    appearance: '外观',
+                    banner: '横幅',
+                    collapseItems: '折叠项目',
+                    dragAndDrop: '拖放',
+                    fileCounts: '文件数',
+                    rainbowColors: '彩虹颜色'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: '快捷方式与最近文件',
+                description: '快捷方式可见性、徽章、最近文件和固定项目。',
+                groups: {
+                    shortcuts: '快捷方式',
+                    recentFiles: '最近文件'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: '文件夹和文件夹笔记',
+                description: '文件夹显示、文件夹笔记、文件夹笔记模板和文件夹笔记行为。',
+                groups: {
+                    folders: '文件夹',
+                    folderNotes: '文件夹笔记',
+                    folderNoteFiles: '文件夹笔记文件'
+                }
+            },
+            tagsAndProperties: {
+                label: '标签与属性',
+                description: '标签和属性部分、图标、排序、范围和继承。',
+                groups: {
+                    tags: '标签',
+                    properties: '属性'
+                }
+            },
+            listPane: {
+                label: '列表窗格',
+                description: '排序、分组、列表模式、固定笔记和绘图预览。',
+                groups: {
+                    appearance: '外观',
+                    sortAndGroup: '排序与分组',
+                    groupHeaders: '分组标题',
+                    manualSort: '手动排序',
+                    pinnedNotes: '固定笔记',
+                    behavior: '行为',
+                    drawingPreviews: '绘图预览'
+                }
+            },
+            fileOperations: {
+                label: '文件操作',
+                description: '模板、删除确认、附件和文件移动冲突行为。',
+                groups: {
+                    templates: '模板'
+                }
+            },
+            frontmatterFields: {
+                label: '前置元数据字段',
+                description: '用于显示名称、时间戳、图标和颜色的前置元数据字段。'
+            },
+            fileDisplay: {
+                label: '文件显示',
+                description: '标题、预览文本、特色图片、标签、属性、日期、字数和字符数。',
+                groups: {
+                    icon: '图标',
+                    title: '标题',
+                    previewText: '预览文本',
+                    featureImage: '特色图片',
+                    tags: '标签',
+                    properties: '属性',
+                    tasks: '任务',
+                    date: '日期',
+                    parentFolder: '父文件夹',
+                    wordAndCharacterCount: '字数和字符数'
+                }
+            },
+            calendar: {
+                label: '导航日历',
+                description: '日历显示、日期笔记、模板、区域设置和侧边栏位置。',
+                groups: {
+                    appearance: '外观',
+                    leftSidebar: '左侧边栏',
+                    calendarIntegration: '日历集成',
+                    rightSidebar: '右侧边栏'
+                }
+            },
+            iconPacks: {
+                label: '图标包',
+                description: '界面图标、文件图标和图标包管理。'
             },
             advanced: {
-                maintenance: '维护',
-                resetSettings: '重置设置'
-            },
-            navigation: {
-                appearance: '外观',
-                banner: '横幅',
-                collapseItems: '折叠项目',
-                dragAndDrop: '拖放',
-                noteCounts: '文件数',
-                rainbowColors: '彩虹颜色',
-                leftSidebar: '左侧边栏',
-                calendarIntegration: '日历集成'
-            },
-            list: {
-                display: '外观',
-                sortAndGroup: '排序与分组',
-                groupHeaders: '分组标题',
-                manualSort: '手动排序',
-                pinnedNotes: '固定笔记',
-                drawingPreviews: '绘图预览'
-            },
-            notes: {
-                frontmatter: '前置元数据字段',
-                tasks: '任务',
-                icon: '图标',
-                title: '标题',
-                previewText: '预览文本',
-                featureImage: '特色图片',
-                tags: '标签',
-                properties: '属性',
-                date: '日期',
-                parentFolder: '父文件夹',
-                wordCount: '字数和字符数'
+                label: '高级',
+                description: '诊断、元数据清理、导入/导出和重置。',
+                groups: {
+                    maintenance: '维护',
+                    resetSettings: '重置设置'
+                }
             }
         },
         syncMode: {

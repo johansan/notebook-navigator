@@ -806,13 +806,13 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                     });
                 } else {
                     icon = NOTEBOOK_NAVIGATOR_ICON_ID;
-                    label = strings.settings.sections.folders;
+                    label = strings.navigationPane.folders;
                 }
                 chevronIcon = foldersSectionExpanded ? 'lucide-chevron-down' : 'lucide-chevron-right';
                 onClick = handleToggleFoldersSection;
             } else if (identifier === NavigationSectionId.TAGS) {
                 icon = resolveUXIcon(settings.interfaceIcons, 'nav-tags');
-                label = strings.settings.sections.tags;
+                label = strings.navigationPane.tags;
                 chevronIcon = tagsSectionExpanded ? 'lucide-chevron-down' : 'lucide-chevron-right';
                 onClick = handleToggleTagsSection;
             } else if (identifier === NavigationSectionId.PROPERTIES) {

@@ -24,11 +24,11 @@ import { renderTagsTab } from './TagsLegacyTab';
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
 export function renderFoldersAndFolderNotesTab(context: SettingsTabContext): void {
-    renderFoldersTab(context, strings.settings.sections.folders);
+    renderFoldersTab(context, strings.settings.pages.foldersAndFolderNotes.groups.folders);
 }
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
 export function renderTagsPropertiesTab(context: SettingsTabContext): void {
-    renderTagsTab(context, strings.settings.sections.tags);
-    renderPropertiesTab(context, strings.navigationPane.properties);
+    renderTagsTab(context, strings.settings.pages.tagsAndProperties.groups.tags);
+    renderPropertiesTab(context, strings.settings.pages.tagsAndProperties.groups.properties);
 }

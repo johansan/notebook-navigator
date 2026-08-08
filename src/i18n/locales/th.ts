@@ -74,6 +74,9 @@ export const STRINGS_TH = {
         shortcutsHeader: 'ทางลัด',
         recentFilesHeader: 'ไฟล์ล่าสุด', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'คุณสมบัติ',
+        folders: 'โฟลเดอร์',
+        tags: 'แท็ก',
+        calendar: 'ปฏิทิน',
         reorderRootFoldersTitle: 'จัดเรียงการนำทางใหม่',
         reorderRootFoldersHint: 'ใช้ลูกศรหรือลากเพื่อจัดเรียงใหม่',
         vaultRootLabel: 'ห้องนิรภัย',
@@ -1004,95 +1007,136 @@ export const STRINGS_TH = {
             exportSuccess: 'ส่งออกรายงานเมตาดาต้าที่ล้มเหลวไปยัง: {filename}',
             exportFailed: 'ส่งออกรายงานเมตาดาต้าล้มเหลว'
         },
-        sections: {
-            general: 'ทั่วไป',
-            vaultFilters: 'ตัวกรองการแสดงผล',
-            appearanceBehavior: 'ลักษณะและพฤติกรรม',
-            navigationPane: 'แผงนำทาง',
-            calendar: 'ปฏิทิน',
-            fileOperations: 'การดำเนินการกับไฟล์',
-            icons: 'ชุดไอคอน',
-            folders: 'โฟลเดอร์',
-            folderNotes: 'โน้ตโฟลเดอร์',
-            folderNoteFiles: 'ไฟล์โน้ตโฟลเดอร์',
-            foldersAndFolderNotes: 'โฟลเดอร์และโน้ตโฟลเดอร์',
-            tagsAndProperties: 'แท็กและคุณสมบัติ',
-            tags: 'แท็ก',
-            listPane: 'แผงรายการ',
-            notes: 'การแสดงไฟล์',
-            shortcutsAndRecentFiles: 'ทางลัดและไฟล์ล่าสุด',
-            advanced: 'ขั้นสูง'
+        index: {
+            label: 'ทั่วไป',
+            description: 'บันทึกการเผยแพร่ การสนับสนุน โปรไฟล์ห้องนิรภัย ประเภทไฟล์ และคีย์คุณสมบัติ',
+            groups: {
+                vaultSetup: 'การตั้งค่าห้องนิรภัย'
+            }
         },
         pageGroups: {
             configuration: 'การกำหนดค่า',
-            navigationAndContent: 'แผงนำทาง',
-            notesAndLists: 'แผงรายการ',
+            navigationPane: 'แผงนำทาง',
+            listPane: 'แผงรายการ',
             calendarAndTools: 'ปฏิทินและเครื่องมือ'
         },
-        pageDescriptions: {
-            general: 'บันทึกการเผยแพร่ การสนับสนุน โปรไฟล์ห้องนิรภัย ประเภทไฟล์ และคีย์คุณสมบัติ',
-            vaultFilters: 'โฟลเดอร์ที่ซ่อน แท็ก ไฟล์ แท็กไฟล์ และกฎคุณสมบัติ',
-            appearanceBehavior: 'พฤติกรรม การนำทางด้วยแป้นพิมพ์ ปุ่มเมาส์ ลักษณะ และการจัดรูปแบบ',
-            navigationPane: 'เค้าโครง ลักษณะ จำนวนไฟล์ พฤติกรรมการยุบ และสีรุ้ง',
-            shortcuts: 'การมองเห็นทางลัด เครื่องหมาย ไฟล์ล่าสุด และรายการที่ปักหมุด',
-            calendar: 'การแสดงปฏิทิน โน้ตวันที่ เทมเพลต โลแคล และตำแหน่งแถบด้านข้าง',
-            fileOperations: 'เทมเพลต การยืนยันการลบ ไฟล์แนบ และพฤติกรรมความขัดแย้งเมื่อย้ายไฟล์',
-            foldersAndFolderNotes: 'การแสดงโฟลเดอร์ โน้ตโฟลเดอร์ เทมเพลตโน้ตโฟลเดอร์ และพฤติกรรมโน้ตโฟลเดอร์',
-            tagsProperties: 'ส่วนแท็กและคุณสมบัติ ไอคอน การจัดเรียง ขอบเขต และการสืบทอด',
-            listPane: 'การจัดเรียง การจัดกลุ่ม โหมดรายการ โน้ตที่ปักหมุด และตัวอย่างภาพวาด',
-            frontmatter: 'ฟิลด์ frontmatter สำหรับชื่อที่แสดง การประทับเวลา ไอคอน และสี',
-            notes: 'ชื่อเรื่อง ข้อความตัวอย่าง รูปภาพเด่น แท็ก คุณสมบัติ วันที่ จำนวนคำ และจำนวนอักขระ',
-            iconPacks: 'ไอคอนอินเทอร์เฟซ ไอคอนไฟล์ และการจัดการชุดไอคอน',
-            advanced: 'การวินิจฉัย การล้างข้อมูลเมตา การนำเข้า/ส่งออก และการรีเซ็ต'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'การตั้งค่าห้องนิรภัย',
-                templates: 'เทมเพลต',
-                behavior: 'พฤติกรรม',
-                startup: 'การเริ่มต้น',
-                keyboardNavigation: 'การนำทางด้วยแป้นพิมพ์',
-                mouseButtons: 'ปุ่มเมาส์',
-                view: 'ลักษณะ',
-                icons: 'ไอคอน',
-                desktopAppearance: 'ลักษณะเดสก์ท็อป',
-                mobileAppearance: 'รูปลักษณ์บนมือถือ',
-                formatting: 'การจัดรูปแบบ'
+        pages: {
+            displayFilters: {
+                label: 'ตัวกรองการแสดงผล',
+                description: 'โฟลเดอร์ที่ซ่อน แท็ก ไฟล์ แท็กไฟล์ และกฎคุณสมบัติ'
+            },
+            appearanceAndBehavior: {
+                label: 'ลักษณะและพฤติกรรม',
+                description: 'พฤติกรรม การนำทางด้วยแป้นพิมพ์ ปุ่มเมาส์ ลักษณะ และการจัดรูปแบบ',
+                groups: {
+                    startup: 'การเริ่มต้น',
+                    keyboardNavigation: 'การนำทางด้วยแป้นพิมพ์',
+                    mouseButtons: 'ปุ่มเมาส์',
+                    desktopAppearance: 'ลักษณะเดสก์ท็อป',
+                    mobileAppearance: 'รูปลักษณ์บนมือถือ',
+                    appearance: 'ลักษณะ',
+                    icons: 'ไอคอน',
+                    formatting: 'การจัดรูปแบบ'
+                }
+            },
+            navigationPane: {
+                label: 'แผงนำทาง',
+                description: 'เค้าโครง ลักษณะ จำนวนไฟล์ พฤติกรรมการยุบ และสีรุ้ง',
+                groups: {
+                    appearance: 'ลักษณะ',
+                    banner: 'แบนเนอร์',
+                    collapseItems: 'ยุบรายการ',
+                    dragAndDrop: 'ลากและวาง',
+                    fileCounts: 'จำนวนไฟล์',
+                    rainbowColors: 'สีรุ้ง'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'ทางลัดและไฟล์ล่าสุด',
+                description: 'การมองเห็นทางลัด เครื่องหมาย ไฟล์ล่าสุด และรายการที่ปักหมุด',
+                groups: {
+                    shortcuts: 'ทางลัด',
+                    recentFiles: 'ไฟล์ล่าสุด'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'โฟลเดอร์และโน้ตโฟลเดอร์',
+                description: 'การแสดงโฟลเดอร์ โน้ตโฟลเดอร์ เทมเพลตโน้ตโฟลเดอร์ และพฤติกรรมโน้ตโฟลเดอร์',
+                groups: {
+                    folders: 'โฟลเดอร์',
+                    folderNotes: 'โน้ตโฟลเดอร์',
+                    folderNoteFiles: 'ไฟล์โน้ตโฟลเดอร์'
+                }
+            },
+            tagsAndProperties: {
+                label: 'แท็กและคุณสมบัติ',
+                description: 'ส่วนแท็กและคุณสมบัติ ไอคอน การจัดเรียง ขอบเขต และการสืบทอด',
+                groups: {
+                    tags: 'แท็ก',
+                    properties: 'คุณสมบัติ'
+                }
+            },
+            listPane: {
+                label: 'แผงรายการ',
+                description: 'การจัดเรียง การจัดกลุ่ม โหมดรายการ โน้ตที่ปักหมุด และตัวอย่างภาพวาด',
+                groups: {
+                    appearance: 'ลักษณะ',
+                    sortAndGroup: 'เรียงลำดับและจัดกลุ่ม',
+                    groupHeaders: 'ส่วนหัวกลุ่ม',
+                    manualSort: 'การจัดเรียงด้วยตนเอง',
+                    pinnedNotes: 'โน้ตที่ปักหมุด',
+                    behavior: 'พฤติกรรม',
+                    drawingPreviews: 'ตัวอย่างภาพวาด'
+                }
+            },
+            fileOperations: {
+                label: 'การดำเนินการกับไฟล์',
+                description: 'เทมเพลต การยืนยันการลบ ไฟล์แนบ และพฤติกรรมความขัดแย้งเมื่อย้ายไฟล์',
+                groups: {
+                    templates: 'เทมเพลต'
+                }
+            },
+            frontmatterFields: {
+                label: 'ฟิลด์ Frontmatter',
+                description: 'ฟิลด์ frontmatter สำหรับชื่อที่แสดง การประทับเวลา ไอคอน และสี'
+            },
+            fileDisplay: {
+                label: 'การแสดงไฟล์',
+                description: 'ชื่อเรื่อง ข้อความตัวอย่าง รูปภาพเด่น แท็ก คุณสมบัติ วันที่ จำนวนคำ และจำนวนอักขระ',
+                groups: {
+                    icon: 'ไอคอน',
+                    title: 'ชื่อเรื่อง',
+                    previewText: 'ข้อความตัวอย่าง',
+                    featureImage: 'รูปภาพเด่น',
+                    tags: 'แท็ก',
+                    properties: 'คุณสมบัติ',
+                    tasks: 'งาน',
+                    date: 'วันที่',
+                    parentFolder: 'โฟลเดอร์หลัก',
+                    wordAndCharacterCount: 'จำนวนคำและอักขระ'
+                }
+            },
+            calendar: {
+                label: 'ปฏิทิน',
+                description: 'การแสดงปฏิทิน โน้ตวันที่ เทมเพลต โลแคล และตำแหน่งแถบด้านข้าง',
+                groups: {
+                    appearance: 'ลักษณะ',
+                    leftSidebar: 'แถบด้านซ้าย',
+                    calendarIntegration: 'การรวมปฏิทิน',
+                    rightSidebar: 'แถบด้านขวา'
+                }
+            },
+            iconPacks: {
+                label: 'ชุดไอคอน',
+                description: 'ไอคอนอินเทอร์เฟซ ไอคอนไฟล์ และการจัดการชุดไอคอน'
             },
             advanced: {
-                maintenance: 'การบำรุงรักษา',
-                resetSettings: 'รีเซ็ตการตั้งค่า'
-            },
-            navigation: {
-                appearance: 'ลักษณะ',
-                banner: 'แบนเนอร์',
-                collapseItems: 'ยุบรายการ',
-                dragAndDrop: 'ลากและวาง',
-                noteCounts: 'จำนวนไฟล์',
-                rainbowColors: 'สีรุ้ง',
-                leftSidebar: 'แถบด้านซ้าย',
-                calendarIntegration: 'การรวมปฏิทิน'
-            },
-            list: {
-                display: 'ลักษณะ',
-                sortAndGroup: 'เรียงลำดับและจัดกลุ่ม',
-                groupHeaders: 'ส่วนหัวกลุ่ม',
-                manualSort: 'การจัดเรียงด้วยตนเอง',
-                pinnedNotes: 'โน้ตที่ปักหมุด',
-                drawingPreviews: 'ตัวอย่างภาพวาด'
-            },
-            notes: {
-                frontmatter: 'ฟิลด์ Frontmatter',
-                tasks: 'งาน',
-                icon: 'ไอคอน',
-                title: 'ชื่อเรื่อง',
-                previewText: 'ข้อความตัวอย่าง',
-                featureImage: 'รูปภาพเด่น',
-                tags: 'แท็ก',
-                properties: 'คุณสมบัติ',
-                date: 'วันที่',
-                parentFolder: 'โฟลเดอร์หลัก',
-                wordCount: 'จำนวนคำและอักขระ'
+                label: 'ขั้นสูง',
+                description: 'การวินิจฉัย การล้างข้อมูลเมตา การนำเข้า/ส่งออก และการรีเซ็ต',
+                groups: {
+                    maintenance: 'การบำรุงรักษา',
+                    resetSettings: 'รีเซ็ตการตั้งค่า'
+                }
             }
         },
         syncMode: {

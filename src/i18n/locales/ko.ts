@@ -73,6 +73,9 @@ export const STRINGS_KO = {
         shortcutsHeader: '바로가기',
         recentFilesHeader: '최근 파일', // Header label for recent files section in navigation pane (English: Recent files)
         properties: '속성',
+        folders: '폴더',
+        tags: '태그',
+        calendar: '달력',
         reorderRootFoldersTitle: '내비게이션 재정렬',
         reorderRootFoldersHint: '화살표 또는 드래그로 재정렬',
         vaultRootLabel: '보관함',
@@ -1008,95 +1011,136 @@ export const STRINGS_KO = {
             exportSuccess: '메타데이터 보고서 내보내기 실패: {filename}',
             exportFailed: '메타데이터 보고서 내보내기 실패'
         },
-        sections: {
-            general: '일반',
-            vaultFilters: '표시 필터',
-            appearanceBehavior: '모양 및 동작',
-            navigationPane: '탐색 창',
-            calendar: '달력',
-            fileOperations: '파일 작업',
-            icons: '아이콘 팩',
-            folders: '폴더',
-            folderNotes: '폴더 노트',
-            folderNoteFiles: '폴더 노트 파일',
-            foldersAndFolderNotes: '폴더 및 폴더 노트',
-            tagsAndProperties: '태그 및 속성',
-            tags: '태그',
-            listPane: '목록 창',
-            notes: '파일 표시',
-            shortcutsAndRecentFiles: '바로 가기 및 최근 파일',
-            advanced: '고급'
+        index: {
+            label: '일반',
+            description: '릴리스 노트, 지원, 보관소 프로필, 파일 유형, 속성 키.',
+            groups: {
+                vaultSetup: '보관소 설정'
+            }
         },
         pageGroups: {
             configuration: '구성',
-            navigationAndContent: '탐색 창',
-            notesAndLists: '목록 창',
+            navigationPane: '탐색 창',
+            listPane: '목록 창',
             calendarAndTools: '달력 및 도구'
         },
-        pageDescriptions: {
-            general: '릴리스 노트, 지원, 보관소 프로필, 파일 유형, 속성 키.',
-            vaultFilters: '숨겨진 폴더, 태그, 파일, 파일 태그 및 속성 규칙.',
-            appearanceBehavior: '동작, 키보드 탐색, 마우스 버튼, 모양 및 서식.',
-            navigationPane: '레이아웃, 모양, 파일 수, 접기 동작 및 무지개 색상.',
-            shortcuts: '바로 가기 표시, 배지, 최근 파일 및 고정된 항목.',
-            calendar: '달력 표시, 날짜 노트, 템플릿, 로케일 및 사이드바 위치.',
-            fileOperations: '템플릿, 삭제 확인, 첨부 파일 및 파일 이동 충돌 동작.',
-            foldersAndFolderNotes: '폴더 표시, 폴더 노트, 폴더 노트 템플릿 및 폴더 노트 동작.',
-            tagsProperties: '태그 및 속성 섹션, 아이콘, 정렬, 범위 및 상속.',
-            listPane: '정렬, 그룹화, 목록 모드, 고정된 노트 및 그림 미리보기.',
-            frontmatter: '표시 이름, 타임스탬프, 아이콘, 색상에 대한 프런트매터 필드.',
-            notes: '제목, 미리보기 텍스트, 대표 이미지, 태그, 속성, 날짜, 단어 수 및 문자 수.',
-            iconPacks: '인터페이스 아이콘, 파일 아이콘 및 아이콘 팩 관리.',
-            advanced: '진단, 메타데이터 정리, 가져오기/내보내기 및 초기화.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: '보관소 설정',
-                templates: '템플릿',
-                behavior: '동작',
-                startup: '시작',
-                keyboardNavigation: '키보드 탐색',
-                mouseButtons: '마우스 버튼',
-                view: '모양',
-                icons: '아이콘',
-                desktopAppearance: '데스크톱 모양새',
-                mobileAppearance: '모바일 모양',
-                formatting: '서식'
+        pages: {
+            displayFilters: {
+                label: '표시 필터',
+                description: '숨겨진 폴더, 태그, 파일, 파일 태그 및 속성 규칙.'
+            },
+            appearanceAndBehavior: {
+                label: '모양 및 동작',
+                description: '동작, 키보드 탐색, 마우스 버튼, 모양 및 서식.',
+                groups: {
+                    startup: '시작',
+                    keyboardNavigation: '키보드 탐색',
+                    mouseButtons: '마우스 버튼',
+                    desktopAppearance: '데스크톱 모양새',
+                    mobileAppearance: '모바일 모양',
+                    appearance: '모양',
+                    icons: '아이콘',
+                    formatting: '서식'
+                }
+            },
+            navigationPane: {
+                label: '탐색 창',
+                description: '레이아웃, 모양, 파일 수, 접기 동작 및 무지개 색상.',
+                groups: {
+                    appearance: '모양',
+                    banner: '배너',
+                    collapseItems: '항목 접기',
+                    dragAndDrop: '끌어서 놓기',
+                    fileCounts: '파일 수',
+                    rainbowColors: '무지개 색상'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: '바로 가기 및 최근 파일',
+                description: '바로 가기 표시, 배지, 최근 파일 및 고정된 항목.',
+                groups: {
+                    shortcuts: '바로가기',
+                    recentFiles: '최근 파일'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: '폴더 및 폴더 노트',
+                description: '폴더 표시, 폴더 노트, 폴더 노트 템플릿 및 폴더 노트 동작.',
+                groups: {
+                    folders: '폴더',
+                    folderNotes: '폴더 노트',
+                    folderNoteFiles: '폴더 노트 파일'
+                }
+            },
+            tagsAndProperties: {
+                label: '태그 및 속성',
+                description: '태그 및 속성 섹션, 아이콘, 정렬, 범위 및 상속.',
+                groups: {
+                    tags: '태그',
+                    properties: '속성'
+                }
+            },
+            listPane: {
+                label: '목록 창',
+                description: '정렬, 그룹화, 목록 모드, 고정된 노트 및 그림 미리보기.',
+                groups: {
+                    appearance: '모양',
+                    sortAndGroup: '정렬 및 그룹화',
+                    groupHeaders: '그룹 머리글',
+                    manualSort: '수동 정렬',
+                    pinnedNotes: '고정된 노트',
+                    behavior: '동작',
+                    drawingPreviews: '그림 미리보기'
+                }
+            },
+            fileOperations: {
+                label: '파일 작업',
+                description: '템플릿, 삭제 확인, 첨부 파일 및 파일 이동 충돌 동작.',
+                groups: {
+                    templates: '템플릿'
+                }
+            },
+            frontmatterFields: {
+                label: '프런트매터 필드',
+                description: '표시 이름, 타임스탬프, 아이콘, 색상에 대한 프런트매터 필드.'
+            },
+            fileDisplay: {
+                label: '파일 표시',
+                description: '제목, 미리보기 텍스트, 대표 이미지, 태그, 속성, 날짜, 단어 수 및 문자 수.',
+                groups: {
+                    icon: '아이콘',
+                    title: '제목',
+                    previewText: '미리보기 텍스트',
+                    featureImage: '대표 이미지',
+                    tags: '태그',
+                    properties: '속성',
+                    tasks: '작업',
+                    date: '날짜',
+                    parentFolder: '상위 폴더',
+                    wordAndCharacterCount: '단어 및 문자 수'
+                }
+            },
+            calendar: {
+                label: '달력',
+                description: '달력 표시, 날짜 노트, 템플릿, 로케일 및 사이드바 위치.',
+                groups: {
+                    appearance: '모양',
+                    leftSidebar: '왼쪽 사이드바',
+                    calendarIntegration: '캘린더 연동',
+                    rightSidebar: '오른쪽 사이드바'
+                }
+            },
+            iconPacks: {
+                label: '아이콘 팩',
+                description: '인터페이스 아이콘, 파일 아이콘 및 아이콘 팩 관리.'
             },
             advanced: {
-                maintenance: '유지 관리',
-                resetSettings: '설정 초기화'
-            },
-            navigation: {
-                appearance: '모양',
-                banner: '배너',
-                collapseItems: '항목 접기',
-                dragAndDrop: '끌어서 놓기',
-                noteCounts: '파일 수',
-                rainbowColors: '무지개 색상',
-                leftSidebar: '왼쪽 사이드바',
-                calendarIntegration: '캘린더 연동'
-            },
-            list: {
-                display: '모양',
-                sortAndGroup: '정렬 및 그룹화',
-                groupHeaders: '그룹 머리글',
-                manualSort: '수동 정렬',
-                pinnedNotes: '고정된 노트',
-                drawingPreviews: '그림 미리보기'
-            },
-            notes: {
-                frontmatter: '프런트매터 필드',
-                tasks: '작업',
-                icon: '아이콘',
-                title: '제목',
-                previewText: '미리보기 텍스트',
-                featureImage: '대표 이미지',
-                tags: '태그',
-                properties: '속성',
-                date: '날짜',
-                parentFolder: '상위 폴더',
-                wordCount: '단어 및 문자 수'
+                label: '고급',
+                description: '진단, 메타데이터 정리, 가져오기/내보내기 및 초기화.',
+                groups: {
+                    maintenance: '유지 관리',
+                    resetSettings: '설정 초기화'
+                }
             }
         },
         syncMode: {

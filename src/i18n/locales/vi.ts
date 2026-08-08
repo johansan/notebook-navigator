@@ -74,6 +74,9 @@ export const STRINGS_VI = {
         shortcutsHeader: 'Lối tắt', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'Tệp gần đây', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Thuộc tính',
+        folders: 'Thư mục',
+        tags: 'Thẻ',
+        calendar: 'Lịch',
         reorderRootFoldersTitle: 'Sắp xếp lại điều hướng',
         reorderRootFoldersHint: 'Dùng mũi tên hoặc kéo để sắp xếp lại',
         vaultRootLabel: 'Vault',
@@ -1012,95 +1015,136 @@ export const STRINGS_VI = {
             exportSuccess: 'Báo cáo metadata thất bại đã xuất đến: {filename}',
             exportFailed: 'Không thể xuất báo cáo metadata'
         },
-        sections: {
-            general: 'Chung',
-            vaultFilters: 'Bộ lọc hiển thị',
-            appearanceBehavior: 'Giao diện và hành vi',
-            navigationPane: 'Bảng điều hướng',
-            calendar: 'Lịch',
-            fileOperations: 'Thao tác tệp',
-            icons: 'Gói biểu tượng',
-            folders: 'Thư mục',
-            folderNotes: 'Ghi chú thư mục',
-            folderNoteFiles: 'Tệp ghi chú thư mục',
-            foldersAndFolderNotes: 'Thư mục và ghi chú thư mục',
-            tagsAndProperties: 'Thẻ và thuộc tính',
-            tags: 'Thẻ',
-            listPane: 'Bảng danh sách',
-            notes: 'Hiển thị tệp',
-            shortcutsAndRecentFiles: 'Lối tắt và tệp gần đây',
-            advanced: 'Nâng cao'
+        index: {
+            label: 'Chung',
+            description: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
+            groups: {
+                vaultSetup: 'Thiết lập vault'
+            }
         },
         pageGroups: {
             configuration: 'Cấu hình',
-            navigationAndContent: 'Bảng điều hướng',
-            notesAndLists: 'Bảng danh sách',
+            navigationPane: 'Bảng điều hướng',
+            listPane: 'Bảng danh sách',
             calendarAndTools: 'Lịch và công cụ'
         },
-        pageDescriptions: {
-            general: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
-            vaultFilters: 'Thư mục, thẻ, tệp, thẻ tệp và quy tắc thuộc tính bị ẩn.',
-            appearanceBehavior: 'Hành vi, điều hướng bằng bàn phím, nút chuột, giao diện và định dạng.',
-            navigationPane: 'Bố cục, giao diện, số lượng tệp, hành vi thu gọn và màu cầu vồng.',
-            shortcuts: 'Khả năng hiển thị lối tắt, huy hiệu, tệp gần đây và mục đã ghim.',
-            calendar: 'Hiển thị lịch, ghi chú ngày, mẫu, ngôn ngữ và vị trí thanh bên.',
-            fileOperations: 'Mẫu, xác nhận xóa, tệp đính kèm và hành vi xung đột khi di chuyển tệp.',
-            foldersAndFolderNotes: 'Hiển thị thư mục, ghi chú thư mục, mẫu ghi chú thư mục và hành vi ghi chú thư mục.',
-            tagsProperties: 'Phần thẻ và thuộc tính, biểu tượng, sắp xếp, phạm vi và kế thừa.',
-            listPane: 'Sắp xếp, nhóm, chế độ danh sách, ghi chú đã ghim và xem trước bản vẽ.',
-            frontmatter: 'Trường frontmatter cho tên hiển thị, dấu thời gian, biểu tượng và màu sắc.',
-            notes: 'Tiêu đề, văn bản xem trước, hình ảnh nổi bật, thẻ, thuộc tính, ngày, số từ và số ký tự.',
-            iconPacks: 'Biểu tượng giao diện, biểu tượng tệp và quản lý gói biểu tượng.',
-            advanced: 'Chẩn đoán, dọn dẹp metadata, nhập/xuất và đặt lại.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Thiết lập vault',
-                templates: 'Mẫu',
-                behavior: 'Hành vi',
-                startup: 'Khởi động',
-                keyboardNavigation: 'Điều hướng bằng bàn phím',
-                mouseButtons: 'Nút chuột',
-                view: 'Giao diện',
-                icons: 'Biểu tượng',
-                desktopAppearance: 'Giao diện máy tính',
-                mobileAppearance: 'Giao diện di động',
-                formatting: 'Định dạng'
+        pages: {
+            displayFilters: {
+                label: 'Bộ lọc hiển thị',
+                description: 'Thư mục, thẻ, tệp, thẻ tệp và quy tắc thuộc tính bị ẩn.'
+            },
+            appearanceAndBehavior: {
+                label: 'Giao diện và hành vi',
+                description: 'Hành vi, điều hướng bằng bàn phím, nút chuột, giao diện và định dạng.',
+                groups: {
+                    startup: 'Khởi động',
+                    keyboardNavigation: 'Điều hướng bằng bàn phím',
+                    mouseButtons: 'Nút chuột',
+                    desktopAppearance: 'Giao diện máy tính',
+                    mobileAppearance: 'Giao diện di động',
+                    appearance: 'Giao diện',
+                    icons: 'Biểu tượng',
+                    formatting: 'Định dạng'
+                }
+            },
+            navigationPane: {
+                label: 'Bảng điều hướng',
+                description: 'Bố cục, giao diện, số lượng tệp, hành vi thu gọn và màu cầu vồng.',
+                groups: {
+                    appearance: 'Giao diện',
+                    banner: 'Banner',
+                    collapseItems: 'Thu gọn mục',
+                    dragAndDrop: 'Kéo và thả',
+                    fileCounts: 'Số lượng tệp',
+                    rainbowColors: 'Màu cầu vồng'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Lối tắt và tệp gần đây',
+                description: 'Khả năng hiển thị lối tắt, huy hiệu, tệp gần đây và mục đã ghim.',
+                groups: {
+                    shortcuts: 'Lối tắt',
+                    recentFiles: 'Tệp gần đây'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Thư mục và ghi chú thư mục',
+                description: 'Hiển thị thư mục, ghi chú thư mục, mẫu ghi chú thư mục và hành vi ghi chú thư mục.',
+                groups: {
+                    folders: 'Thư mục',
+                    folderNotes: 'Ghi chú thư mục',
+                    folderNoteFiles: 'Tệp ghi chú thư mục'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Thẻ và thuộc tính',
+                description: 'Phần thẻ và thuộc tính, biểu tượng, sắp xếp, phạm vi và kế thừa.',
+                groups: {
+                    tags: 'Thẻ',
+                    properties: 'Thuộc tính'
+                }
+            },
+            listPane: {
+                label: 'Bảng danh sách',
+                description: 'Sắp xếp, nhóm, chế độ danh sách, ghi chú đã ghim và xem trước bản vẽ.',
+                groups: {
+                    appearance: 'Giao diện',
+                    sortAndGroup: 'Sắp xếp và nhóm',
+                    groupHeaders: 'Header nhóm',
+                    manualSort: 'Sắp xếp thủ công',
+                    pinnedNotes: 'Ghi chú đã ghim',
+                    behavior: 'Hành vi',
+                    drawingPreviews: 'Xem trước bản vẽ'
+                }
+            },
+            fileOperations: {
+                label: 'Thao tác tệp',
+                description: 'Mẫu, xác nhận xóa, tệp đính kèm và hành vi xung đột khi di chuyển tệp.',
+                groups: {
+                    templates: 'Mẫu'
+                }
+            },
+            frontmatterFields: {
+                label: 'Trường frontmatter',
+                description: 'Trường frontmatter cho tên hiển thị, dấu thời gian, biểu tượng và màu sắc.'
+            },
+            fileDisplay: {
+                label: 'Hiển thị tệp',
+                description: 'Tiêu đề, văn bản xem trước, hình ảnh nổi bật, thẻ, thuộc tính, ngày, số từ và số ký tự.',
+                groups: {
+                    icon: 'Biểu tượng',
+                    title: 'Tiêu đề',
+                    previewText: 'Văn bản xem trước',
+                    featureImage: 'Hình ảnh nổi bật',
+                    tags: 'Thẻ',
+                    properties: 'Thuộc tính',
+                    tasks: 'Nhiệm vụ',
+                    date: 'Ngày',
+                    parentFolder: 'Thư mục cha',
+                    wordAndCharacterCount: 'Số từ và ký tự'
+                }
+            },
+            calendar: {
+                label: 'Lịch',
+                description: 'Hiển thị lịch, ghi chú ngày, mẫu, ngôn ngữ và vị trí thanh bên.',
+                groups: {
+                    appearance: 'Giao diện',
+                    leftSidebar: 'Thanh bên trái',
+                    calendarIntegration: 'Tích hợp lịch',
+                    rightSidebar: 'Thanh bên phải'
+                }
+            },
+            iconPacks: {
+                label: 'Gói biểu tượng',
+                description: 'Biểu tượng giao diện, biểu tượng tệp và quản lý gói biểu tượng.'
             },
             advanced: {
-                maintenance: 'Bảo trì',
-                resetSettings: 'Đặt lại cài đặt'
-            },
-            navigation: {
-                appearance: 'Giao diện',
-                banner: 'Banner',
-                collapseItems: 'Thu gọn mục',
-                dragAndDrop: 'Kéo và thả',
-                noteCounts: 'Số lượng tệp',
-                rainbowColors: 'Màu cầu vồng',
-                leftSidebar: 'Thanh bên trái',
-                calendarIntegration: 'Tích hợp lịch'
-            },
-            list: {
-                display: 'Giao diện',
-                sortAndGroup: 'Sắp xếp và nhóm',
-                groupHeaders: 'Header nhóm',
-                manualSort: 'Sắp xếp thủ công',
-                pinnedNotes: 'Ghi chú đã ghim',
-                drawingPreviews: 'Xem trước bản vẽ'
-            },
-            notes: {
-                frontmatter: 'Trường frontmatter',
-                tasks: 'Nhiệm vụ',
-                icon: 'Biểu tượng',
-                title: 'Tiêu đề',
-                previewText: 'Văn bản xem trước',
-                featureImage: 'Hình ảnh nổi bật',
-                tags: 'Thẻ',
-                properties: 'Thuộc tính',
-                date: 'Ngày',
-                parentFolder: 'Thư mục cha',
-                wordCount: 'Số từ và ký tự'
+                label: 'Nâng cao',
+                description: 'Chẩn đoán, dọn dẹp metadata, nhập/xuất và đặt lại.',
+                groups: {
+                    maintenance: 'Bảo trì',
+                    resetSettings: 'Đặt lại cài đặt'
+                }
             }
         },
         syncMode: {

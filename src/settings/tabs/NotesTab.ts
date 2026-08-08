@@ -62,7 +62,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
     const { plugin } = context;
 
     return [
-        createGroupDefinition(strings.settings.groups.notes.icon, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.icon, [
             createToggleDefinition('showFileIcons', {
                 name: strings.settings.items.showFileIcons.name,
                 desc: strings.settings.items.showFileIcons.desc
@@ -141,7 +141,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                     })
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.title, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.title, [
             createRenderDefinition({
                 name: strings.settings.items.fileNameRows.name,
                 desc: strings.settings.items.fileNameRows.desc,
@@ -153,7 +153,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 desc: strings.settings.items.useFolderColor.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.previewText, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.previewText, [
             createToggleDefinition('showFilePreview', {
                 name: strings.settings.items.showFilePreview.name,
                 desc: strings.settings.items.showFilePreview.desc
@@ -213,7 +213,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 visible: () => plugin.settings.showFilePreview && plugin.settings.previewProperties.length > 0
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.featureImage, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.featureImage, [
             createToggleDefinition('showFeatureImage', {
                 name: strings.settings.items.showFeatureImage.name,
                 desc: strings.settings.items.showFeatureImage.desc
@@ -276,7 +276,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
             })
         ]),
         createGroupDefinition(
-            strings.settings.groups.notes.tags,
+            strings.settings.pages.fileDisplay.groups.tags,
             [
                 createToggleDefinition('showFileTags', {
                     name: strings.settings.items.showFileTags.name,
@@ -305,7 +305,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
             ],
             { visible: () => plugin.settings.showTags }
         ),
-        createGroupDefinition(strings.settings.groups.notes.properties, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.properties, [
             createToggleDefinition('showFileProperties', {
                 name: strings.settings.items.showFileProperties.name,
                 desc: strings.settings.items.showFileProperties.desc
@@ -341,7 +341,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 visible: () => plugin.settings.showFileProperties
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.tasks, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.tasks, [
             createToggleDefinition('showFileTaskProgress', {
                 name: strings.settings.items.showFileTaskProgress.name,
                 desc: strings.settings.items.showFileTaskProgress.desc
@@ -390,7 +390,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                     })
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.date, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.date, [
             createToggleDefinition('showFileDate', {
                 name: strings.settings.items.showFileDate.name,
                 desc: strings.settings.items.showFileDate.desc
@@ -406,7 +406,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 }
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.parentFolder, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.parentFolder, [
             createToggleDefinition('showParentFolder', {
                 name: strings.settings.items.showParentFolder.name,
                 desc: strings.settings.items.showParentFolder.desc
@@ -432,7 +432,7 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 visible: () => plugin.settings.showParentFolder
             })
         ]),
-        createGroupDefinition(strings.settings.groups.notes.wordCount, [
+        createGroupDefinition(strings.settings.pages.fileDisplay.groups.wordAndCharacterCount, [
             createDropdownDefinition('textCountDisplay', {
                 name: strings.settings.items.textCountDisplay.name,
                 desc: strings.settings.items.textCountDisplay.desc,

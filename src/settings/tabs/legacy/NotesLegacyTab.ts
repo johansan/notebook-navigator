@@ -97,16 +97,16 @@ export function renderNotesTab(context: SettingsTabContext): void {
     const { app, containerEl, plugin } = context;
 
     const createGroup = createSettingGroupFactory(containerEl);
-    const iconGroup = createGroup(strings.settings.groups.notes.icon);
-    const titleGroup = createGroup(strings.settings.groups.notes.title);
-    const previewTextGroup = createGroup(strings.settings.groups.notes.previewText);
-    const featureImageGroup = createGroup(strings.settings.groups.notes.featureImage);
-    const tagsGroup = createGroup(strings.settings.groups.notes.tags);
-    const notePropertyGroup = createGroup(strings.settings.groups.notes.properties);
-    const tasksGroup = createGroup(strings.settings.groups.notes.tasks);
-    const dateGroup = createGroup(strings.settings.groups.notes.date);
-    const parentFolderGroup = createGroup(strings.settings.groups.notes.parentFolder);
-    const wordCountGroup = createGroup(strings.settings.groups.notes.wordCount);
+    const iconGroup = createGroup(strings.settings.pages.fileDisplay.groups.icon);
+    const titleGroup = createGroup(strings.settings.pages.fileDisplay.groups.title);
+    const previewTextGroup = createGroup(strings.settings.pages.fileDisplay.groups.previewText);
+    const featureImageGroup = createGroup(strings.settings.pages.fileDisplay.groups.featureImage);
+    const tagsGroup = createGroup(strings.settings.pages.fileDisplay.groups.tags);
+    const notePropertyGroup = createGroup(strings.settings.pages.fileDisplay.groups.properties);
+    const tasksGroup = createGroup(strings.settings.pages.fileDisplay.groups.tasks);
+    const dateGroup = createGroup(strings.settings.pages.fileDisplay.groups.date);
+    const parentFolderGroup = createGroup(strings.settings.pages.fileDisplay.groups.parentFolder);
+    const wordCountGroup = createGroup(strings.settings.pages.fileDisplay.groups.wordAndCharacterCount);
 
     const setGroupVisible = (groupRootEl: HTMLElement, visible: boolean) => {
         setElementVisible(groupRootEl, visible);

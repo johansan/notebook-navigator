@@ -57,6 +57,7 @@ export interface SettingsPageGroupDefinition {
 export interface SettingsPaneDefinition {
     id: SettingsPaneId;
     getLabel: () => string;
+    getDescription: () => string;
     render: (context: SettingsTabContext) => void;
     createDefinitions?: (context: SettingsTabContext) => SettingDefinitionItem[];
 }
@@ -67,11 +68,11 @@ export const SETTINGS_PAGE_GROUP_DEFINITIONS: SettingsPageGroupDefinition[] = [
         items: ['vault-filters', 'appearance-behavior', 'file-operations']
     },
     {
-        getHeading: () => strings.settings.pageGroups.navigationAndContent,
+        getHeading: () => strings.settings.pageGroups.navigationPane,
         items: ['navigation-pane', 'shortcuts', 'folders', 'tags-properties']
     },
     {
-        getHeading: () => strings.settings.pageGroups.notesAndLists,
+        getHeading: () => strings.settings.pageGroups.listPane,
         items: ['list-pane', 'frontmatter', 'notes']
     },
     {
@@ -80,101 +81,102 @@ export const SETTINGS_PAGE_GROUP_DEFINITIONS: SettingsPageGroupDefinition[] = [
     }
 ];
 
-export const SETTINGS_PAGE_DESCRIPTION_GETTERS: Record<SettingsPaneId, () => string> = {
-    general: () => strings.settings.pageDescriptions.general,
-    'vault-filters': () => strings.settings.pageDescriptions.vaultFilters,
-    'appearance-behavior': () => strings.settings.pageDescriptions.appearanceBehavior,
-    'navigation-pane': () => strings.settings.pageDescriptions.navigationPane,
-    shortcuts: () => strings.settings.pageDescriptions.shortcuts,
-    calendar: () => strings.settings.pageDescriptions.calendar,
-    folders: () => strings.settings.pageDescriptions.foldersAndFolderNotes,
-    'tags-properties': () => strings.settings.pageDescriptions.tagsProperties,
-    'file-operations': () => strings.settings.pageDescriptions.fileOperations,
-    'list-pane': () => strings.settings.pageDescriptions.listPane,
-    frontmatter: () => strings.settings.pageDescriptions.frontmatter,
-    notes: () => strings.settings.pageDescriptions.notes,
-    'icon-packs': () => strings.settings.pageDescriptions.iconPacks,
-    advanced: () => strings.settings.pageDescriptions.advanced
-};
-
 // Native pages use createDefinitions; legacy pages use render.
 const SETTINGS_PANE_DEFINITIONS: SettingsPaneDefinition[] = [
-    { id: 'general', getLabel: () => strings.settings.sections.general, render: renderGeneralTab },
+    {
+        id: 'general',
+        getLabel: () => strings.settings.index.label,
+        getDescription: () => strings.settings.index.description,
+        render: renderGeneralTab
+    },
     {
         id: 'vault-filters',
-        getLabel: () => strings.settings.sections.vaultFilters,
+        getLabel: () => strings.settings.pages.displayFilters.label,
+        getDescription: () => strings.settings.pages.displayFilters.description,
         render: renderDisplayFiltersTab,
         createDefinitions: createDisplayFiltersSettingDefinitions
     },
     {
         id: 'appearance-behavior',
-        getLabel: () => strings.settings.sections.appearanceBehavior,
+        getLabel: () => strings.settings.pages.appearanceAndBehavior.label,
+        getDescription: () => strings.settings.pages.appearanceAndBehavior.description,
         render: renderAppearanceBehaviorTab,
         createDefinitions: createAppearanceBehaviorSettingDefinitions
     },
     {
         id: 'navigation-pane',
-        getLabel: () => strings.settings.sections.navigationPane,
+        getLabel: () => strings.settings.pages.navigationPane.label,
+        getDescription: () => strings.settings.pages.navigationPane.description,
         render: renderNavigationPaneTab,
         createDefinitions: createNavigationPaneSettingDefinitions
     },
     {
         id: 'shortcuts',
-        getLabel: () => strings.settings.sections.shortcutsAndRecentFiles,
+        getLabel: () => strings.settings.pages.shortcutsAndRecentFiles.label,
+        getDescription: () => strings.settings.pages.shortcutsAndRecentFiles.description,
         render: renderShortcutsTab,
         createDefinitions: createShortcutsSettingDefinitions
     },
     {
         id: 'folders',
-        getLabel: () => strings.settings.sections.foldersAndFolderNotes,
+        getLabel: () => strings.settings.pages.foldersAndFolderNotes.label,
+        getDescription: () => strings.settings.pages.foldersAndFolderNotes.description,
         render: renderFoldersAndFolderNotesTab,
         createDefinitions: createFoldersAndFolderNotesSettingDefinitions
     },
     {
         id: 'tags-properties',
-        getLabel: () => strings.settings.sections.tagsAndProperties,
+        getLabel: () => strings.settings.pages.tagsAndProperties.label,
+        getDescription: () => strings.settings.pages.tagsAndProperties.description,
         render: renderTagsPropertiesTab,
         createDefinitions: createTagsPropertiesSettingDefinitions
     },
     {
         id: 'list-pane',
-        getLabel: () => strings.settings.sections.listPane,
+        getLabel: () => strings.settings.pages.listPane.label,
+        getDescription: () => strings.settings.pages.listPane.description,
         render: renderListPaneTab,
         createDefinitions: createListPaneSettingDefinitions
     },
     {
         id: 'file-operations',
-        getLabel: () => strings.settings.sections.fileOperations,
+        getLabel: () => strings.settings.pages.fileOperations.label,
+        getDescription: () => strings.settings.pages.fileOperations.description,
         render: renderFilesTab,
         createDefinitions: createFilesSettingDefinitions
     },
     {
         id: 'frontmatter',
-        getLabel: () => strings.settings.groups.notes.frontmatter,
+        getLabel: () => strings.settings.pages.frontmatterFields.label,
+        getDescription: () => strings.settings.pages.frontmatterFields.description,
         render: renderFrontmatterTab,
         createDefinitions: createFrontmatterSettingDefinitions
     },
     {
         id: 'notes',
-        getLabel: () => strings.settings.sections.notes,
+        getLabel: () => strings.settings.pages.fileDisplay.label,
+        getDescription: () => strings.settings.pages.fileDisplay.description,
         render: renderNotesTab,
         createDefinitions: createNotesSettingDefinitions
     },
     {
         id: 'calendar',
-        getLabel: () => strings.settings.sections.calendar,
+        getLabel: () => strings.settings.pages.calendar.label,
+        getDescription: () => strings.settings.pages.calendar.description,
         render: renderCalendarTab,
         createDefinitions: createCalendarSettingDefinitions
     },
     {
         id: 'icon-packs',
-        getLabel: () => strings.settings.sections.icons,
+        getLabel: () => strings.settings.pages.iconPacks.label,
+        getDescription: () => strings.settings.pages.iconPacks.description,
         render: renderIconPacksTab,
         createDefinitions: createIconPacksSettingDefinitions
     },
     {
         id: 'advanced',
-        getLabel: () => strings.settings.sections.advanced,
+        getLabel: () => strings.settings.pages.advanced.label,
+        getDescription: () => strings.settings.pages.advanced.description,
         render: renderAdvancedTab,
         createDefinitions: createAdvancedSettingDefinitions
     }

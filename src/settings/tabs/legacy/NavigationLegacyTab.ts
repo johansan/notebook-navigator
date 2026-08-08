@@ -68,12 +68,12 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     const createGroup = createSettingGroupFactory(containerEl);
     const behaviorGroup = createGroup(undefined);
-    const collapseGroup = createGroup(strings.settings.groups.navigation.collapseItems);
-    const dragAndDropGroup = Platform.isMobile ? null : createGroup(strings.settings.groups.navigation.dragAndDrop);
-    const rainbowGroup = createGroup(createRainbowHeading(strings.settings.groups.navigation.rainbowColors));
-    const noteCountsGroup = createGroup(strings.settings.groups.navigation.noteCounts);
-    const bannerGroup = createGroup(strings.settings.groups.navigation.banner);
-    const appearanceGroup = createGroup(strings.settings.groups.navigation.appearance);
+    const collapseGroup = createGroup(strings.settings.pages.navigationPane.groups.collapseItems);
+    const dragAndDropGroup = Platform.isMobile ? null : createGroup(strings.settings.pages.navigationPane.groups.dragAndDrop);
+    const rainbowGroup = createGroup(createRainbowHeading(strings.settings.pages.navigationPane.groups.rainbowColors));
+    const noteCountsGroup = createGroup(strings.settings.pages.navigationPane.groups.fileCounts);
+    const bannerGroup = createGroup(strings.settings.pages.navigationPane.groups.banner);
+    const appearanceGroup = createGroup(strings.settings.pages.navigationPane.groups.appearance);
 
     renderToolbarButtonsSetting(createSetting => behaviorGroup.addSetting(createSetting), plugin, 'navigation');
 

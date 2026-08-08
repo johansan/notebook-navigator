@@ -85,7 +85,7 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
 
     addSettingSyncModeToggle({ setting: folderSortOrderSetting, plugin, settingId: 'folderSortOrder' });
 
-    const folderNotesGroup = createGroup(strings.settings.sections.folderNotes);
+    const folderNotesGroup = createGroup(strings.settings.pages.foldersAndFolderNotes.groups.folderNotes);
 
     let folderNoteFilesGroupRootEl: HTMLElement | null = null;
     const enableFolderNotesSetting = folderNotesGroup.addSetting(setting => {
@@ -167,7 +167,7 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
             })
         );
 
-    const folderNoteFilesGroup = createGroup(strings.settings.sections.folderNoteFiles);
+    const folderNoteFilesGroup = createGroup(strings.settings.pages.foldersAndFolderNotes.groups.folderNoteFiles);
     folderNoteFilesGroupRootEl = folderNoteFilesGroup.rootEl;
     setElementVisible(folderNoteFilesGroupRootEl, plugin.settings.enableFolderNotes);
 

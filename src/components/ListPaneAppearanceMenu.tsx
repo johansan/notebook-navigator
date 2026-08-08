@@ -245,7 +245,7 @@ export function showListPaneAppearanceMenu({
 
     menu.addSeparator();
     menu.addItem(item => {
-        item.setTitle(strings.settings.sections.notes).setIcon('lucide-file-text').setDisabled(true);
+        item.setTitle(strings.settings.pages.fileDisplay.label).setIcon('lucide-file-text').setDisabled(true);
     });
 
     const storedTitleRows = storedFields?.titleRows;

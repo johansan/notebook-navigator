@@ -74,6 +74,9 @@ export const STRINGS_IT = {
         shortcutsHeader: 'Scorciatoie', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'File recenti', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Proprietà',
+        folders: 'Cartelle',
+        tags: 'Tag',
+        calendar: 'Calendario',
         reorderRootFoldersTitle: 'Riordina navigazione',
         reorderRootFoldersHint: 'Usa frecce o trascina per riordinare',
         vaultRootLabel: 'Vault',
@@ -1007,95 +1010,136 @@ export const STRINGS_IT = {
             exportSuccess: 'Report metadati falliti esportato in: {filename}',
             exportFailed: 'Impossibile esportare report metadati'
         },
-        sections: {
-            general: 'Generale',
-            vaultFilters: 'Filtri di visualizzazione',
-            appearanceBehavior: 'Aspetto e comportamento',
-            navigationPane: 'Pannello di navigazione',
-            calendar: 'Calendario',
-            fileOperations: 'Operazioni sui file',
-            icons: 'Pacchetti icone',
-            folders: 'Cartelle',
-            folderNotes: 'Note cartella',
-            folderNoteFiles: 'File note cartella',
-            foldersAndFolderNotes: 'Cartelle e note cartella',
-            tagsAndProperties: 'Tag e proprietà',
-            tags: 'Tag',
-            listPane: 'Pannello lista',
-            notes: 'Visualizzazione file',
-            shortcutsAndRecentFiles: 'Scorciatoie e file recenti',
-            advanced: 'Avanzate'
+        index: {
+            label: 'Generale',
+            description: 'Note di rilascio, supporto, profilo vault, tipi di file e chiavi delle proprietà.',
+            groups: {
+                vaultSetup: 'Configurazione vault'
+            }
         },
         pageGroups: {
             configuration: 'Configurazione',
-            navigationAndContent: 'Pannello di navigazione',
-            notesAndLists: 'Pannello lista',
+            navigationPane: 'Pannello di navigazione',
+            listPane: 'Pannello lista',
             calendarAndTools: 'Calendario e strumenti'
         },
-        pageDescriptions: {
-            general: 'Note di rilascio, supporto, profilo vault, tipi di file e chiavi delle proprietà.',
-            vaultFilters: 'Cartelle, tag, file, tag dei file e regole delle proprietà nascosti.',
-            appearanceBehavior: 'Comportamento, navigazione da tastiera, pulsanti del mouse, aspetto e formattazione.',
-            navigationPane: 'Layout, aspetto, conteggio file, comportamento del collasso e colori arcobaleno.',
-            shortcuts: 'Visibilità delle scorciatoie, badge, file recenti ed elementi fissati.',
-            calendar: 'Visualizzazione calendario, note data, modelli, locale e posizionamento della barra laterale.',
-            fileOperations: 'Modelli, conferme di eliminazione, allegati e comportamento in caso di conflitti di spostamento dei file.',
-            foldersAndFolderNotes: 'Visualizzazione cartelle, note cartella, modelli di note cartella e comportamento delle note cartella.',
-            tagsProperties: 'Sezioni tag e proprietà, icone, ordinamento, ambito ed ereditarietà.',
-            listPane: 'Ordinamento, raggruppamento, modalità lista, note fissate e anteprime dei disegni.',
-            frontmatter: 'Campi frontmatter per nomi visualizzati, timestamp, icone e colori.',
-            notes: 'Titoli, testo anteprima, immagini in evidenza, tag, proprietà, date, conteggio parole e conteggio caratteri.',
-            iconPacks: 'Icone interfaccia, icone file e gestione pacchetti icone.',
-            advanced: 'Diagnostica, pulizia metadati, importazione/esportazione e ripristino.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Configurazione vault',
-                templates: 'Modelli',
-                behavior: 'Comportamento',
-                startup: 'Avvio',
-                keyboardNavigation: 'Navigazione da tastiera',
-                mouseButtons: 'Pulsanti del mouse',
-                view: 'Aspetto',
-                icons: 'Icone',
-                desktopAppearance: 'Aspetto desktop',
-                mobileAppearance: 'Aspetto mobile',
-                formatting: 'Formattazione'
+        pages: {
+            displayFilters: {
+                label: 'Filtri di visualizzazione',
+                description: 'Cartelle, tag, file, tag dei file e regole delle proprietà nascosti.'
+            },
+            appearanceAndBehavior: {
+                label: 'Aspetto e comportamento',
+                description: 'Comportamento, navigazione da tastiera, pulsanti del mouse, aspetto e formattazione.',
+                groups: {
+                    startup: 'Avvio',
+                    keyboardNavigation: 'Navigazione da tastiera',
+                    mouseButtons: 'Pulsanti del mouse',
+                    desktopAppearance: 'Aspetto desktop',
+                    mobileAppearance: 'Aspetto mobile',
+                    appearance: 'Aspetto',
+                    icons: 'Icone',
+                    formatting: 'Formattazione'
+                }
+            },
+            navigationPane: {
+                label: 'Pannello di navigazione',
+                description: 'Layout, aspetto, conteggio file, comportamento del collasso e colori arcobaleno.',
+                groups: {
+                    appearance: 'Aspetto',
+                    banner: 'Banner',
+                    collapseItems: 'Comprimi elementi',
+                    dragAndDrop: 'Trascina e rilascia',
+                    fileCounts: 'Conteggi file',
+                    rainbowColors: 'Colori arcobaleno'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Scorciatoie e file recenti',
+                description: 'Visibilità delle scorciatoie, badge, file recenti ed elementi fissati.',
+                groups: {
+                    shortcuts: 'Scorciatoie',
+                    recentFiles: 'File recenti'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Cartelle e note cartella',
+                description: 'Visualizzazione cartelle, note cartella, modelli di note cartella e comportamento delle note cartella.',
+                groups: {
+                    folders: 'Cartelle',
+                    folderNotes: 'Note cartella',
+                    folderNoteFiles: 'File note cartella'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tag e proprietà',
+                description: 'Sezioni tag e proprietà, icone, ordinamento, ambito ed ereditarietà.',
+                groups: {
+                    tags: 'Tag',
+                    properties: 'Proprietà'
+                }
+            },
+            listPane: {
+                label: 'Pannello lista',
+                description: 'Ordinamento, raggruppamento, modalità lista, note fissate e anteprime dei disegni.',
+                groups: {
+                    appearance: 'Aspetto',
+                    sortAndGroup: 'Ordinamento e raggruppamento',
+                    groupHeaders: 'Intestazioni di gruppo',
+                    manualSort: 'Ordinamento manuale',
+                    pinnedNotes: 'Note fissate',
+                    behavior: 'Comportamento',
+                    drawingPreviews: 'Anteprime dei disegni'
+                }
+            },
+            fileOperations: {
+                label: 'Operazioni sui file',
+                description: 'Modelli, conferme di eliminazione, allegati e comportamento in caso di conflitti di spostamento dei file.',
+                groups: {
+                    templates: 'Modelli'
+                }
+            },
+            frontmatterFields: {
+                label: 'Campi frontmatter',
+                description: 'Campi frontmatter per nomi visualizzati, timestamp, icone e colori.'
+            },
+            fileDisplay: {
+                label: 'Visualizzazione file',
+                description: 'Titoli, testo anteprima, immagini in evidenza, tag, proprietà, date, conteggio parole e conteggio caratteri.',
+                groups: {
+                    icon: 'Icona',
+                    title: 'Titolo',
+                    previewText: 'Testo anteprima',
+                    featureImage: 'Immagine in evidenza',
+                    tags: 'Tag',
+                    properties: 'Proprietà',
+                    tasks: 'Attività',
+                    date: 'Data',
+                    parentFolder: 'Cartella superiore',
+                    wordAndCharacterCount: 'Conteggio parole e caratteri'
+                }
+            },
+            calendar: {
+                label: 'Calendario',
+                description: 'Visualizzazione calendario, note data, modelli, locale e posizionamento della barra laterale.',
+                groups: {
+                    appearance: 'Aspetto',
+                    leftSidebar: 'Barra laterale sinistra',
+                    calendarIntegration: 'Integrazione calendario',
+                    rightSidebar: 'Barra laterale destra'
+                }
+            },
+            iconPacks: {
+                label: 'Pacchetti icone',
+                description: 'Icone interfaccia, icone file e gestione pacchetti icone.'
             },
             advanced: {
-                maintenance: 'Manutenzione',
-                resetSettings: 'Reimposta impostazioni'
-            },
-            navigation: {
-                appearance: 'Aspetto',
-                banner: 'Banner',
-                collapseItems: 'Comprimi elementi',
-                dragAndDrop: 'Trascina e rilascia',
-                noteCounts: 'Conteggi file',
-                rainbowColors: 'Colori arcobaleno',
-                leftSidebar: 'Barra laterale sinistra',
-                calendarIntegration: 'Integrazione calendario'
-            },
-            list: {
-                display: 'Aspetto',
-                sortAndGroup: 'Ordinamento e raggruppamento',
-                groupHeaders: 'Intestazioni di gruppo',
-                manualSort: 'Ordinamento manuale',
-                pinnedNotes: 'Note fissate',
-                drawingPreviews: 'Anteprime dei disegni'
-            },
-            notes: {
-                frontmatter: 'Campi frontmatter',
-                tasks: 'Attività',
-                icon: 'Icona',
-                title: 'Titolo',
-                previewText: 'Testo anteprima',
-                featureImage: 'Immagine in evidenza',
-                tags: 'Tag',
-                properties: 'Proprietà',
-                date: 'Data',
-                parentFolder: 'Cartella superiore',
-                wordCount: 'Conteggio parole e caratteri'
+                label: 'Avanzate',
+                description: 'Diagnostica, pulizia metadati, importazione/esportazione e ripristino.',
+                groups: {
+                    maintenance: 'Manutenzione',
+                    resetSettings: 'Reimposta impostazioni'
+                }
             }
         },
         syncMode: {

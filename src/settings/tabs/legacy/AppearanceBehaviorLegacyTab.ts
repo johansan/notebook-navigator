@@ -143,7 +143,7 @@ function renderBehaviorSettings(context: SettingsTabContext, createGroup: Create
 
 function renderStartupSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const startupGroup = createGroup(strings.settings.groups.general.startup);
+    const startupGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.startup);
 
     startupGroup.addSetting(setting => {
         setting
@@ -279,7 +279,7 @@ function renderStartupSettings(context: SettingsTabContext, createGroup: CreateS
 
 function renderKeyboardNavigationSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const keyboardNavigationGroup = createGroup(strings.settings.groups.general.keyboardNavigation);
+    const keyboardNavigationGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.keyboardNavigation);
 
     keyboardNavigationGroup.addSetting(setting => {
         setting
@@ -358,7 +358,7 @@ function renderKeyboardNavigationSettings(context: SettingsTabContext, createGro
 
 function renderMouseButtonSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const mouseButtonsGroup = createGroup(strings.settings.groups.general.mouseButtons);
+    const mouseButtonsGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.mouseButtons);
     const normalizeMouseBackForwardAction = (value: string): MouseBackForwardAction => {
         if (value === 'singlePaneSwitch' || value === 'history') {
             return value;
@@ -494,7 +494,7 @@ function renderDualPaneSettings(context: SettingsTabContext, group: ReturnType<C
 
 function renderDesktopAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const desktopAppearanceGroup = createGroup(strings.settings.groups.general.desktopAppearance);
+    const desktopAppearanceGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.desktopAppearance);
 
     renderDualPaneSettings(context, desktopAppearanceGroup);
 
@@ -554,7 +554,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
 
 function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const mobileAppearanceGroup = createGroup(strings.settings.groups.general.mobileAppearance);
+    const mobileAppearanceGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.mobileAppearance);
 
     // Tablets support the dual pane layout, so they get the same pane settings as desktop
     if (Platform.isTablet) {
@@ -579,7 +579,7 @@ function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup
 
 function renderViewSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin } = context;
-    const viewGroup = createGroup(strings.settings.groups.general.view);
+    const viewGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.appearance);
 
     const initialUIScalePercent = scaleToPercent(plugin.getUIScale());
     const uiScaleSetting = viewGroup.addSetting(setting => {
@@ -633,7 +633,7 @@ function renderViewSettings(context: SettingsTabContext, createGroup: CreateSett
 
 function renderIconSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin, addToggleSetting } = context;
-    const iconsGroup = createGroup(strings.settings.groups.general.icons);
+    const iconsGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.icons);
 
     iconsGroup.addSetting(setting => {
         setting.setName(strings.settings.items.interfaceIcons.name).setDesc(strings.settings.items.interfaceIcons.desc);
@@ -674,7 +674,7 @@ function renderIconSettings(context: SettingsTabContext, createGroup: CreateSett
 
 function renderFormattingSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {
     const { plugin, configureDebouncedTextSetting } = context;
-    const formattingGroup = createGroup(strings.settings.groups.general.formatting);
+    const formattingGroup = createGroup(strings.settings.pages.appearanceAndBehavior.groups.formatting);
 
     const dateFormatSetting = formattingGroup.addSetting(setting => {
         configureDebouncedTextSetting(

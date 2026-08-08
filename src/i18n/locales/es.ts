@@ -73,6 +73,9 @@ export const STRINGS_ES = {
         shortcutsHeader: 'Accesos directos',
         recentFilesHeader: 'Archivos recientes', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Propiedades',
+        folders: 'Carpetas',
+        tags: 'Etiquetas',
+        calendar: 'Calendario',
         reorderRootFoldersTitle: 'Reordenar navegación',
         reorderRootFoldersHint: 'Usa flechas o arrastra para reordenar',
         vaultRootLabel: 'Bóveda',
@@ -1012,95 +1015,138 @@ export const STRINGS_ES = {
             exportSuccess: 'Informe de metadatos fallidos exportado a: {filename}',
             exportFailed: 'Error al exportar el informe de metadatos'
         },
-        sections: {
-            general: 'General',
-            vaultFilters: 'Filtros de visualización',
-            appearanceBehavior: 'Apariencia y comportamiento',
-            navigationPane: 'Panel de navegación',
-            calendar: 'Calendario',
-            fileOperations: 'Operaciones de archivos',
-            icons: 'Paquetes de iconos',
-            folders: 'Carpetas',
-            folderNotes: 'Notas de carpeta',
-            folderNoteFiles: 'Archivos de notas de carpeta',
-            foldersAndFolderNotes: 'Carpetas y notas de carpeta',
-            tagsAndProperties: 'Etiquetas y propiedades',
-            tags: 'Etiquetas',
-            listPane: 'Panel de lista',
-            notes: 'Visualización de archivos',
-            shortcutsAndRecentFiles: 'Accesos directos y archivos recientes',
-            advanced: 'Avanzado'
+        index: {
+            label: 'General',
+            description: 'Notas de versión, soporte, perfil de bóveda, tipos de archivo y claves de propiedades.',
+            groups: {
+                vaultSetup: 'Configuración de la bóveda'
+            }
         },
         pageGroups: {
             configuration: 'Configuración',
-            navigationAndContent: 'Panel de navegación',
-            notesAndLists: 'Panel de lista',
+            navigationPane: 'Panel de navegación',
+            listPane: 'Panel de lista',
             calendarAndTools: 'Calendario y herramientas'
         },
-        pageDescriptions: {
-            general: 'Notas de versión, soporte, perfil de bóveda, tipos de archivo y claves de propiedades.',
-            vaultFilters: 'Carpetas, etiquetas, archivos, etiquetas de archivo y reglas de propiedades ocultos.',
-            appearanceBehavior: 'Comportamiento, navegación con teclado, botones del ratón, apariencia y formato.',
-            navigationPane: 'Diseño, apariencia, recuento de archivos, comportamiento de colapso y colores arcoíris.',
-            shortcuts: 'Visibilidad de accesos directos, insignias, archivos recientes y elementos fijados.',
-            calendar: 'Visualización del calendario, notas de fecha, plantillas, configuración regional y ubicación de la barra lateral.',
-            fileOperations: 'Plantillas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
-            foldersAndFolderNotes: 'Visualización de carpetas, notas de carpeta, plantillas y comportamiento de notas de carpeta.',
-            tagsProperties: 'Secciones de etiquetas y propiedades, iconos, ordenación, alcance y herencia.',
-            listPane: 'Ordenación, agrupación, modos de lista, notas fijadas y vistas previas de dibujos.',
-            frontmatter: 'Campos de frontmatter para nombres mostrados, marcas de tiempo, iconos y colores.',
-            notes: 'Títulos, texto de vista previa, imágenes destacadas, etiquetas, propiedades, fechas, recuento de palabras y recuento de caracteres.',
-            iconPacks: 'Iconos de interfaz, iconos de archivos y gestión de paquetes de iconos.',
-            advanced: 'Diagnósticos, limpieza de metadatos, importación/exportación y restablecimiento.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Configuración de la bóveda',
-                templates: 'Plantillas',
-                behavior: 'Comportamiento',
-                startup: 'Inicio',
-                keyboardNavigation: 'Navegación con teclado',
-                mouseButtons: 'Botones del ratón',
-                view: 'Apariencia',
-                icons: 'Iconos',
-                desktopAppearance: 'Apariencia de escritorio',
-                mobileAppearance: 'Apariencia móvil',
-                formatting: 'Formato'
+        pages: {
+            displayFilters: {
+                label: 'Filtros de visualización',
+                description: 'Carpetas, etiquetas, archivos, etiquetas de archivo y reglas de propiedades ocultos.'
+            },
+            appearanceAndBehavior: {
+                label: 'Apariencia y comportamiento',
+                description: 'Comportamiento, navegación con teclado, botones del ratón, apariencia y formato.',
+                groups: {
+                    startup: 'Inicio',
+                    keyboardNavigation: 'Navegación con teclado',
+                    mouseButtons: 'Botones del ratón',
+                    desktopAppearance: 'Apariencia de escritorio',
+                    mobileAppearance: 'Apariencia móvil',
+                    appearance: 'Apariencia',
+                    icons: 'Iconos',
+                    formatting: 'Formato'
+                }
+            },
+            navigationPane: {
+                label: 'Panel de navegación',
+                description: 'Diseño, apariencia, recuento de archivos, comportamiento de colapso y colores arcoíris.',
+                groups: {
+                    appearance: 'Apariencia',
+                    banner: 'Banner',
+                    collapseItems: 'Contraer elementos',
+                    dragAndDrop: 'Arrastrar y soltar',
+                    fileCounts: 'Conteos de archivos',
+                    rainbowColors: 'Colores arcoíris'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Accesos directos y archivos recientes',
+                description: 'Visibilidad de accesos directos, insignias, archivos recientes y elementos fijados.',
+                groups: {
+                    shortcuts: 'Accesos directos',
+                    recentFiles: 'Archivos recientes'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Carpetas y notas de carpeta',
+                description: 'Visualización de carpetas, notas de carpeta, plantillas y comportamiento de notas de carpeta.',
+                groups: {
+                    folders: 'Carpetas',
+                    folderNotes: 'Notas de carpeta',
+                    folderNoteFiles: 'Archivos de notas de carpeta'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Etiquetas y propiedades',
+                description: 'Secciones de etiquetas y propiedades, iconos, ordenación, alcance y herencia.',
+                groups: {
+                    tags: 'Etiquetas',
+                    properties: 'Propiedades'
+                }
+            },
+            listPane: {
+                label: 'Panel de lista',
+                description: 'Ordenación, agrupación, modos de lista, notas fijadas y vistas previas de dibujos.',
+                groups: {
+                    appearance: 'Apariencia',
+                    sortAndGroup: 'Orden y agrupación',
+                    groupHeaders: 'Encabezados de grupo',
+                    manualSort: 'Orden manual',
+                    pinnedNotes: 'Notas fijadas',
+                    behavior: 'Comportamiento',
+                    drawingPreviews: 'Vistas previas de dibujos'
+                }
+            },
+            fileOperations: {
+                label: 'Operaciones de archivos',
+                description: 'Plantillas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
+                groups: {
+                    templates: 'Plantillas'
+                }
+            },
+            frontmatterFields: {
+                label: 'Campos de frontmatter',
+                description: 'Campos de frontmatter para nombres mostrados, marcas de tiempo, iconos y colores.'
+            },
+            fileDisplay: {
+                label: 'Visualización de archivos',
+                description:
+                    'Títulos, texto de vista previa, imágenes destacadas, etiquetas, propiedades, fechas, recuento de palabras y recuento de caracteres.',
+                groups: {
+                    icon: 'Icono',
+                    title: 'Título',
+                    previewText: 'Texto de vista previa',
+                    featureImage: 'Imagen destacada',
+                    tags: 'Etiquetas',
+                    properties: 'Propiedades',
+                    tasks: 'Tareas',
+                    date: 'Fecha',
+                    parentFolder: 'Carpeta superior',
+                    wordAndCharacterCount: 'Recuento de palabras y caracteres'
+                }
+            },
+            calendar: {
+                label: 'Calendario',
+                description:
+                    'Visualización del calendario, notas de fecha, plantillas, configuración regional y ubicación de la barra lateral.',
+                groups: {
+                    appearance: 'Apariencia',
+                    leftSidebar: 'Barra lateral izquierda',
+                    calendarIntegration: 'Integración de calendario',
+                    rightSidebar: 'Barra lateral derecha'
+                }
+            },
+            iconPacks: {
+                label: 'Paquetes de iconos',
+                description: 'Iconos de interfaz, iconos de archivos y gestión de paquetes de iconos.'
             },
             advanced: {
-                maintenance: 'Mantenimiento',
-                resetSettings: 'Restablecer ajustes'
-            },
-            navigation: {
-                appearance: 'Apariencia',
-                banner: 'Banner',
-                collapseItems: 'Contraer elementos',
-                dragAndDrop: 'Arrastrar y soltar',
-                noteCounts: 'Conteos de archivos',
-                rainbowColors: 'Colores arcoíris',
-                leftSidebar: 'Barra lateral izquierda',
-                calendarIntegration: 'Integración de calendario'
-            },
-            list: {
-                display: 'Apariencia',
-                sortAndGroup: 'Orden y agrupación',
-                groupHeaders: 'Encabezados de grupo',
-                manualSort: 'Orden manual',
-                pinnedNotes: 'Notas fijadas',
-                drawingPreviews: 'Vistas previas de dibujos'
-            },
-            notes: {
-                frontmatter: 'Campos de frontmatter',
-                tasks: 'Tareas',
-                icon: 'Icono',
-                title: 'Título',
-                previewText: 'Texto de vista previa',
-                featureImage: 'Imagen destacada',
-                tags: 'Etiquetas',
-                properties: 'Propiedades',
-                date: 'Fecha',
-                parentFolder: 'Carpeta superior',
-                wordCount: 'Recuento de palabras y caracteres'
+                label: 'Avanzado',
+                description: 'Diagnósticos, limpieza de metadatos, importación/exportación y restablecimiento.',
+                groups: {
+                    maintenance: 'Mantenimiento',
+                    resetSettings: 'Restablecer ajustes'
+                }
             }
         },
         syncMode: {

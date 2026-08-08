@@ -120,7 +120,7 @@ export function renderCalendarDisplaySections(
             })
         );
 
-    const appearanceGroup = createGroup(strings.settings.groups.navigation.appearance);
+    const appearanceGroup = createGroup(strings.settings.pages.calendar.groups.appearance);
     const momentApi = getMomentApi();
     const localeOptions = momentApi ? [...momentApi.locales()].sort((a, b) => a.localeCompare(b)) : [];
     const systemLocale = typeof navigator !== 'undefined' ? (navigator.language ?? '').toLowerCase() : '';
@@ -262,7 +262,7 @@ export function renderCalendarDisplaySections(
             })
         );
 
-    const leftSidebarGroup = createGroup(strings.settings.groups.navigation.leftSidebar);
+    const leftSidebarGroup = createGroup(strings.settings.pages.calendar.groups.leftSidebar);
     const calendarLeftPlacementSetting = leftSidebarGroup.addSetting(setting => {
         setting.setName(strings.settings.items.calendarLeftPlacement.name).setDesc(strings.settings.items.calendarLeftPlacement.desc);
     });
@@ -306,7 +306,7 @@ export function renderCalendarDisplaySections(
 
     addSettingSyncModeToggle({ setting: calendarWeeksToShowSetting, plugin, settingId: 'calendarWeeksToShow' });
 
-    const rightSidebarGroup = createGroup(strings.settings.items.calendarPlacement.options.rightSidebar);
+    const rightSidebarGroup = createGroup(strings.settings.pages.calendar.groups.rightSidebar);
 
     rightSidebarGroup
         .addSetting(setting => {

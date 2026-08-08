@@ -53,7 +53,7 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.calendarShowHiddenItems.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.appearance, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.appearance, [
             createRenderDefinition({
                 name: strings.settings.items.calendarLocale.name,
                 desc: strings.settings.items.calendarLocale.desc,
@@ -106,7 +106,7 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.calendarShowQuarter.desc
             })
         ]),
-        createGroupDefinition(strings.settings.groups.navigation.leftSidebar, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.leftSidebar, [
             createRenderDefinition({
                 name: strings.settings.items.calendarLeftPlacement.name,
                 desc: strings.settings.items.calendarLeftPlacement.desc,
@@ -120,7 +120,7 @@ export function createCalendarSettingDefinitions(context: SettingsTabContext): S
                 render: setting => renderCalendarWeeksToShowSetting(setting, context)
             })
         ]),
-        createGroupDefinition(strings.settings.items.calendarPlacement.options.rightSidebar, [
+        createGroupDefinition(strings.settings.pages.calendar.groups.rightSidebar, [
             createToggleDefinition('calendarShowYearCalendar', {
                 name: strings.settings.items.calendarShowYearCalendar.name,
                 desc: strings.settings.items.calendarShowYearCalendar.desc

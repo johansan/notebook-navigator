@@ -34,12 +34,7 @@ import { createSettingGroupFactory } from './settings/settingGroups';
 import { runAsyncAction } from './utils/async';
 import { NOTEBOOK_NAVIGATOR_ICON_ID } from './constants/notebookNavigatorIcon';
 import { SettingsDiagnosticsController } from './settings/SettingsDiagnosticsController';
-import {
-    SETTINGS_PAGE_DESCRIPTION_GETTERS,
-    SETTINGS_PAGE_GROUP_DEFINITIONS,
-    SETTINGS_PANE_DEFINITION_MAP,
-    type SettingsPaneId
-} from './settings/SettingsPaneDefinitions';
+import { SETTINGS_PAGE_GROUP_DEFINITIONS, SETTINGS_PANE_DEFINITION_MAP, type SettingsPaneId } from './settings/SettingsPaneDefinitions';
 import {
     applyAppearanceBehaviorControlValue,
     getAppearanceBehaviorControlValue,
@@ -425,7 +420,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
 
         const name = definition.getLabel();
         const setting = addSetting(setting => {
-            setting.setName(name).setDesc(SETTINGS_PAGE_DESCRIPTION_GETTERS[tabId]());
+            setting.setName(name).setDesc(definition.getDescription());
             setting.addExtraButton(button => {
                 button.setIcon('lucide-chevron-right').onClick(() => this.openLegacySettingsPage(tabId));
                 button.extraSettingsEl.setAttr('aria-label', name);
@@ -603,7 +598,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
     private createNativeSettingsPageDefinition(tabId: SettingsPaneId): SettingDefinitionPage {
         const definition = SETTINGS_PANE_DEFINITION_MAP.get(tabId);
         const name = definition?.getLabel() ?? tabId;
-        const desc = SETTINGS_PAGE_DESCRIPTION_GETTERS[tabId]();
+        const desc = definition?.getDescription() ?? '';
         const definitionItems = definition?.createDefinitions?.(this.createTabContext(this.containerEl));
         if (definitionItems) {
             let pageContainerEl: HTMLElement | null = null;

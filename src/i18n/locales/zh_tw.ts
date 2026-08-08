@@ -73,6 +73,9 @@ export const STRINGS_ZH_TW = {
         shortcutsHeader: '捷徑',
         recentFilesHeader: '最近檔案', // Header label for recent files section in navigation pane (English: Recent files)
         properties: '屬性',
+        folders: '資料夾',
+        tags: '標籤',
+        calendar: '導覽日曆',
         reorderRootFoldersTitle: '重新排列導覽',
         reorderRootFoldersHint: '使用方向鍵或拖曳來重新排列',
         vaultRootLabel: '保險庫',
@@ -1003,95 +1006,136 @@ export const STRINGS_ZH_TW = {
             exportSuccess: '失敗的中繼資料報告已匯出至：{filename}',
             exportFailed: '匯出中繼資料報告失敗'
         },
-        sections: {
-            general: '一般',
-            vaultFilters: '顯示篩選器',
-            appearanceBehavior: '外觀與行為',
-            navigationPane: '導覽窗格',
-            calendar: '導覽日曆',
-            fileOperations: '檔案操作',
-            icons: '圖示包',
-            folders: '資料夾',
-            folderNotes: '資料夾筆記',
-            folderNoteFiles: '資料夾筆記檔案',
-            foldersAndFolderNotes: '資料夾與資料夾筆記',
-            tagsAndProperties: '標籤與屬性',
-            tags: '標籤',
-            listPane: '列表窗格',
-            notes: '檔案顯示',
-            shortcutsAndRecentFiles: '快捷方式與最近檔案',
-            advanced: '進階'
+        index: {
+            label: '一般',
+            description: '發行說明、支援、保險庫設定檔、檔案類型與屬性鍵。',
+            groups: {
+                vaultSetup: '保險庫設定'
+            }
         },
         pageGroups: {
             configuration: '設定',
-            navigationAndContent: '導覽窗格',
-            notesAndLists: '列表窗格',
+            navigationPane: '導覽窗格',
+            listPane: '列表窗格',
             calendarAndTools: '日曆與工具'
         },
-        pageDescriptions: {
-            general: '發行說明、支援、保險庫設定檔、檔案類型與屬性鍵。',
-            vaultFilters: '隱藏的資料夾、標籤、檔案、檔案標籤與屬性規則。',
-            appearanceBehavior: '行為、鍵盤導覽、滑鼠按鈕、外觀與格式。',
-            navigationPane: '版面配置、外觀、檔案數量、摺疊行為與彩虹顏色。',
-            shortcuts: '快捷方式可見性、徽章、最近檔案與釘選項目。',
-            calendar: '日曆顯示、日期筆記、範本、區域設定與側邊欄位置。',
-            fileOperations: '範本、刪除確認、附件與檔案移動衝突行為。',
-            foldersAndFolderNotes: '資料夾顯示、資料夾筆記、資料夾筆記範本與資料夾筆記行為。',
-            tagsProperties: '標籤與屬性區段、圖示、排序、範圍與繼承。',
-            listPane: '排序、群組、列表模式、釘選筆記與繪圖預覽。',
-            frontmatter: '用於顯示名稱、時間戳記、圖示與顏色的前置中繼資料欄位。',
-            notes: '標題、預覽文字、特色圖片、標籤、屬性、日期、字數與字元數。',
-            iconPacks: '介面圖示、檔案圖示與圖示包管理。',
-            advanced: '診斷、中繼資料清理、匯入/匯出與重設。'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: '保險庫設定',
-                templates: '範本',
-                behavior: '行為',
-                startup: '啟動',
-                keyboardNavigation: '鍵盤導覽',
-                mouseButtons: '滑鼠按鈕',
-                view: '外觀',
-                icons: '圖示',
-                desktopAppearance: '桌面外觀',
-                mobileAppearance: '行動裝置外觀',
-                formatting: '格式'
+        pages: {
+            displayFilters: {
+                label: '顯示篩選器',
+                description: '隱藏的資料夾、標籤、檔案、檔案標籤與屬性規則。'
+            },
+            appearanceAndBehavior: {
+                label: '外觀與行為',
+                description: '行為、鍵盤導覽、滑鼠按鈕、外觀與格式。',
+                groups: {
+                    startup: '啟動',
+                    keyboardNavigation: '鍵盤導覽',
+                    mouseButtons: '滑鼠按鈕',
+                    desktopAppearance: '桌面外觀',
+                    mobileAppearance: '行動裝置外觀',
+                    appearance: '外觀',
+                    icons: '圖示',
+                    formatting: '格式'
+                }
+            },
+            navigationPane: {
+                label: '導覽窗格',
+                description: '版面配置、外觀、檔案數量、摺疊行為與彩虹顏色。',
+                groups: {
+                    appearance: '外觀',
+                    banner: '橫幅',
+                    collapseItems: '摺疊項目',
+                    dragAndDrop: '拖放',
+                    fileCounts: '檔案數',
+                    rainbowColors: '彩虹顏色'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: '快捷方式與最近檔案',
+                description: '快捷方式可見性、徽章、最近檔案與釘選項目。',
+                groups: {
+                    shortcuts: '捷徑',
+                    recentFiles: '最近檔案'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: '資料夾與資料夾筆記',
+                description: '資料夾顯示、資料夾筆記、資料夾筆記範本與資料夾筆記行為。',
+                groups: {
+                    folders: '資料夾',
+                    folderNotes: '資料夾筆記',
+                    folderNoteFiles: '資料夾筆記檔案'
+                }
+            },
+            tagsAndProperties: {
+                label: '標籤與屬性',
+                description: '標籤與屬性區段、圖示、排序、範圍與繼承。',
+                groups: {
+                    tags: '標籤',
+                    properties: '屬性'
+                }
+            },
+            listPane: {
+                label: '列表窗格',
+                description: '排序、群組、列表模式、釘選筆記與繪圖預覽。',
+                groups: {
+                    appearance: '外觀',
+                    sortAndGroup: '排序與分組',
+                    groupHeaders: '群組標題',
+                    manualSort: '手動排序',
+                    pinnedNotes: '釘選筆記',
+                    behavior: '行為',
+                    drawingPreviews: '繪圖預覽'
+                }
+            },
+            fileOperations: {
+                label: '檔案操作',
+                description: '範本、刪除確認、附件與檔案移動衝突行為。',
+                groups: {
+                    templates: '範本'
+                }
+            },
+            frontmatterFields: {
+                label: '前置中繼資料欄位',
+                description: '用於顯示名稱、時間戳記、圖示與顏色的前置中繼資料欄位。'
+            },
+            fileDisplay: {
+                label: '檔案顯示',
+                description: '標題、預覽文字、特色圖片、標籤、屬性、日期、字數與字元數。',
+                groups: {
+                    icon: '圖示',
+                    title: '標題',
+                    previewText: '預覽文字',
+                    featureImage: '特色圖片',
+                    tags: '標籤',
+                    properties: '屬性',
+                    tasks: '任務',
+                    date: '日期',
+                    parentFolder: '父資料夾',
+                    wordAndCharacterCount: '字數與字元數'
+                }
+            },
+            calendar: {
+                label: '導覽日曆',
+                description: '日曆顯示、日期筆記、範本、區域設定與側邊欄位置。',
+                groups: {
+                    appearance: '外觀',
+                    leftSidebar: '左側邊欄',
+                    calendarIntegration: '行事曆整合',
+                    rightSidebar: '右側邊欄'
+                }
+            },
+            iconPacks: {
+                label: '圖示包',
+                description: '介面圖示、檔案圖示與圖示包管理。'
             },
             advanced: {
-                maintenance: '維護',
-                resetSettings: '重設設定'
-            },
-            navigation: {
-                appearance: '外觀',
-                banner: '橫幅',
-                collapseItems: '摺疊項目',
-                dragAndDrop: '拖放',
-                noteCounts: '檔案數',
-                rainbowColors: '彩虹顏色',
-                leftSidebar: '左側邊欄',
-                calendarIntegration: '行事曆整合'
-            },
-            list: {
-                display: '外觀',
-                sortAndGroup: '排序與分組',
-                groupHeaders: '群組標題',
-                manualSort: '手動排序',
-                pinnedNotes: '釘選筆記',
-                drawingPreviews: '繪圖預覽'
-            },
-            notes: {
-                frontmatter: '前置中繼資料欄位',
-                tasks: '任務',
-                icon: '圖示',
-                title: '標題',
-                previewText: '預覽文字',
-                featureImage: '特色圖片',
-                tags: '標籤',
-                properties: '屬性',
-                date: '日期',
-                parentFolder: '父資料夾',
-                wordCount: '字數與字元數'
+                label: '進階',
+                description: '診斷、中繼資料清理、匯入/匯出與重設。',
+                groups: {
+                    maintenance: '維護',
+                    resetSettings: '重設設定'
+                }
             }
         },
         syncMode: {
