@@ -422,17 +422,30 @@ export const STRINGS_PL = {
         compactPreset: 'Kompaktowy',
         defaultSuffix: '(domyślne)',
         defaultLabel: 'Domyślne',
-        titleRows: 'Wiersze tytułu',
-        previewRows: 'Wiersze podglądu',
+        titleRows: {
+            label: 'Wiersze tytułu',
+            option: (rows: number) =>
+                `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} tytułu`
+        },
+        previewRows: {
+            label: 'Wiersze podglądu',
+            none: 'Brak',
+            option: (rows: number) =>
+                `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`
+        },
         groupBy: 'Grupuj według',
-        titleRowOption: (rows: number) =>
-            `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} tytułu`,
-        previewRowOption: (rows: number) =>
-            `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`,
-        defaultOffSuffix: '(domyślnie wyłączone)',
         tags: 'Tagi',
         properties: 'Właściwości',
         tasks: 'Zadania',
+        textCount: {
+            label: 'Licznik tekstu',
+            options: {
+                none: 'Brak',
+                words: 'Słowa',
+                characters: 'Znaki',
+                both: 'Słowa i znaki'
+            }
+        },
         resetAppearance: 'Zresetuj wygląd',
         openPluginSettings: 'Otwórz ustawienia wtyczki…'
     },

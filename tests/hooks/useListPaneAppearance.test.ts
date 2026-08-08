@@ -49,7 +49,7 @@ describe('resolveListPaneAppearance', () => {
                 showTags: false,
                 showProperties: false,
                 showTaskProgress: false,
-                showTextCount: false
+                textCount: 'none'
             },
             selectionType: ItemType.FOLDER
         });
@@ -76,7 +76,7 @@ describe('resolveListPaneAppearance', () => {
                 showTags: true,
                 showProperties: true,
                 showTaskProgress: true,
-                showTextCount: true
+                textCount: 'words'
             },
             selectionType: ItemType.FOLDER
         });
@@ -89,19 +89,25 @@ describe('resolveListPaneAppearance', () => {
         });
     });
 
-    it('shows the global count type when a selection enables counts', () => {
-        const enabled = resolveListPaneAppearance({
+    it('lets a selection choose a count type independently of the global setting', () => {
+        const inherited = resolveListPaneAppearance({
             settings: createSettings({ textCountDisplay: 'characters' }),
-            appearance: { showTextCount: true },
+            appearance: {},
+            selectionType: ItemType.FOLDER
+        });
+        const words = resolveListPaneAppearance({
+            settings: createSettings({ textCountDisplay: 'characters' }),
+            appearance: { textCount: 'words' },
             selectionType: ItemType.FOLDER
         });
         const disabled = resolveListPaneAppearance({
             settings: createSettings({ textCountDisplay: 'characters' }),
-            appearance: { showTextCount: false },
+            appearance: { textCount: 'none' },
             selectionType: ItemType.FOLDER
         });
 
-        expect(enabled.textCountDisplay).toBe('characters');
+        expect(inherited.textCountDisplay).toBe('characters');
+        expect(words.textCountDisplay).toBe('words');
         expect(disabled.textCountDisplay).toBe('none');
     });
 
@@ -138,6 +144,17 @@ describe('resolveListPaneAppearance', () => {
         });
     });
 
+    it('lets a selection hide preview text without changing preview-based layout sizing', () => {
+        const result = resolveListPaneAppearance({
+            settings: createSettings({ showFilePreview: true, previewRows: 3 }),
+            appearance: { previewRows: 0 },
+            selectionType: ItemType.FOLDER
+        });
+
+        expect(result.previewRows).toBe(3);
+        expect(result.showPreview).toBe(false);
+    });
+
     it('keeps compact tag and property visibility as global style choices', () => {
         const result = resolveListPaneAppearance({
             settings: createSettings({
@@ -164,7 +181,7 @@ describe('resolveListPaneAppearance', () => {
                 textCountPlacement: 'property',
                 showFilePropertiesInCompactMode: false
             }),
-            appearance: { showTextCount: true },
+            appearance: { textCount: 'both' },
             selectionType: ItemType.FOLDER
         });
 
@@ -179,7 +196,7 @@ describe('stored list appearance intent', () => {
             titleRows: 2,
             previewRows: 9,
             showTags: true,
-            showTextCount: false,
+            textCount: 'both',
             showFilePreview: false,
             textCountDisplay: 'both'
         } as ListPaneAppearance);
@@ -188,9 +205,13 @@ describe('stored list appearance intent', () => {
             mode: 'standard',
             titleRows: 2,
             showTags: true,
-            showTextCount: false
+            textCount: 'both'
         });
         expect(hasStoredListPaneAppearanceOverride(stored ?? undefined)).toBe(true);
+    });
+
+    it('retains zero preview rows as an explicit hidden-preview choice', () => {
+        expect(getStoredListPaneAppearanceFields({ previewRows: 0 })).toEqual({ previewRows: 0 });
     });
 
     it('treats toggles stored with different values as different overrides', () => {
@@ -208,7 +229,7 @@ describe('stored list appearance intent', () => {
 describe('appearance map snapshots', () => {
     it('preserves map identity when an unrelated settings update leaves appearances unchanged', () => {
         const current = {
-            Writing: { mode: 'standard', showTextCount: true }
+            Writing: { mode: 'standard', textCount: 'words' }
         } satisfies Record<string, ListPaneAppearance>;
         const initialSnapshot = snapshotListPaneAppearanceMap(current);
         const nextSnapshot = snapshotListPaneAppearanceMap(current, initialSnapshot);
@@ -220,15 +241,15 @@ describe('appearance map snapshots', () => {
 
     it('publishes a new immutable snapshot after an in-place appearance mutation', () => {
         const current = {
-            Writing: { mode: 'standard', showTextCount: true }
+            Writing: { mode: 'standard', textCount: 'words' }
         } satisfies Record<string, ListPaneAppearance>;
         const initialSnapshot = snapshotListPaneAppearanceMap(current);
 
-        current.Writing.showTextCount = false;
+        current.Writing.textCount = 'characters';
         const nextSnapshot = snapshotListPaneAppearanceMap(current, initialSnapshot);
 
         expect(nextSnapshot).not.toBe(initialSnapshot);
-        expect(nextSnapshot.Writing.showTextCount).toBe(false);
-        expect(initialSnapshot.Writing.showTextCount).toBe(true);
+        expect(nextSnapshot.Writing.textCount).toBe('characters');
+        expect(initialSnapshot.Writing.textCount).toBe('words');
     });
 });

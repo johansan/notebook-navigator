@@ -422,15 +422,28 @@ export const STRINGS_ID = {
         compactPreset: 'Kompak',
         defaultSuffix: '(default)',
         defaultLabel: 'Bawaan',
-        titleRows: 'Baris judul',
-        previewRows: 'Baris pratinjau',
+        titleRows: {
+            label: 'Baris judul',
+            option: (rows: number) => `${rows} baris judul`
+        },
+        previewRows: {
+            label: 'Baris pratinjau',
+            none: 'Tidak ada',
+            option: (rows: number) => `${rows} baris pratinjau`
+        },
         groupBy: 'Kelompokkan berdasarkan',
-        titleRowOption: (rows: number) => `${rows} baris judul`,
-        previewRowOption: (rows: number) => `${rows} baris pratinjau`,
-        defaultOffSuffix: '(bawaan nonaktif)',
         tags: 'Tag',
         properties: 'Properti',
         tasks: 'Tugas',
+        textCount: {
+            label: 'Hitungan teks',
+            options: {
+                none: 'Tidak ada',
+                words: 'Kata',
+                characters: 'Karakter',
+                both: 'Kata dan karakter'
+            }
+        },
         resetAppearance: 'Atur ulang tampilan',
         openPluginSettings: 'Buka pengaturan plugin…'
     },

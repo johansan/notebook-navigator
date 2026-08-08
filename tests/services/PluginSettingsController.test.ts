@@ -329,7 +329,7 @@ describe('PluginSettingsController.loadSettings', () => {
                         previewRows: 4,
                         showTags: true,
                         showProperties: false,
-                        showTextCount: true,
+                        textCount: 'characters',
                         showFilePreview: false,
                         textCountDisplay: 'characters',
                         groupBy: 'folder',
@@ -338,9 +338,9 @@ describe('PluginSettingsController.loadSettings', () => {
                     Invalid: {
                         mode: 'dense',
                         titleRows: 9,
-                        previewRows: 0,
+                        previewRows: -1,
                         showTags: 'yes',
-                        showTextCount: 'on'
+                        textCount: 'on'
                     }
                 }
             })),
@@ -357,9 +357,47 @@ describe('PluginSettingsController.loadSettings', () => {
                 previewRows: 4,
                 showTags: true,
                 showProperties: false,
-                showTextCount: true,
+                textCount: 'characters',
                 groupBy: 'folder'
             }
+        });
+    });
+
+    it('stores appearance values matching global settings as inheritance', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                textCountDisplay: 'none',
+                folderAppearances: {
+                    Inbox: { mode: 'compact', titleRows: 1, previewRows: 2, textCount: 'none' },
+                    Writing: { titleRows: 3, previewRows: 0, textCount: 'words' }
+                }
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.folderAppearances).toEqual({
+            Inbox: { mode: 'compact' },
+            Writing: { titleRows: 3, previewRows: 0, textCount: 'words' }
+        });
+
+        saveData.mockClear();
+        controller.settings.fileNameRows = 3;
+        controller.settings.textCountDisplay = 'words';
+        await controller.saveSettings();
+
+        expect(controller.settings.folderAppearances).toEqual({
+            Inbox: { mode: 'compact' },
+            Writing: { previewRows: 0 }
+        });
+        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(savedSettings['folderAppearances']).toEqual({
+            Inbox: { mode: 'compact' },
+            Writing: { previewRows: 0 }
         });
     });
 });

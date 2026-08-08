@@ -421,15 +421,28 @@ export const STRINGS_EN = {
         compactPreset: 'Compact',
         defaultSuffix: '(default)',
         defaultLabel: 'Default',
-        titleRows: 'Title rows',
-        previewRows: 'Preview rows',
+        titleRows: {
+            label: 'Title rows',
+            option: (rows: number) => `${rows} title row${rows === 1 ? '' : 's'}`
+        },
+        previewRows: {
+            label: 'Preview rows',
+            none: 'None',
+            option: (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`
+        },
         groupBy: 'Group by',
-        titleRowOption: (rows: number) => `${rows} title row${rows === 1 ? '' : 's'}`,
-        previewRowOption: (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`,
-        defaultOffSuffix: '(default off)',
         tags: 'Tags',
         properties: 'Properties',
         tasks: 'Tasks',
+        textCount: {
+            label: 'Text count',
+            options: {
+                none: 'None',
+                words: 'Word',
+                characters: 'Character',
+                both: 'Word and character'
+            }
+        },
         resetAppearance: 'Reset appearance',
         openPluginSettings: 'Open plugin settings…'
     },

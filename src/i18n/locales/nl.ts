@@ -424,15 +424,28 @@ export const STRINGS_NL = {
         compactPreset: 'Compact',
         defaultSuffix: '(standaard)',
         defaultLabel: 'Standaard',
-        titleRows: 'Titelrijen',
-        previewRows: 'Voorbeeldrijen',
+        titleRows: {
+            label: 'Titelrijen',
+            option: (rows: number) => `${rows} titelrij${rows === 1 ? '' : 'en'}`
+        },
+        previewRows: {
+            label: 'Voorbeeldrijen',
+            none: 'Geen',
+            option: (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`
+        },
         groupBy: 'Groeperen op',
-        titleRowOption: (rows: number) => `${rows} titelrij${rows === 1 ? '' : 'en'}`,
-        previewRowOption: (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`,
-        defaultOffSuffix: '(standaard uit)',
         tags: 'Tags',
         properties: 'Eigenschappen',
         tasks: 'Taken',
+        textCount: {
+            label: 'Teksttelling',
+            options: {
+                none: 'Geen',
+                words: 'Woorden',
+                characters: 'Tekens',
+                both: 'Woorden en tekens'
+            }
+        },
         resetAppearance: 'Weergave herstellen',
         openPluginSettings: 'Plugin-instellingen openen…'
     },

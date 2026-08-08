@@ -421,15 +421,28 @@ export const STRINGS_IT = {
         compactPreset: 'Compatto',
         defaultSuffix: '(predefinito)',
         defaultLabel: 'Predefinito',
-        titleRows: 'Righe titolo',
-        previewRows: 'Righe anteprima',
+        titleRows: {
+            label: 'Righe titolo',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} titolo`
+        },
+        previewRows: {
+            label: 'Righe anteprima',
+            none: 'Nessuno',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`
+        },
         groupBy: 'Raggruppa per',
-        titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} titolo`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`,
-        defaultOffSuffix: '(predefinito: disattivato)',
         tags: 'Tag',
         properties: 'Proprietà',
         tasks: 'Attività',
+        textCount: {
+            label: 'Conteggio testo',
+            options: {
+                none: 'Nessuno',
+                words: 'Parole',
+                characters: 'Caratteri',
+                both: 'Parole e caratteri'
+            }
+        },
         resetAppearance: 'Reimposta aspetto',
         openPluginSettings: 'Apri impostazioni del plugin…'
     },
