@@ -78,13 +78,13 @@ export function createFoldersSettingDefinitions(context: SettingsTabContext, hea
                 }
             }),
             createToggleDefinition('showNearestFolderNoteInSidebar', {
-                name: strings.settings.items.showNearestFolderNoteInSidebar.name,
-                desc: strings.settings.items.showNearestFolderNoteInSidebar.desc,
+                name: strings.settings.items.showClosestFolderNoteInRightSidebar.name,
+                desc: strings.settings.items.showClosestFolderNoteInRightSidebar.desc,
                 visible: () => plugin.settings.enableFolderNotes && plugin.settings.folderNoteOpenLocation === 'right-sidebar'
             }),
             createToggleDefinition('enableFolderNoteLinks', {
-                name: strings.settings.items.enableFolderNoteLinks.name,
-                desc: strings.settings.items.enableFolderNoteLinks.desc,
+                name: strings.settings.items.folderNamesOpenFolderNotes.name,
+                desc: strings.settings.items.folderNamesOpenFolderNotes.desc,
                 visible: () => plugin.settings.enableFolderNotes
             }),
             createToggleDefinition('hideFolderNoteInList', {
@@ -207,7 +207,7 @@ function renderFolderNoteTemplateInfoSetting(setting: Setting, context: Settings
     setting.descEl.empty();
 
     const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-        : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+        ? strings.settings.items.templaterSupport.installed
+        : strings.settings.items.templaterSupport.missing;
     setting.descEl.createEl('strong', { text: templaterSupportText });
 }

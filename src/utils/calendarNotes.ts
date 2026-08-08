@@ -50,35 +50,35 @@ export function getCalendarNoteConfig(kind: CalendarNoteKind, settings: Notebook
             return {
                 calendarCustomFilePattern: settings.calendarCustomFilePattern,
                 isPatternValid: isCalendarCustomDatePatternValid,
-                parsingErrorText: strings.settings.items.calendarCustomFilePattern.parsingError
+                parsingErrorText: strings.settings.items.calendarDailyNotePattern.parsingError
             };
         case 'week':
             return {
                 calendarCustomFilePattern: settings.calendarCustomWeekPattern,
                 fallbackPattern: '',
                 isPatternValid: isCalendarCustomWeekPatternValid,
-                parsingErrorText: strings.settings.items.calendarCustomWeekPattern.parsingError
+                parsingErrorText: strings.settings.items.calendarWeeklyNotePattern.parsingError
             };
         case 'month':
             return {
                 calendarCustomFilePattern: settings.calendarCustomMonthPattern,
                 fallbackPattern: '',
                 isPatternValid: isCalendarCustomMonthPatternValid,
-                parsingErrorText: strings.settings.items.calendarCustomMonthPattern.parsingError
+                parsingErrorText: strings.settings.items.calendarMonthlyNotePattern.parsingError
             };
         case 'quarter':
             return {
                 calendarCustomFilePattern: settings.calendarCustomQuarterPattern,
                 fallbackPattern: '',
                 isPatternValid: isCalendarCustomQuarterPatternValid,
-                parsingErrorText: strings.settings.items.calendarCustomQuarterPattern.parsingError
+                parsingErrorText: strings.settings.items.calendarQuarterlyNotePattern.parsingError
             };
         case 'year':
             return {
                 calendarCustomFilePattern: settings.calendarCustomYearPattern,
                 fallbackPattern: '',
                 isPatternValid: isCalendarCustomYearPatternValid,
-                parsingErrorText: strings.settings.items.calendarCustomYearPattern.parsingError
+                parsingErrorText: strings.settings.items.calendarYearlyNotePattern.parsingError
             };
     }
 }

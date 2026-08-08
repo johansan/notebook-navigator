@@ -44,11 +44,11 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
         const version = plugin.getExternalIconProviderVersion(config.id);
 
         const statusText = isInstalled
-            ? strings.settings.items.externalIcons.statusInstalled.replace(
+            ? strings.settings.items.iconPackManagement.statusInstalled.replace(
                   '{version}',
-                  version || strings.settings.items.externalIcons.versionUnknown
+                  version || strings.settings.items.iconPackManagement.versionUnknown
               )
-            : strings.settings.items.externalIcons.statusNotInstalled;
+            : strings.settings.items.iconPackManagement.statusNotInstalled;
 
         const setting = iconPacksGroup.addSetting(setting => {
             setting.setName(config.name).setDesc('');
@@ -70,7 +70,7 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
 
         if (isInstalled) {
             setting.addButton(button => {
-                button.setButtonText(strings.settings.items.externalIcons.removeButton);
+                button.setButtonText(strings.settings.items.iconPackManagement.removeButton);
                 button.setDisabled(isDownloading);
                 button.onClick(() => {
                     runAsyncAction(async () => {
@@ -80,7 +80,7 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
                             renderIconPacksContent(context, iconPacksRootEl);
                         } catch (error) {
                             console.error('Failed to remove icon provider', error);
-                            showNotice(strings.settings.items.externalIcons.removeFailed.replace('{name}', config.name), {
+                            showNotice(strings.settings.items.iconPackManagement.removeFailed.replace('{name}', config.name), {
                                 variant: 'warning'
                             });
                             button.setDisabled(false);
@@ -92,8 +92,8 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
             setting.addButton(button => {
                 button.setButtonText(
                     isDownloading
-                        ? strings.settings.items.externalIcons.downloadingLabel
-                        : strings.settings.items.externalIcons.downloadButton
+                        ? strings.settings.items.iconPackManagement.downloadingLabel
+                        : strings.settings.items.iconPackManagement.downloadButton
                 );
                 button.setDisabled(isDownloading);
                 button.onClick(() => {
@@ -104,7 +104,7 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
                             renderIconPacksContent(context, iconPacksRootEl);
                         } catch (error) {
                             console.error('Failed to download icon provider', error);
-                            showNotice(strings.settings.items.externalIcons.downloadFailed.replace('{name}', config.name), {
+                            showNotice(strings.settings.items.iconPackManagement.downloadFailed.replace('{name}', config.name), {
                                 variant: 'warning'
                             });
                             button.setDisabled(false);
@@ -118,7 +118,7 @@ function renderIconPacksContent(context: SettingsTabContext, iconPacksRootEl: HT
     addInfoSetting(iconPacksGroup.addSetting, 'nn-setting-info-container', descEl => {
         descEl.createDiv().append(
             createExternalLinkText({
-                text: strings.settings.items.externalIcons.infoNote,
+                text: strings.settings.items.iconPackManagement.infoNote,
                 link: { text: ICON_ASSETS_REPOSITORY_URL, href: ICON_ASSETS_REPOSITORY_URL }
             })
         );

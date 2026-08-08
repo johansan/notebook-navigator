@@ -35,15 +35,15 @@ export function createIconPacksSettingDefinitions(context: SettingsTabContext): 
                     name: config.name,
                     desc: config.catalogUrl,
                     aliases: [
-                        strings.settings.items.externalIcons.downloadButton,
-                        strings.settings.items.externalIcons.removeButton,
+                        strings.settings.items.iconPackManagement.downloadButton,
+                        strings.settings.items.iconPackManagement.removeButton,
                         config.catalogUrl
                     ],
                     render: setting => renderIconProviderSetting(setting, context, config)
                 })
             ),
             createRenderDefinition({
-                name: strings.settings.items.externalIcons.infoNote,
+                name: strings.settings.items.iconPackManagement.infoNote,
                 searchable: false,
                 render: setting => {
                     setting.setName('').setDesc('');
@@ -51,7 +51,7 @@ export function createIconPacksSettingDefinitions(context: SettingsTabContext): 
                     setting.descEl.empty();
                     setting.descEl.createDiv().append(
                         createExternalLinkText({
-                            text: strings.settings.items.externalIcons.infoNote,
+                            text: strings.settings.items.iconPackManagement.infoNote,
                             link: { text: ICON_ASSETS_REPOSITORY_URL, href: ICON_ASSETS_REPOSITORY_URL }
                         })
                     );
@@ -75,11 +75,11 @@ function renderIconProviderSetting(
         const version = plugin.getExternalIconProviderVersion(config.id);
 
         const statusText = isInstalled
-            ? strings.settings.items.externalIcons.statusInstalled.replace(
+            ? strings.settings.items.iconPackManagement.statusInstalled.replace(
                   '{version}',
-                  version || strings.settings.items.externalIcons.versionUnknown
+                  version || strings.settings.items.iconPackManagement.versionUnknown
               )
-            : strings.settings.items.externalIcons.statusNotInstalled;
+            : strings.settings.items.iconPackManagement.statusNotInstalled;
 
         setting.setName(config.name).setDesc('');
 
@@ -99,7 +99,7 @@ function renderIconProviderSetting(
 
         if (isInstalled) {
             setting.addButton(button => {
-                button.setButtonText(strings.settings.items.externalIcons.removeButton);
+                button.setButtonText(strings.settings.items.iconPackManagement.removeButton);
                 button.setDisabled(isDownloading);
                 button.onClick(() => {
                     runAsyncAction(async () => {
@@ -109,7 +109,7 @@ function renderIconProviderSetting(
                             renderState();
                         } catch (error) {
                             console.error('Failed to remove icon provider', error);
-                            showNotice(strings.settings.items.externalIcons.removeFailed.replace('{name}', config.name), {
+                            showNotice(strings.settings.items.iconPackManagement.removeFailed.replace('{name}', config.name), {
                                 variant: 'warning'
                             });
                             button.setDisabled(false);
@@ -122,7 +122,9 @@ function renderIconProviderSetting(
 
         setting.addButton(button => {
             button.setButtonText(
-                isDownloading ? strings.settings.items.externalIcons.downloadingLabel : strings.settings.items.externalIcons.downloadButton
+                isDownloading
+                    ? strings.settings.items.iconPackManagement.downloadingLabel
+                    : strings.settings.items.iconPackManagement.downloadButton
             );
             button.setDisabled(isDownloading);
             button.onClick(() => {
@@ -133,7 +135,7 @@ function renderIconProviderSetting(
                         renderState();
                     } catch (error) {
                         console.error('Failed to download icon provider', error);
-                        showNotice(strings.settings.items.externalIcons.downloadFailed.replace('{name}', config.name), {
+                        showNotice(strings.settings.items.iconPackManagement.downloadFailed.replace('{name}', config.name), {
                             variant: 'warning'
                         });
                         button.setDisabled(false);

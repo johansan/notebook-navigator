@@ -180,7 +180,7 @@ export class NavRainbowSectionModal extends Modal {
 
         if (this.section === 'recent') {
             return this.createSectionAccess({
-                sectionLabel: strings.settings.items.navRainbowApplyToRecent.name,
+                sectionLabel: strings.settings.items.navRainbowApplyToRecentItems.name,
                 getSection: settings => settings.recent,
                 setSection: (settings, section) => ({ ...settings, recent: section }),
                 defaultSection: NAV_RAINBOW_DEFAULTS.recent

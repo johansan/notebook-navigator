@@ -52,18 +52,18 @@ export function createTagsSettingDefinitions(context: SettingsTabContext, headin
                 render: setting => renderTagSortOrderSetting(setting, context)
             }),
             createToggleDefinition('showAllTagsFolder', {
-                name: strings.settings.items.showAllTagsFolder.name,
-                desc: strings.settings.items.showAllTagsFolder.desc,
+                name: strings.settings.items.showTagsFolder.name,
+                desc: strings.settings.items.showTagsFolder.desc,
                 visible: () => plugin.settings.showTags
             }),
             createToggleDefinition('showUntagged', {
-                name: strings.settings.items.showUntagged.name,
-                desc: strings.settings.items.showUntagged.desc,
+                name: strings.settings.items.showUntaggedNotes.name,
+                desc: strings.settings.items.showUntaggedNotes.desc,
                 visible: () => plugin.settings.showTags
             }),
             createToggleDefinition('scopeTagsToCurrentContext', {
-                name: strings.settings.items.scopeTagsToCurrentContext.name,
-                desc: strings.settings.items.scopeTagsToCurrentContext.desc,
+                name: strings.settings.items.filterTagsBySelection.name,
+                desc: strings.settings.items.filterTagsBySelection.desc,
                 visible: () => plugin.settings.showTags
             }),
             createToggleDefinition('keepEmptyTagsProperty', {

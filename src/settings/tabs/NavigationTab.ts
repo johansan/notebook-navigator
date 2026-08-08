@@ -64,14 +64,14 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
             ...(supportsKeyboardInteractions()
                 ? [
                       createToggleDefinition('autoSelectFirstFileOnFocusChange', {
-                          name: strings.settings.items.autoSelectFirstFileOnFocusChange.name,
-                          desc: strings.settings.items.autoSelectFirstFileOnFocusChange.desc
+                          name: strings.settings.items.autoSelectFirstNote.name,
+                          desc: strings.settings.items.autoSelectFirstNote.desc
                       })
                   ]
                 : []),
             createToggleDefinition('autoExpandNavItems', {
-                name: strings.settings.items.autoExpandNavItems.name,
-                desc: strings.settings.items.autoExpandNavItems.desc
+                name: strings.settings.items.expandOnSelection.name,
+                desc: strings.settings.items.expandOnSelection.desc
             }),
             createToggleDefinition('collapseOtherBranchesOnExpand', {
                 name: strings.settings.items.collapseOtherBranchesOnExpand.name,
@@ -80,19 +80,19 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
         ]),
         createGroupDefinition(strings.settings.pages.navigationPane.groups.collapseItems, [
             createDropdownDefinition('collapseBehavior', {
-                name: strings.settings.items.collapseBehavior.name,
-                desc: strings.settings.items.collapseBehavior.desc,
-                aliases: Object.values(strings.settings.items.collapseBehavior.options),
+                name: strings.settings.items.collapseItems.name,
+                desc: strings.settings.items.collapseItems.desc,
+                aliases: Object.values(strings.settings.items.collapseItems.options),
                 options: {
-                    all: strings.settings.items.collapseBehavior.options.all,
-                    'folders-only': strings.settings.items.collapseBehavior.options.foldersOnly,
-                    'tags-only': strings.settings.items.collapseBehavior.options.tagsOnly,
-                    'properties-only': strings.settings.items.collapseBehavior.options.propertiesOnly
+                    all: strings.settings.items.collapseItems.options.all,
+                    'folders-only': strings.settings.items.collapseItems.options.foldersOnly,
+                    'tags-only': strings.settings.items.collapseItems.options.tagsOnly,
+                    'properties-only': strings.settings.items.collapseItems.options.propertiesOnly
                 }
             }),
             createToggleDefinition('smartCollapse', {
-                name: strings.settings.items.smartCollapse.name,
-                desc: strings.settings.items.smartCollapse.desc
+                name: strings.settings.items.keepSelectedItemExpanded.name,
+                desc: strings.settings.items.keepSelectedItemExpanded.desc
             }),
             createToggleDefinition('excludeVaultRootFromCollapse', {
                 name: strings.settings.items.excludeVaultRootFromCollapse.name,
@@ -135,8 +135,8 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'shortcuts')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToRecent.name,
-                desc: strings.settings.items.navRainbowApplyToRecent.desc,
+                name: strings.settings.items.navRainbowApplyToRecentItems.name,
+                desc: strings.settings.items.navRainbowApplyToRecentItems.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'recent')
             }),
@@ -159,8 +159,8 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'properties')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowBalanceHueLuminance.name,
-                desc: strings.settings.items.navRainbowBalanceHueLuminance.desc,
+                name: strings.settings.items.navRainbowConsistentBrightness.name,
+                desc: strings.settings.items.navRainbowConsistentBrightness.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowToggleSetting(setting, context, 'balanceHueLuminance')
             }),
@@ -173,12 +173,12 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
         ]),
         createGroupDefinition(strings.settings.pages.navigationPane.groups.fileCounts, [
             createToggleDefinition('showNoteCount', {
-                name: strings.settings.items.showNoteCount.name,
-                desc: strings.settings.items.showNoteCount.desc
+                name: strings.settings.items.showFileCount.name,
+                desc: strings.settings.items.showFileCount.desc
             }),
             createToggleDefinition('separateNoteCounts', {
-                name: strings.settings.items.separateNoteCounts.name,
-                desc: strings.settings.items.separateNoteCounts.desc,
+                name: strings.settings.items.separateFileCounts.name,
+                desc: strings.settings.items.separateFileCounts.desc,
                 visible: () => plugin.settings.showNoteCount
             })
         ]),
@@ -212,13 +212,13 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRootSpacing.name,
-                desc: strings.settings.items.navRootSpacing.desc,
+                name: strings.settings.items.rootItemSpacing.name,
+                desc: strings.settings.items.rootItemSpacing.desc,
                 render: setting => renderRootLevelSpacingSetting(setting, context)
             }),
             createRenderDefinition({
-                name: strings.settings.items.navIndent.name,
-                desc: strings.settings.items.navIndent.desc,
+                name: strings.settings.items.treeIndentation.name,
+                desc: strings.settings.items.treeIndentation.desc,
                 render: setting => renderNavIndentSetting(setting, context)
             }),
             createRenderDefinition({
@@ -310,8 +310,8 @@ function renderRootLevelSpacingSetting(setting: Setting, context: SettingsTabCon
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.navRootSpacing.name,
-        desc: strings.settings.items.navRootSpacing.desc,
+        name: strings.settings.items.rootItemSpacing.name,
+        desc: strings.settings.items.rootItemSpacing.desc,
         value: plugin.settings.rootLevelSpacing,
         defaultValue: DEFAULT_SETTINGS.rootLevelSpacing,
         min: 0,
@@ -329,8 +329,8 @@ function renderNavIndentSetting(setting: Setting, context: SettingsTabContext): 
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.navIndent.name,
-        desc: strings.settings.items.navIndent.desc,
+        name: strings.settings.items.treeIndentation.name,
+        desc: strings.settings.items.treeIndentation.desc,
         value: plugin.settings.navIndent,
         defaultValue: DEFAULT_SETTINGS.navIndent,
         min: 10,
@@ -428,9 +428,9 @@ function renderNavRainbowModeSetting(setting: Setting, context: SettingsTabConte
         .setDesc(strings.settings.items.navRainbowMode.desc)
         .addDropdown(dropdown =>
             dropdown
-                .addOption('none', strings.settings.items.navRainbowMode.options.none)
-                .addOption('foreground', strings.settings.items.navRainbowMode.options.foreground)
-                .addOption('background', strings.settings.items.navRainbowMode.options.background)
+                .addOption('none', strings.settings.items.navRainbowMode.options.off)
+                .addOption('foreground', strings.settings.items.navRainbowMode.options.textColor)
+                .addOption('background', strings.settings.items.navRainbowMode.options.backgroundColor)
                 .setValue(getActiveVaultProfile(plugin.settings).navRainbow.mode)
                 .onChange(async value => {
                     if (!isNavRainbowColorMode(value)) {
@@ -453,7 +453,7 @@ function renderNavRainbowSectionSetting(
     const { plugin } = context;
     const sectionStrings = {
         shortcuts: strings.settings.items.navRainbowApplyToShortcuts,
-        recent: strings.settings.items.navRainbowApplyToRecent,
+        recent: strings.settings.items.navRainbowApplyToRecentItems,
         folders: strings.settings.items.navRainbowApplyToFolders,
         tags: strings.settings.items.navRainbowApplyToTags,
         properties: strings.settings.items.navRainbowApplyToProperties
@@ -486,7 +486,7 @@ function renderNavRainbowToggleSetting(
     const { plugin } = context;
     const itemStrings =
         key === 'balanceHueLuminance'
-            ? strings.settings.items.navRainbowBalanceHueLuminance
+            ? strings.settings.items.navRainbowConsistentBrightness
             : strings.settings.items.navRainbowSeparateThemeColors;
 
     setting.setName(itemStrings.name).setDesc(itemStrings.desc);

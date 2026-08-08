@@ -127,8 +127,8 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
         });
 
     showNearestFolderNoteSetting = new Setting(folderNotesSettingsEl)
-        .setName(strings.settings.items.showNearestFolderNoteInSidebar.name)
-        .setDesc(strings.settings.items.showNearestFolderNoteInSidebar.desc)
+        .setName(strings.settings.items.showClosestFolderNoteInRightSidebar.name)
+        .setDesc(strings.settings.items.showClosestFolderNoteInRightSidebar.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.showNearestFolderNoteInSidebar).onChange(async value => {
                 plugin.settings.showNearestFolderNoteInSidebar = value;
@@ -138,8 +138,8 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
     setElementVisible(showNearestFolderNoteSetting.settingEl, plugin.settings.folderNoteOpenLocation === 'right-sidebar');
 
     new Setting(folderNotesSettingsEl)
-        .setName(strings.settings.items.enableFolderNoteLinks.name)
-        .setDesc(strings.settings.items.enableFolderNoteLinks.desc)
+        .setName(strings.settings.items.folderNamesOpenFolderNotes.name)
+        .setDesc(strings.settings.items.folderNamesOpenFolderNotes.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.enableFolderNoteLinks).onChange(async value => {
                 plugin.settings.enableFolderNoteLinks = value;
@@ -263,7 +263,7 @@ function renderFolderNoteTemplateInfoSetting(setting: Setting, context: Settings
     setting.descEl.empty();
 
     const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-        : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+        ? strings.settings.items.templaterSupport.installed
+        : strings.settings.items.templaterSupport.missing;
     setting.descEl.createEl('strong', { text: templaterSupportText });
 }

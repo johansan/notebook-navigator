@@ -51,7 +51,7 @@ function parseCalendarWeeksToShow(value: string): CalendarWeeksToShow | null {
 }
 
 function formatCalendarWeeksOption(count: number): string {
-    return strings.settings.items.calendarWeeksToShow.options.weeksCount.replace('{count}', count.toString());
+    return strings.settings.items.calendarLeftSidebarWeeksToShow.options.weeksCount.replace('{count}', count.toString());
 }
 
 export function renderCalendarDisplaySections(
@@ -65,7 +65,7 @@ export function renderCalendarDisplaySections(
 
     topGroup
         .addSetting(setting => {
-            setting.setName(strings.settings.items.calendarEnabled.name).setDesc(strings.settings.items.calendarEnabled.desc);
+            setting.setName(strings.settings.items.enableCalendar.name).setDesc(strings.settings.items.enableCalendar.desc);
         })
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.calendarEnabled).onChange(async value => {
@@ -174,13 +174,13 @@ export function renderCalendarDisplaySections(
     appearanceGroup
         .addSetting(setting => {
             setting
-                .setName(strings.settings.items.calendarMonthHeadingFormat.name)
-                .setDesc(strings.settings.items.calendarMonthHeadingFormat.desc);
+                .setName(strings.settings.items.calendarMonthNameFormat.name)
+                .setDesc(strings.settings.items.calendarMonthNameFormat.desc);
         })
         .addDropdown((dropdown: DropdownComponent) => {
             dropdown
-                .addOption('full', strings.settings.items.calendarMonthHeadingFormat.options.full)
-                .addOption('short', strings.settings.items.calendarMonthHeadingFormat.options.short)
+                .addOption('full', strings.settings.items.calendarMonthNameFormat.options.full)
+                .addOption('short', strings.settings.items.calendarMonthNameFormat.options.short)
                 .setValue(plugin.settings.calendarMonthHeadingFormat)
                 .onChange(async value => {
                     if (!isCalendarMonthHeadingFormat(value)) {
@@ -264,13 +264,15 @@ export function renderCalendarDisplaySections(
 
     const leftSidebarGroup = createGroup(strings.settings.pages.calendar.groups.leftSidebar);
     const calendarLeftPlacementSetting = leftSidebarGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.calendarLeftPlacement.name).setDesc(strings.settings.items.calendarLeftPlacement.desc);
+        setting
+            .setName(strings.settings.items.calendarSinglePanePlacement.name)
+            .setDesc(strings.settings.items.calendarSinglePanePlacement.desc);
     });
 
     calendarLeftPlacementSetting.addDropdown((dropdown: DropdownComponent) => {
         dropdown
-            .addOption('below', strings.settings.items.calendarLeftPlacement.options.below)
-            .addOption('navigation', strings.settings.items.calendarLeftPlacement.options.navigationPane)
+            .addOption('below', strings.settings.items.calendarSinglePanePlacement.options.belowPanes)
+            .addOption('navigation', strings.settings.items.calendarSinglePanePlacement.options.navigationPane)
             .setValue(plugin.settings.calendarLeftPlacement)
             .onChange(value => {
                 if (!isCalendarLeftPlacement(value)) {
@@ -284,15 +286,17 @@ export function renderCalendarDisplaySections(
     addSettingSyncModeToggle({ setting: calendarLeftPlacementSetting, plugin, settingId: 'calendarLeftPlacement' });
 
     const calendarWeeksToShowSetting = leftSidebarGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.calendarWeeksToShow.name).setDesc(strings.settings.items.calendarWeeksToShow.desc);
+        setting
+            .setName(strings.settings.items.calendarLeftSidebarWeeksToShow.name)
+            .setDesc(strings.settings.items.calendarLeftSidebarWeeksToShow.desc);
     });
 
     calendarWeeksToShowSetting.addDropdown((dropdown: DropdownComponent) => {
-        dropdown.addOption('1', strings.settings.items.calendarWeeksToShow.options.oneWeek);
+        dropdown.addOption('1', strings.settings.items.calendarLeftSidebarWeeksToShow.options.oneWeek);
         for (let count = 2; count <= 5; count++) {
             dropdown.addOption(String(count), formatCalendarWeeksOption(count));
         }
-        dropdown.addOption('6', strings.settings.items.calendarWeeksToShow.options.fullMonth);
+        dropdown.addOption('6', strings.settings.items.calendarLeftSidebarWeeksToShow.options.fullMonth);
 
         dropdown.setValue(String(plugin.settings.calendarWeeksToShow)).onChange(value => {
             const parsed = parseCalendarWeeksToShow(value);

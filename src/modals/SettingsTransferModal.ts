@@ -75,7 +75,7 @@ export class SettingsImportModal extends Modal {
         super(app);
         this.plugin = plugin;
         this.modalEl.addClass('nn-settings-transfer-modal');
-        this.titleEl.setText(strings.settings.items.settingsTransfer.import.modalTitle);
+        this.titleEl.setText(strings.settings.items.importAndExportSettings.import.modalTitle);
     }
 
     onOpen(): void {
@@ -97,11 +97,11 @@ export class SettingsImportModal extends Modal {
         };
 
         new Setting(contentEl)
-            .setName(strings.settings.items.settingsTransfer.import.fileButtonName)
-            .setDesc(strings.settings.items.settingsTransfer.import.fileButtonDesc)
+            .setName(strings.settings.items.importAndExportSettings.import.fileButtonName)
+            .setDesc(strings.settings.items.importAndExportSettings.import.fileButtonDesc)
             .addButton(button => {
                 fileButton = button;
-                button.setButtonText(strings.settings.items.settingsTransfer.import.fileButtonText).onClick(() => {
+                button.setButtonText(strings.settings.items.importAndExportSettings.import.fileButtonText).onClick(() => {
                     if (isBusy) {
                         return;
                     }
@@ -112,11 +112,11 @@ export class SettingsImportModal extends Modal {
 
         createEditorLabel(
             contentEl,
-            strings.settings.items.settingsTransfer.import.editorName,
-            strings.settings.items.settingsTransfer.import.editorDesc
+            strings.settings.items.importAndExportSettings.import.editorName,
+            strings.settings.items.importAndExportSettings.import.editorDesc
         );
 
-        const editorEl = createEditor(contentEl, '', strings.settings.items.settingsTransfer.import.placeholder);
+        const editorEl = createEditor(contentEl, '', strings.settings.items.importAndExportSettings.import.placeholder);
 
         fileInputEl.addEventListener('change', () => {
             const file = fileInputEl.files?.[0];
@@ -132,7 +132,7 @@ export class SettingsImportModal extends Modal {
                 } catch (error) {
                     console.error('Failed to read settings import file', error);
                     const message = getErrorMessage(error);
-                    showNotice(strings.settings.items.settingsTransfer.import.fileReadError.replace('{message}', message), {
+                    showNotice(strings.settings.items.importAndExportSettings.import.fileReadError.replace('{message}', message), {
                         variant: 'warning'
                     });
                 } finally {
@@ -144,7 +144,7 @@ export class SettingsImportModal extends Modal {
 
         const buttonContainer = contentEl.createDiv('nn-button-container');
         importButton = new ButtonComponent(buttonContainer);
-        importButton.setButtonText(strings.settings.items.settingsTransfer.import.confirmButtonText);
+        importButton.setButtonText(strings.settings.items.importAndExportSettings.import.confirmButtonText);
         importButton.setCta();
         importButton.onClick(() => {
             if (isBusy) {
@@ -157,7 +157,7 @@ export class SettingsImportModal extends Modal {
             } catch (error) {
                 console.error('Failed to parse settings transfer', error);
                 const message = getErrorMessage(error);
-                showNotice(strings.settings.items.settingsTransfer.import.errorNotice.replace('{message}', message), {
+                showNotice(strings.settings.items.importAndExportSettings.import.errorNotice.replace('{message}', message), {
                     variant: 'warning'
                 });
                 return;
@@ -167,8 +167,8 @@ export class SettingsImportModal extends Modal {
 
             new ConfirmModal(
                 this.app,
-                strings.settings.items.settingsTransfer.import.confirmTitle,
-                strings.settings.items.settingsTransfer.import.confirmMessage,
+                strings.settings.items.importAndExportSettings.import.confirmTitle,
+                strings.settings.items.importAndExportSettings.import.confirmMessage,
                 async () => {
                     setBusyState(true);
                     try {
@@ -179,9 +179,12 @@ export class SettingsImportModal extends Modal {
                             } catch (error) {
                                 console.error('Failed to save settings transfer backup', error);
                                 const message = getErrorMessage(error);
-                                showNotice(strings.settings.items.settingsTransfer.import.backupError.replace('{message}', message), {
-                                    variant: 'warning'
-                                });
+                                showNotice(
+                                    strings.settings.items.importAndExportSettings.import.backupError.replace('{message}', message),
+                                    {
+                                        variant: 'warning'
+                                    }
+                                );
                                 return;
                             }
                         }
@@ -190,26 +193,29 @@ export class SettingsImportModal extends Modal {
                         persistSettingsImportBackupToRoot(shouldSaveBackup);
                         showNotice(
                             backupPath
-                                ? strings.settings.items.settingsTransfer.import.successWithBackupNotice.replace('{path}', backupPath)
-                                : strings.settings.items.settingsTransfer.import.successNotice
+                                ? strings.settings.items.importAndExportSettings.import.successWithBackupNotice.replace(
+                                      '{path}',
+                                      backupPath
+                                  )
+                                : strings.settings.items.importAndExportSettings.import.successNotice
                         );
                         this.close();
                     } catch (error) {
                         console.error('Failed to import settings transfer', error);
                         const message = getErrorMessage(error);
-                        showNotice(strings.settings.items.settingsTransfer.import.errorNotice.replace('{message}', message), {
+                        showNotice(strings.settings.items.importAndExportSettings.import.errorNotice.replace('{message}', message), {
                             variant: 'warning'
                         });
                     } finally {
                         setBusyState(false);
                     }
                 },
-                strings.settings.items.settingsTransfer.import.confirmButtonText,
+                strings.settings.items.importAndExportSettings.import.confirmButtonText,
                 {
                     buildContent: containerEl => {
                         new Setting(containerEl)
-                            .setName(strings.settings.items.settingsTransfer.import.backupToggleName)
-                            .setDesc(strings.settings.items.settingsTransfer.import.backupToggleDesc)
+                            .setName(strings.settings.items.importAndExportSettings.import.backupToggleName)
+                            .setDesc(strings.settings.items.importAndExportSettings.import.backupToggleDesc)
                             .addToggle(toggle => {
                                 toggle.setValue(shouldSaveBackup).onChange(value => {
                                     shouldSaveBackup = value;
@@ -237,7 +243,7 @@ export class SettingsExportModal extends Modal {
         super(app);
         this.plugin = plugin;
         this.modalEl.addClass('nn-settings-transfer-modal');
-        this.titleEl.setText(strings.settings.items.settingsTransfer.export.modalTitle);
+        this.titleEl.setText(strings.settings.items.importAndExportSettings.export.modalTitle);
     }
 
     onOpen(): void {
@@ -246,25 +252,25 @@ export class SettingsExportModal extends Modal {
 
         createEditorLabel(
             contentEl,
-            strings.settings.items.settingsTransfer.export.editorName,
-            strings.settings.items.settingsTransfer.export.editorDesc
+            strings.settings.items.importAndExportSettings.export.editorName,
+            strings.settings.items.importAndExportSettings.export.editorDesc
         );
 
         const editorEl = createEditor(
             contentEl,
             this.plugin.createSettingsTransferJson(),
-            strings.settings.items.settingsTransfer.export.placeholder
+            strings.settings.items.importAndExportSettings.export.placeholder
         );
 
         const buttonContainer = contentEl.createDiv('nn-button-container');
 
         const copyButton = new ButtonComponent(buttonContainer);
-        copyButton.setButtonText(strings.settings.items.settingsTransfer.export.copyButtonText);
+        copyButton.setButtonText(strings.settings.items.importAndExportSettings.export.copyButtonText);
         copyButton.onClick(() => {
             runAsyncAction(async () => {
                 try {
                     await navigator.clipboard.writeText(editorEl.value);
-                    showNotice(strings.settings.items.settingsTransfer.export.copyNotice);
+                    showNotice(strings.settings.items.importAndExportSettings.export.copyNotice);
                 } catch (error) {
                     console.error('Failed to copy settings transfer', error);
                     showNotice(strings.common.clipboardWriteError, { variant: 'warning' });
@@ -273,16 +279,16 @@ export class SettingsExportModal extends Modal {
         });
 
         const downloadButton = new ButtonComponent(buttonContainer);
-        downloadButton.setButtonText(strings.settings.items.settingsTransfer.export.downloadButtonText);
+        downloadButton.setButtonText(strings.settings.items.importAndExportSettings.export.downloadButtonText);
         downloadButton.setCta();
         downloadButton.onClick(() => {
             try {
                 downloadTransferFile(editorEl.value);
-                showNotice(strings.settings.items.settingsTransfer.export.downloadNotice);
+                showNotice(strings.settings.items.importAndExportSettings.export.downloadNotice);
             } catch (error) {
                 console.error('Failed to download settings transfer', error);
                 const message = getErrorMessage(error);
-                showNotice(strings.settings.items.settingsTransfer.export.downloadError.replace('{message}', message), {
+                showNotice(strings.settings.items.importAndExportSettings.export.downloadError.replace('{message}', message), {
                     variant: 'warning'
                 });
             }

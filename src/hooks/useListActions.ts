@@ -1509,15 +1509,15 @@ export function useListActions({
             const isPropertySortActive = currentField === 'property';
             const isManualSortActive = isPropertySortActive && isManualSortPropertyKey(settings, currentSortSpec.propertyKey);
             const sortFieldLabels: Record<SortField, string> = {
-                modified: strings.settings.items.sortNotesBy.fields.modified,
-                created: strings.settings.items.sortNotesBy.fields.created,
-                title: strings.settings.items.sortNotesBy.fields.title,
-                filename: strings.settings.items.sortNotesBy.fields.filename,
-                property: strings.settings.items.sortNotesBy.fields.property
+                modified: strings.settings.items.defaultSortOrder.fields.dateEdited,
+                created: strings.settings.items.defaultSortOrder.fields.dateCreated,
+                title: strings.settings.items.defaultSortOrder.fields.title,
+                filename: strings.settings.items.defaultSortOrder.fields.fileName,
+                property: strings.settings.items.defaultSortOrder.fields.property
             };
             const sortDirectionLabels: Record<SortDirection, string> = {
-                asc: strings.settings.items.sortNotesBy.directions.asc,
-                desc: strings.settings.items.sortNotesBy.directions.desc
+                asc: strings.settings.items.defaultSortOrder.directions.asc,
+                desc: strings.settings.items.defaultSortOrder.directions.desc
             };
             const getSortFieldLabel = (field: SortField, propertyKey?: string): string => {
                 if (field === 'property') {
@@ -1719,7 +1719,7 @@ export function useListActions({
             (['custom', 'date'] as const).forEach(option => {
                 addGroupOptionItem(
                     option,
-                    strings.settings.items.groupNotes.options[option],
+                    strings.settings.items.defaultGrouping.options[option],
                     getGroupingIcon(option),
                     isGroupOptionDisabled(option)
                 );
@@ -1730,7 +1730,7 @@ export function useListActions({
             if (hasFolderSelection) {
                 addGroupOptionItem(
                     'folder',
-                    strings.settings.items.groupNotes.options.folder,
+                    strings.settings.items.defaultGrouping.options.folder,
                     getGroupingIcon('folder'),
                     isGroupOptionDisabled('folder')
                 );

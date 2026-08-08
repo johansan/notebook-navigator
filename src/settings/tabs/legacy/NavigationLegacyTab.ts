@@ -148,7 +148,7 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     addSettingSyncModeToggle({ setting: pinNavigationBannerSetting, plugin, settingId: 'pinNavigationBanner' });
 
     const showNoteCountSetting = noteCountsGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.showNoteCount.name).setDesc(strings.settings.items.showNoteCount.desc);
+        setting.setName(strings.settings.items.showFileCount.name).setDesc(strings.settings.items.showFileCount.desc);
     });
 
     const noteCountDependentSettingsEl = wireToggleSettingWithDependentSection(
@@ -161,8 +161,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     );
 
     new Setting(noteCountDependentSettingsEl)
-        .setName(strings.settings.items.separateNoteCounts.name)
-        .setDesc(strings.settings.items.separateNoteCounts.desc)
+        .setName(strings.settings.items.separateFileCounts.name)
+        .setDesc(strings.settings.items.separateFileCounts.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.separateNoteCounts).onChange(async value => {
                 plugin.settings.separateNoteCounts = value;
@@ -204,8 +204,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     appearanceGroup.addSetting(setting => {
         renderSliderSetting(setting, {
-            name: strings.settings.items.navRootSpacing.name,
-            desc: strings.settings.items.navRootSpacing.desc,
+            name: strings.settings.items.rootItemSpacing.name,
+            desc: strings.settings.items.rootItemSpacing.desc,
             value: plugin.settings.rootLevelSpacing,
             defaultValue: DEFAULT_SETTINGS.rootLevelSpacing,
             min: 0,
@@ -221,8 +221,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     const navIndentSetting = appearanceGroup.addSetting(setting => {
         renderSliderSetting(setting, {
-            name: strings.settings.items.navIndent.name,
-            desc: strings.settings.items.navIndent.desc,
+            name: strings.settings.items.treeIndentation.name,
+            desc: strings.settings.items.treeIndentation.desc,
             value: plugin.settings.navIndent,
             defaultValue: DEFAULT_SETTINGS.navIndent,
             min: 10,
@@ -294,9 +294,9 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     rainbowModeSetting.addDropdown(
         dropdown =>
             (navRainbowModeDropdown = dropdown
-                .addOption('none', strings.settings.items.navRainbowMode.options.none)
-                .addOption('foreground', strings.settings.items.navRainbowMode.options.foreground)
-                .addOption('background', strings.settings.items.navRainbowMode.options.background)
+                .addOption('none', strings.settings.items.navRainbowMode.options.off)
+                .addOption('foreground', strings.settings.items.navRainbowMode.options.textColor)
+                .addOption('background', strings.settings.items.navRainbowMode.options.backgroundColor)
                 .setValue(getActiveProfile().navRainbow.mode)
                 .onChange(async value => {
                     if (!isNavRainbowColorMode(value)) {
@@ -350,8 +350,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     });
 
     createRainbowSectionSetting({
-        name: strings.settings.items.navRainbowApplyToRecent.name,
-        desc: strings.settings.items.navRainbowApplyToRecent.desc,
+        name: strings.settings.items.navRainbowApplyToRecentItems.name,
+        desc: strings.settings.items.navRainbowApplyToRecentItems.desc,
         getEnabled: () => getActiveProfile().navRainbow.recent.enabled,
         setEnabled: async value => {
             await updateNavRainbow(settings => ({ ...settings, recent: { ...settings.recent, enabled: value } }));
@@ -403,8 +403,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     });
 
     new Setting(rainbowDependentSettingsEl)
-        .setName(strings.settings.items.navRainbowBalanceHueLuminance.name)
-        .setDesc(strings.settings.items.navRainbowBalanceHueLuminance.desc)
+        .setName(strings.settings.items.navRainbowConsistentBrightness.name)
+        .setDesc(strings.settings.items.navRainbowConsistentBrightness.desc)
         .addToggle(toggle => {
             navRainbowBalanceHueLuminanceToggle = toggle
                 .setValue(getActiveProfile().navRainbow.balanceHueLuminance)
@@ -438,8 +438,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
     if (supportsKeyboardInteractions()) {
         addToggleSetting(
             behaviorGroup.addSetting,
-            strings.settings.items.autoSelectFirstFileOnFocusChange.name,
-            strings.settings.items.autoSelectFirstFileOnFocusChange.desc,
+            strings.settings.items.autoSelectFirstNote.name,
+            strings.settings.items.autoSelectFirstNote.desc,
             () => plugin.settings.autoSelectFirstFileOnFocusChange,
             value => {
                 plugin.settings.autoSelectFirstFileOnFocusChange = value;
@@ -449,8 +449,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         behaviorGroup.addSetting,
-        strings.settings.items.autoExpandNavItems.name,
-        strings.settings.items.autoExpandNavItems.desc,
+        strings.settings.items.expandOnSelection.name,
+        strings.settings.items.expandOnSelection.desc,
         () => plugin.settings.autoExpandNavItems,
         value => {
             plugin.settings.autoExpandNavItems = value;
@@ -469,14 +469,14 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     collapseGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.collapseBehavior.name)
-            .setDesc(strings.settings.items.collapseBehavior.desc)
+            .setName(strings.settings.items.collapseItems.name)
+            .setDesc(strings.settings.items.collapseItems.desc)
             .addDropdown(dropdown =>
                 dropdown
-                    .addOption('all', strings.settings.items.collapseBehavior.options.all)
-                    .addOption('folders-only', strings.settings.items.collapseBehavior.options.foldersOnly)
-                    .addOption('tags-only', strings.settings.items.collapseBehavior.options.tagsOnly)
-                    .addOption('properties-only', strings.settings.items.collapseBehavior.options.propertiesOnly)
+                    .addOption('all', strings.settings.items.collapseItems.options.all)
+                    .addOption('folders-only', strings.settings.items.collapseItems.options.foldersOnly)
+                    .addOption('tags-only', strings.settings.items.collapseItems.options.tagsOnly)
+                    .addOption('properties-only', strings.settings.items.collapseItems.options.propertiesOnly)
                     .setValue(plugin.settings.collapseBehavior)
                     .onChange(async value => {
                         if (!isItemScope(value)) {
@@ -490,8 +490,8 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         collapseGroup.addSetting,
-        strings.settings.items.smartCollapse.name,
-        strings.settings.items.smartCollapse.desc,
+        strings.settings.items.keepSelectedItemExpanded.name,
+        strings.settings.items.keepSelectedItemExpanded.desc,
         () => plugin.settings.smartCollapse,
         value => {
             plugin.settings.smartCollapse = value;

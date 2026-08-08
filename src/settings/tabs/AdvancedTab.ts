@@ -35,31 +35,34 @@ import { getNotSyncedSettingName } from '../syncModeToggle';
 export function createAdvancedSettingDefinitions(context: SettingsTabContext): SettingDefinitionItem[] {
     const generalItems: NonNullable<SettingDefinitionGroup['items']> = [
         createToggleDefinition('checkForUpdatesOnStart', {
-            name: strings.settings.items.updateCheckOnStart.name,
-            desc: strings.settings.items.updateCheckOnStart.desc
+            name: strings.settings.items.checkForNewVersionOnStart.name,
+            desc: strings.settings.items.checkForNewVersionOnStart.desc
         }),
         createRenderDefinition({
-            name: getNotSyncedSettingName(strings.settings.items.debugLogging.name),
-            desc: strings.settings.items.debugLogging.desc,
-            aliases: [strings.settings.items.debugLogging.name],
+            name: getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name),
+            desc: strings.settings.items.startupDebugLogging.desc,
+            aliases: [strings.settings.items.startupDebugLogging.name],
             render: setting => renderDebugLoggingSetting(setting, context)
         }),
         createRenderDefinition({
-            name: strings.settings.items.settingsTransfer.name,
-            desc: strings.settings.items.settingsTransfer.desc,
-            aliases: [strings.settings.items.settingsTransfer.importButtonText, strings.settings.items.settingsTransfer.exportButtonText],
+            name: strings.settings.items.importAndExportSettings.name,
+            desc: strings.settings.items.importAndExportSettings.desc,
+            aliases: [
+                strings.settings.items.importAndExportSettings.importButtonText,
+                strings.settings.items.importAndExportSettings.exportButtonText
+            ],
             render: setting => {
                 const { plugin } = context;
                 setting
-                    .setName(strings.settings.items.settingsTransfer.name)
-                    .setDesc(strings.settings.items.settingsTransfer.desc)
+                    .setName(strings.settings.items.importAndExportSettings.name)
+                    .setDesc(strings.settings.items.importAndExportSettings.desc)
                     .addButton(button =>
-                        button.setButtonText(strings.settings.items.settingsTransfer.importButtonText).onClick(() => {
+                        button.setButtonText(strings.settings.items.importAndExportSettings.importButtonText).onClick(() => {
                             new SettingsImportModal(context.app, plugin).open();
                         })
                     )
                     .addButton(button =>
-                        button.setButtonText(strings.settings.items.settingsTransfer.exportButtonText).onClick(() => {
+                        button.setButtonText(strings.settings.items.importAndExportSettings.exportButtonText).onClick(() => {
                             new SettingsExportModal(context.app, plugin).open();
                         })
                     );
@@ -133,8 +136,8 @@ function renderDebugLoggingSetting(setting: Setting, context: SettingsTabContext
     const { plugin } = context;
 
     setting
-        .setName(getNotSyncedSettingName(strings.settings.items.debugLogging.name))
-        .setDesc(strings.settings.items.debugLogging.desc)
+        .setName(getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name))
+        .setDesc(strings.settings.items.startupDebugLogging.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.isDebugLoggingEnabled()).onChange(value => {
                 plugin.setDebugLoggingEnabled(value);
