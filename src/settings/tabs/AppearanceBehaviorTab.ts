@@ -97,8 +97,8 @@ function createBehaviorDefinitionGroup(context: SettingsTabContext): SettingDefi
 
     return createGroupDefinition(undefined, [
         createToggleDefinition('createNewNotesInNewTab', {
-            name: strings.settings.items.createNewNotesInNewTab.name,
-            desc: strings.settings.items.createNewNotesInNewTab.desc
+            name: strings.settings.items.openNewNotesInNewTab.name,
+            desc: strings.settings.items.openNewNotesInNewTab.desc
         }),
         createToggleDefinition('autoRevealActiveFile', {
             name: strings.settings.items.autoRevealActiveNote.name,
@@ -127,12 +127,12 @@ function createStartupDefinitionGroup(context: SettingsTabContext): SettingDefin
 
     return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.startup, [
         createDropdownDefinition('startView', {
-            name: strings.settings.items.startView.name,
-            desc: strings.settings.items.startView.desc,
-            aliases: optionAliases(strings.settings.items.startView.options),
+            name: strings.settings.items.defaultStartupView.name,
+            desc: strings.settings.items.defaultStartupView.desc,
+            aliases: optionAliases(strings.settings.items.defaultStartupView.options),
             options: {
-                navigation: strings.settings.items.startView.options.navigation,
-                files: strings.settings.items.startView.options.files
+                navigation: strings.settings.items.defaultStartupView.options.navigation,
+                files: strings.settings.items.defaultStartupView.options.listPane
             }
         }),
         createRenderDefinition({
@@ -172,7 +172,7 @@ function createKeyboardNavigationDefinitionGroup(context: SettingsTabContext): S
         rename: strings.contextMenu.file.renameFile
     };
     // Platform.isMacOS is also true on iOS/iPadOS devices, which use Cmd-based keyboards
-    const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterOpenContext : strings.settings.items.ctrlEnterOpenContext;
+    const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterAction : strings.settings.items.ctrlEnterAction;
 
     return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.keyboardNavigation, [
         createDropdownDefinition('multiSelectModifier', {
@@ -189,8 +189,8 @@ function createKeyboardNavigationDefinitionGroup(context: SettingsTabContext): S
             desc: strings.settings.items.enterToOpenFiles.desc
         }),
         createDropdownDefinition('shiftEnterOpenContext', {
-            name: strings.settings.items.shiftEnterOpenContext.name,
-            desc: strings.settings.items.shiftEnterOpenContext.desc,
+            name: strings.settings.items.shiftEnterAction.name,
+            desc: strings.settings.items.shiftEnterAction.desc,
             aliases: optionAliases(openContextOptions),
             options: openContextOptions,
             visible: () => plugin.settings.enterToOpenFiles
@@ -214,7 +214,8 @@ function createMouseButtonsDefinitionGroup(): SettingDefinitionGroup {
             desc: strings.settings.items.mouseBackForwardAction.desc,
             aliases: optionAliases(mouseBackForwardOptions),
             options: {
-                none: mouseBackForwardOptions.none,
+                // `none` is persisted when the plugin leaves the system action unchanged.
+                none: mouseBackForwardOptions.systemDefault,
                 singlePaneSwitch: mouseBackForwardOptions.singlePaneSwitch,
                 history: mouseBackForwardOptions.history
             }
@@ -266,20 +267,20 @@ function createDualPaneDefinitions(context: SettingsTabContext): SettingDefiniti
             }
         }),
         createRenderDefinition({
-            name: strings.settings.items.narrowSidebarLayout.name,
-            desc: strings.settings.items.narrowSidebarLayout.desc,
-            aliases: optionAliases(strings.settings.items.narrowSidebarLayout.options),
+            name: strings.settings.items.narrowSidebarBehavior.name,
+            desc: strings.settings.items.narrowSidebarBehavior.desc,
+            aliases: optionAliases(strings.settings.items.narrowSidebarBehavior.options),
             visible: () => plugin.getDualPaneOrientation() === 'horizontal',
             render: setting => {
                 setting
-                    .setName(strings.settings.items.narrowSidebarLayout.name)
-                    .setDesc(strings.settings.items.narrowSidebarLayout.desc)
+                    .setName(strings.settings.items.narrowSidebarBehavior.name)
+                    .setDesc(strings.settings.items.narrowSidebarBehavior.desc)
                     .addDropdown(dropdown => {
                         dropdown
                             .addOptions({
-                                none: strings.settings.items.narrowSidebarLayout.options.none,
-                                singlePane: strings.settings.items.narrowSidebarLayout.options.singlePane,
-                                vertical: strings.settings.items.narrowSidebarLayout.options.vertical
+                                none: strings.settings.items.narrowSidebarBehavior.options.none,
+                                singlePane: strings.settings.items.narrowSidebarBehavior.options.singlePane,
+                                vertical: strings.settings.items.narrowSidebarBehavior.options.vertical
                             })
                             .setValue(plugin.settings.narrowSidebarLayout)
                             .onChange(value => {
@@ -292,16 +293,16 @@ function createDualPaneDefinitions(context: SettingsTabContext): SettingDefiniti
             }
         }),
         createRenderDefinition({
-            name: strings.settings.items.narrowSidebarTrigger.name,
-            desc: strings.settings.items.narrowSidebarTrigger.desc,
-            aliases: optionAliases(strings.settings.items.narrowSidebarTrigger.options),
+            name: strings.settings.items.narrowSidebarThresholdMode.name,
+            desc: strings.settings.items.narrowSidebarThresholdMode.desc,
+            aliases: optionAliases(strings.settings.items.narrowSidebarThresholdMode.options),
             visible: () => plugin.getDualPaneOrientation() === 'horizontal' && plugin.settings.narrowSidebarLayout !== 'none',
             render: setting => renderNarrowSidebarTriggerSetting(setting, context)
         }),
         createRenderDefinition({
-            name: strings.settings.items.narrowSidebarCustomWidth.name,
-            desc: strings.settings.items.narrowSidebarCustomWidth.desc,
-            aliases: [NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT.toString(), strings.settings.items.narrowSidebarCustomWidth.resetTooltip],
+            name: strings.settings.items.narrowSidebarThresholdWidth.name,
+            desc: strings.settings.items.narrowSidebarThresholdWidth.desc,
+            aliases: [NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT.toString(), strings.settings.items.narrowSidebarThresholdWidth.resetTooltip],
             visible: () =>
                 plugin.getDualPaneOrientation() === 'horizontal' &&
                 plugin.settings.narrowSidebarLayout !== 'none' &&
@@ -317,13 +318,13 @@ function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): Se
     return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.desktopAppearance, [
         ...createDualPaneDefinitions(context),
         createDropdownDefinition('desktopBackground', {
-            name: strings.settings.items.appearanceBackground.name,
-            desc: strings.settings.items.appearanceBackground.desc,
-            aliases: optionAliases(strings.settings.items.appearanceBackground.options),
+            name: strings.settings.items.paneBackgroundColor.name,
+            desc: strings.settings.items.paneBackgroundColor.desc,
+            aliases: optionAliases(strings.settings.items.paneBackgroundColor.options),
             options: {
-                separate: strings.settings.items.appearanceBackground.options.separate,
-                primary: strings.settings.items.appearanceBackground.options.primary,
-                secondary: strings.settings.items.appearanceBackground.options.secondary
+                separate: strings.settings.items.paneBackgroundColor.options.separate,
+                primary: strings.settings.items.paneBackgroundColor.options.listBackground,
+                secondary: strings.settings.items.paneBackgroundColor.options.navigationBackground
             }
         }),
         createToggleDefinition('showTooltips', {
@@ -354,12 +355,12 @@ function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): Set
             ? []
             : [
                   createRenderDefinition({
-                      name: strings.settings.items.useFloatingToolbars.name,
-                      desc: strings.settings.items.useFloatingToolbars.desc,
+                      name: strings.settings.items.useFloatingToolbarsOnIOS.name,
+                      desc: strings.settings.items.useFloatingToolbarsOnIOS.desc,
                       render: setting => {
                           setting
-                              .setName(strings.settings.items.useFloatingToolbars.name)
-                              .setDesc(strings.settings.items.useFloatingToolbars.desc)
+                              .setName(strings.settings.items.useFloatingToolbarsOnIOS.name)
+                              .setDesc(strings.settings.items.useFloatingToolbarsOnIOS.desc)
                               .addToggle(toggle =>
                                   toggle.setValue(plugin.settings.useFloatingToolbars).onChange(value => {
                                       plugin.setUseFloatingToolbars(value);
@@ -375,14 +376,14 @@ function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): Set
 function createViewDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
     return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.appearance, [
         createRenderDefinition({
-            name: strings.settings.items.appearanceScale.name,
-            desc: strings.settings.items.appearanceScale.desc,
+            name: strings.settings.items.zoomLevel.name,
+            desc: strings.settings.items.zoomLevel.desc,
             render: setting => renderUIScaleSetting(setting, context)
         }),
         createRenderDefinition({
-            name: strings.settings.items.paneTransitionDuration.name,
-            desc: strings.settings.items.paneTransitionDuration.desc,
-            aliases: [strings.settings.items.paneTransitionDuration.resetTooltip],
+            name: strings.settings.items.singlePaneAnimation.name,
+            desc: strings.settings.items.singlePaneAnimation.desc,
+            aliases: [strings.settings.items.singlePaneAnimation.resetTooltip],
             render: setting => renderPaneTransitionSetting(setting, context)
         }),
         createToggleDefinition('showInfoButtons', {
@@ -427,8 +428,8 @@ function createIconDefinitionGroup(context: SettingsTabContext): SettingDefiniti
             }
         }),
         createToggleDefinition('colorIconOnly', {
-            name: strings.settings.items.showIconsColorOnly.name,
-            desc: strings.settings.items.showIconsColorOnly.desc
+            name: strings.settings.items.applyColorToIconsOnly.name,
+            desc: strings.settings.items.applyColorToIconsOnly.desc
         })
     ]);
 }
@@ -455,8 +456,8 @@ function renderUIScaleSetting(setting: Setting, context: SettingsTabContext): vo
     const initialUIScalePercent = scaleToPercent(plugin.getUIScale());
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.appearanceScale.name,
-        desc: strings.settings.items.appearanceScale.desc,
+        name: strings.settings.items.zoomLevel.name,
+        desc: strings.settings.items.zoomLevel.desc,
         value: initialUIScalePercent,
         defaultValue: scaleToPercent(DEFAULT_UI_SCALE),
         min: MIN_UI_SCALE_PERCENT,
@@ -475,14 +476,14 @@ function renderPaneTransitionSetting(setting: Setting, context: SettingsTabConte
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.paneTransitionDuration.name,
-        desc: strings.settings.items.paneTransitionDuration.desc,
+        name: strings.settings.items.singlePaneAnimation.name,
+        desc: strings.settings.items.singlePaneAnimation.desc,
         value: plugin.settings.paneTransitionDuration,
         defaultValue: DEFAULT_SETTINGS.paneTransitionDuration,
         min: MIN_PANE_TRANSITION_DURATION_MS,
         max: MAX_PANE_TRANSITION_DURATION_MS,
         step: PANE_TRANSITION_DURATION_STEP_MS,
-        resetTooltip: strings.settings.items.paneTransitionDuration.resetTooltip,
+        resetTooltip: strings.settings.items.singlePaneAnimation.resetTooltip,
         formatValue: value => `${value}ms`,
         onChange: value => {
             plugin.setPaneTransitionDuration(value);
@@ -496,13 +497,13 @@ function renderNarrowSidebarTriggerSetting(setting: Setting, context: SettingsTa
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.narrowSidebarTrigger.name)
-        .setDesc(strings.settings.items.narrowSidebarTrigger.desc)
+        .setName(strings.settings.items.narrowSidebarThresholdMode.name)
+        .setDesc(strings.settings.items.narrowSidebarThresholdMode.desc)
         .addDropdown(dropdown => {
             dropdown
                 .addOptions({
-                    fitPanes: strings.settings.items.narrowSidebarTrigger.options.fitPanes,
-                    customWidth: strings.settings.items.narrowSidebarTrigger.options.customWidth
+                    fitPanes: strings.settings.items.narrowSidebarThresholdMode.options.fitPanes,
+                    customWidth: strings.settings.items.narrowSidebarThresholdMode.options.customWidth
                 })
                 .setValue(plugin.settings.narrowSidebarTriggerMode)
                 .onChange(value => {
@@ -518,14 +519,14 @@ function renderNarrowSidebarCustomWidthSetting(setting: Setting, context: Settin
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.narrowSidebarCustomWidth.name,
-        desc: strings.settings.items.narrowSidebarCustomWidth.desc,
+        name: strings.settings.items.narrowSidebarThresholdWidth.name,
+        desc: strings.settings.items.narrowSidebarThresholdWidth.desc,
         value: plugin.settings.narrowSidebarCustomWidth,
         defaultValue: NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
         min: NARROW_SIDEBAR_CUSTOM_WIDTH_MIN,
         max: NARROW_SIDEBAR_CUSTOM_WIDTH_MAX,
         step: NARROW_SIDEBAR_CUSTOM_WIDTH_STEP,
-        resetTooltip: strings.settings.items.narrowSidebarCustomWidth.resetTooltip,
+        resetTooltip: strings.settings.items.narrowSidebarThresholdWidth.resetTooltip,
         formatValue: formatPixelSliderValue,
         onChange: value => {
             plugin.setNarrowSidebarCustomWidth(value);

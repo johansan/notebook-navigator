@@ -27,7 +27,9 @@ import {
     getPropertyGroupingOrder,
     MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS,
     normalizeListNoteGroupingOption,
-    PROPERTY_SORT_SECONDARY_OPTIONS
+    PROPERTY_SORT_SECONDARY_OPTIONS,
+    type ManualSortNewNotePlacement,
+    type PropertySortSecondaryOption
 } from '../types';
 import type { NotebookNavigatorSettings } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
@@ -105,46 +107,46 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
         ]),
         createGroupDefinition(strings.settings.pages.listPane.groups.sortAndGroup, [
             createRenderDefinition({
-                name: strings.settings.items.sortNotesBy.name,
-                desc: strings.settings.items.sortNotesBy.desc,
+                name: strings.settings.items.defaultSortOrder.name,
+                desc: strings.settings.items.defaultSortOrder.desc,
                 aliases: [
-                    ...Object.values(strings.settings.items.sortNotesBy.fields),
-                    ...Object.values(strings.settings.items.sortNotesBy.directions),
-                    ...Object.values(strings.settings.items.sortNotesBy.dateDirections),
-                    ...Object.values(strings.settings.items.sortNotesBy.textDirections),
+                    ...Object.values(strings.settings.items.defaultSortOrder.fields),
+                    ...Object.values(strings.settings.items.defaultSortOrder.directions),
+                    ...Object.values(strings.settings.items.defaultSortOrder.dateDirections),
+                    ...Object.values(strings.settings.items.defaultSortOrder.textDirections),
                     strings.settings.items.defaultSortDirection.name
                 ],
                 render: setting => renderDefaultFolderSortSetting(setting, context)
             }),
             createRenderDefinition({
-                name: strings.settings.items.groupNotes.name,
-                desc: getPlainSettingText(strings.settings.items.groupNotes.desc),
+                name: strings.settings.items.defaultGrouping.name,
+                desc: getPlainSettingText(strings.settings.items.defaultGrouping.desc),
                 aliases: [
-                    ...Object.values(strings.settings.items.groupNotes.options),
-                    ...Object.values(strings.settings.items.groupNotes.families),
-                    ...Object.values(strings.settings.items.sortNotesBy.directions),
+                    ...Object.values(strings.settings.items.defaultGrouping.options),
+                    ...Object.values(strings.settings.items.defaultGrouping.families),
+                    ...Object.values(strings.settings.items.defaultSortOrder.directions),
                     strings.settings.items.defaultGroupingDirection.name,
                     strings.settings.items.defaultGroupingDirection.options.follow
                 ],
                 render: setting => renderNoteGroupingSetting(setting, context)
             }),
             createRenderDefinition({
-                name: strings.settings.items.propertySortKey.name,
-                desc: strings.settings.items.propertySortKey.desc,
-                aliases: [strings.settings.items.propertySortKey.placeholder],
+                name: strings.settings.items.sortingProperties.name,
+                desc: strings.settings.items.sortingProperties.desc,
+                aliases: [strings.settings.items.sortingProperties.placeholder],
                 render: setting => renderPropertySortKeySetting(setting, context)
             }),
             createDropdownDefinition('propertySortSecondary', {
-                name: strings.settings.items.propertySortSecondary.name,
-                desc: strings.settings.items.propertySortSecondary.desc,
-                aliases: Object.values(strings.settings.items.propertySortSecondary.options),
+                name: strings.settings.items.propertySecondarySort.name,
+                desc: strings.settings.items.propertySecondarySort.desc,
+                aliases: Object.values(strings.settings.items.propertySecondarySort.options),
                 visible: () => plugin.settings.propertySortKey.trim().length > 0,
                 options: createPropertySortSecondaryOptions()
             }),
             createRenderDefinition({
-                name: strings.settings.items.propertyGroupKey.name,
-                desc: strings.settings.items.propertyGroupKey.desc,
-                aliases: [strings.settings.items.propertyGroupKey.placeholder],
+                name: strings.settings.items.groupingProperties.name,
+                desc: strings.settings.items.groupingProperties.desc,
+                aliases: [strings.settings.items.groupingProperties.placeholder],
                 render: setting => renderPropertyGroupKeySetting(setting, context)
             }),
             createToggleDefinition('showCurrentFolderFilesAtBottom', {
@@ -163,16 +165,16 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 desc: strings.settings.items.stickyGroupHeaders.desc
             }),
             createToggleDefinition('showFolderGroupPaths', {
-                name: strings.settings.items.showFolderGroupPaths.name,
-                desc: strings.settings.items.showFolderGroupPaths.desc
+                name: strings.settings.items.showSubfolderPaths.name,
+                desc: strings.settings.items.showSubfolderPaths.desc
             }),
             createToggleDefinition('showGroupHeaderItemCounts', {
                 name: strings.settings.items.showGroupHeaderItemCounts.name,
                 desc: strings.settings.items.showGroupHeaderItemCounts.desc
             }),
             createRenderDefinition({
-                name: strings.settings.items.manualSortGroupHeaderProperty.name,
-                desc: strings.settings.items.manualSortGroupHeaderProperty.desc,
+                name: strings.settings.items.groupHeaderProperty.name,
+                desc: strings.settings.items.groupHeaderProperty.desc,
                 render: setting => renderManualSortGroupHeaderPropertySetting(setting, context)
             }),
             createRenderDefinition({
@@ -183,8 +185,8 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
         ]),
         createGroupDefinition(strings.settings.pages.listPane.groups.manualSort, [
             createRenderDefinition({
-                name: strings.settings.items.manualSortPropertyKey.name,
-                desc: strings.settings.items.manualSortPropertyKey.desc,
+                name: strings.settings.items.manualSortProperty.name,
+                desc: strings.settings.items.manualSortProperty.desc,
                 aliases: [DEFAULT_SETTINGS.manualSortPropertyKey],
                 render: setting => renderManualSortPropertyKeySetting(setting, context)
             }),
@@ -206,15 +208,15 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
         ]),
         createGroupDefinition(strings.settings.pages.listPane.groups.pinnedNotes, [
             createToggleDefinition('filterPinnedByFolder', {
-                name: strings.settings.items.limitPinnedToCurrentFolder.name,
-                desc: strings.settings.items.limitPinnedToCurrentFolder.desc
+                name: strings.settings.items.filterPinnedNotesByFolder.name,
+                desc: strings.settings.items.filterPinnedNotesByFolder.desc
             })
         ]),
         createListAppearanceDefinitionGroup(context),
         createGroupDefinition(strings.settings.pages.listPane.groups.behavior, [
             createToggleDefinition('revealFileOnListChanges', {
-                name: strings.settings.items.revealFileOnListChanges.name,
-                desc: strings.settings.items.revealFileOnListChanges.desc
+                name: strings.settings.items.scrollToSelectedFileOnListChanges.name,
+                desc: strings.settings.items.scrollToSelectedFileOnListChanges.desc
             }),
             ...(Platform.isMobile
                 ? []
@@ -235,8 +237,8 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
         ]),
         createGroupDefinition(strings.settings.pages.listPane.groups.drawingPreviews, [
             createToggleDefinition('hideDrawingPreviewImages', {
-                name: strings.settings.items.hideDrawingPreviewImages.name,
-                desc: strings.settings.items.hideDrawingPreviewImages.desc
+                name: strings.settings.items.hideExportedPreviewImages.name,
+                desc: strings.settings.items.hideExportedPreviewImages.desc
             }),
             createRenderDefinition({
                 name: strings.settings.items.drawingIntegrationInfo.intro,
@@ -261,7 +263,7 @@ function createListAppearanceDefinitionGroup(context: SettingsTabContext): Setti
                 aliases: Object.values(strings.settings.items.listPaneTitle.options),
                 options: {
                     header: strings.settings.items.listPaneTitle.options.header,
-                    list: strings.settings.items.listPaneTitle.options.list,
+                    list: strings.settings.items.listPaneTitle.options.listPane,
                     hidden: strings.settings.items.listPaneTitle.options.hidden
                 }
             })
@@ -290,8 +292,8 @@ function createListAppearanceDefinitionGroup(context: SettingsTabContext): Setti
             render: setting => renderCompactItemHeightScaleTextSetting(setting, context)
         }),
         createToggleDefinition('showSelectedNavigationPills', {
-            name: strings.settings.items.showSelectedNavigationPills.name,
-            desc: strings.settings.items.showSelectedNavigationPills.desc
+            name: strings.settings.items.alwaysShowAllTagAndPropertyPills.name,
+            desc: strings.settings.items.alwaysShowAllTagAndPropertyPills.desc
         })
     );
 
@@ -307,7 +309,7 @@ function isolateBidiText(value: string): string {
 }
 
 function getPropertyDropdownOptionLabel(propertyKey: string): string {
-    return `${strings.settings.items.sortNotesBy.fields.property} \u2018${isolateBidiText(propertyKey)}\u2019`;
+    return `${strings.settings.items.defaultSortOrder.fields.property} \u2018${isolateBidiText(propertyKey)}\u2019`;
 }
 
 /**
@@ -326,10 +328,10 @@ export function renderDefaultFolderSortSetting(setting: Setting, context: Settin
     let refreshDirectionControl: () => void = () => {};
 
     setting
-        .setName(strings.settings.items.sortNotesBy.name)
-        .setDesc(strings.settings.items.sortNotesBy.desc)
+        .setName(strings.settings.items.defaultSortOrder.name)
+        .setDesc(strings.settings.items.defaultSortOrder.desc)
         .addDropdown(dropdown => {
-            dropdown.selectEl.setAttribute('aria-label', strings.settings.items.sortNotesBy.name);
+            dropdown.selectEl.setAttribute('aria-label', strings.settings.items.defaultSortOrder.name);
             // Maps property entry ids to their key. Index-based ids mean decoding never parses the
             // property key out of the id (keys may contain any characters, including separators).
             let propertySelections = new Map<string, string>();
@@ -354,8 +356,16 @@ export function renderDefaultFolderSortSetting(setting: Setting, context: Settin
             const rebuildOptions = (): void => {
                 propertySelections = new Map();
                 dropdown.selectEl.empty();
+                // Persisted sort fields intentionally differ from some localization aliases, so
+                // indexing the translated record with the stored value would omit those labels.
+                const fieldLabels: Record<Exclude<SortField, 'property'>, string> = {
+                    modified: strings.settings.items.defaultSortOrder.fields.dateEdited,
+                    created: strings.settings.items.defaultSortOrder.fields.dateCreated,
+                    title: strings.settings.items.defaultSortOrder.fields.title,
+                    filename: strings.settings.items.defaultSortOrder.fields.fileName
+                };
                 (['modified', 'created', 'title', 'filename'] as const).forEach(field => {
-                    dropdown.addOption(field, strings.settings.items.sortNotesBy.fields[field]);
+                    dropdown.addOption(field, fieldLabels[field]);
                 });
                 getAvailablePropertySortKeys(plugin.settings).forEach((propertyKey, index) => {
                     const id = `property:${index}`;
@@ -404,12 +414,18 @@ export function renderDefaultFolderSortSetting(setting: Setting, context: Settin
             const getDirectionLabels = (): Record<SortDirection, string> => {
                 const field = getSortField(plugin.settings.defaultFolderSort);
                 if (field === 'modified' || field === 'created') {
-                    return strings.settings.items.sortNotesBy.dateDirections;
+                    return {
+                        asc: strings.settings.items.defaultSortOrder.dateDirections.oldestOnTop,
+                        desc: strings.settings.items.defaultSortOrder.dateDirections.newestOnTop
+                    };
                 }
                 if (field === 'property') {
-                    return strings.settings.items.sortNotesBy.directions;
+                    return strings.settings.items.defaultSortOrder.directions;
                 }
-                return strings.settings.items.sortNotesBy.textDirections;
+                return {
+                    asc: strings.settings.items.defaultSortOrder.textDirections.aOnTop,
+                    desc: strings.settings.items.defaultSortOrder.textDirections.zOnTop
+                };
             };
 
             const rebuildOptions = (): void => {
@@ -458,13 +474,13 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
     // update listener would leave the order control briefly shown or hidden for the wrong mode.
     let refreshOrderControl: () => void = () => {};
 
-    setting.setName(strings.settings.items.groupNotes.name).setDesc('');
+    setting.setName(strings.settings.items.defaultGrouping.name).setDesc('');
     setting.descEl.empty();
-    appendSettingText(setting.descEl, strings.settings.items.groupNotes.desc);
+    appendSettingText(setting.descEl, strings.settings.items.defaultGrouping.desc);
 
     setting
         .addDropdown(dropdown => {
-            dropdown.selectEl.setAttribute('aria-label', strings.settings.items.groupNotes.name);
+            dropdown.selectEl.setAttribute('aria-label', strings.settings.items.defaultGrouping.name);
             // Property entry ids use the follow-sort encoding regardless of the stored order;
             // the order lives in the group order dropdown in the same row.
             const getSelectedValue = (): string => {
@@ -491,15 +507,15 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
                 // partition the list and order the groups on their own. The optgroup labels make
                 // that split visible in the control itself.
                 const headersGroupEl = dropdown.selectEl.createEl('optgroup', {
-                    attr: { label: strings.settings.items.groupNotes.families.headers }
+                    attr: { label: strings.settings.items.defaultGrouping.families.headers }
                 });
                 (['custom', 'date'] as const).forEach(option => {
-                    headersGroupEl.createEl('option', { value: option, text: strings.settings.items.groupNotes.options[option] });
+                    headersGroupEl.createEl('option', { value: option, text: strings.settings.items.defaultGrouping.options[option] });
                 });
                 const groupsGroupEl = dropdown.selectEl.createEl('optgroup', {
-                    attr: { label: strings.settings.items.groupNotes.families.groups }
+                    attr: { label: strings.settings.items.defaultGrouping.families.groups }
                 });
-                groupsGroupEl.createEl('option', { value: 'folder', text: strings.settings.items.groupNotes.options.folder });
+                groupsGroupEl.createEl('option', { value: 'folder', text: strings.settings.items.defaultGrouping.options.folder });
                 getAvailablePropertyGroupKeys(plugin.settings).forEach(propertyKey => {
                     groupsGroupEl.createEl('option', {
                         value: createPropertyGroupingOption(propertyKey, 'follow'),
@@ -544,7 +560,7 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
                     order,
                     order === 'follow'
                         ? strings.settings.items.defaultGroupingDirection.options.follow
-                        : strings.settings.items.sortNotesBy.directions[order]
+                        : strings.settings.items.defaultSortOrder.directions[order]
                 );
             });
 
@@ -586,8 +602,8 @@ export function renderPropertyGroupKeySetting(setting: Setting, context: Setting
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.propertyGroupKey.name)
-        .setDesc(strings.settings.items.propertyGroupKey.desc)
+        .setName(strings.settings.items.groupingProperties.name)
+        .setDesc(strings.settings.items.groupingProperties.desc)
         .addText(text => {
             const commitPropertyGroupKey = async (): Promise<void> => {
                 const value = text.getValue();
@@ -612,7 +628,7 @@ export function renderPropertyGroupKeySetting(setting: Setting, context: Setting
                 text.inputEl.blur();
             });
 
-            return text.setPlaceholder(strings.settings.items.propertyGroupKey.placeholder).setValue(plugin.settings.propertyGroupKey);
+            return text.setPlaceholder(strings.settings.items.groupingProperties.placeholder).setValue(plugin.settings.propertyGroupKey);
         });
 }
 
@@ -624,7 +640,7 @@ export function renderPropertyGroupKeySetting(setting: Setting, context: Setting
 export function reconcileDefaultsAfterPropertyKeysEdit(settings: NotebookNavigatorSettings): void {
     const sortResult = reconcileDefaultFolderSort(settings);
     const groupingResult = reconcileDefaultNoteGrouping(settings);
-    const notices = strings.settings.items.propertySortKey.defaultsResetNotices;
+    const notices = strings.settings.items.sortingProperties.defaultsResetNotices;
     if (sortResult.reset && groupingResult.reset) {
         showNotice(notices.both);
     } else if (sortResult.reset) {
@@ -637,7 +653,7 @@ export function reconcileDefaultsAfterPropertyKeysEdit(settings: NotebookNavigat
 function createPropertySortSecondaryOptions(): Record<string, string> {
     const options: Record<string, string> = {};
     PROPERTY_SORT_SECONDARY_OPTIONS.forEach(option => {
-        options[option] = strings.settings.items.propertySortSecondary.options[option];
+        options[option] = getPropertySecondarySortOptionLabel(option);
     });
     return options;
 }
@@ -645,9 +661,37 @@ function createPropertySortSecondaryOptions(): Record<string, string> {
 function createManualSortNewNotePlacementOptions(): Record<string, string> {
     const options: Record<string, string> = {};
     MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS.forEach(option => {
-        options[option] = strings.settings.items.manualSortNewNotePlacement.options[option];
+        options[option] = getManualSortNewNotePlacementOptionLabel(option);
     });
     return options;
+}
+
+/** Maps persisted property-sort values to their semantic localization aliases. */
+export function getPropertySecondarySortOptionLabel(option: PropertySortSecondaryOption): string {
+    switch (option) {
+        case 'title':
+            return strings.settings.items.propertySecondarySort.options.title;
+        case 'filename':
+            return strings.settings.items.propertySecondarySort.options.fileName;
+        case 'created':
+            return strings.settings.items.propertySecondarySort.options.dateCreated;
+        case 'modified':
+            return strings.settings.items.propertySecondarySort.options.dateEdited;
+    }
+}
+
+/** Maps persisted manual-sort placement values to their semantic localization aliases. */
+export function getManualSortNewNotePlacementOptionLabel(option: ManualSortNewNotePlacement): string {
+    switch (option) {
+        case 'top':
+            return strings.settings.items.manualSortNewNotePlacement.options.top;
+        case 'bottom':
+            return strings.settings.items.manualSortNewNotePlacement.options.bottom;
+        case 'below-selected-note':
+            return strings.settings.items.manualSortNewNotePlacement.options.belowSelectedNote;
+        case 'unsorted':
+            return strings.settings.items.manualSortNewNotePlacement.options.unsorted;
+    }
 }
 
 function renderIncludeDescendantNotesSetting(setting: Setting, context: SettingsTabContext): void {
@@ -706,8 +750,8 @@ function renderManualSortGroupHeaderPropertySetting(setting: Setting, context: S
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.manualSortGroupHeaderProperty.name)
-        .setDesc(strings.settings.items.manualSortGroupHeaderProperty.desc)
+        .setName(strings.settings.items.groupHeaderProperty.name)
+        .setDesc(strings.settings.items.groupHeaderProperty.desc)
         .addText(text => {
             const commitGroupHeaderProperty = async (): Promise<void> => {
                 const value = text.getValue().trim();
@@ -751,8 +795,8 @@ function renderPropertySortKeySetting(setting: Setting, context: SettingsTabCont
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.propertySortKey.name)
-        .setDesc(strings.settings.items.propertySortKey.desc)
+        .setName(strings.settings.items.sortingProperties.name)
+        .setDesc(strings.settings.items.sortingProperties.desc)
         .addText(text => {
             const commitPropertySortKey = async (): Promise<void> => {
                 const value = text.getValue();
@@ -778,7 +822,7 @@ function renderPropertySortKeySetting(setting: Setting, context: SettingsTabCont
                 text.inputEl.blur();
             });
 
-            return text.setPlaceholder(strings.settings.items.propertySortKey.placeholder).setValue(plugin.settings.propertySortKey);
+            return text.setPlaceholder(strings.settings.items.sortingProperties.placeholder).setValue(plugin.settings.propertySortKey);
         });
 }
 
@@ -786,8 +830,8 @@ function renderManualSortPropertyKeySetting(setting: Setting, context: SettingsT
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.manualSortPropertyKey.name)
-        .setDesc(strings.settings.items.manualSortPropertyKey.desc)
+        .setName(strings.settings.items.manualSortProperty.name)
+        .setDesc(strings.settings.items.manualSortProperty.desc)
         .addText(text => {
             const commitManualSortPropertyKey = async (): Promise<void> => {
                 const value = normalizeManualSortPropertyKey(text.getValue());

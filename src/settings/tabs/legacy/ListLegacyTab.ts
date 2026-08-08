@@ -23,6 +23,8 @@ import { isListDisplayMode, isListPaneTitleOption, isManualSortNewNotePlacement,
 import { MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS, PROPERTY_SORT_SECONDARY_OPTIONS } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
 import {
+    getManualSortNewNotePlacementOptionLabel,
+    getPropertySecondarySortOptionLabel,
     reconcileDefaultsAfterPropertyKeysEdit,
     renderDefaultFolderSortSetting,
     renderNoteGroupingSetting,
@@ -70,7 +72,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     .addDropdown(dropdown =>
                         dropdown
                             .addOption('header', strings.settings.items.listPaneTitle.options.header)
-                            .addOption('list', strings.settings.items.listPaneTitle.options.list)
+                            .addOption('list', strings.settings.items.listPaneTitle.options.listPane)
                             .addOption('hidden', strings.settings.items.listPaneTitle.options.hidden)
                             .setValue(plugin.settings.listPaneTitle)
                             .onChange(async value => {
@@ -137,8 +139,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
         addToggleSetting(
             appearanceGroup.addSetting,
-            strings.settings.items.showSelectedNavigationPills.name,
-            strings.settings.items.showSelectedNavigationPills.desc,
+            strings.settings.items.alwaysShowAllTagAndPropertyPills.name,
+            strings.settings.items.alwaysShowAllTagAndPropertyPills.desc,
             () => plugin.settings.showSelectedNavigationPills,
             value => {
                 plugin.settings.showSelectedNavigationPills = value;
@@ -177,8 +179,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     const propertySortKeySetting = sortAndGroupGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.propertySortKey.name)
-            .setDesc(strings.settings.items.propertySortKey.desc)
+            .setName(strings.settings.items.sortingProperties.name)
+            .setDesc(strings.settings.items.sortingProperties.desc)
             .addText(text => {
                 const commitPropertySortKey = async (): Promise<void> => {
                     const value = text.getValue();
@@ -204,7 +206,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                     text.inputEl.blur();
                 });
 
-                return text.setPlaceholder(strings.settings.items.propertySortKey.placeholder).setValue(plugin.settings.propertySortKey);
+                return text.setPlaceholder(strings.settings.items.sortingProperties.placeholder).setValue(plugin.settings.propertySortKey);
             });
     });
 
@@ -214,11 +216,11 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     };
 
     new Setting(propertySortSecondarySettingsEl)
-        .setName(strings.settings.items.propertySortSecondary.name)
-        .setDesc(strings.settings.items.propertySortSecondary.desc)
+        .setName(strings.settings.items.propertySecondarySort.name)
+        .setDesc(strings.settings.items.propertySecondarySort.desc)
         .addDropdown(dropdown => {
             PROPERTY_SORT_SECONDARY_OPTIONS.forEach(option => {
-                dropdown.addOption(option, strings.settings.items.propertySortSecondary.options[option]);
+                dropdown.addOption(option, getPropertySecondarySortOptionLabel(option));
             });
             return dropdown.setValue(plugin.settings.propertySortSecondary).onChange(async value => {
                 if (!isPropertySortSecondaryOption(value)) {
@@ -268,8 +270,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         groupHeadersGroup.addSetting,
-        strings.settings.items.showFolderGroupPaths.name,
-        strings.settings.items.showFolderGroupPaths.desc,
+        strings.settings.items.showSubfolderPaths.name,
+        strings.settings.items.showSubfolderPaths.desc,
         () => plugin.settings.showFolderGroupPaths,
         value => {
             plugin.settings.showFolderGroupPaths = value;
@@ -288,8 +290,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     groupHeadersGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.manualSortGroupHeaderProperty.name)
-            .setDesc(strings.settings.items.manualSortGroupHeaderProperty.desc)
+            .setName(strings.settings.items.groupHeaderProperty.name)
+            .setDesc(strings.settings.items.groupHeaderProperty.desc)
             .addText(text => {
                 const commitGroupHeaderProperty = async (): Promise<void> => {
                     const value = text.getValue().trim();
@@ -343,8 +345,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     manualSortGroup.addSetting(setting => {
         setting
-            .setName(strings.settings.items.manualSortPropertyKey.name)
-            .setDesc(strings.settings.items.manualSortPropertyKey.desc)
+            .setName(strings.settings.items.manualSortProperty.name)
+            .setDesc(strings.settings.items.manualSortProperty.desc)
             .addText(text => {
                 const commitManualSortPropertyKey = async (): Promise<void> => {
                     const value = normalizeManualSortPropertyKey(text.getValue());
@@ -385,7 +387,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             .setDesc(strings.settings.items.manualSortNewNotePlacement.desc)
             .addDropdown(dropdown => {
                 MANUAL_SORT_NEW_NOTE_PLACEMENT_OPTIONS.forEach(option => {
-                    dropdown.addOption(option, strings.settings.items.manualSortNewNotePlacement.options[option]);
+                    dropdown.addOption(option, getManualSortNewNotePlacementOptionLabel(option));
                 });
                 return dropdown.setValue(plugin.settings.manualSortNewNotePlacement).onChange(async value => {
                     if (!isManualSortNewNotePlacement(value)) {
@@ -421,8 +423,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         pinnedNotesGroup.addSetting,
-        strings.settings.items.limitPinnedToCurrentFolder.name,
-        strings.settings.items.limitPinnedToCurrentFolder.desc,
+        strings.settings.items.filterPinnedNotesByFolder.name,
+        strings.settings.items.filterPinnedNotesByFolder.desc,
         () => plugin.settings.filterPinnedByFolder,
         value => {
             plugin.settings.filterPinnedByFolder = value;
@@ -435,8 +437,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         behaviorGroup.addSetting,
-        strings.settings.items.revealFileOnListChanges.name,
-        strings.settings.items.revealFileOnListChanges.desc,
+        strings.settings.items.scrollToSelectedFileOnListChanges.name,
+        strings.settings.items.scrollToSelectedFileOnListChanges.desc,
         () => plugin.settings.revealFileOnListChanges,
         value => {
             plugin.settings.revealFileOnListChanges = value;
@@ -534,8 +536,8 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     addToggleSetting(
         drawingPreviewsGroup.addSetting,
-        strings.settings.items.hideDrawingPreviewImages.name,
-        strings.settings.items.hideDrawingPreviewImages.desc,
+        strings.settings.items.hideExportedPreviewImages.name,
+        strings.settings.items.hideExportedPreviewImages.desc,
         () => plugin.settings.hideDrawingPreviewImages,
         value => {
             plugin.settings.hideDrawingPreviewImages = value;

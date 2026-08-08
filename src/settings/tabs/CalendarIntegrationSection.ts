@@ -86,19 +86,19 @@ function renderDailyNotesInfoSetting(setting: Setting): void {
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
-    setting.descEl.createDiv({ text: strings.settings.items.calendarIntegrationMode.info.dailyNotes });
+    setting.descEl.createDiv({ text: strings.settings.items.dailyNoteSource.info.dailyNotes });
 }
 
 function renderCalendarIntegrationModeSetting(setting: Setting, context: SettingsTabContext, onChange: () => void): void {
     const { plugin } = context;
 
     setting
-        .setName(strings.settings.items.calendarIntegrationMode.name)
-        .setDesc(strings.settings.items.calendarIntegrationMode.desc)
+        .setName(strings.settings.items.dailyNoteSource.name)
+        .setDesc(strings.settings.items.dailyNoteSource.desc)
         .addDropdown(dropdown =>
             dropdown
-                .addOption('daily-notes', strings.settings.items.calendarIntegrationMode.options.dailyNotes)
-                .addOption('notebook-navigator', strings.settings.items.calendarIntegrationMode.options.notebookNavigator)
+                .addOption('daily-notes', strings.settings.items.dailyNoteSource.options.dailyNotes)
+                .addOption('notebook-navigator', strings.settings.items.dailyNoteSource.options.notebookNavigator)
                 .setValue(plugin.settings.calendarIntegrationMode)
                 .onChange(async value => {
                     if (value !== 'daily-notes' && value !== 'notebook-navigator') {
@@ -204,9 +204,9 @@ export function createCalendarIntegrationSettingDefinitions(
     return [
         createGroupDefinition(strings.settings.pages.calendar.groups.calendarIntegration, [
             createRenderDefinition({
-                name: strings.settings.items.calendarIntegrationMode.name,
-                desc: strings.settings.items.calendarIntegrationMode.desc,
-                aliases: Object.values(strings.settings.items.calendarIntegrationMode.options),
+                name: strings.settings.items.dailyNoteSource.name,
+                desc: strings.settings.items.dailyNoteSource.desc,
+                aliases: Object.values(strings.settings.items.dailyNoteSource.options),
                 render: setting => {
                     renderCalendarIntegrationModeSetting(setting, context, refreshCalendarIntegrationDomState);
                     context.registerSettingsUpdateListener('calendar-tab-calendar-integration', refreshCalendarIntegrationDomState);
@@ -214,7 +214,7 @@ export function createCalendarIntegrationSettingDefinitions(
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.calendarIntegrationMode.info.dailyNotes,
+                name: strings.settings.items.dailyNoteSource.info.dailyNotes,
                 searchable: false,
                 visible: () => plugin.settings.calendarIntegrationMode === 'daily-notes',
                 render: setting => renderDailyNotesInfoSetting(setting)

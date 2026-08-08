@@ -88,8 +88,8 @@ export function renderPropertiesTab(context: SettingsTabContext, heading?: strin
     addSettingSyncModeToggle({ setting: propertySortOrderSetting, plugin, settingId: 'propertySortOrder' });
 
     new Setting(propertiesDependentSettingsEl)
-        .setName(strings.settings.items.showAllPropertiesFolder.name)
-        .setDesc(strings.settings.items.showAllPropertiesFolder.desc)
+        .setName(strings.settings.items.showPropertiesFolder.name)
+        .setDesc(strings.settings.items.showPropertiesFolder.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.showAllPropertiesFolder).onChange(async value => {
                 plugin.settings.showAllPropertiesFolder = value;
@@ -98,8 +98,8 @@ export function renderPropertiesTab(context: SettingsTabContext, heading?: strin
         );
 
     new Setting(propertiesDependentSettingsEl)
-        .setName(strings.settings.items.scopePropertiesToCurrentContext.name)
-        .setDesc(strings.settings.items.scopePropertiesToCurrentContext.desc)
+        .setName(strings.settings.items.filterPropertiesBySelection.name)
+        .setDesc(strings.settings.items.filterPropertiesBySelection.desc)
         .addToggle(toggle =>
             toggle.setValue(plugin.settings.scopePropertiesToCurrentContext).onChange(async value => {
                 plugin.settings.scopePropertiesToCurrentContext = value;

@@ -31,8 +31,8 @@ export function createShortcutsSettingDefinitions(context: SettingsTabContext): 
     return [
         createGroupDefinition(undefined, [
             createToggleDefinition('showSectionIcons', {
-                name: strings.settings.items.showSectionIcons.name,
-                desc: strings.settings.items.showSectionIcons.desc
+                name: strings.settings.items.showShortcutAndRecentItemIcons.name,
+                desc: strings.settings.items.showShortcutAndRecentItemIcons.desc
             })
         ]),
         createGroupDefinition(strings.settings.pages.shortcutsAndRecentFiles.groups.shortcuts, [
@@ -46,40 +46,40 @@ export function createShortcutsSettingDefinitions(context: SettingsTabContext): 
                 aliases: Object.values(strings.settings.items.shortcutBadgeDisplay.options),
                 visible: () => plugin.settings.showShortcuts,
                 options: {
-                    index: strings.settings.items.shortcutBadgeDisplay.options.index,
+                    index: strings.settings.items.shortcutBadgeDisplay.options.position,
                     count: strings.settings.items.shortcutBadgeDisplay.options.count,
                     none: strings.settings.items.shortcutBadgeDisplay.options.none
                 }
             }),
             createToggleDefinition('skipAutoScroll', {
-                name: strings.settings.items.skipAutoScroll.name,
-                desc: strings.settings.items.skipAutoScroll.desc,
+                name: strings.settings.items.disableShortcutAutoScroll.name,
+                desc: strings.settings.items.disableShortcutAutoScroll.desc,
                 visible: () => plugin.settings.showShortcuts
             })
         ]),
         createGroupDefinition(strings.settings.pages.shortcutsAndRecentFiles.groups.recentFiles, [
             createToggleDefinition('showRecentNotes', {
-                name: strings.settings.items.showRecentNotes.name,
-                desc: strings.settings.items.showRecentNotes.desc
+                name: strings.settings.items.showRecentFiles.name,
+                desc: strings.settings.items.showRecentFiles.desc
             }),
             createDropdownDefinition('hideRecentNotes', {
-                name: strings.settings.items.hideRecentNotes.name,
-                desc: strings.settings.items.hideRecentNotes.desc,
-                aliases: Object.values(strings.settings.items.hideRecentNotes.options),
+                name: strings.settings.items.hideFileTypesFromRecentFiles.name,
+                desc: strings.settings.items.hideFileTypesFromRecentFiles.desc,
+                aliases: Object.values(strings.settings.items.hideFileTypesFromRecentFiles.options),
                 visible: () => plugin.settings.showRecentNotes,
                 options: {
-                    none: strings.settings.items.hideRecentNotes.options.none,
-                    'folder-notes': strings.settings.items.hideRecentNotes.options.folderNotes
+                    none: strings.settings.items.hideFileTypesFromRecentFiles.options.none,
+                    'folder-notes': strings.settings.items.hideFileTypesFromRecentFiles.options.folderNotes
                 }
             }),
             createToggleDefinition('pinRecentNotesWithShortcuts', {
-                name: strings.settings.items.pinRecentNotesWithShortcuts.name,
-                desc: strings.settings.items.pinRecentNotesWithShortcuts.desc,
+                name: strings.settings.items.pinRecentFilesWithShortcuts.name,
+                desc: strings.settings.items.pinRecentFilesWithShortcuts.desc,
                 visible: () => plugin.settings.showRecentNotes
             }),
             createRenderDefinition({
-                name: strings.settings.items.recentNotesCount.name,
-                desc: strings.settings.items.recentNotesCount.desc,
+                name: strings.settings.items.recentFilesCount.name,
+                desc: strings.settings.items.recentFilesCount.desc,
                 visible: () => plugin.settings.showRecentNotes,
                 render: setting => renderRecentNotesCountSetting(setting, context)
             })
@@ -91,8 +91,8 @@ function renderRecentNotesCountSetting(setting: Setting, context: SettingsTabCon
     const { plugin } = context;
 
     renderSliderSetting(setting, {
-        name: strings.settings.items.recentNotesCount.name,
-        desc: strings.settings.items.recentNotesCount.desc,
+        name: strings.settings.items.recentFilesCount.name,
+        desc: strings.settings.items.recentFilesCount.desc,
         value: plugin.settings.recentNotesCount,
         defaultValue: DEFAULT_SETTINGS.recentNotesCount,
         min: 1,

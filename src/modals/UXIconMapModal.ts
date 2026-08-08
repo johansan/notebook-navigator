@@ -126,7 +126,7 @@ export class UXIconMapModal extends Modal {
     private resolveCategoryLabel(category: UXIconCategory): string {
         switch (category) {
             case 'navigationPane':
-                return strings.settings.items.startView.options.navigation;
+                return strings.settings.items.defaultStartupView.options.navigation;
             case 'folders':
                 return strings.navigationPane.folders;
             case 'tags':
@@ -134,7 +134,7 @@ export class UXIconMapModal extends Modal {
             case 'properties':
                 return strings.navigationPane.properties;
             case 'listPane':
-                return strings.settings.items.startView.options.files;
+                return strings.settings.items.defaultStartupView.options.listPane;
             case 'fileItems':
                 return strings.modals.interfaceIcons.fileItemsSection;
             case 'calendar':

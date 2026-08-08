@@ -58,10 +58,10 @@ export function createFilesSettingDefinitions(context: SettingsTabContext, headi
         ]),
         createGroupDefinition(strings.settings.pages.fileOperations.groups.templates, [
             createFolderDefinition('calendarTemplateFolder', {
-                name: strings.settings.items.calendarTemplateFolder.name,
-                desc: strings.settings.items.calendarTemplateFolder.desc,
-                aliases: [strings.settings.items.calendarTemplateFolder.placeholder],
-                placeholder: strings.settings.items.calendarTemplateFolder.placeholder,
+                name: strings.settings.items.templateFolderLocation.name,
+                desc: strings.settings.items.templateFolderLocation.desc,
+                aliases: [strings.settings.items.templateFolderLocation.placeholder],
+                placeholder: strings.settings.items.templateFolderLocation.placeholder,
                 includeRoot: true
             }),
             createRenderDefinition({
@@ -78,10 +78,10 @@ function renderTemplateFolderInfoSetting(setting: Setting, context: SettingsTabC
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
 
-    setting.descEl.createDiv({ text: strings.settings.items.calendarTemplateFolder.usage });
+    setting.descEl.createDiv({ text: strings.settings.items.templateFolderLocation.usage });
 
     const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.calendarCustomFilePattern.templaterSupportInstalled
-        : strings.settings.items.calendarCustomFilePattern.templaterSupportMissing;
+        ? strings.settings.items.templaterSupport.installed
+        : strings.settings.items.templaterSupport.missing;
     setting.descEl.append(createEl('br'), createEl('strong', { text: templaterSupportText }));
 }
