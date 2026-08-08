@@ -21,7 +21,7 @@ import { getDefaultKeyboardShortcuts } from '../utils/keyboardShortcuts';
 import { FILE_VISIBILITY } from '../utils/fileTypeUtils';
 import { LISTPANE_MEASUREMENTS, NAVPANE_MEASUREMENTS, type PinnedNotes } from '../types';
 import { DEFAULT_UI_SCALE } from '../utils/uiScale';
-import type { FolderAppearance, TagAppearance } from '../hooks/useListPaneAppearance';
+import type { FolderAppearance, TagAppearance } from './listPaneAppearance';
 import {
     NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
     SYNC_MODE_SETTING_IDS,

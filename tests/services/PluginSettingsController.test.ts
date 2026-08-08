@@ -317,6 +317,51 @@ describe('PluginSettingsController.loadSettings', () => {
         expect((savedSettings.tagAppearances as Record<string, Record<string, unknown>>)['work']?.groupBy).toBe('custom');
         expect((savedSettings.propertyAppearances as Record<string, Record<string, unknown>>)[statusNodeId]?.groupBy).toBe('custom');
     });
+
+    it('sanitizes stored selection appearance intent while keeping explicit enable and hide toggles', async () => {
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                folderAppearances: {
+                    Valid: {
+                        mode: 'standard',
+                        titleRows: 2,
+                        previewRows: 4,
+                        showFileTags: true,
+                        showFileProperties: false,
+                        showTextCount: true,
+                        showFilePreview: false,
+                        textCountDisplay: 'characters',
+                        groupBy: 'folder',
+                        unknown: 'discard me'
+                    },
+                    Invalid: {
+                        mode: 'dense',
+                        titleRows: 9,
+                        previewRows: 0,
+                        showFileTags: 'yes',
+                        showTextCount: 'on'
+                    }
+                }
+            })),
+            saveData: vi.fn().mockResolvedValue(undefined),
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.folderAppearances).toEqual({
+            Valid: {
+                mode: 'standard',
+                titleRows: 2,
+                previewRows: 4,
+                showFileTags: true,
+                showFileProperties: false,
+                showTextCount: true,
+                groupBy: 'folder'
+            }
+        });
+    });
 });
 
 describe('PluginSettingsController.loadSettings result classification', () => {

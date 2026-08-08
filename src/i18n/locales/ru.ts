@@ -154,6 +154,7 @@ export const STRINGS_RU = {
         childValues: 'дочерних значений',
         applySortAndGroupToDescendants: (target: string) => `Применить сортировку и группировку для ${target}`,
         applyAppearanceToDescendants: (target: string) => `Применить оформление для ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Сбросить оформление для ${target}`,
         showFolders: 'Показать навигацию', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Изменить порядок навигации',
         finishRootFolderReorder: 'Готово',
@@ -164,6 +165,7 @@ export const STRINGS_RU = {
         dualPaneAutoFallbackNotice:
             'Две панели недоступны, когда боковая панель слишком узкая. Чтобы изменить это, установите «Когда боковая панель слишком узкая» в значение «Ничего не делать» в Настройки > Внешний вид и поведение.',
         changeAppearance: 'Изменить внешний вид', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Изменить оформление, настроено',
         showNotesFromSubfolders: 'Показать заметки из подпапок',
         showFilesFromSubfolders: 'Показать файлы из подпапок',
         showNotesFromDescendants: 'Показать заметки из потомков',
@@ -424,7 +426,13 @@ export const STRINGS_RU = {
         previewRows: 'Строки превью',
         groupBy: 'Группировать по',
         titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`
+        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`,
+        defaultOffSuffix: '(по умолчанию выключено)',
+        tags: 'Теги',
+        properties: 'Свойства',
+        tasks: 'Задачи',
+        resetAppearance: 'Сбросить оформление',
+        openPluginSettings: 'Открыть настройки плагина…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_RU = {
             applyButton: 'Применить',
             applySortAndGroupTitle: (target: string) => `Применить сортировку и группировку для ${target}?`,
             applyAppearanceTitle: (target: string) => `Применить оформление для ${target}?`,
+            resetAppearanceTitle: (target: string) => `Сбросить оформление для ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Оформление изменится для ${count} ${count === 1 ? 'элемента' : 'элементов'}. Заменено существующих индивидуальных оформлений: ${replacedCount}. Сохранённые настройки оформления копируются один раз; сортировка и группировка сохраняются. Будущие изменения и новые дочерние элементы не связываются.`,
+            resetAppearanceMessage: (count: number) =>
+                `Оформление будет сброшено для ${count} ${count === 1 ? 'элемента' : 'элементов'}. Сортировка и группировка сохраняются. Это разовое изменение; будущие изменения и новые дочерние элементы не связываются.`,
             affectedCountMessage: (count: number) => `Существующих переопределений, которые изменятся: ${count}.`
         },
         manualSortConfirm: {
@@ -1267,19 +1280,19 @@ export const STRINGS_RU = {
                 desc: 'Отображать значок родительской папки, когда не задан пользовательский значок файла. Цвет папки используется, когда не задан пользовательский цвет файла.'
             },
             showFileTaskProgress: {
-                name: 'Показывать задачи',
+                name: 'Ход выполнения задач',
                 desc: 'Отображать статус задач с необязательными индикатором выполнения и количеством задач. Цвета незавершённых и завершённых задач можно настроить отдельно в плагине Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Показывать задачи: индикатор выполнения',
+                name: 'Ход выполнения задач: индикатор выполнения',
                 desc: 'Отображать индикатор выполнения рядом со значком задач.'
             },
             showFileTaskProgressCount: {
-                name: 'Показывать задачи: количество задач',
+                name: 'Ход выполнения задач: количество задач',
                 desc: 'Отображать количество завершённых задач и их общее число, например 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Показывать задачи: скрывать после завершения',
+                name: 'Ход выполнения задач: скрывать после завершения',
                 desc: 'Скрывать прогресс задач, когда все задачи в заметке завершены.'
             },
             showFileBackgroundUnfinishedTask: {

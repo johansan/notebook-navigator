@@ -153,6 +153,7 @@ export const STRINGS_JA = {
         childValues: '子の値',
         applySortAndGroupToDescendants: (target: string) => `${target}に並び替えとグループ化を適用`,
         applyAppearanceToDescendants: (target: string) => `${target}に外観を適用`,
+        resetAppearanceInDescendants: (target: string) => `${target}の外観をリセット`,
         showFolders: 'ナビゲーションを表示', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'ナビゲーションを並び替え',
         finishRootFolderReorder: '完了',
@@ -163,6 +164,7 @@ export const STRINGS_JA = {
         dualPaneAutoFallbackNotice:
             'サイドバーが狭すぎる場合、デュアルペインは使用できません。変更するには、設定 > 外観と動作で「サイドバーが狭すぎる場合」を「何もしない」に設定してください。',
         changeAppearance: '外観を変更', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: '外観を変更（カスタマイズ済み）',
         showNotesFromSubfolders: 'サブフォルダのノートを表示',
         showFilesFromSubfolders: 'サブフォルダのファイルを表示',
         showNotesFromDescendants: '子孫のノートを表示',
@@ -423,7 +425,13 @@ export const STRINGS_JA = {
         previewRows: 'プレビュー行数',
         groupBy: 'グループ分け',
         titleRowOption: (rows: number) => `タイトル${rows}行`,
-        previewRowOption: (rows: number) => `プレビュー${rows}行`
+        previewRowOption: (rows: number) => `プレビュー${rows}行`,
+        defaultOffSuffix: '（デフォルトはオフ）',
+        tags: 'タグ',
+        properties: 'プロパティ',
+        tasks: 'タスク',
+        resetAppearance: '外観をリセット',
+        openPluginSettings: 'プラグイン設定を開く…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_JA = {
             applyButton: '適用',
             applySortAndGroupTitle: (target: string) => `${target}に並び替えとグループ化を適用しますか？`,
             applyAppearanceTitle: (target: string) => `${target}に外観を適用しますか？`,
+            resetAppearanceTitle: (target: string) => `${target}の外観をリセットしますか？`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `${count}件の外観が変更されます。既存のカスタム外観の置換数：${replacedCount}。保存済みの外観設定が一度だけコピーされ、並べ替えとグループ化は保持されます。今後の変更や新しい子項目は連動しません。`,
+            resetAppearanceMessage: (count: number) =>
+                `${count}件の外観がリセットされます。並べ替えとグループ化は保持されます。これは一度限りの変更で、今後の変更や新しい子項目は連動しません。`,
             affectedCountMessage: (count: number) => `変更される既存のオーバーライド: ${count}。`
         },
         manualSortConfirm: {
@@ -1269,19 +1282,19 @@ export const STRINGS_JA = {
                 desc: 'カスタムファイルアイコンが設定されていない場合に親フォルダのアイコンを表示します。カスタムファイル色が設定されていない場合はフォルダの色が使用されます。'
             },
             showFileTaskProgress: {
-                name: 'タスクを表示',
+                name: 'タスクの進捗',
                 desc: 'タスクの状態を表示します。進捗バーとタスク数は任意で表示できます。未完了タスクと完了タスクの色はStyle Settingsプラグインで個別に設定できます。'
             },
             showFileTaskProgressBar: {
-                name: 'タスクを表示: 進捗バー',
+                name: 'タスクの進捗: 進捗バー',
                 desc: 'タスクアイコンの横に進捗バーを表示します。'
             },
             showFileTaskProgressCount: {
-                name: 'タスクを表示: タスク数',
+                name: 'タスクの進捗: タスク数',
                 desc: '完了タスク数と総タスク数を表示します（例: 3/7）。'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'タスクを表示: 完了時に非表示',
+                name: 'タスクの進捗: 完了時に非表示',
                 desc: 'ノートのすべてのタスクが完了したらタスク進捗を非表示にします。'
             },
             showFileBackgroundUnfinishedTask: {

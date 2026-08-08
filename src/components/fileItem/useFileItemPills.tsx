@@ -93,6 +93,9 @@ export interface UseFileItemPillsParams {
     wordCountDisplayText: string | null;
     characterCountDisplayText: string | null;
     settings: NotebookNavigatorSettings;
+    showTags: boolean;
+    showProperties: boolean;
+    textCountDisplay: NotebookNavigatorSettings['textCountDisplay'];
     visiblePropertyKeys: ReadonlySet<string>;
     visibleNavigationPropertyKeys: ReadonlySet<string>;
     matchedProperties?: readonly PropertySearchMatch[];
@@ -256,6 +259,9 @@ export function useFileItemPills({
     wordCountDisplayText,
     characterCountDisplayText,
     settings,
+    showTags,
+    showProperties,
+    textCountDisplay,
     visiblePropertyKeys,
     visibleNavigationPropertyKeys,
     matchedProperties,
@@ -464,7 +470,7 @@ export function useFileItemPills({
     ]);
 
     const shouldShowFileTags = useMemo(() => {
-        if (!settings.showTags || !settings.showFileTags) {
+        if (!showTags) {
             return false;
         }
 
@@ -472,12 +478,8 @@ export function useFileItemPills({
             return false;
         }
 
-        if (isCompactMode && !settings.showFileTagsInCompactMode) {
-            return false;
-        }
-
         return true;
-    }, [categorizedTags, isCompactMode, settings.showFileTags, settings.showFileTagsInCompactMode, settings.showTags]);
+    }, [categorizedTags, showTags]);
 
     const visibleFrontmatterProperties = useMemo(() => {
         const entries: VisibleFrontmatterPropertyEntry[] = [];
@@ -493,7 +495,7 @@ export function useFileItemPills({
     }, [properties, selectedPropertyValueNodeIdToHide, visiblePropertyKeys]);
 
     const propertyColorSignature = useMemo(() => {
-        if (!settings.showFileProperties || !settings.colorFileProperties || visibleFrontmatterProperties.length === 0) {
+        if (!showProperties || !settings.colorFileProperties || visibleFrontmatterProperties.length === 0) {
             return '';
         }
 
@@ -539,7 +541,7 @@ export function useFileItemPills({
         settings.inheritPropertyColors,
         settings.propertyBackgroundColors,
         settings.propertyColors,
-        settings.showFileProperties,
+        showProperties,
         visibleFrontmatterProperties
     ]);
 
@@ -610,7 +612,7 @@ export function useFileItemPills({
         }
 
         const renderedPropertyValues = new Set<string>();
-        if (canShowPropertyPills && settings.showFileProperties) {
+        if (canShowPropertyPills && showProperties) {
             visibleFrontmatterProperties.forEach(({ entry }) => {
                 renderedPropertyValues.add(buildPropertySearchValueIdentity(entry.fieldKey, entry.valueKind, entry.value));
             });
@@ -622,12 +624,12 @@ export function useFileItemPills({
                 !renderedPropertyValues.has(buildPropertySearchValueIdentity(match.propertyKey, match.valueKind, match.rawValue))
         );
         return buildPropertySearchEvidence(evidenceMatches);
-    }, [canShowPropertyPills, propertySearchValueMatches, settings.showFileProperties, visibleFrontmatterProperties]);
+    }, [canShowPropertyPills, propertySearchValueMatches, showProperties, visibleFrontmatterProperties]);
 
     const wordCountPropertyPill = useMemo<PropertyPill | null>(() => {
         if (
             !canShowPropertyPills ||
-            !showsWordCount(settings.textCountDisplay) ||
+            !showsWordCount(textCountDisplay) ||
             settings.textCountPlacement !== 'property' ||
             wordCountDisplayText === null
         ) {
@@ -645,19 +647,12 @@ export function useFileItemPills({
             linkTarget: null,
             iconId: wordCountPillIconId
         };
-    }, [
-        canShowPropertyPills,
-        settings.textCountDisplay,
-        settings.textCountPlacement,
-        wordCount,
-        wordCountDisplayText,
-        wordCountPillIconId
-    ]);
+    }, [canShowPropertyPills, textCountDisplay, settings.textCountPlacement, wordCount, wordCountDisplayText, wordCountPillIconId]);
 
     const characterCountPropertyPill = useMemo<PropertyPill | null>(() => {
         if (
             !canShowPropertyPills ||
-            !showsCharacterCount(settings.textCountDisplay) ||
+            !showsCharacterCount(textCountDisplay) ||
             settings.textCountPlacement !== 'property' ||
             characterCountDisplayText === null
         ) {
@@ -680,7 +675,7 @@ export function useFileItemPills({
         characterCount,
         characterCountDisplayText,
         characterCountPillIconId,
-        settings.textCountDisplay,
+        textCountDisplay,
         settings.textCountPlacement
     ]);
 
@@ -713,7 +708,7 @@ export function useFileItemPills({
         const pills: PropertyPill[] = [];
         const frontmatterPills: PropertyPill[] = [];
 
-        if (!canShowPropertyPills || !settings.showFileProperties || visibleFrontmatterProperties.length === 0) {
+        if (!canShowPropertyPills || !showProperties || visibleFrontmatterProperties.length === 0) {
             return pills;
         }
 
@@ -819,7 +814,7 @@ export function useFileItemPills({
         propertySearchTermsByValue,
         settings.colorFileProperties,
         settings.prioritizeColoredFileProperties,
-        settings.showFileProperties,
+        showProperties,
         visibleNavigationPropertyKeys,
         visibleFrontmatterProperties
     ]);

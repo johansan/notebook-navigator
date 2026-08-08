@@ -155,6 +155,7 @@ export const STRINGS_UK = {
         childValues: 'дочірніх значень',
         applySortAndGroupToDescendants: (target: string) => `Застосувати сортування та групування для ${target}`,
         applyAppearanceToDescendants: (target: string) => `Застосувати оформлення для ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Скинути оформлення для ${target}`,
         showFolders: 'Показати навігацію', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Змінити порядок навігації',
         finishRootFolderReorder: 'Готово',
@@ -165,6 +166,7 @@ export const STRINGS_UK = {
         dualPaneAutoFallbackNotice:
             'Дві панелі недоступні, коли бічна панель занадто вузька. Щоб змінити це, установіть «Коли бічна панель занадто вузька» на «Нічого не робити» в Налаштування > Вигляд і поведінка.',
         changeAppearance: 'Змінити вигляд', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Змінити оформлення, налаштовано',
         showNotesFromSubfolders: 'Показати нотатки з підпапок',
         showFilesFromSubfolders: 'Показати файли з підпапок',
         showNotesFromDescendants: 'Показати нотатки з нащадків',
@@ -425,7 +427,13 @@ export const STRINGS_UK = {
         previewRows: 'Рядки попереднього перегляду',
         groupBy: 'Групувати за',
         titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} заголовка`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`
+        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`,
+        defaultOffSuffix: '(типово вимкнено)',
+        tags: 'Теги',
+        properties: 'Властивості',
+        tasks: 'Завдання',
+        resetAppearance: 'Скинути оформлення',
+        openPluginSettings: 'Відкрити налаштування плагіна…'
     },
 
     // Modal dialogs
@@ -434,6 +442,11 @@ export const STRINGS_UK = {
             applyButton: 'Застосувати',
             applySortAndGroupTitle: (target: string) => `Застосувати сортування та групування для ${target}?`,
             applyAppearanceTitle: (target: string) => `Застосувати оформлення для ${target}?`,
+            resetAppearanceTitle: (target: string) => `Скинути оформлення для ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Оформлення зміниться для ${count} ${count === 1 ? 'елемента' : 'елементів'}. Замінено наявних власних оформлень: ${replacedCount}. Збережені налаштування оформлення копіюються один раз; сортування й групування зберігаються. Майбутні зміни та нові дочірні елементи не пов’язуються.`,
+            resetAppearanceMessage: (count: number) =>
+                `Оформлення буде скинуто для ${count} ${count === 1 ? 'елемента' : 'елементів'}. Сортування й групування зберігаються. Це одноразова зміна; майбутні зміни та нові дочірні елементи не пов’язуються.`,
             affectedCountMessage: (count: number) => `Наявних перевизначень, які зміняться: ${count}.`
         },
         manualSortConfirm: {
@@ -1267,19 +1280,19 @@ export const STRINGS_UK = {
                 desc: 'Відображати значок батьківської папки, коли не задано користувацький значок файлу. Колір папки використовується, коли не задано користувацький колір файлу.'
             },
             showFileTaskProgress: {
-                name: 'Показувати завдання',
+                name: 'Перебіг виконання завдань',
                 desc: 'Показувати статус завдань із необов’язковими смугою прогресу та кількістю завдань. Кольори незавершених і завершених завдань можна налаштувати окремо в плагіні Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Показувати завдання: смуга прогресу',
+                name: 'Перебіг виконання завдань: смуга прогресу',
                 desc: 'Показувати смугу прогресу поруч зі значком завдань.'
             },
             showFileTaskProgressCount: {
-                name: 'Показувати завдання: кількість завдань',
+                name: 'Перебіг виконання завдань: кількість завдань',
                 desc: 'Показувати кількість завершених і загальну кількість завдань, наприклад 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Показувати завдання: приховувати після завершення',
+                name: 'Перебіг виконання завдань: приховувати після завершення',
                 desc: 'Приховувати прогрес завдань, коли всі завдання в нотатці завершені.'
             },
             showFileBackgroundUnfinishedTask: {

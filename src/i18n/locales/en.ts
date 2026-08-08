@@ -154,6 +154,7 @@ export const STRINGS_EN = {
         childValues: 'child values',
         applySortAndGroupToDescendants: (target: string) => `Apply sort and group to ${target}`,
         applyAppearanceToDescendants: (target: string) => `Apply appearance to ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Reset appearance in ${target}`,
         showFolders: 'Show navigation', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Reorder navigation',
         finishRootFolderReorder: 'Done reordering',
@@ -164,6 +165,7 @@ export const STRINGS_EN = {
         dualPaneAutoFallbackNotice:
             'Dual panes are unavailable when the sidebar is too narrow. To change this, set "When sidebar is too narrow" to "Do nothing" in Settings > Appearance & behavior.',
         changeAppearance: 'Change appearance', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Change appearance, customized',
         showNotesFromSubfolders: 'Show notes from subfolders',
         showFilesFromSubfolders: 'Show files from subfolders',
         showNotesFromDescendants: 'Show notes from descendants',
@@ -423,7 +425,13 @@ export const STRINGS_EN = {
         previewRows: 'Preview rows',
         groupBy: 'Group by',
         titleRowOption: (rows: number) => `${rows} title row${rows === 1 ? '' : 's'}`,
-        previewRowOption: (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`
+        previewRowOption: (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`,
+        defaultOffSuffix: '(default off)',
+        tags: 'Tags',
+        properties: 'Properties',
+        tasks: 'Tasks',
+        resetAppearance: 'Reset appearance',
+        openPluginSettings: 'Open plugin settings…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_EN = {
             applyButton: 'Apply',
             applySortAndGroupTitle: (target: string) => `Apply sort and group to ${target}?`,
             applyAppearanceTitle: (target: string) => `Apply appearance to ${target}?`,
+            resetAppearanceTitle: (target: string) => `Reset appearance in ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Appearance will change for ${count} ${count === 1 ? 'item' : 'items'}. Existing custom appearances replaced: ${replacedCount}. Saved appearance preferences are copied once; sort and grouping are preserved. Future changes and new descendants are not linked.`,
+            resetAppearanceMessage: (count: number) =>
+                `Appearance will be reset for ${count} ${count === 1 ? 'item' : 'items'}. Sort and grouping are preserved. This is a one-time change; future changes and new descendants are not linked.`,
             affectedCountMessage: (count: number) => `Existing overrides that will change: ${count}.`
         },
         manualSortConfirm: {
@@ -1264,19 +1277,19 @@ export const STRINGS_EN = {
                 desc: 'Display the parent folder icon when no custom file icon is set. Folder color is used when no custom file color is set.'
             },
             showFileTaskProgress: {
-                name: 'Show tasks',
+                name: 'Task progress',
                 desc: 'Display task status with an optional progress bar and task count. Colors for unfinished and completed tasks can be set individually with the Style Settings plugin.'
             },
             showFileTaskProgressBar: {
-                name: 'Show tasks: progress bar',
+                name: 'Task progress: progress bar',
                 desc: 'Display a progress bar next to the task icon.'
             },
             showFileTaskProgressCount: {
-                name: 'Show tasks: task count',
+                name: 'Task progress: task count',
                 desc: 'Display the number of completed and total tasks, such as 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Show tasks: hide when completed',
+                name: 'Task progress: hide when completed',
                 desc: 'Hide the task progress when all tasks in a note are completed.'
             },
             showFileBackgroundUnfinishedTask: {

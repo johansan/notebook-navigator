@@ -154,6 +154,7 @@ export const STRINGS_FR = {
         childValues: 'valeurs enfants',
         applySortAndGroupToDescendants: (target: string) => `Appliquer le tri et le regroupement aux ${target}`,
         applyAppearanceToDescendants: (target: string) => `Appliquer l'apparence aux ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Réinitialiser l’apparence dans ${target}`,
         showFolders: 'Afficher la navigation', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Réorganiser la navigation',
         finishRootFolderReorder: 'Terminé',
@@ -164,6 +165,7 @@ export const STRINGS_FR = {
         dualPaneAutoFallbackNotice:
             'Les deux panneaux ne sont pas disponibles lorsque la barre latérale est trop étroite. Pour modifier cela, réglez « Lorsque la barre latérale est trop étroite » sur « Ne rien faire » dans Paramètres > Apparence et comportement.',
         changeAppearance: "Changer l'apparence", // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Modifier l’apparence, personnalisée',
         showNotesFromSubfolders: 'Afficher les notes des sous-dossiers',
         showFilesFromSubfolders: 'Afficher les fichiers des sous-dossiers',
         showNotesFromDescendants: 'Afficher les notes des descendants',
@@ -425,7 +427,13 @@ export const STRINGS_FR = {
         previewRows: "Lignes d'aperçu",
         groupBy: 'Grouper par',
         titleRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`,
-        previewRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`
+        previewRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`,
+        defaultOffSuffix: '(désactivé par défaut)',
+        tags: 'Étiquettes',
+        properties: 'Propriétés',
+        tasks: 'Tâches',
+        resetAppearance: 'Réinitialiser l’apparence',
+        openPluginSettings: 'Ouvrir les réglages du module…'
     },
 
     // Modal dialogs
@@ -434,6 +442,11 @@ export const STRINGS_FR = {
             applyButton: 'Appliquer',
             applySortAndGroupTitle: (target: string) => `Appliquer le tri et le regroupement aux ${target}\u202f?`,
             applyAppearanceTitle: (target: string) => `Appliquer l'apparence aux ${target}\u202f?`,
+            resetAppearanceTitle: (target: string) => `Réinitialiser l’apparence dans ${target}\u202f?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `L’apparence changera pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Apparences personnalisées existantes remplacées\u202f: ${replacedCount}. Les préférences d’apparence enregistrées sont copiées une seule fois\u202f; le tri et le regroupement sont conservés. Les changements futurs et les nouveaux descendants ne sont pas liés.`,
+            resetAppearanceMessage: (count: number) =>
+                `L’apparence sera réinitialisée pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Le tri et le regroupement sont conservés. Cette modification est ponctuelle\u202f; les changements futurs et les nouveaux descendants ne sont pas liés.`,
             affectedCountMessage: (count: number) => `Remplacements existants qui seront modifiés\u202f: ${count}.`
         },
         manualSortConfirm: {
@@ -1274,19 +1287,19 @@ export const STRINGS_FR = {
                 desc: "Afficher l'icône du dossier parent lorsqu'aucune icône de fichier personnalisée n'est définie. La couleur du dossier est utilisée lorsqu'aucune couleur de fichier personnalisée n'est définie."
             },
             showFileTaskProgress: {
-                name: 'Afficher les tâches',
+                name: 'Progression des tâches',
                 desc: "Afficher l'état des tâches avec une barre de progression et un nombre de tâches facultatifs. Les couleurs des tâches inachevées et terminées peuvent être définies séparément avec le plugin Style Settings."
             },
             showFileTaskProgressBar: {
-                name: 'Afficher les tâches : barre de progression',
+                name: 'Progression des tâches : barre de progression',
                 desc: "Afficher une barre de progression à côté de l'icône de tâche."
             },
             showFileTaskProgressCount: {
-                name: 'Afficher les tâches : nombre de tâches',
+                name: 'Progression des tâches : nombre de tâches',
                 desc: 'Afficher le nombre de tâches terminées et le nombre total de tâches, par exemple 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Afficher les tâches : masquer une fois terminées',
+                name: 'Progression des tâches : masquer une fois terminées',
                 desc: "Masquer la progression des tâches lorsque toutes les tâches d'une note sont terminées."
             },
             showFileBackgroundUnfinishedTask: {
