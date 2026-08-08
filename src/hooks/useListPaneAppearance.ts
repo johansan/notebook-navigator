@@ -19,76 +19,11 @@
 import { useMemo } from 'react';
 import { useSettingsState } from '../context/SettingsContext';
 import { useNavigationSelection } from '../context/SelectionContext';
-import type { ListDisplayMode, ListNoteGroupingOption, NotebookNavigatorSettings } from '../settings/types';
+import { resolveListPaneAppearance } from '../settings/listPaneAppearance';
 import { ItemType } from '../types';
-import { resolveListGroupingOverride } from '../utils/listGrouping';
-
-export interface FolderAppearance {
-    mode?: ListDisplayMode;
-    titleRows?: number;
-    previewRows?: number;
-    groupBy?: ListNoteGroupingOption;
-}
-
-export type TagAppearance = FolderAppearance;
-
-export interface ListPaneAppearanceSettings {
-    mode: ListDisplayMode;
-    titleRows: number;
-    previewRows: number;
-    showDate: boolean;
-    showPreview: boolean;
-    showImage: boolean;
-    groupBy: ListNoteGroupingOption;
-}
-
-export function getDefaultListMode(settings: NotebookNavigatorSettings): ListDisplayMode {
-    return settings.defaultListMode === 'compact' ? 'compact' : 'standard';
-}
 
 /**
- * Resolve the effective list mode for a folder/tag appearance.
- */
-export function resolveListMode({
-    appearance,
-    defaultMode
-}: {
-    appearance?: FolderAppearance;
-    defaultMode: ListDisplayMode;
-}): ListDisplayMode {
-    if (appearance?.mode === 'compact' || appearance?.mode === 'standard') {
-        return appearance.mode;
-    }
-
-    return defaultMode;
-}
-
-interface VisibilityDefaults {
-    showFileDate: boolean;
-    showFilePreview: boolean;
-    showFeatureImage: boolean;
-}
-
-/** Return visibility flags for a given list mode */
-function getVisibilityForMode(mode: ListDisplayMode, defaults: VisibilityDefaults) {
-    if (mode === 'compact') {
-        return {
-            showDate: false,
-            showPreview: false,
-            showImage: false
-        };
-    }
-
-    return {
-        showDate: defaults.showFileDate,
-        showPreview: defaults.showFilePreview,
-        showImage: defaults.showFeatureImage
-    };
-}
-
-/**
- * Hook to get effective appearance settings for the current selection (folder or tag)
- * Merges folder/tag-specific settings with defaults
+ * Hook to get effective appearance settings for the current folder, tag, or property selection.
  */
 export function useListPaneAppearance() {
     const settings = useSettingsState();
@@ -104,47 +39,8 @@ export function useListPaneAppearance() {
               : selectedPropertyNodeId !== null
                 ? settings.propertyAppearances?.[selectedPropertyNodeId]
                 : undefined;
-    const selectedMode = selectedAppearance?.mode;
-    const selectedTitleRows = selectedAppearance?.titleRows;
-    const selectedPreviewRows = selectedAppearance?.previewRows;
-    const selectedGroupBy = selectedAppearance?.groupBy;
-    const { defaultListMode, fileNameRows, noteGrouping, previewRows, showFeatureImage, showFileDate, showFilePreview } = settings;
-
-    return useMemo<ListPaneAppearanceSettings>(() => {
-        const defaultMode = defaultListMode === 'compact' ? 'compact' : 'standard';
-        const appearance = {
-            mode: selectedMode,
-            titleRows: selectedTitleRows,
-            previewRows: selectedPreviewRows
-        };
-        const mode = resolveListMode({ appearance, defaultMode });
-        const visibility = getVisibilityForMode(mode, { showFileDate, showFilePreview, showFeatureImage });
-        const grouping = resolveListGroupingOverride({
-            noteGrouping,
-            selectionType,
-            groupBy: selectedGroupBy
-        });
-        return {
-            mode,
-            titleRows: selectedTitleRows ?? fileNameRows,
-            previewRows: selectedPreviewRows ?? previewRows,
-            showDate: visibility.showDate,
-            showPreview: visibility.showPreview,
-            showImage: visibility.showImage,
-            groupBy: grouping.effectiveGrouping
-        };
-    }, [
-        defaultListMode,
-        fileNameRows,
-        noteGrouping,
-        previewRows,
-        selectedMode,
-        selectedTitleRows,
-        selectedPreviewRows,
-        selectedGroupBy,
-        showFeatureImage,
-        showFileDate,
-        showFilePreview,
-        selectionType
-    ]);
+    return useMemo(
+        () => resolveListPaneAppearance({ settings, appearance: selectedAppearance, selectionType }),
+        [selectedAppearance, selectionType, settings]
+    );
 }

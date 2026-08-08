@@ -111,7 +111,11 @@ import {
     type LocalStorageKeys,
     type UXPreferences
 } from '../../types';
-import type { FolderAppearance } from '../../hooks/useListPaneAppearance';
+import {
+    getStoredListPaneAppearanceFields,
+    mergeListPaneAppearanceAndGrouping,
+    type FolderAppearance
+} from '../../settings/listPaneAppearance';
 import { createSyncModeRegistry, type SyncModeRegistry } from './syncModeRegistry';
 import { getDefaultUXPreferences, isUXPreferencesRecord } from './uxPreferences';
 
@@ -1362,9 +1366,18 @@ export class PluginSettingsController {
         const isAppearanceValue = (value: unknown): value is FolderAppearance => isPlainObjectRecordValue(value);
         const sanitizeAppearanceMap = (record?: Record<string, FolderAppearance>): Record<string, FolderAppearance> => {
             const sanitized = sanitizeRecord(record, isAppearanceValue);
-            Object.values(sanitized).forEach(appearance => {
+            Object.entries(sanitized).forEach(([key, appearance]) => {
                 delete (appearance as Record<string, unknown>)['notePropertyType'];
                 normalizeAppearanceGroupBy(appearance);
+                const normalizedAppearance = mergeListPaneAppearanceAndGrouping(
+                    getStoredListPaneAppearanceFields(appearance),
+                    appearance.groupBy
+                );
+                if (normalizedAppearance) {
+                    sanitized[key] = normalizedAppearance;
+                } else {
+                    delete sanitized[key];
+                }
             });
             return sanitized;
         };

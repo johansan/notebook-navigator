@@ -154,6 +154,7 @@ export const STRINGS_TR = {
         childValues: 'alt değerler',
         applySortAndGroupToDescendants: (target: string) => `Sıralama ve gruplandırmayı ${target} için uygula`,
         applyAppearanceToDescendants: (target: string) => `Görünümü ${target} için uygula`,
+        resetAppearanceInDescendants: (target: string) => `${target} için görünümü sıfırla`,
         showFolders: 'Gezinmeyi göster', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Gezinmeyi yeniden sırala',
         finishRootFolderReorder: 'Tamamlandı',
@@ -164,6 +165,7 @@ export const STRINGS_TR = {
         dualPaneAutoFallbackNotice:
             'Kenar çubuğu çok dar olduğunda çift bölmeler kullanılamaz. Bunu değiştirmek için Ayarlar > Görünüm ve davranış altında "Kenar çubuğu çok dar olduğunda" ayarını "Hiçbir şey yapma" olarak ayarlayın.',
         changeAppearance: 'Görünümü değiştir', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Görünümü değiştir, özelleştirilmiş',
         showNotesFromSubfolders: 'Alt klasörlerden notları göster',
         showFilesFromSubfolders: 'Alt klasörlerden dosyaları göster',
         showNotesFromDescendants: 'Alt öğelerden notları göster',
@@ -424,7 +426,13 @@ export const STRINGS_TR = {
         previewRows: 'Önizleme satırları',
         groupBy: 'Grupla',
         titleRowOption: (rows: number) => `${rows} başlık satırı`,
-        previewRowOption: (rows: number) => `${rows} önizleme satırı`
+        previewRowOption: (rows: number) => `${rows} önizleme satırı`,
+        defaultOffSuffix: '(varsayılan olarak kapalı)',
+        tags: 'Etiketler',
+        properties: 'Özellikler',
+        tasks: 'Görevler',
+        resetAppearance: 'Görünümü sıfırla',
+        openPluginSettings: 'Eklenti ayarlarını aç…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_TR = {
             applyButton: 'Uygula',
             applySortAndGroupTitle: (target: string) => `Sıralama ve gruplandırma ${target} için uygulansın mı?`,
             applyAppearanceTitle: (target: string) => `Görünüm ${target} için uygulansın mı?`,
+            resetAppearanceTitle: (target: string) => `${target} için görünüm sıfırlansın mı?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için değişecek. Değiştirilecek mevcut özel görünümler: ${replacedCount}. Kayıtlı görünüm tercihleri bir kez kopyalanır; sıralama ve gruplama korunur. Gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
+            resetAppearanceMessage: (count: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için sıfırlanacak. Sıralama ve gruplama korunur. Bu tek seferlik bir değişikliktir; gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
             affectedCountMessage: (count: number) => `Değişecek mevcut geçersiz kılmalar: ${count}.`
         },
         manualSortConfirm: {
@@ -1268,19 +1281,19 @@ export const STRINGS_TR = {
                 desc: 'Özel dosya simgesi ayarlanmadığında üst klasörün simgesini görüntüler. Özel dosya rengi ayarlanmadığında klasör rengi kullanılır.'
             },
             showFileTaskProgress: {
-                name: 'Görevleri göster',
+                name: 'Görev ilerlemesi',
                 desc: 'Görev durumunu isteğe bağlı ilerleme çubuğu ve görev sayısıyla gösterir. Tamamlanmamış ve tamamlanmış görevlerin renkleri Style Settings eklentisiyle ayrı ayrı ayarlanabilir.'
             },
             showFileTaskProgressBar: {
-                name: 'Görevleri göster: ilerleme çubuğu',
+                name: 'Görev ilerlemesi: ilerleme çubuğu',
                 desc: 'Görev simgesinin yanında ilerleme çubuğu gösterir.'
             },
             showFileTaskProgressCount: {
-                name: 'Görevleri göster: görev sayısı',
+                name: 'Görev ilerlemesi: görev sayısı',
                 desc: 'Tamamlanan ve toplam görev sayısını gösterir, örneğin 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Görevleri göster: tamamlanınca gizle',
+                name: 'Görev ilerlemesi: tamamlanınca gizle',
                 desc: 'Bir nottaki tüm görevler tamamlandığında görev ilerlemesini gizler.'
             },
             showFileBackgroundUnfinishedTask: {

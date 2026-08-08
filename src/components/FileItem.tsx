@@ -43,7 +43,7 @@ import { useServices } from '../context/ServicesContext';
 import { useMetadataService } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import type { FolderDecorationModel } from '../utils/folderDecoration';
-import type { ListPaneAppearanceSettings } from '../hooks/useListPaneAppearance';
+import type { ListPaneAppearanceSettings } from '../settings/listPaneAppearance';
 import { strings } from '../i18n';
 import type { SortOption } from '../settings/types';
 import { ItemType, type NavigationItemType } from '../types';
@@ -462,12 +462,11 @@ export const FileItem = React.memo(function FileItem({
     const metadataService = useMetadataService();
     const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
     const isCompactMode = appearanceSettings.mode === 'compact';
-    const shouldShowWordCount = showsWordCount(settings.textCountDisplay);
-    const shouldShowCharacterCount = showsCharacterCount(settings.textCountDisplay);
+    const shouldShowWordCount = showsWordCount(appearanceSettings.textCountDisplay);
+    const shouldShowCharacterCount = showsCharacterCount(appearanceSettings.textCountDisplay);
     const isMarkdownFile = file.extension === 'md';
     const canShowPropertyPills = isMarkdownFile && (!isCompactMode || settings.showFilePropertiesInCompactMode);
-    const shouldLoadTags =
-        isMarkdownFile && settings.showTags && settings.showFileTags && (!isCompactMode || settings.showFileTagsInCompactMode);
+    const shouldLoadTags = isMarkdownFile && appearanceSettings.showTags;
     const shouldLoadWordCountForDisplay =
         isMarkdownFile &&
         shouldShowWordCount &&
@@ -480,7 +479,7 @@ export const FileItem = React.memo(function FileItem({
         (settings.textCountPlacement === 'title' || (settings.textCountPlacement === 'property' && canShowPropertyPills));
     const shouldLoadProperties =
         isMarkdownFile &&
-        ((canShowPropertyPills && settings.showFileProperties && visiblePropertyKeys.size > 0) ||
+        ((canShowPropertyPills && appearanceSettings.showProperties && visiblePropertyKeys.size > 0) ||
             (shouldLoadWordCountForDisplay && settings.wordCountTargetProperty.trim().length > 0) ||
             (matchedProperties?.length ?? 0) > 0);
     const unfinishedTaskIconAppliesToMode =
@@ -491,7 +490,7 @@ export const FileItem = React.memo(function FileItem({
     const shouldLoadTaskCounts =
         isMarkdownFile &&
         (shouldLoadUnfinishedTaskIcon ||
-            (settings.showFileTaskProgress && !isCompactMode) ||
+            appearanceSettings.showTaskProgress ||
             settings.showFileBackgroundUnfinishedTask ||
             (!isMobile && settings.showTooltips));
     const shouldRefreshMetadataVersionOnFeatureImageChange = isMarkdownFile && appearanceSettings.showImage;
@@ -762,6 +761,9 @@ export const FileItem = React.memo(function FileItem({
             wordCountDisplayText,
             characterCountDisplayText,
             settings,
+            showTags: appearanceSettings.showTags,
+            showProperties: appearanceSettings.showProperties,
+            textCountDisplay: appearanceSettings.textCountDisplay,
             visiblePropertyKeys,
             visibleNavigationPropertyKeys,
             matchedProperties,
@@ -994,7 +996,7 @@ export const FileItem = React.memo(function FileItem({
 
     // Visibility must match the virtualizer height estimate in resolveListFileRowHeightInputs.
     const taskProgressMeta = shouldShowFileItemTaskProgress({
-        showTaskProgress: settings.showFileTaskProgress,
+        showTaskProgress: appearanceSettings.showTaskProgress,
         hideWhenComplete: settings.hideFileTaskProgressWhenComplete,
         taskTotal,
         taskUnfinished

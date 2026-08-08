@@ -32,7 +32,7 @@ import type { FolderDecorationModel } from '../../utils/folderDecoration';
 import type { NavigateToFolderOptions } from '../../hooks/useNavigatorReveal';
 import { FileItem, type FileItemInlineRenameHandlers, type FileItemPaneProps, type FileItemStorageHelpers } from '../FileItem';
 import { ServiceIcon } from '../ServiceIcon';
-import type { ListPaneAppearanceSettings } from '../../hooks/useListPaneAppearance';
+import type { ListPaneAppearanceSettings } from '../../settings/listPaneAppearance';
 import type { FileNameIconNeedle } from '../../utils/fileIconUtils';
 import type { HiddenTagVisibility } from '../../utils/tagPrefixMatcher';
 import type { FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';

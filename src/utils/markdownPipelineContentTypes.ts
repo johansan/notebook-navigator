@@ -17,8 +17,16 @@
  */
 
 import type { FileContentType } from '../interfaces/IContentProvider';
-import { showsCharacterCount, type NotebookNavigatorSettings } from '../settings/types';
+import {
+    resolveTextCountVariant,
+    showsCharacterCount,
+    showsWordCount,
+    type NotebookNavigatorSettings,
+    type TextCountDisplay
+} from '../settings/types';
 import { hasWordCountTargetPropertyConsumer } from './propertyUtils';
+
+const appearanceTextCountConsumerCache = new WeakMap<object, boolean>();
 
 export function hasMarkdownPreviewConsumer(settings: NotebookNavigatorSettings): boolean {
     return settings.showFilePreview;
@@ -28,12 +36,51 @@ export function hasMarkdownFeatureImageConsumer(settings: NotebookNavigatorSetti
     return settings.showFeatureImage;
 }
 
+/**
+ * Checks folder, tag, and property appearance overrides for an enabled text count toggle.
+ * A selection can enable counts while the global count type is 'none', so count extraction
+ * must run whenever any selection displays them. The global setting decides the count type.
+ */
+function hasEnabledAppearanceTextCount(settings: NotebookNavigatorSettings): boolean {
+    // Settings snapshots keep unchanged appearance maps immutable and referentially stable, so each
+    // map is scanned only when its contents change and the result is shared across settings updates.
+    const records = [settings.folderAppearances, settings.tagAppearances, settings.propertyAppearances];
+    return records.some(record => {
+        const cached = appearanceTextCountConsumerCache.get(record);
+        if (cached !== undefined) {
+            return cached;
+        }
+        const enabled = Object.values(record).some(appearance => appearance.showTextCount === true);
+        appearanceTextCountConsumerCache.set(record, enabled);
+        return enabled;
+    });
+}
+
+function hasAppearanceTextCountConsumer(settings: NotebookNavigatorSettings, shows: (value: TextCountDisplay) => boolean): boolean {
+    if (!shows(resolveTextCountVariant(settings.textCountDisplay))) {
+        return false;
+    }
+    return hasEnabledAppearanceTextCount(settings);
+}
+
 export function hasMarkdownWordCountConsumer(settings: NotebookNavigatorSettings): boolean {
-    return hasWordCountTargetPropertyConsumer(settings) || (settings.showTooltips && settings.showTooltipWordCount);
+    return (
+        hasWordCountTargetPropertyConsumer(settings) ||
+        (settings.showTooltips && settings.showTooltipWordCount) ||
+        hasAppearanceTextCountConsumer(settings, showsWordCount)
+    );
 }
 
 export function hasMarkdownCharacterCountConsumer(settings: NotebookNavigatorSettings): boolean {
-    return showsCharacterCount(settings.textCountDisplay);
+    return showsCharacterCount(settings.textCountDisplay) || hasAppearanceTextCountConsumer(settings, showsCharacterCount);
+}
+
+/** Returns whether a settings update changes which text counts the markdown pipeline must extract. */
+export function haveMarkdownCountConsumersChanged(oldSettings: NotebookNavigatorSettings, newSettings: NotebookNavigatorSettings): boolean {
+    return (
+        hasMarkdownWordCountConsumer(oldSettings) !== hasMarkdownWordCountConsumer(newSettings) ||
+        hasMarkdownCharacterCountConsumer(oldSettings) !== hasMarkdownCharacterCountConsumer(newSettings)
+    );
 }
 
 export function hasMarkdownTaskConsumer(_settings: NotebookNavigatorSettings): boolean {

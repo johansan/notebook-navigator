@@ -29,6 +29,7 @@ import type { FileItemPillOrderModel } from '../../../src/utils/fileItemPillOrde
 import type { TagTreeNode } from '../../../src/types/storage';
 import { createTestTFile } from '../../utils/createTestTFile';
 import { ItemType } from '../../../src/types';
+import type { NotebookNavigatorSettings } from '../../../src/settings/types';
 
 const mockOpenLinkText = vi.fn();
 const mockNavigateToTag = vi.fn();
@@ -101,6 +102,9 @@ function renderPillRows(
         | 'wordCountDisplayText'
         | 'characterCount'
         | 'characterCountDisplayText'
+        | 'showTags'
+        | 'showProperties'
+        | 'textCountDisplay'
     > & {
         hiddenTagVisibility?: HiddenTagVisibility;
         fileItemPillDecorationModel?: FileItemPillDecorationModel;
@@ -108,6 +112,9 @@ function renderPillRows(
         wordCountDisplayText?: string | null;
         characterCount?: number | null;
         characterCountDisplayText?: string | null;
+        showTags?: boolean;
+        showProperties?: boolean;
+        textCountDisplay?: NotebookNavigatorSettings['textCountDisplay'];
     }
 ): string {
     const emptyDecorationModel: FileItemPillDecorationModel = {
@@ -134,6 +141,9 @@ function renderPillRows(
     function Host() {
         const state = useFileItemPills({
             ...params,
+            showTags: params.showTags ?? (params.settings.showTags && params.settings.showFileTags),
+            showProperties: params.showProperties ?? params.settings.showFileProperties,
+            textCountDisplay: params.textCountDisplay ?? params.settings.textCountDisplay,
             wordCountDisplayText:
                 params.wordCountDisplayText ?? (typeof params.wordCount === 'number' ? formatTextCount(params.wordCount) : null),
             characterCount: params.characterCount ?? null,

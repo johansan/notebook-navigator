@@ -64,8 +64,7 @@ function createListConfig(pinnedNotes: ListPaneConfig['pinnedNotes']): ListPaneC
         pinnedNotes,
         showCurrentFolderFilesAtBottom: DEFAULT_SETTINGS.showCurrentFolderFilesAtBottom,
         showFolderGroupPaths: DEFAULT_SETTINGS.showFolderGroupPaths,
-        showFileTags: false,
-        showTags: false
+        showFileTags: false
     };
 }
 
@@ -241,6 +240,35 @@ describe('resolveListGroupExpansionToggleState', () => {
 });
 
 describe('buildListItems pinned display scope', () => {
+    it('records tag rows when tags are enabled by the active list appearance', () => {
+        const app = createApp();
+        const file = createTestTFile('Notes/Tagged.md');
+        const db = createDb({
+            [file.path]: { tags: ['writing'], properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [file],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), showFileTags: true },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: null,
+            selectionType: ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'alphabetical-asc'
+        });
+
+        const fileItem = items.find(item => item.type === ListPaneItemType.FILE);
+        expect(fileItem?.hasTags).toBe(true);
+    });
+
     it('attaches internal search evidence to its file row', () => {
         const app = createApp();
         const file = createTestTFile('Notes/Notebook Navigator.md');

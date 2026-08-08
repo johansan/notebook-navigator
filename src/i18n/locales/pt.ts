@@ -154,6 +154,7 @@ export const STRINGS_PT = {
         childValues: 'valores secundários',
         applySortAndGroupToDescendants: (target: string) => `Aplicar ordenação e agrupamento a ${target}`,
         applyAppearanceToDescendants: (target: string) => `Aplicar aparência a ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Repor aparência em ${target}`,
         showFolders: 'Mostrar navegação', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Reordenar navegação',
         finishRootFolderReorder: 'Concluído',
@@ -164,6 +165,7 @@ export const STRINGS_PT = {
         dualPaneAutoFallbackNotice:
             'Os painéis duplos não estão disponíveis quando a barra lateral é demasiado estreita. Para alterar isto, defina "Quando a barra lateral é demasiado estreita" como "Não fazer nada" em Definições > Aparência e comportamento.',
         changeAppearance: 'Alterar aparência', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Alterar aparência, personalizada',
         showNotesFromSubfolders: 'Mostrar notas de subpastas',
         showFilesFromSubfolders: 'Mostrar ficheiros de subpastas',
         showNotesFromDescendants: 'Mostrar notas de descendentes',
@@ -424,7 +426,13 @@ export const STRINGS_PT = {
         previewRows: 'Linhas de pré-visualização',
         groupBy: 'Agrupar por',
         titleRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
-        previewRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`
+        previewRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`,
+        defaultOffSuffix: '(desativado por predefinição)',
+        tags: 'Etiquetas',
+        properties: 'Propriedades',
+        tasks: 'Tarefas',
+        resetAppearance: 'Repor aparência',
+        openPluginSettings: 'Abrir definições do plugin…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_PT = {
             applyButton: 'Aplicar',
             applySortAndGroupTitle: (target: string) => `Aplicar ordenação e agrupamento a ${target}?`,
             applyAppearanceTitle: (target: string) => `Aplicar aparência a ${target}?`,
+            resetAppearanceTitle: (target: string) => `Repor aparência em ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `A aparência será alterada para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência guardadas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam associados.`,
+            resetAppearanceMessage: (count: number) =>
+                `A aparência será reposta para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam associados.`,
             affectedCountMessage: (count: number) => `Substituições existentes que serão alteradas: ${count}.`
         },
         manualSortConfirm: {
@@ -1270,19 +1283,19 @@ export const STRINGS_PT = {
                 desc: 'Exibir o ícone da pasta pai quando não está definido um ícone de ficheiro personalizado. A cor da pasta é usada quando não está definida uma cor de ficheiro personalizada.'
             },
             showFileTaskProgress: {
-                name: 'Mostrar tarefas',
+                name: 'Progresso das tarefas',
                 desc: 'Apresentar o estado das tarefas com barra de progresso e contagem de tarefas opcionais. As cores das tarefas inacabadas e concluídas podem ser definidas separadamente com o plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Mostrar tarefas: barra de progresso',
+                name: 'Progresso das tarefas: barra de progresso',
                 desc: 'Apresentar uma barra de progresso junto ao ícone de tarefas.'
             },
             showFileTaskProgressCount: {
-                name: 'Mostrar tarefas: contagem de tarefas',
+                name: 'Progresso das tarefas: contagem de tarefas',
                 desc: 'Apresentar o número de tarefas concluídas e o total de tarefas, por exemplo 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Mostrar tarefas: ocultar quando concluídas',
+                name: 'Progresso das tarefas: ocultar quando concluídas',
                 desc: 'Ocultar o progresso das tarefas quando todas as tarefas de uma nota estão concluídas.'
             },
             showFileBackgroundUnfinishedTask: {

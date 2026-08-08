@@ -27,7 +27,7 @@ import { strings } from '../../i18n';
 import type { SortOption } from '../../settings/types';
 import { ListPaneItemType, type NavigationItemType } from '../../types';
 import type { ListPaneItem } from '../../types/virtualization';
-import type { ListPaneAppearanceSettings } from '../../hooks/useListPaneAppearance';
+import type { ListPaneAppearanceSettings } from '../../settings/listPaneAppearance';
 import { useManualSortKeyboard } from '../../hooks/useManualSortKeyboard';
 import type { FileNameIconNeedle } from '../../utils/fileIconUtils';
 import type { FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';

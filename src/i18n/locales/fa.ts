@@ -154,6 +154,7 @@ export const STRINGS_FA = {
         childValues: 'مقادیر فرزند',
         applySortAndGroupToDescendants: (target: string) => `اعمال مرتب‌سازی و گروه‌بندی به ${target}`,
         applyAppearanceToDescendants: (target: string) => `اعمال ظاهر به ${target}`,
+        resetAppearanceInDescendants: (target: string) => `بازنشانی ظاهر در ${target}`,
         showFolders: 'نمایش ناوبری',
         reorderRootFolders: 'مرتب‌سازی مجدد ناوبری',
         finishRootFolderReorder: 'تمام',
@@ -164,6 +165,7 @@ export const STRINGS_FA = {
         dualPaneAutoFallbackNotice:
             'وقتی نوار کناری خیلی باریک است، پنل‌های دوگانه در دسترس نیستند. برای تغییر این حالت، در تنظیمات > ظاهر و رفتار، گزینهٔ «وقتی نوار کناری خیلی باریک است» را روی «هیچ کاری نکن» بگذارید.',
         changeAppearance: 'تغییر ظاهر',
+        changeAppearanceCustomized: 'تغییر ظاهر، سفارشی‌شده',
         showNotesFromSubfolders: 'نمایش یادداشت‌ها از زیرپوشه‌ها',
         showFilesFromSubfolders: 'نمایش فایل‌ها از زیرپوشه‌ها',
         showNotesFromDescendants: 'نمایش یادداشت‌ها از زیرمجموعه‌ها',
@@ -423,7 +425,13 @@ export const STRINGS_FA = {
         previewRows: 'ردیف‌های پیش‌نمایش',
         groupBy: 'گروه‌بندی بر اساس',
         titleRowOption: (rows: number) => `${rows} ردیف عنوان`,
-        previewRowOption: (rows: number) => `${rows} ردیف پیش‌نمایش`
+        previewRowOption: (rows: number) => `${rows} ردیف پیش‌نمایش`,
+        defaultOffSuffix: '(به‌طور پیش‌فرض خاموش)',
+        tags: 'برچسب‌ها',
+        properties: 'ویژگی‌ها',
+        tasks: 'وظایف',
+        resetAppearance: 'بازنشانی ظاهر',
+        openPluginSettings: 'باز کردن تنظیمات افزونه…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_FA = {
             applyButton: 'اعمال',
             applySortAndGroupTitle: (target: string) => `مرتب‌سازی و گروه‌بندی به ${target} اعمال شود؟`,
             applyAppearanceTitle: (target: string) => `ظاهر به ${target} اعمال شود؟`,
+            resetAppearanceTitle: (target: string) => `ظاهر در ${target} بازنشانی شود؟`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `ظاهر ${count} مورد تغییر می‌کند. ظاهرهای سفارشی موجود که جایگزین می‌شوند: ${replacedCount}. ترجیحات ذخیره‌شدهٔ ظاهر یک‌بار کپی می‌شوند؛ مرتب‌سازی و گروه‌بندی حفظ می‌شوند. تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
+            resetAppearanceMessage: (count: number) =>
+                `ظاهر ${count} مورد بازنشانی می‌شود. مرتب‌سازی و گروه‌بندی حفظ می‌شوند. این تغییر یک‌باره است؛ تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
             affectedCountMessage: (count: number) => `بازنویسی‌های موجود که تغییر خواهند کرد: ${count}.`
         },
         manualSortConfirm: {
@@ -1270,19 +1283,19 @@ export const STRINGS_FA = {
                 desc: 'هنگامی که آیکون فایل سفارشی تنظیم نشده باشد، آیکون پوشه والد را نمایش دهید. هنگامی که رنگ فایل سفارشی تنظیم نشده باشد، از رنگ پوشه استفاده می‌شود.'
             },
             showFileTaskProgress: {
-                name: 'نمایش وظایف',
+                name: 'پیشرفت کارها',
                 desc: 'نمایش وضعیت وظایف همراه با نوار پیشرفت و تعداد وظایف اختیاری. رنگ وظایف ناتمام و وظایف تکمیل‌شده را می‌توان جداگانه با افزونه Style Settings تنظیم کرد.'
             },
             showFileTaskProgressBar: {
-                name: 'نمایش وظایف: نوار پیشرفت',
+                name: 'پیشرفت کارها: نوار پیشرفت',
                 desc: 'نمایش نوار پیشرفت در کنار آیکون وظیفه.'
             },
             showFileTaskProgressCount: {
-                name: 'نمایش وظایف: تعداد وظایف',
+                name: 'پیشرفت کارها: تعداد وظایف',
                 desc: 'نمایش تعداد وظایف انجام‌شده و تعداد کل وظایف، برای مثال 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'نمایش وظایف: پنهان کردن پس از تکمیل',
+                name: 'پیشرفت کارها: پنهان کردن پس از تکمیل',
                 desc: 'پنهان کردن پیشرفت وظایف زمانی که همه وظایف یادداشت تکمیل شده‌اند.'
             },
             showFileBackgroundUnfinishedTask: {

@@ -166,7 +166,8 @@ export function ListToolbar({
             <button
                 key="appearance"
                 className={`${leftButtonBaseClassName}${hasCustomAppearance ? ' nn-mobile-toolbar-button-active' : ''}`}
-                aria-label={strings.paneHeader.changeAppearance}
+                aria-label={hasCustomAppearance ? strings.paneHeader.changeAppearanceCustomized : strings.paneHeader.changeAppearance}
+                aria-haspopup="menu"
                 onClick={handleAppearanceMenu}
                 disabled={!hasAppearanceOrSortSelection}
                 tabIndex={-1}

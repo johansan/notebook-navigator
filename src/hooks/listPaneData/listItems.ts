@@ -59,8 +59,8 @@ export interface ListPaneConfig {
     pinnedNotes: NotebookNavigatorSettings['pinnedNotes'];
     showCurrentFolderFilesAtBottom: boolean;
     showFolderGroupPaths: boolean;
+    /** Effective tag visibility for the active list selection. */
     showFileTags: boolean;
-    showTags: boolean;
 }
 
 interface BuildListItemsArgs {
@@ -209,7 +209,7 @@ function buildListItemsInternal(
             ? { restrictToFolderPath: selectedFolder.path }
             : undefined;
     const { pinnedFiles, unpinnedFiles } = partitionPinnedFiles(files, listConfig.pinnedNotes, contextFilter, pinnedDisplayScope);
-    const shouldDetectTags = includeFileItems && listConfig.showTags && listConfig.showFileTags;
+    const shouldDetectTags = includeFileItems && listConfig.showFileTags;
     const hiddenTagVisibility = shouldDetectTags ? createHiddenTagVisibility(hiddenTags, showHiddenItems) : null;
     const fileHasTags = shouldDetectTags
         ? (file: TFile) => {

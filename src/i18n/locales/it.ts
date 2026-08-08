@@ -154,6 +154,7 @@ export const STRINGS_IT = {
         childValues: 'valori figli',
         applySortAndGroupToDescendants: (target: string) => `Applica ordinamento e raggruppamento a ${target}`,
         applyAppearanceToDescendants: (target: string) => `Applica aspetto a ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Reimposta aspetto in ${target}`,
         showFolders: 'Mostra navigazione', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Riordina navigazione',
         finishRootFolderReorder: 'Fatto',
@@ -164,6 +165,7 @@ export const STRINGS_IT = {
         dualPaneAutoFallbackNotice:
             'I pannelli doppi non sono disponibili quando la barra laterale è troppo stretta. Per modificarlo, imposta "Quando la barra laterale è troppo stretta" su "Non fare nulla" in Impostazioni > Aspetto e comportamento.',
         changeAppearance: 'Cambia aspetto', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Cambia aspetto, personalizzato',
         showNotesFromSubfolders: 'Mostra note da sottocartelle',
         showFilesFromSubfolders: 'Mostra file da sottocartelle',
         showNotesFromDescendants: 'Mostra note da discendenti',
@@ -423,7 +425,13 @@ export const STRINGS_IT = {
         previewRows: 'Righe anteprima',
         groupBy: 'Raggruppa per',
         titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} titolo`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`
+        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`,
+        defaultOffSuffix: '(predefinito: disattivato)',
+        tags: 'Tag',
+        properties: 'Proprietà',
+        tasks: 'Attività',
+        resetAppearance: 'Reimposta aspetto',
+        openPluginSettings: 'Apri impostazioni del plugin…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_IT = {
             applyButton: 'Applica',
             applySortAndGroupTitle: (target: string) => `Applicare ordinamento e raggruppamento a ${target}?`,
             applyAppearanceTitle: (target: string) => `Applicare aspetto a ${target}?`,
+            resetAppearanceTitle: (target: string) => `Reimpostare aspetto in ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `L’aspetto cambierà per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Aspetti personalizzati esistenti sostituiti: ${replacedCount}. Le preferenze di aspetto salvate vengono copiate una sola volta; ordinamento e raggruppamento restano invariati. Le modifiche future e i nuovi discendenti non sono collegati.`,
+            resetAppearanceMessage: (count: number) =>
+                `L’aspetto verrà reimpostato per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Ordinamento e raggruppamento restano invariati. È una modifica una tantum; le modifiche future e i nuovi discendenti non sono collegati.`,
             affectedCountMessage: (count: number) => `Sostituzioni esistenti che cambieranno: ${count}.`
         },
         manualSortConfirm: {
@@ -1266,19 +1279,19 @@ export const STRINGS_IT = {
                 desc: "Visualizza l'icona della cartella genitore quando non è impostata un'icona file personalizzata. Il colore della cartella viene usato quando non è impostato un colore file personalizzato."
             },
             showFileTaskProgress: {
-                name: 'Mostra attività',
+                name: 'Avanzamento attività',
                 desc: 'Mostra lo stato delle attività con barra di avanzamento e numero di attività opzionali. I colori delle attività incomplete e completate possono essere impostati separatamente con il plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Mostra attività: barra di avanzamento',
+                name: 'Avanzamento attività: barra di avanzamento',
                 desc: "Mostra una barra di avanzamento accanto all'icona attività."
             },
             showFileTaskProgressCount: {
-                name: 'Mostra attività: numero di attività',
+                name: 'Avanzamento attività: numero di attività',
                 desc: 'Mostra il numero di attività completate e totali, ad esempio 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Mostra attività: nascondi al completamento',
+                name: 'Avanzamento attività: nascondi al completamento',
                 desc: "Nasconde l'avanzamento delle attività quando tutte le attività di una nota sono completate."
             },
             showFileBackgroundUnfinishedTask: {

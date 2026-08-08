@@ -24,6 +24,7 @@ import type { NotebookNavigatorSettings } from '../../src/settings/types';
 import type { FileData } from '../../src/storage/IndexedDBStorage';
 import { deriveFileMetadata } from '../utils/pathMetadata';
 import { setActivePropertyFields } from '../../src/utils/vaultProfiles';
+import { haveMarkdownCountConsumersChanged } from '../../src/utils/markdownPipelineContentTypes';
 
 class TestMarkdownPipelineContentProvider extends MarkdownPipelineContentProvider {
     async runWordCount(file: TFile, settings: NotebookNavigatorSettings): Promise<number | null> {
@@ -71,6 +72,42 @@ function createFile(path: string): TFile {
     file.extension = metadata.extension;
     return file;
 }
+
+describe('Markdown pipeline appearance relevance', () => {
+    it('excludes raw appearance-map references from relevant settings', () => {
+        const context = createApp();
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+
+        expect(provider.getRelevantSettings()).not.toContain('folderAppearances');
+        expect(provider.getRelevantSettings()).not.toContain('tagAppearances');
+        expect(provider.getRelevantSettings()).not.toContain('propertyAppearances');
+    });
+
+    it('reports only appearance changes that alter effective count consumers', () => {
+        const disabled = createSettings({
+            textCountDisplay: 'none',
+            showTooltips: false,
+            showTooltipWordCount: false,
+            folderAppearances: { Writing: { mode: 'standard' } }
+        });
+        const visualChange = createSettings({
+            textCountDisplay: 'none',
+            showTooltips: false,
+            showTooltipWordCount: false,
+            folderAppearances: { Writing: { mode: 'compact', showFileTags: true } }
+        });
+        const countsEnabled = createSettings({
+            textCountDisplay: 'none',
+            showTooltips: false,
+            showTooltipWordCount: false,
+            folderAppearances: { Writing: { mode: 'compact', showTextCount: true } }
+        });
+
+        expect(haveMarkdownCountConsumersChanged(disabled, visualChange)).toBe(false);
+        expect(haveMarkdownCountConsumersChanged(visualChange, countsEnabled)).toBe(true);
+        expect(haveMarkdownCountConsumersChanged(countsEnabled, visualChange)).toBe(true);
+    });
+});
 
 function createFrontmatterPosition(bodyStartIndex: number): CachedMetadata['frontmatterPosition'] {
     return {
@@ -345,6 +382,23 @@ describe('MarkdownPipelineContentProvider word count', () => {
         setMarkdownContent(context, file, '---\ntitle: Draft\n---\n\nBody');
         const result = await provider.runProcessFile(file, null, settings);
 
+        expect(result.update?.characterCountWithSpaces).toBeUndefined();
+        expect(result.update?.characterCountWithoutSpaces).toBeUndefined();
+    });
+
+    it('counts words when a list appearance enables counts while the global setting is off', async () => {
+        const context = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            folderAppearances: { Writing: { showTextCount: true } }
+        });
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+        const file = createFile('Writing/Draft.md');
+
+        setMarkdownContent(context, file, 'Three draft words');
+        const result = await provider.runProcessFile(file, null, settings);
+
+        expect(result.update?.wordCount).toBe(3);
         expect(result.update?.characterCountWithSpaces).toBeUndefined();
         expect(result.update?.characterCountWithoutSpaces).toBeUndefined();
     });
