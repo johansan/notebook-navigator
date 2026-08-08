@@ -515,6 +515,8 @@ button.nn-navigation-calendar-year-month {
     z-index: 1;
     display: block;
     max-width: 100%;
+    /* Keeps Windows interface-font descenders inside the clipped label used for horizontal ellipsis. */
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
 }

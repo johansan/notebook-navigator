@@ -154,6 +154,7 @@ export const STRINGS_VI = {
         childValues: 'giá trị con',
         applySortAndGroupToDescendants: (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}`,
         applyAppearanceToDescendants: (target: string) => `Áp dụng giao diện cho ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Đặt lại giao diện trong ${target}`,
         showFolders: 'Hiện điều hướng', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Sắp xếp lại điều hướng',
         finishRootFolderReorder: 'Hoàn tất',
@@ -164,6 +165,7 @@ export const STRINGS_VI = {
         dualPaneAutoFallbackNotice:
             'Không dùng được hai ngăn khi thanh bên quá hẹp. Để thay đổi, đặt "Khi thanh bên quá hẹp" thành "Không làm gì" trong Cài đặt > Giao diện & hành vi.',
         changeAppearance: 'Đổi giao diện', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Thay đổi giao diện, đã tùy chỉnh',
         showNotesFromSubfolders: 'Hiện ghi chú từ thư mục con',
         showFilesFromSubfolders: 'Hiện tập tin từ thư mục con',
         showNotesFromDescendants: 'Hiện ghi chú từ phần tử con',
@@ -423,7 +425,13 @@ export const STRINGS_VI = {
         previewRows: 'Dòng xem trước',
         groupBy: 'Nhóm theo',
         titleRowOption: (rows: number) => `${rows} dòng tiêu đề`,
-        previewRowOption: (rows: number) => `${rows} dòng xem trước`
+        previewRowOption: (rows: number) => `${rows} dòng xem trước`,
+        defaultOffSuffix: '(mặc định tắt)',
+        tags: 'Thẻ',
+        properties: 'Thuộc tính',
+        tasks: 'Nhiệm vụ',
+        resetAppearance: 'Đặt lại giao diện',
+        openPluginSettings: 'Mở cài đặt plugin…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_VI = {
             applyButton: 'Áp dụng',
             applySortAndGroupTitle: (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}?`,
             applyAppearanceTitle: (target: string) => `Áp dụng giao diện cho ${target}?`,
+            resetAppearanceTitle: (target: string) => `Đặt lại giao diện trong ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Giao diện sẽ thay đổi cho ${count} ${count === 1 ? 'mục' : 'mục'}. Giao diện tùy chỉnh hiện có bị thay thế: ${replacedCount}. Các tùy chọn giao diện đã lưu được sao chép một lần; cách sắp xếp và nhóm được giữ nguyên. Thay đổi trong tương lai và mục con mới không được liên kết.`,
+            resetAppearanceMessage: (count: number) =>
+                `Giao diện sẽ được đặt lại cho ${count} ${count === 1 ? 'mục' : 'mục'}. Cách sắp xếp và nhóm được giữ nguyên. Đây là thay đổi một lần; thay đổi trong tương lai và mục con mới không được liên kết.`,
             affectedCountMessage: (count: number) => `Ghi đè hiện có sẽ thay đổi: ${count}.`
         },
         manualSortConfirm: {
@@ -537,6 +550,7 @@ export const STRINGS_VI = {
                 'nav-properties': 'Thuộc tính',
                 'nav-property': 'Thuộc tính',
                 'nav-property-value': 'Giá trị',
+                'file-unfinished-task': 'Nhiệm vụ',
                 'file-word-count': 'Số từ',
                 'file-character-count': 'Số ký tự'
             }
@@ -1254,26 +1268,35 @@ export const STRINGS_VI = {
             },
             showFileIcons: {
                 name: 'Hiện biểu tượng tệp',
-                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
+                desc: 'Hiển thị biểu tượng tệp với khoảng cách căn trái. Tắt sẽ gỡ cả biểu tượng và thụt lề. Ưu tiên: biểu tượng nhiệm vụ chưa hoàn thành > biểu tượng tùy chỉnh > biểu tượng thư mục > biểu tượng tên tệp > biểu tượng loại tệp > biểu tượng mặc định.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Biểu tượng nhiệm vụ chưa hoàn thành',
+                desc: 'Thay thế biểu tượng tệp khi ghi chú có nhiệm vụ chưa hoàn thành.',
+                options: {
+                    none: 'Đã tắt',
+                    compact: 'Chế độ gọn',
+                    all: 'Tiêu chuẩn và gọn'
+                }
             },
             useFolderIcon: {
                 name: 'Dùng biểu tượng thư mục',
                 desc: 'Hiển thị biểu tượng của thư mục cha khi không có biểu tượng tệp tùy chỉnh được đặt. Màu thư mục được dùng khi không có màu tệp tùy chỉnh được đặt.'
             },
             showFileTaskProgress: {
-                name: 'Hiển thị nhiệm vụ',
+                name: 'Tiến độ công việc',
                 desc: 'Hiển thị trạng thái nhiệm vụ với thanh tiến độ và số nhiệm vụ tùy chọn. Màu cho nhiệm vụ chưa hoàn thành và nhiệm vụ đã hoàn thành có thể được đặt riêng bằng plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Hiển thị nhiệm vụ: thanh tiến độ',
+                name: 'Tiến độ công việc: thanh tiến độ',
                 desc: 'Hiển thị thanh tiến độ bên cạnh biểu tượng nhiệm vụ.'
             },
             showFileTaskProgressCount: {
-                name: 'Hiển thị nhiệm vụ: số nhiệm vụ',
+                name: 'Tiến độ công việc: số nhiệm vụ',
                 desc: 'Hiển thị số nhiệm vụ đã hoàn thành và tổng số nhiệm vụ, ví dụ 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Hiển thị nhiệm vụ: ẩn khi hoàn thành',
+                name: 'Tiến độ công việc: ẩn khi hoàn thành',
                 desc: 'Ẩn tiến độ nhiệm vụ khi tất cả nhiệm vụ trong ghi chú đã hoàn thành.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1584,6 +1607,10 @@ export const STRINGS_VI = {
                 name: 'Hiển thị quý',
                 desc: 'Thêm nhãn quý vào tiêu đề lịch.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Hiển thị ngày của các tháng khác',
+                desc: 'Hiển thị các ngày của tháng trước và tháng sau khi lịch hiển thị trọn một tháng.'
+            },
             calendarShowYearCalendar: {
                 name: 'Hiển thị lịch năm',
                 desc: 'Hiển thị điều hướng năm và lưới tháng trong thanh bên phải.'
@@ -1635,7 +1662,10 @@ export const STRINGS_VI = {
                 momentDescSuffix:
                     '. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp > Mẫu.',
                 templaterSupportInstalled: '✅ Plugin Templater đã được cài đặt với hỗ trợ mẫu đầy đủ.',
-                templaterSupportMissing: '⚠️ Cài đặt plugin Templater để hỗ trợ mẫu đầy đủ.',
+                templaterSupportMissing: '⚠️ Cài đặt plugin Templater để hỗ trợ mẫu.',
+                templateTokenNoticeLabel: 'Quan trọng!',
+                templateTokenNotice:
+                    'Hỗ trợ mẫu yêu cầu plugin Templater. Các định dạng tích hợp như {{date}} và {{title}} chỉ dùng được khi {source} được đặt thành {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Cú pháp hiện tại: {path}',
                 parsingError: 'Mẫu phải có thể định dạng và phân tích lại thành một ngày đầy đủ (năm, tháng, ngày).'

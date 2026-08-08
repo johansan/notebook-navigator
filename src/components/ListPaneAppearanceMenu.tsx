@@ -16,13 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Menu, TFolder } from 'obsidian';
+import { Menu, Platform, TFolder, type MenuItem } from 'obsidian';
+import {
+    getDefaultListMode,
+    getStoredListPaneAppearanceFields,
+    hasStoredListPaneAppearanceOverride,
+    mergeListPaneAppearanceAndGrouping,
+    resolveListPaneAppearance,
+    type FolderAppearance,
+    type ListPaneToggleKey
+} from '../settings/listPaneAppearance';
 import { strings } from '../i18n';
-import { getDefaultListMode, resolveListMode, type FolderAppearance } from '../hooks/useListPaneAppearance';
-import type { ListDisplayMode, NotebookNavigatorSettings } from '../settings/types';
+import { resolveTextCountVariant, type ListDisplayMode, type NotebookNavigatorSettings, type TextCountDisplay } from '../settings/types';
 import { ItemType } from '../types';
 import { runAsyncAction } from '../utils/async';
+import { tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
 import { ensureRecord, sanitizeRecord } from '../utils/recordUtils';
+import { resolveUXIconForMenu } from '../utils/uxIcons';
 import type { PropertySelectionNodeId } from '../utils/propertyTree';
 
 interface AppearanceMenuProps {
@@ -31,7 +41,7 @@ interface AppearanceMenuProps {
     selectedFolder: TFolder | null;
     selectedTag?: string | null;
     selectedProperty?: PropertySelectionNodeId | null;
-    selectionType?: ItemType;
+    selectionType: ItemType;
     updateSettings: (updater: (settings: NotebookNavigatorSettings) => void) => Promise<void>;
     descendantAction?: {
         menuTitle: string;
@@ -49,6 +59,21 @@ interface AppearanceRecordAccessor {
     key: string;
     getRecord: (settings: NotebookNavigatorSettings) => Record<string, FolderAppearance> | undefined;
     setRecord: (settings: NotebookNavigatorSettings, next: Record<string, FolderAppearance>) => void;
+}
+
+interface ChoiceOption<T> {
+    value: T;
+    title: string;
+    checked: boolean;
+}
+
+interface ContentToggle {
+    key: ListPaneToggleKey;
+    title: string;
+    icon: string;
+    globalDefault: boolean;
+    /** Toggles are hidden when the current mode or a master setting cannot render the content. */
+    available: boolean;
 }
 
 export function showListPaneAppearanceMenu({
@@ -95,126 +120,231 @@ export function showListPaneAppearanceMenu({
     };
     const appearanceAccessor = resolveAppearanceAccessor();
 
-    const updateAppearance = (updates: Partial<FolderAppearance>) => {
-        const normalizeAppearance = (appearance: FolderAppearance) => {
-            const normalized = { ...appearance };
-            (Object.keys(normalized) as (keyof FolderAppearance)[]).forEach(key => {
-                if (normalized[key] === undefined) {
-                    delete normalized[key];
-                }
-            });
-            if (normalized.mode === defaultMode) {
-                delete normalized.mode;
-            }
-            return normalized;
-        };
-
+    const updateAppearance = (updates: Partial<FolderAppearance>): void => {
         if (!appearanceAccessor) {
             return;
         }
 
         runAsyncAction(() =>
-            updateSettings(s => {
-                const next = sanitizeRecord(ensureRecord(appearanceAccessor.getRecord(s)));
-                const currentAppearance = next[appearanceAccessor.key] || {};
-                const normalizedAppearance = normalizeAppearance({ ...currentAppearance, ...updates });
-                if (Object.keys(normalizedAppearance).length === 0) {
-                    delete next[appearanceAccessor.key];
-                } else {
+            updateSettings(currentSettings => {
+                const next = sanitizeRecord(ensureRecord(appearanceAccessor.getRecord(currentSettings)));
+                const currentAppearance = next[appearanceAccessor.key] ?? {};
+                const candidate: FolderAppearance = { ...currentAppearance, ...updates };
+                const normalizedAppearance = mergeListPaneAppearanceAndGrouping(
+                    getStoredListPaneAppearanceFields(candidate),
+                    candidate.groupBy
+                );
+                if (normalizedAppearance) {
                     next[appearanceAccessor.key] = normalizedAppearance;
+                } else {
+                    delete next[appearanceAccessor.key];
                 }
-
-                appearanceAccessor.setRecord(s, next);
+                appearanceAccessor.setRecord(currentSettings, next);
             })
         );
     };
 
     const menu = new Menu();
-
-    // Get custom appearance settings for the selected folder/tag
-    // Will be undefined if no custom appearance has been set
     const appearance = appearanceAccessor ? appearanceAccessor.getRecord(settings)?.[appearanceAccessor.key] : undefined;
-    const effectiveMode = resolveListMode({ appearance, defaultMode });
-
-    const isStandard = effectiveMode === 'standard';
+    const storedFields = getStoredListPaneAppearanceFields(appearance);
+    const resolved = resolveListPaneAppearance({ settings, appearance, selectionType });
+    const effectiveMode = resolved.mode;
     const isCompact = effectiveMode === 'compact';
-    const appearanceMode = appearance?.mode;
-    const hasAppearanceOverride =
-        ((appearanceMode === 'standard' || appearanceMode === 'compact') && appearanceMode !== defaultMode) ||
-        appearance?.titleRows !== undefined ||
-        appearance?.previewRows !== undefined;
-    const withDefaultSuffix = (label: string, isDefault: boolean): string =>
-        isDefault ? `${label} ${strings.folderAppearance.defaultSuffix}` : label;
+    const hasAppearanceOverride = hasStoredListPaneAppearanceOverride(appearance);
+    const withSuffix = (label: string, suffix: string | null): string => (suffix ? `${label} ${suffix}` : label);
+    // Entries with a per-selection custom value are marked in bold instead of a text suffix.
+    // Native menus render fragment titles as plain text without the bold marker; the active state
+    // of the appearance toolbar button still shows that the selection is customized.
+    const setItemTitle = (item: MenuItem, title: string, isCustom: boolean): void => {
+        if (!isCustom) {
+            item.setTitle(title);
+            return;
+        }
+        const fragment = createFragment();
+        fragment.append(createSpan({ cls: 'nn-menu-title-custom', text: title }));
+        item.setTitle(fragment);
+    };
+    const countLabel = (value: TextCountDisplay): string => strings.settings.items.textCountDisplay.options[value];
+
+    /**
+     * Desktop menus use Obsidian's optional submenu API. Mobile and older Obsidian versions receive
+     * the same choices as flat indented sections so primary appearance controls are never dropped.
+     */
+    const addChoiceSection = <T,>({
+        title,
+        isCustom,
+        icon,
+        options,
+        onSelect
+    }: {
+        title: string;
+        isCustom: boolean;
+        icon: string;
+        options: readonly ChoiceOption<T>[];
+        onSelect: (value: T) => void;
+    }): void => {
+        let choiceMenu: Menu | null = null;
+        menu.addItem(item => {
+            setItemTitle(item, title, isCustom);
+            item.setIcon(icon);
+            if (!Platform.isMobile) {
+                choiceMenu = tryCreateSubmenu(item);
+            }
+            if (!choiceMenu) {
+                item.setDisabled(true);
+            }
+        });
+
+        const destination = choiceMenu ?? menu;
+        const indent = choiceMenu ? '' : '    ';
+        options.forEach(option => {
+            destination.addItem(item => {
+                item.setTitle(`${indent}${option.title}`)
+                    .setIcon(icon)
+                    .setChecked(option.checked)
+                    .onClick(() => {
+                        onSelect(option.value);
+                    });
+            });
+        });
+    };
 
     menu.addItem(item => {
-        item.setTitle(strings.folderAppearance.appearance).setIcon('lucide-palette').setDisabled(true);
+        item.setTitle(strings.folderAppearance.appearance)
+            .setIcon(resolveUXIconForMenu(settings.interfaceIcons, 'list-appearance'))
+            .setDisabled(true);
     });
 
-    // Standard preset
     menu.addItem(item => {
-        const label = withDefaultSuffix(strings.folderAppearance.standardPreset, defaultMode === 'standard');
-        item.setTitle(label)
-            .setIcon('lucide-list')
-            .setChecked(isStandard)
+        const label = withSuffix(
+            strings.folderAppearance.standardPreset,
+            defaultMode === 'standard' ? strings.folderAppearance.defaultSuffix : null
+        );
+        setItemTitle(item, label, appearance?.mode === 'standard');
+        item.setIcon('lucide-list')
+            .setChecked(effectiveMode === 'standard')
             .onClick(() => {
-                updateAppearance({ mode: 'standard' });
+                updateAppearance({ mode: defaultMode === 'standard' ? undefined : 'standard' });
             });
     });
 
-    // Compact preset
     menu.addItem(item => {
-        const label = withDefaultSuffix(strings.folderAppearance.compactPreset, defaultMode === 'compact');
-        item.setTitle(label)
-            .setIcon('lucide-align-left')
-            .setChecked(isCompact)
+        const label = withSuffix(
+            strings.folderAppearance.compactPreset,
+            defaultMode === 'compact' ? strings.folderAppearance.defaultSuffix : null
+        );
+        setItemTitle(item, label, appearance?.mode === 'compact');
+        item.setIcon('lucide-align-left')
+            .setChecked(effectiveMode === 'compact')
             .onClick(() => {
-                updateAppearance({ mode: 'compact', previewRows: undefined });
+                // Preview and content preferences remain stored because they become active again in Standard mode.
+                updateAppearance({ mode: defaultMode === 'compact' ? undefined : 'compact' });
             });
     });
 
     menu.addSeparator();
 
-    // Title rows header
-    menu.addItem(item => {
-        item.setTitle(strings.folderAppearance.titleRows).setIcon('lucide-text').setDisabled(true);
-    });
-
-    // Title row options
-    const effectiveTitleRows = appearance?.titleRows ?? settings.fileNameRows;
-    [1, 2, 3].forEach(rows => {
-        const isDefaultRows = rows === settings.fileNameRows;
-        menu.addItem(item => {
-            item.setTitle(`    ${withDefaultSuffix(strings.folderAppearance.titleRowOption(rows), isDefaultRows)}`)
-                .setIcon('lucide-text')
-                .setChecked(effectiveTitleRows === rows)
-                .onClick(() => {
-                    updateAppearance({ titleRows: isDefaultRows ? undefined : rows });
-                });
-        });
+    const storedTitleRows = storedFields?.titleRows;
+    addChoiceSection<number | undefined>({
+        title: `${strings.folderAppearance.titleRows}: ${resolved.titleRows}`,
+        isCustom: storedTitleRows !== undefined,
+        icon: 'lucide-text',
+        options: [
+            {
+                value: undefined,
+                title: `${strings.folderAppearance.defaultLabel} (${settings.fileNameRows})`,
+                checked: storedTitleRows === undefined
+            },
+            ...[1, 2, 3].map(rows => ({
+                value: rows,
+                title: strings.folderAppearance.titleRowOption(rows),
+                checked: storedTitleRows === rows
+            }))
+        ],
+        onSelect: titleRows => updateAppearance({ titleRows })
     });
 
     if (settings.showFilePreview && !isCompact) {
-        menu.addSeparator();
-
-        // Preview rows header
-        menu.addItem(item => {
-            item.setTitle(strings.folderAppearance.previewRows).setIcon('lucide-file-text').setDisabled(true);
-        });
-
-        // Preview row options
-        const effectivePreviewRows = appearance?.previewRows ?? settings.previewRows;
-        [1, 2, 3, 4, 5].forEach(rows => {
-            const isDefaultRows = rows === settings.previewRows;
-            menu.addItem(item => {
-                item.setTitle(`    ${withDefaultSuffix(strings.folderAppearance.previewRowOption(rows), isDefaultRows)}`)
-                    .setIcon('lucide-file-text')
-                    .setChecked(effectivePreviewRows === rows)
-                    .onClick(() => {
-                        updateAppearance({ previewRows: isDefaultRows ? undefined : rows });
-                    });
-            });
+        const storedPreviewRows = storedFields?.previewRows;
+        addChoiceSection<number | undefined>({
+            title: `${strings.folderAppearance.previewRows}: ${resolved.previewRows}`,
+            isCustom: storedPreviewRows !== undefined,
+            icon: 'lucide-file-text',
+            options: [
+                {
+                    value: undefined,
+                    title: `${strings.folderAppearance.defaultLabel} (${settings.previewRows})`,
+                    checked: storedPreviewRows === undefined
+                },
+                ...[1, 2, 3, 4, 5].map(rows => ({
+                    value: rows,
+                    title: strings.folderAppearance.previewRowOption(rows),
+                    checked: storedPreviewRows === rows
+                }))
+            ],
+            onSelect: previewRows => updateAppearance({ previewRows })
         });
     }
+
+    const textCountVariant = resolveTextCountVariant(settings.textCountDisplay);
+    const contentToggles: ContentToggle[] = [
+        {
+            key: 'showFileTags',
+            title: strings.folderAppearance.tags,
+            icon: resolveUXIconForMenu(settings.interfaceIcons, 'nav-tags'),
+            globalDefault: settings.showFileTags,
+            // Tag content is only extracted while the master tag setting is on.
+            available: settings.showTags && (!isCompact || settings.showFileTagsInCompactMode)
+        },
+        {
+            key: 'showFileProperties',
+            title: strings.folderAppearance.properties,
+            icon: resolveUXIconForMenu(settings.interfaceIcons, 'nav-properties'),
+            globalDefault: settings.showFileProperties,
+            available: !isCompact || settings.showFilePropertiesInCompactMode
+        },
+        {
+            key: 'showFileTaskProgress',
+            title: strings.folderAppearance.tasks,
+            icon: resolveUXIconForMenu(settings.interfaceIcons, 'file-unfinished-task'),
+            globalDefault: settings.showFileTaskProgress,
+            available: !isCompact
+        },
+        {
+            key: 'showTextCount',
+            // The label and icon name the counts the global setting shows; word count when the global type is 'none'.
+            title: countLabel(textCountVariant),
+            icon: resolveUXIconForMenu(
+                settings.interfaceIcons,
+                textCountVariant === 'characters' ? 'file-character-count' : 'file-word-count'
+            ),
+            globalDefault: settings.textCountDisplay !== 'none',
+            // Property-placed counts render as pills, so the toggle is hidden when compact mode hides pills.
+            available: !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode
+        }
+    ];
+    const visibleToggles = contentToggles.filter(toggle => toggle.available);
+    if (visibleToggles.length > 0) {
+        menu.addSeparator();
+    }
+    visibleToggles.forEach(toggle => {
+        const stored = storedFields?.[toggle.key];
+        const effective = stored ?? toggle.globalDefault;
+        menu.addItem(item => {
+            // The default-off suffix tells the user an unchecked toggle comes from global settings and can be enabled here.
+            const suffix = stored === undefined && !toggle.globalDefault ? strings.folderAppearance.defaultOffSuffix : null;
+            setItemTitle(item, withSuffix(toggle.title, suffix), stored !== undefined);
+            item.setIcon(toggle.icon)
+                .setChecked(effective)
+                .onClick(() => {
+                    // A toggle matching the global setting is stored as inherited, so it follows future global changes.
+                    const next = !effective;
+                    const updates: Partial<FolderAppearance> = {};
+                    updates[toggle.key] = next === toggle.globalDefault ? undefined : next;
+                    updateAppearance(updates);
+                });
+        });
+    });
 
     if (descendantAction) {
         menu.addSeparator();
@@ -231,14 +361,20 @@ export function showListPaneAppearanceMenu({
     if (defaultSettingsAction) {
         menu.addSeparator();
         menu.addItem(item => {
-            item.setTitle(strings.paneHeader.resetViewToDefaults)
+            item.setTitle(strings.folderAppearance.resetAppearance)
                 .setIcon('lucide-rotate-ccw')
                 .setDisabled(!hasAppearanceOverride)
                 .onClick(() => {
                     if (!hasAppearanceOverride) {
                         return;
                     }
-                    updateAppearance({ mode: undefined, titleRows: undefined, previewRows: undefined });
+                    const updates: Partial<FolderAppearance> = {};
+                    if (storedFields) {
+                        Object.keys(storedFields).forEach(key => {
+                            updates[key as keyof typeof storedFields] = undefined;
+                        });
+                    }
+                    updateAppearance(updates);
                 });
         });
         menu.addSeparator();

@@ -25,7 +25,7 @@ import {
 } from '../../settings/types';
 import { ItemType, type CollapsedPinnedContexts, type NavigatorContext } from '../../types';
 import { ISettingsProvider } from '../../interfaces/ISettingsProvider';
-import { FolderAppearance, TagAppearance } from '../../hooks/useListPaneAppearance';
+import type { FolderAppearance, TagAppearance } from '../../settings/listPaneAppearance';
 import type { ShortcutEntry } from '../../types/shortcuts';
 import { mutateVaultProfileShortcuts } from '../../utils/vaultProfiles';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';

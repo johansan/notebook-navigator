@@ -243,7 +243,7 @@ Search icon and supporting text use the shared variables under [Pane headers and
 | `--nn-theme-file-compact-name-font-weight` | `400` | File name font weight in compact mode |
 | `--nn-theme-file-preview-color` | `var(--nn-theme-foreground-muted)` | File preview color |
 | `--nn-theme-file-preview-font-weight` | `400` | File preview font weight |
-| `--nn-theme-file-task-color` | unset, falls back to `--nn-theme-file-date-color` | File task icon, bar, and count color; set values also apply on selected rows |
+| `--nn-theme-file-task-color` | unset, falls back to location-specific icon or date colors | Task display and unfinished-task replacement file icon color; set values also apply on selected rows |
 | `--nn-theme-file-task-font-weight` | `400` | File task count and icon weight |
 | `--nn-theme-file-task-complete-color` | unset, falls back to `--nn-theme-file-task-color` | File task color when all tasks are complete; set values also apply on selected rows |
 | `--nn-theme-file-task-complete-font-weight` | `400` | File task count and icon weight when all tasks are complete |

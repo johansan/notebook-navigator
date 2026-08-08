@@ -63,8 +63,26 @@ calendar uses its own folder and format settings instead.
 
 ### Do notes created from the calendar support Templater?
 
-Yes. When the [Templater](https://github.com/SilentVoid13/Templater) plugin is installed, templates used by the calendar
-and folder notes run with full Templater support. Without Templater, only built-in template variables are processed.
+Template support requires the [Templater](https://github.com/SilentVoid13/Templater) plugin. With Templater installed,
+templates used by the calendar and folder notes run with full Templater support. Without Templater the template file is
+copied as it is and no template syntax is processed.
+
+### Why are `{{date}}` and `{{title}}` left as text in my calendar notes?
+
+The built-in formats belong to the core **Templates** and **Daily notes** plugins, not to Obsidian itself, so they are
+not applied when another plugin creates a note.
+
+They are used in one case: **Settings → Notebook Navigator → Calendar → Daily note source** set to **Daily notes (core
+plug-in)**. Notebook Navigator then reads the folder, date format, and template from the Daily Notes core plugin and
+applies `{{date}}`, `{{time}}`, `{{title}}`, `{{yesterday}}`, `{{tomorrow}}`, and calculated formats such as
+`{{date+1d:YYYY-MM-DD}}` when it creates the daily note.
+
+With **Daily note source** set to **Notebook Navigator**, use Templater syntax in calendar templates:
+
+```
+<% tp.date.now("YYYY-MM-DD") %>
+<% tp.file.title %>
+```
 
 ## Settings and sync
 

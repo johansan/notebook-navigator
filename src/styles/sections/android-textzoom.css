@@ -47,6 +47,13 @@
     font-size: calc(var(--nn-file-icon-size-mobile, var(--nn-file-icon-size)) * var(--nn-android-font-scale-reciprocal, 1));
 }
 
+/* Task indicators are smaller than file icons, so preserve their 80% size while compensating
+   for Android textZoom. Without this override, the general icon rule above enlarges them. */
+.notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-emoji-icon,
+.notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-iconfont {
+    font-size: calc(var(--icon-size) * 0.8 * var(--nn-android-font-scale-reciprocal, 1));
+}
+
 /* Clamp height compensation - Android doesn't scale max-height, so match the compensated line-height after textZoom applies. */
 .notebook-navigator-android .nn-file-name {
     max-height: calc(var(--nn-file-title-line-height) * var(--filename-rows, 1) * var(--nn-android-font-scale, 1));

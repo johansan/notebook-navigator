@@ -153,6 +153,7 @@ export const STRINGS_DE = {
         childValues: 'Unterwerte',
         applySortAndGroupToDescendants: (target: string) => `Sortierung und Gruppierung auf ${target} anwenden`,
         applyAppearanceToDescendants: (target: string) => `Darstellung auf ${target} anwenden`,
+        resetAppearanceInDescendants: (target: string) => `Darstellung für ${target} zurücksetzen`,
         showFolders: 'Navigation anzeigen', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Navigation neu anordnen',
         finishRootFolderReorder: 'Neuordnung fertig',
@@ -163,6 +164,7 @@ export const STRINGS_DE = {
         dualPaneAutoFallbackNotice:
             'Doppelbereiche sind nicht verfügbar, wenn die Seitenleiste zu schmal ist. Um dies zu ändern, setzen Sie „Wenn Seitenleiste zu schmal ist“ in Einstellungen > Erscheinungsbild & Verhalten auf „Nichts tun“.',
         changeAppearance: 'Erscheinungsbild ändern', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Darstellung ändern, angepasst',
         showNotesFromSubfolders: 'Notizen aus Unterordnern anzeigen',
         showFilesFromSubfolders: 'Dateien aus Unterordnern anzeigen',
         showNotesFromDescendants: 'Notizen aus Nachkommen anzeigen',
@@ -424,7 +426,13 @@ export const STRINGS_DE = {
         previewRows: 'Vorschauzeilen',
         groupBy: 'Gruppieren nach',
         titleRowOption: (rows: number) => `${rows} Titelzeile${rows === 1 ? '' : 'n'}`,
-        previewRowOption: (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`
+        previewRowOption: (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`,
+        defaultOffSuffix: '(standardmäßig aus)',
+        tags: 'Tags',
+        properties: 'Eigenschaften',
+        tasks: 'Aufgaben',
+        resetAppearance: 'Darstellung zurücksetzen',
+        openPluginSettings: 'Plugin-Einstellungen öffnen…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_DE = {
             applyButton: 'Anwenden',
             applySortAndGroupTitle: (target: string) => `Sortierung und Gruppierung auf ${target} anwenden?`,
             applyAppearanceTitle: (target: string) => `Darstellung auf ${target} anwenden?`,
+            resetAppearanceTitle: (target: string) => `Darstellung für ${target} zurücksetzen?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Die Darstellung ändert sich für ${count} ${count === 1 ? 'Element' : 'Elemente'}. Ersetzte vorhandene Anpassungen: ${replacedCount}. Gespeicherte Darstellungseinstellungen werden einmalig kopiert; Sortierung und Gruppierung bleiben erhalten. Künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
+            resetAppearanceMessage: (count: number) =>
+                `Die Darstellung wird für ${count} ${count === 1 ? 'Element' : 'Elemente'} zurückgesetzt. Sortierung und Gruppierung bleiben erhalten. Dies ist eine einmalige Änderung; künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
             affectedCountMessage: (count: number) => `Vorhandene Überschreibungen, die sich ändern: ${count}.`
         },
         manualSortConfirm: {
@@ -538,6 +551,7 @@ export const STRINGS_DE = {
                 'nav-properties': 'Eigenschaften',
                 'nav-property': 'Eigenschaft',
                 'nav-property-value': 'Wert',
+                'file-unfinished-task': 'Aufgaben',
                 'file-word-count': 'Wortanzahl',
                 'file-character-count': 'Zeichenanzahl'
             }
@@ -1256,26 +1270,35 @@ export const STRINGS_DE = {
             },
             showFileIcons: {
                 name: 'Dateisymbole anzeigen',
-                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+                desc: 'Dateisymbole mit linksbündigem Abstand anzeigen. Deaktivierung entfernt sowohl Symbole als auch Einrückung. Priorität: Unerledigte-Aufgaben-Symbol > Benutzerdefiniertes Symbol > Ordnersymbol > Dateiname-Symbol > Dateityp-Symbol > Standard-Symbol.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Unerledigte-Aufgaben-Symbol',
+                desc: 'Das Dateisymbol ersetzen, wenn eine Notiz unerledigte Aufgaben enthält.',
+                options: {
+                    none: 'Deaktiviert',
+                    compact: 'Kompaktmodus',
+                    all: 'Standard und kompakt'
+                }
             },
             useFolderIcon: {
                 name: 'Ordnersymbol verwenden',
                 desc: 'Das Symbol des übergeordneten Ordners anzeigen, wenn kein benutzerdefiniertes Dateisymbol festgelegt ist. Die Ordnerfarbe wird verwendet, wenn keine benutzerdefinierte Dateifarbe festgelegt ist.'
             },
             showFileTaskProgress: {
-                name: 'Aufgaben anzeigen',
+                name: 'Aufgabenfortschritt',
                 desc: 'Den Aufgabenstatus mit optionalem Fortschrittsbalken und optionaler Aufgabenanzahl anzeigen. Farben für unerledigte und erledigte Aufgaben können im Style-Settings-Plugin einzeln festgelegt werden.'
             },
             showFileTaskProgressBar: {
-                name: 'Aufgaben anzeigen: Fortschrittsbalken',
+                name: 'Aufgabenfortschritt: Fortschrittsbalken',
                 desc: 'Einen Fortschrittsbalken neben dem Aufgabensymbol anzeigen.'
             },
             showFileTaskProgressCount: {
-                name: 'Aufgaben anzeigen: Aufgabenanzahl',
+                name: 'Aufgabenfortschritt: Aufgabenanzahl',
                 desc: 'Die Anzahl der erledigten und die Gesamtzahl der Aufgaben anzeigen, z. B. 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Aufgaben anzeigen: bei Abschluss ausblenden',
+                name: 'Aufgabenfortschritt: bei Abschluss ausblenden',
                 desc: 'Den Aufgabenfortschritt ausblenden, wenn alle Aufgaben einer Notiz erledigt sind.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1586,6 +1609,10 @@ export const STRINGS_DE = {
                 name: 'Quartal anzeigen',
                 desc: 'Quartalbezeichnung im Kalender-Header hinzufügen.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Tage aus anderen Monaten anzeigen',
+                desc: 'Tage des vorherigen und nächsten Monats anzeigen, wenn der Kalender einen ganzen Monat anzeigt.'
+            },
             calendarShowYearCalendar: {
                 name: 'Jahreskalender anzeigen',
                 desc: 'Jahresnavigation und Monatsraster in der rechten Seitenleiste anzeigen.'
@@ -1637,7 +1664,10 @@ export const STRINGS_DE = {
                 momentDescSuffix:
                     '. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicken Sie auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen > Vorlagen festlegen.',
                 templaterSupportInstalled: '✅ Das Templater-Plugin ist mit voller Vorlagenunterstützung installiert.',
-                templaterSupportMissing: '⚠️ Installieren Sie das Templater-Plugin für volle Vorlagenunterstützung.',
+                templaterSupportMissing: '⚠️ Installieren Sie das Templater-Plugin für Vorlagenunterstützung.',
+                templateTokenNoticeLabel: 'Wichtig!',
+                templateTokenNotice:
+                    'Vorlagenunterstützung erfordert das Templater-Plugin. Integrierte Formate wie {{date}} und {{title}} funktionieren nur, wenn {source} auf {option} gesetzt ist.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Aktuelle Syntax: {path}',
                 parsingError: 'Das Muster muss als vollständiges Datum (Jahr, Monat, Tag) formatiert und wieder geparst werden können.'

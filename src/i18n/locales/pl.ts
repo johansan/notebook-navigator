@@ -154,6 +154,7 @@ export const STRINGS_PL = {
         childValues: 'wartości podrzędnych',
         applySortAndGroupToDescendants: (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}`,
         applyAppearanceToDescendants: (target: string) => `Zastosuj wygląd dla ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Zresetuj wygląd w ${target}`,
         showFolders: 'Pokaż nawigację', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Zmień kolejność elementów',
         finishRootFolderReorder: 'Gotowe',
@@ -164,6 +165,7 @@ export const STRINGS_PL = {
         dualPaneAutoFallbackNotice:
             'Podwójne panele są niedostępne, gdy pasek boczny jest zbyt wąski. Aby to zmienić, ustaw „Gdy pasek boczny jest zbyt wąski” na „Nic nie rób” w Ustawienia > Wygląd i zachowanie.',
         changeAppearance: 'Zmień wygląd', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Zmień wygląd, dostosowany',
         showNotesFromSubfolders: 'Pokaż notatki z podfolderów',
         showFilesFromSubfolders: 'Pokaż pliki z podfolderów',
         showNotesFromDescendants: 'Pokaż notatki z potomnych',
@@ -426,7 +428,13 @@ export const STRINGS_PL = {
         titleRowOption: (rows: number) =>
             `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} tytułu`,
         previewRowOption: (rows: number) =>
-            `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`
+            `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`,
+        defaultOffSuffix: '(domyślnie wyłączone)',
+        tags: 'Tagi',
+        properties: 'Właściwości',
+        tasks: 'Zadania',
+        resetAppearance: 'Zresetuj wygląd',
+        openPluginSettings: 'Otwórz ustawienia wtyczki…'
     },
 
     // Modal dialogs
@@ -435,6 +443,11 @@ export const STRINGS_PL = {
             applyButton: 'Zastosuj',
             applySortAndGroupTitle: (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}?`,
             applyAppearanceTitle: (target: string) => `Zastosuj wygląd dla ${target}?`,
+            resetAppearanceTitle: (target: string) => `Zresetować wygląd w ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Wygląd zmieni się dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Zastąpione istniejące niestandardowe wyglądy: ${replacedCount}. Zapisane preferencje wyglądu zostaną skopiowane jednorazowo; sortowanie i grupowanie pozostaną bez zmian. Przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
+            resetAppearanceMessage: (count: number) =>
+                `Wygląd zostanie zresetowany dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Sortowanie i grupowanie pozostaną bez zmian. Jest to jednorazowa zmiana; przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
             affectedCountMessage: (count: number) => `Istniejące nadpisania do zmiany: ${count}.`
         },
         manualSortConfirm: {
@@ -540,6 +553,7 @@ export const STRINGS_PL = {
                 'nav-properties': 'Atrybuty',
                 'nav-property': 'Atrybut',
                 'nav-property-value': 'Wartość',
+                'file-unfinished-task': 'Zadania',
                 'file-word-count': 'Liczba słów',
                 'file-character-count': 'Liczba znaków'
             }
@@ -1256,26 +1270,35 @@ export const STRINGS_PL = {
             },
             showFileIcons: {
                 name: 'Pokaż ikonki plików',
-                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+                desc: 'Wyświetla ikonki plików z wyrównaniem do lewej strony. Wyłączenie tej opcji powoduje usunięcie zarówno ikonek, jak i wcięć. Priorytet: ikonka nieukończonych zadań > ikonka niestandardowa > ikonka folderu > ikonka nazwy pliku > ikonka typu pliku > ikonka domyślna.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Ikonka nieukończonych zadań',
+                desc: 'Zastępuje ikonkę pliku, gdy notatka zawiera nieukończone zadania.',
+                options: {
+                    none: 'Wyłączone',
+                    compact: 'Tryb kompaktowy',
+                    all: 'Standardowy i kompaktowy'
+                }
             },
             useFolderIcon: {
                 name: 'Użyj ikonki folderu',
                 desc: 'Wyświetla ikonkę folderu nadrzędnego, gdy nie ustawiono niestandardowej ikonki pliku. Kolor folderu jest używany, gdy nie ustawiono niestandardowego koloru pliku.'
             },
             showFileTaskProgress: {
-                name: 'Pokaż zadania',
+                name: 'Postęp zadań',
                 desc: 'Wyświetla status zadań z opcjonalnym paskiem postępu i liczbą zadań. Kolory zadań nieukończonych i ukończonych można ustawić osobno we wtyczce Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Pokaż zadania: pasek postępu',
+                name: 'Postęp zadań: pasek postępu',
                 desc: 'Wyświetla pasek postępu obok ikonki zadań.'
             },
             showFileTaskProgressCount: {
-                name: 'Pokaż zadania: liczba zadań',
+                name: 'Postęp zadań: liczba zadań',
                 desc: 'Wyświetla liczbę ukończonych i wszystkich zadań, na przykład 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Pokaż zadania: ukryj po ukończeniu',
+                name: 'Postęp zadań: ukryj po ukończeniu',
                 desc: 'Ukrywa postęp zadań, gdy wszystkie zadania w notatce są ukończone.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1586,6 +1609,10 @@ export const STRINGS_PL = {
                 name: 'Pokaż kwartał',
                 desc: 'Dodaje etykietę kwartału w nagłówku kalendarza.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Pokaż dni z innych miesięcy',
+                desc: 'Pokazuje dni poprzedniego i następnego miesiąca, gdy kalendarz wyświetla pełny miesiąc.'
+            },
             calendarShowYearCalendar: {
                 name: 'Pokaż kalendarz roczny',
                 desc: 'Wyświetla nawigację roczną i siatkę miesięczną w prawym pasku bocznym.'
@@ -1637,7 +1664,10 @@ export const STRINGS_PL = {
                 momentDescSuffix:
                     '. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach > Szablony.',
                 templaterSupportInstalled: '✅ Wtyczka Templater jest zainstalowana i zapewnia pełną obsługę szablonów.',
-                templaterSupportMissing: '⚠️ Zainstaluj wtyczkę Templater, aby uzyskać pełną obsługę szablonów.',
+                templaterSupportMissing: '⚠️ Zainstaluj wtyczkę Templater, aby uzyskać obsługę szablonów.',
+                templateTokenNoticeLabel: 'Ważne!',
+                templateTokenNotice:
+                    'Obsługa szablonów wymaga wtyczki Templater. Wbudowane formaty, takie jak {{date}} i {{title}}, działają tylko wtedy, gdy {source} jest ustawione na {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Aktywna składnia: {path}',
                 parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać kompletną datę (rok, miesiąc, dzień).'

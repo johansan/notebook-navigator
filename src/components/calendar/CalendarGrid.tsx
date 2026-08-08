@@ -132,6 +132,7 @@ interface CalendarGridProps {
     weekStartsOn: number;
     trailingSpacerWeekCount: number;
     weeks: CalendarWeek[];
+    hideOutsideMonthDays: boolean;
     weekNotesEnabled: boolean;
     weekNoteTargetsByKey: Map<string, CalendarNoteTarget>;
     weekUnfinishedTaskCountByKey: Map<string, number>;
@@ -163,6 +164,7 @@ export const CalendarGrid = React.memo(function CalendarGrid({
     weekStartsOn,
     trailingSpacerWeekCount,
     weeks,
+    hideOutsideMonthDays,
     weekNotesEnabled,
     weekNoteTargetsByKey,
     weekUnfinishedTaskCountByKey,
@@ -191,6 +193,12 @@ export const CalendarGrid = React.memo(function CalendarGrid({
     const weekendByIndex = firstWeekDays
         ? firstWeekDays.map(weekDay => isWeekendDay(weekDay.date.toDate().getDay(), calendarWeekendDays))
         : [];
+    // Hidden days render as empty cells and drop out of the weekend background, so the weekend fill is
+    // tracked per cell instead of per column. Without this the block would keep its square edges against
+    // the empty cells because the rounded corners are placed from the neighboring weekend cells.
+    const weekendCellsByWeek = weeks.map(week =>
+        week.days.map((day, dayIndex) => (weekendByIndex[dayIndex] ?? false) && (day.inMonth || !hideOutsideMonthDays))
+    );
 
     return (
         <div className="nn-navigation-calendar-grid" data-weeknumbers={showWeekNumbers ? 'true' : undefined}>
@@ -210,8 +218,8 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                     const weekNoteFile = weekNoteTarget?.visibleFile ?? null;
                     const weekHasUnfinishedTasks = (weekUnfinishedTaskCountByKey.get(week.key) ?? 0) > 0;
                     const isActiveEditorWeek = Boolean(weekNoteFile && activeEditorFilePath === weekNoteFile.path);
-                    const hasWeekAbove = weekIndex > 0;
-                    const hasWeekBelow = weekIndex < weeks.length - 1;
+                    const weekendCells = weekendCellsByWeek[weekIndex] ?? [];
+                    const isHiddenOutsideMonthWeek = hideOutsideMonthDays && week.days.every(day => !day.inMonth);
 
                     return (
                         <div
@@ -220,7 +228,12 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                         >
                             {showWeekNumbers ? (
                                 <>
-                                    {weekNotesEnabled ? (
+                                    {isHiddenOutsideMonthWeek ? (
+                                        <div
+                                            className="nn-navigation-calendar-weeknumber nn-navigation-calendar-weeknumber-spacer-row"
+                                            aria-hidden="true"
+                                        />
+                                    ) : weekNotesEnabled ? (
                                         <button
                                             type="button"
                                             className={[
@@ -250,10 +263,19 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                                             <span className="nn-navigation-calendar-weeknumber-value">{week.weekNumber}</span>
                                         </button>
                                     )}
-                                    <div className="nn-navigation-calendar-weeknumber-divider" aria-hidden="true" />
+                                    {isHiddenOutsideMonthWeek ? (
+                                        // The empty grid item keeps day spacers in their usual columns without drawing the separator.
+                                        <div aria-hidden="true" />
+                                    ) : (
+                                        <div className="nn-navigation-calendar-weeknumber-divider" aria-hidden="true" />
+                                    )}
                                 </>
                             ) : null}
                             {week.days.map((day, dayIndex) => {
+                                if (hideOutsideMonthDays && !day.inMonth) {
+                                    return <div key={day.iso} className="nn-navigation-calendar-day-spacer" aria-hidden="true" />;
+                                }
+
                                 const visibleFile = day.note.visibleFile;
                                 const hasDailyNote = Boolean(visibleFile);
                                 const dayUnfinishedTaskCount = hasDailyNote ? (unfinishedTaskCountByIso.get(day.iso) ?? 0) : 0;
@@ -263,12 +285,11 @@ export const CalendarGrid = React.memo(function CalendarGrid({
                                 const hasFeatureImageKey = Boolean(visibleFile && featureImageKeysByIso.has(day.iso));
                                 const isToday = todayIso === day.iso;
                                 const isActiveEditorDay = Boolean(visibleFile && activeEditorFilePath === visibleFile.path);
-                                const isWeekend = weekendByIndex[dayIndex] ?? false;
-                                const hasWeekendBefore = isWeekend && dayIndex > 0 && Boolean(weekendByIndex[dayIndex - 1]);
-                                const hasWeekendAfter =
-                                    isWeekend && dayIndex < week.days.length - 1 && Boolean(weekendByIndex[dayIndex + 1]);
-                                const hasWeekendAbove = isWeekend && hasWeekAbove;
-                                const hasWeekendBelow = isWeekend && hasWeekBelow;
+                                const isWeekend = weekendCells[dayIndex] ?? false;
+                                const hasWeekendBefore = isWeekend && dayIndex > 0 && Boolean(weekendCells[dayIndex - 1]);
+                                const hasWeekendAfter = isWeekend && dayIndex < week.days.length - 1 && Boolean(weekendCells[dayIndex + 1]);
+                                const hasWeekendAbove = isWeekend && Boolean(weekendCellsByWeek[weekIndex - 1]?.[dayIndex]);
+                                const hasWeekendBelow = isWeekend && Boolean(weekendCellsByWeek[weekIndex + 1]?.[dayIndex]);
                                 const roundWeekendTopLeft = isWeekend && !hasWeekendAbove && !hasWeekendBefore;
                                 const roundWeekendTopRight = isWeekend && !hasWeekendAbove && !hasWeekendAfter;
                                 const roundWeekendBottomLeft = isWeekend && !hasWeekendBelow && !hasWeekendBefore;

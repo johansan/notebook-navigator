@@ -39,8 +39,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      day: sunday
-      time: "06:00"
+      day: saturday
+      time: "06:30"
       timezone: Europe/Stockholm
     groups:
       github-actions:

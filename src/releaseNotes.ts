@@ -24,11 +24,12 @@
  *
  * 1. On plugin load, it compares the current version with the last shown version
  * 2. If version increased, it shows all release notes between versions
- * 3. If downgraded or same version, it shows the latest 5 releases
+ * 3. Same or downgraded versions never auto-display
  * 4. Individual releases can be marked with showOnUpdate: false to skip auto-display
  * 5. Users can always manually access release notes via plugin settings
  *
- * The lastShownVersion is stored in plugin settings to track what the user has seen.
+ * The lastShownVersion is stored in synced settings and device-local storage. The greater value is
+ * used so synced devices normally share one display while stale settings cannot repeat it locally.
  */
 
 import { compareVersions } from './utils/versionUtils';
@@ -105,6 +106,23 @@ export interface ReleaseNote {
  * 2. Categorize features into: new, improved, changed, or fixed arrays
  */
 const RELEASE_NOTES: ReleaseNote[] = [
+    {
+        version: '3.3.3',
+        date: '2026-08-06',
+        showOnUpdate: true,
+        new: [
+            "You can now toggle the display of tags, properties, tasks, and word counts for each location! Maybe you want word counts only for a specific folder, or you don't want to show tasks in another folder. This is now possible! Just click the new ==Appearance== menu in the list pane (see screenshot above).",
+            "When I added the new task display in 3.3.1 I removed the unfinished task icon. Unfortunately this meant no way of checking unfinished tasks in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes. You'll find it at File display > Icon > ==Unfinished task icon==. Default set to compact mode.",
+            'New setting: Calendar > ==Show days from other months==. You can now leave the days before and after the current month empty, so only the days of the month are shown. Only applies when calendar is showing a full month. Enabled by default.'
+        ],
+        fixed: [
+            'Fixed selecting the default sort direction or property group order resetting the selected sort field or grouping property (issue was introduced with the new group and sort settings in 3.3.1).',
+            "Fixed an issue where the `What's new` dialog repeatedly reappeared on some sync providers.",
+            'Fixed renamed notes disappearing from the list when viewing a tag until you switched to another tag and back.',
+            'Fixed the bottom of month labels such as `Aug` being cut off in the year calendar on Windows.',
+            'Fixed `New note` setting a property to `true` when you created the note from a property name, such as `Categories`, instead of from one of its values. The new property is now empty.'
+        ]
+    },
     {
         version: '3.3.2',
         date: '2026-08-02',

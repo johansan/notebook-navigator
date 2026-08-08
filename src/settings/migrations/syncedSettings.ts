@@ -19,7 +19,7 @@
 // Imports
 import type { NotebookNavigatorSettings } from '../types';
 import type { LocalStorageKeys } from '../../types';
-import type { FolderAppearance } from '../../hooks/useListPaneAppearance';
+import type { FolderAppearance } from '../listPaneAppearance';
 import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { localStorage } from '../../utils/localStorage';
 import { cloneShortcuts, createPropertyKeysFromPropertyFields, DEFAULT_VAULT_PROFILE_ID } from '../../utils/vaultProfiles';
@@ -118,6 +118,12 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+
+    const legacyShowFileIconUnfinishedTask = mutableSettings.showFileIconUnfinishedTask;
+    if (typeof storedData?.['unfinishedTaskIcon'] === 'undefined' && typeof legacyShowFileIconUnfinishedTask === 'boolean') {
+        // The legacy toggle affected standard and compact rows, so enabled values map to both modes.
+        settings.unfinishedTaskIcon = legacyShowFileIconUnfinishedTask ? 'all' : 'none';
+    }
     delete mutableSettings.showFileIconUnfinishedTask;
 
     const storedNoteGrouping = storedData ? storedData['noteGrouping'] : undefined;

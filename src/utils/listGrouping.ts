@@ -122,6 +122,18 @@ export function areListGroupingOptionsEqual(left: ListNoteGroupingOption, right:
     return casefold(leftPropertyKey) === casefold(rightPropertyKey) && getPropertyGroupingOrder(left) === getPropertyGroupingOrder(right);
 }
 
+/**
+ * Returns undefined when the complete selected grouping matches the complete default, signaling
+ * that the existing override should be removed. A property grouping must match both its property
+ * key and group order; sharing only one component retains the selection as an override.
+ */
+export function resolveListGroupingOverrideForDefault(
+    selectedGrouping: ListNoteGroupingOption,
+    defaultGrouping: ListNoteGroupingOption
+): ListNoteGroupingOption | undefined {
+    return areListGroupingOptionsEqual(selectedGrouping, defaultGrouping) ? undefined : selectedGrouping;
+}
+
 /** Compares grouping options ignoring group order direction, so a direction change stays on the same grouping property. */
 export function areListGroupingOptionsSameKind(left: ListNoteGroupingOption, right: ListNoteGroupingOption): boolean {
     if (left === right) {

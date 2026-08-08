@@ -464,6 +464,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Property grouping** - Group notes by a frontmatter property value, matching group by in Obsidian Bases: notes sharing the same value collect under one header, notes without the property go into a trailing None group, and groups sort by value with natural ordering
 - **Frontmatter support** - Read note names and timestamps from frontmatter fields
 - **Note metadata** - Show modification date and tags in the file list
+- **Task status** - Show task progress in standard rows and optionally replace file icons for unfinished tasks in compact or all display modes
 - **Custom properties** - Display frontmatter properties or word count in file list with per-folder/tag overrides and custom colors
 - **Parent folder display** - Optional parent folder name and icon in file list
 - **Compact mode** - Compact display when preview, date, and images are disabled

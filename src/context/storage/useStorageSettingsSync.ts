@@ -39,6 +39,7 @@ import {
     haveFrontmatterMetadataCacheSettingsChanged,
     markFrontmatterMetadataCacheCurrent
 } from '../../utils/frontmatterMetadataCache';
+import { haveMarkdownCountConsumersChanged } from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Reacts to settings/profile changes that affect storage and derived content.
@@ -270,7 +271,9 @@ export function useStorageSettingsSync(params: {
         const registry = contentRegistryRef.current;
         const relevantSettings = registry?.getAllRelevantSettings() ?? [];
         const hasRelevantSettingsChange =
-            !registry || relevantSettings.some(settingKey => previousSettings[settingKey] !== settings[settingKey]);
+            !registry ||
+            relevantSettings.some(settingKey => previousSettings[settingKey] !== settings[settingKey]) ||
+            haveMarkdownCountConsumersChanged(previousSettings, settings);
         if (hasRelevantSettingsChange) {
             scheduleSettingsChanges(previousSettings, settings);
         }
