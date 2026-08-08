@@ -311,6 +311,8 @@ graph TD
   destination folders block creation unless hidden items are shown. The `calendarShowHiddenItems` setting
   disables profile visibility for the calendar, treating every note as shown.
 - Calls `onWeekCountChange` so parent panes can update scroll padding and CSS variables for the calendar layout.
+- Resolves no note for days outside the displayed month when `calendarShowOutsideMonthDays` is disabled in the full month
+  grid, so `CalendarGrid` renders those cells empty and no indicators or content are loaded for them.
 - Delegates presentation to `src/components/calendar/CalendarHeader.tsx`, `src/components/calendar/CalendarGrid.tsx`,
   and `src/components/calendar/CalendarYearPanel.tsx`.
 

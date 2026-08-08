@@ -17,7 +17,6 @@
  */
 
 import type { FileVisibility } from '../utils/fileTypeUtils';
-import type { FolderAppearance, TagAppearance } from '../hooks/useListPaneAppearance';
 import type { BackgroundMode, DualPaneOrientation, PinnedNotes } from '../types';
 import type { FolderNoteCreationPreference } from '../types/folderNote';
 import type { KeyboardShortcutConfig } from '../utils/keyboardShortcuts';
@@ -415,6 +414,13 @@ export function isListDisplayMode(value: unknown): value is ListDisplayMode {
     return value === 'standard' || value === 'compact';
 }
 
+/** List modes where unfinished tasks replace the file icon. */
+export type UnfinishedTaskIconMode = 'none' | 'compact' | 'all';
+
+export function isUnfinishedTaskIconMode(value: unknown): value is UnfinishedTaskIconMode {
+    return value === 'none' || value === 'compact' || value === 'all';
+}
+
 /** Built-in grouping modes for list pane notes */
 export type ListNoteGroupingBaseOption = 'custom' | 'date' | 'folder';
 
@@ -437,6 +443,19 @@ export type PropertyGroupingOrder = PropertyGroupingDirection | 'follow';
  */
 export type ListNoteGroupingOption =
     ListNoteGroupingBaseOption | `property:${string}` | `property-desc:${string}` | `property-follow:${string}`;
+
+export interface FolderAppearance {
+    mode?: ListDisplayMode;
+    titleRows?: number;
+    previewRows?: number;
+    groupBy?: ListNoteGroupingOption;
+    showFileTags?: boolean;
+    showFileProperties?: boolean;
+    showFileTaskProgress?: boolean;
+    showTextCount?: boolean;
+}
+
+export type TagAppearance = FolderAppearance;
 
 const PROPERTY_GROUPING_PREFIX = 'property:';
 const PROPERTY_GROUPING_DESC_PREFIX = 'property-desc:';
@@ -552,6 +571,14 @@ export function showsWordCount(display: TextCountDisplay): boolean {
 
 export function showsCharacterCount(display: TextCountDisplay): boolean {
     return display === 'characters' || display === 'both';
+}
+
+/**
+ * The count type shown when a folder, tag, or property selection enables text counts.
+ * The global setting decides the type; word count is the fallback when the global type is 'none'.
+ */
+export function resolveTextCountVariant(display: TextCountDisplay): Exclude<TextCountDisplay, 'none'> {
+    return display === 'none' ? 'words' : display;
 }
 
 /** Buttons available in the navigation toolbar */
@@ -795,6 +822,7 @@ export interface NotebookNavigatorSettings {
     unfinishedTaskBackgroundColor: string;
     unfinishedTaskBackgroundColorDark: string;
     showFileIcons: boolean;
+    unfinishedTaskIcon: UnfinishedTaskIconMode;
     useFolderIconForFiles: boolean;
     showFilenameMatchIcons: boolean;
     fileNameIconMap: Record<string, string>;
@@ -858,6 +886,7 @@ export interface NotebookNavigatorSettings {
     calendarMonthHighlights: Record<string, string>;
     calendarShowWeekNumber: boolean;
     calendarShowQuarter: boolean;
+    calendarShowOutsideMonthDays: boolean;
     calendarShowYearCalendar: boolean;
     calendarLeftPlacement: CalendarLeftPlacement;
     calendarWeeksToShow: CalendarWeeksToShow;

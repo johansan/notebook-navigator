@@ -247,8 +247,8 @@ body {
     --nn-theme-file-preview-color: var(--nn-theme-foreground-muted);
     --nn-theme-file-preview-font-weight: 400;
     /* --nn-theme-file-task-color and --nn-theme-file-task-complete-color are
-       intentionally not declared here: task progress rules use var() fallbacks to detect whether
-       a theme or Style Settings set them, so customized colors can persist on selected rows. */
+       intentionally not declared here: task progress and replacement icon rules use var() fallbacks
+       to detect whether a theme or Style Settings set them, so customized colors can persist on selected rows. */
     --nn-theme-file-task-font-weight: 400;
     --nn-theme-file-task-complete-font-weight: 400;
     --nn-theme-file-date-color: var(--nn-theme-foreground-faded);
@@ -2975,6 +2975,8 @@ button.nn-navigation-calendar-year-month {
     z-index: 1;
     display: block;
     max-width: 100%;
+    /* Keeps Windows interface-font descenders inside the clipped label used for horizontal ellipsis. */
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -4023,7 +4025,7 @@ button.nn-navigation-calendar-day {
     color: var(--nn-file-name-custom-color);
 }
 
-.nn-file-word-count-suffix {
+.nn-file-name-suffix {
     color: var(--nn-theme-file-word-count-color);
     font-weight: var(--nn-theme-file-word-count-font-weight);
 }
@@ -4110,6 +4112,16 @@ button.nn-navigation-calendar-day {
 
 .nn-file.nn-selected .nn-file-icon[data-has-color='false'] {
     color: var(--nn-theme-navitem-selected-icon-color);
+}
+
+/* A configured task color remains stable across selection states. Without one, the replacement
+   follows the same normal and selected colors as the file icon it replaces. */
+.nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
+    color: var(--nn-theme-file-task-color, var(--nn-theme-navitem-icon-color));
+}
+
+.nn-file.nn-selected .nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
+    color: var(--nn-theme-file-task-color, var(--nn-theme-navitem-selected-icon-color));
 }
 
 /* Quick actions panel - horizontal container for action icons */
@@ -4222,6 +4234,14 @@ button.nn-navigation-calendar-day {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* Emoji and icon-font providers render the glyph on the container instead of adding an SVG,
+   so they need an explicit font size to match the task indicator box. */
+.nn-file-task-progress-icon.nn-emoji-icon,
+.nn-file-task-progress-icon.nn-iconfont {
+    font-size: calc(var(--icon-size) * 0.8);
+    line-height: calc(var(--icon-size) * 0.8);
 }
 
 /* The icon has no font weight, so its stroke width tracks the state weight variable instead:
@@ -4554,7 +4574,7 @@ button.nn-navigation-calendar-day {
     );
 }
 
-.nn-file.nn-selected .nn-file-word-count-suffix {
+.nn-file.nn-selected .nn-file-name-suffix {
     color: var(--nn-selected-file-word-count-color);
 }
 
@@ -5494,6 +5514,11 @@ body.nn-resizing {
 
 .nn-file.nn-compact.nn-context-menu-active:not(.nn-selected) .nn-file-content::after {
     border-radius: min(14px, var(--nn-theme-navitem-border-radius));
+}
+
+/* Appearance menu entries holding a per-selection custom value are marked in bold */
+.nn-menu-title-custom {
+    font-weight: 600;
 }
 /* Source: src/styles/sections/state-hidden-items.css */
 
@@ -8906,6 +8931,13 @@ body.is-phone .notebook-navigator-android .nn-split-container {
     font-size: calc(var(--nn-file-icon-size-mobile, var(--nn-file-icon-size)) * var(--nn-android-font-scale-reciprocal, 1));
 }
 
+/* Task indicators are smaller than file icons, so preserve their 80% size while compensating
+   for Android textZoom. Without this override, the general icon rule above enlarges them. */
+.notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-emoji-icon,
+.notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-iconfont {
+    font-size: calc(var(--icon-size) * 0.8 * var(--nn-android-font-scale-reciprocal, 1));
+}
+
 /* Clamp height compensation - Android doesn't scale max-height, so match the compensated line-height after textZoom applies. */
 .notebook-navigator-android .nn-file-name {
     max-height: calc(var(--nn-file-title-line-height) * var(--filename-rows, 1) * var(--nn-android-font-scale, 1));
@@ -9713,7 +9745,7 @@ settings:
     -
         id: nn-theme-file-task-color
         title: File task color
-        description: Icon, bar, and count color for notes with unfinished tasks.
+        description: Color for the task display and replacement file icon in notes with unfinished tasks.
         type: variable-themed-color
         format: hex
         default-light: '#'

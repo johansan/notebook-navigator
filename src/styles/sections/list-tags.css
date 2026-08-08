@@ -160,7 +160,7 @@
     );
 }
 
-.nn-file.nn-selected .nn-file-word-count-suffix {
+.nn-file.nn-selected .nn-file-name-suffix {
     color: var(--nn-selected-file-word-count-color);
 }
 

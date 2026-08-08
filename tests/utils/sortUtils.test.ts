@@ -17,6 +17,7 @@ import {
     replacePropertySortKey,
     resolveFolderChildSortOrder,
     resolveListSort,
+    resolveListSortOverrideForDefault,
     sortFiles,
     shouldRefreshOnFileModifyForSort,
     shouldRefreshOnMetadataChangeForSort,
@@ -637,6 +638,27 @@ describe('property sort keys', () => {
         expect(
             areListSortOverridesEqual({ option: 'property-asc', propertyKey: 'Status' }, { option: 'property-asc', propertyKey: 'status' })
         ).toBe(true);
+    });
+
+    it('retains a sort override when only one component matches the default', () => {
+        expect(resolveListSortOverrideForDefault('filename-desc', 'modified-desc')).toBe('filename-desc');
+        expect(resolveListSortOverrideForDefault('modified-asc', 'modified-desc')).toBe('modified-asc');
+        expect(
+            resolveListSortOverrideForDefault(
+                { option: 'property-desc', propertyKey: 'genre' },
+                { option: 'property-desc', propertyKey: 'status' }
+            )
+        ).toEqual({ option: 'property-desc', propertyKey: 'genre' });
+    });
+
+    it('removes a sort override when the complete selection matches the default', () => {
+        expect(resolveListSortOverrideForDefault('modified-desc', 'modified-desc')).toBeUndefined();
+        expect(
+            resolveListSortOverrideForDefault(
+                { option: 'property-desc', propertyKey: 'Status' },
+                { option: 'property-desc', propertyKey: 'status' }
+            )
+        ).toBeUndefined();
     });
 
     it('removes sort overrides that target unavailable property sort keys', () => {

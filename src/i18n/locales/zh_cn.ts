@@ -153,6 +153,7 @@ export const STRINGS_ZH_CN = {
         childValues: '子值',
         applySortAndGroupToDescendants: (target: string) => `将排序和分组应用到${target}`,
         applyAppearanceToDescendants: (target: string) => `将外观应用到${target}`,
+        resetAppearanceInDescendants: (target: string) => `重置${target}中的外观`,
         showFolders: '显示导航', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: '重新排列导航',
         finishRootFolderReorder: '完成',
@@ -163,6 +164,7 @@ export const STRINGS_ZH_CN = {
         dualPaneAutoFallbackNotice:
             '侧边栏过窄时无法使用双窗格。若要更改此行为，请在设置 > 外观与行为中将“侧边栏过窄时”设为“不执行任何操作”。',
         changeAppearance: '更改外观', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: '更改外观，已自定义',
         showNotesFromSubfolders: '显示子文件夹的笔记',
         showFilesFromSubfolders: '显示子文件夹的文件',
         showNotesFromDescendants: '显示后代的笔记',
@@ -422,7 +424,13 @@ export const STRINGS_ZH_CN = {
         previewRows: '预览行数',
         groupBy: '分组依据',
         titleRowOption: (rows: number) => `标题${rows}行`,
-        previewRowOption: (rows: number) => `预览${rows}行`
+        previewRowOption: (rows: number) => `预览${rows}行`,
+        defaultOffSuffix: '（默认关闭）',
+        tags: '标签',
+        properties: '属性',
+        tasks: '任务',
+        resetAppearance: '重置外观',
+        openPluginSettings: '打开插件设置…'
     },
 
     // Modal dialogs
@@ -431,6 +439,11 @@ export const STRINGS_ZH_CN = {
             applyButton: '应用',
             applySortAndGroupTitle: (target: string) => `将排序和分组应用到${target}？`,
             applyAppearanceTitle: (target: string) => `将外观应用到${target}？`,
+            resetAppearanceTitle: (target: string) => `重置${target}中的外观？`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `将更改 ${count} 项的外观。将替换现有自定义外观：${replacedCount}。已保存的外观偏好只复制一次；排序和分组保持不变。以后所做的更改和新建的后代项目不会联动。`,
+            resetAppearanceMessage: (count: number) =>
+                `将重置 ${count} 项的外观。排序和分组保持不变。这是一次性更改；以后所做的更改和新建的后代项目不会联动。`,
             affectedCountMessage: (count: number) => `将更改的现有覆盖：${count}。`
         },
         manualSortConfirm: {
@@ -534,6 +547,7 @@ export const STRINGS_ZH_CN = {
                 'nav-properties': '属性',
                 'nav-property': '属性',
                 'nav-property-value': '值',
+                'file-unfinished-task': '任务',
                 'file-word-count': '字数统计',
                 'file-character-count': '字符数'
             }
@@ -1241,26 +1255,35 @@ export const STRINGS_ZH_CN = {
             },
             showFileIcons: {
                 name: '显示文件图标',
-                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+                desc: '显示文件图标并保留左对齐间距。禁用后将移除图标和缩进。优先级：未完成任务图标 > 自定义图标 > 文件夹图标 > 文件名图标 > 文件类型图标 > 默认图标。'
+            },
+            unfinishedTaskIcon: {
+                name: '未完成任务图标',
+                desc: '当笔记包含未完成任务时替换文件图标。',
+                options: {
+                    none: '已禁用',
+                    compact: '紧凑模式',
+                    all: '标准和紧凑'
+                }
             },
             useFolderIcon: {
                 name: '使用文件夹图标',
                 desc: '当未设置自定义文件图标时显示父文件夹图标。当未设置自定义文件颜色时使用文件夹颜色。'
             },
             showFileTaskProgress: {
-                name: '显示任务',
+                name: '任务进度',
                 desc: '显示任务状态，进度条和任务数量可选。未完成任务和已完成任务的颜色可通过 Style Settings 插件分别设置。'
             },
             showFileTaskProgressBar: {
-                name: '显示任务：进度条',
+                name: '任务进度：进度条',
                 desc: '在任务图标旁边显示进度条。'
             },
             showFileTaskProgressCount: {
-                name: '显示任务：任务数量',
+                name: '任务进度：任务数量',
                 desc: '显示已完成任务数和任务总数，例如 3/7。'
             },
             hideFileTaskProgressWhenComplete: {
-                name: '显示任务：全部完成时隐藏',
+                name: '任务进度：全部完成时隐藏',
                 desc: '当笔记中的所有任务都已完成时隐藏任务进度。'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1570,6 +1593,10 @@ export const STRINGS_ZH_CN = {
                 name: '显示季度',
                 desc: '在日历标题中添加季度标签。'
             },
+            calendarShowOutsideMonthDays: {
+                name: '显示其他月份的日期',
+                desc: '当日历显示整月时，显示上个月和下个月的日期。'
+            },
             calendarShowYearCalendar: {
                 name: '显示年历',
                 desc: '在右侧边栏中显示年份导航和月份网格。'
@@ -1621,7 +1648,9 @@ export const STRINGS_ZH_CN = {
                 momentDescSuffix:
                     ' 设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
                 templaterSupportInstalled: '✅ 已安装 Templater 插件，支持完整模板功能。',
-                templaterSupportMissing: '⚠️ 安装 Templater 插件以支持完整模板功能。',
+                templaterSupportMissing: '⚠️ 安装 Templater 插件以支持模板功能。',
+                templateTokenNoticeLabel: '重要！',
+                templateTokenNotice: '模板功能需要 Templater 插件。{{date}} 和 {{title}} 等内置格式仅在{source}设置为{option}时可用。',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '当前语法：{path}',
                 parsingError: '模式必须能格式化并重新解析为完整日期（年、月、日）。'

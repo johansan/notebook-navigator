@@ -65,7 +65,7 @@ export const CalendarHoverTooltip = React.memo(function CalendarHoverTooltip({
             ) : null}
             <div className="nn-compact-file-text-content">
                 <div className="nn-file-name" style={{ '--filename-rows': 2, height: 'auto', minHeight: 0 } as React.CSSProperties}>
-                    {hoverTooltip.tooltipData.title}
+                    <span className="nn-file-name-label">{hoverTooltip.tooltipData.title}</span>
                 </div>
                 {shouldShowHoverTooltipPreview ? (
                     <div className="nn-file-preview" style={{ '--preview-rows': 2 } as React.CSSProperties}>

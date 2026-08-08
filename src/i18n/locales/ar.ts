@@ -154,6 +154,7 @@ export const STRINGS_AR = {
         childValues: 'القيم الفرعية',
         applySortAndGroupToDescendants: (target: string) => `تطبيق الفرز والتجميع على ${target}`,
         applyAppearanceToDescendants: (target: string) => `تطبيق المظهر على ${target}`,
+        resetAppearanceInDescendants: (target: string) => `إعادة تعيين المظهر في ${target}`,
         showFolders: 'إظهار التنقل', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'إعادة ترتيب التنقل',
         finishRootFolderReorder: 'تم',
@@ -164,6 +165,7 @@ export const STRINGS_AR = {
         dualPaneAutoFallbackNotice:
             'لا تتوفر اللوحتان عندما يكون الشريط الجانبي ضيقًا جدًا. لتغيير ذلك، اضبط "عندما يكون الشريط الجانبي ضيقًا جدًا" على "عدم فعل شيء" في الإعدادات > المظهر والسلوك.',
         changeAppearance: 'تغيير المظهر', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'تغيير المظهر، مخصص',
         showNotesFromSubfolders: 'إظهار الملاحظات من المجلدات الفرعية',
         showFilesFromSubfolders: 'إظهار الملفات من المجلدات الفرعية',
         showNotesFromDescendants: 'إظهار الملاحظات من الفروع',
@@ -423,7 +425,13 @@ export const STRINGS_AR = {
         previewRows: 'صفوف المعاينة',
         groupBy: 'تجميع حسب',
         titleRowOption: (rows: number) => `${rows} صف عنوان`,
-        previewRowOption: (rows: number) => `${rows} صف معاينة`
+        previewRowOption: (rows: number) => `${rows} صف معاينة`,
+        defaultOffSuffix: '(معطّل افتراضيًا)',
+        tags: 'وسوم',
+        properties: 'الخصائص',
+        tasks: 'المهام',
+        resetAppearance: 'إعادة تعيين المظهر',
+        openPluginSettings: 'فتح إعدادات الإضافة…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_AR = {
             applyButton: 'تطبيق',
             applySortAndGroupTitle: (target: string) => `تطبيق الفرز والتجميع على ${target}؟`,
             applyAppearanceTitle: (target: string) => `تطبيق المظهر على ${target}؟`,
+            resetAppearanceTitle: (target: string) => `إعادة تعيين المظهر في ${target}؟`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `سيتغير المظهر لـ ${count} من العناصر. المظاهر المخصصة الحالية التي ستُستبدل: ${replacedCount}. تُنسخ تفضيلات المظهر المحفوظة مرة واحدة؛ ويُحتفظ بالفرز والتجميع. لا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
+            resetAppearanceMessage: (count: number) =>
+                `سيُعاد تعيين المظهر لـ ${count} من العناصر. يُحتفظ بالفرز والتجميع. هذا تغيير لمرة واحدة؛ ولا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
             affectedCountMessage: (count: number) => `التجاوزات الحالية التي ستتغير: ${count}.`
         },
         manualSortConfirm: {
@@ -535,6 +548,7 @@ export const STRINGS_AR = {
                 'nav-properties': 'الخصائص',
                 'nav-property': 'خاصية',
                 'nav-property-value': 'قيمة',
+                'file-unfinished-task': 'المهام',
                 'file-word-count': 'عدد الكلمات',
                 'file-character-count': 'عدد الأحرف'
             }
@@ -1248,26 +1262,35 @@ export const STRINGS_AR = {
             },
             showFileIcons: {
                 name: 'إظهار أيقونات الملفات',
-                desc: 'عرض أيقونات الملفات مع مسافة محاذاة لليسار. التعطيل يزيل الأيقونات والمسافة البادئة. الأولوية: أيقونة مخصصة > أيقونة المجلد > أيقونة اسم الملف > أيقونة نوع الملف > أيقونة افتراضية.'
+                desc: 'عرض أيقونات الملفات مع مسافة محاذاة لليسار. التعطيل يزيل الأيقونات والمسافة البادئة. الأولوية: أيقونة المهام غير المكتملة > أيقونة مخصصة > أيقونة المجلد > أيقونة اسم الملف > أيقونة نوع الملف > أيقونة افتراضية.'
+            },
+            unfinishedTaskIcon: {
+                name: 'أيقونة المهام غير المكتملة',
+                desc: 'استبدال أيقونة الملف عندما تحتوي الملاحظة على مهام غير مكتملة.',
+                options: {
+                    none: 'معطّل',
+                    compact: 'الوضع المضغوط',
+                    all: 'الوضع القياسي والمضغوط'
+                }
             },
             useFolderIcon: {
                 name: 'استخدام أيقونة المجلد',
                 desc: 'عرض أيقونة المجلد الأصلي عند عدم تعيين أيقونة ملف مخصصة. يُستخدم لون المجلد عند عدم تعيين لون ملف مخصص.'
             },
             showFileTaskProgress: {
-                name: 'إظهار المهام',
+                name: 'تقدم المهام',
                 desc: 'عرض حالة المهام مع شريط تقدم وعدد مهام اختياريين. يمكن تعيين ألوان المهام غير المكتملة والمهام المكتملة بشكل منفصل باستخدام إضافة Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'إظهار المهام: شريط التقدم',
+                name: 'تقدم المهام: شريط التقدم',
                 desc: 'عرض شريط تقدم بجانب أيقونة المهمة.'
             },
             showFileTaskProgressCount: {
-                name: 'إظهار المهام: عدد المهام',
+                name: 'تقدم المهام: عدد المهام',
                 desc: 'عرض عدد المهام المكتملة وإجمالي المهام، على سبيل المثال 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'إظهار المهام: إخفاء عند الاكتمال',
+                name: 'تقدم المهام: إخفاء عند الاكتمال',
                 desc: 'إخفاء تقدم المهام عندما تكتمل جميع المهام في الملاحظة.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1577,6 +1600,10 @@ export const STRINGS_AR = {
                 name: 'عرض الربع',
                 desc: 'إضافة تسمية الربع في رأس التقويم.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'عرض أيام الأشهر الأخرى',
+                desc: 'عرض أيام الشهر السابق والشهر التالي عندما يعرض التقويم شهرًا كاملاً.'
+            },
             calendarShowYearCalendar: {
                 name: 'عرض تقويم السنة',
                 desc: 'عرض التنقل بين السنوات وشبكة الأشهر في الشريط الجانبي الأيمن.'
@@ -1628,7 +1655,10 @@ export const STRINGS_AR = {
                 momentDescSuffix:
                     '. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات > قوالب.',
                 templaterSupportInstalled: '✅ تم تثبيت إضافة Templater مع دعم كامل للقوالب.',
-                templaterSupportMissing: '⚠️ ثبّت إضافة Templater للحصول على دعم كامل للقوالب.',
+                templaterSupportMissing: '⚠️ ثبّت إضافة Templater للحصول على دعم القوالب.',
+                templateTokenNoticeLabel: 'مهم!',
+                templateTokenNotice:
+                    'دعم القوالب يتطلب إضافة Templater. الصيغ المدمجة مثل {{date}} و {{title}} لا تعمل إلا عندما يكون {source} مضبوطًا على {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'الصيغة الحالية: {path}',
                 parsingError: 'يجب أن يقوم النمط بتنسيق التاريخ ثم تحليله مرة أخرى كتاريخ كامل (السنة، الشهر، اليوم).'

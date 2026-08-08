@@ -154,6 +154,7 @@ export const STRINGS_TH = {
         childValues: 'ค่าย่อย',
         applySortAndGroupToDescendants: (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}`,
         applyAppearanceToDescendants: (target: string) => `ใช้รูปลักษณ์กับ${target}`,
+        resetAppearanceInDescendants: (target: string) => `รีเซ็ตรูปลักษณ์ใน${target}`,
         showFolders: 'แสดงการนำทาง',
         reorderRootFolders: 'จัดเรียงการนำทางใหม่',
         finishRootFolderReorder: 'เสร็จสิ้น',
@@ -164,6 +165,7 @@ export const STRINGS_TH = {
         dualPaneAutoFallbackNotice:
             'ไม่สามารถใช้สองแผงได้เมื่อแถบด้านข้างแคบเกินไป หากต้องการเปลี่ยน ให้ตั้ง "เมื่อแถบด้านข้างแคบเกินไป" เป็น "ไม่ต้องทำอะไร" ในการตั้งค่า > ลักษณะและพฤติกรรม',
         changeAppearance: 'เปลี่ยนลักษณะ',
+        changeAppearanceCustomized: 'เปลี่ยนรูปลักษณ์ กำหนดเองแล้ว',
         showNotesFromSubfolders: 'แสดงโน้ตจากโฟลเดอร์ย่อย',
         showFilesFromSubfolders: 'แสดงไฟล์จากโฟลเดอร์ย่อย',
         showNotesFromDescendants: 'แสดงโน้ตจากลูกหลาน',
@@ -423,7 +425,13 @@ export const STRINGS_TH = {
         previewRows: 'แถวตัวอย่าง',
         groupBy: 'จัดกลุ่มตาม',
         titleRowOption: (rows: number) => `${rows} แถวชื่อเรื่อง`,
-        previewRowOption: (rows: number) => `${rows} แถวตัวอย่าง`
+        previewRowOption: (rows: number) => `${rows} แถวตัวอย่าง`,
+        defaultOffSuffix: '(ค่าเริ่มต้นปิด)',
+        tags: 'แท็ก',
+        properties: 'คุณสมบัติ',
+        tasks: 'งาน',
+        resetAppearance: 'รีเซ็ตรูปลักษณ์',
+        openPluginSettings: 'เปิดการตั้งค่าปลั๊กอิน…'
     },
 
     // Modal dialogs
@@ -432,6 +440,11 @@ export const STRINGS_TH = {
             applyButton: 'ใช้',
             applySortAndGroupTitle: (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}?`,
             applyAppearanceTitle: (target: string) => `ใช้รูปลักษณ์กับ${target}?`,
+            resetAppearanceTitle: (target: string) => `รีเซ็ตรูปลักษณ์ใน${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `รูปลักษณ์จะเปลี่ยนสำหรับ ${count} รายการ รูปลักษณ์แบบกำหนดเองเดิมที่จะถูกแทนที่: ${replacedCount} ค่ารูปลักษณ์ที่บันทึกไว้จะถูกคัดลอกครั้งเดียว โดยคงการเรียงลำดับและการจัดกลุ่มไว้ การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
+            resetAppearanceMessage: (count: number) =>
+                `รูปลักษณ์จะถูกรีเซ็ตสำหรับ ${count} รายการ โดยคงการเรียงลำดับและการจัดกลุ่มไว้ นี่เป็นการเปลี่ยนแปลงครั้งเดียว การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
             affectedCountMessage: (count: number) => `การแทนที่ที่มีอยู่ซึ่งจะเปลี่ยนแปลง: ${count}`
         },
         manualSortConfirm: {
@@ -535,6 +548,7 @@ export const STRINGS_TH = {
                 'nav-properties': 'คุณสมบัติ',
                 'nav-property': 'คุณสมบัติ',
                 'nav-property-value': 'ค่า',
+                'file-unfinished-task': 'งาน',
                 'file-word-count': 'จำนวนคำ',
                 'file-character-count': 'จำนวนอักขระ'
             }
@@ -1246,26 +1260,35 @@ export const STRINGS_TH = {
             },
             showFileIcons: {
                 name: 'แสดงไอคอนไฟล์',
-                desc: 'แสดงไอคอนไฟล์พร้อมระยะห่างชิดซ้าย การปิดใช้งานจะนำไอคอนและการเยื้องออก ลำดับความสำคัญ: ไอคอนกำหนดเอง > ไอคอนโฟลเดอร์ > ไอคอนชื่อไฟล์ > ไอคอนประเภทไฟล์ > ไอคอนค่าเริ่มต้น'
+                desc: 'แสดงไอคอนไฟล์พร้อมระยะห่างชิดซ้าย การปิดใช้งานจะนำไอคอนและการเยื้องออก ลำดับความสำคัญ: ไอคอนงานที่ยังไม่เสร็จ > ไอคอนกำหนดเอง > ไอคอนโฟลเดอร์ > ไอคอนชื่อไฟล์ > ไอคอนประเภทไฟล์ > ไอคอนค่าเริ่มต้น'
+            },
+            unfinishedTaskIcon: {
+                name: 'ไอคอนงานที่ยังไม่เสร็จ',
+                desc: 'แทนที่ไอคอนไฟล์เมื่อโน้ตมีงานที่ยังไม่เสร็จ',
+                options: {
+                    none: 'ปิดใช้งาน',
+                    compact: 'โหมดกะทัดรัด',
+                    all: 'มาตรฐานและกะทัดรัด'
+                }
             },
             useFolderIcon: {
                 name: 'ใช้ไอคอนโฟลเดอร์',
                 desc: 'แสดงไอคอนของโฟลเดอร์หลักเมื่อไม่มีการตั้งค่าไอคอนไฟล์กำหนดเอง สีโฟลเดอร์จะถูกใช้เมื่อไม่มีการตั้งค่าสีไฟล์กำหนดเอง'
             },
             showFileTaskProgress: {
-                name: 'แสดงงาน',
+                name: 'ความคืบหน้าของงาน',
                 desc: 'แสดงสถานะงานพร้อมแถบความคืบหน้าและจำนวนงานแบบเลือกได้ สามารถตั้งค่าสีของงานที่ยังไม่เสร็จและงานที่เสร็จแล้วแยกกันได้ด้วยปลั๊กอิน Style Settings'
             },
             showFileTaskProgressBar: {
-                name: 'แสดงงาน: แถบความคืบหน้า',
+                name: 'ความคืบหน้าของงาน: แถบความคืบหน้า',
                 desc: 'แสดงแถบความคืบหน้าถัดจากไอคอนงาน'
             },
             showFileTaskProgressCount: {
-                name: 'แสดงงาน: จำนวนงาน',
+                name: 'ความคืบหน้าของงาน: จำนวนงาน',
                 desc: 'แสดงจำนวนงานที่เสร็จแล้วและจำนวนงานทั้งหมด เช่น 3/7'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'แสดงงาน: ซ่อนเมื่อเสร็จทั้งหมด',
+                name: 'ความคืบหน้าของงาน: ซ่อนเมื่อเสร็จทั้งหมด',
                 desc: 'ซ่อนความคืบหน้าของงานเมื่องานทั้งหมดในโน้ตเสร็จแล้ว'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1576,6 +1599,10 @@ export const STRINGS_TH = {
                 name: 'แสดงไตรมาส',
                 desc: 'เพิ่มป้ายไตรมาสในส่วนหัวปฏิทิน'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'แสดงวันจากเดือนอื่น',
+                desc: 'แสดงวันของเดือนก่อนหน้าและเดือนถัดไปเมื่อปฏิทินแสดงทั้งเดือน'
+            },
             calendarShowYearCalendar: {
                 name: 'แสดงปฏิทินรายปี',
                 desc: 'แสดงการนำทางปีและตารางเดือนในแถบด้านข้างขวา'
@@ -1627,7 +1654,10 @@ export const STRINGS_TH = {
                 momentDescSuffix:
                     ' ใส่ชื่อโฟลเดอร์ย่อยในวงเล็บเหลี่ยม เช่น [Work]/YYYY คลิกไอคอนเทมเพลตเพื่อตั้งค่าเทมเพลต ตั้งค่าตำแหน่งโฟลเดอร์เทมเพลตในการดำเนินการกับไฟล์ > เทมเพลต',
                 templaterSupportInstalled: '✅ ติดตั้งปลั๊กอิน Templater พร้อมการรองรับเทมเพลตเต็มรูปแบบแล้ว',
-                templaterSupportMissing: '⚠️ ติดตั้งปลั๊กอิน Templater เพื่อใช้การรองรับเทมเพลตเต็มรูปแบบ',
+                templaterSupportMissing: '⚠️ ติดตั้งปลั๊กอิน Templater เพื่อใช้การรองรับเทมเพลต',
+                templateTokenNoticeLabel: 'สำคัญ!',
+                templateTokenNotice:
+                    'การรองรับเทมเพลตต้องใช้ปลั๊กอิน Templater รูปแบบในตัว เช่น {{date}} และ {{title}} ใช้ได้เฉพาะเมื่อตั้ง {source} เป็น {option}',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'รูปแบบปัจจุบัน: {path}',
                 parsingError: 'แพทเทิร์นต้องสามารถฟอร์แมตและพาร์สกลับเป็นวันที่แบบเต็ม (ปี เดือน วัน) ได้'

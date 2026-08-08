@@ -154,6 +154,7 @@ export const STRINGS_RU = {
         childValues: 'дочерних значений',
         applySortAndGroupToDescendants: (target: string) => `Применить сортировку и группировку для ${target}`,
         applyAppearanceToDescendants: (target: string) => `Применить оформление для ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Сбросить оформление для ${target}`,
         showFolders: 'Показать навигацию', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Изменить порядок навигации',
         finishRootFolderReorder: 'Готово',
@@ -164,6 +165,7 @@ export const STRINGS_RU = {
         dualPaneAutoFallbackNotice:
             'Две панели недоступны, когда боковая панель слишком узкая. Чтобы изменить это, установите «Когда боковая панель слишком узкая» в значение «Ничего не делать» в Настройки > Внешний вид и поведение.',
         changeAppearance: 'Изменить внешний вид', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Изменить оформление, настроено',
         showNotesFromSubfolders: 'Показать заметки из подпапок',
         showFilesFromSubfolders: 'Показать файлы из подпапок',
         showNotesFromDescendants: 'Показать заметки из потомков',
@@ -424,7 +426,13 @@ export const STRINGS_RU = {
         previewRows: 'Строки превью',
         groupBy: 'Группировать по',
         titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`
+        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`,
+        defaultOffSuffix: '(по умолчанию выключено)',
+        tags: 'Теги',
+        properties: 'Свойства',
+        tasks: 'Задачи',
+        resetAppearance: 'Сбросить оформление',
+        openPluginSettings: 'Открыть настройки плагина…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_RU = {
             applyButton: 'Применить',
             applySortAndGroupTitle: (target: string) => `Применить сортировку и группировку для ${target}?`,
             applyAppearanceTitle: (target: string) => `Применить оформление для ${target}?`,
+            resetAppearanceTitle: (target: string) => `Сбросить оформление для ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Оформление изменится для ${count} ${count === 1 ? 'элемента' : 'элементов'}. Заменено существующих индивидуальных оформлений: ${replacedCount}. Сохранённые настройки оформления копируются один раз; сортировка и группировка сохраняются. Будущие изменения и новые дочерние элементы не связываются.`,
+            resetAppearanceMessage: (count: number) =>
+                `Оформление будет сброшено для ${count} ${count === 1 ? 'элемента' : 'элементов'}. Сортировка и группировка сохраняются. Это разовое изменение; будущие изменения и новые дочерние элементы не связываются.`,
             affectedCountMessage: (count: number) => `Существующих переопределений, которые изменятся: ${count}.`
         },
         manualSortConfirm: {
@@ -538,6 +551,7 @@ export const STRINGS_RU = {
                 'nav-properties': 'Свойства',
                 'nav-property': 'Свойство',
                 'nav-property-value': 'Значение',
+                'file-unfinished-task': 'Задачи',
                 'file-word-count': 'Количество слов',
                 'file-character-count': 'Количество символов'
             }
@@ -1250,26 +1264,35 @@ export const STRINGS_RU = {
             },
             showFileIcons: {
                 name: 'Показывать иконки файлов',
-                desc: 'Отображать иконки файлов с выравниванием по левому краю. Отключение убирает и иконки, и отступы. Приоритет: пользовательский значок > значок папки > значок имени файла > значок типа файла > значок по умолчанию.'
+                desc: 'Отображать иконки файлов с выравниванием по левому краю. Отключение убирает и иконки, и отступы. Приоритет: значок незавершённых задач > пользовательский значок > значок папки > значок имени файла > значок типа файла > значок по умолчанию.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Значок незавершённых задач',
+                desc: 'Заменять значок файла, когда заметка содержит незавершённые задачи.',
+                options: {
+                    none: 'Отключено',
+                    compact: 'Компактный режим',
+                    all: 'Стандартный и компактный'
+                }
             },
             useFolderIcon: {
                 name: 'Использовать значок папки',
                 desc: 'Отображать значок родительской папки, когда не задан пользовательский значок файла. Цвет папки используется, когда не задан пользовательский цвет файла.'
             },
             showFileTaskProgress: {
-                name: 'Показывать задачи',
+                name: 'Ход выполнения задач',
                 desc: 'Отображать статус задач с необязательными индикатором выполнения и количеством задач. Цвета незавершённых и завершённых задач можно настроить отдельно в плагине Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Показывать задачи: индикатор выполнения',
+                name: 'Ход выполнения задач: индикатор выполнения',
                 desc: 'Отображать индикатор выполнения рядом со значком задач.'
             },
             showFileTaskProgressCount: {
-                name: 'Показывать задачи: количество задач',
+                name: 'Ход выполнения задач: количество задач',
                 desc: 'Отображать количество завершённых задач и их общее число, например 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Показывать задачи: скрывать после завершения',
+                name: 'Ход выполнения задач: скрывать после завершения',
                 desc: 'Скрывать прогресс задач, когда все задачи в заметке завершены.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1580,6 +1603,10 @@ export const STRINGS_RU = {
                 name: 'Показать квартал',
                 desc: 'Добавить метку квартала в заголовок календаря.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Показывать дни других месяцев',
+                desc: 'Показывать дни предыдущего и следующего месяца, когда календарь отображает полный месяц.'
+            },
             calendarShowYearCalendar: {
                 name: 'Показать годовой календарь',
                 desc: 'Отображать навигацию по годам и сетку месяцев в правой боковой панели.'
@@ -1631,7 +1658,10 @@ export const STRINGS_RU = {
                 momentDescSuffix:
                     '. Заключайте названия подпапок в скобки, напр. [Work]/YYYY. Нажмите на значок шаблона, чтобы задать шаблон. Укажите расположение папки шаблонов в Операции с файлами > Шаблоны.',
                 templaterSupportInstalled: '✅ Плагин Templater установлен с полной поддержкой шаблонов.',
-                templaterSupportMissing: '⚠️ Установите плагин Templater для полной поддержки шаблонов.',
+                templaterSupportMissing: '⚠️ Установите плагин Templater для поддержки шаблонов.',
+                templateTokenNoticeLabel: 'Важно!',
+                templateTokenNotice:
+                    'Поддержка шаблонов требует плагина Templater. Встроенные форматы, такие как {{date}} и {{title}}, работают только когда для параметра {source} выбрано значение {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Текущий синтаксис: {path}',
                 parsingError: 'Шаблон должен форматироваться и разбираться обратно как полная дата (год, месяц, день).'

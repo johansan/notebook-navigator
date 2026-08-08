@@ -155,6 +155,7 @@ export const STRINGS_NL = {
         childValues: 'onderliggende waarden',
         applySortAndGroupToDescendants: (target: string) => `Sortering en groepering toepassen op ${target}`,
         applyAppearanceToDescendants: (target: string) => `Weergave toepassen op ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Weergave in ${target} herstellen`,
         showFolders: 'Navigatie tonen',
         reorderRootFolders: 'Navigatie herschikken',
         finishRootFolderReorder: 'Klaar',
@@ -165,6 +166,7 @@ export const STRINGS_NL = {
         dualPaneAutoFallbackNotice:
             'Dubbele panelen zijn niet beschikbaar wanneer de zijbalk te smal is. Stel "Wanneer de zijbalk te smal is" in op "Niets doen" in Instellingen > Uiterlijk & gedrag om dit te wijzigen.',
         changeAppearance: 'Uiterlijk wijzigen',
+        changeAppearanceCustomized: 'Weergave wijzigen, aangepast',
         showNotesFromSubfolders: 'Notities uit submappen tonen',
         showFilesFromSubfolders: 'Bestanden uit submappen tonen',
         showNotesFromDescendants: 'Notities uit afstammelingen tonen',
@@ -426,7 +428,13 @@ export const STRINGS_NL = {
         previewRows: 'Voorbeeldrijen',
         groupBy: 'Groeperen op',
         titleRowOption: (rows: number) => `${rows} titelrij${rows === 1 ? '' : 'en'}`,
-        previewRowOption: (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`
+        previewRowOption: (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`,
+        defaultOffSuffix: '(standaard uit)',
+        tags: 'Tags',
+        properties: 'Eigenschappen',
+        tasks: 'Taken',
+        resetAppearance: 'Weergave herstellen',
+        openPluginSettings: 'Plugin-instellingen openen…'
     },
 
     // Modal dialogs
@@ -435,6 +443,11 @@ export const STRINGS_NL = {
             applyButton: 'Toepassen',
             applySortAndGroupTitle: (target: string) => `Sortering en groepering toepassen op ${target}?`,
             applyAppearanceTitle: (target: string) => `Weergave toepassen op ${target}?`,
+            resetAppearanceTitle: (target: string) => `Weergave in ${target} herstellen?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `De weergave verandert voor ${count} ${count === 1 ? 'item' : 'items'}. Bestaande aangepaste weergaven vervangen: ${replacedCount}. Opgeslagen weergavevoorkeuren worden eenmaal gekopieerd; sortering en groepering blijven behouden. Toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
+            resetAppearanceMessage: (count: number) =>
+                `De weergave wordt hersteld voor ${count} ${count === 1 ? 'item' : 'items'}. Sortering en groepering blijven behouden. Dit is een eenmalige wijziging; toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
             affectedCountMessage: (count: number) => `Bestaande overschrijvingen die wijzigen: ${count}.`
         },
         manualSortConfirm: {
@@ -540,6 +553,7 @@ export const STRINGS_NL = {
                 'nav-properties': 'Eigenschappen',
                 'nav-property': 'Eigenschap',
                 'nav-property-value': 'Waarde',
+                'file-unfinished-task': 'Taken',
                 'file-word-count': 'Aantal woorden',
                 'file-character-count': 'Aantal tekens'
             }
@@ -1255,26 +1269,35 @@ export const STRINGS_NL = {
             },
             showFileIcons: {
                 name: 'Bestandspictogrammen tonen',
-                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
+                desc: 'Bestandspictogrammen tonen met links uitgelijnde ruimte. Uitschakelen verwijdert zowel pictogrammen als inspringing. Prioriteit: onvoltooide taken-pictogram > aangepast pictogram > mappictogram > bestandsnaam-pictogram > bestandstype-pictogram > standaardpictogram.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Onvoltooide taken-pictogram',
+                desc: 'Het bestandspictogram vervangen wanneer een notitie onvoltooide taken bevat.',
+                options: {
+                    none: 'Uitgeschakeld',
+                    compact: 'Compacte modus',
+                    all: 'Standaard en compact'
+                }
             },
             useFolderIcon: {
                 name: 'Mappictogram gebruiken',
                 desc: 'Het pictogram van de bovenliggende map weergeven wanneer er geen aangepast bestandspictogram is ingesteld. De mapkleur wordt gebruikt wanneer er geen aangepaste bestandskleur is ingesteld.'
             },
             showFileTaskProgress: {
-                name: 'Taken tonen',
+                name: 'Taakvoortgang',
                 desc: 'De taakstatus weergeven met optionele voortgangsbalk en optioneel aantal taken. Kleuren voor onvoltooide en voltooide taken kunnen afzonderlijk worden ingesteld met de Style Settings-plugin.'
             },
             showFileTaskProgressBar: {
-                name: 'Taken tonen: voortgangsbalk',
+                name: 'Taakvoortgang: voortgangsbalk',
                 desc: 'Een voortgangsbalk naast het taakpictogram weergeven.'
             },
             showFileTaskProgressCount: {
-                name: 'Taken tonen: aantal taken',
+                name: 'Taakvoortgang: aantal taken',
                 desc: 'Het aantal voltooide en totale taken weergeven, bijvoorbeeld 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Taken tonen: verbergen wanneer voltooid',
+                name: 'Taakvoortgang: verbergen wanneer voltooid',
                 desc: 'De taakvoortgang verbergen wanneer alle taken in een notitie voltooid zijn.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1585,6 +1608,10 @@ export const STRINGS_NL = {
                 name: 'Kwartaal tonen',
                 desc: 'Voeg een kwartaallabel toe in de kalender-header.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Dagen uit andere maanden tonen',
+                desc: 'Toon dagen uit de vorige en volgende maand wanneer de kalender een volledige maand toont.'
+            },
             calendarShowYearCalendar: {
                 name: 'Jaarkalender tonen',
                 desc: 'Jaarnavigatie en maandraster weergeven in de rechter zijbalk.'
@@ -1636,7 +1663,10 @@ export const STRINGS_NL = {
                 momentDescSuffix:
                     '. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen > Sjablonen.',
                 templaterSupportInstalled: '✅ De Templater-plug-in is geïnstalleerd met volledige sjabloonondersteuning.',
-                templaterSupportMissing: '⚠️ Installeer de Templater-plug-in voor volledige sjabloonondersteuning.',
+                templaterSupportMissing: '⚠️ Installeer de Templater-plug-in voor sjabloonondersteuning.',
+                templateTokenNoticeLabel: 'Belangrijk!',
+                templateTokenNotice:
+                    'Sjabloonondersteuning vereist de Templater-plug-in. Ingebouwde formaten zoals {{date}} en {{title}} werken alleen wanneer {source} is ingesteld op {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Huidige syntaxis: {path}',
                 parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige datum (jaar, maand, dag).'

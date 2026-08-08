@@ -81,6 +81,8 @@ interface UseListPaneDataParams {
     activeProfile: ActiveProfileState;
     /** Effective grouping for the current list selection */
     groupBy: ListNoteGroupingOption;
+    /** Effective tag visibility for the current list selection */
+    showFileTags: boolean;
     /** Whether the pinned section is expanded in the current context */
     pinnedGroupExpanded: boolean;
     /** Collapsed list group keys for the current vault */
@@ -136,6 +138,7 @@ export function useListPaneData({
     settings,
     activeProfile,
     groupBy,
+    showFileTags,
     pinnedGroupExpanded,
     collapsedListGroups,
     searchProvider,
@@ -202,8 +205,7 @@ export function useListPaneData({
             pinnedNotes: settings.pinnedNotes,
             filterPinnedByFolder: settings.filterPinnedByFolder,
             pinnedGroupExpanded,
-            showTags: settings.showTags,
-            showFileTags: settings.showFileTags,
+            showFileTags,
             showFolderGroupPaths: settings.showFolderGroupPaths,
             showCurrentFolderFilesAtBottom: settings.showCurrentFolderFilesAtBottom,
             groupBy,
@@ -217,8 +219,7 @@ export function useListPaneData({
             settings.pinnedNotes,
             settings.showCurrentFolderFilesAtBottom,
             settings.showFolderGroupPaths,
-            settings.showFileTags,
-            settings.showTags
+            showFileTags
         ]
     );
 
@@ -546,6 +547,7 @@ export function useListPaneData({
         manualSortGroupHeaderPropertyKey,
         onRefresh: () => setUpdateKey(current => current + 1),
         propertyTreeService,
+        tagTreeService,
         selectedFolder,
         selectedProperty,
         selectedTag,

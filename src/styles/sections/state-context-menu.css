@@ -47,3 +47,8 @@
 .nn-file.nn-compact.nn-context-menu-active:not(.nn-selected) .nn-file-content::after {
     border-radius: min(14px, var(--nn-theme-navitem-border-radius));
 }
+
+/* Appearance menu entries holding a per-selection custom value are marked in bold */
+.nn-menu-title-custom {
+    font-weight: 600;
+}

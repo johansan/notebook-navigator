@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { App, PluginManifest } from 'obsidian';
 
 vi.mock('obsidian', async importOriginal => {
@@ -34,6 +34,18 @@ vi.mock('../src/settings/LazyNotebookNavigatorSettingTab', () => ({
     LazyNotebookNavigatorSettingTab: class {}
 }));
 
+const { whatsNewModalMock, whatsNewModalOpen } = vi.hoisted(() => {
+    const whatsNewModalOpen = vi.fn();
+    const whatsNewModalMock = vi.fn(function (_app: unknown, _releaseNotes: unknown, _onClose?: () => void) {
+        return { open: whatsNewModalOpen };
+    });
+    return { whatsNewModalMock, whatsNewModalOpen };
+});
+
+vi.mock('../src/modals/WhatsNewModal', () => ({
+    WhatsNewModal: whatsNewModalMock
+}));
+
 import NotebookNavigatorPlugin from '../src/main.ts';
 import { DEFAULT_SETTINGS } from '../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../src/settings/types';
@@ -48,6 +60,8 @@ interface SettingsControllerHarness {
     clearAllLocalStorage: ReturnType<typeof vi.fn>;
     setLocalStorageVersion: ReturnType<typeof vi.fn>;
     getPersistableDefaultSettings: ReturnType<typeof vi.fn>;
+    getLastShownVersion: ReturnType<typeof vi.fn>;
+    advanceLastShownVersion: ReturnType<typeof vi.fn>;
 }
 
 interface PreferencesControllerHarness {
@@ -63,7 +77,7 @@ interface MetadataServiceHarness {
 }
 
 interface PluginHarness {
-    manifest: { dir?: string };
+    manifest: { dir?: string; version?: string };
     app: {
         vault: {
             adapter: {
@@ -89,6 +103,8 @@ interface PluginHarness {
     resetAllSettings(): Promise<void>;
     runMetadataCleanup(): Promise<boolean>;
     restoreDefaultSettingsFile(): Promise<void>;
+    advanceLastShownVersion(version: string): Promise<void>;
+    checkForVersionUpdate(params: { isFirstLaunch: boolean }): Promise<void>;
 }
 
 function createPluginHarness(): PluginHarness {
@@ -101,7 +117,12 @@ function createPluginHarness(): PluginHarness {
         saveSettings: vi.fn().mockResolvedValue(undefined),
         clearAllLocalStorage: vi.fn(),
         setLocalStorageVersion: vi.fn(),
-        getPersistableDefaultSettings: vi.fn(() => ({ restored: true }))
+        getPersistableDefaultSettings: vi.fn(() => ({ restored: true })),
+        getLastShownVersion: vi.fn(() => settings.lastShownVersion),
+        advanceLastShownVersion: vi.fn((version: string) => {
+            settings.lastShownVersion = version;
+            return true;
+        })
     };
     const preferencesController: PreferencesControllerHarness = {
         syncMirrorsFromSettings: vi.fn(() => false),
@@ -124,7 +145,7 @@ function createPluginHarness(): PluginHarness {
         } as PluginManifest
     ) as unknown as PluginHarness;
     Object.assign(plugin, {
-        manifest: { dir: 'config/plugins/notebook-navigator' },
+        manifest: { dir: 'config/plugins/notebook-navigator', version: '3.2.4' },
         app: { vault: { adapter: {} } },
         settings,
         settingsController,
@@ -224,6 +245,76 @@ describe('NotebookNavigatorPlugin settings orchestration', () => {
         await expect(plugin.runMetadataCleanup()).resolves.toBe(true);
 
         expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("NotebookNavigatorPlugin What's new version tracking", () => {
+    beforeEach(() => {
+        whatsNewModalMock.mockClear();
+        whatsNewModalOpen.mockClear();
+    });
+
+    it('persists the shared marker only when the controller advances it', async () => {
+        const plugin = createPluginHarness();
+
+        await plugin.advanceLastShownVersion('3.3.2');
+
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.3.2');
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+
+        plugin.settingsController.advanceLastShownVersion.mockReturnValue(false);
+        await plugin.advanceLastShownVersion('3.3.1');
+
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('skips the dialog when the effective marker is newer than the running plugin', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '3.3.1';
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.2');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).not.toHaveBeenCalled();
+        expect(plugin.settingsController.advanceLastShownVersion).not.toHaveBeenCalled();
+        expect(plugin.saveSettingsAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('advances both markers after the update dialog closes', async () => {
+        vi.useFakeTimers();
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '999.0.0';
+        plugin.settingsController.getLastShownVersion.mockReturnValue('990.0.0');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).toHaveBeenCalledTimes(1);
+        expect(whatsNewModalOpen).toHaveBeenCalledTimes(1);
+        const onClose = whatsNewModalMock.mock.calls[0][2];
+        expect(onClose).toBeDefined();
+        onClose?.();
+        await vi.advanceTimersByTimeAsync(1000);
+
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not save an older marker when a newer version arrives while the dialog is open', async () => {
+        vi.useFakeTimers();
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '999.0.0';
+        plugin.settingsController.getLastShownVersion.mockReturnValue('990.0.0');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        const onClose = whatsNewModalMock.mock.calls[0][2];
+        expect(onClose).toBeDefined();
+        plugin.settingsController.advanceLastShownVersion.mockReturnValue(false);
+        onClose?.();
+        await vi.advanceTimersByTimeAsync(1000);
+
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.saveSettingsAndUpdate).not.toHaveBeenCalled();
     });
 });
 

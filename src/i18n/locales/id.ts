@@ -154,6 +154,7 @@ export const STRINGS_ID = {
         childValues: 'nilai anak',
         applySortAndGroupToDescendants: (target: string) => `Terapkan urutan dan grup ke ${target}`,
         applyAppearanceToDescendants: (target: string) => `Terapkan tampilan ke ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Atur ulang tampilan di ${target}`,
         showFolders: 'Tampilkan navigasi',
         reorderRootFolders: 'Atur ulang navigasi',
         finishRootFolderReorder: 'Selesai',
@@ -164,6 +165,7 @@ export const STRINGS_ID = {
         dualPaneAutoFallbackNotice:
             'Panel ganda tidak tersedia saat bilah samping terlalu sempit. Untuk mengubahnya, atur "Saat bilah samping terlalu sempit" ke "Jangan lakukan apa pun" di Pengaturan > Tampilan & perilaku.',
         changeAppearance: 'Ubah tampilan',
+        changeAppearanceCustomized: 'Ubah tampilan, disesuaikan',
         showNotesFromSubfolders: 'Tampilkan catatan dari subfolder',
         showFilesFromSubfolders: 'Tampilkan file dari subfolder',
         showNotesFromDescendants: 'Tampilkan catatan dari turunan',
@@ -424,7 +426,13 @@ export const STRINGS_ID = {
         previewRows: 'Baris pratinjau',
         groupBy: 'Kelompokkan berdasarkan',
         titleRowOption: (rows: number) => `${rows} baris judul`,
-        previewRowOption: (rows: number) => `${rows} baris pratinjau`
+        previewRowOption: (rows: number) => `${rows} baris pratinjau`,
+        defaultOffSuffix: '(bawaan nonaktif)',
+        tags: 'Tag',
+        properties: 'Properti',
+        tasks: 'Tugas',
+        resetAppearance: 'Atur ulang tampilan',
+        openPluginSettings: 'Buka pengaturan plugin…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_ID = {
             applyButton: 'Terapkan',
             applySortAndGroupTitle: (target: string) => `Terapkan urutan dan grup ke ${target}?`,
             applyAppearanceTitle: (target: string) => `Terapkan tampilan ke ${target}?`,
+            resetAppearanceTitle: (target: string) => `Atur ulang tampilan di ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Tampilan akan berubah untuk ${count} item. Tampilan khusus yang ada dan diganti: ${replacedCount}. Preferensi tampilan tersimpan disalin satu kali; pengurutan dan pengelompokan dipertahankan. Perubahan mendatang dan turunan baru tidak ditautkan.`,
+            resetAppearanceMessage: (count: number) =>
+                `Tampilan akan diatur ulang untuk ${count} item. Pengurutan dan pengelompokan dipertahankan. Ini adalah perubahan satu kali; perubahan mendatang dan turunan baru tidak ditautkan.`,
             affectedCountMessage: (count: number) => `Penimpaan yang ada dan akan berubah: ${count}.`
         },
         manualSortConfirm: {
@@ -538,6 +551,7 @@ export const STRINGS_ID = {
                 'nav-properties': 'Properti',
                 'nav-property': 'Properti',
                 'nav-property-value': 'Nilai',
+                'file-unfinished-task': 'Tugas',
                 'file-word-count': 'Jumlah kata',
                 'file-character-count': 'Jumlah karakter'
             }
@@ -1253,26 +1267,35 @@ export const STRINGS_ID = {
             },
             showFileIcons: {
                 name: 'Tampilkan ikon file',
-                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
+                desc: 'Tampilkan ikon file dengan spasi rata kiri. Menonaktifkan menghapus ikon dan indentasi. Prioritas: ikon tugas belum selesai > ikon kustom > ikon folder > ikon nama file > ikon tipe file > ikon default.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Ikon tugas belum selesai',
+                desc: 'Ganti ikon file saat catatan memiliki tugas yang belum selesai.',
+                options: {
+                    none: 'Dinonaktifkan',
+                    compact: 'Mode kompak',
+                    all: 'Standar dan kompak'
+                }
             },
             useFolderIcon: {
                 name: 'Gunakan ikon folder',
                 desc: 'Tampilkan ikon folder induk saat tidak ada ikon file kustom yang ditetapkan. Warna folder digunakan saat tidak ada warna file kustom yang ditetapkan.'
             },
             showFileTaskProgress: {
-                name: 'Tampilkan tugas',
+                name: 'Kemajuan tugas',
                 desc: 'Tampilkan status tugas dengan bilah progres dan jumlah tugas opsional. Warna untuk tugas yang belum selesai dan tugas yang selesai dapat diatur secara terpisah dengan plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Tampilkan tugas: bilah progres',
+                name: 'Kemajuan tugas: bilah progres',
                 desc: 'Tampilkan bilah progres di samping ikon tugas.'
             },
             showFileTaskProgressCount: {
-                name: 'Tampilkan tugas: jumlah tugas',
+                name: 'Kemajuan tugas: jumlah tugas',
                 desc: 'Tampilkan jumlah tugas yang selesai dan total tugas, misalnya 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Tampilkan tugas: sembunyikan saat selesai',
+                name: 'Kemajuan tugas: sembunyikan saat selesai',
                 desc: 'Sembunyikan progres tugas saat semua tugas dalam catatan selesai.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1583,6 +1606,10 @@ export const STRINGS_ID = {
                 name: 'Tampilkan kuartal',
                 desc: 'Tambahkan label kuartal di header kalender.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Tampilkan hari dari bulan lain',
+                desc: 'Tampilkan hari dari bulan sebelumnya dan bulan berikutnya saat kalender menampilkan satu bulan penuh.'
+            },
             calendarShowYearCalendar: {
                 name: 'Tampilkan kalender tahunan',
                 desc: 'Tampilkan navigasi tahun dan kisi bulan di bilah sisi kanan.'
@@ -1634,7 +1661,10 @@ export const STRINGS_ID = {
                 momentDescSuffix:
                     '. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder templat di Operasi file > Templat.',
                 templaterSupportInstalled: '✅ Plugin Templater terpasang dengan dukungan template penuh.',
-                templaterSupportMissing: '⚠️ Pasang plugin Templater untuk dukungan template penuh.',
+                templaterSupportMissing: '⚠️ Pasang plugin Templater untuk dukungan template.',
+                templateTokenNoticeLabel: 'Penting!',
+                templateTokenNotice:
+                    'Dukungan template memerlukan plugin Templater. Format bawaan seperti {{date}} dan {{title}} hanya berfungsi jika {source} disetel ke {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintaks saat ini: {path}',
                 parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai tanggal lengkap (tahun, bulan, hari).'

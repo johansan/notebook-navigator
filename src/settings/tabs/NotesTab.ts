@@ -67,6 +67,17 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 name: strings.settings.items.showFileIcons.name,
                 desc: strings.settings.items.showFileIcons.desc
             }),
+            createDropdownDefinition('unfinishedTaskIcon', {
+                name: strings.settings.items.unfinishedTaskIcon.name,
+                desc: strings.settings.items.unfinishedTaskIcon.desc,
+                aliases: Object.values(strings.settings.items.unfinishedTaskIcon.options),
+                options: {
+                    none: strings.settings.items.unfinishedTaskIcon.options.none,
+                    compact: strings.settings.items.unfinishedTaskIcon.options.compact,
+                    all: strings.settings.items.unfinishedTaskIcon.options.all
+                },
+                visible: () => plugin.settings.showFileIcons
+            }),
             createToggleDefinition('useFolderIconForFiles', {
                 name: strings.settings.items.useFolderIcon.name,
                 desc: strings.settings.items.useFolderIcon.desc,

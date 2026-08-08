@@ -154,6 +154,7 @@ export const STRINGS_FR = {
         childValues: 'valeurs enfants',
         applySortAndGroupToDescendants: (target: string) => `Appliquer le tri et le regroupement aux ${target}`,
         applyAppearanceToDescendants: (target: string) => `Appliquer l'apparence aux ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Réinitialiser l’apparence dans ${target}`,
         showFolders: 'Afficher la navigation', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Réorganiser la navigation',
         finishRootFolderReorder: 'Terminé',
@@ -164,6 +165,7 @@ export const STRINGS_FR = {
         dualPaneAutoFallbackNotice:
             'Les deux panneaux ne sont pas disponibles lorsque la barre latérale est trop étroite. Pour modifier cela, réglez « Lorsque la barre latérale est trop étroite » sur « Ne rien faire » dans Paramètres > Apparence et comportement.',
         changeAppearance: "Changer l'apparence", // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Modifier l’apparence, personnalisée',
         showNotesFromSubfolders: 'Afficher les notes des sous-dossiers',
         showFilesFromSubfolders: 'Afficher les fichiers des sous-dossiers',
         showNotesFromDescendants: 'Afficher les notes des descendants',
@@ -425,7 +427,13 @@ export const STRINGS_FR = {
         previewRows: "Lignes d'aperçu",
         groupBy: 'Grouper par',
         titleRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`,
-        previewRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`
+        previewRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`,
+        defaultOffSuffix: '(désactivé par défaut)',
+        tags: 'Étiquettes',
+        properties: 'Propriétés',
+        tasks: 'Tâches',
+        resetAppearance: 'Réinitialiser l’apparence',
+        openPluginSettings: 'Ouvrir les réglages du module…'
     },
 
     // Modal dialogs
@@ -434,6 +442,11 @@ export const STRINGS_FR = {
             applyButton: 'Appliquer',
             applySortAndGroupTitle: (target: string) => `Appliquer le tri et le regroupement aux ${target}\u202f?`,
             applyAppearanceTitle: (target: string) => `Appliquer l'apparence aux ${target}\u202f?`,
+            resetAppearanceTitle: (target: string) => `Réinitialiser l’apparence dans ${target}\u202f?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `L’apparence changera pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Apparences personnalisées existantes remplacées\u202f: ${replacedCount}. Les préférences d’apparence enregistrées sont copiées une seule fois\u202f; le tri et le regroupement sont conservés. Les changements futurs et les nouveaux descendants ne sont pas liés.`,
+            resetAppearanceMessage: (count: number) =>
+                `L’apparence sera réinitialisée pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Le tri et le regroupement sont conservés. Cette modification est ponctuelle\u202f; les changements futurs et les nouveaux descendants ne sont pas liés.`,
             affectedCountMessage: (count: number) => `Remplacements existants qui seront modifiés\u202f: ${count}.`
         },
         manualSortConfirm: {
@@ -539,6 +552,7 @@ export const STRINGS_FR = {
                 'nav-properties': 'Propriétés',
                 'nav-property': 'Propriété',
                 'nav-property-value': 'Valeur',
+                'file-unfinished-task': 'Tâches',
                 'file-word-count': 'Nombre de mots',
                 'file-character-count': 'Nombre de caractères'
             }
@@ -1257,26 +1271,35 @@ export const STRINGS_FR = {
             },
             showFileIcons: {
                 name: 'Afficher les icônes de fichier',
-                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+                desc: "Afficher les icônes de fichier avec espacement aligné à gauche. La désactivation supprime les icônes et l'indentation. Priorité : icône de tâches inachevées > icône personnalisée > icône de dossier > icône de nom de fichier > icône de type de fichier > icône par défaut."
+            },
+            unfinishedTaskIcon: {
+                name: 'Icône de tâches inachevées',
+                desc: "Remplacer l'icône du fichier lorsqu'une note contient des tâches inachevées.",
+                options: {
+                    none: 'Désactivé',
+                    compact: 'Mode compact',
+                    all: 'Standard et compact'
+                }
             },
             useFolderIcon: {
                 name: "Utiliser l'icône du dossier",
                 desc: "Afficher l'icône du dossier parent lorsqu'aucune icône de fichier personnalisée n'est définie. La couleur du dossier est utilisée lorsqu'aucune couleur de fichier personnalisée n'est définie."
             },
             showFileTaskProgress: {
-                name: 'Afficher les tâches',
+                name: 'Progression des tâches',
                 desc: "Afficher l'état des tâches avec une barre de progression et un nombre de tâches facultatifs. Les couleurs des tâches inachevées et terminées peuvent être définies séparément avec le plugin Style Settings."
             },
             showFileTaskProgressBar: {
-                name: 'Afficher les tâches : barre de progression',
+                name: 'Progression des tâches : barre de progression',
                 desc: "Afficher une barre de progression à côté de l'icône de tâche."
             },
             showFileTaskProgressCount: {
-                name: 'Afficher les tâches : nombre de tâches',
+                name: 'Progression des tâches : nombre de tâches',
                 desc: 'Afficher le nombre de tâches terminées et le nombre total de tâches, par exemple 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Afficher les tâches : masquer une fois terminées',
+                name: 'Progression des tâches : masquer une fois terminées',
                 desc: "Masquer la progression des tâches lorsque toutes les tâches d'une note sont terminées."
             },
             showFileBackgroundUnfinishedTask: {
@@ -1587,6 +1610,10 @@ export const STRINGS_FR = {
                 name: 'Afficher le trimestre',
                 desc: "Ajouter une étiquette de trimestre dans l'en-tête du calendrier."
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Afficher les jours des autres mois',
+                desc: 'Afficher les jours du mois précédent et du mois suivant lorsque le calendrier affiche un mois complet.'
+            },
             calendarShowYearCalendar: {
                 name: 'Afficher le calendrier annuel',
                 desc: 'Afficher la navigation annuelle et la grille des mois dans la barre latérale droite.'
@@ -1638,7 +1665,10 @@ export const STRINGS_FR = {
                 momentDescSuffix:
                     ". Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers > Modèles.",
                 templaterSupportInstalled: '✅ Le plugin Templater est installé avec la prise en charge complète des modèles.',
-                templaterSupportMissing: '⚠️ Installez le plugin Templater pour la prise en charge complète des modèles.',
+                templaterSupportMissing: '⚠️ Installez le plugin Templater pour la prise en charge des modèles.',
+                templateTokenNoticeLabel: 'Important !',
+                templateTokenNotice:
+                    'La prise en charge des modèles nécessite le plugin Templater. Les formats intégrés comme {{date}} et {{title}} fonctionnent uniquement lorsque {source} est défini sur {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Syntaxe actuelle : {path}',
                 parsingError: 'Le modèle doit pouvoir être formaté et ré-analysé comme une date complète (année, mois, jour).'

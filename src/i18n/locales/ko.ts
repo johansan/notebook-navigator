@@ -153,6 +153,7 @@ export const STRINGS_KO = {
         childValues: '하위 값',
         applySortAndGroupToDescendants: (target: string) => `${target}에 정렬 및 그룹 적용`,
         applyAppearanceToDescendants: (target: string) => `${target}에 모양 적용`,
+        resetAppearanceInDescendants: (target: string) => `${target}의 모양 재설정`,
         showFolders: '탐색 표시', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: '내비게이션 재정렬',
         finishRootFolderReorder: '완료',
@@ -163,6 +164,7 @@ export const STRINGS_KO = {
         dualPaneAutoFallbackNotice:
             '사이드바가 너무 좁으면 이중 창을 사용할 수 없습니다. 이를 변경하려면 설정 > 모양 및 동작에서 "사이드바가 너무 좁을 때"를 "아무것도 하지 않음"으로 설정하세요.',
         changeAppearance: '모양 변경', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: '모양 변경, 사용자 지정됨',
         showNotesFromSubfolders: '하위 폴더 노트 표시',
         showFilesFromSubfolders: '하위 폴더 파일 표시',
         showNotesFromDescendants: '하위 항목 노트 표시',
@@ -422,7 +424,13 @@ export const STRINGS_KO = {
         previewRows: '미리보기 행',
         groupBy: '그룹화 기준',
         titleRowOption: (rows: number) => `${rows}개 제목 행`,
-        previewRowOption: (rows: number) => `${rows}개 미리보기 행`
+        previewRowOption: (rows: number) => `${rows}개 미리보기 행`,
+        defaultOffSuffix: '(기본값 꺼짐)',
+        tags: '태그',
+        properties: '속성',
+        tasks: '작업',
+        resetAppearance: '모양 재설정',
+        openPluginSettings: '플러그인 설정 열기…'
     },
 
     // Modal dialogs
@@ -431,6 +439,11 @@ export const STRINGS_KO = {
             applyButton: '적용',
             applySortAndGroupTitle: (target: string) => `${target}에 정렬 및 그룹을 적용하시겠습니까?`,
             applyAppearanceTitle: (target: string) => `${target}에 모양을 적용하시겠습니까?`,
+            resetAppearanceTitle: (target: string) => `${target}의 모양을 재설정할까요?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `${count}개 항목의 모양이 변경됩니다. 교체되는 기존 사용자 지정 모양: ${replacedCount}개. 저장된 모양 설정이 한 번 복사되며 정렬과 그룹화는 유지됩니다. 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
+            resetAppearanceMessage: (count: number) =>
+                `${count}개 항목의 모양이 재설정됩니다. 정렬과 그룹화는 유지됩니다. 일회성 변경이며 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
             affectedCountMessage: (count: number) => `변경될 기존 재정의: ${count}.`
         },
         manualSortConfirm: {
@@ -535,6 +548,7 @@ export const STRINGS_KO = {
                 'nav-properties': '속성',
                 'nav-property': '속성',
                 'nav-property-value': '값',
+                'file-unfinished-task': '작업',
                 'file-word-count': '단어 수',
                 'file-character-count': '문자 수'
             }
@@ -1250,26 +1264,35 @@ export const STRINGS_KO = {
             },
             showFileIcons: {
                 name: '파일 아이콘 표시',
-                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+                desc: '파일 아이콘을 왼쪽 정렬 간격과 함께 표시. 비활성화하면 아이콘과 들여쓰기가 모두 제거됩니다. 우선순위: 미완료 작업 아이콘 > 사용자 지정 아이콘 > 폴더 아이콘 > 파일 이름 아이콘 > 파일 유형 아이콘 > 기본값 아이콘.'
+            },
+            unfinishedTaskIcon: {
+                name: '미완료 작업 아이콘',
+                desc: '노트에 미완료 작업이 있을 때 파일 아이콘을 바꿉니다.',
+                options: {
+                    none: '비활성화',
+                    compact: '컴팩트 모드',
+                    all: '표준 및 컴팩트'
+                }
             },
             useFolderIcon: {
                 name: '폴더 아이콘 사용',
                 desc: '사용자 지정 파일 아이콘이 설정되지 않은 경우 상위 폴더 아이콘을 표시합니다. 사용자 지정 파일 색상이 설정되지 않은 경우 폴더 색상이 사용됩니다.'
             },
             showFileTaskProgress: {
-                name: '작업 표시',
+                name: '작업 진행률',
                 desc: '작업 상태를 표시하며 진행률 표시줄과 작업 수는 선택적으로 표시합니다. 미완료 작업과 완료된 작업의 색상은 Style Settings 플러그인에서 개별적으로 설정할 수 있습니다.'
             },
             showFileTaskProgressBar: {
-                name: '작업 표시: 진행률 표시줄',
+                name: '작업 진행률: 진행률 표시줄',
                 desc: '작업 아이콘 옆에 진행률 표시줄을 표시합니다.'
             },
             showFileTaskProgressCount: {
-                name: '작업 표시: 작업 수',
+                name: '작업 진행률: 작업 수',
                 desc: '완료된 작업 수와 전체 작업 수를 표시합니다(예: 3/7).'
             },
             hideFileTaskProgressWhenComplete: {
-                name: '작업 표시: 완료 시 숨기기',
+                name: '작업 진행률: 완료 시 숨기기',
                 desc: '노트의 모든 작업이 완료되면 작업 진행률을 숨깁니다.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1579,6 +1602,10 @@ export const STRINGS_KO = {
                 name: '분기 표시',
                 desc: '캘린더 헤더에 분기 레이블을 추가합니다.'
             },
+            calendarShowOutsideMonthDays: {
+                name: '다른 달의 날짜 표시',
+                desc: '캘린더가 한 달 전체를 표시할 때 이전 달과 다음 달의 날짜를 표시합니다.'
+            },
             calendarShowYearCalendar: {
                 name: '연간 캘린더 표시',
                 desc: '오른쪽 사이드바에 연도 탐색 및 월 그리드를 표시합니다.'
@@ -1630,7 +1657,10 @@ export const STRINGS_KO = {
                 momentDescSuffix:
                     '을 사용하여 경로 지정. 하위 폴더 이름은 대괄호로 감싸세요, 예: [Work]/YYYY. 템플릿 아이콘을 클릭하여 템플릿을 설정하세요. 템플릿 폴더 위치는 파일 작업 > 템플릿에서 설정하세요.',
                 templaterSupportInstalled: '✅ Templater 플러그인이 설치되어 전체 템플릿 지원을 사용할 수 있습니다.',
-                templaterSupportMissing: '⚠️ 전체 템플릿 지원을 사용하려면 Templater 플러그인을 설치하세요.',
+                templaterSupportMissing: '⚠️ 템플릿 지원을 사용하려면 Templater 플러그인을 설치하세요.',
+                templateTokenNoticeLabel: '중요!',
+                templateTokenNotice:
+                    '템플릿 지원에는 Templater 플러그인이 필요합니다. {{date}}, {{title}} 같은 기본 형식은 {source}이(가) {option}으로 설정된 경우에만 사용할 수 있습니다.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: '현재 구문: {path}',
                 parsingError: '패턴은 전체 날짜(연, 월, 일)로 포맷되고 다시 파싱될 수 있어야 합니다.'

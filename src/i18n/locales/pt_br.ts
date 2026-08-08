@@ -154,6 +154,7 @@ export const STRINGS_PT_BR = {
         childValues: 'valores filhos',
         applySortAndGroupToDescendants: (target: string) => `Aplicar classificação e agrupamento a ${target}`,
         applyAppearanceToDescendants: (target: string) => `Aplicar aparência a ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Redefinir aparência em ${target}`,
         showFolders: 'Mostrar navegação',
         reorderRootFolders: 'Reordenar navegação',
         finishRootFolderReorder: 'Concluído',
@@ -164,6 +165,7 @@ export const STRINGS_PT_BR = {
         dualPaneAutoFallbackNotice:
             'Os painéis duplos não estão disponíveis quando a barra lateral está estreita demais. Para mudar isso, defina "Quando a barra lateral está estreita demais" como "Não fazer nada" em Configurações > Aparência e comportamento.',
         changeAppearance: 'Alterar aparência',
+        changeAppearanceCustomized: 'Alterar aparência, personalizada',
         showNotesFromSubfolders: 'Mostrar notas de subpastas',
         showFilesFromSubfolders: 'Mostrar arquivos de subpastas',
         showNotesFromDescendants: 'Mostrar notas de descendentes',
@@ -425,7 +427,13 @@ export const STRINGS_PT_BR = {
         previewRows: 'Linhas de visualização',
         groupBy: 'Agrupar por',
         titleRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
-        previewRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de visualização`
+        previewRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de visualização`,
+        defaultOffSuffix: '(desativado por padrão)',
+        tags: 'Tags',
+        properties: 'Propriedades',
+        tasks: 'Tarefas',
+        resetAppearance: 'Redefinir aparência',
+        openPluginSettings: 'Abrir configurações do plugin…'
     },
 
     // Modal dialogs
@@ -434,6 +442,11 @@ export const STRINGS_PT_BR = {
             applyButton: 'Aplicar',
             applySortAndGroupTitle: (target: string) => `Aplicar classificação e agrupamento a ${target}?`,
             applyAppearanceTitle: (target: string) => `Aplicar aparência a ${target}?`,
+            resetAppearanceTitle: (target: string) => `Redefinir aparência em ${target}?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `A aparência mudará para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência salvas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam vinculados.`,
+            resetAppearanceMessage: (count: number) =>
+                `A aparência será redefinida para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam vinculados.`,
             affectedCountMessage: (count: number) => `Substituições existentes que serão alteradas: ${count}.`
         },
         manualSortConfirm: {
@@ -539,6 +552,7 @@ export const STRINGS_PT_BR = {
                 'nav-properties': 'Propriedades',
                 'nav-property': 'Propriedade',
                 'nav-property-value': 'Valor',
+                'file-unfinished-task': 'Tarefas',
                 'file-word-count': 'Contagem de palavras',
                 'file-character-count': 'Contagem de caracteres'
             }
@@ -1255,26 +1269,35 @@ export const STRINGS_PT_BR = {
             },
             showFileIcons: {
                 name: 'Mostrar ícones de arquivo',
-                desc: 'Exibir ícones de arquivo com espaçamento alinhado à esquerda. Desativar remove tanto ícones quanto recuo. Prioridade: ícone personalizado > ícone de pasta > ícone de nome de arquivo > ícone de tipo de arquivo > ícone padrão.'
+                desc: 'Exibir ícones de arquivo com espaçamento alinhado à esquerda. Desativar remove tanto ícones quanto recuo. Prioridade: ícone de tarefas inacabadas > ícone personalizado > ícone de pasta > ícone de nome de arquivo > ícone de tipo de arquivo > ícone padrão.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Ícone de tarefas inacabadas',
+                desc: 'Substituir o ícone do arquivo quando uma nota possui tarefas inacabadas.',
+                options: {
+                    none: 'Desativado',
+                    compact: 'Modo compacto',
+                    all: 'Padrão e compacto'
+                }
             },
             useFolderIcon: {
                 name: 'Usar ícone de pasta',
                 desc: 'Exibir o ícone da pasta pai quando não há um ícone de arquivo personalizado definido. A cor da pasta é usada quando não há uma cor de arquivo personalizada definida.'
             },
             showFileTaskProgress: {
-                name: 'Mostrar tarefas',
+                name: 'Progresso das tarefas',
                 desc: 'Exibir o status das tarefas com barra de progresso e contagem de tarefas opcionais. As cores das tarefas inacabadas e concluídas podem ser definidas separadamente com o plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Mostrar tarefas: barra de progresso',
+                name: 'Progresso das tarefas: barra de progresso',
                 desc: 'Exibir uma barra de progresso ao lado do ícone de tarefas.'
             },
             showFileTaskProgressCount: {
-                name: 'Mostrar tarefas: contagem de tarefas',
+                name: 'Progresso das tarefas: contagem de tarefas',
                 desc: 'Exibir o número de tarefas concluídas e o total de tarefas, por exemplo 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Mostrar tarefas: ocultar quando concluídas',
+                name: 'Progresso das tarefas: ocultar quando concluídas',
                 desc: 'Ocultar o progresso das tarefas quando todas as tarefas de uma nota estiverem concluídas.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1585,6 +1608,10 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar trimestre',
                 desc: 'Adicionar uma etiqueta de trimestre no cabeçalho do calendário.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Mostrar dias de outros meses',
+                desc: 'Mostrar os dias do mês anterior e do mês seguinte quando o calendário exibe um mês completo.'
+            },
             calendarShowYearCalendar: {
                 name: 'Mostrar calendário anual',
                 desc: 'Exibir navegação anual e grade de meses na barra lateral direita.'
@@ -1636,7 +1663,10 @@ export const STRINGS_PT_BR = {
                 momentDescSuffix:
                     '. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de arquivo > Modelos.',
                 templaterSupportInstalled: '✅ O plugin Templater está instalado com suporte completo a modelos.',
-                templaterSupportMissing: '⚠️ Instale o plugin Templater para suporte completo a modelos.',
+                templaterSupportMissing: '⚠️ Instale o plugin Templater para suporte a modelos.',
+                templateTokenNoticeLabel: 'Importante!',
+                templateTokenNotice:
+                    'O suporte a modelos requer o plugin Templater. Formatos integrados como {{date}} e {{title}} só funcionam quando {source} está definido como {option}.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Sintaxe atual: {path}',
                 parsingError: 'O padrão deve ser formatado e analisado novamente como uma data completa (ano, mês, dia).'

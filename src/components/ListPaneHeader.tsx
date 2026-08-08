@@ -465,7 +465,10 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                     {showAppearanceButton ? (
                         <button
                             className={`nn-icon-button ${hasCustomAppearance ? 'nn-icon-button-active' : ''}`}
-                            aria-label={strings.paneHeader.changeAppearance}
+                            aria-label={
+                                hasCustomAppearance ? strings.paneHeader.changeAppearanceCustomized : strings.paneHeader.changeAppearance
+                            }
+                            aria-haspopup="menu"
                             onClick={handleAppearanceMenu}
                             disabled={actionsDisabled || !hasAppearanceOrSortSelection}
                             tabIndex={-1}

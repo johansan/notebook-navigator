@@ -434,7 +434,7 @@
     color: var(--nn-file-name-custom-color);
 }
 
-.nn-file-word-count-suffix {
+.nn-file-name-suffix {
     color: var(--nn-theme-file-word-count-color);
     font-weight: var(--nn-theme-file-word-count-font-weight);
 }
@@ -521,6 +521,16 @@
 
 .nn-file.nn-selected .nn-file-icon[data-has-color='false'] {
     color: var(--nn-theme-navitem-selected-icon-color);
+}
+
+/* A configured task color remains stable across selection states. Without one, the replacement
+   follows the same normal and selected colors as the file icon it replaces. */
+.nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
+    color: var(--nn-theme-file-task-color, var(--nn-theme-navitem-icon-color));
+}
+
+.nn-file.nn-selected .nn-file-icon.nn-file-icon-unfinished-task[data-has-color='false'] {
+    color: var(--nn-theme-file-task-color, var(--nn-theme-navitem-selected-icon-color));
 }
 
 /* Quick actions panel - horizontal container for action icons */
@@ -633,6 +643,14 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* Emoji and icon-font providers render the glyph on the container instead of adding an SVG,
+   so they need an explicit font size to match the task indicator box. */
+.nn-file-task-progress-icon.nn-emoji-icon,
+.nn-file-task-progress-icon.nn-iconfont {
+    font-size: calc(var(--icon-size) * 0.8);
+    line-height: calc(var(--icon-size) * 0.8);
 }
 
 /* The icon has no font weight, so its stroke width tracks the state weight variable instead:

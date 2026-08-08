@@ -154,6 +154,7 @@ export const STRINGS_TR = {
         childValues: 'alt değerler',
         applySortAndGroupToDescendants: (target: string) => `Sıralama ve gruplandırmayı ${target} için uygula`,
         applyAppearanceToDescendants: (target: string) => `Görünümü ${target} için uygula`,
+        resetAppearanceInDescendants: (target: string) => `${target} için görünümü sıfırla`,
         showFolders: 'Gezinmeyi göster', // Tooltip for button to show the navigation pane (English: Show navigation)
         reorderRootFolders: 'Gezinmeyi yeniden sırala',
         finishRootFolderReorder: 'Tamamlandı',
@@ -164,6 +165,7 @@ export const STRINGS_TR = {
         dualPaneAutoFallbackNotice:
             'Kenar çubuğu çok dar olduğunda çift bölmeler kullanılamaz. Bunu değiştirmek için Ayarlar > Görünüm ve davranış altında "Kenar çubuğu çok dar olduğunda" ayarını "Hiçbir şey yapma" olarak ayarlayın.',
         changeAppearance: 'Görünümü değiştir', // Tooltip for button to change folder appearance settings (English: Change appearance)
+        changeAppearanceCustomized: 'Görünümü değiştir, özelleştirilmiş',
         showNotesFromSubfolders: 'Alt klasörlerden notları göster',
         showFilesFromSubfolders: 'Alt klasörlerden dosyaları göster',
         showNotesFromDescendants: 'Alt öğelerden notları göster',
@@ -424,7 +426,13 @@ export const STRINGS_TR = {
         previewRows: 'Önizleme satırları',
         groupBy: 'Grupla',
         titleRowOption: (rows: number) => `${rows} başlık satırı`,
-        previewRowOption: (rows: number) => `${rows} önizleme satırı`
+        previewRowOption: (rows: number) => `${rows} önizleme satırı`,
+        defaultOffSuffix: '(varsayılan olarak kapalı)',
+        tags: 'Etiketler',
+        properties: 'Özellikler',
+        tasks: 'Görevler',
+        resetAppearance: 'Görünümü sıfırla',
+        openPluginSettings: 'Eklenti ayarlarını aç…'
     },
 
     // Modal dialogs
@@ -433,6 +441,11 @@ export const STRINGS_TR = {
             applyButton: 'Uygula',
             applySortAndGroupTitle: (target: string) => `Sıralama ve gruplandırma ${target} için uygulansın mı?`,
             applyAppearanceTitle: (target: string) => `Görünüm ${target} için uygulansın mı?`,
+            resetAppearanceTitle: (target: string) => `${target} için görünüm sıfırlansın mı?`,
+            applyAppearanceMessage: (count: number, replacedCount: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için değişecek. Değiştirilecek mevcut özel görünümler: ${replacedCount}. Kayıtlı görünüm tercihleri bir kez kopyalanır; sıralama ve gruplama korunur. Gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
+            resetAppearanceMessage: (count: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için sıfırlanacak. Sıralama ve gruplama korunur. Bu tek seferlik bir değişikliktir; gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
             affectedCountMessage: (count: number) => `Değişecek mevcut geçersiz kılmalar: ${count}.`
         },
         manualSortConfirm: {
@@ -537,6 +550,7 @@ export const STRINGS_TR = {
                 'nav-properties': 'Özellikler',
                 'nav-property': 'Özellik',
                 'nav-property-value': 'Değer',
+                'file-unfinished-task': 'Görevler',
                 'file-word-count': 'Kelime sayısı',
                 'file-character-count': 'Karakter sayısı'
             }
@@ -1251,26 +1265,35 @@ export const STRINGS_TR = {
             },
             showFileIcons: {
                 name: 'Dosya simgelerini göster',
-                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
+                desc: 'Dosya simgelerini sol hizalı boşlukla göster. Devre dışı bırakma hem simgeleri hem de girintiyi kaldırır. Öncelik: tamamlanmamış görev simgesi > özel simge > klasör simgesi > dosya adı simgesi > dosya türü simgesi > varsayılan simge.'
+            },
+            unfinishedTaskIcon: {
+                name: 'Tamamlanmamış görev simgesi',
+                desc: 'Bir notta tamamlanmamış görevler olduğunda dosya simgesini değiştir.',
+                options: {
+                    none: 'Devre dışı',
+                    compact: 'Kompakt mod',
+                    all: 'Standart ve kompakt'
+                }
             },
             useFolderIcon: {
                 name: 'Klasör simgesini kullan',
                 desc: 'Özel dosya simgesi ayarlanmadığında üst klasörün simgesini görüntüler. Özel dosya rengi ayarlanmadığında klasör rengi kullanılır.'
             },
             showFileTaskProgress: {
-                name: 'Görevleri göster',
+                name: 'Görev ilerlemesi',
                 desc: 'Görev durumunu isteğe bağlı ilerleme çubuğu ve görev sayısıyla gösterir. Tamamlanmamış ve tamamlanmış görevlerin renkleri Style Settings eklentisiyle ayrı ayrı ayarlanabilir.'
             },
             showFileTaskProgressBar: {
-                name: 'Görevleri göster: ilerleme çubuğu',
+                name: 'Görev ilerlemesi: ilerleme çubuğu',
                 desc: 'Görev simgesinin yanında ilerleme çubuğu gösterir.'
             },
             showFileTaskProgressCount: {
-                name: 'Görevleri göster: görev sayısı',
+                name: 'Görev ilerlemesi: görev sayısı',
                 desc: 'Tamamlanan ve toplam görev sayısını gösterir, örneğin 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Görevleri göster: tamamlanınca gizle',
+                name: 'Görev ilerlemesi: tamamlanınca gizle',
                 desc: 'Bir nottaki tüm görevler tamamlandığında görev ilerlemesini gizler.'
             },
             showFileBackgroundUnfinishedTask: {
@@ -1581,6 +1604,10 @@ export const STRINGS_TR = {
                 name: 'Çeyreği göster',
                 desc: 'Takvim başlığına çeyrek etiketi ekle.'
             },
+            calendarShowOutsideMonthDays: {
+                name: 'Diğer ayların günlerini göster',
+                desc: 'Takvim tam bir ayı gösterirken önceki ve sonraki ayın günlerini göster.'
+            },
             calendarShowYearCalendar: {
                 name: 'Yıllık takvimi göster',
                 desc: 'Sağ kenar çubuğunda yıl gezintisi ve ay ızgarası göster.'
@@ -1632,7 +1659,10 @@ export const STRINGS_TR = {
                 momentDescSuffix:
                     ' kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri > Şablonlar bölümünden ayarlayın.',
                 templaterSupportInstalled: '✅ Templater eklentisi tam şablon desteğiyle yüklü.',
-                templaterSupportMissing: '⚠️ Tam şablon desteği için Templater eklentisini yükleyin.',
+                templaterSupportMissing: '⚠️ Şablon desteği için Templater eklentisini yükleyin.',
+                templateTokenNoticeLabel: 'Önemli!',
+                templateTokenNotice:
+                    'Şablon desteği Templater eklentisini gerektirir. {{date}} ve {{title}} gibi yerleşik biçimler yalnızca {source} ayarı {option} olarak seçildiğinde kullanılabilir.',
                 placeholder: 'YYYY/YYYYMMDD',
                 example: 'Geçerli sözdizimi: {path}',
                 parsingError: 'Desen, tam bir tarih (yıl, ay, gün) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.'
