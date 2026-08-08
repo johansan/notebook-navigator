@@ -69,7 +69,7 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
     const frontmatterGroup = createGroup(undefined);
 
     const useFrontmatterSetting = frontmatterGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.useFrontmatterDates.name).setDesc(strings.settings.items.useFrontmatterDates.desc);
+        setting.setName(strings.settings.items.useFrontmatterMetadata.name).setDesc(strings.settings.items.useFrontmatterMetadata.desc);
     });
 
     const frontmatterSettingsEl = wireToggleSettingWithDependentSection(
@@ -129,11 +129,11 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
     );
     frontmatterBackgroundSetting.controlEl.addClass('nn-setting-wide-input');
 
-    const migrationSetting = new Setting(frontmatterSettingsEl).setName(strings.settings.items.frontmatterMigration.name);
+    const migrationSetting = new Setting(frontmatterSettingsEl).setName(strings.settings.items.migrateIconsAndColorsFromSettings.name);
 
     migrationSetting.addButton(button => {
         migrateButton = button;
-        button.setButtonText(strings.settings.items.frontmatterMigration.button);
+        button.setButtonText(strings.settings.items.migrateIconsAndColorsFromSettings.button);
         button.setCta();
         // Migrate metadata to frontmatter without blocking the UI
         button.onClick(() => {
@@ -143,7 +143,7 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
                 }
 
                 button.setDisabled(true);
-                button.setButtonText(strings.settings.items.frontmatterMigration.buttonWorking);
+                button.setButtonText(strings.settings.items.migrateIconsAndColorsFromSettings.buttonWorking);
 
                 try {
                     const result = await plugin.metadataService.migrateFileMetadataToFrontmatter();
@@ -152,28 +152,28 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
                     const { iconsBefore, colorsBefore, migratedIcons, migratedColors, failures } = result;
 
                     if (iconsBefore === 0 && colorsBefore === 0) {
-                        showNotice(strings.settings.items.frontmatterMigration.noticeNone);
+                        showNotice(strings.settings.items.migrateIconsAndColorsFromSettings.noticeNone);
                     } else if (migratedIcons === 0 && migratedColors === 0) {
-                        showNotice(strings.settings.items.frontmatterMigration.noticeNone);
+                        showNotice(strings.settings.items.migrateIconsAndColorsFromSettings.noticeNone);
                     } else {
-                        let message = strings.settings.items.frontmatterMigration.noticeDone
+                        let message = strings.settings.items.migrateIconsAndColorsFromSettings.noticeDone
                             .replace('{migratedIcons}', migratedIcons.toString())
                             .replace('{icons}', iconsBefore.toString())
                             .replace('{migratedColors}', migratedColors.toString())
                             .replace('{colors}', colorsBefore.toString());
                         if (failures > 0) {
-                            message += ` ${strings.settings.items.frontmatterMigration.noticeFailures.replace('{failures}', failures.toString())}`;
+                            message += ` ${strings.settings.items.migrateIconsAndColorsFromSettings.noticeFailures.replace('{failures}', failures.toString())}`;
                         }
                         showNotice(message, { variant: 'success' });
                     }
                 } catch (error) {
                     console.error('Failed to migrate icon/color metadata to frontmatter', error);
-                    showNotice(strings.settings.items.frontmatterMigration.noticeError, {
+                    showNotice(strings.settings.items.migrateIconsAndColorsFromSettings.noticeError, {
                         timeout: TIMEOUTS.NOTICE_ERROR,
                         variant: 'warning'
                     });
                 } finally {
-                    button.setButtonText(strings.settings.items.frontmatterMigration.button);
+                    button.setButtonText(strings.settings.items.migrateIconsAndColorsFromSettings.button);
                     button.setDisabled(false);
                     updateMigrationDescription?.();
                     context.requestStatisticsRefresh();
@@ -198,7 +198,7 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
         const canMigrateMetadata = hasIconField || hasColorField || hasBackgroundField;
         const isFrontmatterMetadataEnabled = plugin.settings.useFrontmatterMetadata;
 
-        const descriptionText = strings.settings.items.frontmatterMigration.desc
+        const descriptionText = strings.settings.items.migrateIconsAndColorsFromSettings.desc
             .replace('{icons}', iconsBefore.toString())
             .replace('{colors}', colorsBefore.toString());
 
@@ -212,9 +212,9 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
 
     context.createDebouncedTextSetting(
         frontmatterSettingsEl,
-        strings.settings.items.frontmatterNameField.name,
-        strings.settings.items.frontmatterNameField.desc,
-        strings.settings.items.frontmatterNameField.placeholder,
+        strings.settings.items.frontmatterNameFields.name,
+        strings.settings.items.frontmatterNameFields.desc,
+        strings.settings.items.frontmatterNameFields.placeholder,
         () => normalizeCommaSeparatedList(plugin.settings.frontmatterNameField),
         value => {
             plugin.settings.frontmatterNameField = normalizeCommaSeparatedList(value);
@@ -252,10 +252,10 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
     const dateFormatSetting = context
         .createDebouncedTextSetting(
             frontmatterSettingsEl,
-            strings.settings.items.frontmatterDateFormat.name,
+            strings.settings.items.frontmatterTimestampFormat.name,
             createSettingDescriptionWithExternalLink({
-                text: strings.settings.items.frontmatterDateFormat.desc,
-                link: { text: strings.settings.items.frontmatterDateFormat.momentLinkText, href: MOMENT_FORMAT_DOCS_URL }
+                text: strings.settings.items.frontmatterTimestampFormat.desc,
+                link: { text: strings.settings.items.frontmatterTimestampFormat.momentLinkText, href: MOMENT_FORMAT_DOCS_URL }
             }),
             ISO_DATE_FORMAT,
             () => plugin.settings.frontmatterDateFormat,
@@ -268,9 +268,9 @@ export function renderFrontmatterTab(context: SettingsTabContext): void {
         .addExtraButton(button =>
             button
                 .setIcon('lucide-help-circle')
-                .setTooltip(strings.settings.items.frontmatterDateFormat.helpTooltip)
+                .setTooltip(strings.settings.items.frontmatterTimestampFormat.helpTooltip)
                 .onClick(() => {
-                    showNotice(strings.settings.items.frontmatterDateFormat.help, { timeout: TIMEOUTS.NOTICE_HELP });
+                    showNotice(strings.settings.items.frontmatterTimestampFormat.help, { timeout: TIMEOUTS.NOTICE_HELP });
                 })
         );
     dateFormatSetting.controlEl.addClass('nn-setting-wide-input');

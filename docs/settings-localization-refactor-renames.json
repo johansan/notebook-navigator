@@ -1,0 +1,1659 @@
+{
+  "schemaVersion": 1,
+  "baselineRef": "ddee69bb",
+  "scopePrefixes": [
+    "settings"
+  ],
+  "semanticReview": "docs/settings-localization-semantic-review.json",
+  "operations": [
+    {
+      "kind": "move",
+      "source": "settings.sections.general",
+      "targets": [
+        "settings.index.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.general",
+      "targets": [
+        "settings.index.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.vaultConfiguration",
+      "targets": [
+        "settings.index.groups.vaultSetup"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.vaultFilters",
+      "targets": [
+        "settings.pages.displayFilters.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.vaultFilters",
+      "targets": [
+        "settings.pages.displayFilters.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.appearanceBehavior",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.appearanceBehavior",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.navigationPane",
+      "targets": [
+        "settings.pages.navigationPane.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.navigationPane",
+      "targets": [
+        "settings.pages.navigationPane.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.shortcutsAndRecentFiles",
+      "targets": [
+        "settings.pages.shortcutsAndRecentFiles.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.shortcuts",
+      "targets": [
+        "settings.pages.shortcutsAndRecentFiles.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.foldersAndFolderNotes",
+      "targets": [
+        "settings.pages.foldersAndFolderNotes.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.foldersAndFolderNotes",
+      "targets": [
+        "settings.pages.foldersAndFolderNotes.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.tagsAndProperties",
+      "targets": [
+        "settings.pages.tagsAndProperties.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.tagsProperties",
+      "targets": [
+        "settings.pages.tagsAndProperties.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.listPane",
+      "targets": [
+        "settings.pages.listPane.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.listPane",
+      "targets": [
+        "settings.pages.listPane.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.fileOperations",
+      "targets": [
+        "settings.pages.fileOperations.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.fileOperations",
+      "targets": [
+        "settings.pages.fileOperations.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.frontmatter",
+      "targets": [
+        "settings.pages.frontmatterFields.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.frontmatter",
+      "targets": [
+        "settings.pages.frontmatterFields.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.notes",
+      "targets": [
+        "settings.pages.fileDisplay.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.notes",
+      "targets": [
+        "settings.pages.fileDisplay.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.calendar",
+      "targets": [
+        "settings.pages.calendar.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.icons",
+      "targets": [
+        "settings.pages.iconPacks.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.iconPacks",
+      "targets": [
+        "settings.pages.iconPacks.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.advanced",
+      "targets": [
+        "settings.pages.advanced.label"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageDescriptions.advanced",
+      "targets": [
+        "settings.pages.advanced.description"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageGroups.navigationAndContent",
+      "targets": [
+        "settings.pageGroups.navigationPane"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.pageGroups.notesAndLists",
+      "targets": [
+        "settings.pageGroups.listPane"
+      ]
+    },
+    {
+      "kind": "fanOut",
+      "source": "settings.sections.calendar",
+      "targets": [
+        "settings.pages.calendar.label",
+        "navigationPane.calendar"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.startup",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.startup"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.keyboardNavigation",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.keyboardNavigation"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.mouseButtons",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.mouseButtons"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.desktopAppearance",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.desktopAppearance"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.mobileAppearance",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.mobileAppearance"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.view",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.appearance"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.icons",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.icons"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.formatting",
+      "targets": [
+        "settings.pages.appearanceAndBehavior.groups.formatting"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.banner",
+      "targets": [
+        "settings.pages.navigationPane.groups.banner"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.collapseItems",
+      "targets": [
+        "settings.pages.navigationPane.groups.collapseItems"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.dragAndDrop",
+      "targets": [
+        "settings.pages.navigationPane.groups.dragAndDrop"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.noteCounts",
+      "targets": [
+        "settings.pages.navigationPane.groups.fileCounts"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.rainbowColors",
+      "targets": [
+        "settings.pages.navigationPane.groups.rainbowColors"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.folderNotes",
+      "targets": [
+        "settings.pages.foldersAndFolderNotes.groups.folderNotes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.sections.folderNoteFiles",
+      "targets": [
+        "settings.pages.foldersAndFolderNotes.groups.folderNoteFiles"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.display",
+      "targets": [
+        "settings.pages.listPane.groups.appearance"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.sortAndGroup",
+      "targets": [
+        "settings.pages.listPane.groups.sortAndGroup"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.groupHeaders",
+      "targets": [
+        "settings.pages.listPane.groups.groupHeaders"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.manualSort",
+      "targets": [
+        "settings.pages.listPane.groups.manualSort"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.pinnedNotes",
+      "targets": [
+        "settings.pages.listPane.groups.pinnedNotes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.behavior",
+      "targets": [
+        "settings.pages.listPane.groups.behavior"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.list.drawingPreviews",
+      "targets": [
+        "settings.pages.listPane.groups.drawingPreviews"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.general.templates",
+      "targets": [
+        "settings.pages.fileOperations.groups.templates"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.icon",
+      "targets": [
+        "settings.pages.fileDisplay.groups.icon"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.title",
+      "targets": [
+        "settings.pages.fileDisplay.groups.title"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.previewText",
+      "targets": [
+        "settings.pages.fileDisplay.groups.previewText"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.featureImage",
+      "targets": [
+        "settings.pages.fileDisplay.groups.featureImage"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.tags",
+      "targets": [
+        "settings.pages.fileDisplay.groups.tags"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.properties",
+      "targets": [
+        "settings.pages.fileDisplay.groups.properties"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.tasks",
+      "targets": [
+        "settings.pages.fileDisplay.groups.tasks"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.date",
+      "targets": [
+        "settings.pages.fileDisplay.groups.date"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.parentFolder",
+      "targets": [
+        "settings.pages.fileDisplay.groups.parentFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.notes.wordCount",
+      "targets": [
+        "settings.pages.fileDisplay.groups.wordAndCharacterCount"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.leftSidebar",
+      "targets": [
+        "settings.pages.calendar.groups.leftSidebar"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.navigation.calendarIntegration",
+      "targets": [
+        "settings.pages.calendar.groups.calendarIntegration"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.advanced.maintenance",
+      "targets": [
+        "settings.pages.advanced.groups.maintenance"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.groups.advanced.resetSettings",
+      "targets": [
+        "settings.pages.advanced.groups.resetSettings"
+      ]
+    },
+    {
+      "kind": "fanOut",
+      "source": "settings.groups.navigation.appearance",
+      "targets": [
+        "settings.pages.navigationPane.groups.appearance",
+        "settings.pages.calendar.groups.appearance"
+      ]
+    },
+    {
+      "kind": "copy",
+      "source": "navigationPane.shortcutsHeader",
+      "targets": [
+        "settings.pages.shortcutsAndRecentFiles.groups.shortcuts"
+      ]
+    },
+    {
+      "kind": "copy",
+      "source": "navigationPane.recentFilesHeader",
+      "targets": [
+        "settings.pages.shortcutsAndRecentFiles.groups.recentFiles"
+      ]
+    },
+    {
+      "kind": "fanOut",
+      "source": "settings.sections.folders",
+      "targets": [
+        "settings.pages.foldersAndFolderNotes.groups.folders",
+        "navigationPane.folders"
+      ]
+    },
+    {
+      "kind": "fanOut",
+      "source": "settings.sections.tags",
+      "targets": [
+        "settings.pages.tagsAndProperties.groups.tags",
+        "navigationPane.tags"
+      ]
+    },
+    {
+      "kind": "copy",
+      "source": "navigationPane.properties",
+      "targets": [
+        "settings.pages.tagsAndProperties.groups.properties"
+      ]
+    },
+    {
+      "kind": "copy",
+      "source": "settings.items.calendarPlacement.options.rightSidebar",
+      "targets": [
+        "settings.pages.calendar.groups.rightSidebar"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy",
+      "targets": [
+        "settings.items.defaultSortOrder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertySortKey",
+      "targets": [
+        "settings.items.sortingProperties"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertySortSecondary",
+      "targets": [
+        "settings.items.propertySecondarySort"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertyGroupKey",
+      "targets": [
+        "settings.items.groupingProperties"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.manualSortPropertyKey",
+      "targets": [
+        "settings.items.manualSortProperty"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.manualSortGroupHeaderProperty",
+      "targets": [
+        "settings.items.groupHeaderProperty"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.revealFileOnListChanges",
+      "targets": [
+        "settings.items.scrollToSelectedFileOnListChanges"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.limitPinnedToCurrentFolder",
+      "targets": [
+        "settings.items.filterPinnedNotesByFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.separateNoteCounts",
+      "targets": [
+        "settings.items.separateFileCounts"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.groupNotes",
+      "targets": [
+        "settings.items.defaultGrouping"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showSelectedNavigationPills",
+      "targets": [
+        "settings.items.alwaysShowAllTagAndPropertyPills"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showFolderGroupPaths",
+      "targets": [
+        "settings.items.showSubfolderPaths"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showFileBackgroundUnfinishedTask",
+      "targets": [
+        "settings.items.unfinishedTaskBackground"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showFilenameMatchIcons",
+      "targets": [
+        "settings.items.showFileNameIcons"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showCategoryIcons",
+      "targets": [
+        "settings.items.showFileTypeIcons"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showParentFolderFullPath",
+      "targets": [
+        "settings.items.showFolderPath"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.parentFolderClickRevealsFile",
+      "targets": [
+        "settings.items.parentFolderClickOpensFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.narrowSidebarLayout",
+      "targets": [
+        "settings.items.narrowSidebarBehavior"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.narrowSidebarTrigger",
+      "targets": [
+        "settings.items.narrowSidebarThresholdMode"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.narrowSidebarCustomWidth",
+      "targets": [
+        "settings.items.narrowSidebarThresholdWidth"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.appearanceBackground",
+      "targets": [
+        "settings.items.paneBackgroundColor"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.appearanceScale",
+      "targets": [
+        "settings.items.zoomLevel"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.useFloatingToolbars",
+      "targets": [
+        "settings.items.useFloatingToolbarsOnIOS"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.startView",
+      "targets": [
+        "settings.items.defaultStartupView"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.createNewNotesInNewTab",
+      "targets": [
+        "settings.items.openNewNotesInNewTab"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.paneTransitionDuration",
+      "targets": [
+        "settings.items.singlePaneAnimation"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.autoSelectFirstFileOnFocusChange",
+      "targets": [
+        "settings.items.autoSelectFirstNote"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.skipAutoScroll",
+      "targets": [
+        "settings.items.disableShortcutAutoScroll"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.autoExpandNavItems",
+      "targets": [
+        "settings.items.expandOnSelection"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showRecentNotes",
+      "targets": [
+        "settings.items.showRecentFiles"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.hideRecentNotes",
+      "targets": [
+        "settings.items.hideFileTypesFromRecentFiles"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.recentNotesCount",
+      "targets": [
+        "settings.items.recentFilesCount"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.pinRecentNotesWithShortcuts",
+      "targets": [
+        "settings.items.pinRecentFilesWithShortcuts"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarEnabled",
+      "targets": [
+        "settings.items.enableCalendar"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarLeftPlacement",
+      "targets": [
+        "settings.items.calendarSinglePanePlacement"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarMonthHeadingFormat",
+      "targets": [
+        "settings.items.calendarMonthNameFormat"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarWeeksToShow",
+      "targets": [
+        "settings.items.calendarLeftSidebarWeeksToShow"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarIntegrationMode",
+      "targets": [
+        "settings.items.dailyNoteSource"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarCustomRootFolder",
+      "targets": [
+        "settings.items.periodicNotesRootFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarTemplateFolder",
+      "targets": [
+        "settings.items.templateFolderLocation"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarTemplateFile",
+      "targets": [
+        "settings.items.periodicNoteTemplateFile"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.settingsTransfer",
+      "targets": [
+        "settings.items.importAndExportSettings"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.shiftEnterOpenContext",
+      "targets": [
+        "settings.items.shiftEnterAction"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.cmdEnterOpenContext",
+      "targets": [
+        "settings.items.cmdEnterAction"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.ctrlEnterOpenContext",
+      "targets": [
+        "settings.items.ctrlEnterAction"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.fileVisibility",
+      "targets": [
+        "settings.items.showFileTypes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.excludedNotes",
+      "targets": [
+        "settings.items.hideNotesWithPropertyRules"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.excludedFileNamePatterns",
+      "targets": [
+        "settings.items.hideFiles"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.vaultTitle",
+      "targets": [
+        "settings.items.vaultTitlePlacement"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.excludedFolders",
+      "targets": [
+        "settings.items.hideFolders"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.alphabeticalDateMode",
+      "targets": [
+        "settings.items.dateWhenSortingByName"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showFileTagAncestors",
+      "targets": [
+        "settings.items.showFullTagPaths"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.prioritizeColoredFileTags",
+      "targets": [
+        "settings.items.showColoredTagsFirst"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.prioritizeColoredFileProperties",
+      "targets": [
+        "settings.items.showColoredPropertiesFirst"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertyFields",
+      "targets": [
+        "settings.items.propertyKeys"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.enablePropertyInternalLinks",
+      "targets": [
+        "settings.items.linkPropertyPillsToNotes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.enablePropertyExternalLinks",
+      "targets": [
+        "settings.items.linkPropertyPillsToUrls"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.textCountDisplay",
+      "targets": [
+        "settings.items.textCountType"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showWordCountPercentage",
+      "targets": [
+        "settings.items.showTargetPercentage"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showFilePreview",
+      "targets": [
+        "settings.items.showNotePreview"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.previewPropertiesFallback",
+      "targets": [
+        "settings.items.fallbackToNoteContent"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.fileNameRows",
+      "targets": [
+        "settings.items.titleRows"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImageSize",
+      "targets": [
+        "settings.items.featureImageDisplaySize"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.hideDrawingPreviewImages",
+      "targets": [
+        "settings.items.hideExportedPreviewImages"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showNoteCount",
+      "targets": [
+        "settings.items.showFileCount"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showSectionIcons",
+      "targets": [
+        "settings.items.showShortcutAndRecentItemIcons"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showIconsColorOnly",
+      "targets": [
+        "settings.items.applyColorToIconsOnly"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRainbowApplyToRecent",
+      "targets": [
+        "settings.items.navRainbowApplyToRecentItems"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRainbowBalanceHueLuminance",
+      "targets": [
+        "settings.items.navRainbowConsistentBrightness"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.collapseBehavior",
+      "targets": [
+        "settings.items.collapseItems"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.smartCollapse",
+      "targets": [
+        "settings.items.keepSelectedItemExpanded"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navIndent",
+      "targets": [
+        "settings.items.treeIndentation"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRootSpacing",
+      "targets": [
+        "settings.items.rootItemSpacing"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showAllTagsFolder",
+      "targets": [
+        "settings.items.showTagsFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showUntagged",
+      "targets": [
+        "settings.items.showUntaggedNotes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.scopeTagsToCurrentContext",
+      "targets": [
+        "settings.items.filterTagsBySelection"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showAllPropertiesFolder",
+      "targets": [
+        "settings.items.showPropertiesFolder"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.scopePropertiesToCurrentContext",
+      "targets": [
+        "settings.items.filterPropertiesBySelection"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.hiddenTags",
+      "targets": [
+        "settings.items.hideTags"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.hiddenFileTags",
+      "targets": [
+        "settings.items.hideNotesWithTags"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.enableFolderNoteLinks",
+      "targets": [
+        "settings.items.folderNamesOpenFolderNotes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.showNearestFolderNoteInSidebar",
+      "targets": [
+        "settings.items.showClosestFolderNoteInRightSidebar"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.externalIcons",
+      "targets": [
+        "settings.items.iconPackManagement"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.useFrontmatterDates",
+      "targets": [
+        "settings.items.useFrontmatterMetadata"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.frontmatterMigration",
+      "targets": [
+        "settings.items.migrateIconsAndColorsFromSettings"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.frontmatterNameField",
+      "targets": [
+        "settings.items.frontmatterNameFields"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.frontmatterDateFormat",
+      "targets": [
+        "settings.items.frontmatterTimestampFormat"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.updateCheckOnStart",
+      "targets": [
+        "settings.items.checkForNewVersionOnStart"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.debugLogging",
+      "targets": [
+        "settings.items.startupDebugLogging"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.name",
+      "targets": [
+        "settings.items.calendarDailyNotePattern.name"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.desc",
+      "targets": [
+        "settings.items.calendarDailyNotePattern.desc"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.placeholder",
+      "targets": [
+        "settings.items.calendarDailyNotePattern.placeholder"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.parsingError",
+      "targets": [
+        "settings.items.calendarDailyNotePattern.parsingError"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.momentDescPrefix",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.momentDescPrefix"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.momentLinkText",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.momentLinkText"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.momentDescSuffix",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.momentDescSuffix"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.templateTokenNoticeLabel",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.templateTokenNoticeLabel"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.templateTokenNotice",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.templateTokenNotice"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.example",
+      "targets": [
+        "settings.items.calendarPeriodicNotePatterns.example"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.templaterSupportInstalled",
+      "targets": [
+        "settings.items.templaterSupport.installed"
+      ]
+    },
+    {
+      "kind": "split",
+      "source": "settings.items.calendarCustomFilePattern.templaterSupportMissing",
+      "targets": [
+        "settings.items.templaterSupport.missing"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarCustomWeekPattern",
+      "targets": [
+        "settings.items.calendarWeeklyNotePattern"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarCustomMonthPattern",
+      "targets": [
+        "settings.items.calendarMonthlyNotePattern"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarCustomQuarterPattern",
+      "targets": [
+        "settings.items.calendarQuarterlyNotePattern"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarCustomYearPattern",
+      "targets": [
+        "settings.items.calendarYearlyNotePattern"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.listPaneTitle.options.list",
+      "targets": [
+        "settings.items.listPaneTitle.options.listPane"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.dateDirections.desc",
+      "targets": [
+        "settings.items.defaultSortOrder.dateDirections.newestOnTop"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.dateDirections.asc",
+      "targets": [
+        "settings.items.defaultSortOrder.dateDirections.oldestOnTop"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.textDirections.asc",
+      "targets": [
+        "settings.items.defaultSortOrder.textDirections.aOnTop"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.textDirections.desc",
+      "targets": [
+        "settings.items.defaultSortOrder.textDirections.zOnTop"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.fields.modified",
+      "targets": [
+        "settings.items.defaultSortOrder.fields.dateEdited"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.fields.created",
+      "targets": [
+        "settings.items.defaultSortOrder.fields.dateCreated"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.sortNotesBy.fields.filename",
+      "targets": [
+        "settings.items.defaultSortOrder.fields.fileName"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertySortSecondary.options.filename",
+      "targets": [
+        "settings.items.propertySecondarySort.options.fileName"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertySortSecondary.options.created",
+      "targets": [
+        "settings.items.propertySecondarySort.options.dateCreated"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.propertySortSecondary.options.modified",
+      "targets": [
+        "settings.items.propertySecondarySort.options.dateEdited"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.manualSortNewNotePlacement.options.below-selected-note",
+      "targets": [
+        "settings.items.manualSortNewNotePlacement.options.belowSelectedNote"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.unfinishedTaskIcon.options.none",
+      "targets": [
+        "settings.items.unfinishedTaskIcon.options.disabled"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.unfinishedTaskIcon.options.all",
+      "targets": [
+        "settings.items.unfinishedTaskIcon.options.standardAndCompact"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.fileTypeIconPreset.options.none",
+      "targets": [
+        "settings.items.fileTypeIconPreset.options.builtIn"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.appearanceBackground.options.primary",
+      "targets": [
+        "settings.items.paneBackgroundColor.options.listBackground"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.appearanceBackground.options.secondary",
+      "targets": [
+        "settings.items.paneBackgroundColor.options.navigationBackground"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.startView.options.files",
+      "targets": [
+        "settings.items.defaultStartupView.options.listPane"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.shortcutBadgeDisplay.options.index",
+      "targets": [
+        "settings.items.shortcutBadgeDisplay.options.position"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.calendarLeftPlacement.options.below",
+      "targets": [
+        "settings.items.calendarSinglePanePlacement.options.belowPanes"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.mouseBackForwardAction.options.none",
+      "targets": [
+        "settings.items.mouseBackForwardAction.options.systemDefault"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImageSize.options.standard",
+      "targets": [
+        "settings.items.featureImageDisplaySize.options.64"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImageSize.options.large",
+      "targets": [
+        "settings.items.featureImageDisplaySize.options.96"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImageSize.options.extraLarge",
+      "targets": [
+        "settings.items.featureImageDisplaySize.options.128"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImagePixelSize.options.standard",
+      "targets": [
+        "settings.items.featureImagePixelSize.options.256x144"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImagePixelSize.options.large",
+      "targets": [
+        "settings.items.featureImagePixelSize.options.384x216"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.featureImagePixelSize.options.extraLarge",
+      "targets": [
+        "settings.items.featureImagePixelSize.options.512x288"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRainbowMode.options.none",
+      "targets": [
+        "settings.items.navRainbowMode.options.off"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRainbowMode.options.foreground",
+      "targets": [
+        "settings.items.navRainbowMode.options.textColor"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.items.navRainbowMode.options.background",
+      "targets": [
+        "settings.items.navRainbowMode.options.backgroundColor"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.syncMode.switchToSynced",
+      "targets": [
+        "settings.syncMode.enableSync"
+      ]
+    },
+    {
+      "kind": "move",
+      "source": "settings.syncMode.switchToLocal",
+      "targets": [
+        "settings.syncMode.disableSync"
+      ]
+    }
+  ],
+  "retains": [
+    "settings.changeDefaultSettings",
+    "settings.items.autoRevealActiveNote",
+    "settings.items.autoRevealIgnoreOtherWindows",
+    "settings.items.autoRevealIgnoreRightSidebar",
+    "settings.items.autoRevealShortestPath",
+    "settings.items.cacheStatistics",
+    "settings.items.calendarConfirmBeforeCreate",
+    "settings.items.calendarHighlightToday",
+    "settings.items.calendarLocale",
+    "settings.items.calendarPeriodicNotesLocale",
+    "settings.items.calendarPlacement",
+    "settings.items.calendarShowFeatureImage",
+    "settings.items.calendarShowHiddenItems",
+    "settings.items.calendarShowOutsideMonthDays",
+    "settings.items.calendarShowQuarter",
+    "settings.items.calendarShowTasks",
+    "settings.items.calendarShowWeekNumber",
+    "settings.items.calendarShowYearCalendar",
+    "settings.items.calendarWeekendDays",
+    "settings.items.characterCountSpaces",
+    "settings.items.collapseOtherBranchesOnExpand",
+    "settings.items.colorFileProperties",
+    "settings.items.colorFileTags",
+    "settings.items.compactItemHeight",
+    "settings.items.compactItemHeightScaleText",
+    "settings.items.confirmBeforeDelete",
+    "settings.items.confirmBeforeManualSort",
+    "settings.items.dateFormat",
+    "settings.items.defaultGroupingDirection",
+    "settings.items.defaultListMode",
+    "settings.items.defaultSortDirection",
+    "settings.items.deleteAttachments",
+    "settings.items.descendantExcludedFolders",
+    "settings.items.downloadExternalFeatureImages",
+    "settings.items.drawingIntegrationInfo",
+    "settings.items.dualPane",
+    "settings.items.dualPaneOrientation",
+    "settings.items.enableFolderNotes",
+    "settings.items.enterToOpenFiles",
+    "settings.items.excludeVaultRootFromCollapse",
+    "settings.items.featureImageExcludeProperties",
+    "settings.items.featureImagePixelSize",
+    "settings.items.featureImageProperties",
+    "settings.items.fileNameIconMap",
+    "settings.items.fileTypeIconMap",
+    "settings.items.fileTypeIconPreset",
+    "settings.items.folderNoteName",
+    "settings.items.folderNoteNamePattern",
+    "settings.items.folderNoteOpenLocation",
+    "settings.items.folderNoteTemplate",
+    "settings.items.folderNoteType",
+    "settings.items.folderSortOrder",
+    "settings.items.forceSquareFeatureImage",
+    "settings.items.frontmatterBackgroundField",
+    "settings.items.frontmatterColorField",
+    "settings.items.frontmatterCreatedField",
+    "settings.items.frontmatterIconField",
+    "settings.items.frontmatterModifiedField",
+    "settings.items.groupHeadersInstructions",
+    "settings.items.hideFileTaskProgressWhenComplete",
+    "settings.items.hideFolderNoteInList",
+    "settings.items.homepage",
+    "settings.items.includeDescendantNotes",
+    "settings.items.inheritFolderColors",
+    "settings.items.inheritPropertyColors",
+    "settings.items.inheritTagColors",
+    "settings.items.interfaceIcons",
+    "settings.items.keepEmptyTagsProperty",
+    "settings.items.listPaneTitle",
+    "settings.items.manualSortInstructions",
+    "settings.items.manualSortNewNotePlacement",
+    "settings.items.masteringVideo",
+    "settings.items.metadataCleanup",
+    "settings.items.metadataInfo",
+    "settings.items.mouseBackForwardAction",
+    "settings.items.moveFileConflicts",
+    "settings.items.multiSelectModifier",
+    "settings.items.navCountLeaderStyle",
+    "settings.items.navItemHeight",
+    "settings.items.navItemHeightScaleText",
+    "settings.items.navRainbowApplyToFolders",
+    "settings.items.navRainbowApplyToProperties",
+    "settings.items.navRainbowApplyToShortcuts",
+    "settings.items.navRainbowApplyToTags",
+    "settings.items.navRainbowCopyLightToDark",
+    "settings.items.navRainbowFirstColor",
+    "settings.items.navRainbowFolderScope",
+    "settings.items.navRainbowLastColor",
+    "settings.items.navRainbowMode",
+    "settings.items.navRainbowPropertyScope",
+    "settings.items.navRainbowSeparateThemeColors",
+    "settings.items.navRainbowTagScope",
+    "settings.items.navRainbowTransitionStyle",
+    "settings.items.navigationBanner",
+    "settings.items.pinCreatedFolderNote",
+    "settings.items.pinNavigationBanner",
+    "settings.items.previewProperties",
+    "settings.items.previewRows",
+    "settings.items.propertySortInstructions",
+    "settings.items.propertySortOrder",
+    "settings.items.rebuildCache",
+    "settings.items.resetAllSettings",
+    "settings.items.resetPaneSeparator",
+    "settings.items.shortcutBadgeDisplay",
+    "settings.items.showCurrentFolderFilesAtBottom",
+    "settings.items.showFeatureImage",
+    "settings.items.showFileDate",
+    "settings.items.showFileIcons",
+    "settings.items.showFileProperties",
+    "settings.items.showFilePropertiesInCompactMode",
+    "settings.items.showFileTags",
+    "settings.items.showFileTagsInCompactMode",
+    "settings.items.showFileTaskProgress",
+    "settings.items.showFileTaskProgressBar",
+    "settings.items.showFileTaskProgressCount",
+    "settings.items.showFolderIcons",
+    "settings.items.showGroupHeaderItemCounts",
+    "settings.items.showIndentGuides",
+    "settings.items.showInfoButtons",
+    "settings.items.showParentFolder",
+    "settings.items.showParentFolderColor",
+    "settings.items.showParentFolderIcon",
+    "settings.items.showProperties",
+    "settings.items.showPropertiesOnSeparateRows",
+    "settings.items.showPropertyIcons",
+    "settings.items.showQuickActions",
+    "settings.items.showRootFolder",
+    "settings.items.showShortcuts",
+    "settings.items.showTagIcons",
+    "settings.items.showTags",
+    "settings.items.showTooltipPath",
+    "settings.items.showTooltipWordCount",
+    "settings.items.showTooltips",
+    "settings.items.skipCalloutsInPreview",
+    "settings.items.skipCodeBlocksInPreview",
+    "settings.items.skipHeadingsInPreview",
+    "settings.items.springLoadedFolders",
+    "settings.items.springLoadedFoldersInitialDelay",
+    "settings.items.springLoadedFoldersSubsequentDelay",
+    "settings.items.stickyGroupHeaders",
+    "settings.items.stripHtmlInPreview",
+    "settings.items.stripLatexInPreview",
+    "settings.items.supportDevelopment",
+    "settings.items.tagSortOrder",
+    "settings.items.textCountPlacement",
+    "settings.items.timeFormat",
+    "settings.items.toolbarButtons",
+    "settings.items.unfinishedTaskBackgroundColor",
+    "settings.items.unfinishedTaskIcon",
+    "settings.items.useFolderColor",
+    "settings.items.useFolderIcon",
+    "settings.items.vaultProfiles",
+    "settings.items.whatsNew",
+    "settings.items.wordCountTargetProperty",
+    "settings.metadataReport",
+    "settings.pageGroups.calendarAndTools",
+    "settings.pageGroups.configuration",
+    "settings.syncMode.notSynced"
+  ],
+  "approvedAdditions": []
+}

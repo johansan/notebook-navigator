@@ -40,15 +40,15 @@ export function createDisplayFiltersSettingDefinitions(context: SettingsTabConte
     return [
         createGroupDefinition(undefined, [
             createRenderDefinition({
-                name: strings.settings.items.excludedFileNamePatterns.name,
-                desc: strings.settings.items.excludedFileNamePatterns.desc,
-                aliases: [strings.settings.items.excludedFileNamePatterns.placeholder],
+                name: strings.settings.items.hideFiles.name,
+                desc: strings.settings.items.hideFiles.desc,
+                aliases: [strings.settings.items.hideFiles.placeholder],
                 render: setting => {
                     context.configureDebouncedTextSetting(
                         setting,
-                        strings.settings.items.excludedFileNamePatterns.name,
-                        strings.settings.items.excludedFileNamePatterns.desc,
-                        strings.settings.items.excludedFileNamePatterns.placeholder,
+                        strings.settings.items.hideFiles.name,
+                        strings.settings.items.hideFiles.desc,
+                        strings.settings.items.hideFiles.placeholder,
                         () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileNames ?? []),
                         value => {
                             const activeProfile = getActiveProfile();
@@ -62,15 +62,15 @@ export function createDisplayFiltersSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.excludedFolders.name,
-                desc: strings.settings.items.excludedFolders.desc,
-                aliases: [strings.settings.items.excludedFolders.placeholder],
+                name: strings.settings.items.hideFolders.name,
+                desc: strings.settings.items.hideFolders.desc,
+                aliases: [strings.settings.items.hideFolders.placeholder],
                 render: setting => {
                     context.configureDebouncedTextSetting(
                         setting,
-                        strings.settings.items.excludedFolders.name,
-                        strings.settings.items.excludedFolders.desc,
-                        strings.settings.items.excludedFolders.placeholder,
+                        strings.settings.items.hideFolders.name,
+                        strings.settings.items.hideFolders.desc,
+                        strings.settings.items.hideFolders.placeholder,
                         () => formatCommaSeparatedList(getActiveProfile()?.hiddenFolders ?? []),
                         value => {
                             const activeProfile = getActiveProfile();
@@ -106,15 +106,15 @@ export function createDisplayFiltersSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.hiddenTags.name,
-                desc: strings.settings.items.hiddenTags.desc,
-                aliases: [strings.settings.items.hiddenTags.placeholder],
+                name: strings.settings.items.hideTags.name,
+                desc: strings.settings.items.hideTags.desc,
+                aliases: [strings.settings.items.hideTags.placeholder],
                 render: setting => {
                     context.configureDebouncedTextSetting(
                         setting,
-                        strings.settings.items.hiddenTags.name,
-                        strings.settings.items.hiddenTags.desc,
-                        strings.settings.items.hiddenTags.placeholder,
+                        strings.settings.items.hideTags.name,
+                        strings.settings.items.hideTags.desc,
+                        strings.settings.items.hideTags.placeholder,
                         () => formatCommaSeparatedList(getActiveProfile()?.hiddenTags ?? []),
                         value => {
                             const activeProfile = getActiveProfile();
@@ -132,15 +132,15 @@ export function createDisplayFiltersSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.hiddenFileTags.name,
-                desc: strings.settings.items.hiddenFileTags.desc,
-                aliases: [strings.settings.items.hiddenFileTags.placeholder],
+                name: strings.settings.items.hideNotesWithTags.name,
+                desc: strings.settings.items.hideNotesWithTags.desc,
+                aliases: [strings.settings.items.hideNotesWithTags.placeholder],
                 render: setting => {
                     context.configureDebouncedTextSetting(
                         setting,
-                        strings.settings.items.hiddenFileTags.name,
-                        strings.settings.items.hiddenFileTags.desc,
-                        strings.settings.items.hiddenFileTags.placeholder,
+                        strings.settings.items.hideNotesWithTags.name,
+                        strings.settings.items.hideNotesWithTags.desc,
+                        strings.settings.items.hideNotesWithTags.placeholder,
                         () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileTags ?? []),
                         value => {
                             const activeProfile = getActiveProfile();
@@ -159,15 +159,15 @@ export function createDisplayFiltersSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
-                name: strings.settings.items.excludedNotes.name,
-                desc: strings.settings.items.excludedNotes.desc,
-                aliases: [strings.settings.items.excludedNotes.placeholder],
+                name: strings.settings.items.hideNotesWithPropertyRules.name,
+                desc: strings.settings.items.hideNotesWithPropertyRules.desc,
+                aliases: [strings.settings.items.hideNotesWithPropertyRules.placeholder],
                 render: setting => {
                     context.configureDebouncedTextSetting(
                         setting,
-                        strings.settings.items.excludedNotes.name,
-                        strings.settings.items.excludedNotes.desc,
-                        strings.settings.items.excludedNotes.placeholder,
+                        strings.settings.items.hideNotesWithPropertyRules.name,
+                        strings.settings.items.hideNotesWithPropertyRules.desc,
+                        strings.settings.items.hideNotesWithPropertyRules.placeholder,
                         () => formatCommaSeparatedList(getActiveProfile()?.hiddenFileProperties ?? []),
                         value => {
                             const activeProfile = getActiveProfile();

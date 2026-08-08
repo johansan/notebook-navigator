@@ -51,7 +51,7 @@ export function addSettingSyncModeToggle(options: SettingSyncModeToggleOptions):
         const updateButtonState = () => {
             const isLocal = plugin.isLocal(settingId);
             button.setIcon(isLocal ? 'lucide-cloud-off' : 'lucide-cloud');
-            const tooltip = isLocal ? strings.settings.syncMode.switchToSynced : strings.settings.syncMode.switchToLocal;
+            const tooltip = isLocal ? strings.settings.syncMode.enableSync : strings.settings.syncMode.disableSync;
             button.setTooltip(tooltip);
             button.extraSettingsEl.setAttr('aria-label', tooltip);
 
