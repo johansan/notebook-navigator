@@ -128,9 +128,9 @@ export class UXIconMapModal extends Modal {
             case 'navigationPane':
                 return strings.settings.items.startView.options.navigation;
             case 'folders':
-                return strings.settings.sections.folders;
+                return strings.navigationPane.folders;
             case 'tags':
-                return strings.settings.sections.tags;
+                return strings.navigationPane.tags;
             case 'properties':
                 return strings.navigationPane.properties;
             case 'listPane':
@@ -138,7 +138,7 @@ export class UXIconMapModal extends Modal {
             case 'fileItems':
                 return strings.modals.interfaceIcons.fileItemsSection;
             case 'calendar':
-                return strings.settings.sections.calendar;
+                return strings.navigationPane.calendar;
             default:
                 return '';
         }

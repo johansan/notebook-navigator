@@ -74,6 +74,9 @@ export const STRINGS_AR = {
         shortcutsHeader: 'اختصارات', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'ملفات حديثة', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'الخصائص',
+        folders: 'مجلدات',
+        tags: 'وسوم',
+        calendar: 'التقويم',
         reorderRootFoldersTitle: 'إعادة ترتيب التنقل',
         reorderRootFoldersHint: 'استخدم الأسهم أو اسحب لإعادة الترتيب',
         vaultRootLabel: 'الخزنة',
@@ -1006,95 +1009,136 @@ export const STRINGS_AR = {
             exportSuccess: 'تم تصدير تقرير البيانات الوصفية الفاشلة إلى: {filename}',
             exportFailed: 'فشل تصدير تقرير البيانات الوصفية'
         },
-        sections: {
-            general: 'عام',
-            vaultFilters: 'مرشحات العرض',
-            appearanceBehavior: 'المظهر والسلوك',
-            navigationPane: 'لوحة التنقل',
-            calendar: 'التقويم',
-            fileOperations: 'عمليات الملفات',
-            icons: 'حزم الأيقونات',
-            folders: 'مجلدات',
-            folderNotes: 'ملاحظات المجلد',
-            folderNoteFiles: 'ملفات ملاحظات المجلد',
-            foldersAndFolderNotes: 'المجلدات وملاحظات المجلد',
-            tagsAndProperties: 'الوسوم والخصائص',
-            tags: 'وسوم',
-            listPane: 'لوحة القائمة',
-            notes: 'عرض الملفات',
-            shortcutsAndRecentFiles: 'الاختصارات والملفات الأخيرة',
-            advanced: 'متقدم'
+        index: {
+            label: 'عام',
+            description: 'ملاحظات الإصدار والدعم وملف الخزنة وأنواع الملفات ومفاتيح الخصائص.',
+            groups: {
+                vaultSetup: 'إعداد الخزنة'
+            }
         },
         pageGroups: {
             configuration: 'التكوين',
-            navigationAndContent: 'لوحة التنقل',
-            notesAndLists: 'لوحة القائمة',
+            navigationPane: 'لوحة التنقل',
+            listPane: 'لوحة القائمة',
             calendarAndTools: 'التقويم والأدوات'
         },
-        pageDescriptions: {
-            general: 'ملاحظات الإصدار والدعم وملف الخزنة وأنواع الملفات ومفاتيح الخصائص.',
-            vaultFilters: 'المجلدات والوسوم والملفات ووسوم الملفات وقواعد الخصائص المخفية.',
-            appearanceBehavior: 'السلوك والتنقل بلوحة المفاتيح وأزرار الفأرة والمظهر والتنسيق.',
-            navigationPane: 'التخطيط والمظهر وعدد الملفات وسلوك الطي وألوان قوس قزح.',
-            shortcuts: 'رؤية الاختصارات والشارات والملفات الأخيرة والعناصر المثبتة.',
-            calendar: 'عرض التقويم وملاحظات التاريخ والقوالب والإعدادات المحلية وموضع الشريط الجانبي.',
-            fileOperations: 'قوالب، تأكيدات الحذف والمرفقات وسلوك تعارض نقل الملفات.',
-            foldersAndFolderNotes: 'عرض المجلدات وملاحظات المجلد وقوالب ملاحظات المجلد وسلوك ملاحظات المجلد.',
-            tagsProperties: 'أقسام الوسوم والخصائص والأيقونات والفرز والنطاق والوراثة.',
-            listPane: 'الفرز والتجميع وأوضاع القائمة والملاحظات المثبتة ومعاينات الرسومات.',
-            frontmatter: 'حقول البيانات الأمامية لأسماء العرض والطوابع الزمنية والأيقونات والألوان.',
-            notes: 'العناوين ونص المعاينة والصور المميزة والوسوم والخصائص والتواريخ وعدد الكلمات وعدد الأحرف.',
-            iconPacks: 'أيقونات الواجهة وأيقونات الملفات وإدارة حزم الأيقونات.',
-            advanced: 'التشخيص وتنظيف البيانات الوصفية والاستيراد/التصدير وإعادة التعيين.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'إعداد الخزنة',
-                templates: 'قوالب',
-                behavior: 'السلوك',
-                startup: 'بدء التشغيل',
-                keyboardNavigation: 'التنقل بلوحة المفاتيح',
-                mouseButtons: 'أزرار الفأرة',
-                view: 'المظهر',
-                icons: 'الأيقونات',
-                desktopAppearance: 'مظهر سطح المكتب',
-                mobileAppearance: 'مظهر الهاتف المحمول',
-                formatting: 'التنسيق'
+        pages: {
+            displayFilters: {
+                label: 'مرشحات العرض',
+                description: 'المجلدات والوسوم والملفات ووسوم الملفات وقواعد الخصائص المخفية.'
+            },
+            appearanceAndBehavior: {
+                label: 'المظهر والسلوك',
+                description: 'السلوك والتنقل بلوحة المفاتيح وأزرار الفأرة والمظهر والتنسيق.',
+                groups: {
+                    startup: 'بدء التشغيل',
+                    keyboardNavigation: 'التنقل بلوحة المفاتيح',
+                    mouseButtons: 'أزرار الفأرة',
+                    desktopAppearance: 'مظهر سطح المكتب',
+                    mobileAppearance: 'مظهر الهاتف المحمول',
+                    appearance: 'المظهر',
+                    icons: 'الأيقونات',
+                    formatting: 'التنسيق'
+                }
+            },
+            navigationPane: {
+                label: 'لوحة التنقل',
+                description: 'التخطيط والمظهر وعدد الملفات وسلوك الطي وألوان قوس قزح.',
+                groups: {
+                    appearance: 'المظهر',
+                    banner: 'اللافتة',
+                    collapseItems: 'طي العناصر',
+                    dragAndDrop: 'السحب والإفلات',
+                    fileCounts: 'عدد الملفات',
+                    rainbowColors: 'ألوان قوس قزح'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'الاختصارات والملفات الأخيرة',
+                description: 'رؤية الاختصارات والشارات والملفات الأخيرة والعناصر المثبتة.',
+                groups: {
+                    shortcuts: 'اختصارات',
+                    recentFiles: 'ملفات حديثة'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'المجلدات وملاحظات المجلد',
+                description: 'عرض المجلدات وملاحظات المجلد وقوالب ملاحظات المجلد وسلوك ملاحظات المجلد.',
+                groups: {
+                    folders: 'مجلدات',
+                    folderNotes: 'ملاحظات المجلد',
+                    folderNoteFiles: 'ملفات ملاحظات المجلد'
+                }
+            },
+            tagsAndProperties: {
+                label: 'الوسوم والخصائص',
+                description: 'أقسام الوسوم والخصائص والأيقونات والفرز والنطاق والوراثة.',
+                groups: {
+                    tags: 'وسوم',
+                    properties: 'الخصائص'
+                }
+            },
+            listPane: {
+                label: 'لوحة القائمة',
+                description: 'الفرز والتجميع وأوضاع القائمة والملاحظات المثبتة ومعاينات الرسومات.',
+                groups: {
+                    appearance: 'المظهر',
+                    sortAndGroup: 'الفرز والتجميع',
+                    groupHeaders: 'رؤوس المجموعات',
+                    manualSort: 'الفرز اليدوي',
+                    pinnedNotes: 'الملاحظات المثبتة',
+                    behavior: 'السلوك',
+                    drawingPreviews: 'معاينات الرسومات'
+                }
+            },
+            fileOperations: {
+                label: 'عمليات الملفات',
+                description: 'قوالب، تأكيدات الحذف والمرفقات وسلوك تعارض نقل الملفات.',
+                groups: {
+                    templates: 'قوالب'
+                }
+            },
+            frontmatterFields: {
+                label: 'حقول البيانات الأمامية',
+                description: 'حقول البيانات الأمامية لأسماء العرض والطوابع الزمنية والأيقونات والألوان.'
+            },
+            fileDisplay: {
+                label: 'عرض الملفات',
+                description: 'العناوين ونص المعاينة والصور المميزة والوسوم والخصائص والتواريخ وعدد الكلمات وعدد الأحرف.',
+                groups: {
+                    icon: 'الأيقونة',
+                    title: 'العنوان',
+                    previewText: 'نص المعاينة',
+                    featureImage: 'الصورة المميزة',
+                    tags: 'الوسوم',
+                    properties: 'الخصائص',
+                    tasks: 'المهام',
+                    date: 'التاريخ',
+                    parentFolder: 'المجلد الأصلي',
+                    wordAndCharacterCount: 'عدد الكلمات والأحرف'
+                }
+            },
+            calendar: {
+                label: 'التقويم',
+                description: 'عرض التقويم وملاحظات التاريخ والقوالب والإعدادات المحلية وموضع الشريط الجانبي.',
+                groups: {
+                    appearance: 'المظهر',
+                    leftSidebar: 'الشريط الجانبي الأيسر',
+                    calendarIntegration: 'تكامل التقويم',
+                    rightSidebar: 'الشريط الجانبي الأيسر'
+                }
+            },
+            iconPacks: {
+                label: 'حزم الأيقونات',
+                description: 'أيقونات الواجهة وأيقونات الملفات وإدارة حزم الأيقونات.'
             },
             advanced: {
-                maintenance: 'الصيانة',
-                resetSettings: 'إعادة ضبط الإعدادات'
-            },
-            navigation: {
-                appearance: 'المظهر',
-                banner: 'اللافتة',
-                collapseItems: 'طي العناصر',
-                dragAndDrop: 'السحب والإفلات',
-                noteCounts: 'عدد الملفات',
-                rainbowColors: 'ألوان قوس قزح',
-                leftSidebar: 'الشريط الجانبي الأيسر',
-                calendarIntegration: 'تكامل التقويم'
-            },
-            list: {
-                display: 'المظهر',
-                sortAndGroup: 'الفرز والتجميع',
-                groupHeaders: 'رؤوس المجموعات',
-                manualSort: 'الفرز اليدوي',
-                pinnedNotes: 'الملاحظات المثبتة',
-                drawingPreviews: 'معاينات الرسومات'
-            },
-            notes: {
-                frontmatter: 'حقول البيانات الأمامية',
-                tasks: 'المهام',
-                icon: 'الأيقونة',
-                title: 'العنوان',
-                previewText: 'نص المعاينة',
-                featureImage: 'الصورة المميزة',
-                tags: 'الوسوم',
-                properties: 'الخصائص',
-                date: 'التاريخ',
-                parentFolder: 'المجلد الأصلي',
-                wordCount: 'عدد الكلمات والأحرف'
+                label: 'متقدم',
+                description: 'التشخيص وتنظيف البيانات الوصفية والاستيراد/التصدير وإعادة التعيين.',
+                groups: {
+                    maintenance: 'الصيانة',
+                    resetSettings: 'إعادة ضبط الإعدادات'
+                }
             }
         },
         syncMode: {

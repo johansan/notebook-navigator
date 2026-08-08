@@ -74,6 +74,9 @@ export const STRINGS_ID = {
         shortcutsHeader: 'Pintasan',
         recentFilesHeader: 'File terbaru', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Properti',
+        folders: 'Folder',
+        tags: 'Tag',
+        calendar: 'Kalender',
         reorderRootFoldersTitle: 'Atur ulang navigasi',
         reorderRootFoldersHint: 'Gunakan panah atau seret untuk mengatur ulang',
         vaultRootLabel: 'Vault',
@@ -1011,95 +1014,136 @@ export const STRINGS_ID = {
             exportSuccess: 'Laporan metadata yang gagal diekspor ke: {filename}',
             exportFailed: 'Gagal mengekspor laporan metadata'
         },
-        sections: {
-            general: 'Umum',
-            vaultFilters: 'Filter tampilan',
-            appearanceBehavior: 'Tampilan & perilaku',
-            navigationPane: 'Panel navigasi',
-            calendar: 'Kalender',
-            fileOperations: 'Operasi file',
-            icons: 'Paket ikon',
-            folders: 'Folder',
-            folderNotes: 'Catatan folder',
-            folderNoteFiles: 'File catatan folder',
-            foldersAndFolderNotes: 'Folder & catatan folder',
-            tagsAndProperties: 'Tag & properti',
-            tags: 'Tag',
-            listPane: 'Panel daftar',
-            notes: 'Tampilan file',
-            shortcutsAndRecentFiles: 'Pintasan & file terbaru',
-            advanced: 'Lanjutan'
+        index: {
+            label: 'Umum',
+            description: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
+            groups: {
+                vaultSetup: 'Penyiapan vault'
+            }
         },
         pageGroups: {
             configuration: 'Konfigurasi',
-            navigationAndContent: 'Panel navigasi',
-            notesAndLists: 'Panel daftar',
+            navigationPane: 'Panel navigasi',
+            listPane: 'Panel daftar',
             calendarAndTools: 'Kalender dan alat'
         },
-        pageDescriptions: {
-            general: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
-            vaultFilters: 'Folder, tag, file, tag file, dan aturan properti tersembunyi.',
-            appearanceBehavior: 'Perilaku, navigasi keyboard, tombol mouse, tampilan, dan pemformatan.',
-            navigationPane: 'Tata letak, tampilan, jumlah file, perilaku menciutkan, dan warna pelangi.',
-            shortcuts: 'Visibilitas pintasan, lencana, file terbaru, dan item yang disematkan.',
-            calendar: 'Tampilan kalender, catatan tanggal, templat, lokal, dan penempatan bilah sisi.',
-            fileOperations: 'Templat, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
-            foldersAndFolderNotes: 'Tampilan folder, catatan folder, templat catatan folder, dan perilaku catatan folder.',
-            tagsProperties: 'Bagian tag dan properti, ikon, pengurutan, cakupan, dan pewarisan.',
-            listPane: 'Pengurutan, pengelompokan, mode daftar, catatan yang disematkan, dan pratinjau gambar.',
-            frontmatter: 'Bidang frontmatter untuk nama tampilan, stempel waktu, ikon, dan warna.',
-            notes: 'Judul, teks pratinjau, gambar fitur, tag, properti, tanggal, jumlah kata, dan jumlah karakter.',
-            iconPacks: 'Ikon antarmuka, ikon file, dan manajemen paket ikon.',
-            advanced: 'Diagnostik, pembersihan metadata, impor/ekspor, dan reset.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Penyiapan vault',
-                templates: 'Templat',
-                behavior: 'Perilaku',
-                startup: 'Startup',
-                keyboardNavigation: 'Navigasi keyboard',
-                mouseButtons: 'Tombol mouse',
-                view: 'Tampilan',
-                icons: 'Ikon',
-                desktopAppearance: 'Tampilan desktop',
-                mobileAppearance: 'Tampilan seluler',
-                formatting: 'Pemformatan'
+        pages: {
+            displayFilters: {
+                label: 'Filter tampilan',
+                description: 'Folder, tag, file, tag file, dan aturan properti tersembunyi.'
+            },
+            appearanceAndBehavior: {
+                label: 'Tampilan & perilaku',
+                description: 'Perilaku, navigasi keyboard, tombol mouse, tampilan, dan pemformatan.',
+                groups: {
+                    startup: 'Startup',
+                    keyboardNavigation: 'Navigasi keyboard',
+                    mouseButtons: 'Tombol mouse',
+                    desktopAppearance: 'Tampilan desktop',
+                    mobileAppearance: 'Tampilan seluler',
+                    appearance: 'Tampilan',
+                    icons: 'Ikon',
+                    formatting: 'Pemformatan'
+                }
+            },
+            navigationPane: {
+                label: 'Panel navigasi',
+                description: 'Tata letak, tampilan, jumlah file, perilaku menciutkan, dan warna pelangi.',
+                groups: {
+                    appearance: 'Tampilan',
+                    banner: 'Banner',
+                    collapseItems: 'Ciutkan item',
+                    dragAndDrop: 'Seret dan lepas',
+                    fileCounts: 'Jumlah file',
+                    rainbowColors: 'Warna pelangi'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Pintasan & file terbaru',
+                description: 'Visibilitas pintasan, lencana, file terbaru, dan item yang disematkan.',
+                groups: {
+                    shortcuts: 'Pintasan',
+                    recentFiles: 'File terbaru'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Folder & catatan folder',
+                description: 'Tampilan folder, catatan folder, templat catatan folder, dan perilaku catatan folder.',
+                groups: {
+                    folders: 'Folder',
+                    folderNotes: 'Catatan folder',
+                    folderNoteFiles: 'File catatan folder'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tag & properti',
+                description: 'Bagian tag dan properti, ikon, pengurutan, cakupan, dan pewarisan.',
+                groups: {
+                    tags: 'Tag',
+                    properties: 'Properti'
+                }
+            },
+            listPane: {
+                label: 'Panel daftar',
+                description: 'Pengurutan, pengelompokan, mode daftar, catatan yang disematkan, dan pratinjau gambar.',
+                groups: {
+                    appearance: 'Tampilan',
+                    sortAndGroup: 'Urutan & pengelompokan',
+                    groupHeaders: 'Header grup',
+                    manualSort: 'Urutan manual',
+                    pinnedNotes: 'Catatan yang disematkan',
+                    behavior: 'Perilaku',
+                    drawingPreviews: 'Pratinjau gambar'
+                }
+            },
+            fileOperations: {
+                label: 'Operasi file',
+                description: 'Templat, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
+                groups: {
+                    templates: 'Templat'
+                }
+            },
+            frontmatterFields: {
+                label: 'Bidang frontmatter',
+                description: 'Bidang frontmatter untuk nama tampilan, stempel waktu, ikon, dan warna.'
+            },
+            fileDisplay: {
+                label: 'Tampilan file',
+                description: 'Judul, teks pratinjau, gambar fitur, tag, properti, tanggal, jumlah kata, dan jumlah karakter.',
+                groups: {
+                    icon: 'Ikon',
+                    title: 'Judul',
+                    previewText: 'Teks pratinjau',
+                    featureImage: 'Gambar fitur',
+                    tags: 'Tag',
+                    properties: 'Properti',
+                    tasks: 'Tugas',
+                    date: 'Tanggal',
+                    parentFolder: 'Folder induk',
+                    wordAndCharacterCount: 'Jumlah kata dan karakter'
+                }
+            },
+            calendar: {
+                label: 'Kalender',
+                description: 'Tampilan kalender, catatan tanggal, templat, lokal, dan penempatan bilah sisi.',
+                groups: {
+                    appearance: 'Tampilan',
+                    leftSidebar: 'Bilah sisi kiri',
+                    calendarIntegration: 'Integrasi kalender',
+                    rightSidebar: 'Sidebar kanan'
+                }
+            },
+            iconPacks: {
+                label: 'Paket ikon',
+                description: 'Ikon antarmuka, ikon file, dan manajemen paket ikon.'
             },
             advanced: {
-                maintenance: 'Pemeliharaan',
-                resetSettings: 'Atur ulang pengaturan'
-            },
-            navigation: {
-                appearance: 'Tampilan',
-                banner: 'Banner',
-                collapseItems: 'Ciutkan item',
-                dragAndDrop: 'Seret dan lepas',
-                noteCounts: 'Jumlah file',
-                rainbowColors: 'Warna pelangi',
-                leftSidebar: 'Bilah sisi kiri',
-                calendarIntegration: 'Integrasi kalender'
-            },
-            list: {
-                display: 'Tampilan',
-                sortAndGroup: 'Urutan & pengelompokan',
-                groupHeaders: 'Header grup',
-                manualSort: 'Urutan manual',
-                pinnedNotes: 'Catatan yang disematkan',
-                drawingPreviews: 'Pratinjau gambar'
-            },
-            notes: {
-                frontmatter: 'Bidang frontmatter',
-                tasks: 'Tugas',
-                icon: 'Ikon',
-                title: 'Judul',
-                previewText: 'Teks pratinjau',
-                featureImage: 'Gambar fitur',
-                tags: 'Tag',
-                properties: 'Properti',
-                date: 'Tanggal',
-                parentFolder: 'Folder induk',
-                wordCount: 'Jumlah kata dan karakter'
+                label: 'Lanjutan',
+                description: 'Diagnostik, pembersihan metadata, impor/ekspor, dan reset.',
+                groups: {
+                    maintenance: 'Pemeliharaan',
+                    resetSettings: 'Atur ulang pengaturan'
+                }
             }
         },
         syncMode: {

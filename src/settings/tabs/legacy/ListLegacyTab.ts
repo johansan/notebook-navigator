@@ -59,7 +59,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
     const createGroup = createSettingGroupFactory(containerEl);
 
     const renderAppearanceGroup = (): void => {
-        const appearanceGroup = createGroup(strings.settings.groups.list.display);
+        const appearanceGroup = createGroup(strings.settings.pages.listPane.groups.appearance);
 
         // The list pane title only renders with the desktop chrome (desktop and tablets)
         if (!usesMobileChrome()) {
@@ -164,7 +164,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     addSettingSyncModeToggle({ setting: includeDescendantNotesSetting, plugin, settingId: 'includeDescendantNotes' });
 
-    const sortAndGroupGroup = createGroup(strings.settings.groups.list.sortAndGroup);
+    const sortAndGroupGroup = createGroup(strings.settings.pages.listPane.groups.sortAndGroup);
     let refreshPropertySortSecondaryVisibility = (): void => {};
 
     sortAndGroupGroup.addSetting(setting => {
@@ -254,7 +254,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
         });
     });
 
-    const groupHeadersGroup = createGroup(strings.settings.groups.list.groupHeaders);
+    const groupHeadersGroup = createGroup(strings.settings.pages.listPane.groups.groupHeaders);
 
     addToggleSetting(
         groupHeadersGroup.addSetting,
@@ -339,7 +339,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
         });
     });
 
-    const manualSortGroup = createGroup(strings.settings.groups.list.manualSort);
+    const manualSortGroup = createGroup(strings.settings.pages.listPane.groups.manualSort);
 
     manualSortGroup.addSetting(setting => {
         setting
@@ -417,7 +417,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
         });
     });
 
-    const pinnedNotesGroup = createGroup(strings.settings.groups.list.pinnedNotes);
+    const pinnedNotesGroup = createGroup(strings.settings.pages.listPane.groups.pinnedNotes);
 
     addToggleSetting(
         pinnedNotesGroup.addSetting,
@@ -431,7 +431,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
 
     renderAppearanceGroup();
 
-    const behaviorGroup = createGroup(strings.settings.groups.general.behavior);
+    const behaviorGroup = createGroup(strings.settings.pages.listPane.groups.behavior);
 
     addToggleSetting(
         behaviorGroup.addSetting,
@@ -530,7 +530,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
         updateButtonsDisabledState(plugin.settings.showQuickActions);
     }
 
-    const drawingPreviewsGroup = createGroup(strings.settings.groups.list.drawingPreviews);
+    const drawingPreviewsGroup = createGroup(strings.settings.pages.listPane.groups.drawingPreviews);
 
     addToggleSetting(
         drawingPreviewsGroup.addSetting,

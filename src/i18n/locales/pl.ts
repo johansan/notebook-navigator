@@ -74,6 +74,9 @@ export const STRINGS_PL = {
         shortcutsHeader: 'Skróty',
         recentFilesHeader: 'Ostatnie pliki', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Atrybuty',
+        folders: 'Foldery',
+        tags: 'Tagi',
+        calendar: 'Kalendarz',
         reorderRootFoldersTitle: 'Zmień kolejność elementów',
         reorderRootFoldersHint: 'Użyj strzałek lub przeciągnij, aby zmienić kolejność',
         vaultRootLabel: 'Sejf',
@@ -1014,95 +1017,136 @@ export const STRINGS_PL = {
             exportSuccess: 'Raport nieprawidłowych metadanych wyeksportowany do: {filename}',
             exportFailed: 'Nie udało się wyeksportować raportu metadanych'
         },
-        sections: {
-            general: 'Ogólne',
-            vaultFilters: 'Filtry wyświetlania',
-            appearanceBehavior: 'Wygląd i zachowanie',
-            navigationPane: 'Panel nawigacji',
-            calendar: 'Kalendarz',
-            fileOperations: 'Operacje na plikach',
-            icons: 'Pakiety ikon',
-            folders: 'Foldery',
-            folderNotes: 'Notatki folderu',
-            folderNoteFiles: 'Pliki notatek folderów',
-            foldersAndFolderNotes: 'Foldery i notatki folderu',
-            tagsAndProperties: 'Tagi i atrybuty',
-            tags: 'Tagi',
-            listPane: 'Panel listy',
-            notes: 'Wyświetlanie plików',
-            shortcutsAndRecentFiles: 'Skróty i ostatnie pliki',
-            advanced: 'Zaawansowane'
+        index: {
+            label: 'Ogólne',
+            description: 'Informacje o wydaniu, wsparcie, profil sejfu, typy plików i klucze atrybutów.',
+            groups: {
+                vaultSetup: 'Konfiguracja sejfu'
+            }
         },
         pageGroups: {
             configuration: 'Konfiguracja',
-            navigationAndContent: 'Panel nawigacji',
-            notesAndLists: 'Panel listy',
+            navigationPane: 'Panel nawigacji',
+            listPane: 'Panel listy',
             calendarAndTools: 'Kalendarz i narzędzia'
         },
-        pageDescriptions: {
-            general: 'Informacje o wydaniu, wsparcie, profil sejfu, typy plików i klucze atrybutów.',
-            vaultFilters: 'Ukryte foldery, tagi, pliki, tagi plików i reguły atrybutów.',
-            appearanceBehavior: 'Zachowanie, nawigacja klawiaturą, przyciski myszy, wygląd i formatowanie.',
-            navigationPane: 'Układ, wygląd, liczba plików, zachowanie zwijania i kolory tęczy.',
-            shortcuts: 'Widoczność skrótów, odznaki, ostatnie pliki i przypięte elementy.',
-            calendar: 'Wyświetlanie kalendarza, notatki dat, szablony, lokalizacja i położenie paska bocznego.',
-            fileOperations: 'Szablony, potwierdzenia usunięcia, załączniki i zachowanie przy konflikcie przenoszenia plików.',
-            foldersAndFolderNotes: 'Wyświetlanie folderów, notatki folderu, szablony notatek folderu i zachowanie notatek folderu.',
-            tagsProperties: 'Sekcje tagów i atrybutów, ikony, sortowanie, zakres i dziedziczenie.',
-            listPane: 'Sortowanie, grupowanie, tryby listy, przypięte notatki i podglądy rysunków.',
-            frontmatter: 'Pola metadanych dla nazw wyświetlanych, znaczników czasu, ikon i kolorów.',
-            notes: 'Tytuły, tekst podglądu, wyróżnione obrazy, tagi, atrybuty, daty, liczba słów i liczba znaków.',
-            iconPacks: 'Ikony interfejsu, ikony plików i zarządzanie pakietami ikon.',
-            advanced: 'Diagnostyka, czyszczenie metadanych, import/eksport i resetowanie.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Konfiguracja sejfu',
-                templates: 'Szablony',
-                behavior: 'Zachowanie',
-                startup: 'Uruchamianie',
-                keyboardNavigation: 'Nawigacja klawiaturą',
-                mouseButtons: 'Przyciski myszy',
-                view: 'Wygląd',
-                icons: 'Ikonki',
-                desktopAppearance: 'Wygląd na komputerze',
-                mobileAppearance: 'Wygląd mobilny',
-                formatting: 'Formatowanie'
+        pages: {
+            displayFilters: {
+                label: 'Filtry wyświetlania',
+                description: 'Ukryte foldery, tagi, pliki, tagi plików i reguły atrybutów.'
+            },
+            appearanceAndBehavior: {
+                label: 'Wygląd i zachowanie',
+                description: 'Zachowanie, nawigacja klawiaturą, przyciski myszy, wygląd i formatowanie.',
+                groups: {
+                    startup: 'Uruchamianie',
+                    keyboardNavigation: 'Nawigacja klawiaturą',
+                    mouseButtons: 'Przyciski myszy',
+                    desktopAppearance: 'Wygląd na komputerze',
+                    mobileAppearance: 'Wygląd mobilny',
+                    appearance: 'Wygląd',
+                    icons: 'Ikonki',
+                    formatting: 'Formatowanie'
+                }
+            },
+            navigationPane: {
+                label: 'Panel nawigacji',
+                description: 'Układ, wygląd, liczba plików, zachowanie zwijania i kolory tęczy.',
+                groups: {
+                    appearance: 'Wygląd',
+                    banner: 'Baner',
+                    collapseItems: 'Zwiń elementy',
+                    dragAndDrop: 'Przeciągnij i upuść',
+                    fileCounts: 'Liczba plików',
+                    rainbowColors: 'Kolory tęczy'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Skróty i ostatnie pliki',
+                description: 'Widoczność skrótów, odznaki, ostatnie pliki i przypięte elementy.',
+                groups: {
+                    shortcuts: 'Skróty',
+                    recentFiles: 'Ostatnie pliki'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Foldery i notatki folderu',
+                description: 'Wyświetlanie folderów, notatki folderu, szablony notatek folderu i zachowanie notatek folderu.',
+                groups: {
+                    folders: 'Foldery',
+                    folderNotes: 'Notatki folderu',
+                    folderNoteFiles: 'Pliki notatek folderów'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tagi i atrybuty',
+                description: 'Sekcje tagów i atrybutów, ikony, sortowanie, zakres i dziedziczenie.',
+                groups: {
+                    tags: 'Tagi',
+                    properties: 'Atrybuty'
+                }
+            },
+            listPane: {
+                label: 'Panel listy',
+                description: 'Sortowanie, grupowanie, tryby listy, przypięte notatki i podglądy rysunków.',
+                groups: {
+                    appearance: 'Wygląd',
+                    sortAndGroup: 'Sortowanie i grupowanie',
+                    groupHeaders: 'Nagłówki grup',
+                    manualSort: 'Sortowanie ręczne',
+                    pinnedNotes: 'Przypięte notatki',
+                    behavior: 'Zachowanie',
+                    drawingPreviews: 'Podglądy rysunków'
+                }
+            },
+            fileOperations: {
+                label: 'Operacje na plikach',
+                description: 'Szablony, potwierdzenia usunięcia, załączniki i zachowanie przy konflikcie przenoszenia plików.',
+                groups: {
+                    templates: 'Szablony'
+                }
+            },
+            frontmatterFields: {
+                label: 'Pola metadanych',
+                description: 'Pola metadanych dla nazw wyświetlanych, znaczników czasu, ikon i kolorów.'
+            },
+            fileDisplay: {
+                label: 'Wyświetlanie plików',
+                description: 'Tytuły, tekst podglądu, wyróżnione obrazy, tagi, atrybuty, daty, liczba słów i liczba znaków.',
+                groups: {
+                    icon: 'Ikonka',
+                    title: 'Tytuł',
+                    previewText: 'Tekst podglądu',
+                    featureImage: 'Wyróżniony obraz',
+                    tags: 'Tagi',
+                    properties: 'Atrybuty',
+                    tasks: 'Zadania',
+                    date: 'Data',
+                    parentFolder: 'Folder nadrzędny',
+                    wordAndCharacterCount: 'Liczba słów i znaków'
+                }
+            },
+            calendar: {
+                label: 'Kalendarz',
+                description: 'Wyświetlanie kalendarza, notatki dat, szablony, lokalizacja i położenie paska bocznego.',
+                groups: {
+                    appearance: 'Wygląd',
+                    leftSidebar: 'Lewy panel boczny',
+                    calendarIntegration: 'Integracja z kalendarzem',
+                    rightSidebar: 'Prawy panel boczny'
+                }
+            },
+            iconPacks: {
+                label: 'Pakiety ikon',
+                description: 'Ikony interfejsu, ikony plików i zarządzanie pakietami ikon.'
             },
             advanced: {
-                maintenance: 'Konserwacja',
-                resetSettings: 'Resetowanie ustawień'
-            },
-            navigation: {
-                appearance: 'Wygląd',
-                banner: 'Baner',
-                collapseItems: 'Zwiń elementy',
-                dragAndDrop: 'Przeciągnij i upuść',
-                noteCounts: 'Liczba plików',
-                rainbowColors: 'Kolory tęczy',
-                leftSidebar: 'Lewy panel boczny',
-                calendarIntegration: 'Integracja z kalendarzem'
-            },
-            list: {
-                display: 'Wygląd',
-                sortAndGroup: 'Sortowanie i grupowanie',
-                groupHeaders: 'Nagłówki grup',
-                manualSort: 'Sortowanie ręczne',
-                pinnedNotes: 'Przypięte notatki',
-                drawingPreviews: 'Podglądy rysunków'
-            },
-            notes: {
-                frontmatter: 'Pola metadanych',
-                tasks: 'Zadania',
-                icon: 'Ikonka',
-                title: 'Tytuł',
-                previewText: 'Tekst podglądu',
-                featureImage: 'Wyróżniony obraz',
-                tags: 'Tagi',
-                properties: 'Atrybuty',
-                date: 'Data',
-                parentFolder: 'Folder nadrzędny',
-                wordCount: 'Liczba słów i znaków'
+                label: 'Zaawansowane',
+                description: 'Diagnostyka, czyszczenie metadanych, import/eksport i resetowanie.',
+                groups: {
+                    maintenance: 'Konserwacja',
+                    resetSettings: 'Resetowanie ustawień'
+                }
             }
         },
         syncMode: {

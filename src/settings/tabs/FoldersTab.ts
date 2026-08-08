@@ -61,7 +61,7 @@ export function createFoldersSettingDefinitions(context: SettingsTabContext, hea
                 render: setting => renderFolderSortOrderSetting(setting, context)
             })
         ]),
-        createGroupDefinition(strings.settings.sections.folderNotes, [
+        createGroupDefinition(strings.settings.pages.foldersAndFolderNotes.groups.folderNotes, [
             createToggleDefinition('enableFolderNotes', {
                 name: strings.settings.items.enableFolderNotes.name,
                 desc: strings.settings.items.enableFolderNotes.desc
@@ -99,7 +99,7 @@ export function createFoldersSettingDefinitions(context: SettingsTabContext, hea
             })
         ]),
         createGroupDefinition(
-            strings.settings.sections.folderNoteFiles,
+            strings.settings.pages.foldersAndFolderNotes.groups.folderNoteFiles,
             [
                 createDropdownDefinition('folderNoteType', {
                     name: strings.settings.items.folderNoteType.name,

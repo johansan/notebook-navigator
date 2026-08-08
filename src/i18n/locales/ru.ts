@@ -74,6 +74,9 @@ export const STRINGS_RU = {
         shortcutsHeader: 'Ярлыки', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'Недавние файлы', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Свойства',
+        folders: 'Папки',
+        tags: 'Теги',
+        calendar: 'Календарь',
         reorderRootFoldersTitle: 'Изменить порядок навигации',
         reorderRootFoldersHint: 'Используйте стрелки или перетаскивание',
         vaultRootLabel: 'Хранилище',
@@ -1008,95 +1011,136 @@ export const STRINGS_RU = {
             exportSuccess: 'Отчёт о неудачных метаданных экспортирован в: {filename}',
             exportFailed: 'Не удалось экспортировать отчёт о метаданных'
         },
-        sections: {
-            general: 'Общие',
-            vaultFilters: 'Фильтры отображения',
-            appearanceBehavior: 'Внешний вид и поведение',
-            navigationPane: 'Панель навигации',
-            calendar: 'Календарь',
-            fileOperations: 'Операции с файлами',
-            icons: 'Наборы иконок',
-            folders: 'Папки',
-            folderNotes: 'Заметки папок',
-            folderNoteFiles: 'Файлы заметок папок',
-            foldersAndFolderNotes: 'Папки и заметки папок',
-            tagsAndProperties: 'Теги и свойства',
-            tags: 'Теги',
-            listPane: 'Панель списка',
-            notes: 'Отображение файлов',
-            shortcutsAndRecentFiles: 'Ярлыки и недавние файлы',
-            advanced: 'Расширенные'
+        index: {
+            label: 'Общие',
+            description: 'Заметки о выпуске, поддержка, профиль хранилища, типы файлов и ключи свойств.',
+            groups: {
+                vaultSetup: 'Настройка хранилища'
+            }
         },
         pageGroups: {
             configuration: 'Конфигурация',
-            navigationAndContent: 'Панель навигации',
-            notesAndLists: 'Панель списка',
+            navigationPane: 'Панель навигации',
+            listPane: 'Панель списка',
             calendarAndTools: 'Календарь и инструменты'
         },
-        pageDescriptions: {
-            general: 'Заметки о выпуске, поддержка, профиль хранилища, типы файлов и ключи свойств.',
-            vaultFilters: 'Скрытые папки, теги, файлы, теги файлов и правила свойств.',
-            appearanceBehavior: 'Поведение, навигация с клавиатуры, кнопки мыши, внешний вид и форматирование.',
-            navigationPane: 'Компоновка, внешний вид, количество файлов, поведение сворачивания и цвета радуги.',
-            shortcuts: 'Видимость ярлыков, значки, недавние файлы и закреплённые элементы.',
-            calendar: 'Отображение календаря, заметки дат, шаблоны, локаль и размещение боковой панели.',
-            fileOperations: 'Шаблоны, подтверждения удаления, вложения и поведение при конфликтах перемещения файлов.',
-            foldersAndFolderNotes: 'Отображение папок, заметки папок, шаблоны заметок папок и поведение заметок папок.',
-            tagsProperties: 'Разделы тегов и свойств, иконки, сортировка, область действия и наследование.',
-            listPane: 'Сортировка, группировка, режимы списка, закреплённые заметки и предпросмотр рисунков.',
-            frontmatter: 'Поля frontmatter для отображаемых имён, временных меток, иконок и цветов.',
-            notes: 'Заголовки, текст превью, изображения записей, теги, свойства, даты, количество слов и количество символов.',
-            iconPacks: 'Иконки интерфейса, иконки файлов и управление наборами иконок.',
-            advanced: 'Диагностика, очистка метаданных, импорт/экспорт и сброс.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Настройка хранилища',
-                templates: 'Шаблоны',
-                behavior: 'Поведение',
-                startup: 'Запуск',
-                keyboardNavigation: 'Навигация с клавиатуры',
-                mouseButtons: 'Кнопки мыши',
-                view: 'Внешний вид',
-                icons: 'Иконки',
-                desktopAppearance: 'Внешний вид на компьютере',
-                mobileAppearance: 'Мобильный вид',
-                formatting: 'Форматирование'
+        pages: {
+            displayFilters: {
+                label: 'Фильтры отображения',
+                description: 'Скрытые папки, теги, файлы, теги файлов и правила свойств.'
+            },
+            appearanceAndBehavior: {
+                label: 'Внешний вид и поведение',
+                description: 'Поведение, навигация с клавиатуры, кнопки мыши, внешний вид и форматирование.',
+                groups: {
+                    startup: 'Запуск',
+                    keyboardNavigation: 'Навигация с клавиатуры',
+                    mouseButtons: 'Кнопки мыши',
+                    desktopAppearance: 'Внешний вид на компьютере',
+                    mobileAppearance: 'Мобильный вид',
+                    appearance: 'Внешний вид',
+                    icons: 'Иконки',
+                    formatting: 'Форматирование'
+                }
+            },
+            navigationPane: {
+                label: 'Панель навигации',
+                description: 'Компоновка, внешний вид, количество файлов, поведение сворачивания и цвета радуги.',
+                groups: {
+                    appearance: 'Внешний вид',
+                    banner: 'Баннер',
+                    collapseItems: 'Сворачивание элементов',
+                    dragAndDrop: 'Перетаскивание',
+                    fileCounts: 'Количество файлов',
+                    rainbowColors: 'Цвета радуги'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Ярлыки и недавние файлы',
+                description: 'Видимость ярлыков, значки, недавние файлы и закреплённые элементы.',
+                groups: {
+                    shortcuts: 'Ярлыки',
+                    recentFiles: 'Недавние файлы'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Папки и заметки папок',
+                description: 'Отображение папок, заметки папок, шаблоны заметок папок и поведение заметок папок.',
+                groups: {
+                    folders: 'Папки',
+                    folderNotes: 'Заметки папок',
+                    folderNoteFiles: 'Файлы заметок папок'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Теги и свойства',
+                description: 'Разделы тегов и свойств, иконки, сортировка, область действия и наследование.',
+                groups: {
+                    tags: 'Теги',
+                    properties: 'Свойства'
+                }
+            },
+            listPane: {
+                label: 'Панель списка',
+                description: 'Сортировка, группировка, режимы списка, закреплённые заметки и предпросмотр рисунков.',
+                groups: {
+                    appearance: 'Внешний вид',
+                    sortAndGroup: 'Сортировка и группировка',
+                    groupHeaders: 'Заголовки групп',
+                    manualSort: 'Ручная сортировка',
+                    pinnedNotes: 'Закреплённые заметки',
+                    behavior: 'Поведение',
+                    drawingPreviews: 'Предпросмотр рисунков'
+                }
+            },
+            fileOperations: {
+                label: 'Операции с файлами',
+                description: 'Шаблоны, подтверждения удаления, вложения и поведение при конфликтах перемещения файлов.',
+                groups: {
+                    templates: 'Шаблоны'
+                }
+            },
+            frontmatterFields: {
+                label: 'Поля frontmatter',
+                description: 'Поля frontmatter для отображаемых имён, временных меток, иконок и цветов.'
+            },
+            fileDisplay: {
+                label: 'Отображение файлов',
+                description: 'Заголовки, текст превью, изображения записей, теги, свойства, даты, количество слов и количество символов.',
+                groups: {
+                    icon: 'Иконка',
+                    title: 'Заголовок',
+                    previewText: 'Текст превью',
+                    featureImage: 'Изображение записи',
+                    tags: 'Теги',
+                    properties: 'Свойства',
+                    tasks: 'Задачи',
+                    date: 'Дата',
+                    parentFolder: 'Родительская папка',
+                    wordAndCharacterCount: 'Количество слов и символов'
+                }
+            },
+            calendar: {
+                label: 'Календарь',
+                description: 'Отображение календаря, заметки дат, шаблоны, локаль и размещение боковой панели.',
+                groups: {
+                    appearance: 'Внешний вид',
+                    leftSidebar: 'Левая боковая панель',
+                    calendarIntegration: 'Интеграция с календарём',
+                    rightSidebar: 'Правая боковая панель'
+                }
+            },
+            iconPacks: {
+                label: 'Наборы иконок',
+                description: 'Иконки интерфейса, иконки файлов и управление наборами иконок.'
             },
             advanced: {
-                maintenance: 'Обслуживание',
-                resetSettings: 'Сброс настроек'
-            },
-            navigation: {
-                appearance: 'Внешний вид',
-                banner: 'Баннер',
-                collapseItems: 'Сворачивание элементов',
-                dragAndDrop: 'Перетаскивание',
-                noteCounts: 'Количество файлов',
-                rainbowColors: 'Цвета радуги',
-                leftSidebar: 'Левая боковая панель',
-                calendarIntegration: 'Интеграция с календарём'
-            },
-            list: {
-                display: 'Внешний вид',
-                sortAndGroup: 'Сортировка и группировка',
-                groupHeaders: 'Заголовки групп',
-                manualSort: 'Ручная сортировка',
-                pinnedNotes: 'Закреплённые заметки',
-                drawingPreviews: 'Предпросмотр рисунков'
-            },
-            notes: {
-                frontmatter: 'Поля frontmatter',
-                tasks: 'Задачи',
-                icon: 'Иконка',
-                title: 'Заголовок',
-                previewText: 'Текст превью',
-                featureImage: 'Изображение записи',
-                tags: 'Теги',
-                properties: 'Свойства',
-                date: 'Дата',
-                parentFolder: 'Родительская папка',
-                wordCount: 'Количество слов и символов'
+                label: 'Расширенные',
+                description: 'Диагностика, очистка метаданных, импорт/экспорт и сброс.',
+                groups: {
+                    maintenance: 'Обслуживание',
+                    resetSettings: 'Сброс настроек'
+                }
             }
         },
         syncMode: {

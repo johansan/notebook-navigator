@@ -36,8 +36,8 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
 
     const createGroup = createSettingGroupFactory(containerEl);
     const advancedGroup = createGroup(undefined);
-    const maintenanceGroup = createGroup(strings.settings.groups.advanced.maintenance);
-    const resetGroup = createGroup(strings.settings.groups.advanced.resetSettings);
+    const maintenanceGroup = createGroup(strings.settings.pages.advanced.groups.maintenance);
+    const resetGroup = createGroup(strings.settings.pages.advanced.groups.resetSettings);
 
     advancedGroup.addSetting(setting => {
         setting

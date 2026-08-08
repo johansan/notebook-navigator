@@ -56,7 +56,7 @@ export function createFilesSettingDefinitions(context: SettingsTabContext, headi
                 }
             })
         ]),
-        createGroupDefinition(strings.settings.groups.general.templates, [
+        createGroupDefinition(strings.settings.pages.fileOperations.groups.templates, [
             createFolderDefinition('calendarTemplateFolder', {
                 name: strings.settings.items.calendarTemplateFolder.name,
                 desc: strings.settings.items.calendarTemplateFolder.desc,

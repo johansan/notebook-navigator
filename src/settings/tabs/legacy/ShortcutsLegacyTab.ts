@@ -30,8 +30,8 @@ export function renderShortcutsTab(context: SettingsTabContext): void {
     const { containerEl, plugin, addToggleSetting } = context;
     const createGroup = createSettingGroupFactory(containerEl);
     const sharedGroup = createGroup(undefined);
-    const shortcutsGroup = createGroup(strings.navigationPane.shortcutsHeader);
-    const recentFilesGroup = createGroup(strings.navigationPane.recentFilesHeader);
+    const shortcutsGroup = createGroup(strings.settings.pages.shortcutsAndRecentFiles.groups.shortcuts);
+    const recentFilesGroup = createGroup(strings.settings.pages.shortcutsAndRecentFiles.groups.recentFiles);
 
     addToggleSetting(
         sharedGroup.addSetting,

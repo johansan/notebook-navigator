@@ -83,7 +83,7 @@ export function renderFilesTab(context: SettingsTabContext, heading?: string): v
             });
     });
 
-    const templatesGroup = createGroup(strings.settings.groups.general.templates);
+    const templatesGroup = createGroup(strings.settings.pages.fileOperations.groups.templates);
     const templateFolderSetting = templatesGroup.addSetting(setting => {
         context.configureDebouncedTextSetting(
             setting,

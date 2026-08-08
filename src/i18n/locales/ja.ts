@@ -73,6 +73,9 @@ export const STRINGS_JA = {
         shortcutsHeader: 'ショートカット',
         recentFilesHeader: '最近のファイル', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'プロパティ',
+        folders: 'フォルダノート',
+        tags: 'タグ表示',
+        calendar: 'カレンダー',
         reorderRootFoldersTitle: 'ナビゲーションを並び替え',
         reorderRootFoldersHint: '矢印またはドラッグで並び替え',
         vaultRootLabel: 'ボールト',
@@ -1010,95 +1013,136 @@ export const STRINGS_JA = {
             exportSuccess: '失敗したメタデータレポートをエクスポートしました: {filename}',
             exportFailed: 'メタデータレポートのエクスポートに失敗しました'
         },
-        sections: {
-            general: '一般設定',
-            vaultFilters: '表示フィルター',
-            appearanceBehavior: '外観と動作',
-            navigationPane: 'ナビゲーションペイン',
-            calendar: 'カレンダー',
-            fileOperations: 'ファイル操作',
-            icons: 'アイコンパック',
-            folders: 'フォルダノート',
-            folderNotes: 'フォルダノート',
-            folderNoteFiles: 'フォルダノートファイル',
-            foldersAndFolderNotes: 'フォルダとフォルダノート',
-            tagsAndProperties: 'タグとプロパティ',
-            tags: 'タグ表示',
-            listPane: 'リストペイン',
-            notes: 'ファイル表示',
-            shortcutsAndRecentFiles: 'ショートカットと最近のファイル',
-            advanced: '詳細設定'
+        index: {
+            label: '一般設定',
+            description: 'リリースノート、サポート、保管庫プロファイル、ファイルタイプ、プロパティキー。',
+            groups: {
+                vaultSetup: '保管庫のセットアップ'
+            }
         },
         pageGroups: {
             configuration: '設定',
-            navigationAndContent: 'ナビゲーションペイン',
-            notesAndLists: 'リストペイン',
+            navigationPane: 'ナビゲーションペイン',
+            listPane: 'リストペイン',
             calendarAndTools: 'カレンダーとツール'
         },
-        pageDescriptions: {
-            general: 'リリースノート、サポート、保管庫プロファイル、ファイルタイプ、プロパティキー。',
-            vaultFilters: '非表示のフォルダ、タグ、ファイル、ファイルタグ、プロパティルール。',
-            appearanceBehavior: '動作、キーボード操作、マウスボタン、外観、書式。',
-            navigationPane: 'レイアウト、外観、ファイル数、折りたたみ動作、レインボーカラー。',
-            shortcuts: 'ショートカットの表示、バッジ、最近のファイル、ピン留めされた項目。',
-            calendar: 'カレンダー表示、日付ノート、テンプレート、ロケール、サイドバーの配置。',
-            fileOperations: 'テンプレート、削除確認、添付ファイル、ファイル移動時の競合動作。',
-            foldersAndFolderNotes: 'フォルダ表示、フォルダノート、フォルダノートのテンプレート、フォルダノートの動作。',
-            tagsProperties: 'タグとプロパティのセクション、アイコン、並べ替え、スコープ、継承。',
-            listPane: '並べ替え、グループ化、リストモード、ピン留めされたノート、描画プレビュー。',
-            frontmatter: '表示名、タイムスタンプ、アイコン、色のフロントマターフィールド。',
-            notes: 'タイトル、プレビューテキスト、アイキャッチ画像、タグ、プロパティ、日付、単語数、文字数。',
-            iconPacks: 'インターフェースアイコン、ファイルアイコン、アイコンパック管理。',
-            advanced: '診断、メタデータのクリーンアップ、インポート/エクスポート、リセット。'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: '保管庫のセットアップ',
-                templates: 'テンプレート',
-                behavior: '動作',
-                startup: '起動',
-                keyboardNavigation: 'キーボード操作',
-                mouseButtons: 'マウスボタン',
-                view: '外観',
-                icons: 'アイコン',
-                desktopAppearance: 'デスクトップの外観',
-                mobileAppearance: 'モバイルの外観',
-                formatting: '書式'
+        pages: {
+            displayFilters: {
+                label: '表示フィルター',
+                description: '非表示のフォルダ、タグ、ファイル、ファイルタグ、プロパティルール。'
+            },
+            appearanceAndBehavior: {
+                label: '外観と動作',
+                description: '動作、キーボード操作、マウスボタン、外観、書式。',
+                groups: {
+                    startup: '起動',
+                    keyboardNavigation: 'キーボード操作',
+                    mouseButtons: 'マウスボタン',
+                    desktopAppearance: 'デスクトップの外観',
+                    mobileAppearance: 'モバイルの外観',
+                    appearance: '外観',
+                    icons: 'アイコン',
+                    formatting: '書式'
+                }
+            },
+            navigationPane: {
+                label: 'ナビゲーションペイン',
+                description: 'レイアウト、外観、ファイル数、折りたたみ動作、レインボーカラー。',
+                groups: {
+                    appearance: '外観',
+                    banner: 'バナー',
+                    collapseItems: '項目を折りたたむ',
+                    dragAndDrop: 'ドラッグ＆ドロップ',
+                    fileCounts: 'ファイル数',
+                    rainbowColors: 'レインボーカラー'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'ショートカットと最近のファイル',
+                description: 'ショートカットの表示、バッジ、最近のファイル、ピン留めされた項目。',
+                groups: {
+                    shortcuts: 'ショートカット',
+                    recentFiles: '最近のファイル'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'フォルダとフォルダノート',
+                description: 'フォルダ表示、フォルダノート、フォルダノートのテンプレート、フォルダノートの動作。',
+                groups: {
+                    folders: 'フォルダノート',
+                    folderNotes: 'フォルダノート',
+                    folderNoteFiles: 'フォルダノートファイル'
+                }
+            },
+            tagsAndProperties: {
+                label: 'タグとプロパティ',
+                description: 'タグとプロパティのセクション、アイコン、並べ替え、スコープ、継承。',
+                groups: {
+                    tags: 'タグ表示',
+                    properties: 'プロパティ'
+                }
+            },
+            listPane: {
+                label: 'リストペイン',
+                description: '並べ替え、グループ化、リストモード、ピン留めされたノート、描画プレビュー。',
+                groups: {
+                    appearance: '外観',
+                    sortAndGroup: '並べ替えとグループ化',
+                    groupHeaders: 'グループヘッダー',
+                    manualSort: '手動並べ替え',
+                    pinnedNotes: 'ピン留めされたノート',
+                    behavior: '動作',
+                    drawingPreviews: '描画プレビュー'
+                }
+            },
+            fileOperations: {
+                label: 'ファイル操作',
+                description: 'テンプレート、削除確認、添付ファイル、ファイル移動時の競合動作。',
+                groups: {
+                    templates: 'テンプレート'
+                }
+            },
+            frontmatterFields: {
+                label: 'フロントマターフィールド',
+                description: '表示名、タイムスタンプ、アイコン、色のフロントマターフィールド。'
+            },
+            fileDisplay: {
+                label: 'ファイル表示',
+                description: 'タイトル、プレビューテキスト、アイキャッチ画像、タグ、プロパティ、日付、単語数、文字数。',
+                groups: {
+                    icon: 'アイコン',
+                    title: 'タイトル',
+                    previewText: 'プレビューテキスト',
+                    featureImage: 'アイキャッチ画像',
+                    tags: 'タグ',
+                    properties: 'プロパティ',
+                    tasks: 'タスク',
+                    date: '日付',
+                    parentFolder: '親フォルダ',
+                    wordAndCharacterCount: '単語数と文字数'
+                }
+            },
+            calendar: {
+                label: 'カレンダー',
+                description: 'カレンダー表示、日付ノート、テンプレート、ロケール、サイドバーの配置。',
+                groups: {
+                    appearance: '外観',
+                    leftSidebar: '左サイドバー',
+                    calendarIntegration: 'カレンダー連携',
+                    rightSidebar: '右サイドバー'
+                }
+            },
+            iconPacks: {
+                label: 'アイコンパック',
+                description: 'インターフェースアイコン、ファイルアイコン、アイコンパック管理。'
             },
             advanced: {
-                maintenance: 'メンテナンス',
-                resetSettings: '設定をリセット'
-            },
-            navigation: {
-                appearance: '外観',
-                banner: 'バナー',
-                collapseItems: '項目を折りたたむ',
-                dragAndDrop: 'ドラッグ＆ドロップ',
-                noteCounts: 'ファイル数',
-                rainbowColors: 'レインボーカラー',
-                leftSidebar: '左サイドバー',
-                calendarIntegration: 'カレンダー連携'
-            },
-            list: {
-                display: '外観',
-                sortAndGroup: '並べ替えとグループ化',
-                groupHeaders: 'グループヘッダー',
-                manualSort: '手動並べ替え',
-                pinnedNotes: 'ピン留めされたノート',
-                drawingPreviews: '描画プレビュー'
-            },
-            notes: {
-                frontmatter: 'フロントマターフィールド',
-                tasks: 'タスク',
-                icon: 'アイコン',
-                title: 'タイトル',
-                previewText: 'プレビューテキスト',
-                featureImage: 'アイキャッチ画像',
-                tags: 'タグ',
-                properties: 'プロパティ',
-                date: '日付',
-                parentFolder: '親フォルダ',
-                wordCount: '単語数と文字数'
+                label: '詳細設定',
+                description: '診断、メタデータのクリーンアップ、インポート/エクスポート、リセット。',
+                groups: {
+                    maintenance: 'メンテナンス',
+                    resetSettings: '設定をリセット'
+                }
             }
         },
         syncMode: {

@@ -103,7 +103,7 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 render: setting => renderIncludeDescendantNotesSetting(setting, context)
             })
         ]),
-        createGroupDefinition(strings.settings.groups.list.sortAndGroup, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.sortAndGroup, [
             createRenderDefinition({
                 name: strings.settings.items.sortNotesBy.name,
                 desc: strings.settings.items.sortNotesBy.desc,
@@ -157,7 +157,7 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 render: setting => renderInstructionSetting(setting, strings.settings.items.propertySortInstructions)
             })
         ]),
-        createGroupDefinition(strings.settings.groups.list.groupHeaders, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.groupHeaders, [
             createToggleDefinition('stickyGroupHeaders', {
                 name: strings.settings.items.stickyGroupHeaders.name,
                 desc: strings.settings.items.stickyGroupHeaders.desc
@@ -181,7 +181,7 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 render: setting => renderInstructionSetting(setting, strings.settings.items.groupHeadersInstructions)
             })
         ]),
-        createGroupDefinition(strings.settings.groups.list.manualSort, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.manualSort, [
             createRenderDefinition({
                 name: strings.settings.items.manualSortPropertyKey.name,
                 desc: strings.settings.items.manualSortPropertyKey.desc,
@@ -204,14 +204,14 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                 render: setting => renderInstructionSetting(setting, strings.settings.items.manualSortInstructions)
             })
         ]),
-        createGroupDefinition(strings.settings.groups.list.pinnedNotes, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.pinnedNotes, [
             createToggleDefinition('filterPinnedByFolder', {
                 name: strings.settings.items.limitPinnedToCurrentFolder.name,
                 desc: strings.settings.items.limitPinnedToCurrentFolder.desc
             })
         ]),
         createListAppearanceDefinitionGroup(context),
-        createGroupDefinition(strings.settings.groups.general.behavior, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.behavior, [
             createToggleDefinition('revealFileOnListChanges', {
                 name: strings.settings.items.revealFileOnListChanges.name,
                 desc: strings.settings.items.revealFileOnListChanges.desc
@@ -233,7 +233,7 @@ export function createListPaneSettingDefinitions(context: SettingsTabContext): S
                       })
                   ])
         ]),
-        createGroupDefinition(strings.settings.groups.list.drawingPreviews, [
+        createGroupDefinition(strings.settings.pages.listPane.groups.drawingPreviews, [
             createToggleDefinition('hideDrawingPreviewImages', {
                 name: strings.settings.items.hideDrawingPreviewImages.name,
                 desc: strings.settings.items.hideDrawingPreviewImages.desc
@@ -295,7 +295,7 @@ function createListAppearanceDefinitionGroup(context: SettingsTabContext): Setti
         })
     );
 
-    return createGroupDefinition(strings.settings.groups.list.display, items);
+    return createGroupDefinition(strings.settings.pages.listPane.groups.appearance, items);
 }
 
 const BIDI_ISOLATE_START = '\u2068'; // First Strong Isolate

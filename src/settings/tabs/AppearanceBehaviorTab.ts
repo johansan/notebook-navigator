@@ -125,7 +125,7 @@ function createBehaviorDefinitionGroup(context: SettingsTabContext): SettingDefi
 function createStartupDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
     const { plugin } = context;
 
-    return createGroupDefinition(strings.settings.groups.general.startup, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.startup, [
         createDropdownDefinition('startView', {
             name: strings.settings.items.startView.name,
             desc: strings.settings.items.startView.desc,
@@ -174,7 +174,7 @@ function createKeyboardNavigationDefinitionGroup(context: SettingsTabContext): S
     // Platform.isMacOS is also true on iOS/iPadOS devices, which use Cmd-based keyboards
     const cmdCtrlStrings = Platform.isMacOS ? strings.settings.items.cmdEnterOpenContext : strings.settings.items.ctrlEnterOpenContext;
 
-    return createGroupDefinition(strings.settings.groups.general.keyboardNavigation, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.keyboardNavigation, [
         createDropdownDefinition('multiSelectModifier', {
             name: strings.settings.items.multiSelectModifier.name,
             desc: strings.settings.items.multiSelectModifier.desc,
@@ -208,7 +208,7 @@ function createKeyboardNavigationDefinitionGroup(context: SettingsTabContext): S
 function createMouseButtonsDefinitionGroup(): SettingDefinitionGroup {
     const mouseBackForwardOptions = strings.settings.items.mouseBackForwardAction.options;
 
-    return createGroupDefinition(strings.settings.groups.general.mouseButtons, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.mouseButtons, [
         createDropdownDefinition('mouseBackForwardAction', {
             name: strings.settings.items.mouseBackForwardAction.name,
             desc: strings.settings.items.mouseBackForwardAction.desc,
@@ -314,7 +314,7 @@ function createDualPaneDefinitions(context: SettingsTabContext): SettingDefiniti
 function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
     const { plugin } = context;
 
-    return createGroupDefinition(strings.settings.groups.general.desktopAppearance, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.desktopAppearance, [
         ...createDualPaneDefinitions(context),
         createDropdownDefinition('desktopBackground', {
             name: strings.settings.items.appearanceBackground.name,
@@ -346,7 +346,7 @@ function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): Se
 function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
     const { plugin } = context;
 
-    return createGroupDefinition(strings.settings.groups.general.mobileAppearance, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.mobileAppearance, [
         // Tablets support the dual pane layout, so they get the same pane settings as desktop
         ...(Platform.isTablet ? createDualPaneDefinitions(context) : []),
         // Floating toolbars only render with the phone chrome; tablets use the desktop headers
@@ -373,7 +373,7 @@ function createMobileAppearanceDefinitionGroup(context: SettingsTabContext): Set
 }
 
 function createViewDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
-    return createGroupDefinition(strings.settings.groups.general.view, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.appearance, [
         createRenderDefinition({
             name: strings.settings.items.appearanceScale.name,
             desc: strings.settings.items.appearanceScale.desc,
@@ -395,7 +395,7 @@ function createViewDefinitionGroup(context: SettingsTabContext): SettingDefiniti
 function createIconDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
     const { plugin } = context;
 
-    return createGroupDefinition(strings.settings.groups.general.icons, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.icons, [
         createRenderDefinition({
             name: strings.settings.items.interfaceIcons.name,
             desc: strings.settings.items.interfaceIcons.desc,
@@ -434,7 +434,7 @@ function createIconDefinitionGroup(context: SettingsTabContext): SettingDefiniti
 }
 
 function createFormattingDefinitionGroup(context: SettingsTabContext): SettingDefinitionGroup {
-    return createGroupDefinition(strings.settings.groups.general.formatting, [
+    return createGroupDefinition(strings.settings.pages.appearanceAndBehavior.groups.formatting, [
         createRenderDefinition({
             name: strings.settings.items.dateFormat.name,
             desc: strings.settings.items.dateFormat.desc,

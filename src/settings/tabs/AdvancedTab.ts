@@ -124,8 +124,8 @@ export function createAdvancedSettingDefinitions(context: SettingsTabContext): S
 
     return [
         createGroupDefinition(undefined, generalItems),
-        createGroupDefinition(strings.settings.groups.advanced.maintenance, maintenanceItems),
-        createGroupDefinition(strings.settings.groups.advanced.resetSettings, resetItems)
+        createGroupDefinition(strings.settings.pages.advanced.groups.maintenance, maintenanceItems),
+        createGroupDefinition(strings.settings.pages.advanced.groups.resetSettings, resetItems)
     ];
 }
 

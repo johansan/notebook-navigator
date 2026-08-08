@@ -74,6 +74,9 @@ export const STRINGS_EN = {
         shortcutsHeader: 'Shortcuts', // Header label for shortcuts section in navigation pane (English: Shortcuts)
         recentFilesHeader: 'Recent files', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Properties', // Header label for properties section in navigation pane (English: Properties)
+        folders: 'Folders',
+        tags: 'Tags',
+        calendar: 'Calendar',
         reorderRootFoldersTitle: 'Reorder navigation',
         reorderRootFoldersHint: 'Use arrows or drag to reorder',
         vaultRootLabel: 'Vault',
@@ -1005,95 +1008,136 @@ export const STRINGS_EN = {
             exportSuccess: 'Failed metadata report exported to: {filename}',
             exportFailed: 'Failed to export metadata report'
         },
-        sections: {
-            general: 'General',
-            vaultFilters: 'Display filters',
-            appearanceBehavior: 'Appearance & behavior',
-            navigationPane: 'Navigation pane',
-            calendar: 'Calendar',
-            fileOperations: 'File operations',
-            icons: 'Icon packs',
-            folders: 'Folders',
-            folderNotes: 'Folder notes',
-            folderNoteFiles: 'Folder note files',
-            foldersAndFolderNotes: 'Folders & folder notes',
-            tagsAndProperties: 'Tags & properties',
-            tags: 'Tags',
-            listPane: 'List pane',
-            notes: 'File display',
-            shortcutsAndRecentFiles: 'Shortcuts & recent files',
-            advanced: 'Advanced'
+        index: {
+            label: 'General',
+            description: 'Release notes, support, vault profile, file types, and property keys.',
+            groups: {
+                vaultSetup: 'Vault setup'
+            }
         },
         pageGroups: {
             configuration: 'Configuration',
-            navigationAndContent: 'Navigation pane',
-            notesAndLists: 'List pane',
+            navigationPane: 'Navigation pane',
+            listPane: 'List pane',
             calendarAndTools: 'Calendar and tools'
         },
-        pageDescriptions: {
-            general: 'Release notes, support, vault profile, file types, and property keys.',
-            vaultFilters: 'Hidden folders, tags, files, file tags, and property rules.',
-            appearanceBehavior: 'Behavior, keyboard navigation, mouse buttons, appearance, and formatting.',
-            navigationPane: 'Layout, appearance, file counts, collapse behavior, and rainbow colors.',
-            shortcuts: 'Shortcut visibility, badges, recent files, and pinned items.',
-            calendar: 'Calendar display, date notes, templates, locale, and sidebar placement.',
-            fileOperations: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
-            foldersAndFolderNotes: 'Folder display, folder notes, folder note templates, and folder note behavior.',
-            tagsProperties: 'Tag and property sections, icons, sorting, scope, and inheritance.',
-            listPane: 'Sorting, grouping, list modes, pinned notes, and drawing previews.',
-            frontmatter: 'Frontmatter fields for display names, timestamps, icons, and colors.',
-            notes: 'Titles, preview text, feature images, tags, properties, dates, word counts, and character counts.',
-            iconPacks: 'Interface icons, file icons, and icon pack management.',
-            advanced: 'Diagnostics, metadata cleanup, import/export, and reset.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Vault setup',
-                templates: 'Templates',
-                behavior: 'Behavior',
-                startup: 'Startup',
-                keyboardNavigation: 'Keyboard navigation',
-                mouseButtons: 'Mouse buttons',
-                view: 'Appearance',
-                icons: 'Icons',
-                desktopAppearance: 'Desktop appearance',
-                mobileAppearance: 'Mobile appearance',
-                formatting: 'Formatting'
+        pages: {
+            displayFilters: {
+                label: 'Display filters',
+                description: 'Hidden folders, tags, files, file tags, and property rules.'
+            },
+            appearanceAndBehavior: {
+                label: 'Appearance & behavior',
+                description: 'Behavior, keyboard navigation, mouse buttons, appearance, and formatting.',
+                groups: {
+                    startup: 'Startup',
+                    keyboardNavigation: 'Keyboard navigation',
+                    mouseButtons: 'Mouse buttons',
+                    desktopAppearance: 'Desktop appearance',
+                    mobileAppearance: 'Mobile appearance',
+                    appearance: 'Appearance',
+                    icons: 'Icons',
+                    formatting: 'Formatting'
+                }
+            },
+            navigationPane: {
+                label: 'Navigation pane',
+                description: 'Layout, appearance, file counts, collapse behavior, and rainbow colors.',
+                groups: {
+                    appearance: 'Appearance',
+                    banner: 'Banner',
+                    collapseItems: 'Collapse items',
+                    dragAndDrop: 'Drag and drop',
+                    fileCounts: 'File counts',
+                    rainbowColors: 'Rainbow colors'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Shortcuts & recent files',
+                description: 'Shortcut visibility, badges, recent files, and pinned items.',
+                groups: {
+                    shortcuts: 'Shortcuts',
+                    recentFiles: 'Recent files'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Folders & folder notes',
+                description: 'Folder display, folder notes, folder note templates, and folder note behavior.',
+                groups: {
+                    folders: 'Folders',
+                    folderNotes: 'Folder notes',
+                    folderNoteFiles: 'Folder note files'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tags & properties',
+                description: 'Tag and property sections, icons, sorting, scope, and inheritance.',
+                groups: {
+                    tags: 'Tags',
+                    properties: 'Properties'
+                }
+            },
+            listPane: {
+                label: 'List pane',
+                description: 'Sorting, grouping, list modes, pinned notes, and drawing previews.',
+                groups: {
+                    appearance: 'Appearance',
+                    sortAndGroup: 'Sort & group',
+                    groupHeaders: 'Group headers',
+                    manualSort: 'Manual sort',
+                    pinnedNotes: 'Pinned notes',
+                    behavior: 'Behavior',
+                    drawingPreviews: 'Drawing previews'
+                }
+            },
+            fileOperations: {
+                label: 'File operations',
+                description: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
+                groups: {
+                    templates: 'Templates'
+                }
+            },
+            frontmatterFields: {
+                label: 'Frontmatter fields',
+                description: 'Frontmatter fields for display names, timestamps, icons, and colors.'
+            },
+            fileDisplay: {
+                label: 'File display',
+                description: 'Titles, preview text, feature images, tags, properties, dates, word counts, and character counts.',
+                groups: {
+                    icon: 'Icon',
+                    title: 'Title',
+                    previewText: 'Preview text',
+                    featureImage: 'Feature image',
+                    tags: 'Tags',
+                    properties: 'Properties',
+                    tasks: 'Tasks',
+                    date: 'Date',
+                    parentFolder: 'Parent folder',
+                    wordAndCharacterCount: 'Word and character count'
+                }
+            },
+            calendar: {
+                label: 'Calendar',
+                description: 'Calendar display, date notes, templates, locale, and sidebar placement.',
+                groups: {
+                    appearance: 'Appearance',
+                    leftSidebar: 'Left sidebar',
+                    calendarIntegration: 'Calendar integration',
+                    rightSidebar: 'Right sidebar'
+                }
+            },
+            iconPacks: {
+                label: 'Icon packs',
+                description: 'Interface icons, file icons, and icon pack management.'
             },
             advanced: {
-                maintenance: 'Maintenance',
-                resetSettings: 'Reset settings'
-            },
-            navigation: {
-                appearance: 'Appearance',
-                banner: 'Banner',
-                collapseItems: 'Collapse items',
-                dragAndDrop: 'Drag and drop',
-                noteCounts: 'File counts',
-                rainbowColors: 'Rainbow colors',
-                leftSidebar: 'Left sidebar',
-                calendarIntegration: 'Calendar integration'
-            },
-            list: {
-                display: 'Appearance',
-                sortAndGroup: 'Sort & group',
-                groupHeaders: 'Group headers',
-                manualSort: 'Manual sort',
-                pinnedNotes: 'Pinned notes',
-                drawingPreviews: 'Drawing previews'
-            },
-            notes: {
-                frontmatter: 'Frontmatter fields',
-                tasks: 'Tasks',
-                icon: 'Icon',
-                title: 'Title',
-                previewText: 'Preview text',
-                featureImage: 'Feature image',
-                tags: 'Tags',
-                properties: 'Properties',
-                date: 'Date',
-                parentFolder: 'Parent folder',
-                wordCount: 'Word and character count'
+                label: 'Advanced',
+                description: 'Diagnostics, metadata cleanup, import/export, and reset.',
+                groups: {
+                    maintenance: 'Maintenance',
+                    resetSettings: 'Reset settings'
+                }
             }
         },
         syncMode: {

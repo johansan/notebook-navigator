@@ -75,6 +75,9 @@ export const STRINGS_NL = {
         shortcutsHeader: 'Snelkoppelingen',
         recentFilesHeader: 'Recente bestanden', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Eigenschappen',
+        folders: 'Mappen',
+        tags: 'Tags',
+        calendar: 'Kalender',
         reorderRootFoldersTitle: 'Navigatie herschikken',
         reorderRootFoldersHint: 'Gebruik pijlen of sleep om te herschikken',
         vaultRootLabel: 'Kluis',
@@ -1013,95 +1016,137 @@ export const STRINGS_NL = {
             exportSuccess: 'Metadatarapport met fouten geëxporteerd naar: {filename}',
             exportFailed: 'Kan metadatarapport niet exporteren'
         },
-        sections: {
-            general: 'Algemeen',
-            vaultFilters: 'Weergavefilters',
-            appearanceBehavior: 'Uiterlijk & gedrag',
-            navigationPane: 'Navigatiepaneel',
-            calendar: 'Kalender',
-            fileOperations: 'Bestandsbewerkingen',
-            icons: 'Pictogrampakketten',
-            folders: 'Mappen',
-            folderNotes: 'Mapnotities',
-            folderNoteFiles: 'Mapnotitiebestanden',
-            foldersAndFolderNotes: 'Mappen & mapnotities',
-            tagsAndProperties: 'Tags & eigenschappen',
-            tags: 'Tags',
-            listPane: 'Lijstpaneel',
-            notes: 'Bestandsweergave',
-            shortcutsAndRecentFiles: 'Snelkoppelingen & recente bestanden',
-            advanced: 'Geavanceerd'
+        index: {
+            label: 'Algemeen',
+            description: 'Releasenotities, ondersteuning, kluisprofiel, bestandstypen en eigenschapssleutels.',
+            groups: {
+                vaultSetup: 'Kluisinstelling'
+            }
         },
         pageGroups: {
             configuration: 'Configuratie',
-            navigationAndContent: 'Navigatiepaneel',
-            notesAndLists: 'Lijstpaneel',
+            navigationPane: 'Navigatiepaneel',
+            listPane: 'Lijstpaneel',
             calendarAndTools: 'Kalender en hulpmiddelen'
         },
-        pageDescriptions: {
-            general: 'Releasenotities, ondersteuning, kluisprofiel, bestandstypen en eigenschapssleutels.',
-            vaultFilters: 'Verborgen mappen, tags, bestanden, bestandstags en eigenschapsregels.',
-            appearanceBehavior: 'Gedrag, toetsenbordnavigatie, muisknoppen, uiterlijk en opmaak.',
-            navigationPane: 'Indeling, uiterlijk, aantal bestanden, inklapgedrag en regenboogkleuren.',
-            shortcuts: 'Zichtbaarheid van snelkoppelingen, badges, recente bestanden en vastgezette items.',
-            calendar: 'Kalenderweergave, datumnotities, sjablonen, taalinstellingen en zijbalkplaatsing.',
-            fileOperations: 'Sjablonen, verwijderingsbevestigingen, bijlagen en gedrag bij bestandsverplaatsingsconflicten.',
-            foldersAndFolderNotes: 'Mapweergave, mapnotities, mapnotitiesjablonen en mapnotitiegedrag.',
-            tagsProperties: 'Tag- en eigenschapssecties, pictogrammen, sortering, bereik en overerving.',
-            listPane: 'Sortering, groepering, lijstmodi, vastgezette notities en tekeningvoorbeelden.',
-            frontmatter: 'Frontmattervelden voor weergavenamen, tijdstempels, pictogrammen en kleuren.',
-            notes: 'Titels, voorbeeldtekst, uitgelichte afbeeldingen, tags, eigenschappen, datums, aantal woorden en aantal tekens.',
-            iconPacks: 'Interfacepictogrammen, bestandspictogrammen en beheer van pictogrampakketten.',
-            advanced: 'Diagnostiek, opschonen van metadata, import/export en herstellen.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Kluisinstelling',
-                templates: 'Sjablonen',
-                behavior: 'Gedrag',
-                startup: 'Opstarten',
-                keyboardNavigation: 'Toetsenbordnavigatie',
-                mouseButtons: 'Muisknoppen',
-                view: 'Uiterlijk',
-                icons: 'Iconen',
-                desktopAppearance: 'Desktop-uiterlijk',
-                mobileAppearance: 'Mobiele weergave',
-                formatting: 'Opmaak'
+        pages: {
+            displayFilters: {
+                label: 'Weergavefilters',
+                description: 'Verborgen mappen, tags, bestanden, bestandstags en eigenschapsregels.'
+            },
+            appearanceAndBehavior: {
+                label: 'Uiterlijk & gedrag',
+                description: 'Gedrag, toetsenbordnavigatie, muisknoppen, uiterlijk en opmaak.',
+                groups: {
+                    startup: 'Opstarten',
+                    keyboardNavigation: 'Toetsenbordnavigatie',
+                    mouseButtons: 'Muisknoppen',
+                    desktopAppearance: 'Desktop-uiterlijk',
+                    mobileAppearance: 'Mobiele weergave',
+                    appearance: 'Uiterlijk',
+                    icons: 'Iconen',
+                    formatting: 'Opmaak'
+                }
+            },
+            navigationPane: {
+                label: 'Navigatiepaneel',
+                description: 'Indeling, uiterlijk, aantal bestanden, inklapgedrag en regenboogkleuren.',
+                groups: {
+                    appearance: 'Uiterlijk',
+                    banner: 'Banner',
+                    collapseItems: 'Items inklappen',
+                    dragAndDrop: 'Slepen en neerzetten',
+                    fileCounts: 'Bestandstellingen',
+                    rainbowColors: 'Regenboogkleuren'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Snelkoppelingen & recente bestanden',
+                description: 'Zichtbaarheid van snelkoppelingen, badges, recente bestanden en vastgezette items.',
+                groups: {
+                    shortcuts: 'Snelkoppelingen',
+                    recentFiles: 'Recente bestanden'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Mappen & mapnotities',
+                description: 'Mapweergave, mapnotities, mapnotitiesjablonen en mapnotitiegedrag.',
+                groups: {
+                    folders: 'Mappen',
+                    folderNotes: 'Mapnotities',
+                    folderNoteFiles: 'Mapnotitiebestanden'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tags & eigenschappen',
+                description: 'Tag- en eigenschapssecties, pictogrammen, sortering, bereik en overerving.',
+                groups: {
+                    tags: 'Tags',
+                    properties: 'Eigenschappen'
+                }
+            },
+            listPane: {
+                label: 'Lijstpaneel',
+                description: 'Sortering, groepering, lijstmodi, vastgezette notities en tekeningvoorbeelden.',
+                groups: {
+                    appearance: 'Uiterlijk',
+                    sortAndGroup: 'Sorteren & groeperen',
+                    groupHeaders: 'Groepskoppen',
+                    manualSort: 'Handmatig sorteren',
+                    pinnedNotes: 'Vastgezette notities',
+                    behavior: 'Gedrag',
+                    drawingPreviews: 'Tekeningvoorbeelden'
+                }
+            },
+            fileOperations: {
+                label: 'Bestandsbewerkingen',
+                description: 'Sjablonen, verwijderingsbevestigingen, bijlagen en gedrag bij bestandsverplaatsingsconflicten.',
+                groups: {
+                    templates: 'Sjablonen'
+                }
+            },
+            frontmatterFields: {
+                label: 'Frontmattervelden',
+                description: 'Frontmattervelden voor weergavenamen, tijdstempels, pictogrammen en kleuren.'
+            },
+            fileDisplay: {
+                label: 'Bestandsweergave',
+                description:
+                    'Titels, voorbeeldtekst, uitgelichte afbeeldingen, tags, eigenschappen, datums, aantal woorden en aantal tekens.',
+                groups: {
+                    icon: 'Icoon',
+                    title: 'Titel',
+                    previewText: 'Voorbeeldtekst',
+                    featureImage: 'Uitgelichte afbeelding',
+                    tags: 'Tags',
+                    properties: 'Eigenschappen',
+                    tasks: 'Taken',
+                    date: 'Datum',
+                    parentFolder: 'Bovenliggende map',
+                    wordAndCharacterCount: 'Aantal woorden en tekens'
+                }
+            },
+            calendar: {
+                label: 'Kalender',
+                description: 'Kalenderweergave, datumnotities, sjablonen, taalinstellingen en zijbalkplaatsing.',
+                groups: {
+                    appearance: 'Uiterlijk',
+                    leftSidebar: 'Linkerzijbalk',
+                    calendarIntegration: 'Kalenderintegratie',
+                    rightSidebar: 'Rechter zijbalk'
+                }
+            },
+            iconPacks: {
+                label: 'Pictogrampakketten',
+                description: 'Interfacepictogrammen, bestandspictogrammen en beheer van pictogrampakketten.'
             },
             advanced: {
-                maintenance: 'Onderhoud',
-                resetSettings: 'Instellingen resetten'
-            },
-            navigation: {
-                appearance: 'Uiterlijk',
-                banner: 'Banner',
-                collapseItems: 'Items inklappen',
-                dragAndDrop: 'Slepen en neerzetten',
-                noteCounts: 'Bestandstellingen',
-                rainbowColors: 'Regenboogkleuren',
-                leftSidebar: 'Linkerzijbalk',
-                calendarIntegration: 'Kalenderintegratie'
-            },
-            list: {
-                display: 'Uiterlijk',
-                sortAndGroup: 'Sorteren & groeperen',
-                groupHeaders: 'Groepskoppen',
-                manualSort: 'Handmatig sorteren',
-                pinnedNotes: 'Vastgezette notities',
-                drawingPreviews: 'Tekeningvoorbeelden'
-            },
-            notes: {
-                frontmatter: 'Frontmattervelden',
-                tasks: 'Taken',
-                icon: 'Icoon',
-                title: 'Titel',
-                previewText: 'Voorbeeldtekst',
-                featureImage: 'Uitgelichte afbeelding',
-                tags: 'Tags',
-                properties: 'Eigenschappen',
-                date: 'Datum',
-                parentFolder: 'Bovenliggende map',
-                wordCount: 'Aantal woorden en tekens'
+                label: 'Geavanceerd',
+                description: 'Diagnostiek, opschonen van metadata, import/export en herstellen.',
+                groups: {
+                    maintenance: 'Onderhoud',
+                    resetSettings: 'Instellingen resetten'
+                }
             }
         },
         syncMode: {

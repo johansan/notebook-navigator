@@ -73,6 +73,9 @@ export const STRINGS_DE = {
         shortcutsHeader: 'Lesezeichen',
         recentFilesHeader: 'Neueste Dateien', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'Eigenschaften',
+        folders: 'Ordner',
+        tags: 'Tags',
+        calendar: 'Kalender',
         reorderRootFoldersTitle: 'Navigation neu anordnen',
         reorderRootFoldersHint: 'Pfeile oder Ziehen zum Neuanordnen',
         vaultRootLabel: 'Tresor',
@@ -1014,95 +1017,136 @@ export const STRINGS_DE = {
             exportSuccess: 'Fehlgeschlagene Metadaten-Bericht exportiert nach: {filename}',
             exportFailed: 'Export des Metadaten-Berichts fehlgeschlagen'
         },
-        sections: {
-            general: 'Allgemein',
-            vaultFilters: 'Anzeigefilter',
-            appearanceBehavior: 'Darstellung & Verhalten',
-            navigationPane: 'Navigationsbereich',
-            calendar: 'Kalender',
-            fileOperations: 'Dateioperationen',
-            icons: 'Icon-Pakete',
-            folders: 'Ordner',
-            folderNotes: 'Ordnernotizen',
-            folderNoteFiles: 'Ordnernotiz-Dateien',
-            foldersAndFolderNotes: 'Ordner & Ordnernotizen',
-            tagsAndProperties: 'Tags & Eigenschaften',
-            tags: 'Tags',
-            listPane: 'Listenbereich',
-            notes: 'Dateianzeige',
-            shortcutsAndRecentFiles: 'Verknüpfungen & zuletzt verwendete Dateien',
-            advanced: 'Erweitert'
+        index: {
+            label: 'Allgemein',
+            description: 'Versionshinweise, Support, Tresorprofil, Dateitypen und Eigenschaftsschlüssel.',
+            groups: {
+                vaultSetup: 'Tresor-Einrichtung'
+            }
         },
         pageGroups: {
             configuration: 'Konfiguration',
-            navigationAndContent: 'Navigationsbereich',
-            notesAndLists: 'Listenbereich',
+            navigationPane: 'Navigationsbereich',
+            listPane: 'Listenbereich',
             calendarAndTools: 'Kalender und Werkzeuge'
         },
-        pageDescriptions: {
-            general: 'Versionshinweise, Support, Tresorprofil, Dateitypen und Eigenschaftsschlüssel.',
-            vaultFilters: 'Versteckte Ordner, Tags, Dateien, Datei-Tags und Eigenschaftsregeln.',
-            appearanceBehavior: 'Verhalten, Tastaturnavigation, Maustasten, Darstellung und Formatierung.',
-            navigationPane: 'Layout, Darstellung, Dateianzahl, Einklappverhalten und Regenbogenfarben.',
-            shortcuts: 'Verknüpfungssichtbarkeit, Abzeichen, zuletzt verwendete Dateien und angeheftete Elemente.',
-            calendar: 'Kalenderanzeige, Datumsnotizen, Vorlagen, Sprachumgebung und Seitenleistenposition.',
-            fileOperations: 'Vorlagen, Löschbestätigungen, Anhänge und Verhalten bei Dateikonflikten beim Verschieben.',
-            foldersAndFolderNotes: 'Ordneranzeige, Ordnernotizen, Ordnernotiz-Vorlagen und Ordnernotiz-Verhalten.',
-            tagsProperties: 'Tag- und Eigenschaftsbereiche, Symbole, Sortierung, Geltungsbereich und Vererbung.',
-            listPane: 'Sortierung, Gruppierung, Listenmodi, angeheftete Notizen und Zeichnungsvorschauen.',
-            frontmatter: 'Frontmatter-Felder für Anzeigenamen, Zeitstempel, Symbole und Farben.',
-            notes: 'Titel, Vorschautext, Hauptbilder, Tags, Eigenschaften, Daten, Wortanzahlen und Zeichenanzahlen.',
-            iconPacks: 'Oberflächensymbole, Dateisymbole und Icon-Paket-Verwaltung.',
-            advanced: 'Diagnose, Metadatenbereinigung, Import/Export und Zurücksetzen.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'Tresor-Einrichtung',
-                templates: 'Vorlagen',
-                behavior: 'Verhalten',
-                startup: 'Start',
-                keyboardNavigation: 'Tastaturnavigation',
-                mouseButtons: 'Maustasten',
-                view: 'Darstellung',
-                icons: 'Symbole',
-                desktopAppearance: 'Desktop-Darstellung',
-                mobileAppearance: 'Mobile Darstellung',
-                formatting: 'Formatierung'
+        pages: {
+            displayFilters: {
+                label: 'Anzeigefilter',
+                description: 'Versteckte Ordner, Tags, Dateien, Datei-Tags und Eigenschaftsregeln.'
+            },
+            appearanceAndBehavior: {
+                label: 'Darstellung & Verhalten',
+                description: 'Verhalten, Tastaturnavigation, Maustasten, Darstellung und Formatierung.',
+                groups: {
+                    startup: 'Start',
+                    keyboardNavigation: 'Tastaturnavigation',
+                    mouseButtons: 'Maustasten',
+                    desktopAppearance: 'Desktop-Darstellung',
+                    mobileAppearance: 'Mobile Darstellung',
+                    appearance: 'Darstellung',
+                    icons: 'Symbole',
+                    formatting: 'Formatierung'
+                }
+            },
+            navigationPane: {
+                label: 'Navigationsbereich',
+                description: 'Layout, Darstellung, Dateianzahl, Einklappverhalten und Regenbogenfarben.',
+                groups: {
+                    appearance: 'Darstellung',
+                    banner: 'Banner',
+                    collapseItems: 'Elemente einklappen',
+                    dragAndDrop: 'Drag-and-drop',
+                    fileCounts: 'Dateianzahlen',
+                    rainbowColors: 'Regenbogenfarben'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'Verknüpfungen & zuletzt verwendete Dateien',
+                description: 'Verknüpfungssichtbarkeit, Abzeichen, zuletzt verwendete Dateien und angeheftete Elemente.',
+                groups: {
+                    shortcuts: 'Lesezeichen',
+                    recentFiles: 'Neueste Dateien'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'Ordner & Ordnernotizen',
+                description: 'Ordneranzeige, Ordnernotizen, Ordnernotiz-Vorlagen und Ordnernotiz-Verhalten.',
+                groups: {
+                    folders: 'Ordner',
+                    folderNotes: 'Ordnernotizen',
+                    folderNoteFiles: 'Ordnernotiz-Dateien'
+                }
+            },
+            tagsAndProperties: {
+                label: 'Tags & Eigenschaften',
+                description: 'Tag- und Eigenschaftsbereiche, Symbole, Sortierung, Geltungsbereich und Vererbung.',
+                groups: {
+                    tags: 'Tags',
+                    properties: 'Eigenschaften'
+                }
+            },
+            listPane: {
+                label: 'Listenbereich',
+                description: 'Sortierung, Gruppierung, Listenmodi, angeheftete Notizen und Zeichnungsvorschauen.',
+                groups: {
+                    appearance: 'Darstellung',
+                    sortAndGroup: 'Sortierung & Gruppierung',
+                    groupHeaders: 'Gruppenüberschriften',
+                    manualSort: 'Manuelle Sortierung',
+                    pinnedNotes: 'Angeheftete Notizen',
+                    behavior: 'Verhalten',
+                    drawingPreviews: 'Zeichnungsvorschauen'
+                }
+            },
+            fileOperations: {
+                label: 'Dateioperationen',
+                description: 'Vorlagen, Löschbestätigungen, Anhänge und Verhalten bei Dateikonflikten beim Verschieben.',
+                groups: {
+                    templates: 'Vorlagen'
+                }
+            },
+            frontmatterFields: {
+                label: 'Frontmatter-Felder',
+                description: 'Frontmatter-Felder für Anzeigenamen, Zeitstempel, Symbole und Farben.'
+            },
+            fileDisplay: {
+                label: 'Dateianzeige',
+                description: 'Titel, Vorschautext, Hauptbilder, Tags, Eigenschaften, Daten, Wortanzahlen und Zeichenanzahlen.',
+                groups: {
+                    icon: 'Symbol',
+                    title: 'Titel',
+                    previewText: 'Vorschautext',
+                    featureImage: 'Hauptbild',
+                    tags: 'Tags',
+                    properties: 'Eigenschaften',
+                    tasks: 'Aufgaben',
+                    date: 'Datum',
+                    parentFolder: 'Übergeordneter Ordner',
+                    wordAndCharacterCount: 'Wort- und Zeichenanzahl'
+                }
+            },
+            calendar: {
+                label: 'Kalender',
+                description: 'Kalenderanzeige, Datumsnotizen, Vorlagen, Sprachumgebung und Seitenleistenposition.',
+                groups: {
+                    appearance: 'Darstellung',
+                    leftSidebar: 'Linke Seitenleiste',
+                    calendarIntegration: 'Kalenderintegration',
+                    rightSidebar: 'Rechte Seitenleiste'
+                }
+            },
+            iconPacks: {
+                label: 'Icon-Pakete',
+                description: 'Oberflächensymbole, Dateisymbole und Icon-Paket-Verwaltung.'
             },
             advanced: {
-                maintenance: 'Wartung',
-                resetSettings: 'Einstellungen zurücksetzen'
-            },
-            navigation: {
-                appearance: 'Darstellung',
-                banner: 'Banner',
-                collapseItems: 'Elemente einklappen',
-                dragAndDrop: 'Drag-and-drop',
-                noteCounts: 'Dateianzahlen',
-                rainbowColors: 'Regenbogenfarben',
-                leftSidebar: 'Linke Seitenleiste',
-                calendarIntegration: 'Kalenderintegration'
-            },
-            list: {
-                display: 'Darstellung',
-                sortAndGroup: 'Sortierung & Gruppierung',
-                groupHeaders: 'Gruppenüberschriften',
-                manualSort: 'Manuelle Sortierung',
-                pinnedNotes: 'Angeheftete Notizen',
-                drawingPreviews: 'Zeichnungsvorschauen'
-            },
-            notes: {
-                frontmatter: 'Frontmatter-Felder',
-                tasks: 'Aufgaben',
-                icon: 'Symbol',
-                title: 'Titel',
-                previewText: 'Vorschautext',
-                featureImage: 'Hauptbild',
-                tags: 'Tags',
-                properties: 'Eigenschaften',
-                date: 'Datum',
-                parentFolder: 'Übergeordneter Ordner',
-                wordCount: 'Wort- und Zeichenanzahl'
+                label: 'Erweitert',
+                description: 'Diagnose, Metadatenbereinigung, Import/Export und Zurücksetzen.',
+                groups: {
+                    maintenance: 'Wartung',
+                    resetSettings: 'Einstellungen zurücksetzen'
+                }
             }
         },
         syncMode: {

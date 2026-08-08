@@ -74,6 +74,9 @@ export const STRINGS_FA = {
         shortcutsHeader: 'میانبرها',
         recentFilesHeader: 'فایل‌های اخیر', // Header label for recent files section in navigation pane (English: Recent files)
         properties: 'ویژگی‌ها',
+        folders: 'پوشه‌ها',
+        tags: 'برچسب‌ها',
+        calendar: 'تقویم',
         reorderRootFoldersTitle: 'مرتب‌سازی مجدد ناوبری',
         reorderRootFoldersHint: 'از فلش‌ها یا کشیدن برای مرتب‌سازی استفاده کنید',
         vaultRootLabel: 'خزانه',
@@ -1011,95 +1014,136 @@ export const STRINGS_FA = {
             exportSuccess: 'گزارش متادیتای ناموفق به {filename} صادر شد',
             exportFailed: 'صادر کردن گزارش متادیتا ناموفق بود'
         },
-        sections: {
-            general: 'عمومی',
-            vaultFilters: 'فیلترهای نمایش',
-            appearanceBehavior: 'ظاهر و رفتار',
-            navigationPane: 'پنل ناوبری',
-            calendar: 'تقویم',
-            fileOperations: 'عملیات فایل',
-            icons: 'بسته‌های آیکون',
-            folders: 'پوشه‌ها',
-            folderNotes: 'یادداشت‌های پوشه',
-            folderNoteFiles: 'فایل‌های یادداشت پوشه',
-            foldersAndFolderNotes: 'پوشه‌ها و یادداشت‌های پوشه',
-            tagsAndProperties: 'برچسب‌ها و ویژگی‌ها',
-            tags: 'برچسب‌ها',
-            listPane: 'پنل لیست',
-            notes: 'نمایش فایل',
-            shortcutsAndRecentFiles: 'میان‌برها و فایل‌های اخیر',
-            advanced: 'پیشرفته'
+        index: {
+            label: 'عمومی',
+            description: 'یادداشت‌های انتشار، پشتیبانی، پروفایل خزانه، انواع فایل و کلیدهای ویژگی.',
+            groups: {
+                vaultSetup: 'پیکربندی خزانه'
+            }
         },
         pageGroups: {
             configuration: 'پیکربندی',
-            navigationAndContent: 'پنل ناوبری',
-            notesAndLists: 'پنل لیست',
+            navigationPane: 'پنل ناوبری',
+            listPane: 'پنل لیست',
             calendarAndTools: 'تقویم و ابزارها'
         },
-        pageDescriptions: {
-            general: 'یادداشت‌های انتشار، پشتیبانی، پروفایل خزانه، انواع فایل و کلیدهای ویژگی.',
-            vaultFilters: 'پوشه‌ها، برچسب‌ها، فایل‌ها، برچسب‌های فایل و قوانین ویژگی پنهان.',
-            appearanceBehavior: 'رفتار، پیمایش با صفحه‌کلید، دکمه‌های ماوس، ظاهر و قالب‌بندی.',
-            navigationPane: 'چیدمان، ظاهر، تعداد فایل‌ها، رفتار جمع‌شدن و رنگ‌های رنگین‌کمان.',
-            shortcuts: 'قابلیت دید میان‌برها، نشان‌ها، فایل‌های اخیر و موارد سنجاق‌شده.',
-            calendar: 'نمایش تقویم، یادداشت‌های تاریخ، الگوها، تنظیمات محلی و مکان نوار کناری.',
-            fileOperations: 'الگوها، تأییدیه‌های حذف، پیوست‌ها و رفتار تعارض در جابجایی فایل.',
-            foldersAndFolderNotes: 'نمایش پوشه‌ها، یادداشت‌های پوشه، الگوهای یادداشت پوشه و رفتار یادداشت پوشه.',
-            tagsProperties: 'بخش‌های برچسب و ویژگی، آیکون‌ها، مرتب‌سازی، محدوده و وراثت.',
-            listPane: 'مرتب‌سازی، گروه‌بندی، حالت‌های لیست، یادداشت‌های سنجاق‌شده و پیش‌نمایش‌های طراحی.',
-            frontmatter: 'فیلدهای فرانت‌متر برای نام‌های نمایشی، نشانه‌های زمانی، آیکون‌ها و رنگ‌ها.',
-            notes: 'عناوین، متن پیش‌نمایش، تصاویر ویژه، برچسب‌ها، ویژگی‌ها، تاریخ‌ها، تعداد کلمات و تعداد نویسه‌ها.',
-            iconPacks: 'آیکون‌های رابط کاربری، آیکون‌های فایل و مدیریت بسته‌های آیکون.',
-            advanced: 'تشخیص، پاکسازی متادیتا، واردکردن/صادرکردن و بازنشانی.'
-        },
-        groups: {
-            general: {
-                vaultConfiguration: 'پیکربندی خزانه',
-                templates: 'الگوها',
-                behavior: 'رفتار',
-                startup: 'راه‌اندازی',
-                keyboardNavigation: 'پیمایش با صفحه‌کلید',
-                mouseButtons: 'دکمه‌های ماوس',
-                view: 'ظاهر',
-                icons: 'آیکون‌ها',
-                desktopAppearance: 'ظاهر دسکتاپ',
-                mobileAppearance: 'ظاهر موبایل',
-                formatting: 'قالب‌بندی'
+        pages: {
+            displayFilters: {
+                label: 'فیلترهای نمایش',
+                description: 'پوشه‌ها، برچسب‌ها، فایل‌ها، برچسب‌های فایل و قوانین ویژگی پنهان.'
+            },
+            appearanceAndBehavior: {
+                label: 'ظاهر و رفتار',
+                description: 'رفتار، پیمایش با صفحه‌کلید، دکمه‌های ماوس، ظاهر و قالب‌بندی.',
+                groups: {
+                    startup: 'راه‌اندازی',
+                    keyboardNavigation: 'پیمایش با صفحه‌کلید',
+                    mouseButtons: 'دکمه‌های ماوس',
+                    desktopAppearance: 'ظاهر دسکتاپ',
+                    mobileAppearance: 'ظاهر موبایل',
+                    appearance: 'ظاهر',
+                    icons: 'آیکون‌ها',
+                    formatting: 'قالب‌بندی'
+                }
+            },
+            navigationPane: {
+                label: 'پنل ناوبری',
+                description: 'چیدمان، ظاهر، تعداد فایل‌ها، رفتار جمع‌شدن و رنگ‌های رنگین‌کمان.',
+                groups: {
+                    appearance: 'ظاهر',
+                    banner: 'بنر',
+                    collapseItems: 'جمع کردن آیتم‌ها',
+                    dragAndDrop: 'کشیدن و رها کردن',
+                    fileCounts: 'تعداد فایل‌ها',
+                    rainbowColors: 'رنگ‌های رنگین‌کمان'
+                }
+            },
+            shortcutsAndRecentFiles: {
+                label: 'میان‌برها و فایل‌های اخیر',
+                description: 'قابلیت دید میان‌برها، نشان‌ها، فایل‌های اخیر و موارد سنجاق‌شده.',
+                groups: {
+                    shortcuts: 'میانبرها',
+                    recentFiles: 'فایل‌های اخیر'
+                }
+            },
+            foldersAndFolderNotes: {
+                label: 'پوشه‌ها و یادداشت‌های پوشه',
+                description: 'نمایش پوشه‌ها، یادداشت‌های پوشه، الگوهای یادداشت پوشه و رفتار یادداشت پوشه.',
+                groups: {
+                    folders: 'پوشه‌ها',
+                    folderNotes: 'یادداشت‌های پوشه',
+                    folderNoteFiles: 'فایل‌های یادداشت پوشه'
+                }
+            },
+            tagsAndProperties: {
+                label: 'برچسب‌ها و ویژگی‌ها',
+                description: 'بخش‌های برچسب و ویژگی، آیکون‌ها، مرتب‌سازی، محدوده و وراثت.',
+                groups: {
+                    tags: 'برچسب‌ها',
+                    properties: 'ویژگی‌ها'
+                }
+            },
+            listPane: {
+                label: 'پنل لیست',
+                description: 'مرتب‌سازی، گروه‌بندی، حالت‌های لیست، یادداشت‌های سنجاق‌شده و پیش‌نمایش‌های طراحی.',
+                groups: {
+                    appearance: 'ظاهر',
+                    sortAndGroup: 'مرتب‌سازی و گروه‌بندی',
+                    groupHeaders: 'هدرهای گروه',
+                    manualSort: 'مرتب‌سازی دستی',
+                    pinnedNotes: 'یادداشت‌های سنجاق‌شده',
+                    behavior: 'رفتار',
+                    drawingPreviews: 'پیش‌نمایش‌های طراحی'
+                }
+            },
+            fileOperations: {
+                label: 'عملیات فایل',
+                description: 'الگوها، تأییدیه‌های حذف، پیوست‌ها و رفتار تعارض در جابجایی فایل.',
+                groups: {
+                    templates: 'الگوها'
+                }
+            },
+            frontmatterFields: {
+                label: 'فیلدهای فرانت‌متر',
+                description: 'فیلدهای فرانت‌متر برای نام‌های نمایشی، نشانه‌های زمانی، آیکون‌ها و رنگ‌ها.'
+            },
+            fileDisplay: {
+                label: 'نمایش فایل',
+                description: 'عناوین، متن پیش‌نمایش، تصاویر ویژه، برچسب‌ها، ویژگی‌ها، تاریخ‌ها، تعداد کلمات و تعداد نویسه‌ها.',
+                groups: {
+                    icon: 'آیکون',
+                    title: 'عنوان',
+                    previewText: 'متن پیش‌نمایش',
+                    featureImage: 'تصویر ویژه',
+                    tags: 'برچسب‌ها',
+                    properties: 'ویژگی‌ها',
+                    tasks: 'وظایف',
+                    date: 'تاریخ',
+                    parentFolder: 'پوشه والد',
+                    wordAndCharacterCount: 'تعداد کلمات و نویسه‌ها'
+                }
+            },
+            calendar: {
+                label: 'تقویم',
+                description: 'نمایش تقویم، یادداشت‌های تاریخ، الگوها، تنظیمات محلی و مکان نوار کناری.',
+                groups: {
+                    appearance: 'ظاهر',
+                    leftSidebar: 'نوار کناری چپ',
+                    calendarIntegration: 'یکپارچه‌سازی تقویم',
+                    rightSidebar: 'نوار کناری چپ'
+                }
+            },
+            iconPacks: {
+                label: 'بسته‌های آیکون',
+                description: 'آیکون‌های رابط کاربری، آیکون‌های فایل و مدیریت بسته‌های آیکون.'
             },
             advanced: {
-                maintenance: 'نگهداری',
-                resetSettings: 'بازنشانی تنظیمات'
-            },
-            navigation: {
-                appearance: 'ظاهر',
-                banner: 'بنر',
-                collapseItems: 'جمع کردن آیتم‌ها',
-                dragAndDrop: 'کشیدن و رها کردن',
-                noteCounts: 'تعداد فایل‌ها',
-                rainbowColors: 'رنگ‌های رنگین‌کمان',
-                leftSidebar: 'نوار کناری چپ',
-                calendarIntegration: 'یکپارچه‌سازی تقویم'
-            },
-            list: {
-                display: 'ظاهر',
-                sortAndGroup: 'مرتب‌سازی و گروه‌بندی',
-                groupHeaders: 'هدرهای گروه',
-                manualSort: 'مرتب‌سازی دستی',
-                pinnedNotes: 'یادداشت‌های سنجاق‌شده',
-                drawingPreviews: 'پیش‌نمایش‌های طراحی'
-            },
-            notes: {
-                frontmatter: 'فیلدهای فرانت‌متر',
-                tasks: 'وظایف',
-                icon: 'آیکون',
-                title: 'عنوان',
-                previewText: 'متن پیش‌نمایش',
-                featureImage: 'تصویر ویژه',
-                tags: 'برچسب‌ها',
-                properties: 'ویژگی‌ها',
-                date: 'تاریخ',
-                parentFolder: 'پوشه والد',
-                wordCount: 'تعداد کلمات و نویسه‌ها'
+                label: 'پیشرفته',
+                description: 'تشخیص، پاکسازی متادیتا، واردکردن/صادرکردن و بازنشانی.',
+                groups: {
+                    maintenance: 'نگهداری',
+                    resetSettings: 'بازنشانی تنظیمات'
+                }
             }
         },
         syncMode: {

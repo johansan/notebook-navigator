@@ -35,7 +35,7 @@ export function createShortcutsSettingDefinitions(context: SettingsTabContext): 
                 desc: strings.settings.items.showSectionIcons.desc
             })
         ]),
-        createGroupDefinition(strings.navigationPane.shortcutsHeader, [
+        createGroupDefinition(strings.settings.pages.shortcutsAndRecentFiles.groups.shortcuts, [
             createToggleDefinition('showShortcuts', {
                 name: strings.settings.items.showShortcuts.name,
                 desc: strings.settings.items.showShortcuts.desc
@@ -57,7 +57,7 @@ export function createShortcutsSettingDefinitions(context: SettingsTabContext): 
                 visible: () => plugin.settings.showShortcuts
             })
         ]),
-        createGroupDefinition(strings.navigationPane.recentFilesHeader, [
+        createGroupDefinition(strings.settings.pages.shortcutsAndRecentFiles.groups.recentFiles, [
             createToggleDefinition('showRecentNotes', {
                 name: strings.settings.items.showRecentNotes.name,
                 desc: strings.settings.items.showRecentNotes.desc
