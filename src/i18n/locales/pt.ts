@@ -422,15 +422,28 @@ export const STRINGS_PT = {
         compactPreset: 'Compacto',
         defaultSuffix: '(predefinido)',
         defaultLabel: 'Predefinido',
-        titleRows: 'Linhas de título',
-        previewRows: 'Linhas de pré-visualização',
+        titleRows: {
+            label: 'Linhas de título',
+            option: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`
+        },
+        previewRows: {
+            label: 'Linhas de pré-visualização',
+            none: 'Nenhuma',
+            option: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`
+        },
         groupBy: 'Agrupar por',
-        titleRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
-        previewRowOption: (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`,
-        defaultOffSuffix: '(desativado por predefinição)',
         tags: 'Etiquetas',
         properties: 'Propriedades',
         tasks: 'Tarefas',
+        textCount: {
+            label: 'Contagem de texto',
+            options: {
+                none: 'Nenhuma',
+                words: 'Palavras',
+                characters: 'Caracteres',
+                both: 'Palavras e caracteres'
+            }
+        },
         resetAppearance: 'Repor aparência',
         openPluginSettings: 'Abrir definições do plugin…'
     },

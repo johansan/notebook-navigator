@@ -420,15 +420,28 @@ export const STRINGS_KO = {
         compactPreset: '컴팩트',
         defaultSuffix: '(기본값)',
         defaultLabel: '기본',
-        titleRows: '제목 행',
-        previewRows: '미리보기 행',
+        titleRows: {
+            label: '제목 행',
+            option: (rows: number) => `${rows}개 제목 행`
+        },
+        previewRows: {
+            label: '미리보기 행',
+            none: '없음',
+            option: (rows: number) => `${rows}개 미리보기 행`
+        },
         groupBy: '그룹화 기준',
-        titleRowOption: (rows: number) => `${rows}개 제목 행`,
-        previewRowOption: (rows: number) => `${rows}개 미리보기 행`,
-        defaultOffSuffix: '(기본값 꺼짐)',
         tags: '태그',
         properties: '속성',
         tasks: '작업',
+        textCount: {
+            label: '텍스트 수',
+            options: {
+                none: '없음',
+                words: '단어',
+                characters: '문자',
+                both: '단어 및 문자'
+            }
+        },
         resetAppearance: '모양 재설정',
         openPluginSettings: '플러그인 설정 열기…'
     },

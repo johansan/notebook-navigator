@@ -421,15 +421,28 @@ export const STRINGS_TH = {
         compactPreset: 'กะทัดรัด',
         defaultSuffix: '(ค่าเริ่มต้น)',
         defaultLabel: 'ค่าเริ่มต้น',
-        titleRows: 'แถวชื่อเรื่อง',
-        previewRows: 'แถวตัวอย่าง',
+        titleRows: {
+            label: 'แถวชื่อเรื่อง',
+            option: (rows: number) => `${rows} แถวชื่อเรื่อง`
+        },
+        previewRows: {
+            label: 'แถวตัวอย่าง',
+            none: 'ไม่มี',
+            option: (rows: number) => `${rows} แถวตัวอย่าง`
+        },
         groupBy: 'จัดกลุ่มตาม',
-        titleRowOption: (rows: number) => `${rows} แถวชื่อเรื่อง`,
-        previewRowOption: (rows: number) => `${rows} แถวตัวอย่าง`,
-        defaultOffSuffix: '(ค่าเริ่มต้นปิด)',
         tags: 'แท็ก',
         properties: 'คุณสมบัติ',
         tasks: 'งาน',
+        textCount: {
+            label: 'การนับข้อความ',
+            options: {
+                none: 'ไม่มี',
+                words: 'คำ',
+                characters: 'อักขระ',
+                both: 'คำและอักขระ'
+            }
+        },
         resetAppearance: 'รีเซ็ตรูปลักษณ์',
         openPluginSettings: 'เปิดการตั้งค่าปลั๊กอิน…'
     },

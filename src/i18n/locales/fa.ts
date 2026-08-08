@@ -421,15 +421,28 @@ export const STRINGS_FA = {
         compactPreset: 'فشرده',
         defaultSuffix: '(پیش‌فرض)',
         defaultLabel: 'پیش‌فرض',
-        titleRows: 'ردیف‌های عنوان',
-        previewRows: 'ردیف‌های پیش‌نمایش',
+        titleRows: {
+            label: 'ردیف‌های عنوان',
+            option: (rows: number) => `${rows} ردیف عنوان`
+        },
+        previewRows: {
+            label: 'ردیف‌های پیش‌نمایش',
+            none: 'هیچ‌کدام',
+            option: (rows: number) => `${rows} ردیف پیش‌نمایش`
+        },
         groupBy: 'گروه‌بندی بر اساس',
-        titleRowOption: (rows: number) => `${rows} ردیف عنوان`,
-        previewRowOption: (rows: number) => `${rows} ردیف پیش‌نمایش`,
-        defaultOffSuffix: '(به‌طور پیش‌فرض خاموش)',
         tags: 'برچسب‌ها',
         properties: 'ویژگی‌ها',
         tasks: 'وظایف',
+        textCount: {
+            label: 'شمارش متن',
+            options: {
+                none: 'هیچ‌کدام',
+                words: 'کلمات',
+                characters: 'نویسه‌ها',
+                both: 'کلمات و نویسه‌ها'
+            }
+        },
         resetAppearance: 'بازنشانی ظاهر',
         openPluginSettings: 'باز کردن تنظیمات افزونه…'
     },

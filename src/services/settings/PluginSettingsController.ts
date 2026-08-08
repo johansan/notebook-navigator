@@ -637,6 +637,7 @@ export class PluginSettingsController {
         });
 
         this.sanitizeSettingsRecords();
+        this.pruneInheritedAppearanceValues();
         const prunedUnavailablePropertySortOverrides = pruneUnavailablePropertySortOverrides(this.currentSettings);
         const prunedUnavailablePropertyGroupingOverrides = pruneUnavailablePropertyGroupingOverrides(this.currentSettings);
         // Load and external sync reconcile the global defaults silently; only direct settings-tab
@@ -974,6 +975,7 @@ export class PluginSettingsController {
     }
 
     public async saveSettings(): Promise<void> {
+        this.pruneInheritedAppearanceValues();
         ensureVaultProfiles(this.currentSettings);
         this.refreshMatcherCachesIfNeeded();
         localStorage.set(this.options.keys.homepageKey, this.currentSettings.homepage);
@@ -1410,6 +1412,32 @@ export class PluginSettingsController {
         this.currentSettings.syncModes = sanitizeSettingsSyncMap(this.currentSettings.syncModes);
         this.currentSettings.calendarMonthHighlights = sanitizeStringMap(this.currentSettings.calendarMonthHighlights);
         this.currentSettings.pinnedNotes = clonePinnedNotesRecord(this.currentSettings.pinnedNotes);
+    }
+
+    private pruneInheritedAppearanceValues(): void {
+        // Choices equal to their global settings are inheritance. Remove matching stored values so
+        // default-marked entries do not remain overrides after a global setting changes.
+        const appearanceMaps = [
+            this.currentSettings.folderAppearances,
+            this.currentSettings.tagAppearances,
+            this.currentSettings.propertyAppearances
+        ];
+        appearanceMaps.forEach(appearances => {
+            Object.entries(appearances).forEach(([key, appearance]) => {
+                if (appearance.titleRows === this.currentSettings.fileNameRows) {
+                    delete appearance.titleRows;
+                }
+                if (appearance.previewRows === this.currentSettings.previewRows) {
+                    delete appearance.previewRows;
+                }
+                if (appearance.textCount === this.currentSettings.textCountDisplay) {
+                    delete appearance.textCount;
+                }
+                if (Object.keys(appearance).length === 0) {
+                    delete appearances[key];
+                }
+            });
+        });
     }
 
     private normalizeTaskSettings(): void {
