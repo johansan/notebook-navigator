@@ -21,6 +21,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build.ps1
 - Generates icon constants from `icon.svg`
 - Runs ESLint to check for code quality issues
 - Runs Stylelint and regenerates `styles.css`
+- Checks for unused localization keys and locale schema mismatches
 - Validates TypeScript types
 - Checks for unused imports and dead code
 - Formats code with Prettier
@@ -33,7 +34,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build.ps1
 
 - The build MUST complete with zero errors and zero warnings
 - The build summary must show "✅ No warnings"
-- Any lint, type-check, test, or warning failure will abort the deployment
+- Any lint, localization, type-check, test, or warning failure will abort the deployment
 - Node.js `>=24.0.0` is required by `package.json`
 
 ## build-icons.mjs
@@ -177,11 +178,14 @@ cp main.js manifest.json styles.css ~/Documents/ObsidianVault/.obsidian/plugins/
 Finds unused i18n keys in `src/i18n/locales/en.ts` by scanning for `strings.<keyPath>` usage across `src` (excluding `src/i18n/locales`). Also validates that every locale file matches the English locale shape.
 
 ```bash
+npm run check:strings
 node scripts/check-unused-strings.mjs          # Report and prompt before removing unused keys
 node scripts/check-unused-strings.mjs --check  # Exit non-zero if unused keys or locale shape issues exist
 node scripts/check-unused-strings.mjs --fix    # Remove unused keys without prompting
 node scripts/check-unused-strings.mjs --project-root /path/to/project-root
 ```
+
+`npm run build` runs `npm run check:strings` before TypeScript validation and bundling. This also covers the main build scripts and release workflow.
 
 To keep an intentionally dynamic key, add an allowlist comment:
 
