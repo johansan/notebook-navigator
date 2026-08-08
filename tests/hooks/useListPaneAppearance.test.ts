@@ -24,7 +24,7 @@ import {
     mergeListPaneAppearanceAndGrouping,
     resolveListPaneAppearance,
     snapshotListPaneAppearanceMap,
-    type FolderAppearance
+    type ListPaneAppearance
 } from '../../src/settings/listPaneAppearance';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
@@ -46,9 +46,9 @@ describe('resolveListPaneAppearance', () => {
         const result = resolveListPaneAppearance({
             settings,
             appearance: {
-                showFileTags: false,
-                showFileProperties: false,
-                showFileTaskProgress: false,
+                showTags: false,
+                showProperties: false,
+                showTaskProgress: false,
                 showTextCount: false
             },
             selectionType: ItemType.FOLDER
@@ -73,9 +73,9 @@ describe('resolveListPaneAppearance', () => {
         const result = resolveListPaneAppearance({
             settings,
             appearance: {
-                showFileTags: true,
-                showFileProperties: true,
-                showFileTaskProgress: true,
+                showTags: true,
+                showProperties: true,
+                showTaskProgress: true,
                 showTextCount: true
             },
             selectionType: ItemType.FOLDER
@@ -108,7 +108,7 @@ describe('resolveListPaneAppearance', () => {
     it('keeps the master tag setting as a gate because tag content is not extracted without it', () => {
         const result = resolveListPaneAppearance({
             settings: createSettings({ showTags: false, showFileTags: false }),
-            appearance: { showFileTags: true },
+            appearance: { showTags: true },
             selectionType: ItemType.TAG
         });
 
@@ -124,7 +124,7 @@ describe('resolveListPaneAppearance', () => {
                 showFileDate: true,
                 showFileTaskProgress: true
             }),
-            appearance: { mode: 'compact', previewRows: 4, showFileTaskProgress: true },
+            appearance: { mode: 'compact', previewRows: 4, showTaskProgress: true },
             selectionType: ItemType.PROPERTY
         });
 
@@ -148,7 +148,7 @@ describe('resolveListPaneAppearance', () => {
                 showFileProperties: false,
                 showFilePropertiesInCompactMode: true
             }),
-            appearance: { showFileTags: true, showFileProperties: true },
+            appearance: { showTags: true, showProperties: true },
             selectionType: ItemType.FOLDER
         });
 
@@ -178,25 +178,25 @@ describe('stored list appearance intent', () => {
             mode: 'standard',
             titleRows: 2,
             previewRows: 9,
-            showFileTags: true,
+            showTags: true,
             showTextCount: false,
             showFilePreview: false,
             textCountDisplay: 'both'
-        } as FolderAppearance);
+        } as ListPaneAppearance);
 
         expect(stored).toEqual({
             mode: 'standard',
             titleRows: 2,
-            showFileTags: true,
+            showTags: true,
             showTextCount: false
         });
         expect(hasStoredListPaneAppearanceOverride(stored ?? undefined)).toBe(true);
     });
 
     it('treats toggles stored with different values as different overrides', () => {
-        expect(areStoredListPaneAppearanceFieldsEqual({ showFileTags: true }, { showFileTags: false })).toBe(false);
-        expect(areStoredListPaneAppearanceFieldsEqual({ showFileTags: true }, { showFileTags: true })).toBe(true);
-        expect(areStoredListPaneAppearanceFieldsEqual(undefined, { showFileTags: undefined })).toBe(true);
+        expect(areStoredListPaneAppearanceFieldsEqual({ showTags: true }, { showTags: false })).toBe(false);
+        expect(areStoredListPaneAppearanceFieldsEqual({ showTags: true }, { showTags: true })).toBe(true);
+        expect(areStoredListPaneAppearanceFieldsEqual(undefined, { showTags: undefined })).toBe(true);
     });
 
     it('preserves grouping while resetting appearance fields', () => {
@@ -209,7 +209,7 @@ describe('appearance map snapshots', () => {
     it('preserves map identity when an unrelated settings update leaves appearances unchanged', () => {
         const current = {
             Writing: { mode: 'standard', showTextCount: true }
-        } satisfies Record<string, FolderAppearance>;
+        } satisfies Record<string, ListPaneAppearance>;
         const initialSnapshot = snapshotListPaneAppearanceMap(current);
         const nextSnapshot = snapshotListPaneAppearanceMap(current, initialSnapshot);
 
@@ -221,7 +221,7 @@ describe('appearance map snapshots', () => {
     it('publishes a new immutable snapshot after an in-place appearance mutation', () => {
         const current = {
             Writing: { mode: 'standard', showTextCount: true }
-        } satisfies Record<string, FolderAppearance>;
+        } satisfies Record<string, ListPaneAppearance>;
         const initialSnapshot = snapshotListPaneAppearanceMap(current);
 
         current.Writing.showTextCount = false;

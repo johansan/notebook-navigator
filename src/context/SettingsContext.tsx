@@ -39,7 +39,7 @@ import {
 } from '../utils/vaultProfiles';
 import { clonePinnedNotesRecord, isStringRecordValue, sanitizeRecord, type PinnedNoteContextValue } from '../utils/recordUtils';
 import { areStringArraysEqual } from '../utils/arrayUtils';
-import { snapshotListPaneAppearanceMap, type FolderAppearance, type TagAppearance } from '../settings/listPaneAppearance';
+import { snapshotListPaneAppearanceMap, type ListPaneAppearance } from '../settings/listPaneAppearance';
 import { buildFileNameIconNeedles, type FileNameIconNeedle } from '../utils/fileIconUtils';
 
 // Separate contexts for state and update function
@@ -224,9 +224,9 @@ export function SettingsProvider({ children, plugin }: SettingsProviderProps) {
     } | null>(null);
     const previousPinnedNotesRef = useRef<Record<string, PinnedNoteContextValue> | null>(null);
     const previousAppearanceMapsRef = useRef<{
-        folders: Record<string, FolderAppearance>;
-        tags: Record<string, TagAppearance>;
-        properties: Record<string, FolderAppearance>;
+        folders: Record<string, ListPaneAppearance>;
+        tags: Record<string, ListPaneAppearance>;
+        properties: Record<string, ListPaneAppearance>;
     } | null>(null);
 
     const updateSettings = useCallback(

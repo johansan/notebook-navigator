@@ -19,7 +19,7 @@
 // Imports
 import type { NotebookNavigatorSettings } from '../types';
 import type { LocalStorageKeys } from '../../types';
-import type { FolderAppearance } from '../listPaneAppearance';
+import type { ListPaneAppearance } from '../listPaneAppearance';
 import { DEFAULT_SETTINGS } from '../defaultSettings';
 import { localStorage } from '../../utils/localStorage';
 import { cloneShortcuts, createPropertyKeysFromPropertyFields, DEFAULT_VAULT_PROFILE_ID } from '../../utils/vaultProfiles';
@@ -195,7 +195,7 @@ export function migrateLegacySyncedSettings(params: {
     // encoded key is still configured is reconciled by the settings controller after migration.
     settings.noteGrouping = normalizeListNoteGroupingOption(settings.noteGrouping) ?? defaultSettings.noteGrouping;
 
-    const normalizeAppearanceGrouping = (collection: Record<string, FolderAppearance> | undefined): void => {
+    const normalizeAppearanceGrouping = (collection: Record<string, ListPaneAppearance> | undefined): void => {
         if (!collection) {
             return;
         }
@@ -403,13 +403,13 @@ export function migrateLegacySyncedSettings(params: {
         settings.propertySortOrder = defaultSettings.propertySortOrder;
     }
 
-    type LegacyAppearance = FolderAppearance & {
+    type LegacyAppearance = ListPaneAppearance & {
         showDate?: boolean;
         showPreview?: boolean;
         showImage?: boolean;
     };
 
-    const migrateLegacyAppearanceMode = (appearance: LegacyAppearance | undefined): FolderAppearance | undefined => {
+    const migrateLegacyAppearanceMode = (appearance: LegacyAppearance | undefined): ListPaneAppearance | undefined => {
         if (!appearance) {
             return appearance;
         }
@@ -421,7 +421,7 @@ export function migrateLegacySyncedSettings(params: {
             appearance.showImage === false;
 
         if (isLegacyCompact) {
-            const migrated: FolderAppearance = { ...appearance, mode: 'compact' };
+            const migrated: ListPaneAppearance = { ...appearance, mode: 'compact' };
             delete (migrated as LegacyAppearance).showDate;
             delete (migrated as LegacyAppearance).showPreview;
             delete (migrated as LegacyAppearance).showImage;
@@ -431,7 +431,7 @@ export function migrateLegacySyncedSettings(params: {
         return appearance;
     };
 
-    const migrateLegacyAppearances = (collection: Record<string, FolderAppearance> | undefined) => {
+    const migrateLegacyAppearances = (collection: Record<string, ListPaneAppearance> | undefined) => {
         if (!collection) {
             return;
         }
