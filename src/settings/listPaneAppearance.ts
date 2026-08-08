@@ -19,7 +19,7 @@
 import { ItemType } from '../types';
 import { resolveListGroupingOverride } from '../utils/listGrouping';
 import {
-    resolveTextCountVariant,
+    isTextCountDisplay,
     type ListDisplayMode,
     type ListNoteGroupingOption,
     type ListPaneAppearance,
@@ -48,7 +48,7 @@ export interface ListPaneAppearanceSettings {
  * Both `true` and `false` are persisted so a selection can enable content that
  * the global setting turns off, and hide content that the global setting shows.
  */
-export const LIST_PANE_TOGGLE_KEYS = ['showTags', 'showProperties', 'showTaskProgress', 'showTextCount'] as const;
+export const LIST_PANE_TOGGLE_KEYS = ['showTags', 'showProperties', 'showTaskProgress'] as const;
 
 export type ListPaneToggleKey = (typeof LIST_PANE_TOGGLE_KEYS)[number];
 
@@ -58,7 +58,8 @@ const LIST_PANE_APPEARANCE_FIELD_KEYS = [
     'mode',
     'titleRows',
     'previewRows',
-    ...LIST_PANE_TOGGLE_KEYS
+    ...LIST_PANE_TOGGLE_KEYS,
+    'textCount'
 ] as const satisfies readonly (keyof ListPaneAppearanceFields)[];
 
 function isValidTitleRows(value: unknown): value is number {
@@ -66,7 +67,7 @@ function isValidTitleRows(value: unknown): value is number {
 }
 
 function isValidPreviewRows(value: unknown): value is number {
-    return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5;
+    return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 5;
 }
 
 /**
@@ -93,6 +94,9 @@ export function getStoredListPaneAppearanceFields(appearance: ListPaneAppearance
             normalized[key] = appearance[key];
         }
     });
+    if (isTextCountDisplay(appearance.textCount)) {
+        normalized.textCount = appearance.textCount;
+    }
 
     return Object.keys(normalized).length > 0 ? normalized : null;
 }
@@ -210,11 +214,10 @@ export function resolveListPaneAppearance({
     const showProperties =
         (appearance?.showProperties ?? settings.showFileProperties) && (!isCompact || settings.showFilePropertiesInCompactMode);
     const showTaskProgress = (appearance?.showTaskProgress ?? settings.showFileTaskProgress) && !isCompact;
+    const previewRowsOverride = isValidPreviewRows(appearance?.previewRows) ? appearance.previewRows : undefined;
     // Property-placed counts render as pills, so they are unavailable when compact mode hides pills.
     const textCountUnavailable = isCompact && settings.textCountPlacement === 'property' && !settings.showFilePropertiesInCompactMode;
-    // A selection toggles counts on or off; the global setting decides which counts are shown.
-    const showTextCount = (appearance?.showTextCount ?? settings.textCountDisplay !== 'none') && !textCountUnavailable;
-    const textCountDisplay = showTextCount ? resolveTextCountVariant(settings.textCountDisplay) : 'none';
+    const textCountDisplay = textCountUnavailable ? 'none' : (appearance?.textCount ?? settings.textCountDisplay);
     const grouping = resolveListGroupingOverride({
         noteGrouping: settings.noteGrouping,
         selectionType,
@@ -224,9 +227,10 @@ export function resolveListPaneAppearance({
     return {
         mode,
         titleRows: isValidTitleRows(appearance?.titleRows) ? appearance.titleRows : settings.fileNameRows,
-        previewRows: isValidPreviewRows(appearance?.previewRows) ? appearance.previewRows : settings.previewRows,
+        // Zero hides preview text, but the configured row count still sizes feature-image and pill layouts.
+        previewRows: previewRowsOverride && previewRowsOverride > 0 ? previewRowsOverride : settings.previewRows,
         showDate: !isCompact && settings.showFileDate,
-        showPreview: !isCompact && settings.showFilePreview,
+        showPreview: !isCompact && settings.showFilePreview && previewRowsOverride !== 0,
         showImage: !isCompact && settings.showFeatureImage,
         showTags,
         showProperties,

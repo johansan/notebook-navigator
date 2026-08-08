@@ -421,15 +421,28 @@ export const STRINGS_AR = {
         compactPreset: 'مضغوط',
         defaultSuffix: '(افتراضي)',
         defaultLabel: 'افتراضي',
-        titleRows: 'صفوف العنوان',
-        previewRows: 'صفوف المعاينة',
+        titleRows: {
+            label: 'صفوف العنوان',
+            option: (rows: number) => `${rows} صف عنوان`
+        },
+        previewRows: {
+            label: 'صفوف المعاينة',
+            none: 'لا شيء',
+            option: (rows: number) => `${rows} صف معاينة`
+        },
         groupBy: 'تجميع حسب',
-        titleRowOption: (rows: number) => `${rows} صف عنوان`,
-        previewRowOption: (rows: number) => `${rows} صف معاينة`,
-        defaultOffSuffix: '(معطّل افتراضيًا)',
         tags: 'وسوم',
         properties: 'الخصائص',
         tasks: 'المهام',
+        textCount: {
+            label: 'عدد النص',
+            options: {
+                none: 'لا شيء',
+                words: 'الكلمات',
+                characters: 'الأحرف',
+                both: 'الكلمات والأحرف'
+            }
+        },
         resetAppearance: 'إعادة تعيين المظهر',
         openPluginSettings: 'فتح إعدادات الإضافة…'
     },

@@ -422,15 +422,28 @@ export const STRINGS_TR = {
         compactPreset: 'Kompakt',
         defaultSuffix: '(varsayılan)',
         defaultLabel: 'Varsayılan',
-        titleRows: 'Başlık satırları',
-        previewRows: 'Önizleme satırları',
+        titleRows: {
+            label: 'Başlık satırları',
+            option: (rows: number) => `${rows} başlık satırı`
+        },
+        previewRows: {
+            label: 'Önizleme satırları',
+            none: 'Yok',
+            option: (rows: number) => `${rows} önizleme satırı`
+        },
         groupBy: 'Grupla',
-        titleRowOption: (rows: number) => `${rows} başlık satırı`,
-        previewRowOption: (rows: number) => `${rows} önizleme satırı`,
-        defaultOffSuffix: '(varsayılan olarak kapalı)',
         tags: 'Etiketler',
         properties: 'Özellikler',
         tasks: 'Görevler',
+        textCount: {
+            label: 'Metin sayımı',
+            options: {
+                none: 'Yok',
+                words: 'Kelime',
+                characters: 'Karakter',
+                both: 'Kelime ve karakter'
+            }
+        },
         resetAppearance: 'Görünümü sıfırla',
         openPluginSettings: 'Eklenti ayarlarını aç…'
     },

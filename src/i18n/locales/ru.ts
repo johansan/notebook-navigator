@@ -422,15 +422,28 @@ export const STRINGS_RU = {
         compactPreset: 'Компактный',
         defaultSuffix: '(по умолчанию)',
         defaultLabel: 'По умолчанию',
-        titleRows: 'Строки заголовка',
-        previewRows: 'Строки превью',
+        titleRows: {
+            label: 'Строки заголовка',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`
+        },
+        previewRows: {
+            label: 'Строки превью',
+            none: 'Нет',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`
+        },
         groupBy: 'Группировать по',
-        titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`,
-        defaultOffSuffix: '(по умолчанию выключено)',
         tags: 'Теги',
         properties: 'Свойства',
         tasks: 'Задачи',
+        textCount: {
+            label: 'Подсчёт текста',
+            options: {
+                none: 'Нет',
+                words: 'Слова',
+                characters: 'Символы',
+                both: 'Слова и символы'
+            }
+        },
         resetAppearance: 'Сбросить оформление',
         openPluginSettings: 'Открыть настройки плагина…'
     },

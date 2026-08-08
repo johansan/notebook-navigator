@@ -423,15 +423,28 @@ export const STRINGS_UK = {
         compactPreset: 'Компактний',
         defaultSuffix: '(за замовчуванням)',
         defaultLabel: 'За замовчуванням',
-        titleRows: 'Рядки заголовка',
-        previewRows: 'Рядки попереднього перегляду',
+        titleRows: {
+            label: 'Рядки заголовка',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} заголовка`
+        },
+        previewRows: {
+            label: 'Рядки попереднього перегляду',
+            none: 'Немає',
+            option: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`
+        },
         groupBy: 'Групувати за',
-        titleRowOption: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} заголовка`,
-        previewRowOption: (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`,
-        defaultOffSuffix: '(типово вимкнено)',
         tags: 'Теги',
         properties: 'Властивості',
         tasks: 'Завдання',
+        textCount: {
+            label: 'Підрахунок тексту',
+            options: {
+                none: 'Немає',
+                words: 'Слова',
+                characters: 'Символи',
+                both: 'Слова і символи'
+            }
+        },
         resetAppearance: 'Скинути оформлення',
         openPluginSettings: 'Відкрити налаштування плагіна…'
     },

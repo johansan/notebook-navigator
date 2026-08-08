@@ -100,11 +100,18 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             showTooltips: false,
             showTooltipWordCount: false,
-            folderAppearances: { Writing: { mode: 'compact', showTextCount: true } }
+            folderAppearances: { Writing: { mode: 'compact', textCount: 'words' } }
+        });
+        const charactersEnabled = createSettings({
+            textCountDisplay: 'none',
+            showTooltips: false,
+            showTooltipWordCount: false,
+            folderAppearances: { Writing: { mode: 'compact', textCount: 'characters' } }
         });
 
         expect(haveMarkdownCountConsumersChanged(disabled, visualChange)).toBe(false);
         expect(haveMarkdownCountConsumersChanged(visualChange, countsEnabled)).toBe(true);
+        expect(haveMarkdownCountConsumersChanged(countsEnabled, charactersEnabled)).toBe(true);
         expect(haveMarkdownCountConsumersChanged(countsEnabled, visualChange)).toBe(true);
     });
 });
@@ -390,7 +397,7 @@ describe('MarkdownPipelineContentProvider word count', () => {
         const context = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            folderAppearances: { Writing: { showTextCount: true } }
+            folderAppearances: { Writing: { textCount: 'words' } }
         });
         const provider = new TestMarkdownPipelineContentProvider(context.app);
         const file = createFile('Writing/Draft.md');
@@ -401,6 +408,23 @@ describe('MarkdownPipelineContentProvider word count', () => {
         expect(result.update?.wordCount).toBe(3);
         expect(result.update?.characterCountWithSpaces).toBeUndefined();
         expect(result.update?.characterCountWithoutSpaces).toBeUndefined();
+    });
+
+    it('counts characters when a list appearance selects them while the global setting is off', async () => {
+        const context = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            folderAppearances: { Writing: { textCount: 'characters' } }
+        });
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+        const file = createFile('Writing/Draft.md');
+
+        setMarkdownContent(context, file, 'Three draft words');
+        const result = await provider.runProcessFile(file, null, settings);
+
+        expect(result.update?.wordCount).toBeUndefined();
+        expect(result.update?.characterCountWithSpaces).toBe(17);
+        expect(result.update?.characterCountWithoutSpaces).toBe(15);
     });
 
     it('counts words for sort-activated custom group headers when file counts are hidden', async () => {

@@ -421,15 +421,28 @@ export const STRINGS_ZH_TW = {
         compactPreset: '精簡',
         defaultSuffix: '(預設)',
         defaultLabel: '預設',
-        titleRows: '標題行數',
-        previewRows: '預覽行數',
+        titleRows: {
+            label: '標題行數',
+            option: (rows: number) => `標題${rows}行`
+        },
+        previewRows: {
+            label: '預覽行數',
+            none: '無',
+            option: (rows: number) => `預覽${rows}行`
+        },
         groupBy: '分組依據',
-        titleRowOption: (rows: number) => `標題${rows}行`,
-        previewRowOption: (rows: number) => `預覽${rows}行`,
-        defaultOffSuffix: '（預設關閉）',
         tags: '標籤',
         properties: '屬性',
         tasks: '任務',
+        textCount: {
+            label: '文字計數',
+            options: {
+                none: '無',
+                words: '字',
+                characters: '字元',
+                both: '字與字元'
+            }
+        },
         resetAppearance: '重設外觀',
         openPluginSettings: '開啟外掛程式設定…'
     },

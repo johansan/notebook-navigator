@@ -423,15 +423,28 @@ export const STRINGS_FR = {
         compactPreset: 'Compact',
         defaultSuffix: '(par défaut)',
         defaultLabel: 'Par défaut',
-        titleRows: 'Lignes de titre',
-        previewRows: "Lignes d'aperçu",
+        titleRows: {
+            label: 'Lignes de titre',
+            option: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`
+        },
+        previewRows: {
+            label: "Lignes d'aperçu",
+            none: 'Aucun',
+            option: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`
+        },
         groupBy: 'Grouper par',
-        titleRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`,
-        previewRowOption: (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`,
-        defaultOffSuffix: '(désactivé par défaut)',
         tags: 'Étiquettes',
         properties: 'Propriétés',
         tasks: 'Tâches',
+        textCount: {
+            label: 'Comptage du texte',
+            options: {
+                none: 'Aucun',
+                words: 'Mots',
+                characters: 'Caractères',
+                both: 'Mots et caractères'
+            }
+        },
         resetAppearance: 'Réinitialiser l’apparence',
         openPluginSettings: 'Ouvrir les réglages du module…'
     },

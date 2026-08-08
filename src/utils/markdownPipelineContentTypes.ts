@@ -17,16 +17,15 @@
  */
 
 import type { FileContentType } from '../interfaces/IContentProvider';
-import {
-    resolveTextCountVariant,
-    showsCharacterCount,
-    showsWordCount,
-    type NotebookNavigatorSettings,
-    type TextCountDisplay
-} from '../settings/types';
+import { showsCharacterCount, showsWordCount, type NotebookNavigatorSettings } from '../settings/types';
 import { hasWordCountTargetPropertyConsumer } from './propertyUtils';
 
-const appearanceTextCountConsumerCache = new WeakMap<object, boolean>();
+interface AppearanceTextCountConsumers {
+    words: boolean;
+    characters: boolean;
+}
+
+const appearanceTextCountConsumerCache = new WeakMap<object, AppearanceTextCountConsumers>();
 
 export function hasMarkdownPreviewConsumer(settings: NotebookNavigatorSettings): boolean {
     return settings.showFilePreview;
@@ -37,42 +36,41 @@ export function hasMarkdownFeatureImageConsumer(settings: NotebookNavigatorSetti
 }
 
 /**
- * Checks folder, tag, and property appearance overrides for an enabled text count toggle.
- * A selection can enable counts while the global count type is 'none', so count extraction
- * must run whenever any selection displays them. The global setting decides the count type.
+ * Checks folder, tag, and property appearance overrides for text count consumers.
+ * A selection can request either count while the global count type is 'none', so extraction
+ * must include every count type used by an appearance.
  */
-function hasEnabledAppearanceTextCount(settings: NotebookNavigatorSettings): boolean {
+function hasAppearanceTextCountConsumer(settings: NotebookNavigatorSettings, type: keyof AppearanceTextCountConsumers): boolean {
     // Settings snapshots keep unchanged appearance maps immutable and referentially stable, so each
-    // map is scanned only when its contents change and the result is shared across settings updates.
+    // map is scanned only when its contents change and both consumer checks share the result.
     const records = [settings.folderAppearances, settings.tagAppearances, settings.propertyAppearances];
     return records.some(record => {
-        const cached = appearanceTextCountConsumerCache.get(record);
-        if (cached !== undefined) {
-            return cached;
+        let consumers = appearanceTextCountConsumerCache.get(record);
+        if (!consumers) {
+            const detectedConsumers: AppearanceTextCountConsumers = { words: false, characters: false };
+            Object.values(record).forEach(appearance => {
+                if (appearance.textCount) {
+                    detectedConsumers.words ||= showsWordCount(appearance.textCount);
+                    detectedConsumers.characters ||= showsCharacterCount(appearance.textCount);
+                }
+            });
+            consumers = detectedConsumers;
+            appearanceTextCountConsumerCache.set(record, consumers);
         }
-        const enabled = Object.values(record).some(appearance => appearance.showTextCount === true);
-        appearanceTextCountConsumerCache.set(record, enabled);
-        return enabled;
+        return consumers[type];
     });
-}
-
-function hasAppearanceTextCountConsumer(settings: NotebookNavigatorSettings, shows: (value: TextCountDisplay) => boolean): boolean {
-    if (!shows(resolveTextCountVariant(settings.textCountDisplay))) {
-        return false;
-    }
-    return hasEnabledAppearanceTextCount(settings);
 }
 
 export function hasMarkdownWordCountConsumer(settings: NotebookNavigatorSettings): boolean {
     return (
         hasWordCountTargetPropertyConsumer(settings) ||
         (settings.showTooltips && settings.showTooltipWordCount) ||
-        hasAppearanceTextCountConsumer(settings, showsWordCount)
+        hasAppearanceTextCountConsumer(settings, 'words')
     );
 }
 
 export function hasMarkdownCharacterCountConsumer(settings: NotebookNavigatorSettings): boolean {
-    return showsCharacterCount(settings.textCountDisplay) || hasAppearanceTextCountConsumer(settings, showsCharacterCount);
+    return showsCharacterCount(settings.textCountDisplay) || hasAppearanceTextCountConsumer(settings, 'characters');
 }
 
 /** Returns whether a settings update changes which text counts the markdown pipeline must extract. */

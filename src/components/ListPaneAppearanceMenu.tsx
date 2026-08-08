@@ -27,7 +27,7 @@ import {
     type ListPaneToggleKey
 } from '../settings/listPaneAppearance';
 import { strings } from '../i18n';
-import { resolveTextCountVariant, type ListDisplayMode, type NotebookNavigatorSettings, type TextCountDisplay } from '../settings/types';
+import type { ListDisplayMode, NotebookNavigatorSettings, TextCountDisplay } from '../settings/types';
 import { ItemType } from '../types';
 import { runAsyncAction } from '../utils/async';
 import { tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
@@ -164,7 +164,8 @@ export function showListPaneAppearanceMenu({
         fragment.append(createSpan({ cls: 'nn-menu-title-custom', text: title }));
         item.setTitle(fragment);
     };
-    const countLabel = (value: TextCountDisplay): string => strings.settings.items.textCountDisplay.options[value];
+    const textCountLabel = (value: TextCountDisplay): string => strings.folderAppearance.textCount.options[value];
+    const rowCounts = [1, 2, 3, 4, 5] as const;
 
     /**
      * Desktop menus use Obsidian's optional submenu API. Mobile and older Obsidian versions receive
@@ -245,48 +246,50 @@ export function showListPaneAppearanceMenu({
     menu.addSeparator();
 
     const storedTitleRows = storedFields?.titleRows;
-    addChoiceSection<number | undefined>({
-        title: `${strings.folderAppearance.titleRows}: ${resolved.titleRows}`,
+    const effectiveTitleRows = storedTitleRows ?? settings.fileNameRows;
+    addChoiceSection<number>({
+        title: `${strings.folderAppearance.titleRows.label}: ${resolved.titleRows}`,
         isCustom: storedTitleRows !== undefined,
         icon: 'lucide-text',
-        options: [
-            {
-                value: undefined,
-                title: `${strings.folderAppearance.defaultLabel} (${settings.fileNameRows})`,
-                checked: storedTitleRows === undefined
-            },
-            ...[1, 2, 3].map(rows => ({
-                value: rows,
-                title: strings.folderAppearance.titleRowOption(rows),
-                checked: storedTitleRows === rows
-            }))
-        ],
-        onSelect: titleRows => updateAppearance({ titleRows })
+        options: rowCounts.slice(0, 3).map(rows => ({
+            value: rows,
+            title: withSuffix(
+                strings.folderAppearance.titleRows.option(rows),
+                rows === settings.fileNameRows ? strings.folderAppearance.defaultSuffix : null
+            ),
+            checked: effectiveTitleRows === rows
+        })),
+        onSelect: titleRows => updateAppearance({ titleRows: titleRows === settings.fileNameRows ? undefined : titleRows })
     });
 
     if (settings.showFilePreview && !isCompact) {
         const storedPreviewRows = storedFields?.previewRows;
-        addChoiceSection<number | undefined>({
-            title: `${strings.folderAppearance.previewRows}: ${resolved.previewRows}`,
+        const effectivePreviewRows = storedPreviewRows ?? settings.previewRows;
+        addChoiceSection<number>({
+            title: `${strings.folderAppearance.previewRows.label}: ${
+                effectivePreviewRows === 0 ? strings.folderAppearance.previewRows.none : effectivePreviewRows
+            }`,
             isCustom: storedPreviewRows !== undefined,
             icon: 'lucide-file-text',
             options: [
                 {
-                    value: undefined,
-                    title: `${strings.folderAppearance.defaultLabel} (${settings.previewRows})`,
-                    checked: storedPreviewRows === undefined
+                    value: 0,
+                    title: strings.folderAppearance.previewRows.none,
+                    checked: effectivePreviewRows === 0
                 },
-                ...[1, 2, 3, 4, 5].map(rows => ({
+                ...rowCounts.map(rows => ({
                     value: rows,
-                    title: strings.folderAppearance.previewRowOption(rows),
-                    checked: storedPreviewRows === rows
+                    title: withSuffix(
+                        strings.folderAppearance.previewRows.option(rows),
+                        rows === settings.previewRows ? strings.folderAppearance.defaultSuffix : null
+                    ),
+                    checked: effectivePreviewRows === rows
                 }))
             ],
-            onSelect: previewRows => updateAppearance({ previewRows })
+            onSelect: previewRows => updateAppearance({ previewRows: previewRows === settings.previewRows ? undefined : previewRows })
         });
     }
 
-    const textCountVariant = resolveTextCountVariant(settings.textCountDisplay);
     const contentToggles: ContentToggle[] = [
         {
             key: 'showTags',
@@ -309,31 +312,19 @@ export function showListPaneAppearanceMenu({
             icon: resolveUXIconForMenu(settings.interfaceIcons, 'file-unfinished-task'),
             globalDefault: settings.showFileTaskProgress,
             available: !isCompact
-        },
-        {
-            key: 'showTextCount',
-            // The label and icon name the counts the global setting shows; word count when the global type is 'none'.
-            title: countLabel(textCountVariant),
-            icon: resolveUXIconForMenu(
-                settings.interfaceIcons,
-                textCountVariant === 'characters' ? 'file-character-count' : 'file-word-count'
-            ),
-            globalDefault: settings.textCountDisplay !== 'none',
-            // Property-placed counts render as pills, so the toggle is hidden when compact mode hides pills.
-            available: !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode
         }
     ];
     const visibleToggles = contentToggles.filter(toggle => toggle.available);
-    if (visibleToggles.length > 0) {
+    // Property-placed counts render as pills, so the choice is hidden when compact mode hides pills.
+    const textCountAvailable = !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode;
+    if (visibleToggles.length > 0 || textCountAvailable) {
         menu.addSeparator();
     }
     visibleToggles.forEach(toggle => {
         const stored = storedFields?.[toggle.key];
         const effective = stored ?? toggle.globalDefault;
         menu.addItem(item => {
-            // The default-off suffix tells the user an unchecked toggle comes from global settings and can be enabled here.
-            const suffix = stored === undefined && !toggle.globalDefault ? strings.folderAppearance.defaultOffSuffix : null;
-            setItemTitle(item, withSuffix(toggle.title, suffix), stored !== undefined);
+            setItemTitle(item, toggle.title, stored !== undefined);
             item.setIcon(toggle.icon)
                 .setChecked(effective)
                 .onClick(() => {
@@ -345,6 +336,29 @@ export function showListPaneAppearanceMenu({
                 });
         });
     });
+    if (textCountAvailable) {
+        const storedTextCount = storedFields?.textCount;
+        const effectiveTextCount = resolved.textCountDisplay;
+        const countIcon = resolveUXIconForMenu(
+            settings.interfaceIcons,
+            effectiveTextCount === 'characters' ? 'file-character-count' : 'file-word-count'
+        );
+        const countOptions = ['none', 'words', 'characters', 'both'] as const;
+        addChoiceSection<TextCountDisplay>({
+            title: `${strings.folderAppearance.textCount.label}: ${textCountLabel(effectiveTextCount)}`,
+            isCustom: storedTextCount !== undefined,
+            icon: countIcon,
+            options: countOptions.map(textCount => ({
+                value: textCount,
+                title: withSuffix(
+                    textCountLabel(textCount),
+                    textCount === settings.textCountDisplay ? strings.folderAppearance.defaultSuffix : null
+                ),
+                checked: effectiveTextCount === textCount
+            })),
+            onSelect: textCount => updateAppearance({ textCount: textCount === settings.textCountDisplay ? undefined : textCount })
+        });
+    }
 
     if (descendantAction) {
         menu.addSeparator();
