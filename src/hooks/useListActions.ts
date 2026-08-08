@@ -55,7 +55,7 @@ import {
     hasStoredListPaneAppearanceOverride,
     mergeListPaneAppearanceAndGrouping
 } from '../settings/listPaneAppearance';
-import type { FolderAppearance } from '../settings/listPaneAppearance';
+import type { ListPaneAppearance } from '../settings/listPaneAppearance';
 import { getFilesForFolder } from '../utils/fileFinder';
 import { runAsyncAction } from '../utils/async';
 import { FILE_VISIBILITY } from '../utils/fileTypeUtils';
@@ -525,7 +525,7 @@ export function useListActions({
         settings
     ]);
 
-    const getSelectionAppearanceOverride = useCallback((): FolderAppearance | undefined => {
+    const getSelectionAppearanceOverride = useCallback((): ListPaneAppearance | undefined => {
         if (selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder) {
             return settings.folderAppearances?.[selectionState.selectedFolder.path];
         }
@@ -1906,7 +1906,7 @@ export function useListActions({
 
     const hasCustomSortOrGroup = selectionSortOverride !== undefined || hasSelectionGroupOverride;
 
-    const hasMeaningfulOverrides = (appearance: FolderAppearance | undefined) => hasStoredListPaneAppearanceOverride(appearance);
+    const hasMeaningfulOverrides = (appearance: ListPaneAppearance | undefined) => hasStoredListPaneAppearanceOverride(appearance);
 
     // Check if folder, tag, or property has custom appearance settings
     const hasCustomAppearance =

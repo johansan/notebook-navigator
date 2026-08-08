@@ -21,7 +21,7 @@ import { getDefaultKeyboardShortcuts } from '../utils/keyboardShortcuts';
 import { FILE_VISIBILITY } from '../utils/fileTypeUtils';
 import { LISTPANE_MEASUREMENTS, NAVPANE_MEASUREMENTS, type PinnedNotes } from '../types';
 import { DEFAULT_UI_SCALE } from '../utils/uiScale';
-import type { FolderAppearance, TagAppearance } from './listPaneAppearance';
+import type { ListPaneAppearance } from './listPaneAppearance';
 import {
     NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
     SYNC_MODE_SETTING_IDS,
@@ -447,19 +447,19 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     folderBackgroundColors: sanitizeRecord<string>(undefined),
     folderSortOverrides: sanitizeRecord<NotebookNavigatorSettings['folderSortOverrides'][string]>(undefined),
     folderTreeSortOverrides: sanitizeRecord<NotebookNavigatorSettings['folderTreeSortOverrides'][string]>(undefined),
-    folderAppearances: sanitizeRecord<FolderAppearance>(undefined),
+    folderAppearances: sanitizeRecord<ListPaneAppearance>(undefined),
     tagIcons: sanitizeRecord<string>(undefined),
     tagColors: sanitizeRecord<string>(undefined),
     tagBackgroundColors: sanitizeRecord<string>(undefined),
     tagSortOverrides: sanitizeRecord<NotebookNavigatorSettings['tagSortOverrides'][string]>(undefined),
     tagTreeSortOverrides: sanitizeRecord<NotebookNavigatorSettings['tagTreeSortOverrides'][string]>(undefined),
-    tagAppearances: sanitizeRecord<TagAppearance>(undefined),
+    tagAppearances: sanitizeRecord<ListPaneAppearance>(undefined),
     propertyIcons: sanitizeRecord<string>(undefined),
     propertyColors: sanitizeRecord<string>(undefined),
     propertyBackgroundColors: sanitizeRecord<string>(undefined),
     propertySortOverrides: sanitizeRecord<NotebookNavigatorSettings['propertySortOverrides'][string]>(undefined),
     propertyTreeSortOverrides: sanitizeRecord<NotebookNavigatorSettings['propertyTreeSortOverrides'][string]>(undefined),
-    propertyAppearances: sanitizeRecord<FolderAppearance>(undefined),
+    propertyAppearances: sanitizeRecord<ListPaneAppearance>(undefined),
     virtualFolderColors: sanitizeRecord<string>(undefined),
     virtualFolderBackgroundColors: sanitizeRecord<string>(undefined),
     navigationSeparators: sanitizeRecord<boolean>(undefined),

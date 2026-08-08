@@ -444,18 +444,16 @@ export type PropertyGroupingOrder = PropertyGroupingDirection | 'follow';
 export type ListNoteGroupingOption =
     ListNoteGroupingBaseOption | `property:${string}` | `property-desc:${string}` | `property-follow:${string}`;
 
-export interface FolderAppearance {
+export interface ListPaneAppearance {
     mode?: ListDisplayMode;
     titleRows?: number;
     previewRows?: number;
     groupBy?: ListNoteGroupingOption;
-    showFileTags?: boolean;
-    showFileProperties?: boolean;
-    showFileTaskProgress?: boolean;
+    showTags?: boolean;
+    showProperties?: boolean;
+    showTaskProgress?: boolean;
     showTextCount?: boolean;
 }
-
-export type TagAppearance = FolderAppearance;
 
 const PROPERTY_GROUPING_PREFIX = 'property:';
 const PROPERTY_GROUPING_DESC_PREFIX = 'property-desc:';
@@ -920,19 +918,19 @@ export interface NotebookNavigatorSettings {
     folderBackgroundColors: Record<string, string>;
     folderSortOverrides: Record<string, ListSortOverrideValue>;
     folderTreeSortOverrides: Record<string, AlphaSortOrder>;
-    folderAppearances: Record<string, FolderAppearance>;
+    folderAppearances: Record<string, ListPaneAppearance>;
     tagIcons: Record<string, string>;
     tagColors: Record<string, string>;
     tagBackgroundColors: Record<string, string>;
     tagSortOverrides: Record<string, ListSortOverrideValue>;
     tagTreeSortOverrides: Record<string, AlphaSortOrder>;
-    tagAppearances: Record<string, TagAppearance>;
+    tagAppearances: Record<string, ListPaneAppearance>;
     propertyIcons: Record<string, string>;
     propertyColors: Record<string, string>;
     propertyBackgroundColors: Record<string, string>;
     propertySortOverrides: Record<string, ListSortOverrideValue>;
     propertyTreeSortOverrides: Record<string, AlphaSortOrder>;
-    propertyAppearances: Record<string, FolderAppearance>;
+    propertyAppearances: Record<string, ListPaneAppearance>;
     virtualFolderColors: Record<string, string>;
     virtualFolderBackgroundColors: Record<string, string>;
     navigationSeparators: Record<string, boolean>;
