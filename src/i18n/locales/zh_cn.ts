@@ -420,15 +420,28 @@ export const STRINGS_ZH_CN = {
         compactPreset: '紧凑',
         defaultSuffix: '(默认)',
         defaultLabel: '默认',
-        titleRows: '标题行数',
-        previewRows: '预览行数',
+        titleRows: {
+            label: '标题行数',
+            option: (rows: number) => `标题${rows}行`
+        },
+        previewRows: {
+            label: '预览行数',
+            none: '无',
+            option: (rows: number) => `预览${rows}行`
+        },
         groupBy: '分组依据',
-        titleRowOption: (rows: number) => `标题${rows}行`,
-        previewRowOption: (rows: number) => `预览${rows}行`,
-        defaultOffSuffix: '（默认关闭）',
         tags: '标签',
         properties: '属性',
         tasks: '任务',
+        textCount: {
+            label: '文本计数',
+            options: {
+                none: '无',
+                words: '字',
+                characters: '字符',
+                both: '字和字符'
+            }
+        },
         resetAppearance: '重置外观',
         openPluginSettings: '打开插件设置…'
     },

@@ -421,15 +421,28 @@ export const STRINGS_VI = {
         compactPreset: 'Gọn',
         defaultSuffix: '(mặc định)',
         defaultLabel: 'Mặc định',
-        titleRows: 'Dòng tiêu đề',
-        previewRows: 'Dòng xem trước',
+        titleRows: {
+            label: 'Dòng tiêu đề',
+            option: (rows: number) => `${rows} dòng tiêu đề`
+        },
+        previewRows: {
+            label: 'Dòng xem trước',
+            none: 'Không',
+            option: (rows: number) => `${rows} dòng xem trước`
+        },
         groupBy: 'Nhóm theo',
-        titleRowOption: (rows: number) => `${rows} dòng tiêu đề`,
-        previewRowOption: (rows: number) => `${rows} dòng xem trước`,
-        defaultOffSuffix: '(mặc định tắt)',
         tags: 'Thẻ',
         properties: 'Thuộc tính',
         tasks: 'Nhiệm vụ',
+        textCount: {
+            label: 'Đếm văn bản',
+            options: {
+                none: 'Không',
+                words: 'Từ',
+                characters: 'Ký tự',
+                both: 'Từ và ký tự'
+            }
+        },
         resetAppearance: 'Đặt lại giao diện',
         openPluginSettings: 'Mở cài đặt plugin…'
     },

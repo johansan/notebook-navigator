@@ -422,15 +422,28 @@ export const STRINGS_ES = {
         compactPreset: 'Compacto',
         defaultSuffix: '(predeterminado)',
         defaultLabel: 'Predeterminado',
-        titleRows: 'Filas de título',
-        previewRows: 'Filas de vista previa',
+        titleRows: {
+            label: 'Filas de título',
+            option: (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de título`
+        },
+        previewRows: {
+            label: 'Filas de vista previa',
+            none: 'Ninguno',
+            option: (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de vista previa`
+        },
         groupBy: 'Agrupar por',
-        titleRowOption: (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de título`,
-        previewRowOption: (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de vista previa`,
-        defaultOffSuffix: '(desactivado por defecto)',
         tags: 'Etiquetas',
         properties: 'Propiedades',
         tasks: 'Tareas',
+        textCount: {
+            label: 'Recuento de texto',
+            options: {
+                none: 'Ninguno',
+                words: 'Palabras',
+                characters: 'Caracteres',
+                both: 'Palabras y caracteres'
+            }
+        },
         resetAppearance: 'Restablecer apariencia',
         openPluginSettings: 'Abrir ajustes del complemento…'
     },

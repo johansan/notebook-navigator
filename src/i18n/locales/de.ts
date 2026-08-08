@@ -422,15 +422,28 @@ export const STRINGS_DE = {
         compactPreset: 'Kompakt',
         defaultSuffix: '(Standard)',
         defaultLabel: 'Standard',
-        titleRows: 'Titelzeilen',
-        previewRows: 'Vorschauzeilen',
+        titleRows: {
+            label: 'Titelzeilen',
+            option: (rows: number) => `${rows} Titelzeile${rows === 1 ? '' : 'n'}`
+        },
+        previewRows: {
+            label: 'Vorschauzeilen',
+            none: 'Keine',
+            option: (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`
+        },
         groupBy: 'Gruppieren nach',
-        titleRowOption: (rows: number) => `${rows} Titelzeile${rows === 1 ? '' : 'n'}`,
-        previewRowOption: (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`,
-        defaultOffSuffix: '(standardmäßig aus)',
         tags: 'Tags',
         properties: 'Eigenschaften',
         tasks: 'Aufgaben',
+        textCount: {
+            label: 'Textzählung',
+            options: {
+                none: 'Keine',
+                words: 'Wörter',
+                characters: 'Zeichen',
+                both: 'Wörter und Zeichen'
+            }
+        },
         resetAppearance: 'Darstellung zurücksetzen',
         openPluginSettings: 'Plugin-Einstellungen öffnen…'
     },

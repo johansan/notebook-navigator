@@ -447,12 +447,14 @@ export type ListNoteGroupingOption =
 export interface ListPaneAppearance {
     mode?: ListDisplayMode;
     titleRows?: number;
+    /** Zero hides preview text for this selection; undefined inherits the global row count. */
     previewRows?: number;
     groupBy?: ListNoteGroupingOption;
     showTags?: boolean;
     showProperties?: boolean;
     showTaskProgress?: boolean;
-    showTextCount?: boolean;
+    /** Undefined inherits the global count type; `none` explicitly hides counts for this selection. */
+    textCount?: TextCountDisplay;
 }
 
 const PROPERTY_GROUPING_PREFIX = 'property:';
@@ -569,14 +571,6 @@ export function showsWordCount(display: TextCountDisplay): boolean {
 
 export function showsCharacterCount(display: TextCountDisplay): boolean {
     return display === 'characters' || display === 'both';
-}
-
-/**
- * The count type shown when a folder, tag, or property selection enables text counts.
- * The global setting decides the type; word count is the fallback when the global type is 'none'.
- */
-export function resolveTextCountVariant(display: TextCountDisplay): Exclude<TextCountDisplay, 'none'> {
-    return display === 'none' ? 'words' : display;
 }
 
 /** Buttons available in the navigation toolbar */

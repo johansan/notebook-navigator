@@ -421,15 +421,28 @@ export const STRINGS_JA = {
         compactPreset: 'コンパクト',
         defaultSuffix: '(デフォルト)',
         defaultLabel: 'デフォルト',
-        titleRows: 'タイトル行数',
-        previewRows: 'プレビュー行数',
+        titleRows: {
+            label: 'タイトル行数',
+            option: (rows: number) => `タイトル${rows}行`
+        },
+        previewRows: {
+            label: 'プレビュー行数',
+            none: 'なし',
+            option: (rows: number) => `プレビュー${rows}行`
+        },
         groupBy: 'グループ分け',
-        titleRowOption: (rows: number) => `タイトル${rows}行`,
-        previewRowOption: (rows: number) => `プレビュー${rows}行`,
-        defaultOffSuffix: '（デフォルトはオフ）',
         tags: 'タグ',
         properties: 'プロパティ',
         tasks: 'タスク',
+        textCount: {
+            label: 'テキストカウント',
+            options: {
+                none: 'なし',
+                words: '単語',
+                characters: '文字',
+                both: '単語と文字'
+            }
+        },
         resetAppearance: '外観をリセット',
         openPluginSettings: 'プラグイン設定を開く…'
     },
