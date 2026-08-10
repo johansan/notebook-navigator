@@ -107,6 +107,12 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.4',
+        date: '2026-08-16',
+        showOnUpdate: false,
+        fixed: ['Fixed `New canvas` appearing in folder menus when the Canvas core plugin was disabled.']
+    },
+    {
         version: '3.3.3',
         date: '2026-08-09',
         showOnUpdate: true,
