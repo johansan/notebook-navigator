@@ -140,6 +140,27 @@ interface UseListPaneScrollParams {
 }
 
 type ListPaneAppearanceLayoutSettings = UseListPaneScrollParams['folderSettings'];
+type PendingScroll =
+    | {
+          type: 'file';
+          filePath: string;
+          reason?: ListScrollIntent;
+          minIndexVersion?: number;
+      }
+    | {
+          type: 'top';
+          reason?: ListScrollIntent;
+          minIndexVersion?: number;
+      };
+
+/**
+ * A file request becomes stale when selection moves to another file or is cleared. A current
+ * selection can remain absent from the index while an asynchronous search finishes or a collapsed group expands.
+ */
+export function isPendingFileScrollStale(pending: PendingScroll, selectedFilePath: string | null): boolean {
+    return pending.type === 'file' && pending.filePath !== selectedFilePath;
+}
+
 type ListLayoutSignatureSettings = Pick<
     NotebookNavigatorSettings,
     | 'compactItemHeight'
@@ -652,21 +673,12 @@ export function useListPaneScroll({
     const prevGroupCollapseStateSignatureRef = useRef<string>(groupCollapseStateSignature);
 
     // ========== Scroll Orchestration ==========
-    // Scroll reasons determine priority and alignment behavior
-    type ScrollReason = ListScrollIntent;
-
-    // Pending scroll stores requests until list is ready
-    type PendingScroll = {
-        type: 'file' | 'top'; // Scroll to specific file or top of list
-        filePath?: string; // Target file path (for type='file')
-        reason?: ScrollReason; // Why this scroll was requested
-        minIndexVersion?: number; // Don't execute until indexVersion >= this
-    };
     const pendingScrollRef = useRef<PendingScroll | null>(null);
     const [pendingScrollVersion, setPendingScrollVersion] = useState(0); // Triggers effect re-run
     // Tracks the currently selected file path to detect stale pending scrolls
-    const selectedFilePathRef = useRef<string | null>(selectedFile ? selectedFile.path : null);
-    selectedFilePathRef.current = selectedFile?.path ?? null;
+    const selectedFilePath = selectedFile?.path ?? null;
+    const selectedFilePathRef = useRef<string | null>(selectedFilePath);
+    selectedFilePathRef.current = selectedFilePath;
 
     // ========== Index Version Tracking ==========
     // Increments when list rebuilds to ensure scrolls execute with correct indices
@@ -1171,17 +1183,8 @@ export function useListPaneScroll({
                     return true;
                 }
 
-                if (
-                    isStructuralChange &&
-                    pending.filePath &&
-                    selectedFilePathRef.current &&
-                    pending.filePath !== selectedFilePathRef.current
-                ) {
+                if (isPendingFileScrollStale(pending, selectedFilePathRef.current)) {
                     return true;
-                }
-
-                if (!pending.filePath) {
-                    return false;
                 }
 
                 const index = getSelectionIndex(pending.filePath);
@@ -1277,7 +1280,7 @@ export function useListPaneScroll({
         if (executePendingScroll(pending)) {
             pendingScrollRef.current = null;
         }
-    }, [executePendingScroll, rowVirtualizer, isScrollContainerReady, pendingScrollVersion]);
+    }, [executePendingScroll, rowVirtualizer, isScrollContainerReady, pendingScrollVersion, selectedFilePath]);
 
     /**
      * Subscribe to database content changes and refresh virtualizer size estimates when needed.

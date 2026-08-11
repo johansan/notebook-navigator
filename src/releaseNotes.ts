@@ -110,7 +110,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.4',
         date: '2026-08-16',
         showOnUpdate: false,
-        fixed: ['Fixed `New canvas` appearing in folder menus when the Canvas core plugin was disabled.']
+        fixed: [
+            'Fixed `New canvas` appearing in folder menus when the Canvas core plugin was disabled.',
+            'Fixed the previously opened note remaining highlighted after opening a folder note from a folder name, folder shortcut, list pane title, or folder group header.'
+        ]
     },
     {
         version: '3.3.3',
