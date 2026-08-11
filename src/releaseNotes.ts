@@ -110,6 +110,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.4',
         date: '2026-08-16',
         showOnUpdate: false,
+        improved: ['Changed settings sliders to match Obsidian 1.13 style with reset buttons to the left.'],
         fixed: [
             'Fixed `New canvas` appearing in folder menus when the Canvas core plugin was disabled.',
             'Fixed the previously opened note remaining highlighted after opening a folder note from a folder name, folder shortcut, list pane title, or folder group header.'
