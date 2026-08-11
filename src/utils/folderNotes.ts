@@ -17,6 +17,7 @@
  */
 
 import { App, type PaneType, TFile, TFolder } from 'obsidian';
+import type { SelectionDispatch } from '../context/selection/types';
 import { strings } from '../i18n';
 import { FolderNoteType, FOLDER_NOTE_TYPE_EXTENSIONS, FolderNoteCreationPreference } from '../types/folderNote';
 import { buildPathInFolder, createDatabaseContent, createMarkdownFileFromTemplatePreferTemplater } from './fileCreationUtils';
@@ -98,6 +99,18 @@ export function isFolderNoteTemplateCompatible(
     }
 
     return extension === FOLDER_NOTE_TYPE_EXTENSIONS[folderNoteType];
+}
+
+/**
+ * Selects a folder note through the existing manual-reveal pipeline so collapsed groups,
+ * delayed list rebuilds, and scrolling use the same path as other explicit file reveals.
+ */
+export function revealFolderNoteInNavigator(selectionDispatch: SelectionDispatch, folderNote: TFile): void {
+    selectionDispatch({
+        type: 'REVEAL_FILE',
+        file: folderNote,
+        isManualReveal: true
+    });
 }
 
 function getFolderNoteTemplateFile(app: App, templatePath: string | null | undefined, folderNoteType: FolderNoteType): TFile | null {
