@@ -2569,6 +2569,11 @@ export const STRINGS_JA = {
                 buttonText: '❤️ スポンサーになる',
                 coffeeButton: '☕️ コーヒーをおごる'
             },
+            otherPlugins: {
+                name: 'ほかのプラグインも見る',
+                betterPaste: '貼り付けたテキスト、リンク、画像を整える',
+                pixelPerfectImage: '正確な画像リサイズなど'
+            },
             checkForNewVersionOnStart: {
                 name: '起動時に新しいバージョンを確認',
                 desc: '起動時に新しいプラグインリリースを確認し、アップデートが利用可能な場合に通知を表示します。確認は最大1日1回行われます。',

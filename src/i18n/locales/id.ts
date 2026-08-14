@@ -2571,6 +2571,11 @@ export const STRINGS_ID = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Traktir saya kopi'
             },
+            otherPlugins: {
+                name: 'Lihat plugin saya yang lain',
+                betterPaste: 'Membersihkan teks, tautan, dan gambar yang ditempel',
+                pixelPerfectImage: 'Pengubahan ukuran gambar yang presisi dan banyak lagi'
+            },
             checkForNewVersionOnStart: {
                 name: 'Periksa versi baru saat mulai',
                 desc: 'Memeriksa rilis plugin baru saat startup dan menampilkan notifikasi saat pembaruan tersedia. Pemeriksaan terjadi paling banyak sekali sehari.',

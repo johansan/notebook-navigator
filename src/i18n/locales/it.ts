@@ -2570,6 +2570,11 @@ export const STRINGS_IT = {
                 buttonText: '❤️ Sponsorizza',
                 coffeeButton: '☕️ Offrimi un caffè'
             },
+            otherPlugins: {
+                name: 'Scopri i miei altri plugin',
+                betterPaste: 'Ripulisce testo, link e immagini incollati',
+                pixelPerfectImage: 'Ridimensionamento esatto delle immagini e molto altro'
+            },
             checkForNewVersionOnStart: {
                 name: "Controlla nuova versione all'avvio",
                 desc: "Controlla nuovi rilasci plugin all'avvio e mostra notifica quando un aggiornamento è disponibile. I controlli avvengono al massimo una volta al giorno.",

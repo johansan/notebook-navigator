@@ -2555,6 +2555,11 @@ export const STRINGS_ZH_TW = {
                 buttonText: '❤️ 贊助',
                 coffeeButton: '☕️ 請我喝咖啡'
             },
+            otherPlugins: {
+                name: '看看我的其他外掛',
+                betterPaste: '整理貼上的文字、連結和圖片',
+                pixelPerfectImage: '精確的圖片縮放等'
+            },
             checkForNewVersionOnStart: {
                 name: '啟動時檢查新版本',
                 desc: '啟動時檢查新的外掛版本，當有可用更新時顯示通知。檢查最多每天一次。',

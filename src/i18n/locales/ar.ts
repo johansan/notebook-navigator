@@ -2565,6 +2565,11 @@ export const STRINGS_AR = {
                 buttonText: '❤️ رعاية',
                 coffeeButton: '☕️ اشترِ لي قهوة'
             },
+            otherPlugins: {
+                name: 'اطّلع على إضافاتي الأخرى',
+                betterPaste: 'تنظيف النص والروابط والصور الملصقة',
+                pixelPerfectImage: 'تغيير حجم الصور بدقة والمزيد'
+            },
             checkForNewVersionOnStart: {
                 name: 'التحقق من إصدار جديد عند البدء',
                 desc: 'التحقق من إصدارات الإضافة الجديدة عند البدء وإظهار إشعار عند توفر تحديث. التحقق يحدث مرة واحدة يوميًا على الأكثر.',

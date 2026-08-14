@@ -30,6 +30,11 @@ export const ICON_ASSETS_REPOSITORY_URL = `https://github.com/${NOTEBOOK_NAVIGAT
 
 export const WELCOME_VIDEO_URL = 'https://www.youtube.com/watch?v=m2maDNtho7Y';
 
+/** Opens a plugin's page in Obsidian's community plugin browser. */
+export function communityPluginUrl(pluginId: string): string {
+    return `obsidian://show-plugin?id=${pluginId}`;
+}
+
 export function getReleaseBannerUrl(bannerUrl: boolean | string | undefined, version: string): string | null {
     if (!bannerUrl) {
         return null;

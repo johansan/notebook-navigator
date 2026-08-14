@@ -2563,6 +2563,11 @@ export const STRINGS_EN = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Buy me a coffee'
             },
+            otherPlugins: {
+                name: 'Check out my other plugins',
+                betterPaste: 'Clean up pasted text, links and images',
+                pixelPerfectImage: 'Exact image resizing and much more'
+            },
             checkForNewVersionOnStart: {
                 name: 'Check for new version on start',
                 desc: 'Checks for new plugin releases on startup and shows a notification when an update is available. Checks occur at most once per day.',

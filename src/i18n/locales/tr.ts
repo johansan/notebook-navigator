@@ -2570,6 +2570,11 @@ export const STRINGS_TR = {
                 buttonText: '❤️ Sponsor ol',
                 coffeeButton: '☕️ Bana bir kahve ısmarla'
             },
+            otherPlugins: {
+                name: 'Diğer eklentilerime göz at',
+                betterPaste: 'Yapıştırılan metni, bağlantıları ve görselleri temizler',
+                pixelPerfectImage: 'Tam isabetli görsel boyutlandırma ve çok daha fazlası'
+            },
             checkForNewVersionOnStart: {
                 name: 'Başlangıçta yeni sürüm kontrolü',
                 desc: 'Başlangıçta yeni eklenti sürümlerini kontrol eder ve güncelleme mevcut olduğunda bildirim gösterir. Kontroller günde en fazla bir kez yapılır.',
