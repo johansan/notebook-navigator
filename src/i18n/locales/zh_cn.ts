@@ -2554,6 +2554,11 @@ export const STRINGS_ZH_CN = {
                 buttonText: '❤️ 赞助',
                 coffeeButton: '☕️ 请我喝咖啡'
             },
+            otherPlugins: {
+                name: '看看我的其他插件',
+                betterPaste: '整理粘贴的文本、链接和图片',
+                pixelPerfectImage: '精确的图片缩放等'
+            },
             checkForNewVersionOnStart: {
                 name: '启动时检查新版本',
                 desc: '启动时检查新的插件版本，当有可用更新时显示通知。检查最多每天一次。',

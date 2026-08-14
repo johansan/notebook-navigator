@@ -2575,6 +2575,11 @@ export const STRINGS_PL = {
                 buttonText: '❤️ Wesprzyj',
                 coffeeButton: '☕️ Postaw kawę'
             },
+            otherPlugins: {
+                name: 'Zobacz moje inne wtyczki',
+                betterPaste: 'Czyści wklejany tekst, odnośniki i obrazy',
+                pixelPerfectImage: 'Dokładna zmiana rozmiaru obrazów i wiele więcej'
+            },
             checkForNewVersionOnStart: {
                 name: 'Sprawdź nową wersję podczas uruchamiania',
                 desc: 'Sprawdza dostępność nowych wersji wtyczki podczas uruchamiania i wyświetla powiadomienie, gdy dostępna jest aktualizacja. Sprawdzanie odbywa się maksymalnie raz dziennie.',

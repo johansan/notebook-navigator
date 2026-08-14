@@ -2576,6 +2576,11 @@ export const STRINGS_PT_BR = {
                 buttonText: '❤️ Patrocinar',
                 coffeeButton: '☕️ Me pague um café'
             },
+            otherPlugins: {
+                name: 'Conheça meus outros plugins',
+                betterPaste: 'Limpa texto, links e imagens colados',
+                pixelPerfectImage: 'Redimensionamento exato de imagens e muito mais'
+            },
             checkForNewVersionOnStart: {
                 name: 'Verificar nova versão ao iniciar',
                 desc: 'Verifica novas versões do plugin na inicialização e mostra uma notificação quando uma atualização está disponível. As verificações ocorrem no máximo uma vez por dia.',

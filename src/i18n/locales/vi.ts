@@ -2572,6 +2572,11 @@ export const STRINGS_VI = {
                 buttonText: '❤️ Tài trợ',
                 coffeeButton: '☕️ Mua cho tôi một ly cà phê'
             },
+            otherPlugins: {
+                name: 'Xem các plugin khác của tôi',
+                betterPaste: 'Dọn dẹp văn bản, liên kết và ảnh đã dán',
+                pixelPerfectImage: 'Đổi kích thước ảnh chính xác và nhiều hơn nữa'
+            },
             checkForNewVersionOnStart: {
                 name: 'Kiểm tra phiên bản mới khi khởi động',
                 desc: 'Kiểm tra bản phát hành plugin mới khi khởi động và hiện thông báo khi có bản cập nhật. Kiểm tra xảy ra tối đa một lần mỗi ngày.',

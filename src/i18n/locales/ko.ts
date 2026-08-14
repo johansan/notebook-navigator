@@ -2566,6 +2566,11 @@ export const STRINGS_KO = {
                 buttonText: '❤️ 후원하기',
                 coffeeButton: '☕️ 커피 한 잔 사주기'
             },
+            otherPlugins: {
+                name: '제가 만든 다른 플러그인 보기',
+                betterPaste: '붙여넣은 텍스트, 링크, 이미지를 정리',
+                pixelPerfectImage: '정확한 이미지 크기 조정 등'
+            },
             checkForNewVersionOnStart: {
                 name: '시작 시 새 버전 확인',
                 desc: '시작 시 새로운 플러그인 릴리스를 확인하고 업데이트가 있으면 알림을 표시합니다. 확인은 하루에 최대 한 번 수행됩니다.',
