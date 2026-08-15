@@ -293,6 +293,32 @@ export function showListPaneAppearanceMenu({
         });
     }
 
+    // Property-placed counts render as pills, so the choice is hidden when compact mode hides pills.
+    const textCountAvailable = !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode;
+    if (textCountAvailable) {
+        const storedTextCount = storedFields?.textCount;
+        const effectiveTextCount = resolved.textCountDisplay;
+        const countIcon = resolveUXIconForMenu(
+            settings.interfaceIcons,
+            effectiveTextCount === 'characters' ? 'file-character-count' : 'file-word-count'
+        );
+        const countOptions = ['none', 'words', 'characters', 'both'] as const;
+        addChoiceSection<TextCountDisplay>({
+            title: `${strings.folderAppearance.textCount.label}: ${textCountLabel(effectiveTextCount)}`,
+            isCustom: storedTextCount !== undefined,
+            icon: countIcon,
+            options: countOptions.map(textCount => ({
+                value: textCount,
+                title: withSuffix(
+                    textCountLabel(textCount),
+                    textCount === settings.textCountDisplay ? strings.folderAppearance.defaultSuffix : null
+                ),
+                checked: effectiveTextCount === textCount
+            })),
+            onSelect: textCount => updateAppearance({ textCount: textCount === settings.textCountDisplay ? undefined : textCount })
+        });
+    }
+
     const contentToggles: ContentToggle[] = [
         {
             key: 'showTags',
@@ -317,48 +343,50 @@ export function showListPaneAppearanceMenu({
             available: !isCompact
         }
     ];
-    const visibleToggles = contentToggles.filter(toggle => toggle.available);
-    // Property-placed counts render as pills, so the choice is hidden when compact mode hides pills.
-    const textCountAvailable = !isCompact || settings.textCountPlacement !== 'property' || settings.showFilePropertiesInCompactMode;
-    visibleToggles.forEach(toggle => {
-        const stored = storedFields?.[toggle.key];
-        const effective = stored ?? toggle.globalDefault;
-        menu.addItem(item => {
-            setItemTitle(item, toggle.title, stored !== undefined);
-            item.setIcon(toggle.icon)
-                .setChecked(effective)
-                .onClick(() => {
-                    // A toggle matching the global setting is stored as inherited, so it follows future global changes.
-                    const next = !effective;
-                    const updates: Partial<ListPaneAppearance> = {};
-                    updates[toggle.key] = next === toggle.globalDefault ? undefined : next;
-                    updateAppearance(updates);
-                });
+    const metadataToggles: ContentToggle[] = [
+        {
+            key: 'showDate',
+            title: strings.folderAppearance.date,
+            icon: 'lucide-calendar',
+            globalDefault: settings.showFileDate,
+            available: !isCompact
+        },
+        {
+            key: 'showParentFolder',
+            title: strings.folderAppearance.parentFolder,
+            icon: resolveUXIconForMenu(settings.interfaceIcons, 'nav-folder-closed'),
+            globalDefault: settings.showParentFolder,
+            available: !isCompact
+        }
+    ];
+
+    // Each group opens with a separator. A group whose toggles are all unavailable is skipped
+    // entirely so the menu never renders a separator with nothing below it.
+    const addToggleGroup = (toggles: ContentToggle[]): void => {
+        const visibleToggles = toggles.filter(toggle => toggle.available);
+        if (visibleToggles.length === 0) {
+            return;
+        }
+        menu.addSeparator();
+        visibleToggles.forEach(toggle => {
+            const stored = storedFields?.[toggle.key];
+            const effective = stored ?? toggle.globalDefault;
+            menu.addItem(item => {
+                setItemTitle(item, toggle.title, stored !== undefined);
+                item.setIcon(toggle.icon)
+                    .setChecked(effective)
+                    .onClick(() => {
+                        // A toggle matching the global setting is stored as inherited, so it follows future global changes.
+                        const next = !effective;
+                        const updates: Partial<ListPaneAppearance> = {};
+                        updates[toggle.key] = next === toggle.globalDefault ? undefined : next;
+                        updateAppearance(updates);
+                    });
+            });
         });
-    });
-    if (textCountAvailable) {
-        const storedTextCount = storedFields?.textCount;
-        const effectiveTextCount = resolved.textCountDisplay;
-        const countIcon = resolveUXIconForMenu(
-            settings.interfaceIcons,
-            effectiveTextCount === 'characters' ? 'file-character-count' : 'file-word-count'
-        );
-        const countOptions = ['none', 'words', 'characters', 'both'] as const;
-        addChoiceSection<TextCountDisplay>({
-            title: `${strings.folderAppearance.textCount.label}: ${textCountLabel(effectiveTextCount)}`,
-            isCustom: storedTextCount !== undefined,
-            icon: countIcon,
-            options: countOptions.map(textCount => ({
-                value: textCount,
-                title: withSuffix(
-                    textCountLabel(textCount),
-                    textCount === settings.textCountDisplay ? strings.folderAppearance.defaultSuffix : null
-                ),
-                checked: effectiveTextCount === textCount
-            })),
-            onSelect: textCount => updateAppearance({ textCount: textCount === settings.textCountDisplay ? undefined : textCount })
-        });
-    }
+    };
+    addToggleGroup(contentToggles);
+    addToggleGroup(metadataToggles);
 
     if (descendantAction) {
         menu.addSeparator();

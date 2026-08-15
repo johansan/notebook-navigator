@@ -16,7 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, expect, it } from 'vitest';
-import { getReleaseVideoOpenUrl, getReleaseVideoUrl } from '../../src/constants/urls';
+import { getReleaseBannerUrl, getReleaseVideoOpenUrl, getReleaseVideoUrl } from '../../src/constants/urls';
+
+describe('release banner URLs', () => {
+    it('keeps the file extension declared by the release note', () => {
+        expect(getReleaseBannerUrl('3.3.4.gif')).toBe(
+            'https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/version-banners/3.3.4.gif'
+        );
+        expect(getReleaseBannerUrl('3.3.3.jpg')).toBe(
+            'https://raw.githubusercontent.com/johansan/notebook-navigator/main/images/version-banners/3.3.3.jpg'
+        );
+    });
+});
 
 describe('release video URLs', () => {
     it('uses raw GitHub URLs for embedded release videos', () => {

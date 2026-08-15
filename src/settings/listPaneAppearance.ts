@@ -34,6 +34,7 @@ export interface ListPaneAppearanceSettings {
     titleRows: number;
     previewRows: number;
     showDate: boolean;
+    showParentFolder: boolean;
     showPreview: boolean;
     showImage: boolean;
     showTags: boolean;
@@ -48,7 +49,7 @@ export interface ListPaneAppearanceSettings {
  * Both `true` and `false` are persisted so a selection can enable content that
  * the global setting turns off, and hide content that the global setting shows.
  */
-export const LIST_PANE_TOGGLE_KEYS = ['showTags', 'showProperties', 'showTaskProgress'] as const;
+export const LIST_PANE_TOGGLE_KEYS = ['showTags', 'showProperties', 'showTaskProgress', 'showDate', 'showParentFolder'] as const;
 
 export type ListPaneToggleKey = (typeof LIST_PANE_TOGGLE_KEYS)[number];
 
@@ -196,7 +197,7 @@ function resolveListMode({ appearance, defaultMode }: { appearance?: ListPaneApp
  * Per-selection toggles replace the global per-file display setting, but structural gates stay
  * global: tags require the master tag setting because tag content is only extracted when it is on,
  * compact mode keeps its own global tag/property visibility, and the compact row layout never
- * renders previews, images, dates, or task progress.
+ * renders previews, images, dates, parent folders, or task progress.
  */
 export function resolveListPaneAppearance({
     settings,
@@ -229,7 +230,8 @@ export function resolveListPaneAppearance({
         titleRows: isValidTitleRows(appearance?.titleRows) ? appearance.titleRows : settings.fileNameRows,
         // Zero hides preview text, but the configured row count still sizes feature-image and pill layouts.
         previewRows: previewRowsOverride && previewRowsOverride > 0 ? previewRowsOverride : settings.previewRows,
-        showDate: !isCompact && settings.showFileDate,
+        showDate: !isCompact && (appearance?.showDate ?? settings.showFileDate),
+        showParentFolder: !isCompact && (appearance?.showParentFolder ?? settings.showParentFolder),
         showPreview: !isCompact && settings.showFilePreview && previewRowsOverride !== 0,
         showImage: !isCompact && settings.showFeatureImage,
         showTags,

@@ -92,14 +92,14 @@ export const STRINGS_VI = {
     navigationCalendar: {
         ariaLabel: 'Lịch',
         dailyNotesNotEnabled: 'Plugin ghi chú hàng ngày chưa được bật.',
-        noteHiddenByProfile: 'Ghi chú lịch bị ẩn bởi hồ sơ kho hiện tại.',
+        noteHiddenByProfile: 'Ghi chú lịch bị ẩn bởi hồ sơ vault hiện tại.',
         createDailyNote: {
             title: 'Ghi chú hàng ngày mới',
             message: 'Tệp {filename} không tồn tại. Bạn có muốn tạo không?',
             confirmButton: 'Tạo'
         },
         helpModal: {
-            title: 'Phím tắt lịch',
+            title: 'Lối tắt lịch',
             items: [
                 'Nhấp vào bất kỳ ngày nào để mở hoặc tạo ghi chú hàng ngày. Tuần, tháng, quý và năm hoạt động tương tự.',
                 'Chấm đặc dưới một ngày nghĩa là có ghi chú. Chấm rỗng nghĩa là có nhiệm vụ chưa hoàn thành.',
@@ -119,8 +119,8 @@ export const STRINGS_VI = {
         folderExists: 'Thư mục đã có trong lối tắt',
         noteExists: 'Ghi chú đã có trong lối tắt',
         tagExists: 'Thẻ đã có trong lối tắt',
-        propertyExists: 'Thuộc tính đã có trong phím tắt',
-        invalidProperty: 'Phím tắt thuộc tính không hợp lệ',
+        propertyExists: 'Thuộc tính đã có trong lối tắt',
+        invalidProperty: 'Lối tắt thuộc tính không hợp lệ',
         searchExists: 'Lối tắt tìm kiếm đã tồn tại',
         emptySearchQuery: 'Nhập truy vấn tìm kiếm trước khi lưu',
         emptySearchName: 'Nhập tên trước khi lưu tìm kiếm',
@@ -168,11 +168,11 @@ export const STRINGS_VI = {
         dualPaneAutoFallbackNotice:
             'Không dùng được hai ngăn khi thanh bên quá hẹp. Để thay đổi, đặt "Khi thanh bên quá hẹp" thành "Không làm gì" trong Cài đặt > Giao diện & hành vi.',
         changeAppearance: 'Đổi giao diện', // Tooltip for button to change folder appearance settings (English: Change appearance)
-        changeAppearanceCustomized: 'Thay đổi giao diện, đã tùy chỉnh',
+        changeAppearanceCustomized: 'Đổi giao diện, đã tùy chỉnh',
         showNotesFromSubfolders: 'Hiện ghi chú từ thư mục con',
-        showFilesFromSubfolders: 'Hiện tập tin từ thư mục con',
+        showFilesFromSubfolders: 'Hiện tệp từ thư mục con',
         showNotesFromDescendants: 'Hiện ghi chú từ phần tử con',
-        showFilesFromDescendants: 'Hiện tập tin từ phần tử con',
+        showFilesFromDescendants: 'Hiện tệp từ phần tử con',
         search: 'Tìm kiếm' // Tooltip for search button (English: Search)
     },
     // Search input
@@ -270,7 +270,7 @@ export const STRINGS_VI = {
                         '`@2026-02` hoặc `@202602` Tìm một tháng dương lịch.',
                         '`@2026-W05` hoặc `@2026W05` Tìm một tuần ISO.',
                         '`@2026-Q2` hoặc `@2026Q2` Tìm một quý dương lịch.',
-                        '`@13/02/2026` Định dạng số có dấu phân cách (`@07022026` theo địa phương của bạn khi mơ hồ).',
+                        '`@13/02/2026` Định dạng số có dấu phân cách (`@07022026` theo ngôn ngữ của bạn khi mơ hồ).',
                         '`@2026-02-01..2026-02-07` Tìm phạm vi ngày bao gồm (hỗ trợ đầu mở).',
                         '`@c:...` hoặc `@m:...` Nhắm mục tiêu ngày tạo hoặc sửa đổi.',
                         '`-@...` Loại trừ một kết quả khớp ngày.'
@@ -354,7 +354,7 @@ export const STRINGS_VI = {
             newNoteFromTemplate: 'Ghi chú mới từ mẫu',
             newFolder: 'Thư mục mới',
             newCanvas: 'Canvas mới',
-            newBase: 'Cơ sở dữ liệu mới',
+            newBase: 'Base mới',
             newDrawing: 'Bản vẽ mới',
             newExcalidrawDrawing: 'Bản vẽ Excalidraw mới',
             newTldrawDrawing: 'Bản vẽ Tldraw mới',
@@ -437,6 +437,8 @@ export const STRINGS_VI = {
         tags: 'Thẻ',
         properties: 'Thuộc tính',
         tasks: 'Nhiệm vụ',
+        date: 'Ngày',
+        parentFolder: 'Thư mục cha',
         textCount: {
             label: 'Đếm văn bản',
             options: {
@@ -487,7 +489,7 @@ export const STRINGS_VI = {
             wordCountTarget: 'Số từ mục tiêu',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                'Khi trường này trống, mục tiêu nhóm dùng thuộc tính mục tiêu được đặt trong Cài đặt > Ghi chú > Số từ và ký tự. Ghi đè bằng cách đặt giá trị mục tiêu cho nhóm này.',
+                'Khi trường này trống, mục tiêu nhóm dùng thuộc tính mục tiêu được đặt trong Cài đặt > Hiển thị tệp > Số từ và ký tự. Ghi đè bằng cách đặt giá trị mục tiêu cho nhóm này.',
             description: 'Tùy chỉnh header nhóm cho ghi chú này. Để trống tiêu đề để xóa header.'
         },
         mergeNotes: {
@@ -556,7 +558,7 @@ export const STRINGS_VI = {
                 'list-sort-title': 'Sắp xếp theo tiêu đề',
                 'list-sort-filename': 'Sắp xếp theo tên tệp',
                 'list-sort-property': 'Sắp xếp theo thuộc tính',
-                'list-appearance': 'Thay đổi giao diện',
+                'list-appearance': 'Đổi giao diện',
                 'list-new-note': 'Ghi chú mới',
                 'list-pinned': 'Ghi chú đã ghim',
                 'nav-folder-open': 'Thư mục mở',
@@ -624,14 +626,12 @@ export const STRINGS_VI = {
             confirmRename: 'Đổi tên thẻ',
             renameUnchanged: '{tag} không đổi',
             renameNoChanges: '{oldTag} → {newTag} ({countLabel})',
-            renameBatchNotFinalized:
-                'Đã đổi tên {renamed}/{total}. Chưa cập nhật: {notUpdated}. Siêu dữ liệu và phím tắt chưa được cập nhật.',
+            renameBatchNotFinalized: 'Đã đổi tên {renamed}/{total}. Chưa cập nhật: {notUpdated}. Metadata và lối tắt chưa được cập nhật.',
             invalidTagName: 'Nhập tên thẻ hợp lệ.',
             descendantRenameError: 'Không thể di chuyển thẻ vào chính nó hoặc phần tử con.',
             confirmDelete: 'Xóa thẻ',
-            deleteBatchNotFinalized:
-                'Đã xóa khỏi {removed}/{total}. Chưa cập nhật: {notUpdated}. Siêu dữ liệu và phím tắt chưa được cập nhật.',
-            checkConsoleForDetails: 'Kiểm tra bảng điều khiển để biết chi tiết.',
+            deleteBatchNotFinalized: 'Đã xóa khỏi {removed}/{total}. Chưa cập nhật: {notUpdated}. Metadata và lối tắt chưa được cập nhật.',
+            checkConsoleForDetails: 'Kiểm tra console để biết chi tiết.',
             file: 'tệp',
             files: 'tệp',
             inlineParsingWarning: {
@@ -756,7 +756,7 @@ export const STRINGS_VI = {
         propertyKeyVisibility: {
             title: 'Hiển thị khóa thuộc tính',
             description:
-                'Kiểm soát nơi hiển thị giá trị thuộc tính. Các cột tương ứng với bảng điều hướng, bảng danh sách và menu ngữ cảnh tệp. Sử dụng hàng dưới cùng để chuyển đổi tất cả các hàng trong một cột.',
+                'Kiểm soát nơi hiển thị giá trị thuộc tính. Các cột tương ứng với ngăn điều hướng, ngăn danh sách và menu ngữ cảnh tệp. Sử dụng hàng dưới cùng để chuyển đổi tất cả các hàng trong một cột.',
             searchPlaceholder: 'Tìm khóa thuộc tính...',
             propertyColumnLabel: 'Thuộc tính',
             showInNavigation: 'Hiển thị trong điều hướng',
@@ -771,9 +771,9 @@ export const STRINGS_VI = {
         welcome: {
             title: 'Chào mừng đến với {pluginName}',
             introText:
-                'Xin chào và chào mừng bạn đến với Notebook Navigator, một trình duyệt tệp và lịch tốt hơn dành cho Obsidian. Trước khi bắt đầu, tôi thực sự khuyên bạn nên xem ít nhất ba chương đầu của video Mastering Notebook Navigator bên dưới. Video này giới thiệu cách hoạt động của hai bảng và giúp bạn nhanh chóng làm quen.',
+                'Xin chào và chào mừng bạn đến với Notebook Navigator, một trình duyệt tệp và lịch tốt hơn dành cho Obsidian. Trước khi bắt đầu, tôi thực sự khuyên bạn nên xem ít nhất ba chương đầu của video Mastering Notebook Navigator bên dưới. Video này giới thiệu cách hoạt động của hai ngăn và giúp bạn nhanh chóng làm quen.',
             continueText:
-                'Tiếp theo, nếu bạn có thêm mười phút, hãy xem tiếp các chương về thiết lập lần đầu và quy trình sử dụng hằng ngày. Những chương này cung cấp mọi thứ bạn cần để bắt đầu, và bạn có thể quay lại xem chi tiết hơn sau. Bạn sẽ tìm thấy liên kết đến video ở đầu phần cài đặt Notebook Navigator.',
+                'Tiếp theo, nếu bạn có thêm mười phút, hãy xem tiếp các chương về thiết lập lần đầu và quy trình sử dụng hàng ngày. Những chương này cung cấp mọi thứ bạn cần để bắt đầu, và bạn có thể quay lại xem chi tiết hơn sau. Bạn sẽ tìm thấy liên kết đến video ở đầu phần cài đặt Notebook Navigator.',
             thanksText: 'Chúc bạn sử dụng Notebook Navigator vui vẻ!',
             videoAlt: 'Làm chủ Notebook Navigator 3',
             openVideoButton: 'Phát video',
@@ -800,7 +800,7 @@ export const STRINGS_VI = {
             duplicateFolder: 'Không thể nhân bản thư mục: {error}',
             openVersionHistory: 'Không thể mở lịch sử phiên bản: {error}',
             versionHistoryNotFound: 'Không tìm thấy lệnh lịch sử phiên bản. Đảm bảo Obsidian Sync đã bật.',
-            revealInExplorer: 'Không thể hiện tệp trong trình quản lý hệ thống: {error}',
+            revealInExplorer: 'Không thể hiện tệp trong trình quản lý tệp: {error}',
             openInDefaultApp: 'Không thể mở bằng ứng dụng mặc định: {error}',
             openInDefaultAppNotAvailable: 'Mở bằng ứng dụng mặc định không khả dụng trên nền tảng này',
             folderNoteAlreadyExists: 'Ghi chú thư mục đã tồn tại',
@@ -911,11 +911,11 @@ export const STRINGS_VI = {
         open: 'Mở', // Command palette: Opens the Notebook Navigator view (English: Open)
         toggleLeftSidebar: 'Bật/tắt thanh bên trái', // Command palette: Toggles left sidebar, opening Notebook Navigator when uncollapsing (English: Toggle left sidebar)
         openHomepage: 'Mở trang chủ', // Command palette: Opens the Notebook Navigator view and loads the homepage file (English: Open homepage)
-        openDailyNote: 'Mở ghi chú hằng ngày',
-        openWeeklyNote: 'Mở ghi chú hằng tuần',
-        openMonthlyNote: 'Mở ghi chú hằng tháng',
-        openQuarterlyNote: 'Mở ghi chú hằng quý',
-        openYearlyNote: 'Mở ghi chú hằng năm',
+        openDailyNote: 'Mở ghi chú hàng ngày',
+        openWeeklyNote: 'Mở ghi chú hàng tuần',
+        openMonthlyNote: 'Mở ghi chú hàng tháng',
+        openQuarterlyNote: 'Mở ghi chú hàng quý',
+        openYearlyNote: 'Mở ghi chú hàng năm',
         revealFile: 'Hiện tệp', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Tìm kiếm', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Tìm kiếm toàn bộ vault', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
@@ -928,7 +928,7 @@ export const STRINGS_VI = {
         selectVaultProfile3: 'Chọn hồ sơ vault 3', // Command palette: Activates the third vault profile without opening the modal (English: Select vault profile 3)
         deleteFile: 'Xóa tệp', // Command palette: Deletes the currently active file (English: Delete file)
         createNewNote: 'Tạo ghi chú mới', // Command palette: Creates a new note in the currently selected folder (English: Create new note)
-        createNewNoteFromTemplate: 'Ghi chú mới từ mẫu', // Command palette: Creates a new note from a template in the currently selected folder (English: Create new note from template)
+        createNewNoteFromTemplate: 'Tạo ghi chú mới từ mẫu', // Command palette: Creates a new note from a template in the currently selected folder (English: Create new note from template)
         moveFiles: 'Di chuyển tệp', // Command palette: Move selected files to another folder (English: Move files)
         mergeNotes: 'Hợp nhất ghi chú', // Command palette: Creates one note from selected Markdown notes (English: Merge notes)
         selectNextFile: 'Chọn tệp tiếp theo', // Command palette: Selects the next file in the current view (English: Select next file)
@@ -1010,7 +1010,7 @@ export const STRINGS_VI = {
 
     // Settings
     settings: {
-        changeDefaultSettings: 'Thay đổi cài đặt mặc định',
+        changeDefaultSettings: 'Đổi cài đặt mặc định',
         metadataReport: {
             exportSuccess: 'Báo cáo metadata thất bại đã xuất đến: {filename}',
             exportFailed: 'Không thể xuất báo cáo metadata'
@@ -1019,13 +1019,13 @@ export const STRINGS_VI = {
             label: 'Chung',
             description: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
             groups: {
-                vaultSetup: 'Thiết lập vault'
+                about: 'Giới thiệu'
             }
         },
         pageGroups: {
             configuration: 'Cấu hình',
-            navigationPane: 'Bảng điều hướng',
-            listPane: 'Bảng danh sách',
+            navigationPane: 'Ngăn điều hướng',
+            listPane: 'Ngăn danh sách',
             calendarAndTools: 'Lịch và công cụ'
         },
         pages: {
@@ -1048,7 +1048,7 @@ export const STRINGS_VI = {
                 }
             },
             navigationPane: {
-                label: 'Bảng điều hướng',
+                label: 'Ngăn điều hướng',
                 description: 'Bố cục, giao diện, số lượng tệp, hành vi thu gọn và màu cầu vồng.',
                 groups: {
                     appearance: 'Giao diện',
@@ -1085,7 +1085,7 @@ export const STRINGS_VI = {
                 }
             },
             listPane: {
-                label: 'Bảng danh sách',
+                label: 'Ngăn danh sách',
                 description: 'Sắp xếp, nhóm, chế độ danh sách, ghi chú đã ghim và xem trước bản vẽ.',
                 groups: {
                     appearance: 'Giao diện',
@@ -1284,9 +1284,9 @@ export const STRINGS_VI = {
             },
             defaultGrouping: {
                 name: 'Nhóm mặc định',
-                desc: '**Tiêu đề** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị tiêu đề được định nghĩa trong frontmatter và Ngày chèn tiêu đề ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
+                desc: '**Header** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị header được định nghĩa trong frontmatter và Ngày chèn header ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
                 families: {
-                    headers: 'Tiêu đề',
+                    headers: 'Header',
                     groups: 'Nhóm'
                 },
                 options: {
@@ -1309,7 +1309,7 @@ export const STRINGS_VI = {
             },
             showGroupHeaderItemCounts: {
                 name: 'Hiện số lượng mục',
-                desc: 'Hiển thị số lượng mục trong mỗi tiêu đề nhóm ở ngăn danh sách.'
+                desc: 'Hiển thị số lượng mục trong mỗi header nhóm ở ngăn danh sách.'
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Nhóm theo thư mục: tệp trong thư mục hiện tại ở dưới cùng',
@@ -1341,19 +1341,19 @@ export const STRINGS_VI = {
                 desc: 'Hiển thị biểu tượng của thư mục cha khi không có biểu tượng tệp tùy chỉnh được đặt. Màu thư mục được dùng khi không có màu tệp tùy chỉnh được đặt.'
             },
             showFileTaskProgress: {
-                name: 'Tiến độ công việc',
+                name: 'Tiến độ nhiệm vụ',
                 desc: 'Hiển thị trạng thái nhiệm vụ với thanh tiến độ và số nhiệm vụ tùy chọn. Màu cho nhiệm vụ chưa hoàn thành và nhiệm vụ đã hoàn thành có thể được đặt riêng bằng plugin Style Settings.'
             },
             showFileTaskProgressBar: {
-                name: 'Tiến độ công việc: thanh tiến độ',
+                name: 'Tiến độ nhiệm vụ: thanh tiến độ',
                 desc: 'Hiển thị thanh tiến độ bên cạnh biểu tượng nhiệm vụ.'
             },
             showFileTaskProgressCount: {
-                name: 'Tiến độ công việc: số nhiệm vụ',
+                name: 'Tiến độ nhiệm vụ: số nhiệm vụ',
                 desc: 'Hiển thị số nhiệm vụ đã hoàn thành và tổng số nhiệm vụ, ví dụ 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'Tiến độ công việc: ẩn khi hoàn thành',
+                name: 'Tiến độ nhiệm vụ: ẩn khi hoàn thành',
                 desc: 'Ẩn tiến độ nhiệm vụ khi tất cả nhiệm vụ trong ghi chú đã hoàn thành.'
             },
             unfinishedTaskBackground: {
@@ -1389,7 +1389,7 @@ export const STRINGS_VI = {
             fileTypeIconMap: {
                 name: 'Bản đồ biểu tượng loại tệp',
                 desc: 'Tệp có phần mở rộng sẽ nhận biểu tượng được chỉ định. Một ánh xạ mỗi dòng: phần mở rộng=biểu tượng',
-                placeholder: '# Extension=icon\ncpp=ph-file-code\npdf=ph-file-pdf',
+                placeholder: '# phần mở rộng=biểu tượng\ncpp=ph-file-code\npdf=ph-file-pdf',
                 editTooltip: 'Chỉnh sửa ánh xạ'
             },
             compactItemHeight: {
@@ -1411,7 +1411,7 @@ export const STRINGS_VI = {
             },
             parentFolderClickOpensFolder: {
                 name: 'Nhấn thư mục cha để mở thư mục',
-                desc: 'Nhấn nhãn thư mục cha sẽ mở thư mục trong bảng danh sách.'
+                desc: 'Nhấn nhãn thư mục cha sẽ mở thư mục trong ngăn danh sách.'
             },
             showParentFolderColor: {
                 name: 'Hiện màu thư mục cha',
@@ -1423,7 +1423,7 @@ export const STRINGS_VI = {
             },
             showQuickActions: {
                 name: 'Hiện thao tác nhanh',
-                desc: 'Hiện nút thao tác khi di chuột qua tệp. Điều khiển nút chọn thao tác xuất hiện.'
+                desc: 'Hiện nút thao tác khi di chuột qua tệp. Các nút điều khiển chọn thao tác nào xuất hiện.'
             },
             dualPane: {
                 name: 'Bố cục hai ngăn',
@@ -1439,7 +1439,7 @@ export const STRINGS_VI = {
             },
             narrowSidebarBehavior: {
                 name: 'Khi thanh bên quá hẹp',
-                desc: 'Chọn điều xảy ra khi ngăn điều hướng và ngăn danh sách không vừa khi đặt cạnh nhau.',
+                desc: 'Chọn điều gì xảy ra khi ngăn điều hướng và ngăn danh sách không vừa khi đặt cạnh nhau.',
                 options: {
                     none: 'Không làm gì',
                     singlePane: 'Chuyển sang một ngăn',
@@ -1523,7 +1523,7 @@ export const STRINGS_VI = {
             },
             expandOnSelection: {
                 name: 'Mở rộng khi chọn',
-                desc: 'Mở rộng thư mục và thẻ khi chọn. Ở chế độ một ngăn, chọn lần đầu mở rộng, chọn lần hai hiện tệp.'
+                desc: 'Mở rộng thư mục, thẻ và thuộc tính khi chọn. Ở chế độ một ngăn, chọn lần đầu mở rộng, chọn lần hai hiện tệp.'
             },
             collapseOtherBranchesOnExpand: {
                 name: 'Một nhánh được mở rộng',
@@ -1548,8 +1548,8 @@ export const STRINGS_VI = {
                 chooseButton: 'Chọn ảnh'
             },
             pinNavigationBanner: {
-                name: 'Ghim biểu ngữ',
-                desc: 'Ghim biểu ngữ điều hướng phía trên cây điều hướng.'
+                name: 'Ghim banner',
+                desc: 'Ghim banner điều hướng phía trên cây điều hướng.'
             },
             showShortcuts: {
                 name: 'Hiện lối tắt',
@@ -1597,11 +1597,11 @@ export const STRINGS_VI = {
                 }
             },
             calendarSinglePanePlacement: {
-                name: 'Vị trí chế độ bảng đơn',
-                desc: 'Nơi hiển thị lịch trong chế độ bảng đơn.',
+                name: 'Vị trí chế độ ngăn đơn',
+                desc: 'Nơi hiển thị lịch trong chế độ ngăn đơn.',
                 options: {
-                    navigationPane: 'Bảng điều hướng',
-                    belowPanes: 'Bên dưới các bảng'
+                    navigationPane: 'Ngăn điều hướng',
+                    belowPanes: 'Bên dưới các ngăn'
                 }
             },
             calendarLocale: {
@@ -1633,7 +1633,7 @@ export const STRINGS_VI = {
             },
             showInfoButtons: {
                 name: 'Hiển thị nút thông tin',
-                desc: 'Hiển thị nút thông tin trên thanh tìm kiếm và tiêu đề lịch.'
+                desc: 'Hiển thị nút thông tin trên thanh tìm kiếm và header lịch.'
             },
             calendarLeftSidebarWeeksToShow: {
                 name: 'Số tuần hiển thị trong thanh bên trái',
@@ -1662,7 +1662,7 @@ export const STRINGS_VI = {
             },
             calendarShowQuarter: {
                 name: 'Hiển thị quý',
-                desc: 'Thêm nhãn quý vào tiêu đề lịch.'
+                desc: 'Thêm nhãn quý vào header lịch.'
             },
             calendarShowOutsideMonthDays: {
                 name: 'Hiển thị ngày của các tháng khác',
@@ -1673,12 +1673,12 @@ export const STRINGS_VI = {
                 desc: 'Hiển thị điều hướng năm và lưới tháng trong thanh bên phải.'
             },
             calendarConfirmBeforeCreate: {
-                name: 'Xác nhận trước khi tạo',
+                name: 'Xác nhận trước khi tạo ghi chú mới',
                 desc: 'Hiển thị hộp thoại xác nhận khi tạo ghi chú hàng ngày mới.'
             },
             calendarShowHiddenItems: {
                 name: 'Hiện mục ẩn',
-                desc: 'Khi bật, lịch luôn hiển thị tất cả ghi chú lịch, bao gồm cả ghi chú bị ẩn bởi bộ lọc của hồ sơ kho.'
+                desc: 'Khi bật, lịch luôn hiển thị tất cả ghi chú lịch, bao gồm cả ghi chú bị ẩn bởi bộ lọc của hồ sơ vault.'
             },
             dailyNoteSource: {
                 name: 'Nguồn ghi chú hàng ngày',
@@ -1701,14 +1701,14 @@ export const STRINGS_VI = {
             },
 
             periodicNotesRootFolder: {
-                name: 'Thư mục gốc',
+                name: 'Thư mục gốc (hồ sơ vault)',
                 desc: 'Thư mục cơ sở cho ghi chú định kỳ. Mẫu ngày có thể bao gồm thư mục con. Thay đổi theo hồ sơ vault đã chọn.',
-                placeholder: 'Personal/Diary'
+                placeholder: 'Cá nhân/Nhật ký'
             },
             templateFolderLocation: {
                 name: 'Vị trí thư mục mẫu',
                 desc: 'Trình chọn tệp mẫu hiển thị ghi chú từ thư mục này.',
-                placeholder: 'Templates',
+                placeholder: 'Mẫu',
                 usage: 'Được dùng bởi ghi chú lịch và ghi chú thư mục. Cấu hình mẫu trong Lịch > Tích hợp lịch và Thư mục và ghi chú thư mục > Tệp ghi chú thư mục.'
             },
             calendarDailyNotePattern: {
@@ -1801,9 +1801,9 @@ export const STRINGS_VI = {
                     editorName: 'JSON',
                     editorDesc: 'Chỉ bao gồm các cài đặt đã thay đổi so với mặc định.',
                     placeholder: '{}',
-                    copyButtonText: 'Sao chép vào bộ nhớ tạm',
+                    copyButtonText: 'Sao chép vào clipboard',
                     downloadButtonText: 'Tải xuống',
-                    copyNotice: 'Đã sao chép cài đặt vào bộ nhớ tạm.',
+                    copyNotice: 'Đã sao chép cài đặt vào clipboard.',
                     downloadNotice: 'Đã xuất cài đặt.',
                     downloadError: 'Xuất cài đặt thất bại: {message}'
                 }
@@ -1816,7 +1816,7 @@ export const STRINGS_VI = {
                 confirmMessage: 'Thao tác này sẽ đặt lại tất cả cài đặt Notebook Navigator về giá trị mặc định. Không thể hoàn tác.',
                 confirmButtonText: 'Đặt lại tất cả cài đặt',
                 notice: 'Đã đặt lại tất cả cài đặt. Khởi động lại Obsidian hoặc mở lại Notebook Navigator để áp dụng.',
-                error: 'Đặt lại cài đặt thất bại'
+                error: 'Đặt lại cài đặt thất bại.'
             },
             multiSelectModifier: {
                 name: 'Phím bổ trợ chọn nhiều',
@@ -1891,7 +1891,7 @@ export const STRINGS_VI = {
             hideFiles: {
                 name: 'Ẩn tệp (hồ sơ vault)',
                 desc: 'Danh sách mẫu tên tệp phân cách bằng dấu phẩy để ẩn. Hỗ trợ ký tự đại diện * và đường dẫn / (ví dụ: temp-*, *.png, /assets/*).',
-                placeholder: 'temp-*, *.png, /assets/*'
+                placeholder: 'tạm-*, *.png, /assets/*'
             },
             vaultProfiles: {
                 name: 'Hồ sơ vault',
@@ -1919,19 +1919,19 @@ export const STRINGS_VI = {
                 name: 'Vị trí tiêu đề vault',
                 desc: 'Chọn nơi tiêu đề vault được hiển thị.',
                 options: {
-                    header: 'Hiển thị ở tiêu đề',
-                    navigation: 'Hiển thị trong bảng điều hướng'
+                    header: 'Hiện ở header',
+                    navigation: 'Hiện ở ngăn điều hướng'
                 }
             },
             hideFolders: {
                 name: 'Ẩn thư mục (hồ sơ vault)',
-                desc: 'Danh sách thư mục cần ẩn phân cách bằng dấu phẩy. Mẫu tên: assets* (thư mục bắt đầu bằng assets), *_temp (kết thúc bằng _temp). Mẫu đường dẫn: /archive (chỉ archive gốc), /res* (thư mục gốc bắt đầu bằng res), /*/temp (thư mục temp ở độ sâu một cấp), /projects/* (tất cả thư mục trong projects).',
+                desc: 'Danh sách thư mục cần ẩn phân cách bằng dấu phẩy. Mẫu tên: assets* (thư mục bắt đầu bằng assets), *_temp (kết thúc bằng _temp). Mẫu đường dẫn: /lưu trữ (chỉ thư mục lưu trữ ở gốc), /res* (thư mục gốc bắt đầu bằng res), /*/temp (thư mục temp ở độ sâu một cấp), /dự án/* (tất cả thư mục trong dự án).',
                 placeholder: 'mẫu, assets*, /lưu trữ, /res*'
             },
             descendantExcludedFolders: {
-                name: 'Loại trừ thư mục khỏi ghi chú thư mục con (hồ sơ kho)',
+                name: 'Loại trừ thư mục khỏi ghi chú thư mục con (hồ sơ vault)',
                 desc: 'Danh sách thư mục phân cách bằng dấu phẩy sẽ được bỏ qua khi thu thập ghi chú từ thư mục con. Các thư mục vẫn hiển thị, và khi chọn một thư mục thì ghi chú của thư mục đó vẫn được hiển thị. Dùng cùng mẫu với Ẩn thư mục.',
-                placeholder: 'hằng ngày, tài nguyên, /lưu trữ'
+                placeholder: 'hàng ngày, tài nguyên, /lưu trữ'
             },
             showFileDate: {
                 name: 'Hiện ngày',
@@ -2016,7 +2016,7 @@ export const STRINGS_VI = {
                 desc: 'Chỉ hiển thị phần trăm tiến độ khi có số từ mục tiêu.'
             },
             propertyKeys: {
-                name: 'Khóa thuộc tính (hồ sơ kho)',
+                name: 'Khóa thuộc tính (hồ sơ vault)',
                 desc: 'Các khóa thuộc tính frontmatter, với khả năng thiết lập hiển thị từng khóa cho điều hướng và danh sách tệp.',
                 addButtonTooltip: 'Cấu hình khóa thuộc tính',
                 noneConfigured: 'Chưa cấu hình thuộc tính nào',
@@ -2081,7 +2081,7 @@ export const STRINGS_VI = {
                 placeholder: 'summary, description, abstract'
             },
             fallbackToNoteContent: {
-                name: 'Quay lại nội dung ghi chú',
+                name: 'Dùng nội dung ghi chú làm dự phòng',
                 desc: 'Hiển thị nội dung ghi chú làm xem trước khi không có thuộc tính nào được chỉ định chứa văn bản.'
             },
             previewRows: {
@@ -2157,7 +2157,7 @@ export const STRINGS_VI = {
                 intro: 'Notebook Navigator hiển thị các tệp PNG được xuất từ Excalidraw làm bản xem trước của hình vẽ.',
                 items: [
                     'Trong **cài đặt Excalidraw**, mở **Embedding Excalidraw into your Notes and Exporting**, rồi **Export Settings**, rồi **Auto-export Settings**.',
-                    'Bật **Auto-export PNG**. Tuỳ chọn bật thêm **Export both dark- and light-themed image**.',
+                    'Bật **Auto-export PNG**. Tùy chọn bật thêm **Export both dark- and light-themed image**.',
                     'Notebook Navigator tìm **Drawing.excalidraw.png**, **Drawing.excalidraw.dark.png** hoặc **Drawing.excalidraw.light.png**.',
                     'Khi **Ẩn ảnh xem trước đã xuất** đang bật, các tệp PNG chỉ xuất hiện khi **Hiện mục ẩn** cũng được bật.'
                 ]
@@ -2201,7 +2201,7 @@ export const STRINGS_VI = {
             },
             navRainbowMode: {
                 name: 'Chế độ màu cầu vồng (hồ sơ vault)',
-                desc: 'Áp dụng màu cầu vồng trong bảng điều hướng.',
+                desc: 'Áp dụng màu cầu vồng trong ngăn điều hướng.',
                 options: {
                     off: 'Tắt',
                     textColor: 'Màu chữ',
@@ -2311,8 +2311,8 @@ export const STRINGS_VI = {
                 desc: 'Giảm cỡ chữ điều hướng khi giảm chiều cao mục.'
             },
             showIndentGuides: {
-                name: 'Hiển thị đường dẫn thụt lề',
-                desc: 'Hiển thị đường dẫn thụt lề cho các thư mục, thẻ và thuộc tính lồng nhau.'
+                name: 'Hiển thị đường thụt lề',
+                desc: 'Hiển thị đường thụt lề cho các thư mục, thẻ và thuộc tính lồng nhau.'
             },
             navCountLeaderStyle: {
                 name: 'Hiển thị ký tự dẫn',
@@ -2371,12 +2371,12 @@ export const STRINGS_VI = {
                 name: 'Hiển thị thuộc tính',
                 desc: 'Hiển thị phần thuộc tính trong trình điều hướng.',
                 propertyKeysInfoPrefix: 'Cấu hình thuộc tính trong ',
-                propertyKeysInfoLinkText: 'Bắt đầu > Khóa thuộc tính',
+                propertyKeysInfoLinkText: 'Chung > Khóa thuộc tính',
                 propertyKeysInfoSuffix: ''
             },
             showPropertyIcons: {
                 name: 'Hiển thị biểu tượng thuộc tính',
-                desc: 'Hiển thị biểu tượng bên cạnh thuộc tính trong bảng điều hướng.'
+                desc: 'Hiển thị biểu tượng bên cạnh thuộc tính trong ngăn điều hướng.'
             },
             inheritPropertyColors: {
                 name: 'Kế thừa màu thuộc tính',
@@ -2403,13 +2403,13 @@ export const STRINGS_VI = {
             },
             hideTags: {
                 name: 'Ẩn thẻ (hồ sơ vault)',
-                desc: 'Danh sách mẫu thẻ phân cách bằng dấu phẩy. Mẫu tên: tag* (bắt đầu bằng), *tag (kết thúc bằng). Mẫu đường dẫn: archive (thẻ và con cháu), archive/* (chỉ con cháu), projects/*/drafts (ký tự đại diện ở giữa).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                desc: 'Danh sách mẫu thẻ phân cách bằng dấu phẩy. Mẫu tên: tag* (bắt đầu bằng), *tag (kết thúc bằng). Mẫu đường dẫn: lưu-trữ (thẻ và con cháu), lưu-trữ/* (chỉ con cháu), dự-án/*/nháp (ký tự đại diện ở giữa).',
+                placeholder: 'lưu-trữ*, *nháp, dự-án/*/cũ'
             },
             hideNotesWithTags: {
                 name: 'Ẩn ghi chú có thẻ (hồ sơ vault)',
-                desc: 'Comma-separated list of tag patterns. Notes containing matching tags are hidden. Name patterns: tag* (starting with), *tag (ending with). Path patterns: archive (tag and descendants), archive/* (descendants only), projects/*/drafts (mid-segment wildcard).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                desc: 'Danh sách mẫu thẻ phân cách bằng dấu phẩy. Ghi chú chứa thẻ khớp sẽ bị ẩn. Mẫu tên: tag* (bắt đầu bằng), *tag (kết thúc bằng). Mẫu đường dẫn: lưu-trữ (thẻ và con cháu), lưu-trữ/* (chỉ con cháu), dự-án/*/nháp (ký tự đại diện ở giữa).',
+                placeholder: 'lưu-trữ*, *nháp, dự-án/*/cũ'
             },
             enableFolderNotes: {
                 name: 'Bật ghi chú thư mục',
@@ -2427,12 +2427,7 @@ export const STRINGS_VI = {
             },
             folderNoteName: {
                 name: 'Tên ghi chú thư mục',
-                desc: 'Tên ghi chú thư mục không có phần mở rộng. Để trống để dùng cùng tên với thư mục.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Mẫu tên ghi chú thư mục',
-                desc: 'Mẫu tên cho ghi chú thư mục không có phần mở rộng. Dùng {{folder}} để chèn tên thư mục. Khi được đặt, tên ghi chú thư mục không được áp dụng.'
+                desc: 'Tên ghi chú thư mục không có phần mở rộng. Dùng {{folder}} để chèn tên thư mục hoặc nhập tên cố định như index.'
             },
             folderNoteTemplate: {
                 name: 'Mẫu ghi chú thư mục',
@@ -2504,7 +2499,7 @@ export const STRINGS_VI = {
                 progress: 'Đang cập nhật cache Notebook Navigator.'
             },
             iconPackManagement: {
-                downloadButton: 'Tải về',
+                downloadButton: 'Tải xuống',
                 downloadingLabel: 'Đang tải...',
                 removeButton: 'Gỡ bỏ',
                 statusInstalled: 'Đã tải (phiên bản {version})',
@@ -2546,7 +2541,7 @@ export const STRINGS_VI = {
             },
             frontmatterNameFields: {
                 name: 'Các trường tên',
-                desc: 'Danh sách trường frontmatter phân cách bằng dấu phẩy. Sử dụng giá trị không trống đầu tiên. Quay lại tên tệp.',
+                desc: 'Danh sách trường frontmatter phân cách bằng dấu phẩy. Sử dụng giá trị không trống đầu tiên. Nếu không có, dùng tên tệp.',
                 placeholder: 'title, name'
             },
             frontmatterCreatedField: {
@@ -2561,7 +2556,7 @@ export const STRINGS_VI = {
             },
             frontmatterTimestampFormat: {
                 name: 'Định dạng dấu thời gian',
-                desc: 'Định dạng dùng để phân tích dấu thời gian trong frontmatter. Để trống để dùng định dạng ISO 8601',
+                desc: 'Định dạng dùng để phân tích dấu thời gian trong frontmatter. Để trống để dùng định dạng ISO 8601.',
                 helpTooltip: 'Định dạng với Moment',
                 momentLinkText: 'định dạng Moment',
                 help: 'Định dạng phổ biến:\nYYYY-MM-DD[T]HH:mm:ss → 2025-01-04T14:30:45\nYYYY-MM-DD[T]HH:mm:ssZ → 2025-08-07T16:53:39+02:00\nDD/MM/YYYY HH:mm:ss → 04/01/2025 14:30:45\nMM/DD/YYYY h:mm:ss a → 01/04/2025 2:30:45 PM'
@@ -2571,6 +2566,11 @@ export const STRINGS_VI = {
                 desc: 'Nếu bạn thích dùng Notebook Navigator, hãy cân nhắc hỗ trợ việc phát triển liên tục.',
                 buttonText: '❤️ Tài trợ',
                 coffeeButton: '☕️ Mua cho tôi một ly cà phê'
+            },
+            otherPlugins: {
+                name: 'Xem các plugin khác của tôi',
+                betterPaste: 'Dọn dẹp văn bản, liên kết và ảnh đã dán',
+                pixelPerfectImage: 'Đổi kích thước ảnh chính xác và hơn thế nữa'
             },
             checkForNewVersionOnStart: {
                 name: 'Kiểm tra phiên bản mới khi khởi động',
@@ -2615,7 +2615,7 @@ export const STRINGS_VI = {
     },
     whatsNew: {
         title: 'Có gì mới trong Notebook Navigator',
-        openBannerImage: 'Mở hình ảnh biểu ngữ phát hành',
+        openBannerImage: 'Mở hình ảnh banner phát hành',
         supportMessage: 'Nếu bạn thấy Notebook Navigator hữu ích, hãy cân nhắc hỗ trợ việc phát triển.',
         supportButton: 'Mua cho tôi một ly cà phê',
         thanksButton: 'Cảm ơn!'

@@ -39,10 +39,6 @@ import { createGroupDefinition, createRenderDefinition } from '../nativeSettingC
 import { createSettingGroupFactory } from '../settingGroups';
 import type { SettingsTabContext } from './SettingsTabContext';
 
-interface VaultSetupSectionOptions {
-    heading?: string;
-}
-
 interface VaultSetupRenderers {
     renderProfileSetting(setting: Setting): void;
     renderVaultTitleSetting(setting: Setting): void;
@@ -52,16 +48,14 @@ interface VaultSetupRenderers {
 
 /** Renders the vault setup section inside the General settings page. */
 export function renderGeneralVaultSetupSection(context: SettingsTabContext): void {
-    renderVaultSetupSection(context, {
-        heading: strings.settings.index.groups.vaultSetup
-    });
+    renderVaultSetupSection(context);
 }
 
-function renderVaultSetupSection(context: SettingsTabContext, options: VaultSetupSectionOptions): void {
+function renderVaultSetupSection(context: SettingsTabContext): void {
     const { containerEl } = context;
     const renderers = createVaultSetupRenderers(context);
     const createGroup = createSettingGroupFactory(containerEl);
-    const vaultSetupGroup = createGroup(options.heading);
+    const vaultSetupGroup = createGroup(undefined);
 
     vaultSetupGroup.addSetting(setting => renderers.renderProfileSetting(setting));
     // The vault title places the profile selector in the desktop chrome (desktop and
@@ -107,7 +101,7 @@ export function createVaultSetupSettingDefinitions(context: SettingsTabContext):
         );
     }
 
-    return [createGroupDefinition(strings.settings.index.groups.vaultSetup, items)];
+    return [createGroupDefinition(undefined, items)];
 }
 
 function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRenderers {

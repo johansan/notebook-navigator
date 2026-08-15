@@ -30,7 +30,7 @@ import {
 } from '../nativeSettingControls';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { FilePathInputSuggest } from '../../suggest/FilePathInputSuggest';
-import { FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER } from '../../utils/folderNoteName';
+import { FOLDER_NOTE_NAME_PATTERN_TOKEN } from '../../utils/folderNoteName';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
 import { getTemplaterCreateNoteFromTemplate } from '../../utils/templaterIntegration';
 import { isFolderNoteTemplateCompatible, isSupportedFolderNoteExtension } from '../../utils/folderNotes';
@@ -112,17 +112,11 @@ export function createFoldersSettingDefinitions(context: SettingsTabContext, hea
                         base: strings.settings.items.folderNoteType.options.base
                     }
                 }),
-                createTextDefinition('folderNoteName', {
+                createTextDefinition('folderNoteNamePattern', {
                     name: strings.settings.items.folderNoteName.name,
                     desc: strings.settings.items.folderNoteName.desc,
-                    aliases: [strings.settings.items.folderNoteName.placeholder],
-                    placeholder: strings.settings.items.folderNoteName.placeholder
-                }),
-                createTextDefinition('folderNoteNamePattern', {
-                    name: strings.settings.items.folderNoteNamePattern.name,
-                    desc: strings.settings.items.folderNoteNamePattern.desc,
-                    aliases: [FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER],
-                    placeholder: FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER
+                    aliases: ['index', FOLDER_NOTE_NAME_PATTERN_TOKEN],
+                    placeholder: FOLDER_NOTE_NAME_PATTERN_TOKEN
                 }),
                 createRenderDefinition({
                     name: strings.settings.items.folderNoteTemplate.name,

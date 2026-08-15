@@ -139,6 +139,17 @@ describe('applyModifiedSettingsTransfer', () => {
         expect(nextSettings.folderSortOrder).toBe('alpha-desc');
     });
 
+    it('migrates a fixed folder note name from exports created before the settings were combined', () => {
+        const nextSettings = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), {
+            plugin: 'notebook-navigator',
+            pluginVersion: '3.3.3',
+            settings: { folderNoteName: 'index' }
+        });
+
+        expect(nextSettings.folderNoteNamePattern).toBe('index');
+        expect(nextSettings).not.toHaveProperty('folderNoteName');
+    });
+
     it('seeds the grouping property list from the sorting list for pre-split exports', () => {
         // Pre-split exports never contain propertyGroupKey; the enveloped and bare forms both seed.
         const enveloped = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), {
