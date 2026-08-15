@@ -437,6 +437,8 @@ export const STRINGS_FA = {
         tags: 'برچسب‌ها',
         properties: 'ویژگی‌ها',
         tasks: 'وظایف',
+        date: 'تاریخ',
+        parentFolder: 'پوشه والد',
         textCount: {
             label: 'شمارش متن',
             options: {

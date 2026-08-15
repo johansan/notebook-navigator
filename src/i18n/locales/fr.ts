@@ -439,6 +439,8 @@ export const STRINGS_FR = {
         tags: 'Mots-clés',
         properties: 'Propriétés',
         tasks: 'Tâches',
+        date: 'Date',
+        parentFolder: 'Dossier parent',
         textCount: {
             label: 'Comptage du texte',
             options: {

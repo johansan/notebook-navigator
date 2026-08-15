@@ -437,6 +437,8 @@ export const STRINGS_EN = {
         tags: 'Tags',
         properties: 'Properties',
         tasks: 'Tasks',
+        date: 'Date',
+        parentFolder: 'Parent folder',
         textCount: {
             label: 'Text count',
             options: {

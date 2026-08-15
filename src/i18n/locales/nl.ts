@@ -440,6 +440,8 @@ export const STRINGS_NL = {
         tags: 'Tags',
         properties: 'Eigenschappen',
         tasks: 'Taken',
+        date: 'Datum',
+        parentFolder: 'Bovenliggende map',
         textCount: {
             label: 'Teksttelling',
             options: {

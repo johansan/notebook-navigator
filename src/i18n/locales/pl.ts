@@ -440,6 +440,8 @@ export const STRINGS_PL = {
         tags: 'Tagi',
         properties: 'Atrybuty',
         tasks: 'Zadania',
+        date: 'Data',
+        parentFolder: 'Folder nadrzędny',
         textCount: {
             label: 'Licznik tekstu',
             options: {

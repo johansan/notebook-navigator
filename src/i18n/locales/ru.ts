@@ -438,6 +438,8 @@ export const STRINGS_RU = {
         tags: 'Теги',
         properties: 'Свойства',
         tasks: 'Задачи',
+        date: 'Дата',
+        parentFolder: 'Родительская папка',
         textCount: {
             label: 'Подсчёт текста',
             options: {

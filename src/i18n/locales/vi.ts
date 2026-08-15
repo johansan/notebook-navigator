@@ -437,6 +437,8 @@ export const STRINGS_VI = {
         tags: 'Thẻ',
         properties: 'Thuộc tính',
         tasks: 'Nhiệm vụ',
+        date: 'Ngày',
+        parentFolder: 'Thư mục cha',
         textCount: {
             label: 'Đếm văn bản',
             options: {

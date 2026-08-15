@@ -437,6 +437,8 @@ export const STRINGS_ZH_TW = {
         tags: '標籤',
         properties: '屬性',
         tasks: '任務',
+        date: '日期',
+        parentFolder: '父資料夾',
         textCount: {
             label: '文字計數',
             options: {

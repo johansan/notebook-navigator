@@ -699,6 +699,7 @@ export const ListPane = React.memo(
             activeProfile,
             groupBy: effectiveAppearanceSettings.groupBy,
             showFileTags: effectiveAppearanceSettings.showTags,
+            showFileDate: effectiveAppearanceSettings.showDate,
             pinnedGroupExpanded,
             collapsedListGroups,
             searchProvider,

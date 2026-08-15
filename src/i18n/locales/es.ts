@@ -438,6 +438,8 @@ export const STRINGS_ES = {
         tags: 'Etiquetas',
         properties: 'Propiedades',
         tasks: 'Tareas',
+        date: 'Fecha',
+        parentFolder: 'Carpeta superior',
         textCount: {
             label: 'Recuento de texto',
             options: {

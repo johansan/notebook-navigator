@@ -436,6 +436,8 @@ export const STRINGS_ZH_CN = {
         tags: '标签',
         properties: '属性',
         tasks: '任务',
+        date: '日期',
+        parentFolder: '父文件夹',
         textCount: {
             label: '文本计数',
             options: {

@@ -170,7 +170,6 @@ type ListLayoutSignatureSettings = Pick<
     | 'textCountPlacement'
     | 'characterCountSpaces'
     | 'hideFileTaskProgressWhenComplete'
-    | 'showParentFolder'
     | 'showSelectedNavigationPills'
 >;
 
@@ -321,6 +320,7 @@ function getListLayoutSignature({
             previewRows: folderSettings.previewRows,
             groupBy: folderSettings.groupBy,
             showDate: folderSettings.showDate,
+            showParentFolder: folderSettings.showParentFolder,
             showPreview: folderSettings.showPreview,
             showImage: folderSettings.showImage,
             showTags: folderSettings.showTags,
@@ -329,7 +329,6 @@ function getListLayoutSignature({
             textCountDisplay: folderSettings.textCountDisplay
         },
         rowContent: {
-            showParentFolder: settings.showParentFolder,
             showFilePropertiesInCompactMode: settings.showFilePropertiesInCompactMode,
             showPropertiesOnSeparateRows: settings.showPropertiesOnSeparateRows,
             textCountPlacement: settings.textCountPlacement,
@@ -761,7 +760,7 @@ export function useListPaneScroll({
             showPropertiesOnSeparateRows: settings.showPropertiesOnSeparateRows,
             showFilePropertiesInCompactMode: settings.showFilePropertiesInCompactMode,
             characterCountSpaces: settings.characterCountSpaces,
-            showParentFolder: settings.showParentFolder,
+            showParentFolder: folderSettings.showParentFolder,
             // Compact mode never renders the metadata line, so disabling the flag there skips
             // per-row record reads during height estimation and task-driven remeasurements.
             showTaskProgress: folderSettings.showTaskProgress,
@@ -780,6 +779,7 @@ export function useListPaneScroll({
         folderSettings.previewRows,
         folderSettings.showDate,
         folderSettings.showImage,
+        folderSettings.showParentFolder,
         folderSettings.showPreview,
         folderSettings.showProperties,
         folderSettings.showTags,
@@ -797,7 +797,6 @@ export function useListPaneScroll({
         settings.characterCountSpaces,
         settings.showFilePropertiesInCompactMode,
         settings.hideFileTaskProgressWhenComplete,
-        settings.showParentFolder,
         settings.showPropertiesOnSeparateRows,
         settings.textCountPlacement,
         themeMode,
@@ -966,7 +965,6 @@ export function useListPaneScroll({
             textCountPlacement: settings.textCountPlacement,
             characterCountSpaces: settings.characterCountSpaces,
             hideFileTaskProgressWhenComplete: settings.hideFileTaskProgressWhenComplete,
-            showParentFolder: settings.showParentFolder,
             showSelectedNavigationPills: settings.showSelectedNavigationPills
         }),
         [
@@ -977,7 +975,6 @@ export function useListPaneScroll({
             settings.textCountPlacement,
             settings.characterCountSpaces,
             settings.hideFileTaskProgressWhenComplete,
-            settings.showParentFolder,
             settings.showSelectedNavigationPills
         ]
     );
