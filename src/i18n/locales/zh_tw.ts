@@ -27,7 +27,7 @@ export const STRINGS_ZH_TW = {
         delete: '刪除',
         clear: '清除',
         remove: '移除',
-        restoreDefault: '恢復預設', // Button text for restoring values to defaults (English: Restore default)
+        restoreDefault: '還原預設值', // Button text for restoring values to defaults (English: Restore default)
         submit: '提交',
         save: '儲存', // Button text for saving settings and dialogs (English: Save)
         configure: '設定', // Generic button label used when opening a configuration dialog (English: Configure)
@@ -39,7 +39,7 @@ export const STRINGS_ZH_TW = {
         unknownError: '未知錯誤',
         clipboardWriteError: '無法寫入剪貼簿',
         updateBannerTitle: 'Notebook Navigator 有可用更新',
-        updateBannerInstruction: '在設定 -> 社群外掛中更新',
+        updateBannerInstruction: '在設定 -> 社群外掛程式中更新',
         previous: '上一個', // Generic aria label for previous navigation (English: Previous)
         next: '下一個' // Generic aria label for next navigation (English: Next)
     },
@@ -54,13 +54,13 @@ export const STRINGS_ZH_TW = {
         hiddenItemAriaLabel: '{name} (已隱藏)',
         collapseGroup: '摺疊群組',
         expandGroup: '展開群組',
-        manualSortTitle: '手動排序: {property}',
+        manualSortTitle: '手動排序：{property}',
         manualSortHint: '拖曳以重新排序。順序會以數字索引值儲存在屬性「{property}」中。',
         manualSortNonMarkdownHint: '非 Markdown 檔案顯示於底部，無法重新排序。',
         unsortedSection: '未排序',
         propertyGroupNoValue: '無',
         manualSortDone: '完成',
-        manualSortMultipleWriteFailure: '{count} 個檔案失敗；第一個: {path}: {message}'
+        manualSortMultipleWriteFailure: '{count} 個檔案失敗；第一個：{path}: {message}'
     },
 
     // Tag list
@@ -78,27 +78,27 @@ export const STRINGS_ZH_TW = {
         calendar: '導覽日曆',
         reorderRootFoldersTitle: '重新排列導覽',
         reorderRootFoldersHint: '使用方向鍵或拖曳來重新排列',
-        vaultRootLabel: '保險庫',
+        vaultRootLabel: '儲存庫',
         resetRootToAlpha: '重設為字母順序',
         resetRootToFrequency: '重設為頻率排序',
         pinShortcuts: '釘選捷徑',
         pinShortcutsAndRecentFiles: '釘選捷徑和最近檔案',
         unpinShortcuts: '取消釘選捷徑',
         unpinShortcutsAndRecentFiles: '取消釘選捷徑和最近檔案',
-        profileMenuAria: '變更保險庫設定檔'
+        profileMenuAria: '變更儲存庫設定檔'
     },
 
     navigationCalendar: {
         ariaLabel: '導覽日曆',
-        dailyNotesNotEnabled: '未啟用每日筆記。請在 Obsidian 設定 → 核心外掛中啟用每日筆記。',
-        noteHiddenByProfile: '日曆筆記已被目前的倉庫設定檔隱藏。',
+        dailyNotesNotEnabled: '未啟用每日筆記核心外掛程式。',
+        noteHiddenByProfile: '日曆筆記已被目前的儲存庫設定檔隱藏。',
         createDailyNote: {
             title: '建立每日筆記',
             message: '每日筆記 {filename} 不存在。是否建立？',
             confirmButton: '建立'
         },
         helpModal: {
-            title: '行事曆快捷鍵',
+            title: '日曆快捷鍵',
             items: [
                 '點擊任意日期以開啟或建立每日筆記。週、月、季度和年份的操作方式相同。',
                 '日期下方的實心圓點表示有筆記。空心圓點表示有未完成的任務。',
@@ -110,8 +110,8 @@ export const STRINGS_ZH_TW = {
     },
 
     dailyNotes: {
-        templateReadFailed: '讀取每日筆記範本失敗',
-        createFailed: '建立每日筆記失敗'
+        templateReadFailed: '讀取每日筆記範本失敗。',
+        createFailed: '建立每日筆記失敗。'
     },
 
     shortcuts: {
@@ -177,7 +177,7 @@ export const STRINGS_ZH_TW = {
     // Search input
     searchInput: {
         placeholder: '搜尋...',
-        placeholderVault: '搜尋保險庫...',
+        placeholderVault: '搜尋儲存庫...',
         placeholderOmnisearch: 'Omnisearch...',
         clearSearch: '清除搜尋',
         switchToFilterSearch: '切換到篩選搜尋',
@@ -186,7 +186,7 @@ export const STRINGS_ZH_TW = {
         removeSearchShortcut: '從捷徑移除搜尋',
         shortcutModalTitle: '儲存搜尋捷徑',
         shortcutNamePlaceholder: '輸入捷徑名稱',
-        shortcutStartIn: '始終從此處開始: {path}',
+        shortcutStartIn: '始終從此處開始：{path}',
         searchHelp: '搜尋語法',
         searchHelpTitle: '搜尋語法',
         searchHelpModal: {
@@ -196,7 +196,7 @@ export const STRINGS_ZH_TW = {
             activeFilterSearch: '篩選搜尋已啟用。',
             activeOmnisearch: 'Omnisearch 已啟用。',
             omnisearchIntro:
-                'Omnisearch 對整個保管庫的筆記內容執行全文搜尋。Notebook Navigator 顯示屬於目前資料夾、標籤或所選內容的符合項。',
+                'Omnisearch 對整個儲存庫的筆記內容執行全文搜尋。Notebook Navigator 顯示屬於目前資料夾、標籤或所選內容的符合項。',
             sections: {
                 fileNames: {
                     title: '檔案名稱和別名',
@@ -241,7 +241,7 @@ export const STRINGS_ZH_TW = {
                         '`-has:task` 排除有未完成任務的筆記。',
                         '`folder:meetings` 包含資料夾名稱含有 `meetings` 的筆記。',
                         '`folder:/work/meetings` 僅包含 `work/meetings` 中的筆記（不含子資料夾）。',
-                        '`folder:/` 僅包含保管庫根目錄中的筆記。',
+                        '`folder:/` 僅包含儲存庫根目錄中的筆記。',
                         '`-folder:archive` 排除資料夾名稱含有 `archive` 的筆記。',
                         '`-folder:/archive` 僅排除 `archive` 中的筆記（不含子資料夾）。',
                         '`ext:md` 包含副檔名為 `md` 的筆記（也支援 `ext:.md`）。',
@@ -253,9 +253,9 @@ export const STRINGS_ZH_TW = {
                     title: 'AND/OR 行為',
                     items: [
                         '`AND` 和 `OR` 僅在純標籤/屬性查詢中作為運算子。',
-                        '純標籤/屬性查詢僅包含標籤和屬性篩選器: `#tag`、`-#tag`、`#`、`-#`、`.key`、`-.key`、`.key=value`、`-.key=value`。',
+                        '純標籤/屬性查詢僅包含標籤和屬性篩選器：`#tag`、`-#tag`、`#`、`-#`、`.key`、`-.key`、`.key=value`、`-.key=value`。',
                         '如果查詢包含名稱、日期（`@...`）、任務篩選器（`has:task`）、資料夾篩選器（`folder:...`）或副檔名篩選器（`ext:...`），`AND` 和 `OR` 將作為詞語進行比對。',
-                        '運算子查詢範例: `#work OR .status=started`。',
+                        '運算子查詢範例：`#work OR .status=started`。',
                         '混合查詢範例：`#work OR ext:md`（`OR` 在檔案名稱中進行比對）。'
                     ]
                 },
@@ -281,8 +281,8 @@ export const STRINGS_ZH_TW = {
                         '查詢會傳送給 Omnisearch 外掛程式並遵循 Omnisearch 查詢語法。`#tag`、`.property` 和 `@date` 等篩選搜尋標記沒有特殊意義。',
                         '選擇資料夾後，查詢會附加 `path:"<folder>/"`，使 Omnisearch 在該資料夾及其子資料夾內比對。已包含 `path:` 的查詢將原樣傳送。',
                         'Omnisearch 按相關性排序最多傳回 50 筆結果。當符合項超過該數量時，排名較低的筆記不會顯示。',
-                        '限定包含非ASCII字元的資料夾路徑需要 Omnisearch 1.30.0 或更新版本。舊版本會搜尋整個保管庫，然後按資料夾篩選結果。',
-                        '在大型保管庫中，少於3個字元的查詢可能會較慢。',
+                        '限定包含非ASCII字元的資料夾路徑需要 Omnisearch 1.30.0 或更新版本。舊版本會搜尋整個儲存庫，然後按資料夾篩選結果。',
+                        '在大型儲存庫中，少於 3 個字元的查詢可能會較慢。',
                         '筆記預覽顯示 Omnisearch 摘錄，而不是預設預覽文字。'
                     ]
                 }
@@ -354,7 +354,7 @@ export const STRINGS_ZH_TW = {
             newNoteFromTemplate: '從範本新建筆記',
             newFolder: '新建資料夾',
             newCanvas: '新建畫布',
-            newBase: '新建資料庫',
+            newBase: '新建 Base',
             newDrawing: '新建繪圖',
             newExcalidrawDrawing: '新建 Excalidraw 繪圖',
             newTldrawDrawing: '新建 Tldraw 繪圖',
@@ -402,7 +402,7 @@ export const STRINGS_ZH_TW = {
             noteEmbed: '筆記嵌入',
             fileEmbed: '檔案嵌入',
             obsidianUrl: 'Obsidian URL',
-            pathFromVaultFolder: '自保險庫資料夾的路徑',
+            pathFromVaultFolder: '自儲存庫資料夾的路徑',
             pathFromSystemRoot: '自系統根目錄的路徑'
         },
         style: {
@@ -486,7 +486,7 @@ export const STRINGS_ZH_TW = {
             wordCountTarget: '目標字數',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                '此欄位為空時，群組目標會使用「設定 > 筆記 > 字數與字元數」中設定的目標屬性。為此群組設定目標值即可覆寫。',
+                '此欄位為空時，群組目標會使用「設定 > 檔案顯示 > 字數與字元數」中設定的目標屬性。為此群組設定目標值即可覆寫。',
             description: '為此筆記自訂群組標題。將標題留空以移除標題。'
         },
         mergeNotes: {
@@ -534,8 +534,8 @@ export const STRINGS_ZH_TW = {
                 'nav-expand-all': '全部展開',
                 'nav-collapse-all': '全部摺疊',
                 'nav-calendar': '日曆',
-                'nav-tree-expand': '樹狀箭頭: 展開',
-                'nav-tree-collapse': '樹狀箭頭: 摺疊',
+                'nav-tree-expand': '樹狀箭頭：展開',
+                'nav-tree-collapse': '樹狀箭頭：摺疊',
                 'nav-hidden-items': '隱藏項目',
                 'nav-root-reorder': '重新排列根資料夾',
                 'nav-new-folder': '新建資料夾',
@@ -547,15 +547,15 @@ export const STRINGS_ZH_TW = {
                 'list-descendants': '子資料夾中的筆記',
                 'list-expand-all': '展開所有群組',
                 'list-collapse-all': '摺疊所有群組',
-                'list-sort-ascending': '排序: 升序',
-                'list-sort-descending': '排序: 降序',
+                'list-sort-ascending': '排序：升序',
+                'list-sort-descending': '排序：降序',
                 'list-sort-modified': '依編輯日期排序',
                 'list-sort-created': '依建立日期排序',
                 'list-sort-title': '依標題排序',
                 'list-sort-filename': '依檔案名稱排序',
                 'list-sort-property': '依屬性排序',
                 'list-appearance': '變更外觀',
-                'list-new-note': '新建筆記',
+                'list-new-note': '新筆記',
                 'list-pinned': '釘選筆記',
                 'nav-folder-open': '資料夾開啟',
                 'nav-folder-closed': '資料夾關閉',
@@ -605,9 +605,9 @@ export const STRINGS_ZH_TW = {
             apply: '套用'
         },
         selectVaultProfile: {
-            title: '選擇保險庫設定檔',
+            title: '選擇儲存庫設定檔',
             currentBadge: '使用中',
-            emptyState: '沒有可用的保險庫設定檔。'
+            emptyState: '沒有可用的儲存庫設定檔。'
         },
         tagOperation: {
             renameTitle: '重新命名標籤 {tag}',
@@ -618,7 +618,7 @@ export const STRINGS_ZH_TW = {
             deleteWarning: '刪除標籤 {tag} 將修改 {count} 個{files}。',
             modificationWarning: '這將更新檔案修改日期。',
             affectedFiles: '受影響的檔案：',
-            andMore: '以及 {count} 個更多...',
+            andMore: '...以及其他 {count} 個',
             confirmRename: '重新命名標籤',
             renameUnchanged: '{tag} 未變更',
             renameNoChanges: '{oldTag} → {newTag} ({countLabel})',
@@ -628,8 +628,8 @@ export const STRINGS_ZH_TW = {
             confirmDelete: '刪除標籤',
             deleteBatchNotFinalized: '已從 {removed}/{total} 中刪除。未更新：{notUpdated}。中繼資料和捷徑未更新。',
             checkConsoleForDetails: '查看主控台了解詳情。',
-            file: '個檔案',
-            files: '個檔案',
+            file: '檔案',
+            files: '檔案',
             inlineParsingWarning: {
                 title: '內嵌標籤相容性',
                 message: '{tag} 包含 Obsidian 無法在內嵌標籤中解析的字元。Frontmatter 標籤不受影響。',
@@ -662,9 +662,9 @@ export const STRINGS_ZH_TW = {
             deleteFileAttachmentsTitle: '刪除檔案附件？',
             moveFileConflictTitle: '移動衝突',
             folderNamePrompt: '輸入資料夾名稱：',
-            hideInOtherVaultProfiles: '在其他保險庫設定檔中隱藏',
+            hideInOtherVaultProfiles: '在其他儲存庫設定檔中隱藏',
             renamePrompt: '輸入新名稱：',
-            renameVaultTitle: '變更保險庫顯示名稱',
+            renameVaultTitle: '變更儲存庫顯示名稱',
             renameVaultPrompt: '輸入自訂顯示名稱（留空使用預設值）：',
             deleteFolderConfirm: '您確定要刪除此資料夾及其所有內容嗎？',
             deleteFileConfirm: '您確定要刪除此檔案嗎？',
@@ -727,7 +727,7 @@ export const STRINGS_ZH_TW = {
             navigatePlaceholder: '導覽至標籤...',
             addPlaceholder: '搜尋要新增的標籤...',
             removePlaceholder: '選擇要移除的標籤...',
-            createNewTag: '建立新標籤: #{tag}',
+            createNewTag: '建立新標籤：#{tag}',
             instructions: {
                 navigate: '導覽',
                 select: '選擇',
@@ -738,7 +738,7 @@ export const STRINGS_ZH_TW = {
         },
         propertySuggest: {
             placeholder: '選擇屬性鍵...',
-            navigatePlaceholder: '導航到屬性...',
+            navigatePlaceholder: '導覽至屬性...',
             instructions: {
                 navigate: '導覽',
                 select: '新增屬性',
@@ -747,7 +747,7 @@ export const STRINGS_ZH_TW = {
         },
         propertyKeyVisibility: {
             title: '屬性鍵可見性',
-            description: '控制屬性值的顯示位置。各欄分別對應導航面板、列表面板和檔案上下文選單。使用底部列切換某欄中的所有列。',
+            description: '控制屬性值的顯示位置。各欄分別對應導覽窗格、列表窗格和檔案右鍵選單。使用底部列切換某欄中的所有列。',
             searchPlaceholder: '搜尋屬性鍵...',
             propertyColumnLabel: '屬性',
             showInNavigation: '在導覽中顯示',
@@ -762,7 +762,7 @@ export const STRINGS_ZH_TW = {
         welcome: {
             title: '歡迎使用 {pluginName}',
             introText:
-                '您好，歡迎使用 Notebook Navigator，一款更好用的 Obsidian 檔案瀏覽器和日曆。在開始之前，強烈建議您至少觀看下方《Mastering Notebook Navigator》影片的前三章。影片會介紹兩個面板的運作方式，協助您快速上手。',
+                '您好，歡迎使用 Notebook Navigator，一款更好用的 Obsidian 檔案瀏覽器和日曆。在開始之前，強烈建議您至少觀看下方《Mastering Notebook Navigator》影片的前三章。影片會介紹兩個窗格的運作方式，協助您快速上手。',
             continueText:
                 '如果您還有十分鐘，請繼續觀看初次設定和日常使用流程這兩個章節。看完後，您就掌握了入門所需的全部內容，之後還可以回來了解更多細節。Notebook Navigator 設定頂部提供了該影片的連結。',
             thanksText: '祝您使用 Notebook Navigator 愉快！',
@@ -782,9 +782,9 @@ export const STRINGS_ZH_TW = {
             renameFile: '重新命名檔案失敗：{error}',
             deleteFolder: '刪除資料夾失敗：{error}',
             deleteFile: '刪除檔案失敗：{error}',
-            deleteAttachments: '刪除附件失敗: {error}',
-            mergeNotes: '合併筆記失敗: {error}',
-            mergeNotesOpenOutput: '合併後的筆記已建立為 {name}，但無法開啟: {error}。來源筆記未變更。',
+            deleteAttachments: '刪除附件失敗：{error}',
+            mergeNotes: '合併筆記失敗：{error}',
+            mergeNotesOpenOutput: '合併後的筆記已建立為 {name}，但無法開啟：{error}。來源筆記未變更。',
             mergeNotesOpenSkipped: '另一個檔案開啟請求已優先執行。',
             mergeNotesTrashSources: '合併後的筆記已建立。無法將 {count} 則來源筆記移至回收桶。',
             duplicateNote: '複製筆記失敗：{error}',
@@ -805,7 +805,7 @@ export const STRINGS_ZH_TW = {
             folderNoteConversionFailed: '轉換為資料夾筆記失敗',
             folderNoteConversionFailedWithReason: '轉換為資料夾筆記失敗：{error}',
             folderNoteOpenFailed: '檔案已轉換但開啟資料夾筆記失敗：{error}',
-            failedToDeleteFile: '刪除 {name} 失敗: {error}',
+            failedToDeleteFile: '刪除 {name} 失敗：{error}',
             failedToDeleteMultipleFiles: '刪除 {count} 個檔案失敗',
             versionHistoryNotAvailable: '版本歷史服務不可用',
             drawingAlreadyExists: '同名繪圖已存在',
@@ -814,7 +814,7 @@ export const STRINGS_ZH_TW = {
             noFileSelected: '未選擇檔案'
         },
         warnings: {
-            linkBreakingNameCharacters: '該名稱包含會破壞 Obsidian 連結的字元：#, |, ^, %%, [[, ]].',
+            linkBreakingNameCharacters: '該名稱包含會破壞 Obsidian 連結的字元：#, |, ^, %%, [[, ]]。',
             forbiddenNameCharactersAllPlatforms: '名稱不能以 . 開頭，也不能包含 : 或 /。',
             forbiddenNameCharactersWindows: 'Windows 保留字元不允許使用：<, >, ", \\, |, ?, *。'
         },
@@ -873,7 +873,7 @@ export const STRINGS_ZH_TW = {
             itemAlreadyExists: '此位置已存在名為「{name}」的項目。',
             failedToMove: '移動失敗：{error}',
             failedToAddTag: '新增標籤「{tag}」失敗',
-            failedToSetProperty: '更新屬性失敗: {error}',
+            failedToSetProperty: '更新屬性失敗：{error}',
             failedToClearTags: '清除標籤失敗',
             failedToMoveFolder: '移動資料夾「{name}」失敗',
             failedToImportFiles: '匯入失敗：{names}'
@@ -909,14 +909,14 @@ export const STRINGS_ZH_TW = {
         openYearlyNote: '開啟每年筆記',
         revealFile: '定位檔案',
         search: '搜尋',
-        searchVaultRoot: '搜尋整個保險庫',
-        toggleDualPane: '切換雙窗格布局',
+        searchVaultRoot: '搜尋整個儲存庫',
+        toggleDualPane: '切換雙窗格版面配置',
         toggleDualPaneOrientation: '切換雙窗格方向', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: '切換日曆',
-        selectVaultProfile: '變更保險庫設定檔',
-        selectVaultProfile1: '切換到保險庫設定檔 1',
-        selectVaultProfile2: '切換到保險庫設定檔 2',
-        selectVaultProfile3: '切換到保險庫設定檔 3',
+        selectVaultProfile: '變更儲存庫設定檔',
+        selectVaultProfile1: '切換到儲存庫設定檔 1',
+        selectVaultProfile2: '切換到儲存庫設定檔 2',
+        selectVaultProfile3: '切換到儲存庫設定檔 3',
         deleteFile: '刪除檔案',
         createNewNote: '建立新筆記',
         createNewNoteFromTemplate: '從範本新建筆記',
@@ -932,7 +932,7 @@ export const STRINGS_ZH_TW = {
         pinAllFolderNotes: '釘選所有資料夾筆記',
         navigateToFolder: '導覽至資料夾',
         navigateToTag: '導覽至標籤',
-        navigateToProperty: '導航到屬性',
+        navigateToProperty: '導覽至屬性',
         addShortcut: '新增至捷徑',
         openShortcut: '開啟捷徑 {number}',
         toggleDescendants: '切換後代',
@@ -941,7 +941,7 @@ export const STRINGS_ZH_TW = {
         toggleTagsBySelection: '依選擇切換標籤',
         togglePropertiesBySelection: '依選擇切換屬性',
         toggleCompactMode: '切換精簡模式', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
-        togglePinnedSection: '切換置頂區域',
+        togglePinnedSection: '切換釘選區段',
         collapseExpand: '摺疊/展開所有導覽項目',
         collapseExpandListGroups: '摺疊/展開所有列表群組',
         collapseExpandSelectedItem: '摺疊/展開所選項目',
@@ -956,25 +956,25 @@ export const STRINGS_ZH_TW = {
 
     // Plugin UI
     plugin: {
-        viewName: '筆記本導覽器',
+        viewName: 'Notebook Navigator',
         calendarViewName: '日曆',
         folderNoteSidebarViewName: '資料夾筆記',
-        ribbonTooltip: '筆記本導覽器',
-        revealInNavigator: '在筆記本導覽器中定位',
+        ribbonTooltip: 'Notebook Navigator',
+        revealInNavigator: '在 Notebook Navigator 中定位',
         settingsUnavailableNotice:
-            '筆記本導覽器無法讀取其設定,因此未啟動。如果儲存庫正在同步,請在同步完成後重新啟動 Obsidian。若要以預設設定重新開始,請執行命令「還原預設設定」。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+            'Notebook Navigator 無法讀取其設定，因此未啟動。如果儲存庫正在同步，請在同步完成後重新啟動 Obsidian。若要以預設設定重新開始，請執行命令「還原預設設定」。', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
         settingsMissingConfirm: {
-            title: '使用預設設定開始?', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
+            title: '使用預設設定開始？', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
             messageRecentInstall:
-                '筆記本導覽器剛剛安裝,沒有設定檔。如果這是全新安裝或重新安裝,請使用預設設定繼續。如果你的設定來自同步服務,請取消,等待同步完成後重新啟動 Obsidian。', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
+                'Notebook Navigator 剛剛安裝，沒有設定檔。如果這是全新安裝或重新安裝，請使用預設設定繼續。如果您的設定來自同步服務，請取消，等待同步完成後重新啟動 Obsidian。', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
             messageExistingInstall:
-                '筆記本導覽器已在此裝置上安裝了一段時間,但設定檔遺失。如果儲存庫仍在同步,請取消,等待同步完成後重新啟動 Obsidian 以保留現有設定。僅在想要使用預設設定重新開始時繼續。', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+                'Notebook Navigator 已在此裝置上安裝了一段時間，但設定檔遺失。如果儲存庫仍在同步，請取消，等待同步完成後重新啟動 Obsidian 以保留現有設定。僅在想要使用預設設定重新開始時繼續。', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
             confirmButton: '使用預設設定' // Confirm button label in the missing-settings dialog (English: Use default settings)
         },
         settingsRecovery: {
             confirmTitle: '還原預設設定', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
-                '此操作會將筆記本導覽器的設定檔替換為預設設定。如果儲存庫仍在同步,還原的預設設定可能會覆寫其他裝置上儲存的設定。可讀取的設定檔會先複製到外掛資料夾中帶有時間戳記的備份檔。', // Body of the confirmation dialog for the settings recovery command
+                '此操作會將 Notebook Navigator 的設定檔替換為預設設定。如果儲存庫仍在同步，還原的預設設定可能會覆寫其他裝置上儲存的設定。可讀取的設定檔會先複製到外掛程式資料夾中帶有時間戳記的備份檔。', // Body of the confirmation dialog for the settings recovery command
             confirmButton: '還原預設', // Confirm button label in the settings recovery dialog (English: Restore defaults)
             failedNotice: '無法完成設定還原。已保留本機偏好設定。', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
             completedNotice: '已還原預設設定。請重新啟動 Obsidian 以完成。' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
@@ -1008,7 +1008,7 @@ export const STRINGS_ZH_TW = {
         },
         index: {
             label: '一般',
-            description: '發行說明、支援、保險庫設定檔、檔案類型與屬性鍵。',
+            description: '發行說明、支援、儲存庫設定檔、檔案類型與屬性鍵。',
             groups: {
                 about: '關於'
             }
@@ -1051,8 +1051,8 @@ export const STRINGS_ZH_TW = {
                 }
             },
             shortcutsAndRecentFiles: {
-                label: '快捷方式與最近檔案',
-                description: '快捷方式可見性、徽章、最近檔案與釘選項目。',
+                label: '捷徑與最近檔案',
+                description: '捷徑可見性、徽章、最近檔案與釘選項目。',
                 groups: {
                     shortcuts: '捷徑',
                     recentFiles: '最近檔案'
@@ -1121,7 +1121,7 @@ export const STRINGS_ZH_TW = {
                 groups: {
                     appearance: '外觀',
                     leftSidebar: '左側邊欄',
-                    calendarIntegration: '行事曆整合',
+                    calendarIntegration: '日曆整合',
                     rightSidebar: '右側邊欄'
                 }
             },
@@ -1187,7 +1187,7 @@ export const STRINGS_ZH_TW = {
             },
             sortingProperties: {
                 name: '用於排序的屬性',
-                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為排序選項顯示在預設排序方式設定和列表面板的排序選單中。這些屬性不會被更改。',
+                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為排序選項顯示在預設排序方式設定和列表窗格的排序選單中。這些屬性不會被更改。',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: '預設排序方式已重設，因為其屬性已不可用。',
@@ -1217,7 +1217,7 @@ export const STRINGS_ZH_TW = {
             },
             groupingProperties: {
                 name: '用於分組的屬性',
-                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為分組選項顯示在預設分組設定和列表面板的排序選單中。這些屬性不會被更改。',
+                desc: '以逗號分隔的 frontmatter 屬性。每個屬性會作為分組選項顯示在預設分組設定和列表窗格的排序選單中。這些屬性不會被更改。',
                 placeholder: 'status, genre'
             },
             manualSortProperty: {
@@ -1229,8 +1229,8 @@ export const STRINGS_ZH_TW = {
                 desc: '用於儲存自訂群組標題的 frontmatter 屬性。'
             },
             groupHeadersInstructions: {
-                intro: '自訂群組標題會顯示在列表面板的筆記上方。',
-                items: ['從列表面板的排序選單中，將分組設定為 **自訂**。', '右鍵點擊筆記並選擇 **設定群組標題** 以在其上方新增標題。']
+                intro: '自訂群組標題會顯示在列表窗格的筆記上方。',
+                items: ['從列表窗格的排序選單中，將分組設定為 **自訂**。', '右鍵點擊筆記並選擇 **設定群組標題** 以在其上方新增標題。']
             },
             manualSortNewNotePlacement: {
                 name: '新筆記位置',
@@ -1251,7 +1251,7 @@ export const STRINGS_ZH_TW = {
                 items: [
                     '從排序選單中選擇 **手動排序** 以啟用手動排序。之後有兩種方式可以重新排列筆記。',
                     '從排序選單中選擇 **編輯排序方式...** 以開啟重新排序檢視。使用滑鼠拖曳筆記，或在行動裝置上使用觸控。在桌面上，**Cmd/Ctrl** 或 **Shift** 點擊可選取多則筆記，拖曳其中任何一則即可移動整個群組。',
-                    '在列表面板中，選取一則筆記或多選數則，然後按 **Cmd/Ctrl + Arrow Up/Down** 將所選項目上移或下移。'
+                    '在列表窗格中，選取一則筆記或多選數則，然後按 **Cmd/Ctrl + Arrow Up/Down** 將所選項目上移或下移。'
                 ]
             },
             scrollToSelectedFileOnListChanges: {
@@ -1305,7 +1305,7 @@ export const STRINGS_ZH_TW = {
             },
             defaultListMode: {
                 name: '預設列表模式',
-                desc: '選擇預設列表布局。標準顯示標題、日期、描述和預覽文字。精簡只顯示標題。外觀可按資料夾覆寫。',
+                desc: '選擇預設列表版面配置。標準顯示標題、日期、描述和預覽文字。精簡只顯示標題。外觀可按資料夾覆寫。',
                 options: {
                     standard: '標準',
                     compact: '精簡'
@@ -1329,19 +1329,19 @@ export const STRINGS_ZH_TW = {
                 desc: '當未設定自訂檔案圖示時顯示父資料夾圖示。當未設定自訂檔案顏色時使用資料夾顏色。'
             },
             showFileTaskProgress: {
-                name: '工作進度',
-                desc: '顯示任務狀態，進度條和任務數量為可選。未完成任務和已完成任務的顏色可透過 Style Settings 外掛分別設定。'
+                name: '任務進度',
+                desc: '顯示任務狀態，進度條和任務數量為可選。未完成任務和已完成任務的顏色可透過 Style Settings 外掛程式分別設定。'
             },
             showFileTaskProgressBar: {
-                name: '工作進度：進度條',
+                name: '任務進度：進度條',
                 desc: '在任務圖示旁邊顯示進度條。'
             },
             showFileTaskProgressCount: {
-                name: '工作進度：任務數量',
+                name: '任務進度：任務數量',
                 desc: '顯示已完成任務數和任務總數，例如 3/7。'
             },
             hideFileTaskProgressWhenComplete: {
-                name: '工作進度：全部完成時隱藏',
+                name: '任務進度：全部完成時隱藏',
                 desc: '當筆記中的所有任務都已完成時隱藏任務進度。'
             },
             unfinishedTaskBackground: {
@@ -1383,7 +1383,7 @@ export const STRINGS_ZH_TW = {
             compactItemHeight: {
                 name: '精簡項目高度',
                 desc: '設定桌面和行動裝置的精簡列表項目高度（像素）。',
-                resetTooltip: '恢復預設值 (28px)'
+                resetTooltip: '還原預設值 (28px)'
             },
             compactItemHeightScaleText: {
                 name: '隨精簡高度縮放文字',
@@ -1399,7 +1399,7 @@ export const STRINGS_ZH_TW = {
             },
             parentFolderClickOpensFolder: {
                 name: '點按父資料夾開啟資料夾',
-                desc: '點按父資料夾名稱時，在列表面板中開啟該資料夾。'
+                desc: '點按父資料夾名稱時，在列表窗格中開啟該資料夾。'
             },
             showParentFolderColor: {
                 name: '顯示父資料夾顏色',
@@ -1414,12 +1414,12 @@ export const STRINGS_ZH_TW = {
                 desc: '懸停在檔案上時顯示操作按鈕。按鈕控制項選擇顯示哪些操作。'
             },
             dualPane: {
-                name: '雙窗格布局',
+                name: '雙窗格版面配置',
                 desc: '並排顯示導覽窗格和列表窗格。'
             },
             dualPaneOrientation: {
-                name: '雙欄布局方向',
-                desc: '雙欄啟用時選擇水平或垂直布局。',
+                name: '雙窗格方向',
+                desc: '雙窗格啟用時選擇水平或垂直版面配置。',
                 options: {
                     horizontal: '水平分割',
                     vertical: '垂直分割'
@@ -1482,18 +1482,18 @@ export const STRINGS_ZH_TW = {
             },
             autoRevealActiveNote: {
                 name: '自動定位使用中的筆記',
-                desc: '從快速切換器、連結或搜尋開啟筆記時自動顯示。'
+                desc: '從快速切換器、連結或搜尋開啟筆記時自動定位。'
             },
             autoRevealShortestPath: {
-                name: '自動顯示：使用最短路徑',
-                desc: '啟用：自動顯示選擇最近的可見祖先資料夾或標籤。停用：自動顯示選擇檔案的實際資料夾和精確標籤。'
+                name: '自動定位：使用最短路徑',
+                desc: '啟用：自動定位選擇最近的可見祖先資料夾或標籤。停用：自動定位選擇檔案的實際資料夾和精確標籤。'
             },
             autoRevealIgnoreRightSidebar: {
-                name: '自動顯示：忽略右側邊欄事件',
+                name: '自動定位：忽略右側邊欄事件',
                 desc: '在右側邊欄中點按或變更筆記時不變更使用中的筆記。'
             },
             autoRevealIgnoreOtherWindows: {
-                name: '自動顯示：忽略其他視窗的事件',
+                name: '自動定位：忽略其他視窗的事件',
                 desc: '在其他視窗中操作筆記時不變更使用中的筆記。'
             },
             singlePaneAnimation: {
@@ -1507,11 +1507,11 @@ export const STRINGS_ZH_TW = {
             },
             disableShortcutAutoScroll: {
                 name: '停用捷徑自動捲動',
-                desc: '點按捷徑中的項目時不捲動導覽面板。'
+                desc: '點按捷徑中的項目時不捲動導覽窗格。'
             },
             expandOnSelection: {
                 name: '選取時展開',
-                desc: '選取時展開資料夾和標籤。在單窗格模式下，首次選取展開，再次選取顯示檔案。'
+                desc: '選取時展開資料夾、標籤和屬性。在單窗格模式下，首次選取展開，再次選取顯示檔案。'
             },
             collapseOtherBranchesOnExpand: {
                 name: '僅展開一個分支',
@@ -1530,14 +1530,14 @@ export const STRINGS_ZH_TW = {
                 desc: '同一次拖曳中展開更多資料夾或標籤前的延遲（秒）。'
             },
             navigationBanner: {
-                name: '導覽橫幅（保險庫設定檔）',
-                desc: '在導覽窗格頂部顯示一張圖片。隨所選保險庫設定檔而變化。',
+                name: '導覽橫幅（儲存庫設定檔）',
+                desc: '在導覽窗格頂部顯示一張圖片。隨所選儲存庫設定檔而變化。',
                 current: '目前橫幅：{path}',
                 chooseButton: '選擇圖片'
             },
             pinNavigationBanner: {
                 name: '固定橫幅',
-                desc: '將導航橫幅固定在導航樹上方。'
+                desc: '將導覽橫幅固定在導覽樹上方。'
             },
             showShortcuts: {
                 name: '顯示捷徑',
@@ -1588,7 +1588,7 @@ export const STRINGS_ZH_TW = {
                 name: '單窗格位置',
                 desc: '單窗格模式下日曆顯示的位置。',
                 options: {
-                    navigationPane: '導航窗格',
+                    navigationPane: '導覽窗格',
                     belowPanes: '窗格下方'
                 }
             },
@@ -1649,11 +1649,11 @@ export const STRINGS_ZH_TW = {
             },
             calendarShowQuarter: {
                 name: '顯示季度',
-                desc: '在行事曆標題中新增季度標籤。'
+                desc: '在日曆標題中新增季度標籤。'
             },
             calendarShowOutsideMonthDays: {
                 name: '顯示其他月份的日期',
-                desc: '當行事曆顯示整月時，顯示上個月與下個月的日期。'
+                desc: '當日曆顯示整月時，顯示上個月與下個月的日期。'
             },
             calendarShowYearCalendar: {
                 name: '顯示年曆',
@@ -1661,21 +1661,21 @@ export const STRINGS_ZH_TW = {
             },
             calendarConfirmBeforeCreate: {
                 name: '建立前確認',
-                desc: '點按沒有筆記的日期時顯示確認對話方塊。'
+                desc: '建立新的每日筆記時顯示確認對話方塊。'
             },
             calendarShowHiddenItems: {
                 name: '顯示隱藏項目',
-                desc: '啟用時，日曆一律顯示所有日曆筆記，包括被倉庫設定檔篩選器隱藏的筆記。'
+                desc: '啟用時，日曆一律顯示所有日曆筆記，包括被儲存庫設定檔篩選器隱藏的筆記。'
             },
             dailyNoteSource: {
-                name: '日記來源',
-                desc: '行事曆筆記的來源。',
+                name: '每日筆記來源',
+                desc: '日曆筆記的來源。',
                 options: {
-                    dailyNotes: '日記（核心外掛）',
+                    dailyNotes: '每日筆記（核心外掛程式）',
                     notebookNavigator: 'Notebook Navigator'
                 },
                 info: {
-                    dailyNotes: '資料夾和日期格式在日記核心外掛程式中設定。'
+                    dailyNotes: '資料夾和日期格式在每日筆記核心外掛程式中設定。'
                 }
             },
             calendarPeriodicNotesLocale: {
@@ -1688,18 +1688,18 @@ export const STRINGS_ZH_TW = {
             },
 
             periodicNotesRootFolder: {
-                name: '根資料夾',
+                name: '根資料夾（儲存庫設定檔）',
                 desc: '週期筆記的基礎資料夾。日期模式可以包含子資料夾。隨所選儲存庫設定檔更改。',
-                placeholder: 'Personal/Diary'
+                placeholder: '個人/日記'
             },
             templateFolderLocation: {
                 name: '範本資料夾位置',
                 desc: '範本檔案選擇器顯示此資料夾中的筆記。',
-                placeholder: 'Templates',
-                usage: '用於行事曆筆記與資料夾筆記。在導覽日曆 > 行事曆整合和資料夾與資料夾筆記 > 資料夾筆記檔案中設定範本。'
+                placeholder: '範本',
+                usage: '用於日曆筆記與資料夾筆記。在導覽日曆 > 日曆整合和資料夾與資料夾筆記 > 資料夾筆記檔案中設定範本。'
             },
             calendarDailyNotePattern: {
-                name: '日記',
+                name: '每日筆記',
                 desc: '使用 Moment 日期格式設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作 > 範本中設定範本資料夾位置。',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: '模式必須能格式化並重新解析為完整日期（年、月、日）。'
@@ -1710,12 +1710,12 @@ export const STRINGS_ZH_TW = {
                 momentDescSuffix:
                     ' 設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作 > 範本中設定範本資料夾位置。',
                 templateTokenNoticeLabel: '重要！',
-                templateTokenNotice: '範本功能需要 Templater 外掛。{{date}} 與 {{title}} 等內建格式僅在{source}設定為{option}時可用。',
+                templateTokenNotice: '範本功能需要 Templater 外掛程式。{{date}} 與 {{title}} 等內建格式僅在{source}設定為{option}時可用。',
                 example: '目前語法：{path}'
             },
             templaterSupport: {
-                installed: '✅ 已安裝 Templater 外掛，支援完整範本功能。',
-                missing: '⚠️ 安裝 Templater 外掛以支援範本功能。'
+                installed: '✅ 已安裝 Templater 外掛程式，支援完整範本功能。',
+                missing: '⚠️ 安裝 Templater 外掛程式以支援範本功能。'
             },
             calendarWeeklyNotePattern: {
                 name: '週記',
@@ -1752,8 +1752,8 @@ export const STRINGS_ZH_TW = {
                 desc: '在工具提示中顯示筆記字數。'
             },
             resetPaneSeparator: {
-                name: '重設面板分隔符位置',
-                desc: '將導覽面板和列表面板之間的可拖曳分隔符重設為預設位置。',
+                name: '重設窗格分隔符位置',
+                desc: '將導覽窗格和列表窗格之間的可拖曳分隔符重設為預設位置。',
                 buttonText: '重設分隔符',
                 notice: '分隔符位置已重設。重新啟動 Obsidian 或重新開啟 Notebook Navigator 以套用。'
             },
@@ -1773,13 +1773,13 @@ export const STRINGS_ZH_TW = {
                     confirmButtonText: '匯入',
                     confirmTitle: '匯入設定？',
                     confirmMessage: '匯入會取代目前的 Notebook Navigator 設定。',
-                    backupToggleName: '匯入前將目前設定儲存到保險庫根目錄',
-                    backupToggleDesc: '在保險庫根目錄中建立含時間戳的 JSON 檔案。',
+                    backupToggleName: '匯入前將目前設定儲存到儲存庫根目錄',
+                    backupToggleDesc: '在儲存庫根目錄中建立含時間戳的 JSON 檔案。',
                     successWithBackupNotice: '設定已匯入。先前的設定已儲存到 {path}。',
-                    backupError: '無法儲存目前設定: {message}',
+                    backupError: '無法儲存目前設定：{message}',
                     successNotice: '設定已匯入。',
-                    errorNotice: '匯入設定失敗: {message}',
-                    fileReadError: '無法讀取檔案: {message}'
+                    errorNotice: '匯入設定失敗：{message}',
+                    fileReadError: '無法讀取檔案：{message}'
                 },
                 export: {
                     modalTitle: '匯出設定',
@@ -1790,7 +1790,7 @@ export const STRINGS_ZH_TW = {
                     downloadButtonText: '下載',
                     copyNotice: '設定已複製到剪貼簿。',
                     downloadNotice: '設定已匯出。',
-                    downloadError: '下載設定失敗: {message}'
+                    downloadError: '下載設定失敗：{message}'
                 }
             },
             resetAllSettings: {
@@ -1832,22 +1832,22 @@ export const STRINGS_ZH_TW = {
                 desc: '桌面端滑鼠上一頁和下一頁按鈕的操作。',
                 options: {
                     systemDefault: '使用系統預設',
-                    singlePaneSwitch: '切換面板（單面板）',
+                    singlePaneSwitch: '切換窗格（單窗格）',
                     history: '瀏覽歷史'
                 }
             },
             hideNotesWithPropertyRules: {
-                name: '依屬性規則隱藏筆記（保險庫設定檔）',
+                name: '依屬性規則隱藏筆記（儲存庫設定檔）',
                 desc: '逗號分隔的前置中繼資料規則列表。使用 `key` 或 `key=value` 條目（例如：status=done, published=true, archived）。',
                 placeholder: 'status=done, published=true, archived'
             },
             hideFiles: {
-                name: '隱藏檔案（保險庫設定檔）',
-                desc: '逗號分隔的檔名模式列表，用於隱藏檔案。支援 * 萬用字元和 / 路徑（例如：temp-*、*.png、/assets/*）。',
+                name: '隱藏檔案（儲存庫設定檔）',
+                desc: '逗號分隔的檔名模式列表，用於隱藏檔案。支援 * 萬用字元和 / 路徑（例如：temp-*, *.png, /assets/*）。',
                 placeholder: 'temp-*, *.png, /assets/*'
             },
             vaultProfiles: {
-                name: '保險庫設定檔',
+                name: '儲存庫設定檔',
                 desc: '設定檔儲存檔案類型可見性、隱藏檔案、隱藏資料夾、隱藏標籤、隱藏筆記的屬性規則、捷徑和導覽橫幅。從導覽窗格標題切換設定檔。',
                 defaultName: '預設',
                 addButton: '新增設定檔',
@@ -1868,25 +1868,25 @@ export const STRINGS_ZH_TW = {
                 }
             },
             vaultTitlePlacement: {
-                name: '保險庫標題位置',
-                desc: '選擇保險庫標題顯示的位置。',
+                name: '儲存庫標題位置',
+                desc: '選擇儲存庫標題顯示的位置。',
                 options: {
                     header: '顯示在標題列',
                     navigation: '顯示在導覽窗格'
                 }
             },
             hideFolders: {
-                name: '隱藏資料夾（保險庫設定檔）',
-                desc: '逗號分隔的要隱藏的資料夾列表。名稱模式：assets*（以 assets 開頭的資料夾），*_temp（以 _temp 結尾）。路徑模式：/archive（僅根目錄 archive），/res*（以 res 開頭的根資料夾），/*/temp（一級目錄下的 temp 資料夾），/projects/*（projects 內的所有資料夾）。',
-                placeholder: 'templates, assets*, /archive, /res*'
+                name: '隱藏資料夾（儲存庫設定檔）',
+                desc: '逗號分隔的要隱藏的資料夾列表。名稱模式：assets*（以 assets 開頭的資料夾），*_temp（以 _temp 結尾）。路徑模式：/封存（僅根目錄封存），/res*（以 res 開頭的根資料夾），/*/temp（一級目錄下的 temp 資料夾），/專案/*（專案內的所有資料夾）。',
+                placeholder: '範本, assets*, /封存, /res*'
             },
             descendantExcludedFolders: {
-                name: '從子資料夾筆記中排除資料夾（保險庫設定檔）',
+                name: '從子資料夾筆記中排除資料夾（儲存庫設定檔）',
                 desc: '逗號分隔的資料夾列表，用於在收集子資料夾中的筆記時略過這些資料夾。資料夾仍會顯示，選取該資料夾時仍會顯示其中的筆記。使用與隱藏資料夾相同的模式。',
-                placeholder: '日記, 資源, /archive'
+                placeholder: '日記, 資源, /封存'
             },
             showFileTypes: {
-                name: '顯示檔案類型（保險庫設定檔）',
+                name: '顯示檔案類型（儲存庫設定檔）',
                 desc: '篩選在導覽器中顯示的檔案類型。Obsidian 不支援的檔案類型可能會在外部應用程式中開啟。',
                 options: {
                     documents: '文件 (.md, .canvas, .base)',
@@ -1902,7 +1902,7 @@ export const STRINGS_ZH_TW = {
                 options: {
                     none: '無',
                     file: '檔案',
-                    dailyNote: '日記',
+                    dailyNote: '每日筆記',
                     weeklyNote: '週記',
                     monthlyNote: '月記',
                     quarterlyNote: '季度筆記',
@@ -1914,7 +1914,7 @@ export const STRINGS_ZH_TW = {
                 },
                 createMissing: {
                     name: '首頁：不存在時建立筆記',
-                    desc: '啟動或執行命令時，如果定期筆記不存在則建立。'
+                    desc: '啟動或執行命令時，如果週期筆記不存在則建立。'
                 }
             },
             showFileDate: {
@@ -1951,7 +1951,7 @@ export const STRINGS_ZH_TW = {
             },
             showFileProperties: {
                 name: '顯示檔案屬性',
-                desc: '在檔案項目中顯示屬性。使用「屬性鍵可見性」對話框選擇要顯示的屬性。'
+                desc: '在檔案項目中顯示屬性。使用「屬性鍵可見性」對話方塊選擇要顯示的屬性。'
             },
             colorFileProperties: {
                 name: '為檔案屬性著色',
@@ -1993,14 +1993,14 @@ export const STRINGS_ZH_TW = {
             },
             wordCountTargetProperty: {
                 name: '目標屬性',
-                desc: '包含目標字數的前置元資料屬性鍵。留空可隱藏目標。'
+                desc: '包含目標字數的前置中繼資料屬性鍵。留空可隱藏目標。'
             },
             showTargetPercentage: {
                 name: '顯示目標百分比',
                 desc: '有目標字數時，只顯示進度百分比。'
             },
             propertyKeys: {
-                name: '屬性鍵（保險庫設定檔）',
+                name: '屬性鍵（儲存庫設定檔）',
                 desc: 'Frontmatter 屬性鍵，可按鍵設定導覽和檔案清單的可見性。',
                 addButtonTooltip: '設定屬性鍵',
                 noneConfigured: '未設定屬性',
@@ -2012,12 +2012,12 @@ export const STRINGS_ZH_TW = {
                 desc: '將每個屬性顯示在個別行中。'
             },
             linkPropertyPillsToNotes: {
-                name: '將屬性標籤連結到筆記',
-                desc: '點擊屬性標籤以開啟連結的筆記。'
+                name: '將屬性標記連結到筆記',
+                desc: '點擊屬性標記以開啟連結的筆記。'
             },
             linkPropertyPillsToUrls: {
-                name: '將屬性標籤連結到 URL',
-                desc: '點擊屬性標籤以開啟連結的 URL。'
+                name: '將屬性標記連結到 URL',
+                desc: '點擊屬性標記以開啟連結的 URL。'
             },
             dateFormat: {
                 name: '日期格式',
@@ -2148,7 +2148,7 @@ export const STRINGS_ZH_TW = {
             },
             showRootFolder: {
                 name: '顯示根資料夾',
-                desc: '在樹狀結構中顯示根資料夾名稱。'
+                desc: '在樹狀結構中將儲存庫名稱顯示為根資料夾。'
             },
             showFolderIcons: {
                 name: '顯示資料夾圖示',
@@ -2184,7 +2184,7 @@ export const STRINGS_ZH_TW = {
                 desc: '啟用時，自訂顏色僅套用於圖示。停用時，顏色將同時套用於圖示和文字標籤。'
             },
             navRainbowMode: {
-                name: '彩虹顏色模式（保險庫設定檔）',
+                name: '彩虹顏色模式（儲存庫設定檔）',
                 desc: '在導覽窗格中套用彩虹顏色。',
                 options: {
                     off: '關閉',
@@ -2279,8 +2279,8 @@ export const STRINGS_ZH_TW = {
                 desc: '摺疊時，保持選取項及其父級展開。'
             },
             excludeVaultRootFromCollapse: {
-                name: '摺疊時略過保險庫根目錄',
-                desc: '摺疊所有項目時，保持保險庫根資料夾的目前狀態。'
+                name: '摺疊時略過儲存庫根目錄',
+                desc: '摺疊所有項目時，保持儲存庫根資料夾的目前狀態。'
             },
             treeIndentation: {
                 name: '樹狀縮排',
@@ -2355,12 +2355,12 @@ export const STRINGS_ZH_TW = {
                 name: '顯示屬性',
                 desc: '在導覽器中顯示屬性區段。',
                 propertyKeysInfoPrefix: '在',
-                propertyKeysInfoLinkText: '開始 > 屬性鍵',
+                propertyKeysInfoLinkText: '一般 > 屬性鍵',
                 propertyKeysInfoSuffix: '中設定屬性'
             },
             showPropertyIcons: {
                 name: '顯示屬性圖示',
-                desc: '在導覽面板中屬性旁邊顯示圖示。'
+                desc: '在導覽窗格中屬性旁邊顯示圖示。'
             },
             inheritPropertyColors: {
                 name: '繼承屬性顏色',
@@ -2386,18 +2386,18 @@ export const STRINGS_ZH_TW = {
                 desc: '僅顯示所選資料夾或標籤中筆記包含的屬性。'
             },
             hideTags: {
-                name: '隱藏標籤（保險庫設定檔）',
-                desc: '逗號分隔的標籤模式列表。名稱模式：tag*（以...開頭）、*tag（以...結尾）。路徑模式：archive（標籤及其後代）、archive/*（僅後代）、projects/*/drafts（中間萬用字元）。',
-                placeholder: 'archive*, *draft, projects/*/old'
+                name: '隱藏標籤（儲存庫設定檔）',
+                desc: '逗號分隔的標籤模式列表。名稱模式：tag*（以...開頭）、*tag（以...結尾）。路徑模式：封存（標籤及其後代）、封存/*（僅後代）、專案/*/草稿（中間萬用字元）。',
+                placeholder: '封存*, *草稿, 專案/*/舊'
             },
             hideNotesWithTags: {
-                name: '隱藏帶有標籤的筆記（保險庫設定檔）',
-                desc: 'Comma-separated list of tag patterns. Notes containing matching tags are hidden. Name patterns: tag* (starting with), *tag (ending with). Path patterns: archive (tag and descendants), archive/* (descendants only), projects/*/drafts (mid-segment wildcard).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                name: '隱藏帶有標籤的筆記（儲存庫設定檔）',
+                desc: '逗號分隔的標籤模式列表。包含相符標籤的筆記會被隱藏。名稱模式：tag*（以...開頭）、*tag（以...結尾）。路徑模式：封存（標籤及其後代）、封存/*（僅後代）、專案/*/草稿（中間萬用字元）。',
+                placeholder: '封存*, *草稿, 專案/*/舊'
             },
             enableFolderNotes: {
                 name: '啟用資料夾筆記',
-                desc: '具有匹配筆記檔案的資料夾顯示為可點擊的連結。'
+                desc: '具有相符筆記檔案的資料夾顯示為可點擊的連結。'
             },
             folderNoteType: {
                 name: '預設資料夾筆記類型',
@@ -2478,8 +2478,8 @@ export const STRINGS_ZH_TW = {
                 desc: '如果出現標籤缺失、預覽不正確或圖片缺失，請使用此功能。這可能在同步衝突或意外關閉後發生。',
                 buttonText: '重建快取',
                 error: '重建快取失敗',
-                indexingTitle: '正在索引保險庫...',
-                progress: '正在更新 Notebook Navigator 快取.'
+                indexingTitle: '正在索引儲存庫...',
+                progress: '正在更新 Notebook Navigator 快取。'
             },
             iconPackManagement: {
                 downloadButton: '下載',
@@ -2495,7 +2495,7 @@ export const STRINGS_ZH_TW = {
             },
             useFrontmatterMetadata: {
                 name: '使用前置中繼資料',
-                desc: '使用前置設定筆記名稱、時間戳記、圖示和顏色'
+                desc: '使用前置中繼資料設定筆記名稱、時間戳記、圖示和顏色'
             },
             frontmatterNameFields: {
                 name: '名稱欄位（多個）',
@@ -2542,27 +2542,27 @@ export const STRINGS_ZH_TW = {
                 desc: '用於解析前置中時間戳記的格式。留空使用 ISO 8601 解析。',
                 helpTooltip: '使用 Moment 格式',
                 momentLinkText: 'Moment 格式',
-                help: '常用格式:\nYYYY-MM-DD[T]HH:mm:ss → 2025-01-04T14:30:45\nYYYY-MM-DD[T]HH:mm:ssZ → 2025-08-07T16:53:39+02:00\nDD/MM/YYYY HH:mm:ss → 04/01/2025 14:30:45\nMM/DD/YYYY h:mm:ss a → 01/04/2025 2:30:45 PM'
+                help: '常用格式：\nYYYY-MM-DD[T]HH:mm:ss → 2025-01-04T14:30:45\nYYYY-MM-DD[T]HH:mm:ssZ → 2025-08-07T16:53:39+02:00\nDD/MM/YYYY HH:mm:ss → 04/01/2025 14:30:45\nMM/DD/YYYY h:mm:ss a → 01/04/2025 2:30:45 PM'
             },
             supportDevelopment: {
                 name: '支持開發',
-                desc: '如果您喜歡使用筆記本導覽器，請考慮支持其持續開發。',
+                desc: '如果您喜歡使用 Notebook Navigator，請考慮支持其持續開發。',
                 buttonText: '❤️ 贊助',
                 coffeeButton: '☕️ 請我喝咖啡'
             },
             otherPlugins: {
-                name: '看看我的其他外掛',
+                name: '看看我的其他外掛程式',
                 betterPaste: '整理貼上的文字、連結和圖片',
                 pixelPerfectImage: '精確的圖片縮放等'
             },
             checkForNewVersionOnStart: {
                 name: '啟動時檢查新版本',
-                desc: '啟動時檢查新的外掛版本，當有可用更新時顯示通知。檢查最多每天一次。',
+                desc: '啟動時檢查新的外掛程式版本，當有可用更新時顯示通知。檢查最多每天一次。',
                 status: '有新版本可用：{version}'
             },
             startupDebugLogging: {
                 name: '啟動偵錯記錄',
-                desc: '將啟動診斷寫入保存庫根目錄中含時間戳的 Markdown 檔案，並在啟動穩定後停止。該檔案可能會同步，且可能包含檔案路徑。'
+                desc: '將啟動診斷寫入儲存庫根目錄中含時間戳的 Markdown 檔案，並在啟動穩定後停止。該檔案可能會同步，且可能包含檔案路徑。'
             },
             whatsNew: {
                 name: 'Notebook Navigator {version} 的最新動態',
