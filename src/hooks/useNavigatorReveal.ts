@@ -989,7 +989,9 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                 return;
             }
 
-            // Don't reveal if we're opening a folder note
+            // Navigator folder-note interactions enter the manual reveal pipeline before opening
+            // the file. Suppress the later workspace event so auto-reveal does not repeat that
+            // transition or reinterpret the navigation context chosen by the interaction.
             const isOpeningFolderNote = commandQueue && commandQueue.isOpeningFolderNote();
 
             if (isOpeningFolderNote) {

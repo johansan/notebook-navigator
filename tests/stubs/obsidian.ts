@@ -250,6 +250,7 @@ export const Platform = {
 
 export const normalizePath = (value: string) => value;
 export const setIcon = () => {};
+export const addIcon = () => {};
 export const getIconIds = () => [
     'lucide-home',
     'lucide-user',

@@ -129,13 +129,16 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
         });
     });
 
-    menu.addItem((item: MenuItem) => {
-        setAsyncOnClick(item.setTitle(strings.contextMenu.folder.newCanvas).setIcon('lucide-layout-grid'), async () => {
-            ensureFolderSelected();
-            const createdCanvas = await fileSystemOps.createCanvas(folder);
-            handleFileCreation(createdCanvas);
+    const canvasPlugin = getInternalPlugin(app, 'canvas');
+    if (canvasPlugin?.enabled) {
+        menu.addItem((item: MenuItem) => {
+            setAsyncOnClick(item.setTitle(strings.contextMenu.folder.newCanvas).setIcon('lucide-layout-grid'), async () => {
+                ensureFolderSelected();
+                const createdCanvas = await fileSystemOps.createCanvas(folder);
+                handleFileCreation(createdCanvas);
+            });
         });
-    });
+    }
 
     const basesPlugin = getInternalPlugin(app, 'bases');
     if (basesPlugin?.enabled) {
@@ -212,7 +215,6 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
                         folder,
                         {
                             folderNoteType: settings.folderNoteType,
-                            folderNoteName: settings.folderNoteName,
                             folderNoteNamePattern: settings.folderNoteNamePattern,
                             folderNoteTemplate: settings.folderNoteTemplate
                         },

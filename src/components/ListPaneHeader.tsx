@@ -30,7 +30,7 @@ import { useListActions } from '../hooks/useListActions';
 import type { BreadcrumbSegment } from '../hooks/useListPaneTitle';
 import { useSelectedFolderFileVersion } from '../hooks/useSelectedFolderFileVersion';
 import { ItemType } from '../types';
-import { getFolderNote, openFolderNoteFile } from '../utils/folderNotes';
+import { getFolderNote, openFolderNoteFile, revealFolderNoteInNavigator } from '../utils/folderNotes';
 import { resolveFolderNoteClickOpenContext } from '../utils/keyboardOpenContext';
 import { usesMobileChrome } from '../utils/paneLayout';
 import { normalizeTagPath } from '../utils/tagUtils';
@@ -158,14 +158,12 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
 
         return getFolderNote(selectedFolder, {
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern
         });
     }, [
         selectedFolder,
         settings.enableFolderNotes,
         settings.enableFolderNoteLinks,
-        settings.folderNoteName,
         settings.folderNoteNamePattern,
         shouldResolveSelectedFolderNote,
         selectedFolderFileVersion
@@ -181,6 +179,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
             event.stopPropagation();
 
             const openContext = resolveFolderNoteClickOpenContext(event, settings.folderNoteOpenLocation, settings.multiSelectModifier);
+            revealFolderNoteInNavigator(selectionDispatch, selectedFolderNote);
 
             runAsyncAction(() =>
                 openFolderNoteFile({
@@ -193,7 +192,16 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                 })
             );
         },
-        [selectedFolder, selectedFolderNote, settings.folderNoteOpenLocation, settings.multiSelectModifier, app, commandQueue, plugin]
+        [
+            selectedFolder,
+            selectedFolderNote,
+            settings.folderNoteOpenLocation,
+            settings.multiSelectModifier,
+            app,
+            commandQueue,
+            plugin,
+            selectionDispatch
+        ]
     );
 
     const handleSelectedFolderNoteMouseDown = React.useCallback(
@@ -205,6 +213,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
             // Middle-click opens in a new tab and suppresses default browser behavior.
             event.preventDefault();
             event.stopPropagation();
+            revealFolderNoteInNavigator(selectionDispatch, selectedFolderNote);
 
             runAsyncAction(() =>
                 openFolderNoteFile({
@@ -216,7 +225,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                 })
             );
         },
-        [selectedFolder, selectedFolderNote, app, commandQueue]
+        [selectedFolder, selectedFolderNote, app, commandQueue, selectionDispatch]
     );
 
     const breadcrumbContent = useMemo((): React.ReactNode => {

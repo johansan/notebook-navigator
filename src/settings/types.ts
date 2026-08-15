@@ -453,6 +453,8 @@ export interface ListPaneAppearance {
     showTags?: boolean;
     showProperties?: boolean;
     showTaskProgress?: boolean;
+    showDate?: boolean;
+    showParentFolder?: boolean;
     /** Undefined inherits the global count type; `none` explicitly hides counts for this selection. */
     textCount?: TextCountDisplay;
 }
@@ -723,7 +725,6 @@ export interface NotebookNavigatorSettings {
     folderSortOrder: AlphaSortOrder;
     enableFolderNotes: boolean;
     folderNoteType: FolderNoteCreationPreference;
-    folderNoteName: string;
     folderNoteNamePattern: string;
     folderNoteTemplate: string | null;
     enableFolderNoteLinks: boolean;

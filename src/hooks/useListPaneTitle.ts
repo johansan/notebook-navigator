@@ -46,8 +46,7 @@ function addFolderNoteCandidatePaths(
     folderPath: string,
     folderName: string,
     settings: {
-        folderNoteName: string;
-        folderNoteNamePattern?: string;
+        folderNoteNamePattern: string;
     }
 ): void {
     const expectedName = resolveFolderNoteName(folderName, settings);
@@ -117,7 +116,6 @@ export function useListPaneTitle(): UseListPaneTitleResult {
         }
 
         const folderNoteNameSettings = {
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern
         };
 
@@ -147,7 +145,6 @@ export function useListPaneTitle(): UseListPaneTitleResult {
         selectionState.selectedFolder,
         selectionState.selectionType,
         settings.enableFolderNotes,
-        settings.folderNoteName,
         settings.folderNoteNamePattern
     ]);
 
@@ -211,7 +208,6 @@ export function useListPaneTitle(): UseListPaneTitleResult {
             tagIcons: settings.tagIcons || {},
             propertyIcons: settings.propertyIcons || {},
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern,
             useFrontmatterMetadata: settings.useFrontmatterMetadata,
             frontmatterNameField: settings.frontmatterNameField

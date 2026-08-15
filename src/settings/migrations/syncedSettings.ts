@@ -404,7 +404,6 @@ export function migrateLegacySyncedSettings(params: {
     }
 
     type LegacyAppearance = ListPaneAppearance & {
-        showDate?: boolean;
         showPreview?: boolean;
         showImage?: boolean;
     };
@@ -414,6 +413,9 @@ export function migrateLegacySyncedSettings(params: {
             return appearance;
         }
 
+        // Only the full slim-preset trio identifies the legacy compact mode. A stored showDate
+        // outside this trio stays untouched because showDate is a live per-selection toggle;
+        // current records never store showPreview or showImage, so the trio cannot match them.
         const isLegacyCompact =
             appearance.mode === undefined &&
             appearance.showDate === false &&
@@ -422,7 +424,7 @@ export function migrateLegacySyncedSettings(params: {
 
         if (isLegacyCompact) {
             const migrated: ListPaneAppearance = { ...appearance, mode: 'compact' };
-            delete (migrated as LegacyAppearance).showDate;
+            delete migrated.showDate;
             delete (migrated as LegacyAppearance).showPreview;
             delete (migrated as LegacyAppearance).showImage;
             return migrated;
@@ -483,25 +485,44 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings['showFileTagsInSlimMode'];
 }
 
-// Migrates folder note template setting and removes legacy folderNoteProperties.
-export function migrateFolderNoteTemplateSetting(params: {
+// Migrates folder note settings and removes fields that no longer persist.
+export function migrateFolderNoteSettings(params: {
     settings: NotebookNavigatorSettings;
+    storedData: Record<string, unknown> | null;
     defaultSettings: NotebookNavigatorSettings;
-}): void {
-    const { settings, defaultSettings } = params;
+}): boolean {
+    const { settings, storedData, defaultSettings } = params;
     const settingsRecord = settings as unknown as Record<string, unknown>;
     const templateSetting = settings.folderNoteTemplate;
     const normalizedTemplatePath = normalizeOptionalVaultFilePath(templateSetting);
     settings.folderNoteTemplate = normalizedTemplatePath ?? defaultSettings.folderNoteTemplate;
-    if (typeof settings.folderNoteNamePattern !== 'string') {
-        settings.folderNoteNamePattern = defaultSettings.folderNoteNamePattern;
+
+    // The pattern already overrode the fixed name, so preserving that precedence keeps every
+    // existing vault on the same expected folder note filename after the two fields are merged.
+    const storedPattern = storedData?.['folderNoteNamePattern'];
+    const legacyFixedName = storedData?.['folderNoteName'];
+    if (typeof storedPattern === 'string' && storedPattern.length > 0) {
+        settings.folderNoteNamePattern = normalizeFolderNoteNamePattern(storedPattern);
+    } else if (typeof legacyFixedName === 'string' && legacyFixedName.length > 0) {
+        settings.folderNoteNamePattern = legacyFixedName;
     } else {
-        settings.folderNoteNamePattern = normalizeFolderNoteNamePattern(settings.folderNoteNamePattern);
+        settings.folderNoteNamePattern = defaultSettings.folderNoteNamePattern;
     }
+    delete settingsRecord['folderNoteName'];
 
     if (Object.prototype.hasOwnProperty.call(settingsRecord, 'folderNoteProperties')) {
         delete settingsRecord['folderNoteProperties'];
     }
+
+    if (!storedData) {
+        return false;
+    }
+
+    return (
+        Object.prototype.hasOwnProperty.call(storedData, 'folderNoteName') ||
+        (Object.prototype.hasOwnProperty.call(storedData, 'folderNoteNamePattern') && storedPattern !== settings.folderNoteNamePattern) ||
+        Object.prototype.hasOwnProperty.call(storedData, 'folderNoteProperties')
+    );
 }
 
 // Initializes newly added settings with defaults for existing users.

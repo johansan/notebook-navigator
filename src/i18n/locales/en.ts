@@ -437,6 +437,8 @@ export const STRINGS_EN = {
         tags: 'Tags',
         properties: 'Properties',
         tasks: 'Tasks',
+        date: 'Date',
+        parentFolder: 'Parent folder',
         textCount: {
             label: 'Text count',
             options: {
@@ -487,7 +489,7 @@ export const STRINGS_EN = {
             wordCountTarget: 'Target word count',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                'When this field is empty, the group goal uses the target property set in Settings > Notes > Word and character count. Override it by setting a target value for this group.',
+                'When this field is empty, the group goal uses the target property set in Settings > File display > Word and character count. Override it by setting a target value for this group.',
             description: 'Customize the group header for this note. Leave the title empty to remove the header.'
         },
         mergeNotes: {
@@ -1012,7 +1014,7 @@ export const STRINGS_EN = {
             label: 'General',
             description: 'Release notes, support, vault profile, file types, and property keys.',
             groups: {
-                vaultSetup: 'Vault setup'
+                about: 'About'
             }
         },
         pageGroups: {
@@ -2362,7 +2364,7 @@ export const STRINGS_EN = {
                 name: 'Show properties',
                 desc: 'Display properties section in the navigator.',
                 propertyKeysInfoPrefix: 'Configure properties in ',
-                propertyKeysInfoLinkText: 'Start > Property keys',
+                propertyKeysInfoLinkText: 'General > Property keys',
                 propertyKeysInfoSuffix: ''
             },
             showPropertyIcons: {
@@ -2418,12 +2420,7 @@ export const STRINGS_EN = {
             },
             folderNoteName: {
                 name: 'Folder note name',
-                desc: 'Name of the folder note without extension. Leave empty to use the same name as the folder.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Folder note name pattern',
-                desc: 'Name pattern for folder notes without extension. Use {{folder}} to insert the folder name. When set, Folder note name does not apply.'
+                desc: 'Name of the folder note without extension. {{folder}} inserts the folder name; omit it for a fixed name such as index.'
             },
             folderNoteTemplate: {
                 name: 'Folder note template',
@@ -2562,6 +2559,11 @@ export const STRINGS_EN = {
                 desc: 'If you love using Notebook Navigator, please consider supporting its continued development.',
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Buy me a coffee'
+            },
+            otherPlugins: {
+                name: 'Check out my other plugins',
+                betterPaste: 'Clean up pasted text, links and images',
+                pixelPerfectImage: 'Exact image resizing and more'
             },
             checkForNewVersionOnStart: {
                 name: 'Check for new version on start',

@@ -24,3 +24,9 @@ export const TLDRAW_PLUGIN_ID = 'tldraw';
 
 /** Templater plugin identifier */
 export const TEMPLATER_PLUGIN_ID = 'templater-obsidian';
+
+/** Better Paste plugin identifier, linked from the settings start page */
+export const BETTER_PASTE_PLUGIN_ID = 'better-paste';
+
+/** Pixel Perfect Image plugin identifier, linked from the settings start page */
+export const PIXEL_PERFECT_IMAGE_PLUGIN_ID = 'pixel-perfect-image';

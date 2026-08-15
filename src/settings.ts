@@ -496,15 +496,15 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.isFallbackSettingsDisplay = false;
         const context = this.createTabContext(this.containerEl);
 
-        // Native settings index: start resources, vault setup, then grouped page links.
+        // Native settings index: vault controls and page links come before informational resources.
         const items: SettingDefinitionItem[] = [
-            ...createStartResourcesSettingDefinitions(context),
             ...createVaultSetupSettingDefinitions(context),
             ...SETTINGS_PAGE_GROUP_DEFINITIONS.map(group => ({
                 type: 'group' as const,
                 heading: group.getHeading(),
                 items: group.items.map(tabId => this.createNativeSettingsPageDefinition(tabId))
-            }))
+            })),
+            ...createStartResourcesSettingDefinitions(context)
         ];
 
         return this.createNativeDefinitionItems(

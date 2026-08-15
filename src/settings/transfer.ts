@@ -143,6 +143,21 @@ function validateSettingsTransferDiff(transferSettings: Record<string, unknown>)
     throw new Error('Settings import must contain Notebook Navigator settings.');
 }
 
+function migrateLegacyFolderNoteNameTransfer(transferSettings: Record<string, unknown>): Record<string, unknown> {
+    const migratedSettings = structuredClone(transferSettings);
+    const legacyFixedName = migratedSettings['folderNoteName'];
+    const pattern = migratedSettings['folderNoteNamePattern'];
+
+    // Older exports store fixed names separately and may contain no current transferable key.
+    // Convert before validation so importing an export whose only change was `index` still works.
+    if ((typeof pattern !== 'string' || pattern.length === 0) && typeof legacyFixedName === 'string' && legacyFixedName.length > 0) {
+        migratedSettings['folderNoteNamePattern'] = legacyFixedName;
+    }
+    delete migratedSettings['folderNoteName'];
+
+    return migratedSettings;
+}
+
 function areEquivalentValues(left: unknown, right: unknown): boolean {
     if (left === right) {
         return true;
@@ -278,8 +293,9 @@ export function createModifiedSettingsTransfer(settings: NotebookNavigatorSettin
 // treated as bare diffs from exports created before the envelope format.
 function unwrapSettingsTransfer(transferData: Record<string, unknown>): Record<string, unknown> {
     if (!hasOwnKey(transferData, 'plugin')) {
-        validateSettingsTransferDiff(transferData);
-        return transferData;
+        const migratedSettings = migrateLegacyFolderNoteNameTransfer(transferData);
+        validateSettingsTransferDiff(migratedSettings);
+        return migratedSettings;
     }
 
     if (transferData.plugin !== SETTINGS_TRANSFER_PLUGIN_ID) {
@@ -291,9 +307,10 @@ function unwrapSettingsTransfer(transferData: Record<string, unknown>): Record<s
         throw new Error('Settings import must contain a settings object.');
     }
 
-    validateSettingsTransferDiff(transferSettings);
+    const migratedSettings = migrateLegacyFolderNoteNameTransfer(transferSettings);
+    validateSettingsTransferDiff(migratedSettings);
 
-    return transferSettings;
+    return migratedSettings;
 }
 
 export function applyModifiedSettingsTransfer(currentSettings: NotebookNavigatorSettings, transferData: unknown): Record<string, unknown> {
