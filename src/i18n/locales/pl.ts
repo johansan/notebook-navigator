@@ -2430,12 +2430,7 @@ export const STRINGS_PL = {
             },
             folderNoteName: {
                 name: 'Nazwa notatki folderu',
-                desc: 'Nazwa notatki folderu bez rozszerzenia. Zostaw puste, aby użyć takiej samej nazwy jak folder.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Format nazwy notatki folderu',
-                desc: 'Format nazwy notatek folderów bez rozszerzenia. Użyj {{folder}}, aby wstawić nazwę folderu. Po ustawieniu nazwa notatki folderu nie ma zastosowania.'
+                desc: 'Nazwa notatki folderu bez rozszerzenia. Użyj {{folder}}, aby wstawić nazwę folderu, lub wpisz stałą nazwę, na przykład index.'
             },
             folderNoteTemplate: {
                 name: 'Szablon notatki folderu',

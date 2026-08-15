@@ -2410,12 +2410,7 @@ export const STRINGS_ZH_CN = {
             },
             folderNoteName: {
                 name: '文件夹笔记名称',
-                desc: '文件夹笔记的名称。留空以使用与文件夹相同的名称。',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: '文件夹笔记名称模式',
-                desc: '不含扩展名的文件夹笔记名称模式。使用 {{folder}} 插入文件夹名称。设置后，文件夹笔记名称不适用。'
+                desc: '不含扩展名的文件夹笔记名称。使用 {{folder}} 插入文件夹名称，或输入固定名称，例如 index。'
             },
             folderNoteTemplate: {
                 name: '文件夹笔记模板',

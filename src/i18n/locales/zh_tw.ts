@@ -2411,12 +2411,7 @@ export const STRINGS_ZH_TW = {
             },
             folderNoteName: {
                 name: '資料夾筆記名稱',
-                desc: '資料夾筆記的名稱。留空以使用與資料夾相同的名稱。',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: '資料夾筆記名稱模式',
-                desc: '不含副檔名的資料夾筆記名稱模式。使用 {{folder}} 插入資料夾名稱。設定後，資料夾筆記名稱不適用。'
+                desc: '不含副檔名的資料夾筆記名稱。使用 {{folder}} 插入資料夾名稱，或輸入固定名稱，例如 index。'
             },
             folderNoteTemplate: {
                 name: '資料夾筆記範本',

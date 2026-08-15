@@ -2425,12 +2425,7 @@ export const STRINGS_IT = {
             },
             folderNoteName: {
                 name: 'Nome nota cartella',
-                desc: 'Nome della nota cartella senza estensione. Lascia vuoto per usare lo stesso nome della cartella.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Modello nome nota cartella',
-                desc: 'Modello di nome per le note cartella senza estensione. Usa {{folder}} per inserire il nome della cartella. Se impostato, il nome della nota cartella non si applica.'
+                desc: 'Nome della nota cartella senza estensione. Usa {{folder}} per inserire il nome della cartella oppure inserisci un nome fisso come index.'
             },
             folderNoteTemplate: {
                 name: 'Modello nota cartella',

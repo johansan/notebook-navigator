@@ -2430,12 +2430,7 @@ export const STRINGS_NL = {
             },
             folderNoteName: {
                 name: 'Mapnotitienaam',
-                desc: 'Naam van de mapnotitie zonder extensie. Laat leeg om dezelfde naam als de map te gebruiken.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Naampatroon mapnotitie',
-                desc: 'Naampatroon voor mapnotities zonder extensie. Gebruik {{folder}} om de mapnaam in te voegen. Indien ingesteld, is de mapnotitiesnaam niet van toepassing.'
+                desc: 'Naam van de mapnotitie zonder extensie. Gebruik {{folder}} om de mapnaam in te voegen, of voer een vaste naam zoals index in.'
             },
             folderNoteTemplate: {
                 name: 'Mapnotitiesjabloon',

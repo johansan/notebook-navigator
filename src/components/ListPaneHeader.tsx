@@ -158,14 +158,12 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
 
         return getFolderNote(selectedFolder, {
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern
         });
     }, [
         selectedFolder,
         settings.enableFolderNotes,
         settings.enableFolderNoteLinks,
-        settings.folderNoteName,
         settings.folderNoteNamePattern,
         shouldResolveSelectedFolderNote,
         selectedFolderFileVersion

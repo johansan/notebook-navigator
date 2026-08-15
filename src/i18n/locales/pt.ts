@@ -2429,12 +2429,7 @@ export const STRINGS_PT = {
             },
             folderNoteName: {
                 name: 'Nome da nota de pasta',
-                desc: 'Nome da nota de pasta sem extensão. Deixe vazio para usar o mesmo nome que a pasta.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Padrão de nome da nota de pasta',
-                desc: 'Padrão de nome para notas de pasta sem extensão. Use {{folder}} para inserir o nome da pasta. Quando definido, o nome da nota de pasta não se aplica.'
+                desc: 'Nome da nota de pasta sem extensão. Use {{folder}} para inserir o nome da pasta ou introduza um nome fixo como index.'
             },
             folderNoteTemplate: {
                 name: 'Modelo de nota de pasta',

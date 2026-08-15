@@ -2431,12 +2431,7 @@ export const STRINGS_ES = {
             },
             folderNoteName: {
                 name: 'Nombre de la nota de carpeta',
-                desc: 'Nombre de la nota de carpeta. Dejar vacío para usar el mismo nombre que la carpeta.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Patrón de nombre de nota de carpeta',
-                desc: 'Patrón de nombre para notas de carpeta sin extensión. Usa {{folder}} para insertar el nombre de la carpeta. Cuando se establece, el nombre de nota de carpeta no se aplica.'
+                desc: 'Nombre de la nota de carpeta sin extensión. Usa {{folder}} para insertar el nombre de la carpeta o introduce un nombre fijo como index.'
             },
             folderNoteTemplate: {
                 name: 'Plantilla de nota de carpeta',

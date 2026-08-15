@@ -2431,12 +2431,7 @@ export const STRINGS_DE = {
             },
             folderNoteName: {
                 name: 'Name der Ordnernotiz',
-                desc: 'Name der Ordnernotiz. Leer lassen, um denselben Namen wie der Ordner zu verwenden.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Namensmuster der Ordnernotiz',
-                desc: 'Namensmuster für Ordnernotizen ohne Erweiterung. Verwende {{folder}}, um den Ordnernamen einzufügen. Wenn gesetzt, gilt der Ordnernotizname nicht.'
+                desc: 'Name der Ordnernotiz ohne Erweiterung. Verwende {{folder}}, um den Ordnernamen einzufügen, oder gib einen festen Namen wie index ein.'
             },
             folderNoteTemplate: {
                 name: 'Ordnernotiz-Vorlage',

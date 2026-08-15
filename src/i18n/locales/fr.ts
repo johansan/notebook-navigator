@@ -2434,12 +2434,7 @@ export const STRINGS_FR = {
             },
             folderNoteName: {
                 name: 'Nom de la note de dossier',
-                desc: 'Nom de la note de dossier. Laisser vide pour utiliser le même nom que le dossier.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Modèle de nom de note de dossier',
-                desc: "Modèle de nom pour les notes de dossier sans extension. Utilisez {{folder}} pour insérer le nom du dossier. Lorsque défini, le nom de note de dossier ne s'applique pas."
+                desc: 'Nom de la note de dossier sans extension. Utilisez {{folder}} pour insérer le nom du dossier, ou saisissez un nom fixe comme index.'
             },
             folderNoteTemplate: {
                 name: 'Modèle de note de dossier',
