@@ -29,7 +29,7 @@ import {
     extractLegacyPeriodicNotesFolder,
     extractLegacyShortcuts,
     extractLegacyVisibilitySettings,
-    migrateFolderNoteTemplateSetting,
+    migrateFolderNoteSettings,
     migrateLegacySyncedSettings,
     migrateSearchShortcutNegationSyntax
 } from '../../settings/migrations/syncedSettings';
@@ -768,7 +768,11 @@ export class PluginSettingsController {
             })
         );
 
-        migrateFolderNoteTemplateSetting({ settings: this.currentSettings, defaultSettings: DEFAULT_SETTINGS });
+        const migratedFolderNoteSettings = migrateFolderNoteSettings({
+            settings: this.currentSettings,
+            storedData,
+            defaultSettings: DEFAULT_SETTINGS
+        });
         applyExistingUserDefaults({ settings: this.currentSettings });
 
         const legacyVisibility = extractLegacyVisibilitySettings({ settings: this.currentSettings, storedData });
@@ -830,6 +834,7 @@ export class PluginSettingsController {
             prunedUnavailablePropertyGroupingOverrides ||
             uiScaleMigrated ||
             migratedMomentFormats ||
+            migratedFolderNoteSettings ||
             migratedShortcutNegationSyntax;
 
         // A local marker newer than data.json repairs the shared high-water mark so other devices

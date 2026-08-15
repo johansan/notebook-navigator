@@ -179,7 +179,6 @@ const STRING_SETTING_KEYS = [
     'deleteAttachments',
     'moveFileConflicts',
     'folderNoteType',
-    'folderNoteName',
     'folderNoteNamePattern',
     'folderNoteOpenLocation',
     'shortcutBadgeDisplay',

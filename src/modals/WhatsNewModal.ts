@@ -25,6 +25,16 @@ import { focusElementPreventScroll } from '../utils/domUtils';
 import { DateUtils } from '../utils/dateUtils';
 import { getYoutubeThumbnailUrl, getYoutubeVideoId } from '../utils/youtubeUtils';
 
+const SUPPORTED_RELEASE_NOTE_LINK_PROTOCOLS = new Set(['http:', 'https:', 'obsidian:']);
+
+function isSupportedReleaseNoteLink(url: string): boolean {
+    try {
+        return SUPPORTED_RELEASE_NOTE_LINK_PROTOCOLS.has(new URL(url).protocol);
+    } catch {
+        return false;
+    }
+}
+
 export class WhatsNewModal extends Modal {
     private releaseNotes: ReleaseNote[];
     private thanksButton: HTMLButtonElement | null = null;
@@ -40,12 +50,12 @@ export class WhatsNewModal extends Modal {
     // - **bold**
     // - `inline code`
     // - ==text== (highlight as red + bold)
-    // - [label](https://link)
+    // - [label](https://link) and [label](obsidian://action)
     // - Auto-link bare http(s) URLs
     // - Line breaks: single \n or <br> becomes <br>
     private renderFormattedText(container: HTMLElement, text: string): void {
         const renderInline = (segment: string, dest: HTMLElement) => {
-            const pattern = /==([\s\S]*?)==|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|(https?:\/\/[^\s]+)/g;
+            const pattern = /==([\s\S]*?)==|\[([^\]]+)\]\(([^\s)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|(https?:\/\/[^\s]+)/g;
             let lastIndex = 0;
             let match: RegExpExecArray | null;
 
@@ -60,12 +70,15 @@ export class WhatsNewModal extends Modal {
                     // ==highlight== -> highlight span, supports nested formatting inside
                     const highlight = dest.createSpan({ cls: 'nn-highlight' });
                     renderInline(match[1], highlight);
-                } else if (match[2] && match[3]) {
+                } else if (match[2] && match[3] && isSupportedReleaseNoteLink(match[3])) {
                     // Markdown link [label](url)
                     const a = dest.createEl('a', { text: match[2] });
                     a.setAttr('href', match[3]);
                     a.setAttr('rel', 'noopener noreferrer');
                     a.setAttr('target', '_blank');
+                } else if (match[2] && match[3]) {
+                    // Unsupported protocols remain visible without becoming executable links.
+                    appendText(match[0]);
                 } else if (match[4]) {
                     // `inline code`
                     dest.createEl('code', { text: match[4] });
@@ -264,8 +277,8 @@ export class WhatsNewModal extends Modal {
             }
             versionContainer.createEl('h3', { text: headerText });
 
-            const bannerUrl = getReleaseBannerUrl(note.bannerUrl, note.version);
-            if (bannerUrl) {
+            if (note.banner) {
+                const bannerUrl = getReleaseBannerUrl(note.banner);
                 this.renderReleaseBanner(versionContainer, bannerUrl, note.bannerClickable === true);
             }
 

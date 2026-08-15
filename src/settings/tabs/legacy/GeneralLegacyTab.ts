@@ -22,6 +22,6 @@ import { renderGeneralVaultSetupSection } from '../VaultSetupSection';
 
 /** Renders the General settings page. */
 export function renderGeneralTab(context: SettingsTabContext): void {
-    renderStartResourcesSection(context);
     renderGeneralVaultSetupSection(context);
+    renderStartResourcesSection(context);
 }

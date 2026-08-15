@@ -211,8 +211,7 @@ describe('FolderNoteSidebarService', () => {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
                 showNearestFolderNoteInSidebar: true,
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -251,8 +250,7 @@ describe('FolderNoteSidebarService', () => {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
                 showNearestFolderNoteInSidebar: true,
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -360,8 +358,7 @@ describe('FolderNoteSidebarService', () => {
             settings: {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -400,8 +397,7 @@ describe('FolderNoteSidebarService', () => {
             settings: {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -443,8 +439,7 @@ describe('FolderNoteSidebarService', () => {
             settings: {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -485,8 +480,7 @@ describe('FolderNoteSidebarService', () => {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
                 showNearestFolderNoteInSidebar: true,
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -534,8 +528,7 @@ describe('FolderNoteSidebarService', () => {
             settings: {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'current-tab',
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -585,8 +578,7 @@ describe('FolderNoteSidebarService', () => {
             settings: {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'current-tab',
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -666,8 +658,7 @@ describe('FolderNoteSidebarService', () => {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
                 showNearestFolderNoteInSidebar: true,
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;
@@ -704,8 +695,7 @@ describe('FolderNoteSidebarService', () => {
                 enableFolderNotes: true,
                 folderNoteOpenLocation: 'right-sidebar',
                 showNearestFolderNoteInSidebar: true,
-                folderNoteName: 'index',
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: 'index'
             },
             isShuttingDown: () => false
         } as unknown as NotebookNavigatorPlugin;

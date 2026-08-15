@@ -231,7 +231,6 @@ export const NotebookNavigatorComponent = React.memo(
             selectedFolderFileVersionForFolderNoteSidebar,
             selectedFolderForFolderNoteSidebar,
             settings.enableFolderNotes,
-            settings.folderNoteName,
             settings.folderNoteNamePattern,
             settings.folderNoteOpenLocation,
             settings.showNearestFolderNoteInSidebar
