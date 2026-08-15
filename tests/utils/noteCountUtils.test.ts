@@ -63,7 +63,6 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteName: '',
                 folderNoteNamePattern: ''
             }
         };
@@ -93,7 +92,6 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteName: '',
                 folderNoteNamePattern: ''
             },
             cache
@@ -125,7 +123,6 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteName: '',
                 folderNoteNamePattern: ''
             },
             cache

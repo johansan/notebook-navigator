@@ -2425,12 +2425,7 @@ export const STRINGS_TR = {
             },
             folderNoteName: {
                 name: 'Klasör notu adı',
-                desc: 'Uzantısız klasör notu adı. Klasörle aynı adı kullanmak için boş bırakın.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Klasör notu ad deseni',
-                desc: 'Uzantısız klasör notu ad deseni. Klasör adını eklemek için {{folder}} kullanın. Ayarlandığında, klasör notu adı geçerli olmaz.'
+                desc: 'Uzantısız klasör notu adı. Klasör adını eklemek için {{folder}} kullanın veya index gibi sabit bir ad girin.'
             },
             folderNoteTemplate: {
                 name: 'Klasör notu şablonu',

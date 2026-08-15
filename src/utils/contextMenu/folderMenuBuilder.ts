@@ -215,7 +215,6 @@ export function buildFolderCreationMenu(params: FolderMenuBuilderParams, folderD
                         folder,
                         {
                             folderNoteType: settings.folderNoteType,
-                            folderNoteName: settings.folderNoteName,
                             folderNoteNamePattern: settings.folderNoteNamePattern,
                             folderNoteTemplate: settings.folderNoteTemplate
                         },

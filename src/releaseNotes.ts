@@ -111,9 +111,12 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-16',
         showOnUpdate: false,
         improved: ['Changed settings sliders to match Obsidian 1.13 style with reset buttons to the left.'],
+        changed: [
+            'Merged the two folder note name settings into one: ==Folder note name== that supports both fixed names and patterns.'
+        ],
         fixed: [
-            'Fixed `New canvas` appearing in folder menus when the Canvas core plugin was disabled.',
-            'Fixed the previously opened note remaining highlighted after opening a folder note from a folder name, folder shortcut, list pane title, or folder group header.'
+            '`New canvas` is now hidden if the Canvas core plugin is disabled.',
+            'Clicking a folder note in navpane with folder notes showing in list pane now properly selects it.'
         ]
     },
     {

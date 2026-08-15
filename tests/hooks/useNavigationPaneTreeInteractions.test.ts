@@ -214,7 +214,7 @@ describe('useNavigationPaneTreeInteractions', () => {
                     ...DEFAULT_SETTINGS,
                     autoExpandNavItems: true,
                     enableFolderNotes: true,
-                    folderNoteName: 'index',
+                    folderNoteNamePattern: 'index',
                     folderNoteOpenLocation: 'right-sidebar',
                     showNearestFolderNoteInSidebar: false
                 },
@@ -284,7 +284,7 @@ describe('useNavigationPaneTreeInteractions', () => {
                 settings: {
                     ...DEFAULT_SETTINGS,
                     enableFolderNotes: true,
-                    folderNoteName: 'index',
+                    folderNoteNamePattern: 'index',
                     folderNoteOpenLocation: 'right-sidebar',
                     showNearestFolderNoteInSidebar: true
                 },
@@ -353,7 +353,7 @@ describe('useNavigationPaneTreeInteractions', () => {
                 settings: {
                     ...DEFAULT_SETTINGS,
                     enableFolderNotes: true,
-                    folderNoteName: 'index',
+                    folderNoteNamePattern: 'index',
                     folderNoteOpenLocation: 'current-tab',
                     showNearestFolderNoteInSidebar: true
                 },

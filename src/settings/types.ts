@@ -723,7 +723,6 @@ export interface NotebookNavigatorSettings {
     folderSortOrder: AlphaSortOrder;
     enableFolderNotes: boolean;
     folderNoteType: FolderNoteCreationPreference;
-    folderNoteName: string;
     folderNoteNamePattern: string;
     folderNoteTemplate: string | null;
     enableFolderNoteLinks: boolean;

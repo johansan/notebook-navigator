@@ -57,7 +57,6 @@ export interface FolderDisplayCacheSettingsSnapshot {
     useFrontmatterMetadata: boolean;
     enableFolderNotes: boolean;
     inheritFolderColors: boolean;
-    folderNoteName: string;
     folderNoteNamePattern: string;
     frontmatterNameField: string;
     frontmatterIconField: string;

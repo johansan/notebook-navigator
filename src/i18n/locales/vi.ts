@@ -2427,12 +2427,7 @@ export const STRINGS_VI = {
             },
             folderNoteName: {
                 name: 'Tên ghi chú thư mục',
-                desc: 'Tên ghi chú thư mục không có phần mở rộng. Để trống để dùng cùng tên với thư mục.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'Mẫu tên ghi chú thư mục',
-                desc: 'Mẫu tên cho ghi chú thư mục không có phần mở rộng. Dùng {{folder}} để chèn tên thư mục. Khi được đặt, tên ghi chú thư mục không được áp dụng.'
+                desc: 'Tên ghi chú thư mục không có phần mở rộng. Dùng {{folder}} để chèn tên thư mục hoặc nhập tên cố định như index.'
             },
             folderNoteTemplate: {
                 name: 'Mẫu ghi chú thư mục',

@@ -2422,12 +2422,7 @@ export const STRINGS_KO = {
             },
             folderNoteName: {
                 name: '폴더 노트 이름',
-                desc: '확장자 없는 폴더 노트의 이름입니다. 폴더와 같은 이름을 사용하려면 비워 두세요.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: '폴더 노트 이름 패턴',
-                desc: '확장자 없는 폴더 노트 이름 패턴. {{folder}}을 사용하여 폴더 이름을 삽입합니다. 설정하면 폴더 노트 이름이 적용되지 않습니다.'
+                desc: '확장자 없는 폴더 노트 이름입니다. {{folder}}를 사용하여 폴더 이름을 삽입하거나 index와 같은 고정 이름을 입력하세요.'
             },
             folderNoteTemplate: {
                 name: '폴더 노트 템플릿',

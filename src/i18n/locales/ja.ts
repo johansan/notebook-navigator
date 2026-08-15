@@ -2424,12 +2424,7 @@ export const STRINGS_JA = {
             },
             folderNoteName: {
                 name: 'フォルダノート名',
-                desc: 'フォルダノートの名前。空のままにするとフォルダと同じ名前を使用します。',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'フォルダノート名パターン',
-                desc: '拡張子なしのフォルダノートの名前パターン。{{folder}} でフォルダ名を挿入します。設定すると、フォルダノート名は適用されません。'
+                desc: '拡張子なしのフォルダノート名。{{folder}} でフォルダ名を挿入するか、index のような固定名を入力します。'
             },
             folderNoteTemplate: {
                 name: 'フォルダノートテンプレート',

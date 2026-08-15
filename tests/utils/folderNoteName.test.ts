@@ -25,32 +25,28 @@ import {
 } from '../../src/utils/folderNoteName';
 
 describe('resolveFolderNoteName', () => {
-    it('uses the configured fixed folder note name when pattern is empty', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: 'index', folderNoteNamePattern: '' })).toBe('index');
+    it('uses a pattern without the folder token as a fixed name', () => {
+        expect(resolveFolderNoteName('ProjectA', { folderNoteNamePattern: 'index' })).toBe('index');
     });
 
-    it('falls back to folder name when both fixed name and pattern are empty', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: '', folderNoteNamePattern: '' })).toBe('ProjectA');
+    it('falls back to folder name when the pattern is empty', () => {
+        expect(resolveFolderNoteName('ProjectA', { folderNoteNamePattern: '' })).toBe('ProjectA');
     });
 
     it('applies folder name token in pattern', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: '', folderNoteNamePattern: '_{{folder}}' })).toBe('_ProjectA');
+        expect(resolveFolderNoteName('ProjectA', { folderNoteNamePattern: '_{{folder}}' })).toBe('_ProjectA');
     });
 
     it('applies folder name token with whitespace and casing differences', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: '', folderNoteNamePattern: '{{ Folder }}-note' })).toBe('ProjectA-note');
+        expect(resolveFolderNoteName('ProjectA', { folderNoteNamePattern: '{{ Folder }}-note' })).toBe('ProjectA-note');
     });
 
     it('supports the legacy folder_name token', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: '', folderNoteNamePattern: '_{{folder_name}}' })).toBe('_ProjectA');
+        expect(resolveFolderNoteName('ProjectA', { folderNoteNamePattern: '_{{folder_name}}' })).toBe('_ProjectA');
     });
 
     it('inserts folder names with dollar-sign sequences as literals', () => {
-        expect(resolveFolderNoteName('A$&B', { folderNoteName: '', folderNoteNamePattern: '_{{folder}}' })).toBe('_A$&B');
-    });
-
-    it('uses pattern as static name when token is not present', () => {
-        expect(resolveFolderNoteName('ProjectA', { folderNoteName: 'index', folderNoteNamePattern: '_folder' })).toBe('_folder');
+        expect(resolveFolderNoteName('A$&B', { folderNoteNamePattern: '_{{folder}}' })).toBe('_A$&B');
     });
 });
 
@@ -70,19 +66,15 @@ describe('hasFolderNoteNameToken', () => {
 
 describe('shouldRenameFolderNoteWithFolderName', () => {
     it('returns true for default folder naming', () => {
-        expect(shouldRenameFolderNoteWithFolderName({ folderNoteName: '', folderNoteNamePattern: '' })).toBe(true);
+        expect(shouldRenameFolderNoteWithFolderName({ folderNoteNamePattern: '' })).toBe(true);
     });
 
     it('returns true when pattern contains folder token', () => {
-        expect(shouldRenameFolderNoteWithFolderName({ folderNoteName: '', folderNoteNamePattern: '_{{folder}}' })).toBe(true);
-    });
-
-    it('returns true when token pattern is configured with fixed folder note name', () => {
-        expect(shouldRenameFolderNoteWithFolderName({ folderNoteName: 'index', folderNoteNamePattern: '_{{folder}}' })).toBe(true);
+        expect(shouldRenameFolderNoteWithFolderName({ folderNoteNamePattern: '_{{folder}}' })).toBe(true);
     });
 
     it('returns false for static pattern without token', () => {
-        expect(shouldRenameFolderNoteWithFolderName({ folderNoteName: '', folderNoteNamePattern: '_folder' })).toBe(false);
+        expect(shouldRenameFolderNoteWithFolderName({ folderNoteNamePattern: '_folder' })).toBe(false);
     });
 });
 

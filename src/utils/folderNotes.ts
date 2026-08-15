@@ -222,7 +222,6 @@ export async function createFolderNote(
         folder,
         getFolderNoteDetectionSettings({
             enableFolderNotes: true,
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern
         })
     );
