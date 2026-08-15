@@ -1015,7 +1015,7 @@ export const STRINGS_UK = {
             label: 'Загальне',
             description: 'Примітки до випуску, підтримка, профіль сховища, типи файлів і ключі властивостей.',
             groups: {
-                vaultSetup: 'Налаштування сховища'
+                about: 'Про плагін'
             }
         },
         pageGroups: {
@@ -2567,7 +2567,7 @@ export const STRINGS_UK = {
             otherPlugins: {
                 name: 'Подивіться мої інші плагіни',
                 betterPaste: 'Очищає вставлений текст, посилання та зображення',
-                pixelPerfectImage: 'Точна зміна розміру зображень та багато іншого'
+                pixelPerfectImage: 'Точна зміна розміру зображень та інше'
             },
             checkForNewVersionOnStart: {
                 name: 'Перевіряти нову версію при запуску',

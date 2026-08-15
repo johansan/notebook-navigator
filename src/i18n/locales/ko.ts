@@ -1015,7 +1015,7 @@ export const STRINGS_KO = {
             label: '일반',
             description: '릴리스 노트, 지원, 보관소 프로필, 파일 유형, 속성 키.',
             groups: {
-                vaultSetup: '보관소 설정'
+                about: '정보'
             }
         },
         pageGroups: {

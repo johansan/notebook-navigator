@@ -1018,7 +1018,7 @@ export const STRINGS_ID = {
             label: 'Umum',
             description: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
             groups: {
-                vaultSetup: 'Penyiapan vault'
+                about: 'Tentang'
             }
         },
         pageGroups: {
@@ -2569,7 +2569,7 @@ export const STRINGS_ID = {
             otherPlugins: {
                 name: 'Lihat plugin saya yang lain',
                 betterPaste: 'Membersihkan teks, tautan, dan gambar yang ditempel',
-                pixelPerfectImage: 'Pengubahan ukuran gambar yang presisi dan banyak lagi'
+                pixelPerfectImage: 'Pengubahan ukuran gambar yang presisi dan lainnya'
             },
             checkForNewVersionOnStart: {
                 name: 'Periksa versi baru saat mulai',

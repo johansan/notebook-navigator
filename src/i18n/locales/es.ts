@@ -1019,7 +1019,7 @@ export const STRINGS_ES = {
             label: 'General',
             description: 'Notas de versión, soporte, perfil de bóveda, tipos de archivo y claves de propiedades.',
             groups: {
-                vaultSetup: 'Configuración de la bóveda'
+                about: 'Acerca de'
             }
         },
         pageGroups: {
@@ -2575,7 +2575,7 @@ export const STRINGS_ES = {
             otherPlugins: {
                 name: 'Descubre mis otros plugins',
                 betterPaste: 'Limpia el texto, los enlaces y las imágenes que pegas',
-                pixelPerfectImage: 'Cambio de tamaño exacto de imágenes y mucho más'
+                pixelPerfectImage: 'Cambio de tamaño exacto de imágenes y más'
             },
             checkForNewVersionOnStart: {
                 name: 'Buscar nueva versión al iniciar',

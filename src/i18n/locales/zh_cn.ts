@@ -1009,7 +1009,7 @@ export const STRINGS_ZH_CN = {
             label: '通用',
             description: '发行说明、支持、仓库配置文件、文件类型和属性键。',
             groups: {
-                vaultSetup: '仓库设置'
+                about: '关于'
             }
         },
         pageGroups: {

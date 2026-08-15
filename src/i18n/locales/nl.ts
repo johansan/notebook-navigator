@@ -1020,7 +1020,7 @@ export const STRINGS_NL = {
             label: 'Algemeen',
             description: 'Releasenotities, ondersteuning, kluisprofiel, bestandstypen en eigenschapssleutels.',
             groups: {
-                vaultSetup: 'Kluisinstelling'
+                about: 'Over'
             }
         },
         pageGroups: {
@@ -2573,7 +2573,7 @@ export const STRINGS_NL = {
             otherPlugins: {
                 name: 'Bekijk mijn andere plugins',
                 betterPaste: 'Ruimt geplakte tekst, links en afbeeldingen op',
-                pixelPerfectImage: 'Exact afbeeldingen schalen en veel meer'
+                pixelPerfectImage: 'Exact afbeeldingen schalen en meer'
             },
             checkForNewVersionOnStart: {
                 name: 'Controleren op nieuwe versie bij opstarten',

@@ -1012,7 +1012,7 @@ export const STRINGS_EN = {
             label: 'General',
             description: 'Release notes, support, vault profile, file types, and property keys.',
             groups: {
-                vaultSetup: 'Vault setup'
+                about: 'About'
             }
         },
         pageGroups: {
@@ -2561,7 +2561,7 @@ export const STRINGS_EN = {
             otherPlugins: {
                 name: 'Check out my other plugins',
                 betterPaste: 'Clean up pasted text, links and images',
-                pixelPerfectImage: 'Exact image resizing and much more'
+                pixelPerfectImage: 'Exact image resizing and more'
             },
             checkForNewVersionOnStart: {
                 name: 'Check for new version on start',

@@ -112,7 +112,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         showOnUpdate: false,
         improved: ['Changed settings sliders to match Obsidian 1.13 style with reset buttons to the left.'],
         changed: [
-            'Merged the two folder note name settings into one: ==Folder note name== that supports both fixed names and patterns.'
+            'Merged the two folder note name settings into one: ==Folder note name== that supports both fixed names and patterns.',
+            'Moved release notes, the mastering video, support links, and other plugin links into the new ==About== section at the bottom of settings.'
         ],
         fixed: [
             '`New canvas` is now hidden if the Canvas core plugin is disabled.',

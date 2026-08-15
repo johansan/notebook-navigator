@@ -1021,7 +1021,7 @@ export const STRINGS_PL = {
             label: 'Ogólne',
             description: 'Informacje o wydaniu, wsparcie, profil sejfu, typy plików i klucze atrybutów.',
             groups: {
-                vaultSetup: 'Konfiguracja sejfu'
+                about: 'O wtyczce'
             }
         },
         pageGroups: {
@@ -2573,7 +2573,7 @@ export const STRINGS_PL = {
             otherPlugins: {
                 name: 'Zobacz moje inne wtyczki',
                 betterPaste: 'Czyści wklejany tekst, odnośniki i obrazy',
-                pixelPerfectImage: 'Dokładna zmiana rozmiaru obrazów i wiele więcej'
+                pixelPerfectImage: 'Dokładna zmiana rozmiaru obrazów i więcej'
             },
             checkForNewVersionOnStart: {
                 name: 'Sprawdź nową wersję podczas uruchamiania',

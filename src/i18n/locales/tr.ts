@@ -1016,7 +1016,7 @@ export const STRINGS_TR = {
             label: 'Genel',
             description: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
             groups: {
-                vaultSetup: 'Kasa kurulumu'
+                about: 'Hakkında'
             }
         },
         pageGroups: {
@@ -2568,7 +2568,7 @@ export const STRINGS_TR = {
             otherPlugins: {
                 name: 'Diğer eklentilerime göz at',
                 betterPaste: 'Yapıştırılan metni, bağlantıları ve görselleri temizler',
-                pixelPerfectImage: 'Tam isabetli görsel boyutlandırma ve çok daha fazlası'
+                pixelPerfectImage: 'Tam isabetli görsel boyutlandırma ve daha fazlası'
             },
             checkForNewVersionOnStart: {
                 name: 'Başlangıçta yeni sürüm kontrolü',

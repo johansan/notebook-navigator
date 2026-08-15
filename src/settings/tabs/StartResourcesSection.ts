@@ -80,12 +80,12 @@ function renderOtherPluginCards(setting: Setting): void {
     }
 }
 
-/** Renders release notes, support links, and onboarding resources on the settings start page. */
+/** Renders release notes, support links, and onboarding resources in the About group. */
 export function renderStartResourcesSection(context: SettingsTabContext): void {
     const { containerEl, plugin } = context;
     const pluginVersion = plugin.manifest.version;
     const createGroup = createSettingGroupFactory(containerEl);
-    const topGroup = createGroup(undefined);
+    const aboutGroup = createGroup(strings.settings.index.groups.about);
 
     let updateStatusEl: HTMLDivElement | null = null;
 
@@ -108,7 +108,7 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
     const updateStatusListenerId = 'general-update-status';
     plugin.unregisterUpdateNoticeListener(updateStatusListenerId);
 
-    const whatsNewSetting = topGroup.addSetting(setting => {
+    const whatsNewSetting = aboutGroup.addSetting(setting => {
         setting
             .setName(strings.settings.items.whatsNew.name.replace('{version}', pluginVersion))
             .setDesc(strings.settings.items.whatsNew.desc)
@@ -141,23 +141,7 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
         plugin.unregisterUpdateNoticeListener(updateStatusListenerId);
     });
 
-    const supportSetting = topGroup.addSetting(setting => {
-        setting.setName(strings.settings.items.supportDevelopment.name).setDesc(strings.settings.items.supportDevelopment.desc);
-    });
-
-    supportSetting.addButton(button => {
-        button.setButtonText(strings.settings.items.supportDevelopment.buttonText).onClick(() => window.open(SUPPORT_SPONSOR_URL));
-        button.buttonEl.addClass('nn-support-button');
-    });
-
-    supportSetting.addButton(button => {
-        button
-            .setButtonText(strings.settings.items.supportDevelopment.coffeeButton)
-            .onClick(() => window.open(SUPPORT_BUY_ME_A_COFFEE_URL));
-        button.buttonEl.addClass('nn-support-button');
-    });
-
-    topGroup.addSetting(setting => {
+    aboutGroup.addSetting(setting => {
         setting
             .setName(strings.settings.items.masteringVideo.name)
             .setDesc(strings.settings.items.masteringVideo.desc)
@@ -173,7 +157,23 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
             });
     });
 
-    topGroup.addSetting(setting => {
+    const supportSetting = aboutGroup.addSetting(setting => {
+        setting.setName(strings.settings.items.supportDevelopment.name).setDesc(strings.settings.items.supportDevelopment.desc);
+    });
+
+    supportSetting.addButton(button => {
+        button.setButtonText(strings.settings.items.supportDevelopment.buttonText).onClick(() => window.open(SUPPORT_SPONSOR_URL));
+        button.buttonEl.addClass('nn-support-button');
+    });
+
+    supportSetting.addButton(button => {
+        button
+            .setButtonText(strings.settings.items.supportDevelopment.coffeeButton)
+            .onClick(() => window.open(SUPPORT_BUY_ME_A_COFFEE_URL));
+        button.buttonEl.addClass('nn-support-button');
+    });
+
+    aboutGroup.addSetting(setting => {
         setting.setName(strings.settings.items.otherPlugins.name);
         renderOtherPluginCards(setting);
     });
@@ -193,7 +193,7 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
     };
 
     return [
-        createGroupDefinition(undefined, [
+        createGroupDefinition(strings.settings.index.groups.about, [
             createRenderDefinition({
                 name: strings.settings.items.whatsNew.name.replace('{version}', pluginVersion),
                 desc: strings.settings.items.whatsNew.desc,
@@ -249,6 +249,25 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
                 }
             }),
             createRenderDefinition({
+                name: strings.settings.items.masteringVideo.name,
+                desc: strings.settings.items.masteringVideo.desc,
+                render: setting => {
+                    setting
+                        .setName(strings.settings.items.masteringVideo.name)
+                        .setDesc(strings.settings.items.masteringVideo.desc)
+                        .addButton(button => {
+                            button
+                                .setIcon('lucide-play')
+                                .setTooltip(strings.modals.welcome.openVideoButton)
+                                .onClick(() => {
+                                    window.open(WELCOME_VIDEO_URL);
+                                });
+                            button.buttonEl.addClass('nn-youtube-button');
+                            button.buttonEl.setAttr('aria-label', strings.modals.welcome.openVideoButton);
+                        });
+                }
+            }),
+            createRenderDefinition({
                 name: strings.settings.items.supportDevelopment.name,
                 desc: strings.settings.items.supportDevelopment.desc,
                 render: setting => {
@@ -267,25 +286,6 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
                             .onClick(() => window.open(SUPPORT_BUY_ME_A_COFFEE_URL));
                         button.buttonEl.addClass('nn-support-button');
                     });
-                }
-            }),
-            createRenderDefinition({
-                name: strings.settings.items.masteringVideo.name,
-                desc: strings.settings.items.masteringVideo.desc,
-                render: setting => {
-                    setting
-                        .setName(strings.settings.items.masteringVideo.name)
-                        .setDesc(strings.settings.items.masteringVideo.desc)
-                        .addButton(button => {
-                            button
-                                .setIcon('lucide-play')
-                                .setTooltip(strings.modals.welcome.openVideoButton)
-                                .onClick(() => {
-                                    window.open(WELCOME_VIDEO_URL);
-                                });
-                            button.buttonEl.addClass('nn-youtube-button');
-                            button.buttonEl.setAttr('aria-label', strings.modals.welcome.openVideoButton);
-                        });
                 }
             }),
             createRenderDefinition({
