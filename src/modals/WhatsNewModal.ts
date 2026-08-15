@@ -264,8 +264,8 @@ export class WhatsNewModal extends Modal {
             }
             versionContainer.createEl('h3', { text: headerText });
 
-            const bannerUrl = getReleaseBannerUrl(note.bannerUrl, note.version);
-            if (bannerUrl) {
+            if (note.banner) {
+                const bannerUrl = getReleaseBannerUrl(note.banner);
                 this.renderReleaseBanner(versionContainer, bannerUrl, note.bannerClickable === true);
             }
 

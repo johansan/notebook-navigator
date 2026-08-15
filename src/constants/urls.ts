@@ -35,21 +35,9 @@ export function communityPluginUrl(pluginId: string): string {
     return `obsidian://show-plugin?id=${pluginId}`;
 }
 
-export function getReleaseBannerUrl(bannerUrl: boolean | string | undefined, version: string): string | null {
-    if (!bannerUrl) {
-        return null;
-    }
-
-    const bannerSource = bannerUrl === true ? version : bannerUrl.trim();
-    if (bannerSource.length === 0) {
-        return null;
-    }
-
-    if (/^https?:\/\//i.test(bannerSource)) {
-        return bannerSource;
-    }
-
-    return `${NOTEBOOK_NAVIGATOR_RAW_BASE_URL}/images/version-banners/${bannerSource}.jpg`;
+/** Builds a repository URL from a release banner filename, including its extension. */
+export function getReleaseBannerUrl(fileName: string): string {
+    return `${NOTEBOOK_NAVIGATOR_RAW_BASE_URL}/images/version-banners/${fileName}`;
 }
 
 export function getReleaseVideoUrl(videoUrl: boolean | string | undefined, version: string): string | null {
