@@ -25,6 +25,7 @@ import { createHiddenTagVisibility } from '../../src/utils/tagPrefixMatcher';
 import type { FileContentChange, IndexedDBStorage } from '../../src/storage/IndexedDBStorage';
 import {
     createRemeasureScheduler,
+    isPendingFileScrollStale,
     isListRowHeightAffectingContentChange,
     type ListRowHeightAffectingContentChangeConfig,
     resolveListFileRowHeightInputs,
@@ -127,6 +128,17 @@ function installAnimationFrameStub() {
         }
     };
 }
+
+describe('isPendingFileScrollStale', () => {
+    const revealRequest = { type: 'file' as const, filePath: 'Notes/Folder.md', reason: 'reveal' as const };
+
+    it('retains the current selection request and discards it after selection changes', () => {
+        expect(isPendingFileScrollStale(revealRequest, 'Notes/Folder.md')).toBe(false);
+        expect(isPendingFileScrollStale(revealRequest, 'Notes/Other.md')).toBe(true);
+        expect(isPendingFileScrollStale(revealRequest, null)).toBe(true);
+        expect(isPendingFileScrollStale({ type: 'top', reason: 'visibility-change' }, null)).toBe(false);
+    });
+});
 
 afterEach(() => {
     vi.unstubAllGlobals();

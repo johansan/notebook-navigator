@@ -189,6 +189,26 @@ describe('WhatsNewModal formatting', () => {
             '<p class="nn-whats-new-info">First paragraph</p><p class="nn-whats-new-info">Second paragraph</p>'
         );
     });
+
+    it('renders Obsidian URIs as Markdown links', () => {
+        const formatter = createFormatter();
+        const container = new TestElement();
+
+        formatter.renderFormattedText(container, '[Better Paste](obsidian://show-plugin?id=better-paste)');
+
+        expect(container.toMarkup()).toBe(
+            '<a href="obsidian://show-plugin?id=better-paste" rel="noopener noreferrer" target="_blank">Better Paste</a>'
+        );
+    });
+
+    it('leaves unsupported Markdown link protocols as plain text', () => {
+        const formatter = createFormatter();
+        const container = new TestElement();
+
+        formatter.renderFormattedText(container, '[Unsafe](javascript:alert)');
+
+        expect(container.toMarkup()).toBe('[Unsafe](javascript:alert)');
+    });
 });
 
 describe('WhatsNewModal YouTube preview', () => {

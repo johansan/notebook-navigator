@@ -42,7 +42,7 @@ export { compareVersions } from './utils/versionUtils';
  * - Bold text: **text**
  * - Critical emphasis (red + bold): ==text==
  * - Inline code: `code`
- * - Markdown link: [label](https://example.com)
+ * - Markdown link: [label](https://example.com) or [label](obsidian://action)
  * - Auto-link: https://example.com
  *
  * Supported block formats in info:
@@ -79,8 +79,8 @@ export interface ReleaseNote {
     date: string;
     /** If false, skip automatic modal display for this version during startup */
     showOnUpdate?: boolean;
-    /** Optional banner image source. true uses version as banner id, string uses explicit URL or banner id */
-    bannerUrl?: boolean | string;
+    /** File name inside images/version-banners, extension included, such as '3.3.4.gif'. */
+    banner?: string;
     /** When true, the banner opens the full image in a new tab */
     bannerClickable?: boolean;
     /** Optional autoplay video source. true uses version as video id, string uses explicit URL or video id */
@@ -107,10 +107,32 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.4',
+        date: '2026-08-17',
+        showOnUpdate: true,
+        banner: '3.3.4.gif',
+        info: 'I just launched a new plugin: [Better Paste](obsidian://show-plugin?id=better-paste)!\n\nYou can now finally copy images from Safari to Obsidian, it cleans up tracking data from URLs, it cleans up AI-generated text, it let\'s you choose if you want commas inside ("x," ) or outside ("x", ) quotes, it fetches page titles for URLs like the plugin **Auto Link Title** which hasn\'t been updated in years, it cleans up text copied from terminal, and much more.\n\n**Better Paste** is already saving me lots of time every day, so feel free to give it a try and let me know if you like it!',
+        new: [
+            'New appearance menu options: You can now show or hide `Date` and `Parent folder` per folder, tag, and property, for example turning them off globally and enabling them only for the root folder.'
+        ],
+        improved: [
+            'Changed settings sliders to match Obsidian 1.13 style with reset buttons to the left.',
+            'Improved all 20 language translations. They now better match built-in Obsidian strings and usage context.'
+        ],
+        changed: [
+            'Merged the two folder note name settings into one: ==Folder note name== that supports both fixed names and patterns.',
+            'Moved release notes, the mastering video, support links, and other plugin links into the new ==About== section at the bottom of settings.'
+        ],
+        fixed: [
+            '`New canvas` is now hidden if the Canvas core plugin is disabled.',
+            'Clicking a folder note in navpane with folder notes showing in list pane now properly selects it.'
+        ]
+    },
+    {
         version: '3.3.3',
         date: '2026-08-09',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.3.3.jpg',
         new: [
             "You can now **change the display of tags, properties, tasks, and word counts for each location!** Maybe you want word counts only for a specific folder, or you don't want to show tasks in another folder. This is now possible! Just click the new ==Appearance== menu in the list pane (see screenshot above).",
             "When I added the new task display in 3.3.1 I removed the unfinished task icon. Unfortunately this meant no way of showing unfinished tasks in compact mode. So I put it back, and made it better. You can now choose if you want the unfinished task icon to appear in only compact or in both display modes. You'll find it at File display > Icon > ==Unfinished task icon==. Default set to compact mode.",
@@ -134,7 +156,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.1',
         date: '2026-08-02',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.3.1.jpg',
         info: "Lots of nice new things in this release! First up is a new **task display** in the list pane (see screenshot above). As usual you can customize everything and disable it if you don't want it.\n\nFor you power users out there you can finally set **sort by property** and **group by property** as default across the entire vault.\n\nAnd I know many of you have wanted this for a while now - if you hide the root folder **you can now temporarily show the root folder with Show hidden items**.\n\nHave a great day and thank you for using Notebook Navigator!",
         new: [
             'Much better task display in the list pane! Notes containing tasks now show a task icon, progress bar, and completed count, such as `5/7`, on the same line as the date and parent folder! Everything is optional of course, but this is now enabled by default. You will find all related settings in File display > ==Show tasks==. If you want a green color for completed tasks you can change this with the Style Settings plugin.',
@@ -218,7 +240,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.3',
         date: '2026-07-09',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.2.3.jpg',
         info: 'After making startup much faster in 3.2.0, I took the time to go through everything that runs when you actually use the plugin: scrolling, switching folders, typing in notes, editing tags, and moving folders.\n\nRendering while scrolling is now 15-25% more efficient, switching folders builds the list about 60% faster, warm starts load storage about 5 times faster, background processing while typing is cut in half, and moving a folder now batches its database writes instead of writing every file separately.\n\nYou should notice these improvements in your daily use, especially if you have a large vault. Thank you for using Notebook Navigator!',
         new: [
             '**Calendar.** New setting: Calendar > ==Show tasks==. You can now hide the indicator on days, weeks, and months with unfinished tasks. Enabled by default.',
@@ -249,7 +271,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.1',
         date: '2026-06-29',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.2.1.jpg',
         info: 'You can now **rename files, tags and properties inline** using Enter (macOS) or F2 (Windows and Linux)! And we got more optimizations! This release significantly reduces **preview work while typing** and also improves **drag and drop performance**. Previously there were lots of processing happening in the background every time Obsidian updated the current file when typing, now all actions are heavily gated.',
         new: [
             '**Inline rename.** ==Rename files, folders, tags, and properties inline== with Enter on macOS or F2 on Windows/Linux. The keyboard command is customizable with the `pane:rename` action.',
@@ -275,7 +297,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.2.0',
         date: '2026-06-21',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.2.0.jpg',
         info: '**This release makes Notebook Navigator start MUCH faster!** Most feature code now loads the first time you use a feature instead of while Obsidian starts up, and several background tasks no longer run during plugin load. Many users will see almost a tenfold improvement to startup time.',
         new: [
             '==New icon and color picker!== Redesigned and merged the icon and color pickers into a unified panel with preview, saturation/value rectangle and a new hue slider.',
@@ -331,7 +353,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.1.0',
         date: '2026-06-07',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.1.0.jpg',
         bannerClickable: true,
         info: 'This version adds two fantastic new features: ==Open folder notes in right sidebar== and ==Right sidebar: Show closest folder note==. When these settings are enabled, selecting a folder will now automatically open its folder note or the closest ancestor folder note in the right sidebar! Super useful for scratch pads related to different areas of your vault.\n\nThis release also includes dozens of ==list pane and navigation pane performance improvements==. Notebook Navigator now does less work when scrolling and moving through notes, folders, tags and properties. Give it a try and let me know if you notice any difference!',
         new: [
@@ -364,7 +386,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.0.2',
         date: '2026-05-29',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.0.2.jpg',
         info: 'Settings search, finally! Obsidian 1.13 introduced a completely new Settings window that stays open and supports text search. All settings in Notebook Navigator have been meticulously rewritten to fully support this new structure, while still providing support for older versions like 1.11 and 1.12. Give it a try and let me know how you like it.',
         new: [
             '**Settings.** Notebook Navigator now support the new ==Obsidian 1.13 settings API==, including the new Settings dialog and settings search.'
@@ -382,7 +404,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.0.1',
         date: '2026-05-26',
         showOnUpdate: true,
-        bannerUrl: true,
+        banner: '3.0.1.jpg',
         info: 'Notebook Navigator should start quickly on all devices. If you feel Notebook Navigator starts slowly, then please enable the new setting "Startup debug logging", restart, review the generated markdown file, and upload it to https://github.com/johansan/notebook-navigator as a bug report and I will take a look at it.',
         new: [
             '**List pane.** You can now ==merge notes in the list pane==! Right click several files or a group header to create a new note from selected files. You can also use it through the command "Merge notes".',

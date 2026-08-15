@@ -41,6 +41,8 @@ describe('resolveListPaneAppearance', () => {
             showFileTags: true,
             showFileProperties: true,
             showFileTaskProgress: true,
+            showFileDate: true,
+            showParentFolder: true,
             textCountDisplay: 'both'
         });
         const result = resolveListPaneAppearance({
@@ -49,6 +51,8 @@ describe('resolveListPaneAppearance', () => {
                 showTags: false,
                 showProperties: false,
                 showTaskProgress: false,
+                showDate: false,
+                showParentFolder: false,
                 textCount: 'none'
             },
             selectionType: ItemType.FOLDER
@@ -58,6 +62,8 @@ describe('resolveListPaneAppearance', () => {
             showTags: false,
             showProperties: false,
             showTaskProgress: false,
+            showDate: false,
+            showParentFolder: false,
             textCountDisplay: 'none'
         });
     });
@@ -68,6 +74,8 @@ describe('resolveListPaneAppearance', () => {
             showFileTags: false,
             showFileProperties: false,
             showFileTaskProgress: false,
+            showFileDate: false,
+            showParentFolder: false,
             textCountDisplay: 'none'
         });
         const result = resolveListPaneAppearance({
@@ -76,6 +84,8 @@ describe('resolveListPaneAppearance', () => {
                 showTags: true,
                 showProperties: true,
                 showTaskProgress: true,
+                showDate: true,
+                showParentFolder: true,
                 textCount: 'words'
             },
             selectionType: ItemType.FOLDER
@@ -85,6 +95,8 @@ describe('resolveListPaneAppearance', () => {
             showTags: true,
             showProperties: true,
             showTaskProgress: true,
+            showDate: true,
+            showParentFolder: true,
             textCountDisplay: 'words'
         });
     });
@@ -128,9 +140,10 @@ describe('resolveListPaneAppearance', () => {
                 showFilePreview: true,
                 showFeatureImage: true,
                 showFileDate: true,
+                showParentFolder: true,
                 showFileTaskProgress: true
             }),
-            appearance: { mode: 'compact', previewRows: 4, showTaskProgress: true },
+            appearance: { mode: 'compact', previewRows: 4, showTaskProgress: true, showDate: true, showParentFolder: true },
             selectionType: ItemType.PROPERTY
         });
 
@@ -140,6 +153,7 @@ describe('resolveListPaneAppearance', () => {
             showPreview: false,
             showImage: false,
             showDate: false,
+            showParentFolder: false,
             showTaskProgress: false
         });
     });
@@ -196,6 +210,8 @@ describe('stored list appearance intent', () => {
             titleRows: 2,
             previewRows: 9,
             showTags: true,
+            showDate: false,
+            showParentFolder: true,
             textCount: 'both',
             showFilePreview: false,
             textCountDisplay: 'both'
@@ -205,6 +221,8 @@ describe('stored list appearance intent', () => {
             mode: 'standard',
             titleRows: 2,
             showTags: true,
+            showDate: false,
+            showParentFolder: true,
             textCount: 'both'
         });
         expect(hasStoredListPaneAppearanceOverride(stored ?? undefined)).toBe(true);

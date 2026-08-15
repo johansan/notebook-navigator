@@ -89,10 +89,9 @@ export function useFolderNavigationSourceState({
     const folderNoteSettings = useMemo(() => {
         return getFolderNoteDetectionSettings({
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteName: settings.folderNoteName,
             folderNoteNamePattern: settings.folderNoteNamePattern
         });
-    }, [settings.enableFolderNotes, settings.folderNoteName, settings.folderNoteNamePattern]);
+    }, [settings.enableFolderNotes, settings.folderNoteNamePattern]);
     const shouldEvaluateFolderNoteExclusions = useMemo(() => {
         return (
             settings.enableFolderNotes &&

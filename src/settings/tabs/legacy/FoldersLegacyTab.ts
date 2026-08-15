@@ -20,7 +20,7 @@ import { Setting } from 'obsidian';
 import { strings } from '../../../i18n';
 import { FilePathInputSuggest } from '../../../suggest/FilePathInputSuggest';
 import { isFolderNoteCreationPreference } from '../../../types/folderNote';
-import { FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER } from '../../../utils/folderNoteName';
+import { FOLDER_NOTE_NAME_PATTERN_TOKEN } from '../../../utils/folderNoteName';
 import { isFolderNoteTemplateCompatible, isSupportedFolderNoteExtension } from '../../../utils/folderNotes';
 import { normalizeOptionalVaultFilePath } from '../../../utils/pathUtils';
 import { getTemplaterCreateNoteFromTemplate } from '../../../utils/templaterIntegration';
@@ -195,20 +195,7 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
             setting,
             strings.settings.items.folderNoteName.name,
             strings.settings.items.folderNoteName.desc,
-            strings.settings.items.folderNoteName.placeholder,
-            () => plugin.settings.folderNoteName,
-            value => {
-                plugin.settings.folderNoteName = value;
-            }
-        );
-    });
-
-    folderNoteFilesGroup.addSetting(setting => {
-        context.configureDebouncedTextSetting(
-            setting,
-            strings.settings.items.folderNoteNamePattern.name,
-            strings.settings.items.folderNoteNamePattern.desc,
-            FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER,
+            FOLDER_NOTE_NAME_PATTERN_TOKEN,
             () => plugin.settings.folderNoteNamePattern,
             value => {
                 plugin.settings.folderNoteNamePattern = value;

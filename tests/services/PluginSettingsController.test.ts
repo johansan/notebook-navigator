@@ -764,6 +764,28 @@ describe('PluginSettingsController.applySettingsRecord', () => {
         expect(saveData).not.toHaveBeenCalled();
     });
 
+    it('migrates a fixed folder note name into the single naming pattern', () => {
+        const { controller } = createController();
+
+        const needsCleanup = controller.applySettingsRecord(
+            { folderNoteName: 'index', folderNoteNamePattern: '' },
+            { isFirstLaunch: false }
+        );
+
+        expect(controller.settings.folderNoteNamePattern).toBe('index');
+        expect(controller.settings).not.toHaveProperty('folderNoteName');
+        expect(controller.getPersistableSettings()).not.toHaveProperty('folderNoteName');
+        expect(needsCleanup).toBe(true);
+    });
+
+    it('preserves a folder note pattern when the legacy fixed name is also set', () => {
+        const { controller } = createController();
+
+        controller.applySettingsRecord({ folderNoteName: 'index', folderNoteNamePattern: '_{{folder_name}}' }, { isFirstLaunch: false });
+
+        expect(controller.settings.folderNoteNamePattern).toBe('_{{folder}}');
+    });
+
     it('uses imported values instead of existing device mirrors for local-mode settings', () => {
         const { controller } = createController();
         const syncModes = structuredClone(DEFAULT_SETTINGS.syncModes);

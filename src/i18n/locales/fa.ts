@@ -92,7 +92,7 @@ export const STRINGS_FA = {
     navigationCalendar: {
         ariaLabel: 'تقویم',
         dailyNotesNotEnabled: 'افزونه یادداشت روزانه فعال نیست.',
-        noteHiddenByProfile: 'یادداشت تقویم توسط نمایه فعلی خزانه پنهان شده است.',
+        noteHiddenByProfile: 'یادداشت تقویم توسط پروفایل فعلی خزانه پنهان شده است.',
         createDailyNote: {
             title: 'یادداشت روزانه جدید',
             message: 'فایل {filename} وجود ندارد. آیا می‌خواهید آن را ایجاد کنید؟',
@@ -111,7 +111,7 @@ export const STRINGS_FA = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'خواندن قالب یادداشت روزانه ناموفق بود.',
+        templateReadFailed: 'خواندن الگوی یادداشت روزانه ناموفق بود.',
         createFailed: 'ایجاد یادداشت روزانه ممکن نیست.'
     },
 
@@ -125,7 +125,7 @@ export const STRINGS_FA = {
         emptySearchQuery: 'قبل از ذخیره، عبارت جستجو را وارد کنید',
         emptySearchName: 'قبل از ذخیره جستجو، نامی وارد کنید',
         add: 'افزودن به میانبرها',
-        addNotesCount: 'افزودن {count} یادداشت‌ها به میانبرها',
+        addNotesCount: 'افزودن {count} یادداشت به میانبرها',
         addFilesCount: 'افزودن {count} فایل به میانبرها',
         rename: 'تغییر نام میانبر',
         remove: 'حذف از میانبرها',
@@ -151,7 +151,7 @@ export const STRINGS_FA = {
         manualSort: 'مرتب‌سازی دستی',
         editSortOrder: 'ویرایش ترتیب مرتب‌سازی...',
         removeSortProperty: 'حذف ویژگی مرتب‌سازی',
-        descendants: 'فرزندان',
+        descendants: 'زیرمجموعه‌ها',
         subfolders: 'زیرپوشه‌ها',
         subtags: 'زیربرچسب‌ها',
         childValues: 'مقادیر فرزند',
@@ -212,10 +212,10 @@ export const STRINGS_FA = {
                 tags: {
                     title: 'برچسب‌ها',
                     items: [
-                        '`#tag` یادداشت‌های دارای برچسب را شامل شوید (همچنین برچسب‌های تودرتو مثل `#tag/subtag` را پیدا می‌کند).',
-                        '`#` فقط یادداشت‌های دارای برچسب را شامل شوید.',
+                        '`#tag` یادداشت‌های دارای برچسب را شامل کنید (همچنین برچسب‌های تودرتو مثل `#tag/subtag` را پیدا می‌کند).',
+                        '`#` فقط یادداشت‌های دارای برچسب را شامل کنید.',
                         '`-#tag` یادداشت‌های دارای برچسب را حذف کنید.',
-                        '`-#` فقط یادداشت‌های بدون برچسب را شامل شوید.',
+                        '`-#` فقط یادداشت‌های بدون برچسب را شامل کنید.',
                         '`#tag1 #tag2` هر دو برچسب را پیدا کنید (AND ضمنی).',
                         '`#tag1 AND #tag2` هر دو برچسب را پیدا کنید (AND صریح).',
                         '`#tag1 OR #tag2` هر یک از برچسب‌ها را پیدا کنید.',
@@ -351,7 +351,7 @@ export const STRINGS_FA = {
         },
         folder: {
             newNote: 'یادداشت جدید',
-            newNoteFromTemplate: 'یادداشت جدید از قالب',
+            newNoteFromTemplate: 'یادداشت جدید از الگو',
             newFolder: 'پوشه جدید',
             newCanvas: 'بوم جدید',
             newBase: 'پایگاه جدید',
@@ -401,7 +401,7 @@ export const STRINGS_FA = {
             fileLinkAsFootnote: 'پیوند فایل به‌صورت پاورقی',
             noteEmbed: 'جاسازی یادداشت',
             fileEmbed: 'جاسازی فایل',
-            obsidianUrl: 'URL اوبسیدین',
+            obsidianUrl: 'URL Obsidian',
             pathFromVaultFolder: 'مسیر از پوشه خزانه',
             pathFromSystemRoot: 'مسیر از ریشه سیستم'
         },
@@ -437,6 +437,8 @@ export const STRINGS_FA = {
         tags: 'برچسب‌ها',
         properties: 'ویژگی‌ها',
         tasks: 'وظایف',
+        date: 'تاریخ',
+        parentFolder: 'پوشه والد',
         textCount: {
             label: 'شمارش متن',
             options: {
@@ -474,20 +476,20 @@ export const STRINGS_FA = {
             removePropertyConfirmButton: 'حذف ویژگی',
             compactTitle: 'فشرده‌سازی مقادیر شاخص؟',
             compactMessage: (count: number) =>
-                `این بازآرایی به فضای عددی بیشتری نیاز دارد. ${count} یادداشت مقادیر شاخص جدید دریافت می‌کنند.`,
+                `این بازآرایی به فضای عددی بیشتری نیاز دارد. ${count} یادداشت مقادیر شاخص جدید دریافت می‌کند.`,
             compactConfirmButton: 'فشرده‌سازی مقادیر شاخص'
         },
         manualSortGroupHeader: {
             title: 'تنظیم هدر گروه',
             titleLabel: 'عنوان',
             placeholder: 'هدر گروه',
-            icon: 'نماد',
+            icon: 'آیکون',
             color: 'رنگ',
             wordCount: 'نمایش تعداد کلمات',
             wordCountTarget: 'تعداد کلمات هدف',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                'وقتی این فیلد خالی است، هدف گروه از ویژگی هدف تنظیم‌شده در تنظیمات > یادداشت‌ها > تعداد کلمات و نویسه‌ها استفاده می‌کند. با تنظیم مقدار هدف برای این گروه آن را بازنویسی کنید.',
+                'وقتی این فیلد خالی است، هدف گروه از ویژگی هدف تنظیم‌شده در تنظیمات > نمایش فایل > تعداد کلمات و نویسه‌ها استفاده می‌کند. با تنظیم مقدار هدف برای این گروه آن را بازنویسی کنید.',
             description: 'هدر گروه را برای این یادداشت سفارشی کنید. عنوان را خالی بگذارید تا هدر حذف شود.'
         },
         mergeNotes: {
@@ -597,7 +599,7 @@ export const STRINGS_FA = {
             alphaSlider: 'شفافیت'
         },
         appearance: {
-            tabIcon: 'نماد',
+            tabIcon: 'آیکون',
             tabColor: 'رنگ',
             tabBackground: 'پس‌زمینه',
             resetIcon: 'حذف آیکون',
@@ -633,11 +635,11 @@ export const STRINGS_FA = {
                 'از {removed}/{total} حذف شد. به‌روزرسانی نشده: {notUpdated}. فراداده‌ها و میانبرها به‌روزرسانی نشدند.',
             checkConsoleForDetails: 'برای جزئیات بیشتر کنسول را بررسی کنید.',
             file: 'فایل',
-            files: 'فایل‌ها',
+            files: 'فایل',
             inlineParsingWarning: {
                 title: 'سازگاری برچسب‌های درون‌خطی',
                 message:
-                    '{tag} شامل نویسه‌هایی است که Obsidian نمی‌تواند در برچسب‌های درون‌خطی تجزیه کند. برچسب‌های Frontmatter تحت تأثیر قرار نمی‌گیرند.',
+                    '{tag} شامل نویسه‌هایی است که Obsidian نمی‌تواند در برچسب‌های درون‌خطی تجزیه کند. برچسب‌های فرانت‌متر تحت تأثیر قرار نمی‌گیرند.',
                 confirm: 'استفاده در هر صورت'
             }
         },
@@ -714,10 +716,10 @@ export const STRINGS_FA = {
             }
         },
         calendarTemplate: {
-            placeholder: 'جستجوی قالب‌ها...',
+            placeholder: 'جستجوی الگوها...',
             instructions: {
                 navigate: 'برای ناوبری',
-                select: 'برای انتخاب قالب',
+                select: 'برای انتخاب الگو',
                 dismiss: 'برای بستن'
             }
         },
@@ -836,7 +838,7 @@ export const STRINGS_FA = {
             movedMultipleFiles: '{count} فایل به {folder} منتقل شد',
             folderNoteConversionSuccess: 'فایل به یادداشت پوشه در "{name}" تبدیل شد',
             folderMoved: 'پوشه "{name}" منتقل شد',
-            deepLinkCopied: 'URL اوبسیدین در کلیپ‌بورد کپی شد',
+            deepLinkCopied: 'URL Obsidian در کلیپ‌بورد کپی شد',
             pathCopied: 'مسیر در کلیپ‌بورد کپی شد',
             relativePathCopied: 'مسیر نسبی در کلیپ‌بورد کپی شد',
             linkCopied: 'پیوند در کلیپ‌بورد کپی شد',
@@ -863,7 +865,7 @@ export const STRINGS_FA = {
             iconPackUpdated: '{provider} به‌روزرسانی شد ({version})',
             iconPackRemoved: '{provider} حذف شد',
             iconPackLoadFailed: 'بارگذاری {provider} ناموفق بود',
-            hiddenFileReveal: 'فایل مخفی است. "نمایش آیتم‌های مخفی" را فعال کنید'
+            hiddenFileReveal: 'فایل مخفی است. «نمایش آیتم‌های مخفی» را فعال کنید'
         },
         confirmations: {
             deleteMultipleFiles: 'آیا مطمئن هستید می‌خواهید {count} فایل را حذف کنید؟',
@@ -889,7 +891,7 @@ export const STRINGS_FA = {
         notifications: {
             filesAlreadyExist: '{count} فایل در مقصد وجود دارد',
             filesAlreadyHaveTag: '{count} فایل این برچسب یا برچسب دقیق‌تر را دارد',
-            filesAlreadyHaveProperty: '{count} فایل از قبل این ویژگی را دارند',
+            filesAlreadyHaveProperty: '{count} فایل از قبل این ویژگی را دارد',
             noTagsToClear: 'برچسبی برای پاک کردن نیست',
             fileImported: '۱ فایل وارد شد',
             filesImported: '{count} فایل وارد شد'
@@ -927,7 +929,7 @@ export const STRINGS_FA = {
         selectVaultProfile3: 'انتخاب پروفایل خزانه ۳',
         deleteFile: 'حذف فایل‌ها',
         createNewNote: 'ایجاد یادداشت جدید',
-        createNewNoteFromTemplate: 'یادداشت جدید از قالب',
+        createNewNoteFromTemplate: 'ایجاد یادداشت جدید از الگو',
         moveFiles: 'انتقال فایل‌ها',
         mergeNotes: 'ادغام یادداشت‌ها', // Command palette: Creates one note from selected Markdown notes (English: Merge notes)
         selectNextFile: 'انتخاب فایل بعدی',
@@ -970,19 +972,19 @@ export const STRINGS_FA = {
         ribbonTooltip: 'Notebook Navigator',
         revealInNavigator: 'نمایش در Notebook Navigator',
         settingsUnavailableNotice:
-            'Notebook Navigator نتوانست تنظیمات خود را بخواند و راه‌اندازی نشد. اگر Vault شما در حال همگام‌سازی است، پس از پایان همگام‌سازی Obsidian را دوباره راه‌اندازی کنید. برای شروع دوباره با تنظیمات پیش‌فرض، فرمان «بازیابی تنظیمات پیش‌فرض» را اجرا کنید.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
+            'Notebook Navigator نتوانست تنظیمات خود را بخواند و راه‌اندازی نشد. اگر خزانه شما در حال همگام‌سازی است، پس از پایان همگام‌سازی Obsidian را دوباره راه‌اندازی کنید. برای شروع دوباره با تنظیمات پیش‌فرض، فرمان «بازیابی تنظیمات پیش‌فرض» را اجرا کنید.', // Notice shown when startup is aborted because the settings file is missing or cannot be read (English: Notebook Navigator could not read its settings and did not start. If your vault is syncing, restart Obsidian after the sync completes. To start over with default settings, run the command "Restore default settings".)
         settingsMissingConfirm: {
             title: 'شروع با تنظیمات پیش‌فرض؟', // Title of the dialog shown when the plugin is enabled while its settings file is missing (English: Start with default settings?)
             messageRecentInstall:
                 'Notebook Navigator همین حالا نصب شده و فایل تنظیمات ندارد. اگر این یک نصب جدید یا نصب مجدد است، با تنظیمات پیش‌فرض ادامه دهید. اگر تنظیمات شما از یک سرویس همگام‌سازی می‌آید، لغو کنید، تا پایان همگام‌سازی صبر کنید و سپس Obsidian را دوباره راه‌اندازی کنید.', // Dialog message when the plugin folder was written recently (English: Notebook Navigator was just installed and has no settings file. If this is a new install or a reinstall, continue with default settings. If your settings come from a sync service, cancel, wait for the sync to complete, and restart Obsidian.)
             messageExistingInstall:
-                'Notebook Navigator مدتی است روی این دستگاه نصب شده است، اما فایل تنظیمات آن موجود نیست. اگر Vault شما هنوز در حال همگام‌سازی است، لغو کنید، تا پایان همگام‌سازی صبر کنید و سپس Obsidian را دوباره راه‌اندازی کنید تا تنظیمات فعلی شما حفظ شود. فقط در صورتی ادامه دهید که می‌خواهید با تنظیمات پیش‌فرض از نو شروع کنید.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
+                'Notebook Navigator مدتی است روی این دستگاه نصب شده است، اما فایل تنظیمات آن موجود نیست. اگر خزانه شما هنوز در حال همگام‌سازی است، لغو کنید، تا پایان همگام‌سازی صبر کنید و سپس Obsidian را دوباره راه‌اندازی کنید تا تنظیمات فعلی شما حفظ شود. فقط در صورتی ادامه دهید که می‌خواهید با تنظیمات پیش‌فرض از نو شروع کنید.', // Dialog message when the plugin folder has existed for a while (English: Notebook Navigator has been installed on this device for a while, but its settings file is missing. If your vault is still syncing, cancel, wait for the sync to complete, and restart Obsidian to keep your existing settings. Continue only to start over with default settings.)
             confirmButton: 'استفاده از تنظیمات پیش‌فرض' // Confirm button label in the missing-settings dialog (English: Use default settings)
         },
         settingsRecovery: {
             confirmTitle: 'بازیابی تنظیمات پیش‌فرض', // Title of the confirmation dialog for the settings recovery command (English: Restore default settings)
             confirmMessage:
-                'این کار فایل تنظیمات Notebook Navigator را با تنظیمات پیش‌فرض جایگزین می‌کند. اگر Vault شما هنوز در حال همگام‌سازی است، تنظیمات پیش‌فرض بازیابی‌شده ممکن است جایگزین تنظیمات ذخیره‌شده در دستگاه‌های دیگر شما شود. فایل تنظیمات قابل خواندن ابتدا در یک نسخه پشتیبان دارای برچسب زمانی در پوشه افزونه کپی می‌شود.', // Body of the confirmation dialog for the settings recovery command
+                'این کار فایل تنظیمات Notebook Navigator را با تنظیمات پیش‌فرض جایگزین می‌کند. اگر خزانه شما هنوز در حال همگام‌سازی است، تنظیمات پیش‌فرض بازیابی‌شده ممکن است جایگزین تنظیمات ذخیره‌شده در دستگاه‌های دیگر شما شود. فایل تنظیمات قابل خواندن ابتدا در یک نسخه پشتیبان دارای برچسب زمانی در پوشه افزونه کپی می‌شود.', // Body of the confirmation dialog for the settings recovery command
             confirmButton: 'بازیابی پیش‌فرض‌ها', // Confirm button label in the settings recovery dialog (English: Restore defaults)
             failedNotice: 'بازیابی تنظیمات کامل نشد. ترجیحات محلی حفظ شدند.', // Notice shown when settings recovery cannot be completed (English: Could not complete settings recovery. Local preferences were kept.)
             completedNotice: 'تنظیمات پیش‌فرض بازیابی شد. برای پایان کار Obsidian را دوباره راه‌اندازی کنید.' // Notice shown after the settings file was replaced with defaults (English: Default settings restored. Restart Obsidian to finish.)
@@ -1018,7 +1020,7 @@ export const STRINGS_FA = {
             label: 'عمومی',
             description: 'یادداشت‌های انتشار، پشتیبانی، پروفایل خزانه، انواع فایل و کلیدهای ویژگی.',
             groups: {
-                vaultSetup: 'پیکربندی خزانه'
+                about: 'درباره'
             }
         },
         pageGroups: {
@@ -1059,8 +1061,8 @@ export const STRINGS_FA = {
                 }
             },
             shortcutsAndRecentFiles: {
-                label: 'میان‌برها و فایل‌های اخیر',
-                description: 'قابلیت دید میان‌برها، نشان‌ها، فایل‌های اخیر و موارد سنجاق‌شده.',
+                label: 'میانبرها و فایل‌های اخیر',
+                description: 'قابلیت دید میانبرها، نشان‌ها، فایل‌های اخیر و موارد سنجاق‌شده.',
                 groups: {
                     shortcuts: 'میانبرها',
                     recentFiles: 'فایل‌های اخیر'
@@ -1130,7 +1132,7 @@ export const STRINGS_FA = {
                     appearance: 'ظاهر',
                     leftSidebar: 'نوار کناری چپ',
                     calendarIntegration: 'یکپارچه‌سازی تقویم',
-                    rightSidebar: 'نوار کناری چپ'
+                    rightSidebar: 'نوار کناری راست'
                 }
             },
             iconPacks: {
@@ -1195,7 +1197,7 @@ export const STRINGS_FA = {
             },
             sortingProperties: {
                 name: 'ویژگی‌های مرتب‌سازی',
-                desc: 'ویژگی‌های frontmatter جداشده با ویرگول. هر ویژگی به‌عنوان یک گزینه مرتب‌سازی در تنظیم ترتیب پیش‌فرض مرتب‌سازی و در منوی مرتب‌سازی پنل لیست نمایش داده می‌شود. این ویژگی‌ها تغییر نمی‌کنند.',
+                desc: 'ویژگی‌های فرانت‌متر جدا شده با کاما. هر ویژگی به‌عنوان یک گزینه مرتب‌سازی در تنظیم ترتیب پیش‌فرض مرتب‌سازی و در منوی مرتب‌سازی پنل لیست نمایش داده می‌شود. این ویژگی‌ها تغییر نمی‌کنند.',
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'ترتیب پیش‌فرض مرتب‌سازی بازنشانی شد زیرا ویژگی آن دیگر در دسترس نیست.',
@@ -1225,16 +1227,16 @@ export const STRINGS_FA = {
             },
             groupingProperties: {
                 name: 'ویژگی‌های گروه‌بندی',
-                desc: 'ویژگی‌های frontmatter جداشده با ویرگول. هر ویژگی به‌عنوان یک گزینه گروه‌بندی در تنظیم گروه‌بندی پیش‌فرض و در منوی مرتب‌سازی پنل لیست نمایش داده می‌شود. این ویژگی‌ها تغییر نمی‌کنند.',
+                desc: 'ویژگی‌های فرانت‌متر جدا شده با کاما. هر ویژگی به‌عنوان یک گزینه گروه‌بندی در تنظیم گروه‌بندی پیش‌فرض و در منوی مرتب‌سازی پنل لیست نمایش داده می‌شود. این ویژگی‌ها تغییر نمی‌کنند.',
                 placeholder: 'status, genre'
             },
             manualSortProperty: {
                 name: 'ویژگی مرتب‌سازی دستی',
-                desc: 'ویژگی frontmatter که برای ذخیره مقادیر شاخص عددی در مرتب‌سازی دستی استفاده می‌شود.'
+                desc: 'ویژگی فرانت‌متر که برای ذخیره مقادیر شاخص عددی در مرتب‌سازی دستی استفاده می‌شود.'
             },
             groupHeaderProperty: {
                 name: 'ویژگی هدر گروه',
-                desc: 'ویژگی frontmatter که برای ذخیره هدرهای سفارشی گروه استفاده می‌شود.'
+                desc: 'ویژگی فرانت‌متر که برای ذخیره هدرهای سفارشی گروه استفاده می‌شود.'
             },
             groupHeadersInstructions: {
                 intro: 'هدرهای سفارشی گروه بالای یادداشت‌ها در پنل لیست نمایش داده می‌شوند.',
@@ -1258,7 +1260,7 @@ export const STRINGS_FA = {
                 desc: 'پیش از نوشتن ویژگی مرتب‌سازی دستی در یادداشت‌ها برای نخستین بار، یک هشدار نمایش داده شود. هنگامی که غیرفعال باشد، یادداشت‌ها بدون هشدار این ویژگی را دریافت می‌کنند.'
             },
             manualSortInstructions: {
-                intro: 'مرتب‌سازی دستی یک مقدار شاخص عددی را در یک ویژگی frontmatter بر روی هر یادداشت می‌نویسد. یادداشت‌های بدون شاخص در زیر بخش مرتب‌نشده ظاهر می‌شوند.',
+                intro: 'مرتب‌سازی دستی یک مقدار شاخص عددی را در یک ویژگی فرانت‌متر بر روی هر یادداشت می‌نویسد. یادداشت‌های بدون شاخص در زیر بخش مرتب‌نشده ظاهر می‌شوند.',
                 items: [
                     'مرتب‌سازی دستی را با انتخاب **مرتب‌سازی دستی** از منوی مرتب‌سازی فعال کنید. پس از آن، دو روش برای بازآرایی یادداشت‌ها وجود دارد.',
                     '**ویرایش ترتیب مرتب‌سازی...** را از منوی مرتب‌سازی انتخاب کنید تا نمای بازآرایی باز شود. یادداشت‌ها را با ماوس بکشید یا روی موبایل با لمس. در دسکتاپ، کلیک **Cmd/Ctrl** یا **Shift** چندین یادداشت را انتخاب می‌کند، سپس کشیدن هر یک از آن‌ها کل گروه را جابه‌جا می‌کند.',
@@ -1283,7 +1285,7 @@ export const STRINGS_FA = {
             },
             defaultGrouping: {
                 name: 'گروه‌بندی پیش‌فرض',
-                desc: '**سرصفحه‌ها** فهرست مرتب‌شده را بدون تغییر ترتیب آن نشانه‌گذاری می‌کنند: «سفارشی» سرصفحه‌های تعریف‌شده در frontmatter را نمایش می‌دهد و «تاریخ» سرصفحه‌های تاریخ را درج می‌کند. **گروه‌ها** فهرست را دوباره مرتب می‌کنند: گروه‌های پوشه و ویژگی به‌طور مستقل مرتب می‌شوند و یادداشت‌های درون هر گروه از ترتیب مرتب‌سازی پیروی می‌کنند.',
+                desc: '**سرصفحه‌ها** فهرست مرتب‌شده را بدون تغییر ترتیب آن نشانه‌گذاری می‌کنند: «سفارشی» سرصفحه‌های تعریف‌شده در فرانت‌متر را نمایش می‌دهد و «تاریخ» سرصفحه‌های تاریخ را درج می‌کند. **گروه‌ها** فهرست را دوباره مرتب می‌کنند: گروه‌های پوشه و ویژگی به‌طور مستقل مرتب می‌شوند و یادداشت‌های درون هر گروه از ترتیب مرتب‌سازی پیروی می‌کنند.',
                 families: {
                     headers: 'سرصفحه‌ها',
                     groups: 'گروه‌ها'
@@ -1312,7 +1314,7 @@ export const STRINGS_FA = {
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'گروه‌بندی پوشه: فایل‌های پوشه فعلی در پایین',
-                desc: 'وقتی گروه‌بندی پیش‌فرض روی پوشه است، فایل‌هایی را که مستقیماً در پوشه انتخاب‌شده هستند به زیر گروه‌های زیرپوشه منتقل کن.'
+                desc: 'وقتی گروه‌بندی پیش‌فرض روی پوشه است، فایل‌هایی که مستقیماً در پوشه انتخاب‌شده هستند به زیر گروه‌های زیرپوشه منتقل می‌شوند.'
             },
             defaultListMode: {
                 name: 'حالت لیست پیش‌فرض',
@@ -1327,7 +1329,7 @@ export const STRINGS_FA = {
                 desc: 'آیکون‌های فایل را با فاصله‌گذاری چپ‌چین نمایش دهید. غیرفعال کردن آیکون‌ها و تورفتگی را حذف می‌کند. اولویت: آیکون وظایف ناتمام > آیکون سفارشی > آیکون پوشه > آیکون نام فایل > آیکون نوع فایل > آیکون پیش‌فرض.'
             },
             unfinishedTaskIcon: {
-                name: 'نماد وظایف ناتمام',
+                name: 'آیکون وظایف ناتمام',
                 desc: 'هنگامی که یادداشت وظایف ناتمام دارد، آیکون فایل را جایگزین کنید.',
                 options: {
                     disabled: 'غیرفعال',
@@ -1340,19 +1342,19 @@ export const STRINGS_FA = {
                 desc: 'هنگامی که آیکون فایل سفارشی تنظیم نشده باشد، آیکون پوشه والد را نمایش دهید. هنگامی که رنگ فایل سفارشی تنظیم نشده باشد، از رنگ پوشه استفاده می‌شود.'
             },
             showFileTaskProgress: {
-                name: 'پیشرفت کارها',
+                name: 'پیشرفت وظایف',
                 desc: 'نمایش وضعیت وظایف همراه با نوار پیشرفت و تعداد وظایف اختیاری. رنگ وظایف ناتمام و وظایف تکمیل‌شده را می‌توان جداگانه با افزونه Style Settings تنظیم کرد.'
             },
             showFileTaskProgressBar: {
-                name: 'پیشرفت کارها: نوار پیشرفت',
+                name: 'پیشرفت وظایف: نوار پیشرفت',
                 desc: 'نمایش نوار پیشرفت در کنار آیکون وظیفه.'
             },
             showFileTaskProgressCount: {
-                name: 'پیشرفت کارها: تعداد وظایف',
+                name: 'پیشرفت وظایف: تعداد وظایف',
                 desc: 'نمایش تعداد وظایف انجام‌شده و تعداد کل وظایف، برای مثال 3/7.'
             },
             hideFileTaskProgressWhenComplete: {
-                name: 'پیشرفت کارها: پنهان کردن پس از تکمیل',
+                name: 'پیشرفت وظایف: پنهان کردن پس از تکمیل',
                 desc: 'پنهان کردن پیشرفت وظایف زمانی که همه وظایف یادداشت تکمیل شده‌اند.'
             },
             unfinishedTaskBackground: {
@@ -1493,7 +1495,7 @@ export const STRINGS_FA = {
             },
             autoRevealActiveNote: {
                 name: 'نمایش خودکار یادداشت فعال',
-                desc: 'یادداشت‌ها را هنگام باز شدن از Quick Switcher، لینک‌ها یا جستجو به طور خودکار نمایش دهید.'
+                desc: 'یادداشت‌ها را هنگام باز شدن از پرش سریع، لینک‌ها یا جستجو به طور خودکار نمایش دهید.'
             },
             autoRevealShortestPath: {
                 name: 'نمایش خودکار: استفاده از کوتاه‌ترین مسیر',
@@ -1522,7 +1524,7 @@ export const STRINGS_FA = {
             },
             expandOnSelection: {
                 name: 'باز کردن هنگام انتخاب',
-                desc: 'پوشه‌ها و برچسب‌ها را هنگام انتخاب باز کنید. در حالت پنل تکی، اولین انتخاب باز می‌کند، دومین انتخاب فایل‌ها را نمایش می‌دهد.'
+                desc: 'پوشه‌ها، برچسب‌ها و ویژگی‌ها را هنگام انتخاب باز کنید. در حالت پنل تکی، اولین انتخاب باز می‌کند، دومین انتخاب فایل‌ها را نمایش می‌دهد.'
             },
             collapseOtherBranchesOnExpand: {
                 name: 'یک شاخه باز',
@@ -1589,10 +1591,10 @@ export const STRINGS_FA = {
             },
             calendarPlacement: {
                 name: 'محل قرارگیری تقویم',
-                desc: 'نمایش در نوار کناری راست یا چپ.', // RTL: right↔left flipped to match visual layout
+                desc: 'نمایش در نوار کناری چپ یا راست.',
                 options: {
-                    leftSidebar: 'نوار کناری راست', // RTL: "Left sidebar" → "Right sidebar" (appears on right in RTL)
-                    rightSidebar: 'نوار کناری چپ' // RTL: "Right sidebar" → "Left sidebar" (appears on left in RTL)
+                    leftSidebar: 'نوار کناری چپ',
+                    rightSidebar: 'نوار کناری راست'
                 }
             },
             calendarSinglePanePlacement: {
@@ -1624,10 +1626,10 @@ export const STRINGS_FA = {
             },
             calendarMonthNameFormat: {
                 name: 'قالب نام ماه',
-                desc: 'نام ماه کامل (ژانویه) یا کوتاه (ژانویه).',
+                desc: 'نام ماه کامل (January) یا کوتاه (Jan).',
                 options: {
-                    full: 'ژانویه (کامل)',
-                    short: 'ژانویه (کوتاه)'
+                    full: 'January (کامل)',
+                    short: 'Jan (کوتاه)'
                 }
             },
             showInfoButtons: {
@@ -1635,8 +1637,8 @@ export const STRINGS_FA = {
                 desc: 'نمایش دکمه‌های اطلاعات در نوار جستجو و سربرگ تقویم.'
             },
             calendarLeftSidebarWeeksToShow: {
-                name: 'هفته‌های نمایش در نوار کناری راست', // RTL: "left sidebar" → "right sidebar"
-                desc: 'تقویم در نوار کناری چپ همیشه ماه کامل را نمایش می‌دهد.', // RTL: "right sidebar" → "left sidebar"
+                name: 'هفته‌های نمایش در نوار کناری چپ',
+                desc: 'تقویم در نوار کناری راست همیشه ماه کامل را نمایش می‌دهد.',
                 options: {
                     fullMonth: 'ماه کامل',
                     oneWeek: '۱ هفته',
@@ -1672,18 +1674,18 @@ export const STRINGS_FA = {
                 desc: 'نمایش ناوبری سال و شبکه ماه‌ها در نوار کناری سمت راست.'
             },
             calendarConfirmBeforeCreate: {
-                name: 'تأیید قبل از ایجاد',
+                name: 'تأیید قبل از ایجاد یادداشت جدید',
                 desc: 'نمایش پنجره تأیید هنگام ایجاد یادداشت روزانه جدید.'
             },
             calendarShowHiddenItems: {
                 name: 'نمایش آیتم‌های مخفی',
-                desc: 'وقتی فعال، تقویم همیشه همه یادداشت‌های تقویم را نشان می‌دهد، از جمله یادداشت‌های پنهان‌شده توسط فیلترهای نمایه خزانه.'
+                desc: 'وقتی فعال، تقویم همیشه همه یادداشت‌های تقویم را نشان می‌دهد، از جمله یادداشت‌های پنهان‌شده توسط فیلترهای پروفایل خزانه.'
             },
             dailyNoteSource: {
                 name: 'منبع یادداشت روزانه',
                 desc: 'منبع یادداشت‌های تقویم.',
                 options: {
-                    dailyNotes: 'یادداشت‌های روزانه (پلاگین اصلی)',
+                    dailyNotes: 'یادداشت‌های روزانه (افزونه اصلی)',
                     notebookNavigator: 'Notebook Navigator'
                 },
                 info: {
@@ -1700,19 +1702,19 @@ export const STRINGS_FA = {
             },
 
             periodicNotesRootFolder: {
-                name: 'پوشه ریشه',
-                desc: 'پوشه پایه برای یادداشت‌های دوره‌ای. الگوهای تاریخ می‌توانند شامل زیرپوشه‌ها باشند. با پروفایل صندوق انتخاب شده تغییر می‌کند.',
-                placeholder: 'Personal/Diary'
+                name: 'پوشه ریشه (پروفایل خزانه)',
+                desc: 'پوشه پایه برای یادداشت‌های دوره‌ای. الگوهای تاریخ می‌توانند شامل زیرپوشه‌ها باشند. با پروفایل خزانه انتخاب‌شده تغییر می‌کند.',
+                placeholder: 'شخصی/خاطرات'
             },
             templateFolderLocation: {
-                name: 'محل پوشه قالب',
-                desc: 'انتخابگر فایل قالب یادداشت‌های این پوشه را نمایش می‌دهد.',
-                placeholder: 'Templates',
+                name: 'محل پوشه الگوها',
+                desc: 'انتخابگر فایل الگو یادداشت‌های این پوشه را نمایش می‌دهد.',
+                placeholder: 'الگوها',
                 usage: 'برای یادداشت‌های تقویم و یادداشت‌های پوشه استفاده می‌شود. الگوها را در تقویم > یکپارچه‌سازی تقویم و پوشه‌ها و یادداشت‌های پوشه > فایل‌های یادداشت پوشه پیکربندی کنید.'
             },
             calendarDailyNotePattern: {
                 name: 'یادداشت‌های روزانه',
-                desc: 'قالب‌بندی مسیر با استفاده از فرمت تاریخ Moment. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی نماد قالب کلیک کنید تا قالب تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
+                desc: 'قالب‌بندی مسیر با استفاده از قالب تاریخ Moment. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'الگو باید بتواند به یک تاریخ کامل (سال، ماه، روز) قالب‌بندی شود و دوباره به همان تاریخ تجزیه شود.'
             },
@@ -1720,15 +1722,15 @@ export const STRINGS_FA = {
                 momentDescPrefix: 'قالب‌بندی مسیر با استفاده از ',
                 momentLinkText: 'فرمت تاریخ Moment',
                 momentDescSuffix:
-                    '. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی نماد قالب کلیک کنید تا قالب تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
+                    '. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
                 templateTokenNoticeLabel: 'مهم!',
                 templateTokenNotice:
-                    'پشتیبانی از قالب‌ها به افزونه Templater نیاز دارد. قالب‌های داخلی مانند {{date}} و {{title}} فقط زمانی کار می‌کنند که {source} روی {option} تنظیم شده باشد.',
+                    'پشتیبانی از الگوها به افزونه Templater نیاز دارد. قالب‌های داخلی مانند {{date}} و {{title}} فقط زمانی کار می‌کنند که {source} روی {option} تنظیم شده باشد.',
                 example: 'نحوه نگارش فعلی: {path}'
             },
             templaterSupport: {
-                installed: '✅ افزونه Templater با پشتیبانی کامل از قالب‌ها نصب شده است.',
-                missing: '⚠️ برای پشتیبانی از قالب‌ها، افزونه Templater را نصب کنید.'
+                installed: '✅ افزونه Templater با پشتیبانی کامل از الگوها نصب شده است.',
+                missing: '⚠️ برای پشتیبانی از الگوها، افزونه Templater را نصب کنید.'
             },
             calendarWeeklyNotePattern: {
                 name: 'یادداشت‌های هفتگی',
@@ -1751,11 +1753,11 @@ export const STRINGS_FA = {
                 parsingError: 'الگو باید بتواند به یک سال کامل (سال) قالب‌بندی شود و دوباره تجزیه شود.'
             },
             periodicNoteTemplateFile: {
-                current: 'فایل قالب: {name}'
+                current: 'فایل الگو: {name}'
             },
             showTooltips: {
                 name: 'نمایش راهنماها',
-                desc: 'راهنماهای hover را با اطلاعات اضافی برای یادداشت‌ها و پوشه‌ها نمایش دهید.'
+                desc: 'هنگام قرار گرفتن روی یادداشت‌ها و پوشه‌ها، راهنماهایی با اطلاعات اضافی نمایش دهید.'
             },
             showTooltipPath: {
                 name: 'نمایش مسیر در راهنماها',
@@ -1769,7 +1771,7 @@ export const STRINGS_FA = {
                 name: 'بازنشانی موقعیت جداکننده پنل',
                 desc: 'جداکننده قابل کشیدن بین پنل ناوبری و پنل لیست را به موقعیت پیش‌فرض بازنشانی کنید.',
                 buttonText: 'بازنشانی جداکننده',
-                notice: 'موقعیت جداکننده بازنشانی شد. اوبسیدین را ری‌استارت کنید یا Notebook Navigator را دوباره باز کنید.'
+                notice: 'موقعیت جداکننده بازنشانی شد. Obsidian را دوباره راه‌اندازی کنید یا Notebook Navigator را دوباره باز کنید.'
             },
             importAndExportSettings: {
                 name: 'وارد و صادر کردن تنظیمات',
@@ -1814,8 +1816,8 @@ export const STRINGS_FA = {
                 confirmTitle: 'بازنشانی همه تنظیمات؟',
                 confirmMessage: 'این کار همه تنظیمات Notebook Navigator را به مقادیر پیش‌فرض بازنشانی می‌کند. قابل برگشت نیست.',
                 confirmButtonText: 'بازنشانی همه تنظیمات',
-                notice: 'همه تنظیمات بازنشانی شد. اوبسیدین را ری‌استارت کنید یا Notebook Navigator را دوباره باز کنید.',
-                error: 'بازنشانی تنظیمات ناموفق بود'
+                notice: 'همه تنظیمات بازنشانی شد. Obsidian را دوباره راه‌اندازی کنید یا Notebook Navigator را دوباره باز کنید.',
+                error: 'بازنشانی تنظیمات ناموفق بود.'
             },
             multiSelectModifier: {
                 name: 'کلید تغییردهنده انتخاب چندگانه',
@@ -1852,10 +1854,10 @@ export const STRINGS_FA = {
             },
             showFileTypes: {
                 name: 'نمایش انواع فایل (پروفایل خزانه)',
-                desc: 'فیلتر کنید کدام انواع فایل در ناوبر نمایش داده شوند. انواع فایل پشتیبانی‌نشده توسط اوبسیدین ممکن است در برنامه‌های خارجی باز شوند.',
+                desc: 'فیلتر کنید کدام انواع فایل در ناوبر نمایش داده شوند. انواع فایل پشتیبانی‌نشده توسط Obsidian ممکن است در برنامه‌های خارجی باز شوند.',
                 options: {
                     documents: 'اسناد (.md, .canvas, .base)',
-                    supported: 'پشتیبانی‌شده (در اوبسیدین باز می‌شود)',
+                    supported: 'پشتیبانی‌شده (در Obsidian باز می‌شود)',
                     all: 'همه (ممکن است خارجی باز شود)'
                 }
             },
@@ -1889,8 +1891,8 @@ export const STRINGS_FA = {
             },
             hideFiles: {
                 name: 'مخفی کردن فایل‌ها (پروفایل خزانه)',
-                desc: 'لیست الگوهای نام فایل جدا شده با کاما برای مخفی کردن. از علامت‌های عام * و مسیرهای / پشتیبانی می‌کند (مثل temp-*، *.png، /assets/*).',
-                placeholder: 'temp-*, *.png, /assets/*'
+                desc: 'لیست الگوهای نام فایل جدا شده با کاما برای مخفی کردن. از علامت‌های عام * و مسیرهای / پشتیبانی می‌کند (مثل temp-*, *.png, /assets/*).',
+                placeholder: 'موقت-*, *.png, /assets/*'
             },
             vaultProfiles: {
                 name: 'پروفایل خزانه',
@@ -1925,12 +1927,12 @@ export const STRINGS_FA = {
             hideFolders: {
                 name: 'مخفی کردن پوشه‌ها (پروفایل خزانه)',
                 desc: 'لیست پوشه‌های جدا شده با کاما برای مخفی کردن. الگوهای نام: assets* (پوشه‌های شروع‌شده با assets)، *_temp (پایان‌یافته با _temp). الگوهای مسیر: /archive (فقط archive اصلی)، /res* (پوشه‌های اصلی شروع‌شده با res)، /*/temp (پوشه‌های temp یک سطح عمیق)، /projects/* (همه پوشه‌های داخل projects).',
-                placeholder: 'قالب‌ها، assets*، /archive، /res*'
+                placeholder: 'الگوها, assets*, /archive, /res*'
             },
             descendantExcludedFolders: {
-                name: 'مستثنی کردن پوشه‌ها از یادداشت‌های زیرپوشه‌ها (نمایه خزانه)',
+                name: 'مستثنی کردن پوشه‌ها از یادداشت‌های زیرپوشه‌ها (پروفایل خزانه)',
                 desc: 'فهرست پوشه‌های جداشده با کاما که هنگام جمع‌آوری یادداشت‌ها از زیرپوشه‌ها نادیده گرفته می‌شوند. پوشه‌ها همچنان قابل مشاهده می‌مانند و با انتخاب آن‌ها یادداشت‌هایشان نمایش داده می‌شود. از همان الگوهای مخفی کردن پوشه‌ها استفاده می‌کند.',
-                placeholder: 'روزانه، منابع، /archive'
+                placeholder: 'روزانه, منابع, /archive'
             },
             showFileDate: {
                 name: 'نمایش تاریخ',
@@ -2038,7 +2040,7 @@ export const STRINGS_FA = {
                 name: 'قالب تاریخ',
                 desc: 'قالب نمایش تاریخ‌ها (از قالب Moment استفاده می‌کند).',
                 placeholder: 'YYYY/MM/DD',
-                help: 'قالب‌های رایج:\nYYYY/MM/DD = ۱۴۰۱/۰۵/۲۵\nDD/MM/YYYY = ۲۵/۰۵/۲۰۲۲\nYYYY-MM-DD = 2022-05-25\n\nتوکن‌ها:\nYYYY/YY = سال\nMMMM/MMM/MM = ماه\nDD/D = روز\ndddd/ddd = روز هفته',
+                help: 'قالب‌های رایج:\nYYYY/MM/DD = ۲۰۲۲/۰۵/۲۵\nDD/MM/YYYY = ۲۵/۰۵/۲۰۲۲\nYYYY-MM-DD = ۲۰۲۲-۰۵-۲۵\n\nتوکن‌ها:\nYYYY/YY = سال\nMMMM/MMM/MM = ماه\nDD/D = روز\ndddd/ddd = روز هفته',
                 helpTooltip: 'قالب با استفاده از Moment',
                 momentLinkText: 'قالب Moment'
             },
@@ -2118,7 +2120,7 @@ export const STRINGS_FA = {
             featureImageProperties: {
                 name: 'ویژگی‌های تصویر',
                 desc: 'لیست ویژگی‌های فرانت‌متر جدا شده با کاما برای بررسی در ابتدا. در صورت عدم یافتن، از اولین تصویر در محتوای markdown استفاده می‌شود.',
-                placeholder: 'بندانگشتی، تصویر'
+                placeholder: 'thumbnail, featureResized, feature'
             },
             featureImageExcludeProperties: {
                 name: 'استثنای یادداشت‌ها با ویژگی‌ها',
@@ -2150,7 +2152,7 @@ export const STRINGS_FA = {
             },
             hideExportedPreviewImages: {
                 name: 'پنهان کردن تصاویر پیش‌نمایش صادر شده',
-                desc: 'پنهان کردن فایل‌های PNG پیش‌نمایش طراحی صادر شده. برای نمایش آن‌ها، «نمایش موارد پنهان» را روشن کنید.'
+                desc: 'پنهان کردن فایل‌های PNG پیش‌نمایش طراحی صادر شده. برای نمایش آن‌ها، «نمایش آیتم‌های مخفی» را روشن کنید.'
             },
             drawingIntegrationInfo: {
                 intro: 'Notebook Navigator فایل‌های PNG صادر شده توسط Excalidraw را به‌عنوان پیش‌نمایش طراحی نمایش می‌دهد.',
@@ -2158,7 +2160,7 @@ export const STRINGS_FA = {
                     'در **تنظیمات Excalidraw**، **Embedding Excalidraw into your Notes and Exporting** را باز کنید، سپس **Export Settings**، سپس **Auto-export Settings**.',
                     '**Auto-export PNG** را فعال کنید. به‌صورت اختیاری **Export both dark- and light-themed image** را فعال کنید.',
                     'Notebook Navigator به دنبال **Drawing.excalidraw.png**، **Drawing.excalidraw.dark.png** یا **Drawing.excalidraw.light.png** می‌گردد.',
-                    'هنگامی که **پنهان کردن تصاویر پیش‌نمایش صادر شده** روشن است، فایل‌های PNG فقط زمانی نمایش داده می‌شوند که **نمایش موارد پنهان** نیز روشن باشد.'
+                    'هنگامی که **پنهان کردن تصاویر پیش‌نمایش صادر شده** روشن است، فایل‌های PNG فقط زمانی نمایش داده می‌شوند که **نمایش آیتم‌های مخفی** نیز روشن باشد.'
                 ]
             },
             showRootFolder: {
@@ -2352,11 +2354,11 @@ export const STRINGS_FA = {
             },
             showTagsFolder: {
                 name: 'نمایش پوشه برچسب‌ها',
-                desc: '"برچسب‌ها" را به عنوان پوشه قابل جمع‌شدن نمایش دهید.'
+                desc: '«برچسب‌ها» را به عنوان پوشه قابل جمع‌شدن نمایش دهید.'
             },
             showUntaggedNotes: {
                 name: 'نمایش یادداشت‌های بدون برچسب',
-                desc: 'آیتم "بدون برچسب" را برای یادداشت‌های بدون برچسب نمایش دهید.'
+                desc: 'آیتم «بدون برچسب» را برای یادداشت‌های بدون برچسب نمایش دهید.'
             },
             filterTagsBySelection: {
                 name: 'فیلتر برچسب‌ها بر اساس انتخاب',
@@ -2370,12 +2372,12 @@ export const STRINGS_FA = {
                 name: 'نمایش ویژگی‌ها',
                 desc: 'نمایش بخش ویژگی‌ها در ناوبر.',
                 propertyKeysInfoPrefix: 'پیکربندی ویژگی‌ها در ',
-                propertyKeysInfoLinkText: 'شروع > کلیدهای ویژگی',
+                propertyKeysInfoLinkText: 'عمومی > کلیدهای ویژگی',
                 propertyKeysInfoSuffix: ''
             },
             showPropertyIcons: {
-                name: 'نمایش نمادهای ویژگی',
-                desc: 'نمایش نمادها در کنار ویژگی‌ها در پنل ناوبری.'
+                name: 'نمایش آیکون‌های ویژگی',
+                desc: 'نمایش آیکون‌ها در کنار ویژگی‌ها در پنل ناوبری.'
             },
             inheritPropertyColors: {
                 name: 'ارث‌بری رنگ‌های ویژگی',
@@ -2394,7 +2396,7 @@ export const STRINGS_FA = {
             },
             showPropertiesFolder: {
                 name: 'نمایش پوشه ویژگی‌ها',
-                desc: 'نمایش "ویژگی‌ها" به عنوان پوشه جمع‌شدنی.'
+                desc: 'نمایش «ویژگی‌ها» به عنوان پوشه جمع‌شدنی.'
             },
             filterPropertiesBySelection: {
                 name: 'فیلتر ویژگی‌ها بر اساس انتخاب',
@@ -2402,13 +2404,13 @@ export const STRINGS_FA = {
             },
             hideTags: {
                 name: 'مخفی کردن برچسب‌ها (پروفایل خزانه)',
-                desc: 'لیست الگوهای برچسب جدا شده با کاما. الگوهای نام: tag* (شروع با)، *tag (پایان با). الگوهای مسیر: archive (برچسب و فرزندان)، archive/* (فقط فرزندان)، projects/*/drafts (wildcard میانی).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                desc: 'لیست الگوهای برچسب جدا شده با کاما. الگوهای نام: برچسب* (شروع با)، *برچسب (پایان با). الگوهای مسیر: آرشیو (برچسب و فرزندان)، آرشیو/* (فقط فرزندان)، پروژه/*/پیشنویس (wildcard میانی).',
+                placeholder: 'آرشیو*, *پیشنویس, پروژه/*/قدیمی'
             },
             hideNotesWithTags: {
                 name: 'مخفی کردن یادداشت‌ها با برچسب‌ها (پروفایل خزانه)',
-                desc: 'Comma-separated list of tag patterns. Notes containing matching tags are hidden. Name patterns: tag* (starting with), *tag (ending with). Path patterns: archive (tag and descendants), archive/* (descendants only), projects/*/drafts (mid-segment wildcard).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                desc: 'لیست الگوهای برچسب جدا شده با کاما. یادداشت‌های دارای برچسب‌های منطبق مخفی می‌شوند. الگوهای نام: برچسب* (شروع با)، *برچسب (پایان با). الگوهای مسیر: آرشیو (برچسب و فرزندان)، آرشیو/* (فقط فرزندان)، پروژه/*/پیشنویس (wildcard میانی).',
+                placeholder: 'آرشیو*, *پیشنویس, پروژه/*/قدیمی'
             },
             enableFolderNotes: {
                 name: 'فعال کردن یادداشت‌های پوشه',
@@ -2426,12 +2428,7 @@ export const STRINGS_FA = {
             },
             folderNoteName: {
                 name: 'نام یادداشت پوشه',
-                desc: 'نام یادداشت پوشه بدون پسوند. برای استفاده از نام پوشه خالی بگذارید.',
-                placeholder: 'index'
-            },
-            folderNoteNamePattern: {
-                name: 'الگوی نام یادداشت پوشه',
-                desc: 'الگوی نام یادداشت پوشه بدون پسوند. از {{folder}} برای درج نام پوشه استفاده کنید. در صورت تنظیم، نام یادداشت پوشه اعمال نمی‌شود.'
+                desc: 'نام یادداشت پوشه بدون پسوند. از {{folder}} برای درج نام پوشه استفاده کنید، یا یک نام ثابت مانند index وارد کنید.'
             },
             folderNoteTemplate: {
                 name: 'الگوی یادداشت پوشه',
@@ -2480,13 +2477,13 @@ export const STRINGS_FA = {
                 name: 'تعارضات انتقال',
                 desc: 'هنگام انتقال فایل به پوشه‌ای که فایلی با همان نام وجود دارد. هر بار بپرسید (تغییر نام، بازنویسی، لغو) یا همیشه تغییر نام دهید.',
                 options: {
-                    ask: 'هر بار بپرسید',
+                    ask: 'هر بار بپرس',
                     rename: 'همیشه تغییر نام'
                 }
             },
             metadataCleanup: {
                 name: 'پاکسازی متادیتا',
-                desc: 'متادیتای یتیم را که هنگام حذف، انتقال یا تغییر نام فایل‌ها، پوشه‌ها، برچسب‌ها یا ویژگی‌ها خارج از اوبسیدین باقی مانده حذف می‌کند. این فقط فایل تنظیمات Notebook Navigator را تحت تأثیر قرار می‌دهد.',
+                desc: 'متادیتای یتیم را که هنگام حذف، انتقال یا تغییر نام فایل‌ها، پوشه‌ها، برچسب‌ها یا ویژگی‌ها خارج از Obsidian باقی مانده حذف می‌کند. این فقط فایل تنظیمات Notebook Navigator را تحت تأثیر قرار می‌دهد.',
                 buttonText: 'پاکسازی متادیتا',
                 error: 'پاکسازی تنظیمات ناموفق بود',
                 loading: 'بررسی متادیتا...',
@@ -2559,7 +2556,7 @@ export const STRINGS_FA = {
                 placeholder: 'modified'
             },
             frontmatterTimestampFormat: {
-                name: 'قالب زمان',
+                name: 'قالب نشانه زمانی',
                 desc: 'قالب استفاده‌شده برای تجزیه زمان‌ها در فرانت‌متر. برای استفاده از تجزیه ISO 8601 خالی بگذارید.',
                 helpTooltip: 'قالب با استفاده از Moment',
                 momentLinkText: 'قالب Moment',
@@ -2571,6 +2568,11 @@ export const STRINGS_FA = {
                 buttonText: '❤️ حمایت مالی',
                 coffeeButton: '☕️ یک قهوه مهمانم کن'
             },
+            otherPlugins: {
+                name: 'افزونه‌های دیگرم را ببینید',
+                betterPaste: 'پاکسازی متن، پیوندها و تصاویر چسبانده‌شده',
+                pixelPerfectImage: 'تغییر اندازه دقیق تصویر و بیشتر'
+            },
             checkForNewVersionOnStart: {
                 name: 'بررسی نسخه جدید هنگام شروع',
                 desc: 'هنگام شروع نسخه‌های جدید افزونه را بررسی می‌کند و هنگام در دسترس بودن به‌روزرسانی اعلان نمایش می‌دهد. بررسی‌ها حداکثر روزی یک بار انجام می‌شوند.',
@@ -2581,7 +2583,7 @@ export const STRINGS_FA = {
                 desc: 'تشخیص‌های راه‌اندازی را در یک فایل Markdown زمان‌دار در ریشه خزانه می‌نویسد و پس از پایدار شدن راه‌اندازی متوقف می‌شود. فایل ممکن است همگام‌سازی شود و می‌تواند مسیرهای فایل را شامل شود.'
             },
             whatsNew: {
-                name: 'چه چیزی جدید است در Notebook Navigator {version}',
+                name: 'چه چیزی در Notebook Navigator {version} جدید است',
                 desc: 'به‌روزرسانی‌ها و بهبودهای اخیر را ببینید',
                 buttonText: 'مشاهده به‌روزرسانی‌های اخیر'
             },
@@ -2607,13 +2609,13 @@ export const STRINGS_FA = {
                 failedToParse: 'تجزیه ناموفق بود',
                 createdDates: 'تاریخ‌های ایجاد',
                 modifiedDates: 'تاریخ‌های تغییر',
-                checkTimestampFormat: 'قالب زمان خود را بررسی کنید.',
+                checkTimestampFormat: 'قالب نشانه زمانی خود را بررسی کنید.',
                 exportFailed: 'صادر کردن خطاها'
             }
         }
     },
     whatsNew: {
-        title: 'چه چیزی جدید است در Notebook Navigator',
+        title: 'چه چیزی در Notebook Navigator جدید است',
         openBannerImage: 'باز کردن تصویر بنر انتشار',
         supportMessage: 'اگر Notebook Navigator را مفید می‌دانید، لطفاً حمایت از توسعه آن را در نظر بگیرید.',
         supportButton: 'یک قهوه مهمانم کن',

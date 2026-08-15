@@ -17,12 +17,10 @@
  */
 
 export interface FolderNoteNameSettings {
-    folderNoteName: string;
-    folderNoteNamePattern?: string;
+    folderNoteNamePattern: string;
 }
 
-const FOLDER_NOTE_NAME_PATTERN_TOKEN = '{{folder}}';
-export const FOLDER_NOTE_NAME_PATTERN_PLACEHOLDER = '_{{folder}}';
+export const FOLDER_NOTE_NAME_PATTERN_TOKEN = '{{folder}}';
 
 const FOLDER_NOTE_NAME_TOKEN_PATTERN = /\{\{\s*folder\s*\}\}/giu;
 const LEGACY_FOLDER_NOTE_NAME_TOKEN_PATTERN = /\{\{\s*folder_name\s*\}\}/giu;
@@ -46,38 +44,21 @@ export function hasFolderNoteNameToken(pattern: string): boolean {
 
 /**
  * Resolves folder note basename from settings and folder name.
- * Pattern takes precedence over fixed name when pattern is configured.
+ * A pattern without the folder token is a fixed name, while an empty pattern retains folder-name naming.
  */
 export function resolveFolderNoteName(folderName: string, settings: FolderNoteNameSettings): string {
-    const pattern = settings.folderNoteNamePattern;
-    if (typeof pattern === 'string' && pattern.length > 0) {
-        const normalizedPattern = normalizeFolderNoteNamePattern(pattern);
-        FOLDER_NOTE_NAME_TOKEN_PATTERN.lastIndex = 0;
-        const resolvedPatternName = normalizedPattern.replace(FOLDER_NOTE_NAME_TOKEN_PATTERN, () => folderName);
-        if (resolvedPatternName.length > 0) {
-            return resolvedPatternName;
-        }
+    if (settings.folderNoteNamePattern.length === 0) {
+        return folderName;
     }
 
-    if (settings.folderNoteName.length > 0) {
-        return settings.folderNoteName;
-    }
-
-    return folderName;
+    const normalizedPattern = normalizeFolderNoteNamePattern(settings.folderNoteNamePattern);
+    FOLDER_NOTE_NAME_TOKEN_PATTERN.lastIndex = 0;
+    return normalizedPattern.replace(FOLDER_NOTE_NAME_TOKEN_PATTERN, () => folderName) || folderName;
 }
 
 /**
  * Returns true when folder note basename depends on the current folder name.
  */
 export function shouldRenameFolderNoteWithFolderName(settings: FolderNoteNameSettings): boolean {
-    const pattern = settings.folderNoteNamePattern;
-    if (typeof pattern === 'string' && pattern.length > 0) {
-        return hasFolderNoteNameToken(pattern);
-    }
-
-    if (settings.folderNoteName.length > 0) {
-        return false;
-    }
-
-    return true;
+    return settings.folderNoteNamePattern.length === 0 || hasFolderNoteNameToken(settings.folderNoteNamePattern);
 }

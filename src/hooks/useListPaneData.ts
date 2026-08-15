@@ -83,6 +83,8 @@ interface UseListPaneDataParams {
     groupBy: ListNoteGroupingOption;
     /** Effective tag visibility for the current list selection */
     showFileTags: boolean;
+    /** Effective date visibility for the current list selection */
+    showFileDate: boolean;
     /** Whether the pinned section is expanded in the current context */
     pinnedGroupExpanded: boolean;
     /** Collapsed list group keys for the current vault */
@@ -139,6 +141,7 @@ export function useListPaneData({
     activeProfile,
     groupBy,
     showFileTags,
+    showFileDate,
     pinnedGroupExpanded,
     collapsedListGroups,
     searchProvider,
@@ -258,7 +261,6 @@ export function useListPaneData({
         settings.enableFolderNotes,
         settings.hideFolderNoteInList,
         settings.hideDrawingPreviewImages,
-        settings.folderNoteName,
         settings.folderNoteNamePattern,
         settings.useFrontmatterMetadata,
         settings.frontmatterNameField,
@@ -554,6 +556,7 @@ export function useListPaneData({
         selectionType,
         settings,
         shouldRefreshOnCustomGroupHeaderMetadataChange,
+        showFileDate,
         showHiddenItems,
         sortOption,
         propertySortKey: sortSpec.propertyKey,

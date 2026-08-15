@@ -36,7 +36,6 @@ export interface FolderNoteDetectionSettings extends FolderNoteNameSettings {
 export function getFolderNoteDetectionSettings(settings: FolderNoteDetectionSettings): FolderNoteDetectionSettings {
     return {
         enableFolderNotes: settings.enableFolderNotes,
-        folderNoteName: settings.folderNoteName,
         folderNoteNamePattern: settings.folderNoteNamePattern
     };
 }
