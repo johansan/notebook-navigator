@@ -1018,7 +1018,7 @@ export const STRINGS_FA = {
             label: 'عمومی',
             description: 'یادداشت‌های انتشار، پشتیبانی، پروفایل خزانه، انواع فایل و کلیدهای ویژگی.',
             groups: {
-                vaultSetup: 'پیکربندی خزانه'
+                about: 'درباره'
             }
         },
         pageGroups: {

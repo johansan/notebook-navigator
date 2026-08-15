@@ -1019,7 +1019,7 @@ export const STRINGS_VI = {
             label: 'Chung',
             description: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
             groups: {
-                vaultSetup: 'Thiết lập vault'
+                about: 'Giới thiệu'
             }
         },
         pageGroups: {
@@ -2570,7 +2570,7 @@ export const STRINGS_VI = {
             otherPlugins: {
                 name: 'Xem các plugin khác của tôi',
                 betterPaste: 'Dọn dẹp văn bản, liên kết và ảnh đã dán',
-                pixelPerfectImage: 'Đổi kích thước ảnh chính xác và nhiều hơn nữa'
+                pixelPerfectImage: 'Đổi kích thước ảnh chính xác và hơn thế nữa'
             },
             checkForNewVersionOnStart: {
                 name: 'Kiểm tra phiên bản mới khi khởi động',

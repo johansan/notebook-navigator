@@ -1018,7 +1018,7 @@ export const STRINGS_PT = {
             label: 'Geral',
             description: 'Notas de versão, suporte, perfil do cofre, tipos de ficheiro e chaves de propriedades.',
             groups: {
-                vaultSetup: 'Configuração do cofre'
+                about: 'Sobre'
             }
         },
         pageGroups: {
@@ -2572,7 +2572,7 @@ export const STRINGS_PT = {
             otherPlugins: {
                 name: 'Veja os meus outros plugins',
                 betterPaste: 'Limpa texto, ligações e imagens colados',
-                pixelPerfectImage: 'Redimensionamento exato de imagens e muito mais'
+                pixelPerfectImage: 'Redimensionamento exato de imagens e mais'
             },
             checkForNewVersionOnStart: {
                 name: 'Verificar nova versão ao iniciar',

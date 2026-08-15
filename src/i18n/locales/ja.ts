@@ -1017,7 +1017,7 @@ export const STRINGS_JA = {
             label: '一般設定',
             description: 'リリースノート、サポート、保管庫プロファイル、ファイルタイプ、プロパティキー。',
             groups: {
-                vaultSetup: '保管庫のセットアップ'
+                about: 'このプラグインについて'
             }
         },
         pageGroups: {

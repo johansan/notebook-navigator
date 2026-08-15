@@ -1010,7 +1010,7 @@ export const STRINGS_ZH_TW = {
             label: '一般',
             description: '發行說明、支援、保險庫設定檔、檔案類型與屬性鍵。',
             groups: {
-                vaultSetup: '保險庫設定'
+                about: '關於'
             }
         },
         pageGroups: {

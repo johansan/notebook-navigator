@@ -1021,7 +1021,7 @@ export const STRINGS_DE = {
             label: 'Allgemein',
             description: 'Versionshinweise, Support, Tresorprofil, Dateitypen und Eigenschaftsschlüssel.',
             groups: {
-                vaultSetup: 'Tresor-Einrichtung'
+                about: 'Über'
             }
         },
         pageGroups: {
@@ -2574,7 +2574,7 @@ export const STRINGS_DE = {
             otherPlugins: {
                 name: 'Schau dir meine anderen Plugins an',
                 betterPaste: 'Räumt eingefügten Text, Links und Bilder auf',
-                pixelPerfectImage: 'Exakte Bildgrößen und vieles mehr'
+                pixelPerfectImage: 'Exakte Bildgrößen und mehr'
             },
             checkForNewVersionOnStart: {
                 name: 'Beim Start nach neuer Version suchen',

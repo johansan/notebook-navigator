@@ -1013,7 +1013,7 @@ export const STRINGS_AR = {
             label: 'عام',
             description: 'ملاحظات الإصدار والدعم وملف الخزنة وأنواع الملفات ومفاتيح الخصائص.',
             groups: {
-                vaultSetup: 'إعداد الخزنة'
+                about: 'حول'
             }
         },
         pageGroups: {

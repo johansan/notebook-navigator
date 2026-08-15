@@ -1011,7 +1011,7 @@ export const STRINGS_TH = {
             label: 'ทั่วไป',
             description: 'บันทึกการเผยแพร่ การสนับสนุน โปรไฟล์ห้องนิรภัย ประเภทไฟล์ และคีย์คุณสมบัติ',
             groups: {
-                vaultSetup: 'การตั้งค่าห้องนิรภัย'
+                about: 'เกี่ยวกับ'
             }
         },
         pageGroups: {
@@ -2561,7 +2561,7 @@ export const STRINGS_TH = {
             otherPlugins: {
                 name: 'ดูปลั๊กอินอื่นของฉัน',
                 betterPaste: 'จัดระเบียบข้อความ ลิงก์ และรูปภาพที่วาง',
-                pixelPerfectImage: 'ปรับขนาดภาพได้แม่นยำและอื่น ๆ อีกมาก'
+                pixelPerfectImage: 'ปรับขนาดภาพได้แม่นยำและอื่น ๆ'
             },
             checkForNewVersionOnStart: {
                 name: 'ตรวจสอบเวอร์ชันใหม่เมื่อเริ่ม',

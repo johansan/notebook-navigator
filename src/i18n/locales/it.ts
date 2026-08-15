@@ -1014,7 +1014,7 @@ export const STRINGS_IT = {
             label: 'Generale',
             description: 'Note di rilascio, supporto, profilo vault, tipi di file e chiavi delle proprietà.',
             groups: {
-                vaultSetup: 'Configurazione vault'
+                about: 'Informazioni'
             }
         },
         pageGroups: {
@@ -2568,7 +2568,7 @@ export const STRINGS_IT = {
             otherPlugins: {
                 name: 'Scopri i miei altri plugin',
                 betterPaste: 'Ripulisce testo, link e immagini incollati',
-                pixelPerfectImage: 'Ridimensionamento esatto delle immagini e molto altro'
+                pixelPerfectImage: 'Ridimensionamento esatto delle immagini e altro'
             },
             checkForNewVersionOnStart: {
                 name: "Controlla nuova versione all'avvio",

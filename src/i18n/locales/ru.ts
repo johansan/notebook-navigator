@@ -1015,7 +1015,7 @@ export const STRINGS_RU = {
             label: 'Общие',
             description: 'Заметки о выпуске, поддержка, профиль хранилища, типы файлов и ключи свойств.',
             groups: {
-                vaultSetup: 'Настройка хранилища'
+                about: 'О плагине'
             }
         },
         pageGroups: {
@@ -2566,7 +2566,7 @@ export const STRINGS_RU = {
             otherPlugins: {
                 name: 'Посмотрите мои другие плагины',
                 betterPaste: 'Очищает вставленный текст, ссылки и изображения',
-                pixelPerfectImage: 'Точное изменение размера изображений и многое другое'
+                pixelPerfectImage: 'Точное изменение размера изображений и другое'
             },
             checkForNewVersionOnStart: {
                 name: 'Проверять новую версию при запуске',
