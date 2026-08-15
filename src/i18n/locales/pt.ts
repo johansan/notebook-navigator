@@ -438,6 +438,8 @@ export const STRINGS_PT = {
         tags: 'Etiquetas',
         properties: 'Propriedades',
         tasks: 'Tarefas',
+        date: 'Data',
+        parentFolder: 'Pasta pai',
         textCount: {
             label: 'Contagem de texto',
             options: {

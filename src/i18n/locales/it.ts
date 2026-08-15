@@ -437,6 +437,8 @@ export const STRINGS_IT = {
         tags: 'Etichette',
         properties: 'Proprietà',
         tasks: 'Attività',
+        date: 'Data',
+        parentFolder: 'Cartella superiore',
         textCount: {
             label: 'Conteggio testo',
             options: {

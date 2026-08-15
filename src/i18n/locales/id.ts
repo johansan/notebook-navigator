@@ -438,6 +438,8 @@ export const STRINGS_ID = {
         tags: 'Tag',
         properties: 'Properti',
         tasks: 'Tugas',
+        date: 'Tanggal',
+        parentFolder: 'Folder induk',
         textCount: {
             label: 'Hitungan teks',
             options: {

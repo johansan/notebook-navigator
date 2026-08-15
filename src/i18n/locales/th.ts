@@ -437,6 +437,8 @@ export const STRINGS_TH = {
         tags: 'แท็ก',
         properties: 'คุณสมบัติ',
         tasks: 'งาน',
+        date: 'วันที่',
+        parentFolder: 'โฟลเดอร์หลัก',
         textCount: {
             label: 'การนับข้อความ',
             options: {

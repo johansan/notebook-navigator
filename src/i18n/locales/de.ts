@@ -438,6 +438,8 @@ export const STRINGS_DE = {
         tags: 'Tags',
         properties: 'Eigenschaften',
         tasks: 'Aufgaben',
+        date: 'Datum',
+        parentFolder: 'Übergeordneter Ordner',
         textCount: {
             label: 'Textzählung',
             options: {

@@ -437,6 +437,8 @@ export const STRINGS_AR = {
         tags: 'وسوم',
         properties: 'الخصائص',
         tasks: 'المهام',
+        date: 'التاريخ',
+        parentFolder: 'المجلد الأصلي',
         textCount: {
             label: 'عدد النص',
             options: {

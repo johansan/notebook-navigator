@@ -438,6 +438,8 @@ export const STRINGS_TR = {
         tags: 'Etiketler',
         properties: 'Özellikler',
         tasks: 'Görevler',
+        date: 'Tarih',
+        parentFolder: 'Üst klasör',
         textCount: {
             label: 'Metin sayımı',
             options: {

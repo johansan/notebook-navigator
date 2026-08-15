@@ -437,6 +437,8 @@ export const STRINGS_JA = {
         tags: 'タグ',
         properties: 'プロパティ',
         tasks: 'タスク',
+        date: '日付',
+        parentFolder: '親フォルダ',
         textCount: {
             label: 'テキストカウント',
             options: {

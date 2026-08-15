@@ -436,6 +436,8 @@ export const STRINGS_KO = {
         tags: '태그',
         properties: '속성',
         tasks: '작업',
+        date: '날짜',
+        parentFolder: '상위 폴더',
         textCount: {
             label: '텍스트 수',
             options: {

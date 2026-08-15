@@ -439,6 +439,8 @@ export const STRINGS_UK = {
         tags: 'Мітки',
         properties: 'Властивості',
         tasks: 'Завдання',
+        date: 'Дата',
+        parentFolder: 'Батьківська тека',
         textCount: {
             label: 'Підрахунок тексту',
             options: {

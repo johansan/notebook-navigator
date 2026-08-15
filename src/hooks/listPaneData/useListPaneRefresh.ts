@@ -62,6 +62,8 @@ interface UseListPaneRefreshArgs {
     selectionType: ItemType | null;
     settings: NotebookNavigatorSettings;
     shouldRefreshOnCustomGroupHeaderMetadataChange: boolean;
+    /** Effective date visibility for the current selection, including per-selection appearance overrides */
+    showFileDate: boolean;
     showHiddenItems: boolean;
     sortOption: SortOption;
     propertySortKey: string;
@@ -208,6 +210,7 @@ export function useListPaneRefresh({
     selectionType,
     settings,
     shouldRefreshOnCustomGroupHeaderMetadataChange,
+    showFileDate,
     showHiddenItems,
     sortOption,
     propertySortKey,
@@ -381,7 +384,7 @@ export function useListPaneRefresh({
                             previousBoundaryRefreshKey,
                             boundaryRefreshKey,
                             hasDateSearchFilters,
-                            showFileDate: settings.showFileDate,
+                            showFileDate,
                             showTooltips: settings.showTooltips
                         })
                     ) {
@@ -592,7 +595,7 @@ export function useListPaneRefresh({
         propertySortKey,
         propertySortSecondary,
         settings.showFileBackgroundUnfinishedTask,
-        settings.showFileDate,
+        showFileDate,
         settings.showTooltips,
         settings.useFrontmatterMetadata,
         settings.wordCountTargetProperty,

@@ -598,7 +598,7 @@ export const FileItem = React.memo(function FileItem({
     const parentFolderSource = file.parent;
     const hasParentFolderSource = parentFolderSource instanceof TFolder;
     const shouldShowParentFolderLine = shouldShowFileItemParentFolderLine({
-        showParentFolder: settings.showParentFolder,
+        showParentFolder: appearanceSettings.showParentFolder,
         isPinned,
         selectionType,
         includeDescendantNotes,
