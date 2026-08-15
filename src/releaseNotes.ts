@@ -111,7 +111,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-17',
         showOnUpdate: true,
         banner: '3.3.4.gif',
-        info: "I just launched a new plugin: [Better Paste](obsidian://show-plugin?id=better-paste)!\n\nYou can now finally copy images from Safari to Obsidian, it cleans up tracking data from URLs, it cleans up AI-generated text, it let's you choose if you want commas inside our outside quotes, it fetches page titles for URLs like the plugin **Auto Link Title** which hasn't been updated in years, it cleans up text copied from terminal, and much more.\n\n**Better Paste** is already saving me lots of time every day, so feel free to give it a try and let me know if you like it!",
+        info: "I just launched a new plugin: [Better Paste](obsidian://show-plugin?id=better-paste)!\n\nYou can now finally copy images from Safari to Obsidian, it cleans up tracking data from URLs, it cleans up AI-generated text, it let's you choose if you want commas inside (\"x,\" ) or outside (\"x\", ) quotes, it fetches page titles for URLs like the plugin **Auto Link Title** which hasn't been updated in years, it cleans up text copied from terminal, and much more.\n\n**Better Paste** is already saving me lots of time every day, so feel free to give it a try and let me know if you like it!",
         improved: [
             'Changed settings sliders to match Obsidian 1.13 style with reset buttons to the left.',
             'Improved all 20 language translations. They now better match built-in Obsidian strings and usage context.'

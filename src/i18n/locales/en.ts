@@ -487,7 +487,7 @@ export const STRINGS_EN = {
             wordCountTarget: 'Target word count',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                'When this field is empty, the group goal uses the target property set in Settings > Notes > Word and character count. Override it by setting a target value for this group.',
+                'When this field is empty, the group goal uses the target property set in Settings > File display > Word and character count. Override it by setting a target value for this group.',
             description: 'Customize the group header for this note. Leave the title empty to remove the header.'
         },
         mergeNotes: {
@@ -2362,7 +2362,7 @@ export const STRINGS_EN = {
                 name: 'Show properties',
                 desc: 'Display properties section in the navigator.',
                 propertyKeysInfoPrefix: 'Configure properties in ',
-                propertyKeysInfoLinkText: 'Start > Property keys',
+                propertyKeysInfoLinkText: 'General > Property keys',
                 propertyKeysInfoSuffix: ''
             },
             showPropertyIcons: {

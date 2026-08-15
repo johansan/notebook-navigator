@@ -52,8 +52,8 @@ export const STRINGS_NL = {
         notesSection: 'Notities',
         filesSection: 'Bestanden',
         hiddenItemAriaLabel: '{name} (verborgen)',
-        collapseGroup: 'Groep samenvouwen',
-        expandGroup: 'Groep uitvouwen',
+        collapseGroup: 'Groep inklappen',
+        expandGroup: 'Groep uitklappen',
         manualSortTitle: 'Handmatig sorteren: {property}',
         manualSortHint:
             'Sleep om opnieuw te ordenen. De volgorde wordt opgeslagen als numerieke indexwaarden in de eigenschap "{property}".',
@@ -87,16 +87,16 @@ export const STRINGS_NL = {
         pinShortcutsAndRecentFiles: 'Snelkoppelingen en recente bestanden vastpinnen',
         unpinShortcuts: 'Snelkoppelingen losmaken',
         unpinShortcutsAndRecentFiles: 'Snelkoppelingen en recente bestanden losmaken',
-        profileMenuAria: 'Kluis profiel wijzigen'
+        profileMenuAria: 'Kluisprofiel wijzigen'
     },
 
     navigationCalendar: {
         ariaLabel: 'Kalender',
-        dailyNotesNotEnabled: 'De dagelijkse notities plugin is niet ingeschakeld.',
+        dailyNotesNotEnabled: 'De core plug-in Dagelijkse notities is niet ingeschakeld.',
         noteHiddenByProfile: 'De kalendernotitie is verborgen door het huidige kluisprofiel.',
         createDailyNote: {
             title: 'Nieuwe dagelijkse notitie',
-            message: 'Bestand {filename} bestaat niet. Wilt u het aanmaken?',
+            message: 'Bestand {filename} bestaat niet. Wil je het aanmaken?',
             confirmButton: 'Aanmaken'
         },
         helpModal: {
@@ -123,8 +123,8 @@ export const STRINGS_NL = {
         propertyExists: 'Eigenschap staat al in snelkoppelingen',
         invalidProperty: 'Ongeldige eigenschapssnelkoppeling',
         searchExists: 'Zoeksnelkoppeling bestaat al',
-        emptySearchQuery: 'Voer een zoekopdracht in voordat u deze opslaat',
-        emptySearchName: 'Voer een naam in voordat u de zoekopdracht opslaat',
+        emptySearchQuery: 'Voer een zoekopdracht in voordat je deze opslaat',
+        emptySearchName: 'Voer een naam in voordat je de zoekopdracht opslaat',
         add: 'Toevoegen aan snelkoppelingen',
         addNotesCount: 'Voeg {count} notities toe aan snelkoppelingen',
         addFilesCount: 'Voeg {count} bestanden toe aan snelkoppelingen',
@@ -157,8 +157,8 @@ export const STRINGS_NL = {
         subtags: 'subtags',
         childValues: 'onderliggende waarden',
         applySortAndGroupToDescendants: (target: string) => `Sortering en groepering toepassen op ${target}`,
-        applyAppearanceToDescendants: (target: string) => `Weergave toepassen op ${target}`,
-        resetAppearanceInDescendants: (target: string) => `Weergave in ${target} herstellen`,
+        applyAppearanceToDescendants: (target: string) => `Uiterlijk toepassen op ${target}`,
+        resetAppearanceInDescendants: (target: string) => `Uiterlijk in ${target} herstellen`,
         showFolders: 'Navigatie tonen',
         reorderRootFolders: 'Navigatie herschikken',
         finishRootFolderReorder: 'Klaar',
@@ -169,7 +169,7 @@ export const STRINGS_NL = {
         dualPaneAutoFallbackNotice:
             'Dubbele panelen zijn niet beschikbaar wanneer de zijbalk te smal is. Stel "Wanneer de zijbalk te smal is" in op "Niets doen" in Instellingen > Uiterlijk & gedrag om dit te wijzigen.',
         changeAppearance: 'Uiterlijk wijzigen',
-        changeAppearanceCustomized: 'Weergave wijzigen, aangepast',
+        changeAppearanceCustomized: 'Uiterlijk wijzigen, aangepast',
         showNotesFromSubfolders: 'Notities uit submappen tonen',
         showFilesFromSubfolders: 'Bestanden uit submappen tonen',
         showNotesFromDescendants: 'Notities uit afstammelingen tonen',
@@ -188,7 +188,7 @@ export const STRINGS_NL = {
         saveSearchShortcut: 'Zoeksnelkoppeling opslaan',
         removeSearchShortcut: 'Zoeksnelkoppeling verwijderen',
         shortcutModalTitle: 'Zoeksnelkoppeling opslaan',
-        shortcutNamePlaceholder: 'Voer naam snelkoppeling in',
+        shortcutNamePlaceholder: 'Voer een naam voor de snelkoppeling in',
         shortcutStartIn: 'Altijd starten in: {path}',
         searchHelp: 'Zoeksyntax',
         searchHelpTitle: 'Zoeksyntax',
@@ -200,7 +200,7 @@ export const STRINGS_NL = {
             activeFilterSearch: 'Filterzoeken is actief.',
             activeOmnisearch: 'Omnisearch is actief.',
             omnisearchIntro:
-                'Omnisearch voert zoeken in volledige tekst uit op de inhoud van notities in de hele vault. Notebook Navigator toont de overeenkomsten die bij de huidige map, tag of selectie horen.',
+                'Omnisearch voert zoeken in volledige tekst uit op de inhoud van notities in de hele kluis. Notebook Navigator toont de overeenkomsten die bij de huidige map, tag of selectie horen.',
             sections: {
                 fileNames: {
                     title: 'Bestandsnamen en aliassen',
@@ -245,7 +245,7 @@ export const STRINGS_NL = {
                         '`-has:task` Notities met onvoltooide taken uitsluiten.',
                         '`folder:meetings` Notities opnemen waarvan een mapnaam `meetings` bevat.',
                         '`folder:/work/meetings` Notities alleen in `work/meetings` opnemen (geen submappen).',
-                        '`folder:/` Notities alleen in de vault-root opnemen.',
+                        '`folder:/` Notities alleen in de kluisroot opnemen.',
                         '`-folder:archive` Notities uitsluiten waarvan een mapnaam `archive` bevat.',
                         '`-folder:/archive` Notities alleen in `archive` uitsluiten (geen submappen).',
                         '`ext:md` Notities met extensie `md` opnemen (`ext:.md` wordt ook ondersteund).',
@@ -273,7 +273,7 @@ export const STRINGS_NL = {
                         '`@2026-02` of `@202602` Een kalendermaand vinden.',
                         '`@2026-W05` of `@2026W05` Een ISO-week vinden.',
                         '`@2026-Q2` of `@2026Q2` Een kalenderkwartaal vinden.',
-                        '`@13/02/2026` Numerieke formaten met scheidingstekens (`@07022026` volgt uw landinstelling bij onduidelijkheid).',
+                        '`@13/02/2026` Numerieke formaten met scheidingstekens (`@07022026` volgt je landinstelling bij onduidelijkheid).',
                         '`@2026-02-01..2026-02-07` Een inclusief dagenbereik vinden (open einden ondersteund).',
                         '`@c:...` of `@m:...` Aanmaak- of wijzigingsdatum targeten.',
                         '`-@...` Een datumovereenkomst uitsluiten.'
@@ -285,8 +285,8 @@ export const STRINGS_NL = {
                         'De zoekopdracht wordt naar de Omnisearch-plugin gestuurd en volgt de querysyntaxis van Omnisearch. Filterzoektokens zoals `#tag`, `.property` en `@date` hebben geen speciale betekenis.',
                         'Wanneer een map is geselecteerd, wordt `path:"<folder>/"` aan de zoekopdracht toegevoegd zodat Omnisearch binnen die map en de submappen zoekt. Zoekopdrachten die al `path:` bevatten, worden ongewijzigd verstuurd.',
                         'Omnisearch geeft maximaal 50 resultaten terug, gerangschikt op relevantie. Bij zoekopdrachten met meer overeenkomsten ontbreken de lager gerangschikte notities.',
-                        'Het beperken tot mappaden met niet-ASCII-tekens vereist Omnisearch 1.30.0 of hoger. Oudere versies doorzoeken de hele vault, waarna de resultaten op de map worden gefilterd.',
-                        'Zoekopdrachten met minder dan 3 tekens kunnen traag zijn in grote vaults.',
+                        'Het beperken tot mappaden met niet-ASCII-tekens vereist Omnisearch 1.30.0 of hoger. Oudere versies doorzoeken de hele kluis, waarna de resultaten op de map worden gefilterd.',
+                        'Zoekopdrachten met minder dan 3 tekens kunnen traag zijn in grote kluizen.',
                         'Notitievoorbeelden tonen Omnisearch-fragmenten in plaats van de standaard voorbeeldtekst.'
                     ]
                 }
@@ -404,8 +404,8 @@ export const STRINGS_NL = {
             fileLinkAsFootnote: 'bestandslink als voetnoot',
             noteEmbed: 'notitie-insluiting',
             fileEmbed: 'bestandsinsluiting',
-            obsidianUrl: 'Obsidian URL',
-            pathFromVaultFolder: 'pad vanuit vault-map',
+            obsidianUrl: 'Obsidian-URL',
+            pathFromVaultFolder: 'pad vanaf kluismap',
             pathFromSystemRoot: 'pad vanaf systeemroot'
         },
         style: {
@@ -449,7 +449,7 @@ export const STRINGS_NL = {
                 both: 'Woorden en tekens'
             }
         },
-        resetAppearance: 'Weergave herstellen',
+        resetAppearance: 'Uiterlijk herstellen',
         openPluginSettings: 'Plugin-instellingen openen…'
     },
 
@@ -458,12 +458,12 @@ export const STRINGS_NL = {
         bulkApply: {
             applyButton: 'Toepassen',
             applySortAndGroupTitle: (target: string) => `Sortering en groepering toepassen op ${target}?`,
-            applyAppearanceTitle: (target: string) => `Weergave toepassen op ${target}?`,
-            resetAppearanceTitle: (target: string) => `Weergave in ${target} herstellen?`,
+            applyAppearanceTitle: (target: string) => `Uiterlijk toepassen op ${target}?`,
+            resetAppearanceTitle: (target: string) => `Uiterlijk in ${target} herstellen?`,
             applyAppearanceMessage: (count: number, replacedCount: number) =>
-                `De weergave verandert voor ${count} ${count === 1 ? 'item' : 'items'}. Bestaande aangepaste weergaven vervangen: ${replacedCount}. Opgeslagen weergavevoorkeuren worden eenmaal gekopieerd; sortering en groepering blijven behouden. Toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
+                `Het uiterlijk verandert voor ${count} ${count === 1 ? 'item' : 'items'}. Bestaande aangepaste uiterlijkinstellingen vervangen: ${replacedCount}. Opgeslagen voorkeuren voor uiterlijk worden eenmaal gekopieerd; sortering en groepering blijven behouden. Toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
             resetAppearanceMessage: (count: number) =>
-                `De weergave wordt hersteld voor ${count} ${count === 1 ? 'item' : 'items'}. Sortering en groepering blijven behouden. Dit is een eenmalige wijziging; toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
+                `Het uiterlijk wordt hersteld voor ${count} ${count === 1 ? 'item' : 'items'}. Sortering en groepering blijven behouden. Dit is een eenmalige wijziging; toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
             affectedCountMessage: (count: number) => `Bestaande overschrijvingen die wijzigen: ${count}.`
         },
         manualSortConfirm: {
@@ -487,10 +487,10 @@ export const STRINGS_NL = {
             icon: 'Pictogram',
             color: 'Kleur',
             wordCount: 'Aantal woorden tonen',
-            wordCountTarget: 'Doel aantal woorden',
+            wordCountTarget: 'Doelaantal woorden',
             wordCountTargetPlaceholder: '10,000',
             wordCountTargetDescription:
-                'Wanneer dit veld leeg is, gebruikt het groepsdoel de doeleigenschap die is ingesteld in Instellingen > Notities > Aantal woorden en tekens. Overschrijf dit door een doelwaarde voor deze groep in te stellen.',
+                'Wanneer dit veld leeg is, gebruikt het groepsdoel de doeleigenschap die is ingesteld in Instellingen > Bestandsweergave > Aantal woorden en tekens. Overschrijf dit door een doelwaarde voor deze groep in te stellen.',
             description: 'Pas de groepskop voor deze notitie aan. Laat de titel leeg om de kop te verwijderen.'
         },
         mergeNotes: {
@@ -531,16 +531,16 @@ export const STRINGS_NL = {
             addRuleAria: 'Regel toevoegen'
         },
         interfaceIcons: {
-            title: 'Interface-iconen',
+            title: 'Interfacepictogrammen',
             fileItemsSection: 'Bestandsitems',
             items: {
                 'nav-shortcuts': 'Snelkoppelingen',
                 'nav-recent-files': 'Recente bestanden',
-                'nav-expand-all': 'Alles uitvouwen',
-                'nav-collapse-all': 'Alles invouwen',
+                'nav-expand-all': 'Alles uitklappen',
+                'nav-collapse-all': 'Alles inklappen',
                 'nav-calendar': 'Kalender',
-                'nav-tree-expand': 'Boompijl: uitvouwen',
-                'nav-tree-collapse': 'Boompijl: invouwen',
+                'nav-tree-expand': 'Boompijl: uitklappen',
+                'nav-tree-collapse': 'Boompijl: inklappen',
                 'nav-hidden-items': 'Verborgen items',
                 'nav-root-reorder': 'Hoofdmappen herschikken',
                 'nav-new-folder': 'Nieuwe map',
@@ -561,7 +561,7 @@ export const STRINGS_NL = {
                 'list-sort-property': 'Sorteren op eigenschap',
                 'list-appearance': 'Uiterlijk wijzigen',
                 'list-new-note': 'Nieuwe notitie',
-                'list-pinned': 'Vastgezette notities',
+                'list-pinned': 'Vastgepinde notities',
                 'nav-folder-open': 'Map open',
                 'nav-folder-closed': 'Map gesloten',
                 'nav-tags': 'Tags',
@@ -610,7 +610,7 @@ export const STRINGS_NL = {
             apply: 'Toepassen'
         },
         selectVaultProfile: {
-            title: 'Kluisprofiel wijzigen',
+            title: 'Kluisprofiel selecteren',
             currentBadge: 'Actief',
             emptyState: 'Geen kluisprofielen beschikbaar.'
         },
@@ -646,8 +646,8 @@ export const STRINGS_NL = {
         propertyOperation: {
             renameTitle: 'Eigenschap {property} hernoemen',
             deleteTitle: 'Eigenschap {property} verwijderen',
-            newKeyPrompt: 'Nieuwe eigenschapnaam',
-            newKeyPlaceholder: 'Voer de nieuwe eigenschapnaam in',
+            newKeyPrompt: 'Nieuwe eigenschapsnaam',
+            newKeyPlaceholder: 'Voer de nieuwe eigenschapsnaam in',
             renameWarning: 'Het hernoemen van eigenschap {property} wijzigt {count} {files}.',
             renameConflictWarning:
                 'Eigenschap {newKey} bestaat al in {count} {files}. Het hernoemen van {oldKey} vervangt bestaande {newKey}-waarden.',
@@ -659,7 +659,7 @@ export const STRINGS_NL = {
             deleteSingleSuccess: 'Eigenschap {property} verwijderd uit 1 notitie',
             deleteMultipleSuccess: 'Eigenschap {property} verwijderd uit {count} notities',
             deleteSettingsUpdateFailed: 'Eigenschap {property} verwijderd. Instellingen konden niet worden bijgewerkt.',
-            invalidKeyName: 'Voer een geldige eigenschapnaam in.'
+            invalidKeyName: 'Voer een geldige eigenschapsnaam in.'
         },
         fileSystem: {
             newFolderTitle: 'Nieuwe map',
@@ -674,10 +674,10 @@ export const STRINGS_NL = {
             renamePrompt: 'Voer nieuwe naam in:',
             renameVaultTitle: 'Weergavenaam kluis wijzigen',
             renameVaultPrompt: 'Voer aangepaste weergavenaam in (laat leeg voor standaard):',
-            deleteFolderConfirm: 'Weet u zeker dat u deze map en alle inhoud wilt verwijderen?',
-            deleteFileConfirm: 'Weet u zeker dat u dit bestand wilt verwijderen?',
-            deleteFileAttachmentsDescriptionSingle: 'Deze bijlage wordt niet meer gebruikt in notities. Wilt u deze verwijderen?',
-            deleteFileAttachmentsDescriptionMultiple: 'Deze bijlagen worden niet meer gebruikt in notities. Wilt u ze verwijderen?',
+            deleteFolderConfirm: 'Weet je zeker dat je deze map en alle inhoud wilt verwijderen?',
+            deleteFileConfirm: 'Weet je zeker dat je dit bestand wilt verwijderen?',
+            deleteFileAttachmentsDescriptionSingle: 'Deze bijlage wordt niet meer gebruikt in notities. Wil je deze verwijderen?',
+            deleteFileAttachmentsDescriptionMultiple: 'Deze bijlagen worden niet meer gebruikt in notities. Wil je ze verwijderen?',
             deleteFileAttachmentsViewFileTreeAriaLabel: 'Bestandsboom',
             deleteFileAttachmentsViewGalleryAriaLabel: 'Galerij',
             moveFileConflictDescriptionSingle: 'Een bestandsconflict is gevonden in "{folder}".',
@@ -688,8 +688,8 @@ export const STRINGS_NL = {
             moveFileConflictRename: 'Hernoemen',
             moveFileConflictOverwrite: 'Overschrijven',
             removeAllTagsTitle: 'Alle tags verwijderen',
-            removeAllTagsFromNote: 'Weet u zeker dat u alle tags van deze notitie wilt verwijderen?',
-            removeAllTagsFromNotes: 'Weet u zeker dat u alle tags van {count} notities wilt verwijderen?'
+            removeAllTagsFromNote: 'Weet je zeker dat je alle tags van deze notitie wilt verwijderen?',
+            removeAllTagsFromNotes: 'Weet je zeker dat je alle tags van {count} notities wilt verwijderen?'
         },
         folderNoteType: {
             title: 'Selecteer type mapnotitie',
@@ -800,7 +800,7 @@ export const STRINGS_NL = {
             duplicateNote: 'Kan notitie niet dupliceren: {error}',
             duplicateFolder: 'Kan map niet dupliceren: {error}',
             openVersionHistory: 'Kan versiegeschiedenis niet openen: {error}',
-            versionHistoryNotFound: 'Versiegeschiedenis commando niet gevonden. Zorg dat Obsidian Sync is ingeschakeld.',
+            versionHistoryNotFound: 'Opdracht voor versiegeschiedenis niet gevonden. Zorg dat Obsidian Sync is ingeschakeld.',
             revealInExplorer: 'Kan bestand niet tonen in systeemverkenner: {error}',
             openInDefaultApp: 'Kan niet openen in standaardapp: {error}',
             openInDefaultAppNotAvailable: 'Openen in standaardapp is niet beschikbaar op dit platform',
@@ -838,7 +838,7 @@ export const STRINGS_NL = {
             movedMultipleFiles: '{count} bestanden verplaatst naar {folder}',
             folderNoteConversionSuccess: 'Bestand geconverteerd naar mapnotitie in "{name}"',
             folderMoved: 'Map "{name}" verplaatst',
-            deepLinkCopied: 'Obsidian URL gekopieerd naar klembord',
+            deepLinkCopied: 'Obsidian-URL gekopieerd naar klembord',
             pathCopied: 'Pad gekopieerd naar klembord',
             relativePathCopied: 'Relatief pad gekopieerd naar klembord',
             linkCopied: 'Link gekopieerd naar klembord',
@@ -854,7 +854,7 @@ export const STRINGS_NL = {
             noFilesSelected: 'Geen bestanden geselecteerd',
             mergeNotesRequireMultipleMarkdown: 'Selecteer ten minste twee Markdown-notities om samen te voegen',
             tagOperationsNotAvailable: 'Tagbewerkingen niet beschikbaar',
-            propertyOperationsNotAvailable: 'Eigenschapbewerkingen niet beschikbaar',
+            propertyOperationsNotAvailable: 'Eigenschapsbewerkingen niet beschikbaar',
             tagsRequireMarkdown: 'Tags worden alleen ondersteund op Markdown-notities',
             propertiesRequireMarkdown: 'Eigenschappen worden alleen ondersteund in Markdown-notities',
             propertySetOnNote: 'Eigenschap bijgewerkt op 1 notitie',
@@ -868,11 +868,11 @@ export const STRINGS_NL = {
             hiddenFileReveal: 'Bestand is verborgen. Schakel "Verborgen items tonen" in om het weer te geven'
         },
         confirmations: {
-            deleteMultipleFiles: 'Weet u zeker dat u {count} bestanden wilt verwijderen?',
+            deleteMultipleFiles: 'Weet je zeker dat je {count} bestanden wilt verwijderen?',
             deleteConfirmation: 'Deze actie kan niet ongedaan worden gemaakt.'
         },
         defaultNames: {
-            untitled: 'Zonder titel'
+            untitled: 'Naamloos'
         }
     },
 
@@ -910,7 +910,7 @@ export const STRINGS_NL = {
     // Plugin commands
     commands: {
         open: 'Openen',
-        toggleLeftSidebar: 'Linker zijbalk in-/uitschakelen',
+        toggleLeftSidebar: 'Linkerzijbalk in-/uitschakelen',
         openHomepage: 'Startpagina openen',
         openDailyNote: 'Dagelijkse notitie openen',
         openWeeklyNote: 'Wekelijkse notitie openen',
@@ -921,15 +921,15 @@ export const STRINGS_NL = {
         search: 'Zoeken',
         searchVaultRoot: 'Hele kluis doorzoeken',
         toggleDualPane: 'Dubbel paneel in-/uitschakelen',
-        toggleDualPaneOrientation: 'Dubbel paneel oriëntatie wisselen', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
+        toggleDualPaneOrientation: 'Oriëntatie van dubbel paneel wisselen', // Command palette: Toggles dual-pane orientation between horizontal and vertical (English: Toggle dual pane orientation)
         toggleCalendar: 'Kalender in-/uitschakelen',
-        selectVaultProfile: 'Kluisprofiel wijzigen',
+        selectVaultProfile: 'Kluisprofiel selecteren',
         selectVaultProfile1: 'Kluisprofiel 1 selecteren',
         selectVaultProfile2: 'Kluisprofiel 2 selecteren',
         selectVaultProfile3: 'Kluisprofiel 3 selecteren',
         deleteFile: 'Bestanden verwijderen',
         createNewNote: 'Nieuwe notitie maken',
-        createNewNoteFromTemplate: 'Nieuwe notitie uit sjabloon',
+        createNewNoteFromTemplate: 'Nieuwe notitie maken uit sjabloon',
         moveFiles: 'Bestanden verplaatsen',
         mergeNotes: 'Notities samenvoegen', // Command palette: Creates one note from selected Markdown notes (English: Merge notes)
         selectNextFile: 'Volgend bestand selecteren',
@@ -947,11 +947,11 @@ export const STRINGS_NL = {
         openShortcut: 'Snelkoppeling {number} openen',
         toggleDescendants: 'Afstammelingen in-/uitschakelen',
         toggleHidden: 'Verborgen mappen, tags en notities in-/uitschakelen',
-        toggleTagSort: 'Tag sorteervolgorde in-/uitschakelen',
+        toggleTagSort: 'Sorteervolgorde van tags in-/uitschakelen',
         toggleTagsBySelection: 'Tags op selectie in-/uitschakelen',
         togglePropertiesBySelection: 'Eigenschappen op selectie in-/uitschakelen',
         toggleCompactMode: 'Compacte modus in-/uitschakelen', // Command palette: Toggles list mode between standard and compact (English: Toggle compact mode)
-        togglePinnedSection: 'Vastgemaakt gedeelte in-/uitschakelen',
+        togglePinnedSection: 'Vastgepinde sectie in-/uitschakelen',
         collapseExpand: 'Alle navigatie-items in-/uitklappen',
         collapseExpandListGroups: 'Alle lijstgroepen in-/uitklappen',
         collapseExpandSelectedItem: 'Geselecteerd item in-/uitklappen',
@@ -1042,9 +1042,9 @@ export const STRINGS_NL = {
                     keyboardNavigation: 'Toetsenbordnavigatie',
                     mouseButtons: 'Muisknoppen',
                     desktopAppearance: 'Desktop-uiterlijk',
-                    mobileAppearance: 'Mobiele weergave',
+                    mobileAppearance: 'Mobiel uiterlijk',
                     appearance: 'Uiterlijk',
-                    icons: 'Iconen',
+                    icons: 'Pictogrammen',
                     formatting: 'Opmaak'
                 }
             },
@@ -1062,7 +1062,7 @@ export const STRINGS_NL = {
             },
             shortcutsAndRecentFiles: {
                 label: 'Snelkoppelingen & recente bestanden',
-                description: 'Zichtbaarheid van snelkoppelingen, badges, recente bestanden en vastgezette items.',
+                description: 'Zichtbaarheid van snelkoppelingen, badges, recente bestanden en vastgepinde items.',
                 groups: {
                     shortcuts: 'Snelkoppelingen',
                     recentFiles: 'Recente bestanden'
@@ -1087,13 +1087,13 @@ export const STRINGS_NL = {
             },
             listPane: {
                 label: 'Lijstpaneel',
-                description: 'Sortering, groepering, lijstmodi, vastgezette notities en tekeningvoorbeelden.',
+                description: 'Sortering, groepering, lijstmodi, vastgepinde notities en tekeningvoorbeelden.',
                 groups: {
                     appearance: 'Uiterlijk',
                     sortAndGroup: 'Sorteren & groeperen',
                     groupHeaders: 'Groepskoppen',
                     manualSort: 'Handmatig sorteren',
-                    pinnedNotes: 'Vastgezette notities',
+                    pinnedNotes: 'Vastgepinde notities',
                     behavior: 'Gedrag',
                     drawingPreviews: 'Tekeningvoorbeelden'
                 }
@@ -1106,15 +1106,15 @@ export const STRINGS_NL = {
                 }
             },
             frontmatterFields: {
-                label: 'Frontmattervelden',
-                description: 'Frontmattervelden voor weergavenamen, tijdstempels, pictogrammen en kleuren.'
+                label: 'Frontmatter-velden',
+                description: 'Frontmatter-velden voor weergavenamen, tijdstempels, pictogrammen en kleuren.'
             },
             fileDisplay: {
                 label: 'Bestandsweergave',
                 description:
                     'Titels, voorbeeldtekst, uitgelichte afbeeldingen, tags, eigenschappen, datums, aantal woorden en aantal tekens.',
                 groups: {
-                    icon: 'Icoon',
+                    icon: 'Pictogram',
                     title: 'Titel',
                     previewText: 'Voorbeeldtekst',
                     featureImage: 'Uitgelichte afbeelding',
@@ -1133,7 +1133,7 @@ export const STRINGS_NL = {
                     appearance: 'Uiterlijk',
                     leftSidebar: 'Linkerzijbalk',
                     calendarIntegration: 'Kalenderintegratie',
-                    rightSidebar: 'Rechter zijbalk'
+                    rightSidebar: 'Rechterzijbalk'
                 }
             },
             iconPacks: {
@@ -1180,8 +1180,8 @@ export const STRINGS_NL = {
                     zOnTop: 'Z bovenaan'
                 },
                 fields: {
-                    dateEdited: 'Datum bewerkt',
-                    dateCreated: 'Datum gemaakt',
+                    dateEdited: 'Bewerkingsdatum',
+                    dateCreated: 'Aanmaakdatum',
                     title: 'Titel',
                     fileName: 'Bestandsnaam',
                     property: 'Eigenschap'
@@ -1202,8 +1202,8 @@ export const STRINGS_NL = {
                 placeholder: 'published, author',
                 defaultsResetNotices: {
                     sort: 'De standaard sorteervolgorde is teruggezet omdat de eigenschap niet meer beschikbaar is.',
-                    grouping: 'De standaardgroepering is teruggezet omdat de eigenschap niet meer beschikbaar is.',
-                    both: 'De standaard sorteervolgorde en standaardgroepering zijn teruggezet omdat hun eigenschappen niet meer beschikbaar zijn.'
+                    grouping: 'De standaard groepering is teruggezet omdat de eigenschap niet meer beschikbaar is.',
+                    both: 'De standaard sorteervolgorde en standaard groepering zijn teruggezet omdat hun eigenschappen niet meer beschikbaar zijn.'
                 }
             },
             propertySecondarySort: {
@@ -1223,12 +1223,12 @@ export const STRINGS_NL = {
                     '**Groeperen:** Als je een eigenschap zoals Status kiest, wordt voor elke Statuswaarde een kop gemaakt. Notities met dezelfde Status verschijnen onder dezelfde kop.',
                     '**Meerdere waarden:** Als een eigenschap een lijst bevat, gebruikt Notebook Navigator de volledige lijst. Als Onderwerpen bijvoorbeeld Boeken en Geschiedenis bevat, wordt de notitie gesorteerd of gegroepeerd op ‘Boeken, Geschiedenis’, niet op elk onderwerp afzonderlijk.',
                     '**Ontbrekende waarden:** Bij groeperen verschijnen notities zonder de eigenschap onderaan onder **Geen**.',
-                    '**Tag- en eigenschapweergaven:** Als groeperen op **Map** is geselecteerd, worden in plaats daarvan datumkoppen weergegeven.'
+                    '**Tag- en eigenschapsweergaven:** Als groeperen op **Map** is geselecteerd, worden in plaats daarvan datumkoppen weergegeven.'
                 ]
             },
             groupingProperties: {
                 name: 'Groeperingseigenschappen',
-                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als groeperingsoptie in de instelling Standaardgroepering en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
+                desc: 'Kommagescheiden frontmatter-eigenschappen. Elke eigenschap verschijnt als groeperingsoptie in de instelling Standaard groepering en in het sorteermenu van het lijstpaneel. Deze eigenschappen worden niet gewijzigd.',
                 placeholder: 'status, genre'
             },
             manualSortProperty: {
@@ -1264,21 +1264,21 @@ export const STRINGS_NL = {
                 intro: 'Handmatig sorteren schrijft een numerieke indexwaarde naar een frontmatter-eigenschap op elke notitie. Notities zonder index verschijnen onder Niet gesorteerd.',
                 items: [
                     'Schakel handmatig sorteren in door **Handmatig sorteren** te kiezen uit het sorteermenu. Daarna zijn er twee manieren om notities te herschikken.',
-                    'Kies **Sorteervolgorde bewerken...** uit het sorteermenu om een herschikweergave te openen. Sleep notities met de muis, of met aanraking op mobiel. Op desktop selecteert **Cmd/Ctrl** of **Shift** klikken meerdere notities, daarna verplaatst slepen van een ervan de hele groep.',
+                    'Kies **Sorteervolgorde bewerken...** uit het sorteermenu om een herschikweergave te openen. Sleep notities met de muis, of met aanraking op mobiel. Op desktop selecteer je meerdere notities door met **Cmd/Ctrl** of **Shift** te klikken. Daarna verplaats je de hele groep door er één te slepen.',
                     'Selecteer in het lijstpaneel één notitie of selecteer er meerdere, en druk vervolgens op **Cmd/Ctrl + Arrow Up/Down** om de selectie omhoog of omlaag te verplaatsen.'
                 ]
             },
             scrollToSelectedFileOnListChanges: {
                 name: 'Scroll naar geselecteerd bestand bij lijstwijzigingen',
-                desc: 'Scroll naar het geselecteerde bestand bij het vastpinnen van notities, tonen van afstammelingen-notities, wijzigen van mapweergave of uitvoeren van bestandsoperaties.'
+                desc: 'Scroll naar het geselecteerde bestand bij het vastpinnen van notities, tonen van afstammelingen-notities, wijzigen van het uiterlijk van mappen of uitvoeren van bestandsoperaties.'
             },
             includeDescendantNotes: {
                 name: 'Notities uit submappen / afstammelingen tonen',
                 desc: 'Notities uit geneste submappen en tag- en eigenschap-afstammelingen opnemen bij het bekijken van een map, tag of eigenschap.'
             },
             filterPinnedNotesByFolder: {
-                name: 'Notities alleen in hun map vastmaken',
-                desc: 'Vastgemaakte notities worden alleen als vastgemaakt weergegeven in hun eigen map. Handig voor mapnotities of als je veel vastgemaakte notities hebt. Heeft geen invloed op tag- of eigenschapweergaven.'
+                name: 'Notities alleen in hun map vastpinnen',
+                desc: 'Vastgepinde notities worden alleen als vastgepind weergegeven in hun eigen map. Handig voor mapnotities of als je veel vastgepinde notities hebt. Heeft geen invloed op tag- of eigenschapsweergaven.'
             },
             separateFileCounts: {
                 name: 'Huidige en afstammeling-bestandstellingen apart tonen',
@@ -1302,7 +1302,7 @@ export const STRINGS_NL = {
                 desc: 'Wanneer uitgeschakeld, worden pillen die overeenkomen met de huidige navigatieselectie verborgen (bijv. de "recepten"-tagpil wordt verborgen bij het bladeren door de "recepten"-tag). Inschakelen om alle pillen zichtbaar te houden.'
             },
             stickyGroupHeaders: {
-                name: 'Plakkerige groepskoppen',
+                name: 'Zwevende groepskoppen',
                 desc: 'Houd de huidige datum-, map-, eigenschap- of vastgepinde sectiekop zichtbaar tijdens het scrollen.'
             },
             showSubfolderPaths: {
@@ -1315,7 +1315,7 @@ export const STRINGS_NL = {
             },
             showCurrentFolderFilesAtBottom: {
                 name: 'Mapgroepering: bestanden van huidige map onderaan',
-                desc: 'Wanneer de standaardgroepering Map is, worden bestanden direct in de geselecteerde map onder submapgroepen geplaatst.'
+                desc: 'Wanneer de standaard groepering Map is, worden bestanden direct in de geselecteerde map onder submapgroepen geplaatst.'
             },
             defaultListMode: {
                 name: 'Standaard lijstmodus',
@@ -1371,7 +1371,7 @@ export const STRINGS_NL = {
                 desc: 'Pictogrammen toewijzen aan bestanden op basis van tekst in hun namen.'
             },
             fileNameIconMap: {
-                name: 'Bestandsnaam-pictogram toewijzing',
+                name: 'Toewijzing bestandsnaam-pictogram',
                 desc: 'Bestanden met de tekst krijgen het opgegeven pictogram. Eén toewijzing per regel: tekst=pictogram',
                 placeholder: '# tekst=pictogram\nvergadering=ph-calendar\nfactuur=ph-receipt',
                 editTooltip: 'Toewijzingen bewerken'
@@ -1389,7 +1389,7 @@ export const STRINGS_NL = {
                 notInstalledWarning: 'Dit pictogrampakket is niet geïnstalleerd. In plaats daarvan worden ingebouwde pictogrammen getoond.'
             },
             fileTypeIconMap: {
-                name: 'Bestandstype-pictogram toewijzing',
+                name: 'Toewijzing bestandstype-pictogram',
                 desc: 'Bestanden met de extensie krijgen het opgegeven pictogram. Eén toewijzing per regel: extensie=pictogram',
                 placeholder: '# Extension=icon\ncpp=ph-file-code\npdf=ph-file-pdf',
                 editTooltip: 'Toewijzingen bewerken'
@@ -1420,19 +1420,19 @@ export const STRINGS_NL = {
                 desc: 'Mapkleuren gebruiken voor labels van bovenliggende mappen.'
             },
             showParentFolderIcon: {
-                name: 'Bovenliggende mapicoon tonen',
-                desc: 'Mapiconen tonen naast labels van bovenliggende mappen.'
+                name: 'Bovenliggend mappictogram tonen',
+                desc: 'Mappictogrammen tonen naast labels van bovenliggende mappen.'
             },
             showQuickActions: {
                 name: 'Snelle acties tonen',
                 desc: 'Actieknoppen tonen bij zweven over bestanden. Knopbediening selecteert welke acties verschijnen.'
             },
             dualPane: {
-                name: 'Dubbel paneellay-out',
+                name: 'Lay-out met dubbel paneel',
                 desc: 'Navigatiepaneel en lijstpaneel naast elkaar tonen.'
             },
             dualPaneOrientation: {
-                name: 'Dubbel paneel oriëntatie',
+                name: 'Oriëntatie dubbel paneel',
                 desc: 'Kies horizontale of verticale lay-out wanneer dubbel paneel actief is.',
                 options: {
                     horizontal: 'Horizontale splitsing',
@@ -1496,23 +1496,23 @@ export const STRINGS_NL = {
             },
             autoRevealActiveNote: {
                 name: 'Actieve notitie automatisch tonen',
-                desc: 'Notities automatisch tonen wanneer geopend vanuit Snelle Wisselaar, links of zoeken.'
+                desc: 'Notities automatisch tonen wanneer geopend vanuit Snel wisselen, links of zoeken.'
             },
             autoRevealShortestPath: {
                 name: 'Automatisch tonen: Kortste pad gebruiken',
                 desc: 'Ingeschakeld: Automatisch tonen selecteert de dichtstbijzijnde zichtbare bovenliggende map of tag. Uitgeschakeld: Automatisch tonen selecteert de werkelijke map en exacte tag van het bestand.'
             },
             autoRevealIgnoreRightSidebar: {
-                name: 'Automatisch tonen: Gebeurtenissen van rechter zijbalk negeren',
-                desc: 'Actieve notitie niet wijzigen bij klikken of wijzigen van notities in de rechter zijbalk.'
+                name: 'Automatisch tonen: Gebeurtenissen van rechterzijbalk negeren',
+                desc: 'Actieve notitie niet wijzigen bij klikken of wijzigen van notities in de rechterzijbalk.'
             },
             autoRevealIgnoreOtherWindows: {
                 name: 'Automatisch tonen: Gebeurtenissen van andere vensters negeren',
                 desc: 'Actieve notitie niet wijzigen bij het werken met notities in een ander venster.'
             },
             singlePaneAnimation: {
-                name: 'Enkelvoudig paneel animatie',
-                desc: 'Transitieduur bij het wisselen tussen panelen in enkelvoudig-paneel-modus (milliseconden).',
+                name: 'Animatie bij enkel paneel',
+                desc: 'Transitieduur bij het wisselen tussen panelen in enkelvoudige paneelmodus (milliseconden).',
                 resetTooltip: 'Herstellen naar standaard'
             },
             autoSelectFirstNote: {
@@ -1525,7 +1525,7 @@ export const STRINGS_NL = {
             },
             expandOnSelection: {
                 name: 'Uitvouwen bij selectie',
-                desc: 'Mappen en tags uitvouwen bij selectie. In enkelvoudige paneelmodus: eerste selectie vouwt uit, tweede selectie toont bestanden.'
+                desc: 'Mappen, tags en eigenschappen uitvouwen bij selectie. In enkelvoudige paneelmodus: eerste selectie vouwt uit, tweede selectie toont bestanden.'
             },
             collapseOtherBranchesOnExpand: {
                 name: 'Een uitgevouwen tak',
@@ -1551,15 +1551,15 @@ export const STRINGS_NL = {
             },
             pinNavigationBanner: {
                 name: 'Banner vastpinnen',
-                desc: 'Pin de navigatiebanner boven de navigatieboom.'
+                desc: 'De navigatiebanner boven de navigatieboom vastpinnen.'
             },
             showShortcuts: {
                 name: 'Snelkoppelingen tonen',
                 desc: 'De sectie snelkoppelingen weergeven in het navigatiepaneel.'
             },
             shortcutBadgeDisplay: {
-                name: 'Snelkoppeling badge',
-                desc: "Wat naast snelkoppelingen weergeven. Gebruik de commando's 'Snelkoppeling 1-9 openen' om snelkoppelingen direct te openen.",
+                name: 'Snelkoppelingsbadge',
+                desc: "Wat naast snelkoppelingen weergeven. Gebruik de opdrachten 'Snelkoppeling 1-9 openen' om snelkoppelingen direct te openen.",
                 options: {
                     position: 'Positie (1-9)',
                     count: 'Aantal items',
@@ -1592,14 +1592,14 @@ export const STRINGS_NL = {
             },
             calendarPlacement: {
                 name: 'Kalenderpositie',
-                desc: 'Weergeven in de linker of rechter zijbalk.',
+                desc: 'Weergeven in de linker- of rechterzijbalk.',
                 options: {
-                    leftSidebar: 'Linker zijbalk',
-                    rightSidebar: 'Rechter zijbalk'
+                    leftSidebar: 'Linkerzijbalk',
+                    rightSidebar: 'Rechterzijbalk'
                 }
             },
             calendarSinglePanePlacement: {
-                name: 'Enkele paneel plaatsing',
+                name: 'Plaatsing bij enkel paneel',
                 desc: 'Waar de kalender wordt weergegeven in enkele paneelmodus.',
                 options: {
                     navigationPane: 'Navigatiepaneel',
@@ -1635,11 +1635,11 @@ export const STRINGS_NL = {
             },
             showInfoButtons: {
                 name: 'Infoknoppen tonen',
-                desc: 'Infoknoppen weergeven in de zoekbalk en de kalenderheader.'
+                desc: 'Infoknoppen weergeven in de zoekbalk en de koptekst van de kalender.'
             },
             calendarLeftSidebarWeeksToShow: {
-                name: 'Weken om te tonen in linker zijbalk',
-                desc: 'De kalender in de rechter zijbalk toont altijd de volledige maand.',
+                name: 'Weken om te tonen in linkerzijbalk',
+                desc: 'De kalender in de rechterzijbalk toont altijd de volledige maand.',
                 options: {
                     fullMonth: 'Volledige maand',
                     oneWeek: '1 week',
@@ -1664,7 +1664,7 @@ export const STRINGS_NL = {
             },
             calendarShowQuarter: {
                 name: 'Kwartaal tonen',
-                desc: 'Voeg een kwartaallabel toe in de kalender-header.'
+                desc: 'Voeg een kwartaallabel toe in de koptekst van de kalender.'
             },
             calendarShowOutsideMonthDays: {
                 name: 'Dagen uit andere maanden tonen',
@@ -1672,7 +1672,7 @@ export const STRINGS_NL = {
             },
             calendarShowYearCalendar: {
                 name: 'Jaarkalender tonen',
-                desc: 'Jaarnavigatie en maandraster weergeven in de rechter zijbalk.'
+                desc: 'Jaarnavigatie en maandraster weergeven in de rechterzijbalk.'
             },
             calendarConfirmBeforeCreate: {
                 name: 'Bevestigen voor aanmaken',
@@ -1683,14 +1683,14 @@ export const STRINGS_NL = {
                 desc: 'Indien ingeschakeld, toont de kalender altijd alle kalendernotities, inclusief notities die door de filters van het kluisprofiel zijn verborgen.'
             },
             dailyNoteSource: {
-                name: 'Dagelijkse notitie bron',
+                name: 'Bron voor dagelijkse notities',
                 desc: 'Bron voor kalendernotities.',
                 options: {
                     dailyNotes: 'Dagelijkse notities (core plug-in)',
                     notebookNavigator: 'Notebook Navigator'
                 },
                 info: {
-                    dailyNotes: 'Map en datumformaat worden geconfigureerd in de Daily Notes core plugin.'
+                    dailyNotes: 'Map en datumformaat worden geconfigureerd in de core plug-in Dagelijkse notities.'
                 }
             },
             calendarPeriodicNotesLocale: {
@@ -1703,14 +1703,14 @@ export const STRINGS_NL = {
             },
 
             periodicNotesRootFolder: {
-                name: 'Hoofdmap',
+                name: 'Hoofdmap (kluisprofiel)',
                 desc: 'Basismap voor periodieke notities. Datumpatronen kunnen submappen bevatten. Wijzigt met het geselecteerde kluisprofiel.',
-                placeholder: 'Personal/Diary'
+                placeholder: 'Privé/Dagboek'
             },
             templateFolderLocation: {
                 name: 'Sjabloonmaplocatie',
                 desc: 'De sjabloonbestandskiezer toont notities uit deze map.',
-                placeholder: 'Templates',
+                placeholder: 'Sjablonen',
                 usage: 'Gebruikt door kalendernotities en mapnotities. Configureer sjablonen in Kalender > Kalenderintegratie en Mappen & mapnotities > Mapnotitiebestanden.'
             },
             calendarDailyNotePattern: {
@@ -1822,7 +1822,7 @@ export const STRINGS_NL = {
                 error: 'Instellingen resetten mislukt.'
             },
             multiSelectModifier: {
-                name: 'Meervoudige selectie modifier',
+                name: 'Modificatortoets voor meervoudige selectie',
                 desc: 'Kies welke modificatortoets meervoudige selectie in-/uitschakelt. Wanneer Option/Alt is geselecteerd, opent Cmd/Ctrl klik notities in een nieuw tabblad.',
                 options: {
                     cmdCtrl: 'Cmd/Ctrl klik',
@@ -1860,7 +1860,7 @@ export const STRINGS_NL = {
                 options: {
                     documents: 'Documenten (.md, .canvas, .base)',
                     supported: 'Ondersteund (opent in Obsidian)',
-                    all: 'Alle (kan extern openen)'
+                    all: 'Alle (kunnen extern worden geopend)'
                 }
             },
             homepage: {
@@ -1897,8 +1897,8 @@ export const STRINGS_NL = {
                 placeholder: 'temp-*, *.png, /assets/*'
             },
             vaultProfiles: {
-                name: 'Kluis profiel',
-                desc: 'Profielen bewaren bestandstypezichtbaarheid, verborgen bestanden, verborgen mappen, verborgen labels, eigenschapsregels voor verborgen notities, snelkoppelingen en navigatiebanner. Wissel van profiel via de koptekst van het navigatiepaneel.',
+                name: 'Kluisprofiel',
+                desc: 'Profielen bewaren bestandstypezichtbaarheid, verborgen bestanden, verborgen mappen, verborgen tags, eigenschapsregels voor verborgen notities, snelkoppelingen en navigatiebanner. Wissel van profiel via de koptekst van het navigatiepaneel.',
                 defaultName: 'Standaard',
                 addButton: 'Profiel toevoegen',
                 editProfilesButton: 'Profielen bewerken',
@@ -1910,7 +1910,7 @@ export const STRINGS_NL = {
                 addModalPlaceholder: 'Profielnaam',
                 deleteModalTitle: '{name} verwijderen',
                 deleteModalMessage:
-                    '{name} verwijderen? Verborgen bestands-, map-, label- en eigenschapsgebaseerde notitiefilters opgeslagen in dit profiel worden verwijderd.',
+                    '{name} verwijderen? Verborgen bestands-, map-, tag- en eigenschapsgebaseerde notitiefilters opgeslagen in dit profiel worden verwijderd.',
                 moveUp: 'Omhoog verplaatsen',
                 moveDown: 'Omlaag verplaatsen',
                 errors: {
@@ -1919,17 +1919,17 @@ export const STRINGS_NL = {
                 }
             },
             vaultTitlePlacement: {
-                name: 'Kluistitel plaatsing',
+                name: 'Plaatsing kluistitel',
                 desc: 'Kies waar de kluistitel wordt weergegeven.',
                 options: {
-                    header: 'Weergeven in header',
+                    header: 'Weergeven in koptekst',
                     navigation: 'Weergeven in navigatiepaneel'
                 }
             },
             hideFolders: {
                 name: 'Mappen verbergen (kluisprofiel)',
-                desc: 'Kommagescheiden lijst van te verbergen mappen. Naampatronen: assets* (mappen beginnend met assets), *_temp (eindigend met _temp). Padpatronen: /archive (alleen root archive), /res* (root mappen beginnend met res), /*/temp (temp mappen één niveau diep), /projects/* (alle mappen binnen projects).',
-                placeholder: 'templates, assets*, /archive, /res*'
+                desc: 'Kommagescheiden lijst van te verbergen mappen. Naampatronen: assets* (mappen beginnend met assets), *_temp (eindigend met _temp). Padpatronen: /archief (alleen root archief), /res* (root mappen beginnend met res), /*/temp (temp mappen één niveau diep), /projecten/* (alle mappen binnen projecten).',
+                placeholder: 'sjablonen, assets*, /archief, /res*'
             },
             descendantExcludedFolders: {
                 name: 'Mappen uitsluiten van notities uit submappen (kluisprofiel)',
@@ -1974,7 +1974,7 @@ export const STRINGS_NL = {
             },
             colorFileProperties: {
                 name: 'Bestandseigenschappen kleuren',
-                desc: 'Eigenschapkleuren toepassen op eigenschapbadges in bestandsitems.'
+                desc: 'Eigenschapskleuren toepassen op eigenschapsbadges in bestandsitems.'
             },
             showColoredPropertiesFirst: {
                 name: 'Gekleurde eigenschappen eerst tonen',
@@ -2031,12 +2031,12 @@ export const STRINGS_NL = {
                 desc: 'Toon elke eigenschap op een eigen regel.'
             },
             linkPropertyPillsToNotes: {
-                name: 'Eigenschap-pills koppelen aan notities',
-                desc: 'Klik op een eigenschap-pill om de gekoppelde notitie te openen.'
+                name: 'Eigenschapspillen koppelen aan notities',
+                desc: 'Klik op een eigenschapspil om de gekoppelde notitie te openen.'
             },
             linkPropertyPillsToUrls: {
-                name: "Eigenschap-pills koppelen aan URL's",
-                desc: 'Klik op een eigenschap-pill om de gekoppelde URL te openen.'
+                name: "Eigenschapspillen koppelen aan URL's",
+                desc: 'Klik op een eigenschapspil om de gekoppelde URL te openen.'
             },
             dateFormat: {
                 name: 'Datumformaat',
@@ -2178,7 +2178,7 @@ export const STRINGS_NL = {
                 desc: 'Submappen erven kleur van bovenliggende mappen.'
             },
             folderSortOrder: {
-                name: 'Map sorteervolgorde',
+                name: 'Sorteervolgorde mappen',
                 desc: 'Klik met de rechtermuisknop op een map om een andere sorteervolgorde in te stellen voor de onderliggende items.',
                 options: {
                     alphaAsc: 'A tot Z',
@@ -2194,17 +2194,17 @@ export const STRINGS_NL = {
                 desc: 'Pictogrammen naast items in de secties Snelkoppelingen en Recent weergeven.'
             },
             interfaceIcons: {
-                name: 'Interface-iconen',
-                desc: 'Bewerk werkbalk-, map-, tag-, eigenschap-, vastgezette, zoek- en sorteerichtogrammen.',
-                buttonText: 'Iconen bewerken'
+                name: 'Interfacepictogrammen',
+                desc: 'Bewerk pictogrammen voor werkbalk, map, tag, eigenschap, vastgepinde items, zoeken en sorteren.',
+                buttonText: 'Pictogrammen bewerken'
             },
             applyColorToIconsOnly: {
                 name: 'Kleur alleen op pictogrammen toepassen',
                 desc: 'Indien ingeschakeld, worden aangepaste kleuren alleen op pictogrammen toegepast. Indien uitgeschakeld, worden kleuren toegepast op zowel pictogrammen als tekstlabels.'
             },
             navRainbowMode: {
-                name: 'Regenboogkleurmodus (kluis profiel)',
-                desc: 'Regenboogkleuren toepassen in het navigatievenster.',
+                name: 'Regenboogkleurmodus (kluisprofiel)',
+                desc: 'Regenboogkleuren toepassen in het navigatiepaneel.',
                 options: {
                     off: 'Uit',
                     textColor: 'Tekstkleur',
@@ -2223,7 +2223,7 @@ export const STRINGS_NL = {
                 name: 'Overgangsstijl',
                 desc: 'Interpolatie tussen de eerste en laatste kleur.',
                 options: {
-                    hue: 'Hue',
+                    hue: 'Tint',
                     rgb: 'RGB'
                 }
             },
@@ -2267,7 +2267,7 @@ export const STRINGS_NL = {
             },
             navRainbowConsistentBrightness: {
                 name: 'Consistente helderheid over kleurtonen', // (English: Consistent brightness across hues)
-                desc: 'Interpoleert de helderheid tussen de begin- en eindkleuren tijdens kleurtoenovergangen.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
+                desc: 'Interpoleert de helderheid tussen de begin- en eindkleuren tijdens kleurtoonovergangen.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
             },
             navRainbowSeparateThemeColors: {
                 name: 'Aparte kleuren voor lichte en donkere modus', // (English: Separate light and dark mode colors)
@@ -2285,7 +2285,7 @@ export const STRINGS_NL = {
             },
             collapseItems: {
                 name: 'Items inklappen',
-                desc: 'Kies wat de uitklappen/inklappen alle knop beïnvloedt.',
+                desc: 'Kies wat de knop Alles in-/uitklappen beïnvloedt.',
                 options: {
                     all: 'Alles',
                     foldersOnly: 'Alleen mappen',
@@ -2344,7 +2344,7 @@ export const STRINGS_NL = {
                 desc: 'Onderliggende tags nemen de kleur over van bovenliggende tags.'
             },
             tagSortOrder: {
-                name: 'Tag sorteervolgorde',
+                name: 'Sorteervolgorde tags',
                 desc: 'Klik met de rechtermuisknop op een tag om een andere sorteervolgorde in te stellen voor de onderliggende items.',
                 options: {
                     alphaAsc: 'A tot Z',
@@ -2374,7 +2374,7 @@ export const STRINGS_NL = {
                 name: 'Eigenschappen tonen',
                 desc: 'Eigenschappensectie tonen in de navigator.',
                 propertyKeysInfoPrefix: 'Configureer eigenschappen in ',
-                propertyKeysInfoLinkText: 'Start > Eigenschapssleutels',
+                propertyKeysInfoLinkText: 'Algemeen > Eigenschapssleutels',
                 propertyKeysInfoSuffix: ''
             },
             showPropertyIcons: {
@@ -2382,8 +2382,8 @@ export const STRINGS_NL = {
                 desc: 'Pictogrammen naast eigenschappen in het navigatiepaneel tonen.'
             },
             inheritPropertyColors: {
-                name: 'Eigenschapkleuren overnemen',
-                desc: 'Eigenschapwaarden nemen de kleur en achtergrond over van hun eigenschapsleutel.'
+                name: 'Eigenschapskleuren overnemen',
+                desc: 'Eigenschapswaarden nemen de kleur en achtergrond over van hun eigenschapssleutel.'
             },
             propertySortOrder: {
                 name: 'Sorteervolgorde eigenschappen',
@@ -2411,16 +2411,16 @@ export const STRINGS_NL = {
             },
             hideNotesWithTags: {
                 name: 'Notities met tags verbergen (kluisprofiel)',
-                desc: 'Comma-separated list of tag patterns. Notes containing matching tags are hidden. Name patterns: tag* (starting with), *tag (ending with). Path patterns: archive (tag and descendants), archive/* (descendants only), projects/*/drafts (mid-segment wildcard).',
-                placeholder: 'archive*, *draft, projects/*/old'
+                desc: 'Kommagescheiden lijst van tagpatronen. Notities met overeenkomende tags worden verborgen. Naampatronen: tag* (begint met), *tag (eindigt met). Padpatronen: archief (tag en afstammelingen), archief/* (alleen afstammelingen), projecten/*/concepten (wildcard in het midden).',
+                placeholder: 'archief*, *concept, projecten/*/oud'
             },
             enableFolderNotes: {
                 name: 'Mapnotities inschakelen',
                 desc: 'Mappen met een overeenkomstig notitiebestand worden weergegeven als klikbare koppelingen.'
             },
             folderNoteType: {
-                name: 'Standaard mapnotitie-type',
-                desc: 'Mapnotitie-type aangemaakt vanuit het contextmenu.',
+                name: 'Standaard mapnotitietype',
+                desc: 'Mapnotitietype aangemaakt vanuit het contextmenu.',
                 options: {
                     ask: 'Vragen bij aanmaken',
                     markdown: 'Markdown',
@@ -2447,7 +2447,7 @@ export const STRINGS_NL = {
             },
             pinCreatedFolderNote: {
                 name: 'Aangemaakte mapnotities vastpinnen',
-                desc: 'Mapnotities vastmaken wanneer ze via het contextmenu worden aangemaakt.'
+                desc: 'Mapnotities vastpinnen wanneer ze via het contextmenu worden aangemaakt.'
             },
             folderNoteOpenLocation: {
                 name: 'Mapnotities openen in',
@@ -2491,11 +2491,11 @@ export const STRINGS_NL = {
                 loading: 'Metadata controleren...',
                 statusClean: 'Geen metadata om op te schonen',
                 statusCounts:
-                    'Verweesde items: {folders} mappen, {tags} tags, {properties} eigenschappen, {files} bestanden, {pinned} pins, {separators} scheidingslijnen'
+                    'Verweesde items: {folders} mappen, {tags} tags, {properties} eigenschappen, {files} bestanden, {pinned} vastgepinde items, {separators} scheidingslijnen'
             },
             rebuildCache: {
                 name: 'Cache opnieuw opbouwen',
-                desc: 'Gebruik dit als u ontbrekende tags, onjuiste voorbeelden of ontbrekende uitgelichte afbeeldingen ervaart. Dit kan gebeuren na synchronisatieconflicten of onverwachte afsluitingen.',
+                desc: 'Gebruik dit als je ontbrekende tags, onjuiste voorbeelden of ontbrekende uitgelichte afbeeldingen ervaart. Dit kan gebeuren na synchronisatieconflicten of onverwachte afsluitingen.',
                 buttonText: 'Cache opnieuw opbouwen',
                 error: 'Kan cache niet opnieuw opbouwen',
                 indexingTitle: 'Kluis wordt geïndexeerd...',
@@ -2508,13 +2508,13 @@ export const STRINGS_NL = {
                 statusInstalled: 'Gedownload (versie {version})',
                 statusNotInstalled: 'Niet gedownload',
                 versionUnknown: 'onbekend',
-                downloadFailed: 'Kan {name} niet downloaden. Controleer uw verbinding en probeer opnieuw.',
+                downloadFailed: 'Kan {name} niet downloaden. Controleer je verbinding en probeer opnieuw.',
                 removeFailed: 'Kan {name} niet verwijderen.',
                 infoNote:
                     'Gedownloade pictogrampakketten synchroniseren installatiestatus tussen apparaten. Pictogrampakketten blijven in de lokale database op elk apparaat; synchronisatie houdt alleen bij of ze moeten worden gedownload of verwijderd. Pictogrampakketten downloaden van de Notebook Navigator repository (https://github.com/johansan/notebook-navigator/tree/main/icon-assets).'
             },
             useFrontmatterMetadata: {
-                name: 'Frontmatter metadata gebruiken',
+                name: 'Frontmatter-metadata gebruiken',
                 desc: 'Frontmatter gebruiken voor notitienaam, tijdstempels, pictogrammen en kleuren'
             },
             frontmatterIconField: {
@@ -2549,12 +2549,12 @@ export const STRINGS_NL = {
             },
             frontmatterCreatedField: {
                 name: 'Aangemaakt tijdstempelveld',
-                desc: 'Frontmatter-veldnaam voor de aangemaakt tijdstempel. Laat leeg om alleen bestandssysteemdatum te gebruiken.',
+                desc: 'Frontmatter-veldnaam voor de aanmaaktijdstempel. Laat leeg om alleen bestandssysteemdatum te gebruiken.',
                 placeholder: 'created'
             },
             frontmatterModifiedField: {
                 name: 'Gewijzigd tijdstempelveld',
-                desc: 'Frontmatter-veldnaam voor de gewijzigd tijdstempel. Laat leeg om alleen bestandssysteemdatum te gebruiken.',
+                desc: 'Frontmatter-veldnaam voor de wijzigingstijdstempel. Laat leeg om alleen bestandssysteemdatum te gebruiken.',
                 placeholder: 'modified'
             },
             frontmatterTimestampFormat: {
@@ -2566,7 +2566,7 @@ export const STRINGS_NL = {
             },
             supportDevelopment: {
                 name: 'Ontwikkeling ondersteunen',
-                desc: 'Als u graag Notebook Navigator gebruikt, overweeg dan om de voortdurende ontwikkeling te ondersteunen.',
+                desc: 'Als je Notebook Navigator graag gebruikt, overweeg dan om de voortdurende ontwikkeling te ondersteunen.',
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Koop me een koffie'
             },
@@ -2582,7 +2582,7 @@ export const STRINGS_NL = {
             },
             startupDebugLogging: {
                 name: 'Debuglogboek bij opstarten',
-                desc: 'Schrijft opstartdiagnoses naar een Markdown-bestand met tijdstempel in de hoofdmap van de vault en stopt nadat het opstarten is gestabiliseerd. Het bestand kan worden gesynchroniseerd en bestandspaden bevatten.'
+                desc: 'Schrijft opstartdiagnoses naar een Markdown-bestand met tijdstempel in de hoofdmap van de kluis en stopt nadat het opstarten is gestabiliseerd. Het bestand kan worden gesynchroniseerd en bestandspaden bevatten.'
             },
             whatsNew: {
                 name: 'Wat is er nieuw in Notebook Navigator {version}',
@@ -2602,7 +2602,7 @@ export const STRINGS_NL = {
                 withMetadata: 'met metadata'
             },
             metadataInfo: {
-                successfullyParsed: 'Succesvol geparsed',
+                successfullyParsed: 'Succesvol geparseerd',
                 itemsWithName: 'items met naam',
                 withCreatedDate: 'met aanmaakdatum',
                 withModifiedDate: 'met wijzigingsdatum',
@@ -2611,7 +2611,7 @@ export const STRINGS_NL = {
                 failedToParse: 'Parseren mislukt',
                 createdDates: 'aanmaakdatums',
                 modifiedDates: 'wijzigingsdatums',
-                checkTimestampFormat: 'Controleer uw tijdstempelformaat.',
+                checkTimestampFormat: 'Controleer je tijdstempelformaat.',
                 exportFailed: 'Exportfouten'
             }
         }
@@ -2619,7 +2619,7 @@ export const STRINGS_NL = {
     whatsNew: {
         title: 'Wat is er nieuw in Notebook Navigator',
         openBannerImage: 'Releasebannerafbeelding openen',
-        supportMessage: 'Als u Notebook Navigator nuttig vindt, overweeg dan om de ontwikkeling te ondersteunen.',
+        supportMessage: 'Als je Notebook Navigator nuttig vindt, overweeg dan om de ontwikkeling te ondersteunen.',
         supportButton: 'Koop me een koffie',
         thanksButton: 'Bedankt!'
     }
