@@ -20,7 +20,7 @@ import { MenuItem, TFile } from 'obsidian';
 import type { PropertyMenuBuilderParams } from './menuTypes';
 import { strings } from '../../i18n';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../types';
-import { setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { setAsyncOnClick, setSubmenuOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { addStyleMenu } from './styleMenuBuilder';
 import { resolveUXIcon, resolveUXIconForMenu } from '../uxIcons';
@@ -336,7 +336,7 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(`${strings.folderAppearance.defaultLabel} (${globalDefaultLabel})`).setChecked(!currentOverride);
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.removePropertyChildSortOrderOverride(normalizedNodeId);
                     app.workspace.requestSaveLayout();
                 });
@@ -346,7 +346,7 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(strings.settings.items.propertySortOrder.options.alphaAsc).setChecked(currentOverride === 'alpha-asc');
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.setPropertyChildSortOrderOverride(normalizedNodeId, 'alpha-asc');
                     app.workspace.requestSaveLayout();
                 });
@@ -354,7 +354,7 @@ export function buildPropertyMenu(params: PropertyMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(strings.settings.items.propertySortOrder.options.alphaDesc).setChecked(currentOverride === 'alpha-desc');
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.setPropertyChildSortOrderOverride(normalizedNodeId, 'alpha-desc');
                     app.workspace.requestSaveLayout();
                 });

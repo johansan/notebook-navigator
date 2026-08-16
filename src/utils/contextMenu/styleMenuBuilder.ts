@@ -21,7 +21,7 @@ import { strings } from '../../i18n';
 import { MetadataService } from '../../services/MetadataService';
 import { resolveFolderDisplayName } from '../folderDisplayName';
 import { resolveNavigationFolderIcon } from '../uxIcons';
-import { setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { setAsyncOnClick, setSubmenuOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { copyStyleToClipboard, getStyleClipboard, hasStyleData, type StyleClipboardData } from './styleClipboard';
 
 /**
@@ -293,7 +293,7 @@ export function addStyleMenu(config: StyleMenuConfig): void {
 
         if (hasCopyableStyle) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.copy).setIcon('lucide-copy'), async () => {
+                setSubmenuOnClick(config.menu, subItem.setTitle(strings.contextMenu.style.copy).setIcon('lucide-copy'), async () => {
                     copyStyleToClipboard(config.styleData);
                 });
             });
@@ -301,54 +301,70 @@ export function addStyleMenu(config: StyleMenuConfig): void {
 
         if (hasPasteableStyle) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.paste).setIcon('lucide-clipboard-check'), async () => {
-                    const clipboard = getStyleClipboard();
-                    if (!clipboard || !hasStyleData(clipboard.data) || !config.applyStyle) {
-                        return;
+                setSubmenuOnClick(
+                    config.menu,
+                    subItem.setTitle(strings.contextMenu.style.paste).setIcon('lucide-clipboard-check'),
+                    async () => {
+                        const clipboard = getStyleClipboard();
+                        if (!clipboard || !hasStyleData(clipboard.data) || !config.applyStyle) {
+                            return;
+                        }
+
+                        const supportedClipboardData: StyleClipboardData = {
+                            icon: hasIconSupport ? clipboard.data.icon : undefined,
+                            color: hasColorSupport ? clipboard.data.color : undefined,
+                            background: hasBackgroundSupport ? clipboard.data.background : undefined
+                        };
+
+                        if (!hasStyleData(supportedClipboardData)) {
+                            return;
+                        }
+
+                        await config.applyStyle(supportedClipboardData);
                     }
-
-                    const supportedClipboardData: StyleClipboardData = {
-                        icon: hasIconSupport ? clipboard.data.icon : undefined,
-                        color: hasColorSupport ? clipboard.data.color : undefined,
-                        background: hasBackgroundSupport ? clipboard.data.background : undefined
-                    };
-
-                    if (!hasStyleData(supportedClipboardData)) {
-                        return;
-                    }
-
-                    await config.applyStyle(supportedClipboardData);
-                });
+                );
             });
         }
 
         if (showIndividualRemovers && hasRemovableIcon) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.removeIcon).setIcon('lucide-image-off'), async () => {
-                    await config.removeIcon?.();
-                });
+                setSubmenuOnClick(
+                    config.menu,
+                    subItem.setTitle(strings.contextMenu.style.removeIcon).setIcon('lucide-image-off'),
+                    async () => {
+                        await config.removeIcon?.();
+                    }
+                );
             });
         }
 
         if (showIndividualRemovers && hasRemovableColor) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.removeColor).setIcon('lucide-palette'), async () => {
-                    await config.removeColor?.();
-                });
+                setSubmenuOnClick(
+                    config.menu,
+                    subItem.setTitle(strings.contextMenu.style.removeColor).setIcon('lucide-palette'),
+                    async () => {
+                        await config.removeColor?.();
+                    }
+                );
             });
         }
 
         if (showIndividualRemovers && hasRemovableBackground) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.removeBackground).setIcon('lucide-paint-bucket'), async () => {
-                    await config.removeBackground?.();
-                });
+                setSubmenuOnClick(
+                    config.menu,
+                    subItem.setTitle(strings.contextMenu.style.removeBackground).setIcon('lucide-paint-bucket'),
+                    async () => {
+                        await config.removeBackground?.();
+                    }
+                );
             });
         }
 
         if (showClearAction && hasClearAction) {
             styleSubmenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.style.clear).setIcon('lucide-eraser'), async () => {
+                setSubmenuOnClick(config.menu, subItem.setTitle(strings.contextMenu.style.clear).setIcon('lucide-eraser'), async () => {
                     if (config.clearStyle) {
                         // Single clear action path for item types that support unified metadata updates.
                         await config.clearStyle();
