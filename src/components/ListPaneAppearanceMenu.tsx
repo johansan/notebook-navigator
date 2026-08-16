@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Menu, Platform, TFolder, type MenuItem } from 'obsidian';
+import { Menu, TFolder, type MenuItem } from 'obsidian';
 import {
     getDefaultListMode,
     getStoredListPaneAppearanceFields,
@@ -167,10 +167,7 @@ export function showListPaneAppearanceMenu({
     const textCountLabel = (value: TextCountDisplay): string => strings.folderAppearance.textCount.options[value];
     const rowCounts = [1, 2, 3, 4, 5] as const;
 
-    /**
-     * Desktop menus use Obsidian's optional submenu API. Mobile and older Obsidian versions receive
-     * the same choices as flat indented sections so primary appearance controls are never dropped.
-     */
+    /** Obsidian versions without working submenu support receive the same choices as flat indented sections. */
     const addChoiceSection = <T,>({
         title,
         isCustom,
@@ -188,9 +185,7 @@ export function showListPaneAppearanceMenu({
         menu.addItem(item => {
             setItemTitle(item, title, isCustom);
             item.setIcon(icon);
-            if (!Platform.isMobile) {
-                choiceMenu = tryCreateSubmenu(item);
-            }
+            choiceMenu = tryCreateSubmenu(item);
             if (!choiceMenu) {
                 item.setDisabled(true);
             }
