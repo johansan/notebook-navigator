@@ -125,7 +125,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         ],
         fixed: [
             '`New canvas` is now hidden if the Canvas core plugin is disabled.',
-            'Clicking a folder note in navpane with folder notes showing in list pane now properly selects it.'
+            'Clicking a folder note in navpane with folder notes showing in list pane now properly selects it.',
+            'Submenus now close properly after selecting an option on mobile devices.'
         ]
     },
     {

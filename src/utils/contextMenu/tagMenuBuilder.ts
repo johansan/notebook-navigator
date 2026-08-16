@@ -22,7 +22,7 @@ import { strings } from '../../i18n';
 import { cleanupTagPatterns, createHiddenTagMatcher, matchesHiddenTagPattern } from '../tagPrefixMatcher';
 import { ItemType, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../../types';
 import { normalizeTagPath } from '../tagUtils';
-import { setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { setAsyncOnClick, setSubmenuOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { addStyleMenu } from './styleMenuBuilder';
 import { resolveUXIcon, resolveUXIconForMenu } from '../uxIcons';
@@ -240,7 +240,7 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(`${strings.folderAppearance.defaultLabel} (${globalDefaultLabel})`).setChecked(!currentOverride);
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.removeTagChildSortOrderOverride(tagPath);
                     app.workspace.requestSaveLayout();
                 });
@@ -250,7 +250,7 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(strings.settings.items.tagSortOrder.options.alphaAsc).setChecked(currentOverride === 'alpha-asc');
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.setTagChildSortOrderOverride(tagPath, 'alpha-asc');
                     app.workspace.requestSaveLayout();
                 });
@@ -258,7 +258,7 @@ export function buildTagMenu(params: TagMenuBuilderParams): void {
 
             sortOrderSubmenu.addItem(subItem => {
                 subItem.setTitle(strings.settings.items.tagSortOrder.options.alphaDesc).setChecked(currentOverride === 'alpha-desc');
-                setAsyncOnClick(subItem, async () => {
+                setSubmenuOnClick(menu, subItem, async () => {
                     await metadataService.setTagChildSortOrderOverride(tagPath, 'alpha-desc');
                     app.workspace.requestSaveLayout();
                 });

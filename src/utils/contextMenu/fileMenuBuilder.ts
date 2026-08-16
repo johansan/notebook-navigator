@@ -30,7 +30,7 @@ import { SelectionState, SelectionAction } from '../../context/SelectionContext'
 import type { ShortcutsContextValue } from '../../context/ShortcutsContext';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { CommandQueueService } from '../../services/CommandQueueService';
-import { addCopySubmenu, setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { addCopySubmenu, setAsyncOnClick, setSubmenuOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 import { addShortcutRenameMenuItem } from './shortcutRenameMenuItem';
 import { openFileInContext } from '../openFileInContext';
 import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFilesWithPrompt } from '../tagModalHelpers';
@@ -272,7 +272,7 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
                         const configuredItem = subItem.setTitle(action.label);
                         configuredItem.setIcon(resolveFileMenuPropertyActionIcon(settings, metadataService, action));
 
-                        setAsyncOnClick(configuredItem, async () => {
+                        setSubmenuOnClick(menu, configuredItem, async () => {
                             await fileSystemOps.applyPropertyNodeToFiles(action.nodeId, filesForTagOps);
                         });
                     });

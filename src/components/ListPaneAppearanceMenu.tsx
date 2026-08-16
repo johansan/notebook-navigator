@@ -30,7 +30,7 @@ import { strings } from '../i18n';
 import type { ListDisplayMode, NotebookNavigatorSettings, TextCountDisplay } from '../settings/types';
 import { ItemType } from '../types';
 import { runAsyncAction } from '../utils/async';
-import { tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
+import { setSubmenuOnClick, tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
 import { ensureRecord, sanitizeRecord } from '../utils/recordUtils';
 import { resolveUXIconForMenu } from '../utils/uxIcons';
 import type { PropertySelectionNodeId } from '../utils/propertyTree';
@@ -195,12 +195,16 @@ export function showListPaneAppearanceMenu({
         const indent = choiceMenu ? '' : '    ';
         options.forEach(option => {
             destination.addItem(item => {
-                item.setTitle(`${indent}${option.title}`)
-                    .setIcon(icon)
-                    .setChecked(option.checked)
-                    .onClick(() => {
+                const configuredItem = item.setTitle(`${indent}${option.title}`).setIcon(icon).setChecked(option.checked);
+                if (choiceMenu) {
+                    setSubmenuOnClick(menu, configuredItem, () => {
                         onSelect(option.value);
                     });
+                    return;
+                }
+                configuredItem.onClick(() => {
+                    onSelect(option.value);
+                });
             });
         });
     };
