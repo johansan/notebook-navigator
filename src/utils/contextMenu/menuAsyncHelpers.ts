@@ -27,6 +27,15 @@ export function setAsyncOnClick(item: MenuItem, handler: () => void | Promise<vo
     });
 }
 
+export function setSubmenuOnClick(rootMenu: Menu, item: MenuItem, handler: () => void | Promise<void>): MenuItem {
+    return item.onClick(() => {
+        // Obsidian's phone submenu navigation does not close the root menu after a child action,
+        // so close it explicitly before the action updates state behind the still-visible menu.
+        rootMenu.hide();
+        runAsyncAction(handler);
+    });
+}
+
 export function tryCreateSubmenu(item: MenuItem): Menu | null {
     if (typeof item.setSubmenu !== 'function') {
         return null;
@@ -96,7 +105,8 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
         const linkItems = config.linkItems;
         if (linkItems) {
             submenu.addItem(subItem => {
-                setAsyncOnClick(
+                setSubmenuOnClick(
+                    config.menu,
                     subItem
                         .setTitle(linkItems.isMarkdownFile ? strings.contextMenu.copy.noteLink : strings.contextMenu.copy.fileLink)
                         .setIcon('lucide-brackets'),
@@ -109,7 +119,8 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
             });
 
             submenu.addItem(subItem => {
-                setAsyncOnClick(
+                setSubmenuOnClick(
+                    config.menu,
                     subItem
                         .setTitle(
                             linkItems.isMarkdownFile
@@ -126,7 +137,8 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
             });
 
             submenu.addItem(subItem => {
-                setAsyncOnClick(
+                setSubmenuOnClick(
+                    config.menu,
                     subItem
                         .setTitle(linkItems.isMarkdownFile ? strings.contextMenu.copy.noteEmbed : strings.contextMenu.copy.fileEmbed)
                         .setIcon('lucide-picture-in-picture-2'),
@@ -143,7 +155,7 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
 
         if (config.getObsidianUrl) {
             submenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.copy.obsidianUrl).setIcon('lucide-link'), async () => {
+                setSubmenuOnClick(config.menu, subItem.setTitle(strings.contextMenu.copy.obsidianUrl).setIcon('lucide-link'), async () => {
                     const deepLink = config.getObsidianUrl?.();
                     if (!deepLink) {
                         return;
@@ -157,7 +169,7 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
         }
 
         submenu.addItem(subItem => {
-            setAsyncOnClick(subItem.setTitle(strings.contextMenu.copy.pathFromVaultFolder).setIcon('vault'), async () => {
+            setSubmenuOnClick(config.menu, subItem.setTitle(strings.contextMenu.copy.pathFromVaultFolder).setIcon('vault'), async () => {
                 const vaultPath = config.getVaultPath();
                 if (await copyToClipboard(vaultPath)) {
                     showNotice(strings.fileSystem.notifications.relativePathCopied, { variant: 'success' });
@@ -167,16 +179,20 @@ export function addCopySubmenu(config: CopySubmenuConfig): boolean {
 
         if (config.getSystemPath) {
             submenu.addItem(subItem => {
-                setAsyncOnClick(subItem.setTitle(strings.contextMenu.copy.pathFromSystemRoot).setIcon('lucide-hard-drive'), async () => {
-                    const systemPath = config.getSystemPath?.();
-                    if (!systemPath) {
-                        return;
-                    }
+                setSubmenuOnClick(
+                    config.menu,
+                    subItem.setTitle(strings.contextMenu.copy.pathFromSystemRoot).setIcon('lucide-hard-drive'),
+                    async () => {
+                        const systemPath = config.getSystemPath?.();
+                        if (!systemPath) {
+                            return;
+                        }
 
-                    if (await copyToClipboard(systemPath)) {
-                        showNotice(strings.fileSystem.notifications.pathCopied, { variant: 'success' });
+                        if (await copyToClipboard(systemPath)) {
+                            showNotice(strings.fileSystem.notifications.pathCopied, { variant: 'success' });
+                        }
                     }
-                });
+                );
             });
         }
     });

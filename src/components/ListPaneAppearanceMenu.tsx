@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Menu, Platform, TFolder, type MenuItem } from 'obsidian';
+import { Menu, TFolder, type MenuItem } from 'obsidian';
 import {
     getDefaultListMode,
     getStoredListPaneAppearanceFields,
@@ -30,7 +30,7 @@ import { strings } from '../i18n';
 import type { ListDisplayMode, NotebookNavigatorSettings, TextCountDisplay } from '../settings/types';
 import { ItemType } from '../types';
 import { runAsyncAction } from '../utils/async';
-import { tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
+import { setSubmenuOnClick, tryCreateSubmenu } from '../utils/contextMenu/menuAsyncHelpers';
 import { ensureRecord, sanitizeRecord } from '../utils/recordUtils';
 import { resolveUXIconForMenu } from '../utils/uxIcons';
 import type { PropertySelectionNodeId } from '../utils/propertyTree';
@@ -167,10 +167,7 @@ export function showListPaneAppearanceMenu({
     const textCountLabel = (value: TextCountDisplay): string => strings.folderAppearance.textCount.options[value];
     const rowCounts = [1, 2, 3, 4, 5] as const;
 
-    /**
-     * Desktop menus use Obsidian's optional submenu API. Mobile and older Obsidian versions receive
-     * the same choices as flat indented sections so primary appearance controls are never dropped.
-     */
+    /** Obsidian versions without working submenu support receive the same choices as flat indented sections. */
     const addChoiceSection = <T,>({
         title,
         isCustom,
@@ -188,9 +185,7 @@ export function showListPaneAppearanceMenu({
         menu.addItem(item => {
             setItemTitle(item, title, isCustom);
             item.setIcon(icon);
-            if (!Platform.isMobile) {
-                choiceMenu = tryCreateSubmenu(item);
-            }
+            choiceMenu = tryCreateSubmenu(item);
             if (!choiceMenu) {
                 item.setDisabled(true);
             }
@@ -200,12 +195,16 @@ export function showListPaneAppearanceMenu({
         const indent = choiceMenu ? '' : '    ';
         options.forEach(option => {
             destination.addItem(item => {
-                item.setTitle(`${indent}${option.title}`)
-                    .setIcon(icon)
-                    .setChecked(option.checked)
-                    .onClick(() => {
+                const configuredItem = item.setTitle(`${indent}${option.title}`).setIcon(icon).setChecked(option.checked);
+                if (choiceMenu) {
+                    setSubmenuOnClick(menu, configuredItem, () => {
                         onSelect(option.value);
                     });
+                    return;
+                }
+                configuredItem.onClick(() => {
+                    onSelect(option.value);
+                });
             });
         });
     };
