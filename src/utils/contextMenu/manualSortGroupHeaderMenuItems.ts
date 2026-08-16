@@ -25,7 +25,7 @@ import {
     type ManualSortGroupHeaderData,
     type ManualSortGroupHeaderWriteValue
 } from '../manualSort';
-import { setAsyncOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
+import { setAsyncOnClick, setSubmenuOnClick, tryCreateSubmenu } from './menuAsyncHelpers';
 
 interface AddManualSortGroupHeaderMenuItemsParams {
     menu: Menu;
@@ -159,18 +159,20 @@ function addGroupHeaderSubmenu(
 
         if (currentValue) {
             submenu.addItem(subItem => {
-                subItem
-                    .setTitle(strings.contextMenu.file.manualSortGroupHeader.copyStyle)
-                    .setIcon('lucide-copy')
-                    .onClick(() => {
+                setSubmenuOnClick(
+                    menu,
+                    subItem.setTitle(strings.contextMenu.file.manualSortGroupHeader.copyStyle).setIcon('lucide-copy'),
+                    () => {
                         copyManualSortGroupHeaderStyle(currentValue);
-                    });
+                    }
+                );
             });
         }
 
         if (copiedStyle) {
             submenu.addItem(subItem => {
-                setAsyncOnClick(
+                setSubmenuOnClick(
+                    menu,
                     subItem.setTitle(strings.contextMenu.file.manualSortGroupHeader.pasteStyle).setIcon('lucide-clipboard-check'),
                     async () => {
                         const style = getManualSortGroupHeaderStyleClipboard();
@@ -186,7 +188,8 @@ function addGroupHeaderSubmenu(
 
         if (currentValue) {
             submenu.addItem((subItem: MenuItem) => {
-                setAsyncOnClick(
+                setSubmenuOnClick(
+                    menu,
                     subItem.setTitle(strings.contextMenu.file.manualSortGroupHeader.remove).setIcon('lucide-eraser'),
                     async () => {
                         await writeManualSortGroupHeader(app, file, propertyKey, '');
