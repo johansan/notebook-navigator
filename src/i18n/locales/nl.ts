@@ -1481,8 +1481,8 @@ export const STRINGS_NL = {
                 desc: 'Geldt alleen op iOS.'
             },
             defaultStartupView: {
-                name: 'Standaard opstartweergave',
-                desc: 'Kies welk paneel actief is bij het openen van Notebook Navigator. De enkelpaneelweergave toont dit paneel eerst; de dubbelpaneelweergave geeft het de toetsenbordfocus.',
+                name: 'Opstartweergave met enkel paneel',
+                desc: 'Kies welk paneel wordt weergegeven wanneer Notebook Navigator in de enkelpaneelweergave wordt geopend.',
                 options: {
                     navigation: 'Navigatiepaneel',
                     listPane: 'Lijstpaneel'

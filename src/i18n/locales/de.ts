@@ -1481,8 +1481,8 @@ export const STRINGS_DE = {
                 desc: 'Gilt nur für iOS.'
             },
             defaultStartupView: {
-                name: 'Standard-Startansicht',
-                desc: 'Wähle den Bereich, der beim Öffnen von Notebook Navigator aktiv ist. In der einspaltigen Ansicht wird dieser Bereich zuerst angezeigt, in der zweispaltigen Ansicht erhält er den Tastaturfokus.',
+                name: 'Startansicht im Einzelbereich',
+                desc: 'Wähle, welcher Bereich beim Öffnen von Notebook Navigator in der einspaltigen Ansicht angezeigt wird.',
                 options: {
                     navigation: 'Navigationsbereich',
                     listPane: 'Listenbereich'

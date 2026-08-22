@@ -1472,8 +1472,8 @@ export const STRINGS_EN = {
                 desc: 'Applies only on iOS.'
             },
             defaultStartupView: {
-                name: 'Default startup view',
-                desc: 'Choose which pane is active when Notebook Navigator opens. Single-pane layout shows this pane first; dual-pane layout gives it keyboard focus.',
+                name: 'Single-pane startup view',
+                desc: 'Choose which pane is shown when Notebook Navigator opens in single-pane layout.',
                 options: {
                     navigation: 'Navigation pane',
                     listPane: 'List pane'
