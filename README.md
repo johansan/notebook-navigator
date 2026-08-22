@@ -427,7 +427,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Single-pane mode** - Navigation and list views with animated transitions
 - **Resizable panes** - Horizontal or vertical split orientation
 - **Independent UI zoom** - Scale Notebook Navigator without changing Obsidian zoom
-- **Startup view** - Navigation-first or list-first
+- **Single-pane startup view** - Navigation pane or list pane
 - **Multi-language support** - 21 languages with RTL layout support
 - **Interface icon set** - Customizable UI icons across the plugin
 

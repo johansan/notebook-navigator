@@ -1474,8 +1474,8 @@ export const STRINGS_AR = {
                 desc: 'ينطبق فقط على iOS.'
             },
             defaultStartupView: {
-                name: 'عرض البدء الافتراضي',
-                desc: 'اختر اللوحة النشطة عند فتح Notebook Navigator. في تخطيط اللوحة الواحدة تظهر هذه اللوحة أولًا، وفي تخطيط اللوحتين تحصل على تركيز لوحة المفاتيح.',
+                name: 'عرض بدء اللوحة الواحدة',
+                desc: 'اختر اللوحة التي تظهر عند فتح Notebook Navigator في تخطيط اللوحة الواحدة.',
                 options: {
                     navigation: 'لوحة التنقل',
                     listPane: 'لوحة القائمة'

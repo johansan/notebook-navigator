@@ -1481,8 +1481,8 @@ export const STRINGS_ES = {
                 desc: 'Solo se aplica en iOS.'
             },
             defaultStartupView: {
-                name: 'Vista de inicio predeterminada',
-                desc: 'Elige qué panel está activo al abrir Notebook Navigator. El diseño de panel único muestra este panel primero; el diseño de doble panel le da el foco del teclado.',
+                name: 'Vista de inicio en panel único',
+                desc: 'Elige qué panel se muestra al abrir Notebook Navigator con el diseño de panel único.',
                 options: {
                     navigation: 'Panel de navegación',
                     listPane: 'Panel de lista'

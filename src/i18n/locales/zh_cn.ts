@@ -1466,8 +1466,8 @@ export const STRINGS_ZH_CN = {
                 desc: '仅适用于 iOS。'
             },
             defaultStartupView: {
-                name: '默认启动视图',
-                desc: '选择打开 Notebook Navigator 时处于活动状态的窗格。单窗格布局优先显示该窗格；双窗格布局将键盘焦点移至该窗格。',
+                name: '单窗格启动视图',
+                desc: '选择在单窗格布局中打开 Notebook Navigator 时显示的窗格。',
                 options: {
                     navigation: '导航窗格',
                     listPane: '列表窗格'

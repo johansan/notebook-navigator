@@ -1467,8 +1467,8 @@ export const STRINGS_ZH_TW = {
                 desc: '僅適用於 iOS。'
             },
             defaultStartupView: {
-                name: '預設啟動檢視',
-                desc: '選擇開啟 Notebook Navigator 時處於作用中的窗格。單窗格版面配置會優先顯示此窗格；雙窗格版面配置會將鍵盤焦點移至此窗格。',
+                name: '單窗格啟動檢視',
+                desc: '選擇在單窗格版面配置中開啟 Notebook Navigator 時顯示的窗格。',
                 options: {
                     navigation: '導覽窗格',
                     listPane: '列表窗格'

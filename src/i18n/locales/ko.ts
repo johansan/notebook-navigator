@@ -1475,8 +1475,8 @@ export const STRINGS_KO = {
                 desc: 'iOS에서만 적용됩니다.'
             },
             defaultStartupView: {
-                name: '기본 시작 보기',
-                desc: 'Notebook Navigator를 열 때 활성화되는 창을 선택하세요. 단일 창 레이아웃에서는 이 창이 먼저 표시되고, 이중 창 레이아웃에서는 이 창에 키보드 포커스가 이동합니다.',
+                name: '단일 창 시작 보기',
+                desc: '단일 창 레이아웃에서 Notebook Navigator를 열 때 표시할 창을 선택하세요.',
                 options: {
                     navigation: '탐색 창',
                     listPane: '목록 창'

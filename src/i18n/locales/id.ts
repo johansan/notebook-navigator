@@ -1478,8 +1478,8 @@ export const STRINGS_ID = {
                 desc: 'Hanya berlaku di iOS.'
             },
             defaultStartupView: {
-                name: 'Tampilan startup default',
-                desc: 'Pilih panel yang aktif saat Notebook Navigator dibuka. Tata letak panel tunggal menampilkan panel ini lebih dulu; tata letak panel ganda memberinya fokus keyboard.',
+                name: 'Tampilan awal panel tunggal',
+                desc: 'Pilih panel yang ditampilkan saat Notebook Navigator dibuka dalam tata letak panel tunggal.',
                 options: {
                     navigation: 'Panel navigasi',
                     listPane: 'Panel daftar'

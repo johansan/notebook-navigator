@@ -1481,8 +1481,8 @@ export const STRINGS_PT_BR = {
                 desc: 'Aplica-se apenas ao iOS.'
             },
             defaultStartupView: {
-                name: 'Visualização inicial padrão',
-                desc: 'Escolha qual painel fica ativo ao abrir o Notebook Navigator. O layout de painel único mostra este painel primeiro; o layout de painel duplo dá a ele o foco do teclado.',
+                name: 'Visualização inicial em painel único',
+                desc: 'Escolha qual painel é exibido ao abrir o Notebook Navigator no layout de painel único.',
                 options: {
                     navigation: 'Painel de navegação',
                     listPane: 'Painel de lista'

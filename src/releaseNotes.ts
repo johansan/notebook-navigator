@@ -107,6 +107,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.5',
+        date: '2026-08-24',
+        showOnUpdate: false,
+        fixed: [
+            'When the navigator starts in a sidebar too narrow for dual panes, it now respects ==Single-pane startup view== instead of always showing the list pane (issue introduced in 3.1.4 with the automatic switch between single and dual panes).'
+        ]
+    },
+    {
         version: '3.3.4',
         date: '2026-08-17',
         showOnUpdate: true,

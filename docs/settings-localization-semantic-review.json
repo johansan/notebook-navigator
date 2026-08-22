@@ -612,12 +612,12 @@
       "source": "settings.items.startView",
       "target": "settings.items.defaultStartupView",
       "decision": "rename",
-      "display": "Default startup view",
+      "display": "Single-pane startup view",
       "owner": {
         "page": "Appearance & behavior",
         "group": "Startup"
       },
-      "rationale": "The target names the displayed concept “Default startup view” instead of a persisted, legacy, or implementation-oriented identifier."
+      "rationale": "The displayed name scopes the startup view setting to single-pane layout."
     },
     {
       "source": "settings.items.toolbarButtons",

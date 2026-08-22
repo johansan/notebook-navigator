@@ -1477,8 +1477,8 @@ export const STRINGS_JA = {
                 desc: 'iOSでのみ適用されます。'
             },
             defaultStartupView: {
-                name: 'デフォルト起動ビュー',
-                desc: 'Notebook Navigator を開いたときにアクティブになるペインを選択します。シングルペインレイアウトではこのペインが最初に表示され、デュアルペインレイアウトではこのペインにキーボードフォーカスが移ります。',
+                name: 'シングルペインの起動ビュー',
+                desc: 'シングルペインレイアウトで Notebook Navigator を開いたときに表示するペインを選択します。',
                 options: {
                     navigation: 'ナビゲーションペイン',
                     listPane: 'リストペイン'
