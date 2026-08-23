@@ -32,7 +32,6 @@
  * used so synced devices normally share one display while stale settings cannot repeat it locally.
  */
 
-import { compareVersions } from './utils/versionUtils';
 export { compareVersions } from './utils/versionUtils';
 
 /**
@@ -106,6 +105,15 @@ export interface ReleaseNote {
  * 2. Categorize features into: new, improved, changed, or fixed arrays
  */
 const RELEASE_NOTES: ReleaseNote[] = [
+    {
+        version: '3.3.5',
+        date: '2026-08-23',
+        showOnUpdate: false,
+        improved: ["You can now turn off the `What's new` dialog on startup with the new setting ==Show release notes after updating==."],
+        fixed: [
+            'When the navigator starts in a sidebar too narrow for dual panes, it now properly respects ==Single-pane startup view== instead of always showing the list pane (issue was introduced in 3.1.4 with the automatic switch between single and dual panes).'
+        ]
+    },
     {
         version: '3.3.4',
         date: '2026-08-17',
@@ -497,37 +505,4 @@ export function isReleaseAutoDisplayEnabled(version: string): boolean {
         return true;
     }
     return note.showOnUpdate !== false;
-}
-
-/**
- * Determines whether release notes should appear automatically when upgrading between two versions.
- *
- * Upgrade decision rule:
- * - Evaluate release notes in the semantic range (fromVersion, toVersion]
- * - Return true when at least one note in that range has showOnUpdate not explicitly set to false
- *
- * Range resolution:
- * - If both versions exist in RELEASE_NOTES, use their index range in the ordered list
- * - If either version is missing, resolve the range by semantic version comparisons
- *
- * Non-upgrade transitions (same version or downgrade) use the target version setting.
- */
-export function shouldAutoDisplayReleaseNotesForUpdate(fromVersion: string, toVersion: string): boolean {
-    if (compareVersions(toVersion, fromVersion) <= 0) {
-        return isReleaseAutoDisplayEnabled(toVersion);
-    }
-
-    const fromIndex = RELEASE_NOTES.findIndex(note => note.version === fromVersion);
-    const toIndex = RELEASE_NOTES.findIndex(note => note.version === toVersion);
-
-    const releaseNotesInUpgradePath =
-        fromIndex === -1 || toIndex === -1
-            ? RELEASE_NOTES.filter(note => compareVersions(note.version, fromVersion) > 0 && compareVersions(note.version, toVersion) <= 0)
-            : RELEASE_NOTES.slice(Math.min(fromIndex, toIndex), Math.max(fromIndex, toIndex));
-
-    if (releaseNotesInUpgradePath.length === 0) {
-        return isReleaseAutoDisplayEnabled(toVersion);
-    }
-
-    return releaseNotesInUpgradePath.some(note => note.showOnUpdate !== false);
 }

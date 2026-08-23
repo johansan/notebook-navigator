@@ -1466,8 +1466,8 @@ export const STRINGS_ZH_CN = {
                 desc: '仅适用于 iOS。'
             },
             defaultStartupView: {
-                name: '默认启动视图',
-                desc: '选择打开 Notebook Navigator 时处于活动状态的窗格。单窗格布局优先显示该窗格；双窗格布局将键盘焦点移至该窗格。',
+                name: '单窗格启动视图',
+                desc: '选择在单窗格布局中打开 Notebook Navigator 时显示的窗格。',
                 options: {
                     navigation: '导航窗格',
                     listPane: '列表窗格'
@@ -2570,6 +2570,10 @@ export const STRINGS_ZH_CN = {
                 name: 'Notebook Navigator {version} 的最新动态',
                 desc: '查看最近的更新和改进',
                 buttonText: '查看最近更新'
+            },
+            showReleaseNotes: {
+                name: '更新后显示新功能',
+                desc: '关闭后，更新后不会自动打开新功能对话框。'
             },
             masteringVideo: {
                 name: '精通 Notebook Navigator（视频）',

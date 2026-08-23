@@ -24,7 +24,7 @@ import { strings } from '../../i18n';
 import { runAsyncAction } from '../../utils/async';
 import { createSettingGroupFactory } from '../settingGroups';
 import { setElementVisible } from '../dependentSettings';
-import { createGroupDefinition, createRenderDefinition } from '../nativeSettingControls';
+import { createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import type { SettingsTabContext } from './SettingsTabContext';
 
 /*
@@ -143,6 +143,18 @@ export function renderStartResourcesSection(context: SettingsTabContext): void {
 
     aboutGroup.addSetting(setting => {
         setting
+            .setName(strings.settings.items.showReleaseNotes.name)
+            .setDesc(strings.settings.items.showReleaseNotes.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.showReleaseNotes).onChange(async value => {
+                    plugin.settings.showReleaseNotes = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+            );
+    });
+
+    aboutGroup.addSetting(setting => {
+        setting
             .setName(strings.settings.items.masteringVideo.name)
             .setDesc(strings.settings.items.masteringVideo.desc)
             .addButton(button => {
@@ -247,6 +259,10 @@ export function createStartResourcesSettingDefinitions(context: SettingsTabConte
                         plugin.unregisterUpdateNoticeListener(updateStatusListenerId);
                     };
                 }
+            }),
+            createToggleDefinition('showReleaseNotes', {
+                name: strings.settings.items.showReleaseNotes.name,
+                desc: strings.settings.items.showReleaseNotes.desc
             }),
             createRenderDefinition({
                 name: strings.settings.items.masteringVideo.name,

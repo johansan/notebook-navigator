@@ -1481,8 +1481,8 @@ export const STRINGS_DE = {
                 desc: 'Gilt nur für iOS.'
             },
             defaultStartupView: {
-                name: 'Standard-Startansicht',
-                desc: 'Wähle den Bereich, der beim Öffnen von Notebook Navigator aktiv ist. In der einspaltigen Ansicht wird dieser Bereich zuerst angezeigt, in der zweispaltigen Ansicht erhält er den Tastaturfokus.',
+                name: 'Startansicht im Einzelbereich',
+                desc: 'Wähle, welcher Bereich beim Öffnen von Notebook Navigator in der einspaltigen Ansicht angezeigt wird.',
                 options: {
                     navigation: 'Navigationsbereich',
                     listPane: 'Listenbereich'
@@ -2591,6 +2591,10 @@ export const STRINGS_DE = {
                 name: 'Neuigkeiten in Notebook Navigator {version}',
                 desc: 'Letzte Updates und Verbesserungen anzeigen',
                 buttonText: 'Letzte Updates anzeigen'
+            },
+            showReleaseNotes: {
+                name: 'Versionshinweise nach Updates anzeigen',
+                desc: 'Deaktivieren, damit sich der Dialog mit den Neuerungen nach Updates nicht automatisch öffnet.'
             },
             masteringVideo: {
                 name: 'Notebook Navigator meistern (Video)',

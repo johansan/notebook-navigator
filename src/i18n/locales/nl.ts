@@ -1481,8 +1481,8 @@ export const STRINGS_NL = {
                 desc: 'Geldt alleen op iOS.'
             },
             defaultStartupView: {
-                name: 'Standaard opstartweergave',
-                desc: 'Kies welk paneel actief is bij het openen van Notebook Navigator. De enkelpaneelweergave toont dit paneel eerst; de dubbelpaneelweergave geeft het de toetsenbordfocus.',
+                name: 'Opstartweergave met enkel paneel',
+                desc: 'Kies welk paneel wordt weergegeven wanneer Notebook Navigator in de enkelpaneelweergave wordt geopend.',
                 options: {
                     navigation: 'Navigatiepaneel',
                     listPane: 'Lijstpaneel'
@@ -2590,6 +2590,10 @@ export const STRINGS_NL = {
                 name: 'Wat is er nieuw in Notebook Navigator {version}',
                 desc: 'Bekijk recente updates en verbeteringen',
                 buttonText: 'Bekijk recente updates'
+            },
+            showReleaseNotes: {
+                name: 'Releasenotes tonen na een update',
+                desc: 'Schakel uit om te voorkomen dat het dialoogvenster met wat er nieuw is automatisch wordt geopend na updates.'
             },
             masteringVideo: {
                 name: 'Notebook Navigator beheersen (video)',

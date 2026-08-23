@@ -280,6 +280,57 @@ describe("NotebookNavigatorPlugin What's new version tracking", () => {
         expect(plugin.saveSettingsAndUpdate).not.toHaveBeenCalled();
     });
 
+    it('advances the marker without opening the dialog when release notes are disabled', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '999.0.0';
+        plugin.settings.showReleaseNotes = false;
+        plugin.settingsController.getLastShownVersion.mockReturnValue('990.0.0');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).not.toHaveBeenCalled();
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('initializes a missing marker without opening the dialog when release notes are disabled', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '999.0.0';
+        plugin.settings.showReleaseNotes = false;
+        plugin.settingsController.getLastShownVersion.mockReturnValue('');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).not.toHaveBeenCalled();
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not open the dialog when the current release opts out of automatic display', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '3.3.5';
+        plugin.settings.showReleaseNotes = true;
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.3');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).not.toHaveBeenCalled();
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.3.5');
+        expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens the dialog when the user and current release both opt in', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '3.3.4';
+        plugin.settings.showReleaseNotes = true;
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.2');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).toHaveBeenCalledTimes(1);
+        expect(whatsNewModalOpen).toHaveBeenCalledTimes(1);
+    });
+
     it('advances both markers after the update dialog closes', async () => {
         vi.useFakeTimers();
         const plugin = createPluginHarness();

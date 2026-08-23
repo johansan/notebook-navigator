@@ -230,6 +230,9 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     // Icon packs tab
     externalIconProviders: sanitizeRecord<boolean>(undefined),
 
+    // About
+    showReleaseNotes: true,
+
     // Advanced tab
     checkForUpdatesOnStart: true,
 

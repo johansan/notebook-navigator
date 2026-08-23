@@ -1477,8 +1477,8 @@ export const STRINGS_TR = {
                 desc: 'Yalnızca iOS için geçerlidir.'
             },
             defaultStartupView: {
-                name: 'Varsayılan başlangıç görünümü',
-                desc: 'Notebook Navigator açıldığında hangi bölmenin etkin olacağını seçin. Tek bölmeli düzen önce bu bölmeyi gösterir; çift bölmeli düzen klavye odağını bu bölmeye verir.',
+                name: 'Tek bölmeli başlangıç görünümü',
+                desc: 'Notebook Navigator tek bölmeli düzende açıldığında gösterilecek bölmeyi seçin.',
                 options: {
                     navigation: 'Gezinme bölmesi',
                     listPane: 'Liste bölmesi'
@@ -2585,6 +2585,10 @@ export const STRINGS_TR = {
                 name: 'Notebook Navigator {version} yenilikleri',
                 desc: 'Son güncellemeleri ve iyileştirmeleri görün',
                 buttonText: 'Son güncellemeleri görüntüle'
+            },
+            showReleaseNotes: {
+                name: 'Güncellemeden sonra yenilikleri göster',
+                desc: 'Güncellemelerden sonra yenilikler penceresinin otomatik olarak açılmasını önlemek için devre dışı bırakın.'
             },
             masteringVideo: {
                 name: "Notebook Navigator'da uzmanlaşma (video)",
