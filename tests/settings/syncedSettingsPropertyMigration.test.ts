@@ -32,6 +32,16 @@ function createSettings(): NotebookNavigatorSettings {
 }
 
 describe('applyExistingUserDefaults', () => {
+    it('shows release notes when the setting is missing', () => {
+        const settings = createSettings();
+        const settingsRecord = settings as unknown as Record<string, unknown>;
+        delete settingsRecord['showReleaseNotes'];
+
+        applyExistingUserDefaults({ settings });
+
+        expect(settings.showReleaseNotes).toBe(true);
+    });
+
     it('hides group header item counts when the setting is missing', () => {
         const settings = createSettings();
         const settingsRecord = settings as unknown as Record<string, unknown>;

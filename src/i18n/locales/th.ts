@@ -1471,8 +1471,8 @@ export const STRINGS_TH = {
                 desc: 'ใช้ได้เฉพาะบน iOS'
             },
             defaultStartupView: {
-                name: 'มุมมองเริ่มต้นเมื่อเริ่มงาน',
-                desc: 'เลือกแผงที่ใช้งานเมื่อเปิด Notebook Navigator เลย์เอาต์แผงเดียวจะแสดงแผงนี้ก่อน ส่วนเลย์เอาต์สองแผงจะให้โฟกัสแป้นพิมพ์กับแผงนี้',
+                name: 'มุมมองเริ่มต้นแบบแผงเดียว',
+                desc: 'เลือกแผงที่จะแสดงเมื่อเปิด Notebook Navigator ในเลย์เอาต์แผงเดียว',
                 options: {
                     navigation: 'แผงนำทาง',
                     listPane: 'แผงรายการ'
@@ -2578,6 +2578,10 @@ export const STRINGS_TH = {
                 name: 'มีอะไรใหม่ใน Notebook Navigator {version}',
                 desc: 'ดูการอัปเดตและการปรับปรุงล่าสุด',
                 buttonText: 'ดูการอัปเดตล่าสุด'
+            },
+            showReleaseNotes: {
+                name: 'แสดงหน้าต่างมีอะไรใหม่หลังอัปเดต',
+                desc: 'ปิดใช้งานเพื่อไม่ให้หน้าต่างมีอะไรใหม่เปิดโดยอัตโนมัติหลังการอัปเดต'
             },
             masteringVideo: {
                 name: 'เชี่ยวชาญ Notebook Navigator (วิดีโอ)',

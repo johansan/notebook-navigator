@@ -1477,8 +1477,8 @@ export const STRINGS_JA = {
                 desc: 'iOSでのみ適用されます。'
             },
             defaultStartupView: {
-                name: 'デフォルト起動ビュー',
-                desc: 'Notebook Navigator を開いたときにアクティブになるペインを選択します。シングルペインレイアウトではこのペインが最初に表示され、デュアルペインレイアウトではこのペインにキーボードフォーカスが移ります。',
+                name: 'シングルペインの起動ビュー',
+                desc: 'シングルペインレイアウトで Notebook Navigator を開いたときに表示するペインを選択します。',
                 options: {
                     navigation: 'ナビゲーションペイン',
                     listPane: 'リストペイン'
@@ -2584,6 +2584,10 @@ export const STRINGS_JA = {
                 name: 'Notebook Navigator {version} の新機能',
                 desc: '最近の更新と改善を確認',
                 buttonText: '最近の更新を表示'
+            },
+            showReleaseNotes: {
+                name: '更新後に新機能を表示',
+                desc: '無効にすると、更新後に新機能ダイアログが自動的に開かなくなります。'
             },
             masteringVideo: {
                 name: 'Notebook Navigator をマスターする（動画）',

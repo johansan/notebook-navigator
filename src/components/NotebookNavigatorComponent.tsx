@@ -56,7 +56,13 @@ import { deleteSelectedFiles } from '../utils/deleteOperations';
 import { calculateCompactListMetrics } from '../utils/listPaneMetrics';
 import { getNavigationPaneSizing } from '../utils/paneSizing';
 import { getAndroidFontScale } from '../utils/androidFontScale';
-import { getBackgroundClasses, isDualPaneSupported, supportsKeyboardInteractions } from '../utils/paneLayout';
+import {
+    getBackgroundClasses,
+    getSinglePaneEntryView,
+    isDualPaneSupported,
+    isResolvedDualPaneLayout,
+    supportsKeyboardInteractions
+} from '../utils/paneLayout';
 import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFilesWithPrompt } from '../utils/tagModalHelpers';
 import { normalizeTagPath } from '../utils/tagUtils';
 import { getTemplaterCreateNewNoteFromTemplate } from '../utils/templaterIntegration';
@@ -281,7 +287,9 @@ export const NotebookNavigatorComponent = React.memo(
         const [suppressPaneTransitions, setSuppressPaneTransitions] = useState(false);
         const navigationPaneRef = useRef<NavigationPaneHandle | null>(null);
         const listPaneRef = useRef<ListPaneHandle | null>(null);
-        const lastDualPaneRef = useRef(uiState.dualPane);
+        // Layout is provisional until the container is measured. Recording that initial
+        // calculation as dual pane would make a narrow startup look like a later resize.
+        const lastDualPaneRef = useRef(isResolvedDualPaneLayout(uiState.dualPane, uiState.containerWidth));
         const auxClickStateRef = useRef<AuxClickState>({
             mouseBackForwardAction: settings.mouseBackForwardAction,
             singlePane: uiState.singlePane,
@@ -441,7 +449,6 @@ export const NotebookNavigatorComponent = React.memo(
         // view through user navigation instead.
         useLayoutEffect(() => {
             const wasDualPane = lastDualPaneRef.current;
-            lastDualPaneRef.current = uiState.dualPane;
 
             if (!isDualPaneSupported()) {
                 return;
@@ -457,21 +464,35 @@ export const NotebookNavigatorComponent = React.memo(
             }
 
             hasInitializedSinglePane.current = true;
+            const targetView = getSinglePaneEntryView({
+                preferredView: preferredSinglePaneView.current,
+                wasDualPane
+            });
 
             if (wasDualPane) {
                 setSuppressPaneTransitions(true);
                 const raf = window.requestAnimationFrame(() => {
                     setSuppressPaneTransitions(false);
                 });
-                uiDispatch({ type: 'ACTIVATE_PANE', target: 'files' });
+                uiDispatch({ type: 'ACTIVATE_PANE', target: targetView });
                 return () => {
                     window.cancelAnimationFrame(raf);
                 };
             }
 
-            const preferredView = preferredSinglePaneView.current;
-            uiDispatch({ type: 'ACTIVATE_PANE', target: preferredView });
+            uiDispatch({ type: 'ACTIVATE_PANE', target: targetView });
         }, [uiDispatch, uiState.dualPane]);
+
+        useLayoutEffect(() => {
+            if (uiState.containerWidth === null) {
+                return;
+            }
+
+            // This effect must remain after the entry effect because that effect reads the previous
+            // resolved layout. It also records the first measurement when dualPane stays unchanged;
+            // otherwise the next responsive fallback would still be mistaken for startup.
+            lastDualPaneRef.current = isResolvedDualPaneLayout(uiState.dualPane, uiState.containerWidth);
+        }, [uiState.containerWidth, uiState.dualPane]);
 
         useEffect(() => {
             if (!uiState.singlePane) {

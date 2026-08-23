@@ -1482,8 +1482,8 @@ export const STRINGS_PL = {
                 desc: 'Dotyczy tylko iOS.'
             },
             defaultStartupView: {
-                name: 'Domyślny widok początkowy',
-                desc: 'Wybierz, który panel jest aktywny po otwarciu Notebook Navigator. Układ jednopanelowy pokazuje ten panel jako pierwszy; układ dwupanelowy przenosi na niego fokus klawiatury.',
+                name: 'Widok początkowy w układzie jednopanelowym',
+                desc: 'Wybierz panel wyświetlany po otwarciu Notebook Navigator w układzie jednopanelowym.',
                 options: {
                     navigation: 'Panel nawigacji',
                     listPane: 'Panel listy'
@@ -2591,6 +2591,10 @@ export const STRINGS_PL = {
                 name: 'Co nowego w Notebook Navigator {version}',
                 desc: 'Zobacz najnowsze aktualizacje i ulepszenia',
                 buttonText: 'Zobacz ostatnie aktualizacje'
+            },
+            showReleaseNotes: {
+                name: 'Pokazuj nowości po aktualizacji',
+                desc: 'Wyłącz, aby okno z nowościami nie otwierało się automatycznie po aktualizacjach.'
             },
             masteringVideo: {
                 name: 'Poradnik do Notebook Navigator (wideo)',

@@ -1483,8 +1483,8 @@ export const STRINGS_FR = {
                 desc: "S'applique uniquement à iOS."
             },
             defaultStartupView: {
-                name: 'Vue de démarrage par défaut',
-                desc: "Choisissez le panneau actif à l'ouverture de Notebook Navigator. La disposition à panneau unique affiche ce panneau en premier ; la disposition à double panneau lui donne le focus clavier.",
+                name: 'Vue de démarrage à panneau unique',
+                desc: "Choisissez le panneau affiché à l'ouverture de Notebook Navigator dans la disposition à panneau unique.",
                 options: {
                     navigation: 'Panneau de navigation',
                     listPane: 'Panneau de liste'
@@ -2594,6 +2594,10 @@ export const STRINGS_FR = {
                 name: 'Nouveautés dans Notebook Navigator {version}',
                 desc: 'Voir les mises à jour et améliorations récentes',
                 buttonText: 'Voir les mises à jour récentes'
+            },
+            showReleaseNotes: {
+                name: 'Afficher les nouveautés après une mise à jour',
+                desc: 'Désactivez cette option pour empêcher l’ouverture automatique de la fenêtre des nouveautés après les mises à jour.'
             },
             masteringVideo: {
                 name: 'Maîtriser Notebook Navigator (vidéo)',

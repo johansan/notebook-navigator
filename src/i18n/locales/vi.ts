@@ -1477,8 +1477,8 @@ export const STRINGS_VI = {
                 desc: 'Chỉ áp dụng trên iOS.'
             },
             defaultStartupView: {
-                name: 'Chế độ xem khởi động mặc định',
-                desc: 'Chọn ngăn hoạt động khi mở Notebook Navigator. Bố cục một ngăn hiển thị ngăn này trước; bố cục hai ngăn chuyển tiêu điểm bàn phím vào ngăn này.',
+                name: 'Chế độ xem khởi động một ngăn',
+                desc: 'Chọn ngăn được hiển thị khi mở Notebook Navigator trong bố cục một ngăn.',
                 options: {
                     navigation: 'Ngăn điều hướng',
                     listPane: 'Ngăn danh sách'
@@ -2585,6 +2585,10 @@ export const STRINGS_VI = {
                 name: 'Có gì mới trong Notebook Navigator {version}',
                 desc: 'Xem cập nhật và cải tiến gần đây',
                 buttonText: 'Xem cập nhật gần đây'
+            },
+            showReleaseNotes: {
+                name: 'Hiển thị "Có gì mới" sau khi cập nhật',
+                desc: 'Tắt để hộp thoại "Có gì mới" không tự động mở sau khi cập nhật.'
             },
             masteringVideo: {
                 name: 'Làm chủ Notebook Navigator (video)',

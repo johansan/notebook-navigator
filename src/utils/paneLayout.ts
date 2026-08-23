@@ -47,6 +47,30 @@ export function isDualPaneSupported(): boolean {
 }
 
 /**
+ * Returns whether dual pane is the resolved layout after container measurement.
+ * Before measurement, the provisional dual-pane calculation must not count as a
+ * completed layout transition.
+ */
+export function isResolvedDualPaneLayout(dualPane: boolean, containerWidth: number | null): boolean {
+    return containerWidth !== null && dualPane;
+}
+
+/**
+ * Chooses the pane shown when the navigator enters single-pane layout.
+ * A transition from a resolved dual-pane layout shows the file list. Startup and
+ * direct single-pane entry keep the configured pane.
+ */
+export function getSinglePaneEntryView({
+    preferredView,
+    wasDualPane
+}: {
+    preferredView: 'navigation' | 'files';
+    wasDualPane: boolean;
+}): 'navigation' | 'files' {
+    return wasDualPane ? 'files' : preferredView;
+}
+
+/**
  * Returns whether the device gets keyboard and pointer-modifier interactions:
  * modifier-based multi-select, keyboard range selection, navigator focus tracking,
  * and the keyboard navigation settings. Enabled on desktop and tablets, which

@@ -529,6 +529,10 @@ export function migrateFolderNoteSettings(params: {
 export function applyExistingUserDefaults(params: { settings: NotebookNavigatorSettings }): void {
     const { settings } = params;
 
+    if (typeof settings.showReleaseNotes !== 'boolean') {
+        settings.showReleaseNotes = DEFAULT_SETTINGS.showReleaseNotes;
+    }
+
     // Initialize update check setting with default value for existing users
     if (typeof settings.checkForUpdatesOnStart !== 'boolean') {
         settings.checkForUpdatesOnStart = true;

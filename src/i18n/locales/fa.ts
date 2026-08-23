@@ -1478,8 +1478,8 @@ export const STRINGS_FA = {
                 desc: 'فقط برای iOS اعمال می‌شود.'
             },
             defaultStartupView: {
-                name: 'نمای پیش‌فرض شروع',
-                desc: 'پنل فعال هنگام باز شدن Notebook Navigator را انتخاب کنید. در چیدمان تک‌پنلی این پنل ابتدا نمایش داده می‌شود؛ در چیدمان دوپنلی فوکوس صفحه‌کلید به آن داده می‌شود.',
+                name: 'نمای شروع تک‌پنلی',
+                desc: 'پنلی را انتخاب کنید که هنگام باز شدن Notebook Navigator در چیدمان تک‌پنلی نمایش داده می‌شود.',
                 options: {
                     navigation: 'پنل ناوبری',
                     listPane: 'پنل لیست'
@@ -2586,6 +2586,10 @@ export const STRINGS_FA = {
                 name: 'چه چیزی در Notebook Navigator {version} جدید است',
                 desc: 'به‌روزرسانی‌ها و بهبودهای اخیر را ببینید',
                 buttonText: 'مشاهده به‌روزرسانی‌های اخیر'
+            },
+            showReleaseNotes: {
+                name: 'نمایش تازه‌ها پس از به‌روزرسانی',
+                desc: 'برای جلوگیری از باز شدن خودکار پنجرهٔ تازه‌ها پس از به‌روزرسانی، این گزینه را غیرفعال کنید.'
             },
             masteringVideo: {
                 name: 'تسلط بر Notebook Navigator (ویدیو)',
