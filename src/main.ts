@@ -1944,6 +1944,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
                 return;
             }
 
+            // Disabled dialogs still advance the marker so re-enabling them starts with
+            // the next update instead of replaying every release skipped meanwhile.
+            if (!this.settings.showReleaseNotes) {
+                await this.advanceLastShownVersion(currentVersion);
+                return;
+            }
+
             const { getLatestReleaseNotes, isReleaseAutoDisplayEnabled } = await import('./releaseNotes');
 
             if (!isReleaseAutoDisplayEnabled(currentVersion)) {
@@ -1968,13 +1975,22 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         // A newer shared marker can come from a device running a newer plugin version. Downgrades
         // never auto-display because recording the older version would reopen the dialog elsewhere.
-        const { getReleaseNotesBetweenVersions, compareVersions, shouldAutoDisplayReleaseNotesForUpdate } = await import('./releaseNotes');
+        const { getReleaseNotesBetweenVersions, compareVersions, isReleaseAutoDisplayEnabled } = await import('./releaseNotes');
         if (compareVersions(currentVersion, lastShownVersion) <= 0) {
             return;
         }
 
-        // Auto-display when any release in the upgrade path opts in.
-        if (!shouldAutoDisplayReleaseNotesForUpdate(lastShownVersion, currentVersion)) {
+        if (!this.settings.showReleaseNotes) {
+            // Keep the high-water marker current while dialogs are disabled, otherwise
+            // re-enabling them would replay release notes from every skipped update.
+            await this.advanceLastShownVersion(currentVersion);
+            return;
+        }
+
+        // Only the current release decides whether startup should open the dialog. Advance the
+        // marker when it opts out so the skipped dialog is not reconsidered on the next startup.
+        if (!isReleaseAutoDisplayEnabled(currentVersion)) {
+            await this.advanceLastShownVersion(currentVersion);
             return;
         }
 

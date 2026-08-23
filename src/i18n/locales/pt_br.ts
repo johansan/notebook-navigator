@@ -2592,6 +2592,10 @@ export const STRINGS_PT_BR = {
                 desc: 'Veja atualizações e melhorias recentes',
                 buttonText: 'Ver atualizações recentes'
             },
+            showReleaseNotes: {
+                name: 'Mostrar as novidades após uma atualização',
+                desc: 'Desative para impedir que o diálogo de novidades seja aberto automaticamente após as atualizações.'
+            },
             masteringVideo: {
                 name: 'Dominando o Notebook Navigator (vídeo)',
                 desc: 'Este vídeo cobre tudo o que você precisa para ser produtivo no Notebook Navigator, incluindo atalhos de teclado, busca, etiquetas e personalização avançada.'

@@ -2586,6 +2586,10 @@ export const STRINGS_VI = {
                 desc: 'Xem cập nhật và cải tiến gần đây',
                 buttonText: 'Xem cập nhật gần đây'
             },
+            showReleaseNotes: {
+                name: 'Hiển thị "Có gì mới" sau khi cập nhật',
+                desc: 'Tắt để hộp thoại "Có gì mới" không tự động mở sau khi cập nhật.'
+            },
             masteringVideo: {
                 name: 'Làm chủ Notebook Navigator (video)',
                 desc: 'Video này bao gồm mọi thứ bạn cần để làm việc hiệu quả với Notebook Navigator, bao gồm phím tắt, tìm kiếm, thẻ và tùy chỉnh nâng cao.'

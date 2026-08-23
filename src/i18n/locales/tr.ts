@@ -2586,6 +2586,10 @@ export const STRINGS_TR = {
                 desc: 'Son güncellemeleri ve iyileştirmeleri görün',
                 buttonText: 'Son güncellemeleri görüntüle'
             },
+            showReleaseNotes: {
+                name: 'Güncellemeden sonra yenilikleri göster',
+                desc: 'Güncellemelerden sonra yenilikler penceresinin otomatik olarak açılmasını önlemek için devre dışı bırakın.'
+            },
             masteringVideo: {
                 name: "Notebook Navigator'da uzmanlaşma (video)",
                 desc: "Bu video, Notebook Navigator'da verimli olmak için ihtiyacınız olan her şeyi kapsar; kısayol tuşları, arama, etiketler ve gelişmiş özelleştirme dahil."

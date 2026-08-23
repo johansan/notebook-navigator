@@ -683,6 +683,9 @@ export interface NotebookNavigatorSettings {
     // Icon packs tab
     externalIconProviders: Record<string, boolean>;
 
+    // About
+    showReleaseNotes: boolean;
+
     // Advanced tab
     checkForUpdatesOnStart: boolean;
 

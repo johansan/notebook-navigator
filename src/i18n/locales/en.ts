@@ -2579,6 +2579,10 @@ export const STRINGS_EN = {
                 desc: 'See recent updates and improvements',
                 buttonText: 'View recent updates'
             },
+            showReleaseNotes: {
+                name: 'Show release notes after updating',
+                desc: "Disable to stop the What's new dialog from opening automatically after updates."
+            },
             masteringVideo: {
                 name: 'Mastering Notebook Navigator (video)',
                 desc: 'This video covers everything you need to be productive in Notebook Navigator, including hot keys, search, tags and advanced customization.'

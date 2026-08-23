@@ -2591,6 +2591,10 @@ export const STRINGS_NL = {
                 desc: 'Bekijk recente updates en verbeteringen',
                 buttonText: 'Bekijk recente updates'
             },
+            showReleaseNotes: {
+                name: 'Releasenotes tonen na een update',
+                desc: 'Schakel uit om te voorkomen dat het dialoogvenster met wat er nieuw is automatisch wordt geopend na updates.'
+            },
             masteringVideo: {
                 name: 'Notebook Navigator beheersen (video)',
                 desc: 'Deze video behandelt alles wat je nodig hebt om productief te zijn in Notebook Navigator, inclusief sneltoetsen, zoeken, tags en geavanceerde aanpassingen.'

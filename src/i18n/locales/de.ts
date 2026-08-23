@@ -2592,6 +2592,10 @@ export const STRINGS_DE = {
                 desc: 'Letzte Updates und Verbesserungen anzeigen',
                 buttonText: 'Letzte Updates anzeigen'
             },
+            showReleaseNotes: {
+                name: 'Versionshinweise nach Updates anzeigen',
+                desc: 'Deaktivieren, damit sich der Dialog mit den Neuerungen nach Updates nicht automatisch öffnet.'
+            },
             masteringVideo: {
                 name: 'Notebook Navigator meistern (Video)',
                 desc: 'Dieses Video behandelt alles, was du brauchst, um produktiv mit Notebook Navigator zu arbeiten, einschließlich Tastenkürzel, Suche, Tags und erweiterte Anpassungen.'

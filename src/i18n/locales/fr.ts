@@ -2595,6 +2595,10 @@ export const STRINGS_FR = {
                 desc: 'Voir les mises à jour et améliorations récentes',
                 buttonText: 'Voir les mises à jour récentes'
             },
+            showReleaseNotes: {
+                name: 'Afficher les nouveautés après une mise à jour',
+                desc: 'Désactivez cette option pour empêcher l’ouverture automatique de la fenêtre des nouveautés après les mises à jour.'
+            },
             masteringVideo: {
                 name: 'Maîtriser Notebook Navigator (vidéo)',
                 desc: 'Cette vidéo couvre tout ce dont vous avez besoin pour être productif avec Notebook Navigator, y compris les raccourcis clavier, la recherche, les mots-clés et la personnalisation avancée.'
