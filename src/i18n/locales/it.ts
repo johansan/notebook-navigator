@@ -2588,6 +2588,10 @@ export const STRINGS_IT = {
                 desc: 'Vedi aggiornamenti e miglioramenti recenti',
                 buttonText: 'Vedi aggiornamenti recenti'
             },
+            showReleaseNotes: {
+                name: 'Mostra le novità dopo un aggiornamento',
+                desc: "Disattiva per impedire l'apertura automatica della finestra delle novità dopo gli aggiornamenti."
+            },
             masteringVideo: {
                 name: 'Padroneggiare Notebook Navigator (video)',
                 desc: 'Questo video copre tutto ciò che serve per essere produttivi in Notebook Navigator, incluse scorciatoie da tastiera, ricerca, etichette e personalizzazione avanzata.'

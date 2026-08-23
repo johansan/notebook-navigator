@@ -2592,6 +2592,10 @@ export const STRINGS_PL = {
                 desc: 'Zobacz najnowsze aktualizacje i ulepszenia',
                 buttonText: 'Zobacz ostatnie aktualizacje'
             },
+            showReleaseNotes: {
+                name: 'Pokazuj nowości po aktualizacji',
+                desc: 'Wyłącz, aby okno z nowościami nie otwierało się automatycznie po aktualizacjach.'
+            },
             masteringVideo: {
                 name: 'Poradnik do Notebook Navigator (wideo)',
                 desc: 'Ten film przedstawia wszystko, co jest potrzebne do wydajnej pracy w Notebook Navigator, w tym skróty klawiszowe, wyszukiwanie, tagi i ustawienia zaawansowane.'

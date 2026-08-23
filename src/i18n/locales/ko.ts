@@ -2582,6 +2582,10 @@ export const STRINGS_KO = {
                 desc: '최근 업데이트와 개선 사항 보기',
                 buttonText: '최근 업데이트 보기'
             },
+            showReleaseNotes: {
+                name: '업데이트 후 새로운 기능 표시',
+                desc: '비활성화하면 업데이트 후 새로운 기능 대화상자가 자동으로 열리지 않습니다.'
+            },
             masteringVideo: {
                 name: 'Notebook Navigator 마스터하기 (동영상)',
                 desc: '이 동영상에서는 Notebook Navigator를 효율적으로 사용하는 데 필요한 모든 것을 다룹니다. 단축키, 검색, 태그 및 고급 사용자 지정이 포함됩니다.'

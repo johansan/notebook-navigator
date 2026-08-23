@@ -2585,6 +2585,10 @@ export const STRINGS_JA = {
                 desc: '最近の更新と改善を確認',
                 buttonText: '最近の更新を表示'
             },
+            showReleaseNotes: {
+                name: '更新後に新機能を表示',
+                desc: '無効にすると、更新後に新機能ダイアログが自動的に開かなくなります。'
+            },
             masteringVideo: {
                 name: 'Notebook Navigator をマスターする（動画）',
                 desc: 'この動画では、Notebook Navigator で生産性を高めるために必要なすべてを解説しています。ホットキー、検索、タグ、高度なカスタマイズなどが含まれます。'

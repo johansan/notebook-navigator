@@ -2571,6 +2571,10 @@ export const STRINGS_ZH_TW = {
                 desc: '查看最近的更新和改進',
                 buttonText: '查看最近更新'
             },
+            showReleaseNotes: {
+                name: '更新後顯示新功能',
+                desc: '關閉後，更新後不會自動開啟新功能對話框。'
+            },
             masteringVideo: {
                 name: '精通 Notebook Navigator（影片）',
                 desc: '本影片涵蓋了在 Notebook Navigator 中高效工作所需的一切內容，包括快速鍵、搜尋、標籤和進階自訂。'

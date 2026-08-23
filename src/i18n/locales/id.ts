@@ -2587,6 +2587,10 @@ export const STRINGS_ID = {
                 desc: 'Lihat pembaruan dan peningkatan terbaru',
                 buttonText: 'Lihat pembaruan terbaru'
             },
+            showReleaseNotes: {
+                name: 'Tampilkan yang baru setelah pembaruan',
+                desc: 'Nonaktifkan agar dialog "Yang baru" tidak terbuka secara otomatis setelah pembaruan.'
+            },
             masteringVideo: {
                 name: 'Menguasai Notebook Navigator (video)',
                 desc: 'Video ini membahas semua yang Anda butuhkan untuk produktif di Notebook Navigator, termasuk pintasan keyboard, pencarian, tag, dan kustomisasi lanjutan.'
