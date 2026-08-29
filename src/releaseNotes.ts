@@ -106,6 +106,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.6',
+        date: '2026-08-31',
+        showOnUpdate: false,
+        fixed: [
+            'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1).'
+        ]
+    },
+    {
         version: '3.3.5',
         date: '2026-08-23',
         showOnUpdate: false,
