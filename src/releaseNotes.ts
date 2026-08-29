@@ -110,7 +110,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-31',
         showOnUpdate: false,
         fixed: [
-            'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1).'
+            'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1) [#1466](https://github.com/johansan/notebook-navigator/issues/1466).'
         ]
     },
     {
