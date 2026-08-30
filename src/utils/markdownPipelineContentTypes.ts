@@ -61,12 +61,13 @@ function hasAppearanceTextCountConsumer(settings: NotebookNavigatorSettings, typ
     });
 }
 
+/**
+ * The tooltip word count setting is deliberately not a consumer. Tooltips show a word count
+ * only for notes whose resolved appearance already displays one, so enabling the tooltip
+ * setting alone never keeps word count extraction running.
+ */
 export function hasMarkdownWordCountConsumer(settings: NotebookNavigatorSettings): boolean {
-    return (
-        hasWordCountTargetPropertyConsumer(settings) ||
-        (settings.showTooltips && settings.showTooltipWordCount) ||
-        hasAppearanceTextCountConsumer(settings, 'words')
-    );
+    return hasWordCountTargetPropertyConsumer(settings) || hasAppearanceTextCountConsumer(settings, 'words');
 }
 
 export function hasMarkdownCharacterCountConsumer(settings: NotebookNavigatorSettings): boolean {

@@ -1766,9 +1766,13 @@ export const STRINGS_NL = {
                 name: 'Pad in tooltips tonen',
                 desc: 'Het mappad onder notitienamen in tooltips weergeven.'
             },
+            showTooltipTags: {
+                name: 'Tags in tooltips tonen',
+                desc: 'Tags van notities in tooltips weergeven wanneer de tagsectie is ingeschakeld.'
+            },
             showTooltipWordCount: {
                 name: 'Aantal woorden in tooltips tonen',
-                desc: 'Het aantal woorden van notities in tooltips weergeven.'
+                desc: 'Het aantal woorden in tooltips weergeven wanneer het aantal woorden is ingeschakeld.'
             },
             resetPaneSeparator: {
                 name: 'Paneelscheidingspositie resetten',

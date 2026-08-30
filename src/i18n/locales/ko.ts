@@ -1759,9 +1759,13 @@ export const STRINGS_KO = {
                 name: '도구 설명에 경로 표시',
                 desc: '도구 설명에서 노트 이름 아래에 폴더 경로를 표시합니다.'
             },
+            showTooltipTags: {
+                name: '도구 설명에 태그 표시',
+                desc: '태그 섹션이 활성화된 경우 도구 설명에 노트의 태그를 표시합니다.'
+            },
             showTooltipWordCount: {
                 name: '도구 설명에 단어 수 표시',
-                desc: '도구 설명에 노트의 단어 수를 표시합니다.'
+                desc: '단어 수가 활성화된 경우 도구 설명에 단어 수를 표시합니다.'
             },
             resetPaneSeparator: {
                 name: '창 구분선 위치 초기화',

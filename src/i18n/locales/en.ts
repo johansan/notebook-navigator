@@ -1756,9 +1756,13 @@ export const STRINGS_EN = {
                 name: 'Show path in tooltips',
                 desc: 'Display the folder path below note names in tooltips.'
             },
+            showTooltipTags: {
+                name: 'Show tags in tooltips',
+                desc: 'Display note tags in tooltips when the tags section is enabled.'
+            },
             showTooltipWordCount: {
                 name: 'Show word count in tooltips',
-                desc: 'Display note word counts in tooltips.'
+                desc: 'Display word counts in tooltips when word counts are enabled.'
             },
             resetPaneSeparator: {
                 name: 'Reset pane separator position',

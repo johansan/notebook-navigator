@@ -1761,9 +1761,13 @@ export const STRINGS_JA = {
                 name: 'ツールチップにパスを表示',
                 desc: 'ツールチップでノート名の下にフォルダパスを表示します。'
             },
+            showTooltipTags: {
+                name: 'ツールチップにタグを表示',
+                desc: 'タグセクションが有効な場合、ツールチップにノートのタグを表示します。'
+            },
             showTooltipWordCount: {
                 name: 'ツールチップに単語数を表示',
-                desc: 'ツールチップにノートの単語数を表示します。'
+                desc: '単語数が有効な場合、ツールチップに単語数を表示します。'
             },
             resetPaneSeparator: {
                 name: 'ペインセパレーターの位置をリセット',

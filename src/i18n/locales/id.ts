@@ -1763,9 +1763,13 @@ export const STRINGS_ID = {
                 name: 'Tampilkan path di tooltip',
                 desc: 'Tampilkan path folder di bawah nama catatan di tooltip.'
             },
+            showTooltipTags: {
+                name: 'Tampilkan tag di tooltip',
+                desc: 'Tampilkan tag catatan di tooltip saat bagian tag diaktifkan.'
+            },
             showTooltipWordCount: {
                 name: 'Tampilkan jumlah kata di tooltip',
-                desc: 'Tampilkan jumlah kata catatan di tooltip.'
+                desc: 'Tampilkan jumlah kata di tooltip saat jumlah kata diaktifkan.'
             },
             resetPaneSeparator: {
                 name: 'Atur ulang posisi pemisah panel',

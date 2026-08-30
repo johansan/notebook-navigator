@@ -124,16 +124,15 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 
-    it('clears word counts when tooltip word count is enabled', async () => {
+    it('does not regenerate word counts when only tooltip word count changes', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ showTooltips: false, showTooltipWordCount: false });
         const newSettings = createSettings({ showTooltips: true, showTooltipWordCount: true });
 
         await provider.clearContent({ oldSettings, newSettings });
 
-        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('wordCount');
+        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(false);
+        expect(batchClearAllFileContentMock).not.toHaveBeenCalled();
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 

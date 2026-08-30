@@ -40,6 +40,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/ui-search.css';
 /* ui-buttons.css: header icon buttons (`.nn-icon-button`), active/disabled states, SVG sizing. */
 @import './sections/ui-buttons.css';
+/* ui-tooltip.css: custom item hover tooltip (`.nn-tooltip`) mirroring the built-in Obsidian tooltip. */
+@import './sections/ui-tooltip.css';
 /* layout-spacers.css: navigation/list spacer rows and separators (`.nn-nav-*-spacer`, `.nn-list-*-spacer`). */
 @import './sections/layout-spacers.css';
 

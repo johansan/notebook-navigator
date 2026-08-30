@@ -1756,9 +1756,13 @@ export const STRINGS_TH = {
                 name: 'แสดงเส้นทางใน tooltips',
                 desc: 'แสดงเส้นทางโฟลเดอร์ใต้ชื่อโน้ตใน tooltips'
             },
+            showTooltipTags: {
+                name: 'แสดงแท็กใน tooltips',
+                desc: 'แสดงแท็กของโน้ตใน tooltips เมื่อเปิดใช้ส่วนแท็ก'
+            },
             showTooltipWordCount: {
                 name: 'แสดงจำนวนคำใน tooltips',
-                desc: 'แสดงจำนวนคำของโน้ตใน tooltips'
+                desc: 'แสดงจำนวนคำใน tooltips เมื่อเปิดใช้จำนวนคำ'
             },
             resetPaneSeparator: {
                 name: 'รีเซ็ตตำแหน่งตัวคั่นแผง',

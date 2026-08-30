@@ -1762,9 +1762,13 @@ export const STRINGS_TR = {
                 name: 'İpuçlarında yolu göster',
                 desc: 'İpuçlarında not adlarının altında klasör yolunu görüntüle.'
             },
+            showTooltipTags: {
+                name: 'İpuçlarında etiketleri göster',
+                desc: 'Etiketler bölümü etkinken ipuçlarında not etiketlerini görüntüle.'
+            },
             showTooltipWordCount: {
                 name: 'İpuçlarında kelime sayısını göster',
-                desc: 'İpuçlarında not kelime sayılarını görüntüle.'
+                desc: 'Kelime sayısı etkinken ipuçlarında kelime sayısını görüntüle.'
             },
             resetPaneSeparator: {
                 name: 'Bölme ayırıcı konumunu sıfırla',

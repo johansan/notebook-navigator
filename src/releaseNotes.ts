@@ -109,6 +109,15 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.3.6',
         date: '2026-08-31',
         showOnUpdate: false,
+        new: [
+            'New setting in Appearance & Behavior: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.'
+        ],
+        improved: [
+            'Rebuilt the hover tooltips with the same look and timing as built-in Obsidian tooltips while supporting tag pills and text hierarchy.'
+        ],
+        changed: [
+            'Changed ==Show word count in tooltips== to show word counts only when word counts are enabled, so the tooltip setting no longer keeps word counting running on its own.'
+        ],
         fixed: [
             'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1) [#1466](https://github.com/johansan/notebook-navigator/issues/1466).'
         ]

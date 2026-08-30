@@ -1762,9 +1762,13 @@ export const STRINGS_IT = {
                 name: 'Mostra percorso nei tooltip',
                 desc: 'Visualizza il percorso cartella sotto i nomi note nei tooltip.'
             },
+            showTooltipTags: {
+                name: 'Mostra etichette nei tooltip',
+                desc: 'Visualizza le etichette delle note nei tooltip quando la sezione etichette è attiva.'
+            },
             showTooltipWordCount: {
                 name: 'Mostra conteggio parole nei tooltip',
-                desc: 'Visualizza il conteggio delle parole delle note nei tooltip.'
+                desc: 'Visualizza il conteggio delle parole nei tooltip quando il conteggio delle parole è attivo.'
             },
             resetPaneSeparator: {
                 name: 'Ripristina posizione separatore pannelli',
