@@ -1748,9 +1748,13 @@ export const STRINGS_ZH_CN = {
                 name: '在工具提示中显示路径',
                 desc: '在工具提示中的笔记名称下方显示文件夹路径。'
             },
+            showTooltipTags: {
+                name: '在工具提示中显示标签',
+                desc: '启用标签部分时，在工具提示中显示笔记的标签。'
+            },
             showTooltipWordCount: {
                 name: '在工具提示中显示字数',
-                desc: '在工具提示中显示笔记字数。'
+                desc: '启用字数统计时，在工具提示中显示字数。'
             },
             resetPaneSeparator: {
                 name: '重置窗格分隔符位置',

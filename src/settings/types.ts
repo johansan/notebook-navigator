@@ -655,6 +655,7 @@ export interface NotebookNavigatorSettings {
     narrowSidebarCustomWidth: number;
     showTooltips: boolean;
     showTooltipPath: boolean;
+    showTooltipTags: boolean;
     showTooltipWordCount: boolean;
     desktopBackground: BackgroundMode;
     desktopScale: number;

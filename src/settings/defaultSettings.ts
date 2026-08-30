@@ -182,6 +182,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     narrowSidebarCustomWidth: NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
     showTooltips: false,
     showTooltipPath: true,
+    showTooltipTags: false,
     showTooltipWordCount: false,
     desktopBackground: 'separate',
     desktopScale: DEFAULT_UI_SCALE,

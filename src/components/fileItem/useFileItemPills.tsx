@@ -29,11 +29,10 @@ import {
     forEachVisibleFrontmatterProperty,
     getSelectedPropertyValuePillToHide,
     getSelectedTagPillToHide,
-    getTagPillDisplayName,
     type VisibleFrontmatterPropertyEntry
 } from '../../utils/listPaneMeasurements';
 import { naturalCompare } from '../../utils/sortUtils';
-import { getTagSearchModifierOperator, normalizeTagPath } from '../../utils/tagUtils';
+import { getTagSearchModifierOperator } from '../../utils/tagUtils';
 import {
     buildPropertySearchEvidence,
     isSupportedCssColor,
@@ -42,7 +41,7 @@ import {
     type PropertyLinkTarget,
     type PropertySearchEvidenceGroup
 } from '../../utils/propertyUtils';
-import { casefold, foldSearchText } from '../../utils/recordUtils';
+import { casefold, foldSearchText, hasOwnRecordEntries } from '../../utils/recordUtils';
 import { resolveUXIcon } from '../../utils/uxIcons';
 import { getFoldedSearchHighlightRanges } from '../../utils/searchHighlight';
 import type { InclusionOperator } from '../../utils/filterSearch';
@@ -53,16 +52,9 @@ import {
     parsePropertyNodeId
 } from '../../utils/propertyTree';
 import type { HiddenTagVisibility } from '../../utils/tagPrefixMatcher';
-import {
-    resolveFileItemPropertyDecorationColors,
-    resolveFileItemTagDecorationColors,
-    type FileItemPillDecorationModel
-} from '../../utils/fileItemPillDecoration';
-import {
-    compareFileItemPropertyKeysByNavigationOrder,
-    compareFileItemTagsByNavigationOrder,
-    type FileItemPillOrderModel
-} from '../../utils/fileItemPillOrder';
+import { resolveFileItemPropertyDecorationColors, type FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';
+import { compareFileItemPropertyKeysByNavigationOrder, type FileItemPillOrderModel } from '../../utils/fileItemPillOrder';
+import { useFileItemTagPills } from './useFileItemTagPills';
 import { renderTextWithHighlightRanges } from './searchHighlightRendering';
 import { ServiceIcon } from '../ServiceIcon';
 
@@ -113,31 +105,19 @@ export interface FileItemPillsState {
     hasVisiblePillRows: boolean;
     propertySearchEvidenceGroups: readonly PropertySearchEvidenceGroup[];
     propertySearchEvidenceHiddenGroupCount: number;
+    /**
+     * Non-clickable tag pill row for the file hover tooltip, matching the rendered tag
+     * pills in filtering, order, display name, colors, and icons. Null when tooltip tags
+     * are disabled or the file has no visible tags.
+     */
+    tooltipTagRow: React.ReactNode;
     pillRows: React.ReactNode;
 }
 
-type TagPillColorData = { color?: string; background?: string; hasCustomColor: boolean };
-
-const EMPTY_COLOR_MAP = new Map<string, TagPillColorData>();
 const EXTERNAL_PROPERTY_LINK_ICON_ID = 'external-link';
 
 function buildPropertySearchValueIdentity(fieldKey: string, valueKind: PropertyItem['valueKind'], rawValue: string): string {
     return `${casefold(fieldKey.trim())}\u0000${valueKind ?? ''}\u0000${rawValue}`;
-}
-
-function sortTagsByNavigationOrder(
-    tags: string[],
-    orderModel: FileItemPillOrderModel,
-    childSortOrderOverrides: NotebookNavigatorSettings['tagTreeSortOverrides']
-): void {
-    tags.sort((firstTag, secondTag) =>
-        compareFileItemTagsByNavigationOrder({
-            leftTag: firstTag,
-            rightTag: secondTag,
-            orderModel,
-            childSortOrderOverrides
-        })
-    );
 }
 
 function sortPropertyPillsAlphabetically(pills: PropertyPill[]): void {
@@ -233,20 +213,6 @@ function resolveNormalizedPropertyKeyNodeId(fieldKey: string | undefined): strin
 
     const rawKeyNodeId = buildPropertyKeyNodeId(trimmedFieldKey);
     return normalizePropertyNodeId(rawKeyNodeId) ?? rawKeyNodeId;
-}
-
-function hasOwnRecordEntries(record: Record<string, string> | undefined): boolean {
-    if (!record) {
-        return false;
-    }
-
-    for (const key in record) {
-        if (Object.prototype.hasOwnProperty.call(record, key)) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 export function useFileItemPills({
@@ -363,111 +329,14 @@ export function useFileItemPills({
         ]
     );
 
-    const getTagColorData = useCallback(
-        (tag: string): { color?: string; background?: string } => {
-            return metadataService.getTagColorData(tag);
-        },
-        [metadataService]
-    );
-
-    const visibleTags = useMemo(() => {
-        if (tags.length === 0) {
-            return tags;
-        }
-
-        if (!hiddenTagVisibility.shouldFilterHiddenTags && !selectedTagToHide) {
-            return tags;
-        }
-
-        return tags.filter(tag => {
-            if (hiddenTagVisibility.shouldFilterHiddenTags && !hiddenTagVisibility.isTagVisible(tag)) {
-                return false;
-            }
-
-            if (!selectedTagToHide) {
-                return true;
-            }
-
-            return normalizeTagPath(tag) !== selectedTagToHide;
-        });
-    }, [hiddenTagVisibility, selectedTagToHide, tags]);
-
-    const tagColorData = useMemo(() => {
-        void settings.tagColors;
-        void settings.tagBackgroundColors;
-        void settings.inheritTagColors;
-
-        if (!settings.colorFileTags || visibleTags.length === 0) {
-            return EMPTY_COLOR_MAP;
-        }
-
-        const entries = new Map<string, TagPillColorData>();
-        visibleTags.forEach(tag => {
-            const tagColorData = getTagColorData(tag);
-            const hasCustomColor = Boolean(tagColorData.color || tagColorData.background);
-            const resolved = resolveFileItemTagDecorationColors({
-                model: fileItemPillDecorationModel,
-                tagPath: tag,
-                color: tagColorData.color,
-                backgroundColor: tagColorData.background
-            });
-            if (resolved.color || resolved.backgroundColor) {
-                entries.set(tag, {
-                    color: resolved.color,
-                    background: resolved.backgroundColor,
-                    hasCustomColor
-                });
-            }
-        });
-
-        return entries;
-    }, [
+    const { categorizedTags, tagColorData, tagPillIcons, getTagDisplayName, tooltipTagRow } = useFileItemTagPills({
+        tags,
+        settings,
+        hiddenTagVisibility,
+        selectedTagToHide,
         fileItemPillDecorationModel,
-        getTagColorData,
-        settings.colorFileTags,
-        settings.inheritTagColors,
-        settings.tagBackgroundColors,
-        settings.tagColors,
-        visibleTags
-    ]);
-
-    const categorizedTags = useMemo(() => {
-        if (visibleTags.length === 0) {
-            return visibleTags;
-        }
-
-        if (!settings.prioritizeColoredFileTags || !settings.colorFileTags) {
-            const sortedTags = [...visibleTags];
-            sortTagsByNavigationOrder(sortedTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
-            return sortedTags;
-        }
-
-        const coloredTags: string[] = [];
-        const regularTags: string[] = [];
-
-        visibleTags.forEach(tag => {
-            const tagColors = tagColorData.get(tag);
-
-            if (tagColors?.hasCustomColor === true) {
-                coloredTags.push(tag);
-                return;
-            }
-
-            regularTags.push(tag);
-        });
-
-        sortTagsByNavigationOrder(coloredTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
-        sortTagsByNavigationOrder(regularTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
-
-        return [...coloredTags, ...regularTags];
-    }, [
-        fileItemPillOrderModel,
-        settings.colorFileTags,
-        settings.prioritizeColoredFileTags,
-        settings.tagTreeSortOverrides,
-        tagColorData,
-        visibleTags
-    ]);
+        fileItemPillOrderModel
+    });
 
     const shouldShowFileTags = useMemo(() => {
         if (!showTags) {
@@ -904,29 +773,6 @@ export function useFileItemPills({
         return rows;
     }, [propertyPills, settings.showPropertiesOnSeparateRows]);
 
-    const getTagDisplayName = useCallback(
-        (tag: string): string => {
-            return getTagPillDisplayName(tag, settings.showFileTagAncestors);
-        },
-        [settings.showFileTagAncestors]
-    );
-
-    const tagPillIcons = useMemo(() => {
-        const icons = new Map<string, string>();
-        if (!settings.tagIcons || !hasOwnRecordEntries(settings.tagIcons) || categorizedTags.length === 0) {
-            return icons;
-        }
-
-        categorizedTags.forEach(tag => {
-            const iconId = metadataService.getTagIcon(tag);
-            if (iconId) {
-                icons.set(tag, iconId);
-            }
-        });
-
-        return icons;
-    }, [categorizedTags, metadataService, settings.tagIcons]);
-
     const propertyPillIcons = useMemo(() => {
         const icons = new Map<PropertyPill, string>();
         const resolvePropertyPillIconId = (pill: PropertyPill): string | undefined => {
@@ -1126,6 +972,7 @@ export function useFileItemPills({
         hasVisiblePillRows: shouldShowFileTags || shouldShowProperty || shouldShowTextCountProperty,
         propertySearchEvidenceGroups: propertySearchEvidence.groups,
         propertySearchEvidenceHiddenGroupCount: propertySearchEvidence.hiddenGroupCount,
+        tooltipTagRow,
         pillRows
     };
 }

@@ -1766,9 +1766,13 @@ export const STRINGS_ES = {
                 name: 'Mostrar ruta en tooltips',
                 desc: 'Muestra la ruta de la carpeta debajo del nombre de las notas en los tooltips.'
             },
+            showTooltipTags: {
+                name: 'Mostrar etiquetas en tooltips',
+                desc: 'Muestra las etiquetas de las notas en los tooltips cuando la sección de etiquetas está activada.'
+            },
             showTooltipWordCount: {
                 name: 'Mostrar recuento de palabras en tooltips',
-                desc: 'Muestra el recuento de palabras de las notas en los tooltips.'
+                desc: 'Muestra el recuento de palabras en los tooltips cuando el recuento de palabras está activado.'
             },
             resetPaneSeparator: {
                 name: 'Restablecer posición del separador de paneles',

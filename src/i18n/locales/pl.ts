@@ -1767,9 +1767,13 @@ export const STRINGS_PL = {
                 name: 'Pokaż ścieżkę w podpowiedziach',
                 desc: 'Po najechaniu kursorem wyświetla ścieżkę folderu pod nazwami notatek.'
             },
+            showTooltipTags: {
+                name: 'Pokaż tagi w podpowiedziach',
+                desc: 'Wyświetla tagi notatek w podpowiedziach, gdy sekcja tagów jest włączona.'
+            },
             showTooltipWordCount: {
                 name: 'Pokaż liczbę słów w podpowiedziach',
-                desc: 'Wyświetla liczbę słów notatek w podpowiedziach.'
+                desc: 'Wyświetla liczbę słów w podpowiedziach, gdy liczba słów jest włączona.'
             },
             resetPaneSeparator: {
                 name: 'Przywróć położenie separatora paneli',

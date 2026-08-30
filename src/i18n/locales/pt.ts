@@ -1765,9 +1765,13 @@ export const STRINGS_PT = {
                 name: 'Mostrar caminho nas dicas',
                 desc: 'Exibir o caminho da pasta abaixo dos nomes das notas nas dicas.'
             },
+            showTooltipTags: {
+                name: 'Mostrar etiquetas nas dicas',
+                desc: 'Exibir as etiquetas das notas nas dicas quando a secção de etiquetas está ativada.'
+            },
             showTooltipWordCount: {
                 name: 'Mostrar contagem de palavras nas dicas',
-                desc: 'Exibir a contagem de palavras das notas nas dicas.'
+                desc: 'Exibir a contagem de palavras nas dicas quando a contagem de palavras está ativada.'
             },
             resetPaneSeparator: {
                 name: 'Repor posição do separador de painéis',

@@ -1749,9 +1749,13 @@ export const STRINGS_ZH_TW = {
                 name: '在工具提示中顯示路徑',
                 desc: '在工具提示中的筆記名稱下方顯示資料夾路徑。'
             },
+            showTooltipTags: {
+                name: '在工具提示中顯示標籤',
+                desc: '啟用標籤區段時，在工具提示中顯示筆記的標籤。'
+            },
             showTooltipWordCount: {
                 name: '在工具提示中顯示字數',
-                desc: '在工具提示中顯示筆記字數。'
+                desc: '啟用字數統計時，在工具提示中顯示字數。'
             },
             resetPaneSeparator: {
                 name: '重設窗格分隔符位置',

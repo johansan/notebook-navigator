@@ -1762,9 +1762,13 @@ export const STRINGS_VI = {
                 name: 'Hiện đường dẫn trong chú thích',
                 desc: 'Hiển thị đường dẫn thư mục bên dưới tên ghi chú trong chú thích.'
             },
+            showTooltipTags: {
+                name: 'Hiện thẻ trong chú thích',
+                desc: 'Hiển thị thẻ của ghi chú trong chú thích khi phần thẻ được bật.'
+            },
             showTooltipWordCount: {
                 name: 'Hiện số từ trong chú thích',
-                desc: 'Hiển thị số từ của ghi chú trong chú thích.'
+                desc: 'Hiển thị số từ trong chú thích khi số từ được bật.'
             },
             resetPaneSeparator: {
                 name: 'Đặt lại vị trí thanh phân cách',

@@ -1769,9 +1769,13 @@ export const STRINGS_FR = {
                 name: 'Afficher le chemin dans les infobulles',
                 desc: 'Affiche le chemin du dossier sous le nom des notes dans les infobulles.'
             },
+            showTooltipTags: {
+                name: 'Afficher les mots-clés dans les infobulles',
+                desc: 'Affiche les mots-clés des notes dans les infobulles lorsque la section des mots-clés est activée.'
+            },
             showTooltipWordCount: {
                 name: 'Afficher le nombre de mots dans les infobulles',
-                desc: 'Affiche le nombre de mots des notes dans les infobulles.'
+                desc: 'Affiche le nombre de mots dans les infobulles lorsque le nombre de mots est activé.'
             },
             resetPaneSeparator: {
                 name: 'Réinitialiser la position du séparateur de panneaux',

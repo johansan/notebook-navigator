@@ -1767,9 +1767,13 @@ export const STRINGS_DE = {
                 name: 'Pfad in Tooltips anzeigen',
                 desc: 'Zeigt den Ordnerpfad unter den Notiznamen in Tooltips an.'
             },
+            showTooltipTags: {
+                name: 'Tags in Tooltips anzeigen',
+                desc: 'Zeigt Tags von Notizen in Tooltips an, wenn der Tag-Bereich aktiviert ist.'
+            },
             showTooltipWordCount: {
                 name: 'Wortanzahl in Tooltips anzeigen',
-                desc: 'Zeigt die Wortanzahl von Notizen in Tooltips an.'
+                desc: 'Zeigt die Wortanzahl in Tooltips an, wenn die Wortanzahl aktiviert ist.'
             },
             resetPaneSeparator: {
                 name: 'Position des Fenstertrennelements zurücksetzen',
