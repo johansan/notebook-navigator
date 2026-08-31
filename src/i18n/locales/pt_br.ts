@@ -2025,9 +2025,10 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar porcentagem da meta',
                 desc: 'Mostrar apenas a porcentagem de progresso quando houver uma contagem de palavras alvo disponível.'
             },
-            wordCountActiveNotice: {
-                title: 'A contagem de palavras continua ativa',
-                summary: 'A contagem de palavras continua sendo calculada para todas as notas porque é utilizada pelos seguintes itens:',
+            textCountActiveNotice: {
+                title: 'A contagem continua ativa',
+                summary:
+                    'As contagens de palavras ou caracteres continuam sendo calculadas para todas as notas porque são utilizadas pelos seguintes itens:',
                 more: 'e mais {count}',
                 reasons: {
                     appearance: 'Aparência dos arquivos',

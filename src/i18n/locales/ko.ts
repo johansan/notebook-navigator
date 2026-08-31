@@ -2016,9 +2016,9 @@ export const STRINGS_KO = {
                 name: '목표 백분율 표시',
                 desc: '목표 단어 수가 있을 때 진행률 백분율만 표시합니다.'
             },
-            wordCountActiveNotice: {
-                title: '단어 수 계산이 계속 활성화되어 있습니다',
-                summary: '다음 항목에서 사용하므로 모든 노트의 단어 수를 계속 계산합니다:',
+            textCountActiveNotice: {
+                title: '카운트 계산이 계속 활성화되어 있습니다',
+                summary: '다음 항목에서 사용하므로 모든 노트의 단어 수 또는 문자 수를 계속 계산합니다:',
                 more: '외 {count}개',
                 reasons: {
                     appearance: '파일 모양',

@@ -2019,9 +2019,9 @@ export const STRINGS_VI = {
                 name: 'Hiển thị phần trăm mục tiêu',
                 desc: 'Chỉ hiển thị phần trăm tiến độ khi có số từ mục tiêu.'
             },
-            wordCountActiveNotice: {
-                title: 'Tính số từ vẫn đang bật',
-                summary: 'Số từ vẫn được tính cho tất cả ghi chú vì các mục sau sử dụng số từ:',
+            textCountActiveNotice: {
+                title: 'Bộ đếm vẫn đang bật',
+                summary: 'Số từ hoặc ký tự vẫn được tính cho tất cả ghi chú vì các mục sau sử dụng chúng:',
                 more: 'và {count} mục khác',
                 reasons: {
                     appearance: 'Giao diện tệp',

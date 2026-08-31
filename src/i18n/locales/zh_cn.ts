@@ -2004,9 +2004,9 @@ export const STRINGS_ZH_CN = {
                 name: '显示目标百分比',
                 desc: '有目标字数时，仅显示进度百分比。'
             },
-            wordCountActiveNotice: {
-                title: '字数统计仍处于启用状态',
-                summary: '由于以下项目使用字数统计，系统仍会为所有笔记计算字数：',
+            textCountActiveNotice: {
+                title: '计数仍处于启用状态',
+                summary: '由于以下项目使用字数或字符数，系统仍会为所有笔记计算这些数值：',
                 more: '以及另外 {count} 个',
                 reasons: {
                     appearance: '文件外观',

@@ -2025,9 +2025,10 @@ export const STRINGS_ES = {
                 name: 'Mostrar porcentaje objetivo',
                 desc: 'Mostrar solo el porcentaje de progreso cuando haya un recuento de palabras objetivo disponible.'
             },
-            wordCountActiveNotice: {
-                title: 'El recuento de palabras sigue activado',
-                summary: 'El recuento de palabras se sigue calculando para todas las notas porque lo utilizan los siguientes elementos:',
+            textCountActiveNotice: {
+                title: 'El recuento sigue activado',
+                summary:
+                    'Los recuentos de palabras o caracteres se siguen calculando para todas las notas porque los utilizan los siguientes elementos:',
                 more: 'y {count} más',
                 reasons: {
                     appearance: 'Apariencia de archivos',

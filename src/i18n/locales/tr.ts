@@ -2019,9 +2019,9 @@ export const STRINGS_TR = {
                 name: 'Hedef yüzdesini göster',
                 desc: 'Hedef kelime sayısı varsa yalnızca ilerleme yüzdesini göster.'
             },
-            wordCountActiveNotice: {
-                title: 'Kelime sayımı hâlâ açık',
-                summary: 'Aşağıdaki öğeler kullandığı için kelime sayıları tüm notlar için hesaplanmaya devam ediyor:',
+            textCountActiveNotice: {
+                title: 'Sayım hâlâ açık',
+                summary: 'Aşağıdaki öğeler kullandığı için kelime veya karakter sayıları tüm notlar için hesaplanmaya devam ediyor:',
                 more: 've {count} tane daha',
                 reasons: {
                     appearance: 'Dosya görünümü',

@@ -2028,9 +2028,10 @@ export const STRINGS_FR = {
                 name: 'Afficher le pourcentage cible',
                 desc: 'Afficher uniquement le pourcentage de progression lorsqu’un objectif de nombre de mots est disponible.'
             },
-            wordCountActiveNotice: {
-                title: 'Le comptage des mots est toujours actif',
-                summary: 'Le nombre de mots est toujours calculé pour toutes les notes car les éléments suivants l’utilisent :',
+            textCountActiveNotice: {
+                title: 'Le comptage est toujours actif',
+                summary:
+                    'Le nombre de mots ou de caractères est toujours calculé pour toutes les notes car les éléments suivants l’utilisent :',
                 more: 'et {count} de plus',
                 reasons: {
                     appearance: 'Apparence des fichiers',
