@@ -114,7 +114,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         ],
         improved: [
             'Rebuilt the **hover tooltips** with the same look as the built-in Obsidian tooltips but with less flickering and support for tag pills and text hierarchy.',
-            'Added a notice under File display > Word and character count: ==Count type== that lists the file appearances and group headers that keep the word counting engine active while the master setting is off (e.g. custom folder appearances or group headers tracking word counts).'
+            'Added a notice under File display > Word and character count that lists the file appearances and group headers that keep word or character counting active for counts that ==Count type== does not show.'
         ],
         changed: [
             'Changed ==Show word count in tooltips== to show word counts only when word counts are enabled, so the tooltip setting no longer keeps word counting running on its own.'
