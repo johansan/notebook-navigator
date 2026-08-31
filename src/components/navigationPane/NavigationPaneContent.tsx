@@ -39,6 +39,7 @@ import { useNavigationPaneShortcuts } from '../../hooks/navigationPane/useNaviga
 import { useNavigationPaneTreeInteractions } from '../../hooks/navigationPane/useNavigationPaneTreeInteractions';
 import { useNavigationSearchHighlights } from '../../hooks/navigationPane/useNavigationSearchHighlights';
 import { useStableHandlerFacade } from '../../hooks/useStableHandlerFacade';
+import { useMarkdownWordCountConsumerChanges } from '../../hooks/useMarkdownWordCountConsumerChanges';
 import { buildNavigationInlineRenameTarget, matchNavigationInlineRenameTarget, replacePathLeaf } from './navigationRenameTarget';
 import type { SearchNavFilterState } from '../../types/search';
 import type { NoteCountInfo } from '../../types/noteCounts';
@@ -97,7 +98,7 @@ import type { NavigationPaneTreeSectionsResult } from '../../hooks/navigationPan
 import type { FolderDecorationModel } from '../../utils/folderDecoration';
 import type { FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';
 import type { FileItemPillOrderModel } from '../../utils/fileItemPillOrder';
-import { hasMarkdownWordCountConsumer } from '../../utils/markdownPipelineContentTypes';
+import { hasCachedMarkdownWordCountConsumer } from '../../utils/markdownPipelineContentTypes';
 import { focusElementPreventScroll } from '../../utils/domUtils';
 
 const EMPTY_INDENT_GUIDE_MAP = new Map<string, number[]>();
@@ -143,6 +144,7 @@ export const NavigationPane = React.memo(
         const selectionState = useNavigationSelection();
         const selectionDispatch = useSelectionDispatch();
         const settings = useSettingsState();
+        useMarkdownWordCountConsumerChanges(app);
         const activeProfile = useActiveProfile();
         const updateSettings = useSettingsUpdate();
         const uxPreferences = useUXPreferences();
@@ -151,7 +153,7 @@ export const NavigationPane = React.memo(
         const { fileData, getFile, getFileDisplayName, getFileTimestamps, isStorageReady } = useFileCache();
         // Cached word counts are only current while a display setting keeps the markdown
         // pipeline extracting them; without a consumer a stale count would show after edits.
-        const hasWordCountConsumer = hasMarkdownWordCountConsumer(settings);
+        const hasWordCountConsumer = hasCachedMarkdownWordCountConsumer(settings, app);
         const getFileWordCount = useCallback(
             (file: TFile): number | null => {
                 if (!hasWordCountConsumer) {

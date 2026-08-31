@@ -2026,6 +2026,20 @@ export const STRINGS_DE = {
                 name: 'Zielprozentsatz anzeigen',
                 desc: 'Nur den Fortschrittsprozentsatz anzeigen, wenn eine Zielwortanzahl verfügbar ist.'
             },
+            wordCountActiveNotice: {
+                title: 'Wortzählung ist weiterhin aktiv',
+                summary: 'Wortzahlen werden weiterhin für alle Notizen berechnet, weil die folgenden Einträge sie verwenden:',
+                more: 'und {count} weitere',
+                reasons: {
+                    appearance: 'Dateidarstellung',
+                    'group-header': 'Gruppenüberschrift'
+                },
+                scopes: {
+                    folder: 'Ordner: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Eigenschaft: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Eigenschaftsschlüssel (Vault-Profil)',
                 desc: 'Frontmatter-Eigenschaftsschlüssel mit schlüsselweiser Sichtbarkeit für Navigation und Dateiliste.',

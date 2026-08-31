@@ -2024,6 +2024,20 @@ export const STRINGS_NL = {
                 name: 'Doelpercentage tonen',
                 desc: 'Toon alleen het voortgangspercentage wanneer een doelaantal woorden beschikbaar is.'
             },
+            wordCountActiveNotice: {
+                title: 'Woorden tellen is nog actief',
+                summary: 'Woordaantallen worden nog steeds voor alle notities berekend omdat de volgende items ze gebruiken:',
+                more: 'en nog {count}',
+                reasons: {
+                    appearance: 'Bestandsweergave',
+                    'group-header': 'Groepskop'
+                },
+                scopes: {
+                    folder: 'Map: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Eigenschap: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Eigenschapssleutels (kluisprofiel)',
                 desc: 'Frontmatter-eigenschapssleutels, met zichtbaarheid per sleutel voor navigatie en bestandslijst.',

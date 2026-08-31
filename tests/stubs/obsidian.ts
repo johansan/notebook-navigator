@@ -39,6 +39,7 @@ interface TestVault {
     getAbstractFileByPath(path: string): TFile | TFolder | null;
     getRoot(): TFolder;
     getAllLoadedFiles(): Array<TFile | TFolder>;
+    getMarkdownFiles(): TFile[];
     cachedRead(file: TFile): Promise<string>;
     adapter: {
         readBinary(path: string): Promise<ArrayBuffer>;
@@ -91,6 +92,9 @@ export class App {
             },
             getAllLoadedFiles(): Array<TFile | TFolder> {
                 return [...folders.values(), ...files.values()];
+            },
+            getMarkdownFiles(): TFile[] {
+                return Array.from(files.values()).filter(file => file.extension === 'md');
             },
             cachedRead: async () => '',
             adapter: {

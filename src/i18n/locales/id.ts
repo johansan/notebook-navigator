@@ -2020,6 +2020,20 @@ export const STRINGS_ID = {
                 name: 'Tampilkan persentase target',
                 desc: 'Tampilkan hanya persentase kemajuan saat target jumlah kata tersedia.'
             },
+            wordCountActiveNotice: {
+                title: 'Penghitungan kata masih aktif',
+                summary: 'Jumlah kata masih dihitung untuk semua catatan karena digunakan oleh item berikut:',
+                more: 'dan {count} lainnya',
+                reasons: {
+                    appearance: 'Tampilan file',
+                    'group-header': 'Header grup'
+                },
+                scopes: {
+                    folder: 'Folder: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Properti: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Kunci properti (profil vault)',
                 desc: 'Kunci properti frontmatter, dengan visibilitas per kunci untuk navigasi dan daftar file.',

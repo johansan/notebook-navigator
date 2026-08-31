@@ -564,7 +564,7 @@ function renderDesktopAppearanceSettings(context: SettingsTabContext, createGrou
             })
         );
     // Word counts only exist while a list display setting or appearance requests them
-    setElementVisible(showTooltipWordCountSetting.settingEl, hasMarkdownWordCountConsumer(plugin.settings));
+    setElementVisible(showTooltipWordCountSetting.settingEl, hasMarkdownWordCountConsumer(plugin.settings, context.app));
 }
 
 function renderMobileAppearanceSettings(context: SettingsTabContext, createGroup: CreateSettingGroup): void {

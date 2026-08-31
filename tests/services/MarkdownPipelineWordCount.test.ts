@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { describe, expect, it } from 'vitest';
-import { App, TFile, type CachedMetadata } from 'obsidian';
+import { describe, expect, it, vi } from 'vitest';
+import { App, TFile, type CachedMetadata, type EventRef } from 'obsidian';
 import { LIMITS } from '../../src/constants/limits';
 import { MarkdownPipelineContentProvider } from '../../src/services/content/MarkdownPipelineContentProvider';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
@@ -24,7 +24,22 @@ import type { NotebookNavigatorSettings } from '../../src/settings/types';
 import type { FileData } from '../../src/storage/IndexedDBStorage';
 import { deriveFileMetadata } from '../utils/pathMetadata';
 import { setActivePropertyFields } from '../../src/utils/vaultProfiles';
-import { haveMarkdownCountConsumersChanged } from '../../src/utils/markdownPipelineContentTypes';
+import {
+    getMarkdownWordCountDependencies,
+    hasCachedMarkdownWordCountConsumer,
+    hasMarkdownWordCountConsumer,
+    haveMarkdownCountConsumersChanged,
+    refreshMarkdownWordCountConsumerForFile,
+    refreshMarkdownWordCountConsumerSettings,
+    removeMarkdownWordCountConsumersInFolder,
+    renameMarkdownWordCountConsumersInFolder,
+    rescanMarkdownWordCountConsumers,
+    subscribeInitialMarkdownWordCountConsumerResolution,
+    subscribeMarkdownWordCountConsumerChanges
+} from '../../src/utils/markdownPipelineContentTypes';
+import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID } from '../../src/types';
+import { buildPropertyKeyNodeId } from '../../src/utils/propertyTree';
+import { rescanManualSortGroupHeaderWordCountConsumers } from '../../src/utils/manualSort';
 
 class TestMarkdownPipelineContentProvider extends MarkdownPipelineContentProvider {
     async runWordCount(file: TFile, settings: NotebookNavigatorSettings): Promise<number | null> {
@@ -56,11 +71,14 @@ function createSettings(overrides?: Partial<NotebookNavigatorSettings> & { prope
 function createApp() {
     const app = new App();
     const cachedMetadataByPath = new Map<string, CachedMetadata>();
+    const markdownFiles: TFile[] = [];
 
     app.metadataCache.getFileCache = (file: TFile) => cachedMetadataByPath.get(file.path) ?? null;
+    app.vault.getMarkdownFiles = () => markdownFiles;
+    app.vault.getFileByPath = path => markdownFiles.find(file => file.path === path) ?? null;
     app.vault.cachedRead = async (_file: TFile) => '';
 
-    return { app, cachedMetadataByPath };
+    return { app, cachedMetadataByPath, markdownFiles };
 }
 
 function createFile(path: string): TFile {
@@ -113,6 +131,435 @@ describe('Markdown pipeline appearance relevance', () => {
         expect(haveMarkdownCountConsumersChanged(visualChange, countsEnabled)).toBe(true);
         expect(haveMarkdownCountConsumersChanged(countsEnabled, charactersEnabled)).toBe(true);
         expect(haveMarkdownCountConsumersChanged(countsEnabled, visualChange)).toBe(true);
+    });
+
+    it('lists only appearances and actual group headers that request word counts', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Projects/Draft.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Draft', show_word_count: true }
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            folderAppearances: { Writing: { textCount: 'words' } },
+            folderSortOverrides: { Projects: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([
+            { reason: 'appearance', selectionType: ItemType.FOLDER, key: 'Writing' },
+            { reason: 'group-header', path: 'Projects/Draft.md' }
+        ]);
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('uses the initialized group-header cache without scanning the vault from render checks', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Projects/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Projects', show_word_count: true }
+            }
+        });
+        const getMarkdownFiles = vi.fn(() => markdownFiles);
+        const getFileByPath = vi.fn((path: string) => markdownFiles.find(file => file.path === path) ?? null);
+        app.vault.getMarkdownFiles = getMarkdownFiles;
+        app.vault.getFileByPath = getFileByPath;
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(hasCachedMarkdownWordCountConsumer(settings, app)).toBe(false);
+        expect(getMarkdownFiles).not.toHaveBeenCalled();
+        expect(getFileByPath).not.toHaveBeenCalled();
+
+        rescanManualSortGroupHeaderWordCountConsumers(app, settings);
+        expect(hasCachedMarkdownWordCountConsumer(settings, app)).toBe(false);
+        expect(getFileByPath).not.toHaveBeenCalled();
+        hasMarkdownWordCountConsumer(settings, app);
+
+        expect(getMarkdownFiles).toHaveBeenCalledTimes(1);
+        getFileByPath.mockClear();
+        const publishedSnapshot = { ...settings };
+        expect(hasCachedMarkdownWordCountConsumer(publishedSnapshot, app)).toBe(true);
+        expect(getMarkdownFiles).toHaveBeenCalledTimes(1);
+        expect(getFileByPath).not.toHaveBeenCalled();
+    });
+
+    it('invalidates group-header dependencies after settings mutate in place', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Projects/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Projects', show_word_count: true }
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+
+        settings.folderSortOverrides.Projects = 'title-asc';
+        refreshMarkdownWordCountConsumerSettings(app, settings);
+
+        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([{ reason: 'group-header', path: headerFile.path }]);
+    });
+
+    it('does not enable word counting for a custom sort order without a consuming header', () => {
+        const { app } = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
+    });
+
+    it('reports activation when a resolved metadata scan discovers the first consuming header', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
+
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true }
+            }
+        });
+
+        expect(rescanMarkdownWordCountConsumers(app, settings)).toEqual({ becameActive: true, dependenciesChanged: true });
+        expect(rescanMarkdownWordCountConsumers(app, settings)).toEqual({ becameActive: false, dependenciesChanged: false });
+    });
+
+    it('removes the startup resolution listener before later metadata resolutions', () => {
+        const { app } = createApp();
+        const listeners = new Map<EventRef, () => void>();
+        app.metadataCache.on = vi.fn((_name: 'resolved', callback: () => void) => {
+            const eventRef = {} as EventRef;
+            listeners.set(eventRef, callback);
+            return eventRef;
+        });
+        const offref = vi.fn((eventRef: EventRef) => {
+            listeners.delete(eventRef);
+        });
+        app.metadataCache.offref = offref;
+        const listener = vi.fn();
+        const unsubscribe = subscribeInitialMarkdownWordCountConsumerResolution(app, listener);
+        const triggerResolved = () => Array.from(listeners.values()).forEach(callback => callback());
+
+        triggerResolved();
+        triggerResolved();
+
+        expect(listener).toHaveBeenCalledOnce();
+        expect(offref).toHaveBeenCalledOnce();
+        unsubscribe();
+        expect(offref).toHaveBeenCalledOnce();
+    });
+
+    it('publishes activation and deactivation when one header changes', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
+
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true }
+            }
+        });
+        const listener = vi.fn();
+        const unsubscribe = subscribeMarkdownWordCountConsumerChanges(app, listener);
+
+        expect(refreshMarkdownWordCountConsumerForFile(app, headerFile, settings)).toEqual({
+            becameActive: true,
+            dependenciesChanged: true
+        });
+        expect(hasCachedMarkdownWordCountConsumer(settings, app)).toBe(true);
+        expect(listener).toHaveBeenCalledTimes(1);
+
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: false }
+            }
+        });
+        expect(refreshMarkdownWordCountConsumerForFile(app, headerFile, settings)).toEqual({
+            becameActive: false,
+            dependenciesChanged: true
+        });
+        expect(hasCachedMarkdownWordCountConsumer(settings, app)).toBe(false);
+        expect(listener).toHaveBeenCalledTimes(2);
+
+        unsubscribe();
+    });
+
+    it('publishes when an unchanged header leaves its active tag context', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true },
+                tags: ['work']
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            tagSortOverrides: { work: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            showTags: true
+        });
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+        const listener = vi.fn();
+        const unsubscribe = subscribeMarkdownWordCountConsumerChanges(app, listener);
+
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true },
+                tags: ['personal']
+            }
+        });
+        expect(refreshMarkdownWordCountConsumerForFile(app, headerFile, settings)).toEqual({
+            becameActive: false,
+            dependenciesChanged: true
+        });
+        expect(hasCachedMarkdownWordCountConsumer(settings, app)).toBe(false);
+        expect(listener).toHaveBeenCalledOnce();
+
+        unsubscribe();
+    });
+
+    it('publishes folder path changes without rescanning markdown files', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Projects/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true }
+            }
+        });
+        const getMarkdownFiles = vi.fn(() => markdownFiles);
+        app.vault.getMarkdownFiles = getMarkdownFiles;
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc',
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+        expect(getMarkdownFiles).toHaveBeenCalledOnce();
+
+        cachedMetadataByPath.delete(headerFile.path);
+        headerFile.path = 'Archive/Header.md';
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true }
+            }
+        });
+        expect(renameMarkdownWordCountConsumersInFolder(app, 'Projects', 'Archive', settings)).toEqual({
+            becameActive: false,
+            dependenciesChanged: true
+        });
+        expect(getMarkdownFiles).toHaveBeenCalledOnce();
+
+        markdownFiles.splice(0, 1);
+        expect(removeMarkdownWordCountConsumersInFolder(app, 'Archive', settings)).toEqual({
+            becameActive: false,
+            dependenciesChanged: true
+        });
+        expect(getMarkdownFiles).toHaveBeenCalledOnce();
+    });
+
+    it('does not enable word counting when a consuming header is outside every custom list context', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Tech Insights/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Work', show_word_count: true }
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            folderSortOverrides: { Projects: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header'
+        });
+
+        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
+    });
+
+    it('counts ancestor folder contexts only when descendant notes are included', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Projects/Current/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Current', show_word_count: true }
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            folderSortOverrides: { Projects: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            includeDescendantNotes: false
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
+
+        const descendantSettings = { ...settings, includeDescendantNotes: true };
+        expect(hasMarkdownWordCountConsumer(descendantSettings, app)).toBe(true);
+    });
+
+    it('recognizes a consuming header in the tagged root list', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Tagged', show_word_count: true },
+                tags: ['work/project']
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            tagSortOverrides: { [TAGGED_TAG_ID]: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            includeDescendantNotes: true,
+            showTags: true
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('matches tag-specific custom lists case-insensitively', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Project', show_word_count: true },
+                tags: ['Work/Project']
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            tagSortOverrides: { 'work/project': 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            includeDescendantNotes: false,
+            showTags: true
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('keeps word counting active for a selected tag when the Tags section is hidden', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Work', show_word_count: true },
+                tags: ['work']
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            tagSortOverrides: { work: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            showTags: false
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('recognizes a consuming header in the properties root list', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Properties', show_word_count: true },
+                status: 'draft'
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            propertySortOverrides: { [PROPERTIES_ROOT_VIRTUAL_FOLDER_ID]: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            includeDescendantNotes: true,
+            showProperties: true,
+            propertyFields: 'status'
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('does not treat empty strings as indexed property-list membership', () => {
+        const { app, cachedMetadataByPath, markdownFiles } = createApp();
+        const headerFile = createFile('Notes/Header.md');
+        markdownFiles.push(headerFile);
+        cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Empty status', show_word_count: true },
+                status: '   '
+            }
+        });
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'modified-desc',
+            propertySortOverrides: { [buildPropertyKeyNodeId('status')]: 'title-asc' },
+            manualSortGroupHeaderProperty: 'group_header',
+            includeDescendantNotes: false,
+            showProperties: true,
+            propertyFields: 'status'
+        });
+
+        expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
     });
 });
 
@@ -427,7 +874,7 @@ describe('MarkdownPipelineContentProvider word count', () => {
         expect(result.update?.characterCountWithoutSpaces).toBe(15);
     });
 
-    it('counts words for sort-activated custom group headers when file counts are hidden', async () => {
+    it('does not count words for a custom sort order without a consuming group header', async () => {
         const context = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
@@ -438,6 +885,29 @@ describe('MarkdownPipelineContentProvider word count', () => {
         const file = createFile('notes/note.md');
 
         setMarkdownContent(context, file, 'Hello group header');
+        const result = await provider.runProcessFile(file, null, settings);
+
+        expect(result.update?.wordCount).toBeUndefined();
+    });
+
+    it('counts words when an actual group header requests them', async () => {
+        const context = createApp();
+        const settings = createSettings({
+            textCountDisplay: 'none',
+            noteGrouping: 'date',
+            defaultFolderSort: 'title-asc'
+        });
+        const provider = new TestMarkdownPipelineContentProvider(context.app);
+        const file = createFile('notes/note.md');
+        const headerFile = createFile('notes/header.md');
+
+        setMarkdownContent(context, file, 'Hello group header');
+        context.markdownFiles.push(headerFile);
+        context.cachedMetadataByPath.set(headerFile.path, {
+            frontmatter: {
+                group_header: { title: 'Header', show_word_count: true }
+            }
+        });
         const result = await provider.runProcessFile(file, null, settings);
 
         expect(result.update?.wordCount).toBe(3);

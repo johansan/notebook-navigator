@@ -81,10 +81,10 @@ export function filterFilesRequiringMetadataSources(
     const app = options?.app;
     const featureImageExcludeMatcher = createCaseInsensitiveKeyMatcher(settings.featureImageExcludeProperties);
     const hiddenFilePropertyMatcher = requiresHiddenState ? createFrontmatterPropertyExclusionMatcher(hiddenFileProperties) : null;
-    const markdownPipelineEnabled = hasMarkdownPipelineContent(settings);
+    const markdownPipelineEnabled = hasMarkdownPipelineContent(settings, app);
     const previewEnabled = hasMarkdownPreviewConsumer(settings);
     const featureImageEnabled = hasMarkdownFeatureImageConsumer(settings);
-    const wordCountEnabled = hasMarkdownWordCountConsumer(settings);
+    const wordCountEnabled = hasMarkdownWordCountConsumer(settings, app);
     const characterCountEnabled = hasMarkdownCharacterCountConsumer(settings);
     const tasksEnabled = hasMarkdownTaskConsumer(settings);
 

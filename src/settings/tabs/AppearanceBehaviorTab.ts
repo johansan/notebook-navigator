@@ -347,7 +347,7 @@ function createDesktopAppearanceDefinitionGroup(context: SettingsTabContext): Se
             name: strings.settings.items.showTooltipWordCount.name,
             desc: strings.settings.items.showTooltipWordCount.desc,
             // Word counts only exist while a list display setting or appearance requests them
-            visible: () => plugin.settings.showTooltips && hasMarkdownWordCountConsumer(plugin.settings)
+            visible: () => plugin.settings.showTooltips && hasMarkdownWordCountConsumer(plugin.settings, context.app)
         })
     ]);
 }

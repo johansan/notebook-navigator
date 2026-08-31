@@ -2023,6 +2023,20 @@ export const STRINGS_PT = {
                 name: 'Mostrar percentagem do objetivo',
                 desc: 'Mostrar apenas a percentagem de progresso quando houver uma contagem de palavras objetivo disponível.'
             },
+            wordCountActiveNotice: {
+                title: 'A contagem de palavras continua ativa',
+                summary: 'A contagem de palavras continua a ser calculada para todas as notas porque é utilizada pelos seguintes itens:',
+                more: 'e mais {count}',
+                reasons: {
+                    appearance: 'Aparência dos ficheiros',
+                    'group-header': 'Cabeçalho de grupo'
+                },
+                scopes: {
+                    folder: 'Pasta: {name}',
+                    tag: 'Etiqueta: #{name}',
+                    property: 'Propriedade: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Chaves de propriedades (perfil do cofre)',
                 desc: 'Chaves de propriedades do frontmatter, com visibilidade por chave para navegação e lista de ficheiros.',

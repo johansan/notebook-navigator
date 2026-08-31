@@ -30,7 +30,7 @@ import { buildPropertyKeyNodeId } from '../../src/utils/propertyTree';
 import {
     areListGroupingOptionsEqual,
     areListGroupingOptionsSameKind,
-    hasEffectiveCustomListGrouping,
+    hasEffectiveCustomListGroupingForSelection,
     pruneUnavailablePropertyGroupingOverrides,
     reconcileDefaultNoteGrouping,
     resolveEffectiveListGroupingForSort,
@@ -343,13 +343,13 @@ describe('updatePropertyGroupingOverrideKeys', () => {
     });
 });
 
-describe('hasEffectiveCustomListGrouping', () => {
+describe('hasEffectiveCustomListGroupingForSelection', () => {
     it('detects custom grouping forced by the default sort', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
         settings.noteGrouping = 'date';
         settings.defaultFolderSort = 'title-asc';
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, null)).toBe(true);
     });
 
     it('detects custom grouping forced by a selection sort override', () => {
@@ -358,7 +358,8 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.defaultFolderSort = 'modified-desc';
         settings.folderSortOverrides.Projects = 'title-asc';
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Writing')).toBe(false);
     });
 
     it('combines a tag appearance with its sort override', () => {
@@ -368,7 +369,7 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.tagAppearances.reading = { groupBy: 'date' };
         settings.tagSortOverrides.reading = 'title-asc';
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.TAG, 'reading')).toBe(true);
     });
 
     it('detects custom grouping forced by a property sort override', () => {
@@ -377,7 +378,7 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.defaultFolderSort = 'modified-desc';
         settings.propertySortOverrides['property:status:active'] = 'property-asc';
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.PROPERTY, 'property:status:active')).toBe(true);
     });
 
     it('detects custom grouping forced by manual sorting', () => {
@@ -386,7 +387,7 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.defaultFolderSort = 'property-asc';
         settings.propertySortKey = settings.manualSortPropertyKey;
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, null)).toBe(true);
     });
 
     it('detects manual sorting in an object override', () => {
@@ -398,7 +399,7 @@ describe('hasEffectiveCustomListGrouping', () => {
             propertyKey: settings.manualSortPropertyKey
         };
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(true);
     });
 
     it('does not treat alphabetical folder grouping as custom', () => {
@@ -407,7 +408,7 @@ describe('hasEffectiveCustomListGrouping', () => {
         settings.defaultFolderSort = 'modified-desc';
         settings.folderSortOverrides.Projects = 'title-asc';
 
-        expect(hasEffectiveCustomListGrouping(settings)).toBe(false);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(false);
     });
 });
 

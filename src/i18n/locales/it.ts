@@ -2021,6 +2021,20 @@ export const STRINGS_IT = {
                 name: 'Mostra percentuale obiettivo',
                 desc: 'Mostra solo la percentuale di avanzamento quando è disponibile un obiettivo di conteggio parole.'
             },
+            wordCountActiveNotice: {
+                title: 'Il conteggio delle parole è ancora attivo',
+                summary: 'Il conteggio delle parole viene ancora calcolato per tutte le note perché è utilizzato dai seguenti elementi:',
+                more: 'e altri {count}',
+                reasons: {
+                    appearance: 'Aspetto dei file',
+                    'group-header': 'Intestazione di gruppo'
+                },
+                scopes: {
+                    folder: 'Cartella: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Proprietà: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Chiavi proprietà (profilo vault)',
                 desc: "Chiavi proprietà frontmatter, con visibilità per singola chiave nella navigazione e nell'elenco file.",

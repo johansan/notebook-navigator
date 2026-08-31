@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Setting } from 'obsidian';
+import { Setting, setIcon } from 'obsidian';
 import type { SettingDefinitionItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { showNotice } from '../../utils/noticeUtils';
@@ -37,6 +37,14 @@ import {
 import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../utils/commaSeparatedListUtils';
 import { EXTERNAL_ICON_PROVIDERS } from '../../services/icons/external/providerRegistry';
 import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../utils/fileTypeIconPresets';
+import {
+    getMarkdownWordCountDependencies,
+    subscribeMarkdownWordCountConsumerChanges,
+    type MarkdownWordCountDependency
+} from '../../utils/markdownPipelineContentTypes';
+import { parsePropertyNodeId } from '../../utils/propertyTree';
+import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../types';
+import { getVirtualTagCollection, isVirtualTagCollectionId } from '../../utils/virtualTagCollections';
 
 function parseFileTypeIconMapText(value: string): IconMapParseResult {
     return parseIconMapText(value, normalizeFileTypeIconMapKey);
@@ -55,6 +63,66 @@ interface ColorSettingAccess {
 interface FileTypeIconPresetOption {
     label: string;
     isInstalled: boolean;
+}
+
+const MAX_VISIBLE_WORD_COUNT_DEPENDENCIES = 3;
+
+export function formatWordCountDependencyScope(dependency: MarkdownWordCountDependency): string {
+    if (dependency.reason === 'group-header') {
+        return dependency.path;
+    }
+
+    const labels = strings.settings.items.wordCountActiveNotice.scopes;
+    switch (dependency.selectionType) {
+        case ItemType.FOLDER:
+            return labels.folder.replace('{name}', dependency.key);
+        case ItemType.TAG:
+            if (isVirtualTagCollectionId(dependency.key)) {
+                return getVirtualTagCollection(dependency.key).getLabel();
+            }
+            return labels.tag.replace('{name}', dependency.key);
+        case ItemType.PROPERTY: {
+            if (dependency.key === PROPERTIES_ROOT_VIRTUAL_FOLDER_ID) {
+                return strings.navigationPane.properties;
+            }
+            const parsed = parsePropertyNodeId(dependency.key);
+            const name = parsed ? (parsed.valuePath ? `${parsed.key} = ${parsed.valuePath}` : parsed.key) : dependency.key;
+            return labels.property.replace('{name}', name);
+        }
+        default:
+            return dependency.key;
+    }
+}
+
+/** Renders the explanatory footer shown when non-display settings keep word counting active. */
+export function renderWordCountActiveNotice(setting: Setting, context: SettingsTabContext): void {
+    const dependencies = getMarkdownWordCountDependencies(context.app, context.plugin.settings);
+    const copy = strings.settings.items.wordCountActiveNotice;
+
+    setting.setName('').setDesc('');
+    setting.settingEl.addClass('nn-setting-info-container');
+    setting.settingEl.addClass('nn-setting-info-list');
+    setting.settingEl.addClass('nn-setting-word-count-warning');
+    setting.descEl.empty();
+
+    const headerEl = setting.descEl.createDiv({ cls: 'nn-setting-word-count-warning-header' });
+    const iconEl = headerEl.createSpan({ cls: 'nn-setting-word-count-warning-icon', attr: { 'aria-hidden': 'true' } });
+    setIcon(iconEl, 'lucide-triangle-alert');
+    headerEl.createEl('strong', { text: copy.title });
+
+    setting.descEl.createDiv({ text: copy.summary });
+
+    const listEl = setting.descEl.createEl('ol');
+    dependencies.slice(0, MAX_VISIBLE_WORD_COUNT_DEPENDENCIES).forEach(dependency => {
+        const itemEl = listEl.createEl('li');
+        const reason = copy.reasons[dependency.reason];
+        itemEl.createEl('strong', { text: reason });
+        itemEl.appendText(`: ${formatWordCountDependencyScope(dependency)}`);
+    });
+    if (dependencies.length > MAX_VISIBLE_WORD_COUNT_DEPENDENCIES) {
+        const remainingCount = dependencies.length - MAX_VISIBLE_WORD_COUNT_DEPENDENCIES;
+        listEl.createEl('li', { text: copy.more.replace('{count}', remainingCount.toString()) });
+    }
 }
 
 /** Builds native 1.13 setting definitions for note appearance and metadata settings. */
@@ -487,6 +555,23 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 name: strings.settings.items.showTargetPercentage.name,
                 desc: strings.settings.items.showTargetPercentage.desc,
                 visible: () => showsWordCount(plugin.settings.textCountDisplay)
+            }),
+            createRenderDefinition({
+                name: strings.settings.items.wordCountActiveNotice.title,
+                searchable: false,
+                visible: () =>
+                    !showsWordCount(plugin.settings.textCountDisplay) &&
+                    getMarkdownWordCountDependencies(context.app, plugin.settings).length > 0,
+                render: setting => {
+                    const refresh = () => renderWordCountActiveNotice(setting, context);
+                    context.registerSettingsUpdateListener('notes-word-count-active-notice', refresh);
+                    const unsubscribe = subscribeMarkdownWordCountConsumerChanges(context.app, () => {
+                        refresh();
+                        context.refreshSettingsDomState();
+                    });
+                    context.registerSettingsRenderCleanup(unsubscribe);
+                    refresh();
+                }
             })
         ])
     ];

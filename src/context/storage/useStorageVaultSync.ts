@@ -17,7 +17,7 @@
  */
 
 import { useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
-import { App, EventRef, TAbstractFile, TFile, debounce } from 'obsidian';
+import { App, EventRef, TAbstractFile, TFile, TFolder, debounce } from 'obsidian';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { INTERNAL_NOTEBOOK_NAVIGATOR_API, type NotebookNavigatorAPI } from '../../api/NotebookNavigatorAPI';
 import type { NotebookNavigatorSettings } from '../../settings/types';
@@ -41,6 +41,14 @@ import {
     isFrontmatterMetadataCacheCurrent,
     markFrontmatterMetadataCacheCurrent
 } from '../../utils/frontmatterMetadataCache';
+import {
+    refreshMarkdownWordCountConsumerForFile,
+    removeMarkdownWordCountConsumerForFile,
+    removeMarkdownWordCountConsumersInFolder,
+    renameMarkdownWordCountConsumerForFile,
+    renameMarkdownWordCountConsumersInFolder,
+    type MarkdownWordCountConsumerUpdate
+} from '../../utils/markdownPipelineContentTypes';
 
 /**
  * Buffered vault/metadata events awaiting a debounced flush. The whole buffer (files, timer, processing flag) is
@@ -131,6 +139,7 @@ export function useStorageVaultSync(params: {
         includeTypes?: ContentProviderType[],
         settingsOverride?: NotebookNavigatorSettings
     ) => void;
+    queueAllMarkdownForWordCountActivation: () => void;
     queueIndexableFilesForContentGeneration: (files: TFile[], settings: NotebookNavigatorSettings) => { markdownFiles: TFile[] };
     queueIndexableFilesNeedingContentGeneration: (filesToCheck: TFile[], allFiles: TFile[], settings: NotebookNavigatorSettings) => void;
     disposeMetadataWaitDisposers: () => void;
@@ -165,6 +174,7 @@ export function useStorageVaultSync(params: {
         getIndexableFiles,
         getVisibleMarkdownFiles,
         queueMetadataContentWhenReady,
+        queueAllMarkdownForWordCountActivation,
         queueIndexableFilesForContentGeneration,
         queueIndexableFilesNeedingContentGeneration,
         disposeMetadataWaitDisposers
@@ -215,7 +225,7 @@ export function useStorageVaultSync(params: {
 
                     api?.[INTERNAL_NOTEBOOK_NAVIGATOR_API].setStorageReady(true);
 
-                    const metadataDependentTypes = getMetadataDependentTypes(settings);
+                    const metadataDependentTypes = getMetadataDependentTypes(settings, app);
                     const contentEnabled = metadataDependentTypes.length > 0;
                     const queuedStartupDetails: Record<string, unknown> = { metadataDependentTypes, frontmatterMetadataCacheInvalidated };
 
@@ -391,7 +401,7 @@ export function useStorageVaultSync(params: {
             const db = getDBInstance();
             if (db.consumePendingRebuildNotice()) {
                 const liveSettings = latestSettingsRef.current;
-                const enabledTypes = getCacheRebuildProgressTypes(liveSettings);
+                const enabledTypes = getCacheRebuildProgressTypes(liveSettings, app);
                 const total = getContentWorkTotal(getIndexableFiles(), enabledTypes);
                 startCacheRebuildNotice(total, enabledTypes);
             }
@@ -405,7 +415,7 @@ export function useStorageVaultSync(params: {
 
             try {
                 const liveSettings = latestSettingsRef.current;
-                const metadataDependentTypes = getMetadataDependentTypes(liveSettings);
+                const metadataDependentTypes = getMetadataDependentTypes(liveSettings, app);
                 const { markdownFiles } = queueIndexableFilesForContentGeneration(files, liveSettings);
                 if (metadataDependentTypes.length > 0) {
                     queueMetadataContentWhenReady(markdownFiles, metadataDependentTypes, liveSettings);
@@ -538,7 +548,7 @@ export function useStorageVaultSync(params: {
                 }
 
                 const liveSettings = latestSettingsRef.current;
-                const metadataDependentTypes = getMetadataDependentTypes(liveSettings);
+                const metadataDependentTypes = getMetadataDependentTypes(liveSettings, app);
 
                 metadataChangeFlushBuffer.isProcessing = true;
                 try {
@@ -580,6 +590,12 @@ export function useStorageVaultSync(params: {
             flushMetadataChangedFiles();
         };
 
+        const applyWordCountConsumerUpdate = (update: MarkdownWordCountConsumerUpdate): void => {
+            if (update.becameActive) {
+                queueAllMarkdownForWordCountActivation();
+            }
+        };
+
         // Entries buffered before an effect remount have no active timer (cleanup cleared it); reschedule their
         // flushes. When a flush batch from the previous effect run is still in flight, the schedule guard skips
         // and that batch reschedules on completion if the buffer is non-empty.
@@ -614,7 +630,22 @@ export function useStorageVaultSync(params: {
         });
 
         const handleRename = (file: TAbstractFile, oldPath: string) => {
+            if (file instanceof TFolder) {
+                const liveSettings = latestSettingsRef.current;
+                // Obsidian emits one event for a folder move and no rename events for its descendants.
+                // Rewrite cached header paths by prefix so the event does not scan every markdown note.
+                applyWordCountConsumerUpdate(renameMarkdownWordCountConsumersInFolder(app, oldPath, file.path, liveSettings));
+            }
             if (file instanceof TFile) {
+                const liveSettings = latestSettingsRef.current;
+                const wasMarkdown = isMarkdownPath(oldPath);
+                const isMarkdown = file.extension === 'md';
+                if (wasMarkdown && isMarkdown) {
+                    applyWordCountConsumerUpdate(renameMarkdownWordCountConsumerForFile(app, oldPath, file.path, liveSettings));
+                } else if (wasMarkdown) {
+                    applyWordCountConsumerUpdate(removeMarkdownWordCountConsumerForFile(app, oldPath, liveSettings));
+                }
+
                 notifyDrawingCompanionChange(oldPath);
                 notifyDrawingCompanionChange(file.path);
 
@@ -628,7 +659,6 @@ export function useStorageVaultSync(params: {
                         // - Buffer the move in event order; the zero-delay flush persists the burst's seeded records
                         //   and moves stored blobs/preview text in one batched transaction per store.
                         // - Schedule a diff afterwards to reconcile final state and update mtimes.
-                        const wasMarkdown = isMarkdownPath(oldPath);
                         const isMarkdown = isMarkdownPath(file.path);
                         const nextPreviewStatus: DBFileData['previewStatus'] = isMarkdown
                             ? wasMarkdown
@@ -710,9 +740,21 @@ export function useStorageVaultSync(params: {
             }
         };
 
+        const handleDelete = (file: TAbstractFile) => {
+            if (file instanceof TFolder) {
+                const liveSettings = latestSettingsRef.current;
+                // Obsidian emits one event for a folder deletion and no delete events for its descendants.
+                applyWordCountConsumerUpdate(removeMarkdownWordCountConsumersInFolder(app, file.path, liveSettings));
+            } else if (file instanceof TFile && file.extension === 'md') {
+                const liveSettings = latestSettingsRef.current;
+                applyWordCountConsumerUpdate(removeMarkdownWordCountConsumerForFile(app, file.path, liveSettings));
+            }
+            handleCreateOrDelete(file);
+        };
+
         const vaultEvents = [
             app.vault.on('create', handleCreateOrDelete),
-            app.vault.on('delete', handleCreateOrDelete),
+            app.vault.on('delete', handleDelete),
             app.vault.on('rename', handleRename),
             app.vault.on('modify', handleModify)
         ];
@@ -725,10 +767,17 @@ export function useStorageVaultSync(params: {
             if (!(file instanceof TFile) || file.extension !== 'md' || isDebugLogPath(file.path)) {
                 return;
             }
-            if (getMetadataDependentTypes(latestSettingsRef.current).length === 0) {
+            const liveSettings = latestSettingsRef.current;
+            const wordCountConsumerUpdate = refreshMarkdownWordCountConsumerForFile(app, file, liveSettings);
+
+            if (getMetadataDependentTypes(liveSettings, app).length === 0) {
                 return;
             }
 
+            applyWordCountConsumerUpdate(wordCountConsumerUpdate);
+
+            // Activation queues only the markdown pipeline, so the triggering file must still take the
+            // normal metadata path to refresh separate tag and frontmatter-metadata providers.
             metadataChangeFlushBuffer.files.set(file.path, file);
             scheduleMetadataChangedFilesFlush();
         };
@@ -785,6 +834,7 @@ export function useStorageVaultSync(params: {
         pendingSyncTimeoutIdRef,
         queueIndexableFilesForContentGeneration,
         queueIndexableFilesNeedingContentGeneration,
+        queueAllMarkdownForWordCountActivation,
         queueMetadataContentWhenReady,
         rebuildFileCacheRef,
         rebuildTagTree,

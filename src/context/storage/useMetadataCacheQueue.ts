@@ -134,7 +134,7 @@ export function useMetadataCacheQueue(params: {
      * no longer be scheduled.
      */
     useEffect(() => {
-        const activeMask = getPendingMetadataWaitMaskForTypes(getMetadataDependentTypes(settings));
+        const activeMask = getPendingMetadataWaitMaskForTypes(getMetadataDependentTypes(settings, app));
         pendingMetadataWaitPathsRef.current.forEach((mask, path) => {
             // Clear bits for providers that are disabled by the latest settings.
             const nextMask = mask & activeMask;
@@ -146,7 +146,7 @@ export function useMetadataCacheQueue(params: {
                 pendingMetadataWaitPathsRef.current.set(path, nextMask);
             }
         });
-    }, [pendingMetadataWaitPathsRef, settings]);
+    }, [app, pendingMetadataWaitPathsRef, settings]);
 
     /**
      * Effect: Cancel metadata waits when no dependent providers are enabled.
@@ -154,13 +154,13 @@ export function useMetadataCacheQueue(params: {
      * When all metadata-dependent providers are disabled, there is no reason to keep event listeners alive.
      */
     useEffect(() => {
-        if (getMetadataDependentTypes(settings).length > 0) {
+        if (getMetadataDependentTypes(settings, app).length > 0) {
             return;
         }
 
         disposeMetadataWaitDisposers();
         pendingMetadataWaitPathsRef.current.clear();
-    }, [disposeMetadataWaitDisposers, pendingMetadataWaitPathsRef, settings]);
+    }, [app, disposeMetadataWaitDisposers, pendingMetadataWaitPathsRef, settings]);
 
     const clearWarningTimer = useCallback(() => {
         if (warningTimeoutIdRef.current === null) {
@@ -254,7 +254,7 @@ export function useMetadataCacheQueue(params: {
         }
 
         const latestSettings = latestSettingsRef.current;
-        const activeMask = getPendingMetadataWaitMaskForTypes(getMetadataDependentTypes(latestSettings));
+        const activeMask = getPendingMetadataWaitMaskForTypes(getMetadataDependentTypes(latestSettings, app));
         if (activeMask === 0) {
             pendingReadyFilesByMaskRef.current.clear();
             return;
@@ -279,7 +279,7 @@ export function useMetadataCacheQueue(params: {
         }
 
         maybeDisposeMetadataWaitListeners();
-    }, [contentRegistryRef, latestSettingsRef, maybeDisposeMetadataWaitListeners, stoppedRef]);
+    }, [app, contentRegistryRef, latestSettingsRef, maybeDisposeMetadataWaitListeners, stoppedRef]);
 
     const scheduleFlushReadyFiles = useCallback(() => {
         if (flushTimeoutIdRef.current !== null) {
@@ -495,7 +495,7 @@ export function useMetadataCacheQueue(params: {
     const queueMetadataContentWhenReady = useCallback(
         (files: TFile[], includeTypes?: ContentProviderType[], settingsOverride?: NotebookNavigatorSettings) => {
             const baseSettings = settingsOverride ?? latestSettingsRef.current;
-            const requestedTypes = resolveMetadataDependentTypes(baseSettings, includeTypes);
+            const requestedTypes = resolveMetadataDependentTypes(baseSettings, includeTypes, app);
             const requestedMask = getPendingMetadataWaitMaskForTypes(requestedTypes);
 
             if (requestedTypes.length === 0 || requestedMask === 0) {
@@ -555,7 +555,7 @@ export function useMetadataCacheQueue(params: {
                     return;
                 }
                 const latestSettings = latestSettingsRef.current;
-                const activeTypes = resolveMetadataDependentTypes(latestSettings, includeTypes);
+                const activeTypes = resolveMetadataDependentTypes(latestSettings, includeTypes, app);
                 if (activeTypes.length === 0 || !contentRegistryRef.current) {
                     return;
                 }
