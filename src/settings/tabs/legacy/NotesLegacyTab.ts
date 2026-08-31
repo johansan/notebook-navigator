@@ -46,8 +46,8 @@ import {
 import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../../utils/commaSeparatedListUtils';
 import { EXTERNAL_ICON_PROVIDERS } from '../../../services/icons/external/providerRegistry';
 import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../../utils/fileTypeIconPresets';
-import { getMarkdownWordCountDependencies, subscribeMarkdownWordCountConsumerChanges } from '../../../utils/markdownPipelineContentTypes';
-import { renderWordCountActiveNotice } from '../NotesTab';
+import { getMarkdownTextCountDependencies, subscribeMarkdownWordCountConsumerChanges } from '../../../utils/markdownPipelineContentTypes';
+import { renderTextCountActiveNotice } from '../NotesTab';
 
 function parseFileTypeIconMapText(value: string): IconMapParseResult {
     return parseIconMapText(value, normalizeFileTypeIconMapKey);
@@ -973,23 +973,23 @@ export function renderNotesTab(context: SettingsTabContext): void {
             })
         );
 
-    const wordCountActiveNoticeSetting = wordCountGroup.addSetting(setting => {
-        renderWordCountActiveNotice(setting, context);
+    const textCountActiveNoticeSetting = wordCountGroup.addSetting(setting => {
+        renderTextCountActiveNotice(setting, context);
     });
-    const refreshWordCountActiveNotice = (): void => {
-        renderWordCountActiveNotice(wordCountActiveNoticeSetting, context);
+    const refreshTextCountActiveNotice = (): void => {
+        renderTextCountActiveNotice(textCountActiveNoticeSetting, context);
         setElementVisible(
-            wordCountActiveNoticeSetting.settingEl,
-            !showsWordCount(plugin.settings.textCountDisplay) && getMarkdownWordCountDependencies(context.app, plugin.settings).length > 0
+            textCountActiveNoticeSetting.settingEl,
+            getMarkdownTextCountDependencies(context.app, plugin.settings).length > 0
         );
     };
-    context.registerSettingsUpdateListener('notes-word-count-active-notice', refreshWordCountActiveNotice);
+    context.registerSettingsUpdateListener('notes-text-count-active-notice', refreshTextCountActiveNotice);
     const unsubscribeWordCountConsumerChanges = subscribeMarkdownWordCountConsumerChanges(context.app, () => {
-        refreshWordCountActiveNotice();
+        refreshTextCountActiveNotice();
         context.refreshSettingsDomState();
     });
     context.registerSettingsRenderCleanup(unsubscribeWordCountConsumerChanges);
-    refreshWordCountActiveNotice();
+    refreshTextCountActiveNotice();
 
     context.registerShowTagsListener(visible => {
         setGroupVisible(tagsGroup.rootEl, visible);

@@ -1284,12 +1284,13 @@ export const STRINGS_TR = {
             },
             defaultGrouping: {
                 name: 'Varsayılan gruplama',
-                desc: "**Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
+                desc: "Gruplama yok seçeneği sıralanmış listeyi gruplara ayırmadan düz tutar. **Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
                 families: {
                     headers: 'Başlıklar',
                     groups: 'Gruplar'
                 },
                 options: {
+                    none: 'Gruplama yok',
                     custom: 'Özel',
                     date: 'Tarih',
                     folder: 'Klasör'

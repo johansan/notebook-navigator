@@ -25,7 +25,7 @@ import type { FileData } from '../../src/storage/IndexedDBStorage';
 import { deriveFileMetadata } from '../utils/pathMetadata';
 import { setActivePropertyFields } from '../../src/utils/vaultProfiles';
 import {
-    getMarkdownWordCountDependencies,
+    getMarkdownTextCountDependencies,
     hasCachedMarkdownWordCountConsumer,
     hasMarkdownWordCountConsumer,
     haveMarkdownCountConsumersChanged,
@@ -146,16 +146,47 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
-            folderAppearances: { Writing: { textCount: 'words' } },
+            folderAppearances: { Writing: { textCount: 'words' }, Projects: { groupBy: 'custom' } },
             folderSortOverrides: { Projects: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header'
         });
 
-        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([
+        expect(getMarkdownTextCountDependencies(app, settings)).toEqual([
             { reason: 'appearance', selectionType: ItemType.FOLDER, key: 'Writing' },
             { reason: 'group-header', path: 'Projects/Draft.md' }
         ]);
         expect(hasMarkdownWordCountConsumer(settings, app)).toBe(true);
+    });
+
+    it('lists only dependencies for count kinds the global display omits', () => {
+        const { app } = createApp();
+        const characterOverride = createSettings({
+            textCountDisplay: 'none',
+            folderAppearances: { Writing: { textCount: 'characters' } }
+        });
+        expect(getMarkdownTextCountDependencies(app, characterOverride)).toEqual([
+            { reason: 'appearance', selectionType: ItemType.FOLDER, key: 'Writing' }
+        ]);
+
+        const wordsShownGlobally = createSettings({
+            textCountDisplay: 'words',
+            folderAppearances: { Writing: { textCount: 'characters' } }
+        });
+        expect(getMarkdownTextCountDependencies(app, wordsShownGlobally)).toEqual([
+            { reason: 'appearance', selectionType: ItemType.FOLDER, key: 'Writing' }
+        ]);
+
+        const charactersShownGlobally = createSettings({
+            textCountDisplay: 'characters',
+            folderAppearances: { Writing: { textCount: 'characters' } }
+        });
+        expect(getMarkdownTextCountDependencies(app, charactersShownGlobally)).toEqual([]);
+
+        const bothShownGlobally = createSettings({
+            textCountDisplay: 'both',
+            folderAppearances: { Writing: { textCount: 'words' } }
+        });
+        expect(getMarkdownTextCountDependencies(app, bothShownGlobally)).toEqual([]);
     });
 
     it('uses the initialized group-header cache without scanning the vault from render checks', () => {
@@ -173,7 +204,7 @@ describe('Markdown pipeline appearance relevance', () => {
         app.vault.getFileByPath = getFileByPath;
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc',
             manualSortGroupHeaderProperty: 'group_header'
         });
@@ -211,24 +242,24 @@ describe('Markdown pipeline appearance relevance', () => {
             manualSortGroupHeaderProperty: 'group_header'
         });
 
-        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+        expect(getMarkdownTextCountDependencies(app, settings)).toEqual([]);
 
-        settings.folderSortOverrides.Projects = 'title-asc';
+        settings.folderAppearances.Projects = { groupBy: 'custom' };
         refreshMarkdownWordCountConsumerSettings(app, settings);
 
-        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([{ reason: 'group-header', path: headerFile.path }]);
+        expect(getMarkdownTextCountDependencies(app, settings)).toEqual([{ reason: 'group-header', path: headerFile.path }]);
     });
 
     it('does not enable word counting for a custom sort order without a consuming header', () => {
         const { app } = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc',
             manualSortGroupHeaderProperty: 'group_header'
         });
 
-        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+        expect(getMarkdownTextCountDependencies(app, settings)).toEqual([]);
         expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
     });
 
@@ -236,7 +267,7 @@ describe('Markdown pipeline appearance relevance', () => {
         const { app, cachedMetadataByPath, markdownFiles } = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc',
             manualSortGroupHeaderProperty: 'group_header'
         });
@@ -284,7 +315,7 @@ describe('Markdown pipeline appearance relevance', () => {
         const { app, cachedMetadataByPath, markdownFiles } = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc',
             manualSortGroupHeaderProperty: 'group_header'
         });
@@ -336,6 +367,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            tagAppearances: { work: { groupBy: 'custom' } },
             tagSortOverrides: { work: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             showTags: true
@@ -373,7 +405,7 @@ describe('Markdown pipeline appearance relevance', () => {
         app.vault.getMarkdownFiles = getMarkdownFiles;
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc',
             manualSortGroupHeaderProperty: 'group_header'
         });
@@ -414,11 +446,12 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            folderAppearances: { Projects: { groupBy: 'custom' } },
             folderSortOverrides: { Projects: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header'
         });
 
-        expect(getMarkdownWordCountDependencies(app, settings)).toEqual([]);
+        expect(getMarkdownTextCountDependencies(app, settings)).toEqual([]);
         expect(hasMarkdownWordCountConsumer(settings, app)).toBe(false);
     });
 
@@ -435,6 +468,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            folderAppearances: { Projects: { groupBy: 'custom' } },
             folderSortOverrides: { Projects: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             includeDescendantNotes: false
@@ -460,6 +494,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            tagAppearances: { [TAGGED_TAG_ID]: { groupBy: 'custom' } },
             tagSortOverrides: { [TAGGED_TAG_ID]: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             includeDescendantNotes: true,
@@ -483,6 +518,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            tagAppearances: { 'work/project': { groupBy: 'custom' } },
             tagSortOverrides: { 'work/project': 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             includeDescendantNotes: false,
@@ -506,6 +542,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            tagAppearances: { work: { groupBy: 'custom' } },
             tagSortOverrides: { work: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             showTags: false
@@ -528,6 +565,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            propertyAppearances: { [PROPERTIES_ROOT_VIRTUAL_FOLDER_ID]: { groupBy: 'custom' } },
             propertySortOverrides: { [PROPERTIES_ROOT_VIRTUAL_FOLDER_ID]: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             includeDescendantNotes: true,
@@ -552,6 +590,7 @@ describe('Markdown pipeline appearance relevance', () => {
             textCountDisplay: 'none',
             noteGrouping: 'date',
             defaultFolderSort: 'modified-desc',
+            propertyAppearances: { [buildPropertyKeyNodeId('status')]: { groupBy: 'custom' } },
             propertySortOverrides: { [buildPropertyKeyNodeId('status')]: 'title-asc' },
             manualSortGroupHeaderProperty: 'group_header',
             includeDescendantNotes: false,
@@ -878,7 +917,7 @@ describe('MarkdownPipelineContentProvider word count', () => {
         const context = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc'
         });
         const provider = new TestMarkdownPipelineContentProvider(context.app);
@@ -894,7 +933,7 @@ describe('MarkdownPipelineContentProvider word count', () => {
         const context = createApp();
         const settings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc'
         });
         const provider = new TestMarkdownPipelineContentProvider(context.app);

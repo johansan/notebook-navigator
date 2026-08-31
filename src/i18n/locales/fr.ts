@@ -1290,12 +1290,13 @@ export const STRINGS_FR = {
             },
             defaultGrouping: {
                 name: 'Regroupement par défaut',
-                desc: "Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
+                desc: "Sans regroupement, la liste triée reste à plat. Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
                 families: {
                     headers: 'En-têtes',
                     groups: 'Groupes'
                 },
                 options: {
+                    none: 'Ne pas grouper',
                     custom: 'Personnalisé',
                     date: 'Date',
                     folder: 'Dossier'

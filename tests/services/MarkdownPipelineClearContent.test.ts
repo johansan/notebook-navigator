@@ -136,7 +136,7 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 
-    it('clears word counts when sorting activates a consuming custom group header', async () => {
+    it('clears word counts when grouping activates a consuming custom group header', async () => {
         const app = new App();
         const headerFile = new TFile('Projects/Header.md');
         app.vault.getMarkdownFiles = () => [headerFile];
@@ -152,12 +152,12 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         const provider = new MarkdownPipelineContentProvider(app);
         const oldSettings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
-            defaultFolderSort: 'modified-desc'
+            noteGrouping: 'none',
+            defaultFolderSort: 'title-asc'
         });
         const newSettings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc'
         });
 

@@ -422,7 +422,7 @@ export function isUnfinishedTaskIconMode(value: unknown): value is UnfinishedTas
 }
 
 /** Built-in grouping modes for list pane notes */
-export type ListNoteGroupingBaseOption = 'custom' | 'date' | 'folder';
+export type ListNoteGroupingBaseOption = 'none' | 'custom' | 'date' | 'folder';
 
 /** Resolved direction applied when arranging property groups */
 export type PropertyGroupingDirection = 'asc' | 'desc';
@@ -464,7 +464,7 @@ const PROPERTY_GROUPING_DESC_PREFIX = 'property-desc:';
 const PROPERTY_GROUPING_FOLLOW_PREFIX = 'property-follow:';
 
 function isListNoteGroupingBaseOption(value: unknown): value is ListNoteGroupingBaseOption {
-    return value === 'custom' || value === 'date' || value === 'folder';
+    return value === 'none' || value === 'custom' || value === 'date' || value === 'folder';
 }
 
 function parsePropertyGroupingOption(value: unknown): { propertyKey: string; order: PropertyGroupingOrder } | null {
@@ -505,12 +505,7 @@ export function createPropertyGroupingOption(propertyKey: string, order: Propert
     return `${prefix}${propertyKey.trim()}`;
 }
 
-/** Validates a base grouping mode, mapping the legacy `none` value to `custom`. */
 function normalizeListNoteGroupingBaseOption(value: unknown): ListNoteGroupingBaseOption | null {
-    if (value === 'none') {
-        return 'custom';
-    }
-
     return isListNoteGroupingBaseOption(value) ? value : null;
 }
 

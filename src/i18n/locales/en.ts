@@ -1279,12 +1279,13 @@ export const STRINGS_EN = {
             },
             defaultGrouping: {
                 name: 'Default grouping',
-                desc: '**Headers** annotate the sorted list without changing its order: Custom shows headers defined in frontmatter, and Date inserts date headers. **Groups** reorder the list: folder and property groups are ordered on their own, and notes inside each group follow the sort order.',
+                desc: 'None keeps the sorted list flat. **Headers** annotate it without changing its order: Custom shows headers defined in frontmatter, and Date inserts date headers. **Groups** reorder the list: folder and property groups are ordered on their own, and notes inside each group follow the sort order.',
                 families: {
                     headers: 'Headers',
                     groups: 'Groups'
                 },
                 options: {
+                    none: 'None',
                     custom: 'Custom',
                     date: 'Date',
                     folder: 'Folder'

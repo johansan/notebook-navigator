@@ -1288,12 +1288,13 @@ export const STRINGS_NL = {
             },
             defaultGrouping: {
                 name: 'Standaard groepering',
-                desc: '**Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
+                desc: 'Zonder groepering blijft de gesorteerde lijst plat. **Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
                 families: {
                     headers: 'Koppen',
                     groups: 'Groepen'
                 },
                 options: {
+                    none: 'Niet groeperen',
                     custom: 'Aangepast',
                     date: 'Datum',
                     folder: 'Map'

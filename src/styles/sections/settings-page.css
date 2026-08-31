@@ -95,20 +95,20 @@
     margin-top: 4px;
 }
 
-.nn-setting-word-count-warning-header {
+.nn-setting-text-count-warning-header {
     display: flex;
     align-items: center;
     gap: var(--size-2-2);
     margin-bottom: var(--size-2-2);
 }
 
-.nn-setting-word-count-warning-icon {
+.nn-setting-text-count-warning-icon {
     display: inline-flex;
     flex: 0 0 auto;
     color: var(--text-warning);
 }
 
-.nn-setting-word-count-warning-icon svg {
+.nn-setting-text-count-warning-icon svg {
     width: 16px;
     height: 16px;
 }

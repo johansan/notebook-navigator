@@ -1288,12 +1288,13 @@ export const STRINGS_DE = {
             },
             defaultGrouping: {
                 name: 'Standardgruppierung',
-                desc: '**Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
+                desc: 'Ohne Gruppierung bleibt die sortierte Liste flach. **Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
                 families: {
                     headers: 'Überschriften',
                     groups: 'Gruppen'
                 },
                 options: {
+                    none: 'Nicht gruppieren',
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',
                     folder: 'Ordner'

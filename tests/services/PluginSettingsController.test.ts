@@ -282,7 +282,7 @@ describe('PluginSettingsController.loadSettings', () => {
         expect((saveData.mock.calls[0][0] as Record<string, unknown>).manualSortPropertyKey).toBe(DEFAULT_SETTINGS.manualSortPropertyKey);
     });
 
-    it('persists cleanup when legacy none grouping is migrated', async () => {
+    it('preserves none grouping values', async () => {
         const saveData = vi.fn().mockResolvedValue(undefined);
         const statusNodeId = buildPropertyKeyNodeId('status');
         const controller = new PluginSettingsController({
@@ -293,7 +293,7 @@ describe('PluginSettingsController.loadSettings', () => {
                     Inbox: { groupBy: 'none' }
                 },
                 tagAppearances: {
-                    '#work': { groupBy: 'none' }
+                    work: { groupBy: 'none' }
                 },
                 propertyAppearances: {
                     [statusNodeId]: { groupBy: 'none' }
@@ -305,17 +305,10 @@ describe('PluginSettingsController.loadSettings', () => {
 
         await controller.loadSettings();
 
-        expect(controller.settings.noteGrouping).toBe('custom');
-        expect(controller.settings.folderAppearances.Inbox?.groupBy).toBe('custom');
-        // Tag appearance keys are canonicalized by the settings pipeline, so '#work' is stored as 'work'
-        expect(controller.settings.tagAppearances['work']?.groupBy).toBe('custom');
-        expect(controller.settings.propertyAppearances[statusNodeId]?.groupBy).toBe('custom');
-        expect(saveData).toHaveBeenCalledTimes(1);
-        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
-        expect(savedSettings.noteGrouping).toBe('custom');
-        expect((savedSettings.folderAppearances as Record<string, Record<string, unknown>>).Inbox?.groupBy).toBe('custom');
-        expect((savedSettings.tagAppearances as Record<string, Record<string, unknown>>)['work']?.groupBy).toBe('custom');
-        expect((savedSettings.propertyAppearances as Record<string, Record<string, unknown>>)[statusNodeId]?.groupBy).toBe('custom');
+        expect(controller.settings.noteGrouping).toBe('none');
+        expect(controller.settings.folderAppearances.Inbox?.groupBy).toBe('none');
+        expect(controller.settings.tagAppearances.work?.groupBy).toBe('none');
+        expect(controller.settings.propertyAppearances[statusNodeId]?.groupBy).toBe('none');
     });
 
     it('sanitizes stored selection appearance intent while keeping explicit enable and hide toggles', async () => {

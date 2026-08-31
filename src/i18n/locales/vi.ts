@@ -1284,12 +1284,13 @@ export const STRINGS_VI = {
             },
             defaultGrouping: {
                 name: 'Nhóm mặc định',
-                desc: '**Header** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị header được định nghĩa trong frontmatter và Ngày chèn header ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
+                desc: 'Không nhóm giữ nguyên danh sách đã sắp xếp, không chia danh sách thành các nhóm. **Header** chú thích danh sách đó mà không thay đổi thứ tự: Tùy chỉnh hiển thị header được định nghĩa trong frontmatter và Ngày chèn header ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
                 families: {
                     headers: 'Header',
                     groups: 'Nhóm'
                 },
                 options: {
+                    none: 'Không nhóm',
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',
                     folder: 'Thư mục'
