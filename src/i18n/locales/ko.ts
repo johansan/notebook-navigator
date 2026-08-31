@@ -2016,6 +2016,20 @@ export const STRINGS_KO = {
                 name: '목표 백분율 표시',
                 desc: '목표 단어 수가 있을 때 진행률 백분율만 표시합니다.'
             },
+            wordCountActiveNotice: {
+                title: '단어 수 계산이 계속 활성화되어 있습니다',
+                summary: '다음 항목에서 사용하므로 모든 노트의 단어 수를 계속 계산합니다:',
+                more: '외 {count}개',
+                reasons: {
+                    appearance: '파일 모양',
+                    'group-header': '그룹 머리글'
+                },
+                scopes: {
+                    folder: '폴더: {name}',
+                    tag: '태그: #{name}',
+                    property: '속성: {name}'
+                }
+            },
             propertyKeys: {
                 name: '속성 키 (보관함 프로필)',
                 desc: 'frontmatter 속성 키. 키별로 탐색 창 및 파일 목록의 표시 여부를 설정할 수 있습니다.',

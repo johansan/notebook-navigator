@@ -2025,6 +2025,20 @@ export const STRINGS_PL = {
                 name: 'Pokaż procent celu',
                 desc: 'Wyświetlaj tylko procent postępu, gdy dostępna jest docelowa liczba słów.'
             },
+            wordCountActiveNotice: {
+                title: 'Zliczanie słów jest nadal włączone',
+                summary: 'Liczba słów jest nadal obliczana dla wszystkich notatek, ponieważ korzystają z niej następujące elementy:',
+                more: 'i jeszcze {count}',
+                reasons: {
+                    appearance: 'Wygląd plików',
+                    'group-header': 'Nagłówek grupy'
+                },
+                scopes: {
+                    folder: 'Folder: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Właściwość: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Klucze atrybutów (profil sejfu)',
                 desc: 'Klucze atrybutów frontmatter z kontrolą widoczności per klucz dla nawigacji i listy plików.',

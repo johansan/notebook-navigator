@@ -2025,6 +2025,20 @@ export const STRINGS_ES = {
                 name: 'Mostrar porcentaje objetivo',
                 desc: 'Mostrar solo el porcentaje de progreso cuando haya un recuento de palabras objetivo disponible.'
             },
+            wordCountActiveNotice: {
+                title: 'El recuento de palabras sigue activado',
+                summary: 'El recuento de palabras se sigue calculando para todas las notas porque lo utilizan los siguientes elementos:',
+                more: 'y {count} más',
+                reasons: {
+                    appearance: 'Apariencia de archivos',
+                    'group-header': 'Encabezado de grupo'
+                },
+                scopes: {
+                    folder: 'Carpeta: {name}',
+                    tag: 'Etiqueta: #{name}',
+                    property: 'Propiedad: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Claves de propiedades (perfil de bóveda)',
                 desc: 'Claves de propiedades de metadatos, con visibilidad por clave para la navegación y la lista de archivos.',

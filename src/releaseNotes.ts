@@ -110,15 +110,17 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-08-31',
         showOnUpdate: false,
         new: [
-            'New setting in Appearance & Behavior: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.'
+            'New setting in Appearance & behavior > Desktop appearance: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.'
         ],
         improved: [
-            'Rebuilt the hover tooltips with the same look and timing as built-in Obsidian tooltips while supporting tag pills and text hierarchy.'
+            'Rebuilt the **hover tooltips** with the same look as the built-in Obsidian tooltips but with less flickering and support for tag pills and text hierarchy.',
+            'Added a notice under File display > Word and character count: ==Count type== that lists the file appearances and group headers that keep the word counting engine active while the master setting is off (e.g. custom folder appearances or group headers tracking word counts).'
         ],
         changed: [
             'Changed ==Show word count in tooltips== to show word counts only when word counts are enabled, so the tooltip setting no longer keeps word counting running on its own.'
         ],
         fixed: [
+            'Word counting for files now stays disabled for custom sort orders unless a list contains a custom group header that shows a word count.',
             'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1) [#1466](https://github.com/johansan/notebook-navigator/issues/1466).'
         ]
     },

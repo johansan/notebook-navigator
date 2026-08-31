@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App } from 'obsidian';
+import { App, TFile } from 'obsidian';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPipelineContentProvider } from '../../src/services/content/MarkdownPipelineContentProvider';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
@@ -136,8 +136,20 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 
-    it('clears word counts when sorting activates custom group headers', async () => {
-        const provider = new MarkdownPipelineContentProvider(new App());
+    it('clears word counts when sorting activates a consuming custom group header', async () => {
+        const app = new App();
+        const headerFile = new TFile('Projects/Header.md');
+        app.vault.getMarkdownFiles = () => [headerFile];
+        app.vault.getFileByPath = path => (path === headerFile.path ? headerFile : null);
+        app.metadataCache.getFileCache = file =>
+            file.path === headerFile.path
+                ? {
+                      frontmatter: {
+                          group_header: { title: 'Projects', show_word_count: true }
+                      }
+                  }
+                : null;
+        const provider = new MarkdownPipelineContentProvider(app);
         const oldSettings = createSettings({
             textCountDisplay: 'none',
             noteGrouping: 'date',

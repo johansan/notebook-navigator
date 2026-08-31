@@ -53,7 +53,7 @@ import { openFileInContext } from '../utils/openFileInContext';
 import { FILE_VISIBILITY, getExtensionSuffix, isRasterImageFile, shouldDisplayFile } from '../utils/fileTypeUtils';
 import { resolveFolderDecorationColors } from '../utils/folderDecoration';
 import { resolveFileDragIconId, resolveFileIconId } from '../utils/fileIconUtils';
-import { hasMarkdownWordCountConsumer } from '../utils/markdownPipelineContentTypes';
+import { hasCachedMarkdownWordCountConsumer } from '../utils/markdownPipelineContentTypes';
 import { isInsideNativeTooltipTarget, useTooltip } from '../context/TooltipContext';
 import { FileTooltipContent } from './FileTooltipContent';
 import { getFoldedSearchHighlightRanges } from '../utils/searchHighlight';
@@ -85,6 +85,7 @@ import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useMarkdownWordCountConsumerChanges } from '../hooks/useMarkdownWordCountConsumerChanges';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
@@ -460,6 +461,7 @@ export const FileItem = React.memo(function FileItem({
     // === Hooks (all hooks together at the top) ===
     const { app, isMobile, plugin, commandQueue, fileSystemOps, tagOperations } = useServices();
     const settings = useSettingsState();
+    useMarkdownWordCountConsumerChanges(app);
     const metadataService = useMetadataService();
     const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
     const isCompactMode = appearanceSettings.mode === 'compact';
@@ -482,7 +484,11 @@ export const FileItem = React.memo(function FileItem({
     // count without a consumer would go stale after edits.
     const shouldLoadWordCount =
         shouldLoadWordCountForDisplay ||
-        (isMarkdownFile && !isMobile && settings.showTooltips && settings.showTooltipWordCount && hasMarkdownWordCountConsumer(settings));
+        (isMarkdownFile &&
+            !isMobile &&
+            settings.showTooltips &&
+            settings.showTooltipWordCount &&
+            hasCachedMarkdownWordCountConsumer(settings, app));
     const shouldLoadCharacterCount =
         isMarkdownFile &&
         shouldShowCharacterCount &&

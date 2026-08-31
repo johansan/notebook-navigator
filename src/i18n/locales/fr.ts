@@ -2028,6 +2028,20 @@ export const STRINGS_FR = {
                 name: 'Afficher le pourcentage cible',
                 desc: 'Afficher uniquement le pourcentage de progression lorsqu’un objectif de nombre de mots est disponible.'
             },
+            wordCountActiveNotice: {
+                title: 'Le comptage des mots est toujours actif',
+                summary: 'Le nombre de mots est toujours calculé pour toutes les notes car les éléments suivants l’utilisent :',
+                more: 'et {count} de plus',
+                reasons: {
+                    appearance: 'Apparence des fichiers',
+                    'group-header': 'En-tête de groupe'
+                },
+                scopes: {
+                    folder: 'Dossier : {name}',
+                    tag: 'Tag : #{name}',
+                    property: 'Propriété : {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Clés de propriétés (profil du coffre)',
                 desc: 'Clés de propriétés frontmatter, avec visibilité par clé pour la navigation et la liste de fichiers.',

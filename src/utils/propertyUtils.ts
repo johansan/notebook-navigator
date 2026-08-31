@@ -18,11 +18,9 @@
 
 import type { App } from 'obsidian';
 import { showsWordCount, type NotebookNavigatorSettings } from '../settings/types';
-import type { PropertyItem } from '../storage/IndexedDBStorage';
+import type { PropertyItem, PropertyValueKind } from '../storage/IndexedDBStorage';
 import type { PropertySearchValueMatch } from '../types/search';
 import { formatCommaSeparatedList, getCachedCommaSeparatedList } from './commaSeparatedListUtils';
-import { hasEffectiveCustomListGrouping } from './listGrouping';
-import { getManualSortGroupHeaderPropertyKey } from './manualSort';
 import { casefold } from './recordUtils';
 import { naturalCompare } from './sortUtils';
 import { isRecord } from './typeGuards';
@@ -68,10 +66,42 @@ const BLOCKED_EXTERNAL_URI_PROTOCOLS = new Set(['data:', 'javascript:', 'vbscrip
 const ALLOWED_NON_SLASH_EXTERNAL_URI_PROTOCOLS = new Set(['mailto:', 'sms:', 'tel:']);
 
 export function hasWordCountTargetPropertyConsumer(settings: NotebookNavigatorSettings): boolean {
-    return (
-        showsWordCount(settings.textCountDisplay) ||
-        (getManualSortGroupHeaderPropertyKey(settings) !== null && hasEffectiveCustomListGrouping(settings))
-    );
+    return showsWordCount(settings.textCountDisplay);
+}
+
+export interface ExtractedFrontmatterPropertyValue {
+    value: string;
+    valueKind?: PropertyValueKind;
+}
+
+/**
+ * Converts supported frontmatter scalars into the values persisted by the property index.
+ * Null remains an unassigned key value, nested arrays are flattened, and empty strings and
+ * non-finite numbers are omitted so membership checks match the stored property tree.
+ */
+export function extractFrontmatterPropertyValues(value: unknown): ExtractedFrontmatterPropertyValue[] {
+    if (value === null) {
+        return [{ value: '' }];
+    }
+
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? [{ value: trimmed, valueKind: 'string' }] : [];
+    }
+
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? [{ value: value.toString(), valueKind: 'number' }] : [];
+    }
+
+    if (typeof value === 'boolean') {
+        return [{ value: value ? 'true' : 'false', valueKind: 'boolean' }];
+    }
+
+    if (Array.isArray(value)) {
+        return value.flatMap(entry => extractFrontmatterPropertyValues(entry));
+    }
+
+    return [];
 }
 
 export function collectVaultPropertyKeys(app: App): PropertyKeySuggestion[] {

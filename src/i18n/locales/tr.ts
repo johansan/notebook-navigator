@@ -2019,6 +2019,20 @@ export const STRINGS_TR = {
                 name: 'Hedef yüzdesini göster',
                 desc: 'Hedef kelime sayısı varsa yalnızca ilerleme yüzdesini göster.'
             },
+            wordCountActiveNotice: {
+                title: 'Kelime sayımı hâlâ açık',
+                summary: 'Aşağıdaki öğeler kullandığı için kelime sayıları tüm notlar için hesaplanmaya devam ediyor:',
+                more: 've {count} tane daha',
+                reasons: {
+                    appearance: 'Dosya görünümü',
+                    'group-header': 'Grup başlığı'
+                },
+                scopes: {
+                    folder: 'Klasör: {name}',
+                    tag: 'Etiket: #{name}',
+                    property: 'Özellik: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Özellik anahtarları (kasa profili)',
                 desc: 'Gezinme ve dosya listesi için anahtar bazında görünürlük ayarlı frontmatter özellik anahtarları.',

@@ -2025,6 +2025,20 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar porcentagem da meta',
                 desc: 'Mostrar apenas a porcentagem de progresso quando houver uma contagem de palavras alvo disponível.'
             },
+            wordCountActiveNotice: {
+                title: 'A contagem de palavras continua ativa',
+                summary: 'A contagem de palavras continua sendo calculada para todas as notas porque é utilizada pelos seguintes itens:',
+                more: 'e mais {count}',
+                reasons: {
+                    appearance: 'Aparência dos arquivos',
+                    'group-header': 'Cabeçalho de grupo'
+                },
+                scopes: {
+                    folder: 'Pasta: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Propriedade: {name}'
+                }
+            },
             propertyKeys: {
                 name: 'Chaves de propriedades (perfil do cofre)',
                 desc: 'Chaves de propriedades de metadados, com visibilidade por chave para navegação e lista de arquivos.',

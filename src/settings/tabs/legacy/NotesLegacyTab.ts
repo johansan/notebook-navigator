@@ -46,6 +46,8 @@ import {
 import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../../utils/commaSeparatedListUtils';
 import { EXTERNAL_ICON_PROVIDERS } from '../../../services/icons/external/providerRegistry';
 import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../../utils/fileTypeIconPresets';
+import { getMarkdownWordCountDependencies, subscribeMarkdownWordCountConsumerChanges } from '../../../utils/markdownPipelineContentTypes';
+import { renderWordCountActiveNotice } from '../NotesTab';
 
 function parseFileTypeIconMapText(value: string): IconMapParseResult {
     return parseIconMapText(value, normalizeFileTypeIconMapKey);
@@ -970,6 +972,24 @@ export function renderNotesTab(context: SettingsTabContext): void {
                 await plugin.saveSettingsAndUpdate();
             })
         );
+
+    const wordCountActiveNoticeSetting = wordCountGroup.addSetting(setting => {
+        renderWordCountActiveNotice(setting, context);
+    });
+    const refreshWordCountActiveNotice = (): void => {
+        renderWordCountActiveNotice(wordCountActiveNoticeSetting, context);
+        setElementVisible(
+            wordCountActiveNoticeSetting.settingEl,
+            !showsWordCount(plugin.settings.textCountDisplay) && getMarkdownWordCountDependencies(context.app, plugin.settings).length > 0
+        );
+    };
+    context.registerSettingsUpdateListener('notes-word-count-active-notice', refreshWordCountActiveNotice);
+    const unsubscribeWordCountConsumerChanges = subscribeMarkdownWordCountConsumerChanges(context.app, () => {
+        refreshWordCountActiveNotice();
+        context.refreshSettingsDomState();
+    });
+    context.registerSettingsRenderCleanup(unsubscribeWordCountConsumerChanges);
+    refreshWordCountActiveNotice();
 
     context.registerShowTagsListener(visible => {
         setGroupVisible(tagsGroup.rootEl, visible);
