@@ -2005,9 +2005,9 @@ export const STRINGS_ZH_TW = {
                 name: '顯示目標百分比',
                 desc: '有目標字數時，只顯示進度百分比。'
             },
-            wordCountActiveNotice: {
-                title: '字數統計仍處於啟用狀態',
-                summary: '由於以下項目使用字數統計，系統仍會為所有筆記計算字數：',
+            textCountActiveNotice: {
+                title: '計數仍處於啟用狀態',
+                summary: '由於以下項目使用字數或字元數，系統仍會為所有筆記計算這些數值：',
                 more: '以及另外 {count} 個',
                 reasons: {
                     appearance: '檔案外觀',

@@ -2018,9 +2018,9 @@ export const STRINGS_JA = {
                 name: '目標パーセントを表示',
                 desc: '目標単語数がある場合、進捗パーセントのみを表示します。'
             },
-            wordCountActiveNotice: {
-                title: '単語数の計算は引き続き有効です',
-                summary: '次の項目で使用されているため、すべてのノートで単語数が引き続き計算されます：',
+            textCountActiveNotice: {
+                title: 'カウントは引き続き有効です',
+                summary: '次の項目で使用されているため、すべてのノートで単語数または文字数が引き続き計算されます：',
                 more: 'ほか{count}件',
                 reasons: {
                     appearance: 'ファイルの外観',

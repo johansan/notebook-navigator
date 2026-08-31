@@ -2033,9 +2033,9 @@ export const STRINGS_EN = {
                 name: 'Show target percentage',
                 desc: 'Display only the progress percentage when a target word count is available.'
             },
-            wordCountActiveNotice: {
-                title: 'Word counting is still on',
-                summary: 'Word counts are still calculated for all notes because they are used by the following:',
+            textCountActiveNotice: {
+                title: 'Counting is still on',
+                summary: 'Word or character counts are still calculated for all notes because they are used by the following:',
                 more: 'and {count} more',
                 reasons: {
                     appearance: 'File appearance',

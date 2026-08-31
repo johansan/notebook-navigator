@@ -2023,9 +2023,10 @@ export const STRINGS_PT = {
                 name: 'Mostrar percentagem do objetivo',
                 desc: 'Mostrar apenas a percentagem de progresso quando houver uma contagem de palavras objetivo disponível.'
             },
-            wordCountActiveNotice: {
-                title: 'A contagem de palavras continua ativa',
-                summary: 'A contagem de palavras continua a ser calculada para todas as notas porque é utilizada pelos seguintes itens:',
+            textCountActiveNotice: {
+                title: 'A contagem continua ativa',
+                summary:
+                    'As contagens de palavras ou caracteres continuam a ser calculadas para todas as notas porque são utilizadas pelos seguintes itens:',
                 more: 'e mais {count}',
                 reasons: {
                     appearance: 'Aparência dos ficheiros',

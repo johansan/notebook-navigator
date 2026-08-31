@@ -2020,9 +2020,9 @@ export const STRINGS_ID = {
                 name: 'Tampilkan persentase target',
                 desc: 'Tampilkan hanya persentase kemajuan saat target jumlah kata tersedia.'
             },
-            wordCountActiveNotice: {
-                title: 'Penghitungan kata masih aktif',
-                summary: 'Jumlah kata masih dihitung untuk semua catatan karena digunakan oleh item berikut:',
+            textCountActiveNotice: {
+                title: 'Penghitungan masih aktif',
+                summary: 'Jumlah kata atau karakter masih dihitung untuk semua catatan karena digunakan oleh item berikut:',
                 more: 'dan {count} lainnya',
                 reasons: {
                     appearance: 'Tampilan file',

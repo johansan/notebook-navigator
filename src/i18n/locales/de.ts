@@ -2026,9 +2026,10 @@ export const STRINGS_DE = {
                 name: 'Zielprozentsatz anzeigen',
                 desc: 'Nur den Fortschrittsprozentsatz anzeigen, wenn eine Zielwortanzahl verfügbar ist.'
             },
-            wordCountActiveNotice: {
-                title: 'Wortzählung ist weiterhin aktiv',
-                summary: 'Wortzahlen werden weiterhin für alle Notizen berechnet, weil die folgenden Einträge sie verwenden:',
+            textCountActiveNotice: {
+                title: 'Zählung ist weiterhin aktiv',
+                summary:
+                    'Wort- oder Zeichenanzahlen werden weiterhin für alle Notizen berechnet, weil die folgenden Einträge sie verwenden:',
                 more: 'und {count} weitere',
                 reasons: {
                     appearance: 'Dateidarstellung',

@@ -2021,9 +2021,10 @@ export const STRINGS_IT = {
                 name: 'Mostra percentuale obiettivo',
                 desc: 'Mostra solo la percentuale di avanzamento quando è disponibile un obiettivo di conteggio parole.'
             },
-            wordCountActiveNotice: {
-                title: 'Il conteggio delle parole è ancora attivo',
-                summary: 'Il conteggio delle parole viene ancora calcolato per tutte le note perché è utilizzato dai seguenti elementi:',
+            textCountActiveNotice: {
+                title: 'Il conteggio è ancora attivo',
+                summary:
+                    'I conteggi di parole o caratteri vengono ancora calcolati per tutte le note perché sono utilizzati dai seguenti elementi:',
                 more: 'e altri {count}',
                 reasons: {
                     appearance: 'Aspetto dei file',
