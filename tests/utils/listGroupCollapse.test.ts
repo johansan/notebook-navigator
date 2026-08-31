@@ -34,9 +34,9 @@ describe('normalizeStoredCollapsedListGroupKeys', () => {
         expect(normalizeStoredCollapsedListGroupKeys(null)).toEqual([]);
     });
 
-    it('migrates legacy none grouping keys to custom grouping', () => {
+    it('retains none grouping keys', () => {
         expect(normalizeStoredCollapsedListGroupKeys(['scope=folder:%2F;group=none;id=section%3Aunsorted'])).toEqual([
-            'scope=folder:%2F;group=custom;id=section%3Aunsorted'
+            'scope=folder:%2F;group=none;id=section%3Aunsorted'
         ]);
     });
 });

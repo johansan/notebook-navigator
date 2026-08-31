@@ -109,14 +109,14 @@ describe('resolveListGrouping property selections', () => {
 });
 
 describe('resolveEffectiveListGroupingForSort', () => {
-    it('uses custom groups when property sort would otherwise use date grouping', () => {
+    it('uses no grouping when property sort would otherwise use date grouping', () => {
         expect(
             resolveEffectiveListGroupingForSort({
                 groupBy: 'date',
                 sortOption: 'property-asc',
                 selectionType: ItemType.FOLDER
             })
-        ).toBe('custom');
+        ).toBe('none');
     });
 
     it('keeps folder grouping for property-sorted folder views', () => {
@@ -129,31 +129,41 @@ describe('resolveEffectiveListGroupingForSort', () => {
         ).toBe('folder');
     });
 
-    it('uses custom groups for property-sorted tag and property views', () => {
+    it('uses no grouping for property-sorted tag and property views', () => {
         expect(
             resolveEffectiveListGroupingForSort({
                 groupBy: 'date',
                 sortOption: 'property-asc',
                 selectionType: ItemType.TAG
             })
-        ).toBe('custom');
+        ).toBe('none');
         expect(
             resolveEffectiveListGroupingForSort({
                 groupBy: 'date',
                 sortOption: 'property-asc',
                 selectionType: ItemType.PROPERTY
             })
+        ).toBe('none');
+    });
+
+    it('keeps custom grouping with property sort', () => {
+        expect(
+            resolveEffectiveListGroupingForSort({
+                groupBy: 'custom',
+                sortOption: 'property-asc',
+                selectionType: ItemType.TAG
+            })
         ).toBe('custom');
     });
 
-    it('uses custom groups when date grouping is paired with a non-date sort', () => {
+    it('uses no grouping when date grouping is paired with a non-date sort', () => {
         expect(
             resolveEffectiveListGroupingForSort({
                 groupBy: 'date',
                 sortOption: 'title-asc',
                 selectionType: ItemType.FOLDER
             })
-        ).toBe('custom');
+        ).toBe('none');
     });
 
     it('keeps date grouping with date sorts', () => {
@@ -238,14 +248,14 @@ describe('property grouping option encoding', () => {
         expect(normalizeListNoteGroupingOption('property-desc: status ')).toBe('property-desc:status');
         expect(normalizeListNoteGroupingOption('property:')).toBeNull();
         expect(normalizeListNoteGroupingOption('property-desc:')).toBeNull();
-        expect(normalizeListNoteGroupingOption('none')).toBe('custom');
+        expect(normalizeListNoteGroupingOption('none')).toBe('none');
         expect(normalizeListNoteGroupingOption('date')).toBe('date');
     });
 
     it('accepts property encodings for the vault-wide default grouping', () => {
         expect(normalizeListNoteGroupingOption('property:status')).toBe('property:status');
         expect(normalizeListNoteGroupingOption('property-desc:status')).toBe('property-desc:status');
-        expect(normalizeListNoteGroupingOption('none')).toBe('custom');
+        expect(normalizeListNoteGroupingOption('none')).toBe('none');
         expect(normalizeListNoteGroupingOption('folder')).toBe('folder');
         expect(normalizeListNoteGroupingOption('date')).toBe('date');
     });
@@ -344,41 +354,50 @@ describe('updatePropertyGroupingOverrideKeys', () => {
 });
 
 describe('hasEffectiveCustomListGroupingForSelection', () => {
-    it('detects custom grouping forced by the default sort', () => {
+    it('does not treat a non-date fallback as custom grouping', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
         settings.noteGrouping = 'date';
         settings.defaultFolderSort = 'title-asc';
 
-        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, null)).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, null)).toBe(false);
     });
 
-    it('detects custom grouping forced by a selection sort override', () => {
+    it('does not treat a selection sort fallback as custom grouping', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
         settings.noteGrouping = 'date';
         settings.defaultFolderSort = 'modified-desc';
         settings.folderSortOverrides.Projects = 'title-asc';
 
-        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(false);
         expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Writing')).toBe(false);
     });
 
-    it('combines a tag appearance with its sort override', () => {
+    it('keeps a tag sort fallback separate from custom grouping', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
         settings.noteGrouping = 'folder';
         settings.defaultFolderSort = 'modified-desc';
         settings.tagAppearances.reading = { groupBy: 'date' };
         settings.tagSortOverrides.reading = 'title-asc';
 
-        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.TAG, 'reading')).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.TAG, 'reading')).toBe(false);
     });
 
-    it('detects custom grouping forced by a property sort override', () => {
+    it('keeps a property sort fallback separate from custom grouping', () => {
         const settings = structuredClone(DEFAULT_SETTINGS);
         settings.noteGrouping = 'folder';
         settings.defaultFolderSort = 'modified-desc';
         settings.propertySortOverrides['property:status:active'] = 'property-asc';
 
-        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.PROPERTY, 'property:status:active')).toBe(true);
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.PROPERTY, 'property:status:active')).toBe(false);
+    });
+
+    it('detects an explicit custom grouping override', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.noteGrouping = 'none';
+        settings.defaultFolderSort = 'title-asc';
+        settings.folderAppearances.Projects = { groupBy: 'custom' };
+
+        expect(hasEffectiveCustomListGroupingForSelection(settings, ItemType.FOLDER, 'Projects')).toBe(true);
     });
 
     it('detects custom grouping forced by manual sorting', () => {

@@ -17,20 +17,20 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { formatWordCountDependencyScope } from '../../src/settings/tabs/NotesTab';
+import { formatTextCountDependencyScope } from '../../src/settings/tabs/NotesTab';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../../src/types';
 
-describe('formatWordCountDependencyScope', () => {
+describe('formatTextCountDependencyScope', () => {
     it('uses localized labels for virtual tag collections', () => {
-        expect(formatWordCountDependencyScope({ reason: 'appearance', selectionType: ItemType.TAG, key: TAGGED_TAG_ID })).toBe('Tags');
-        expect(formatWordCountDependencyScope({ reason: 'appearance', selectionType: ItemType.TAG, key: UNTAGGED_TAG_ID })).toBe(
+        expect(formatTextCountDependencyScope({ reason: 'appearance', selectionType: ItemType.TAG, key: TAGGED_TAG_ID })).toBe('Tags');
+        expect(formatTextCountDependencyScope({ reason: 'appearance', selectionType: ItemType.TAG, key: UNTAGGED_TAG_ID })).toBe(
             'Untagged'
         );
     });
 
     it('uses the localized label for the properties root', () => {
         expect(
-            formatWordCountDependencyScope({
+            formatTextCountDependencyScope({
                 reason: 'appearance',
                 selectionType: ItemType.PROPERTY,
                 key: PROPERTIES_ROOT_VIRTUAL_FOLDER_ID

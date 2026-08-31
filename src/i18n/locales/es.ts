@@ -1288,12 +1288,13 @@ export const STRINGS_ES = {
             },
             defaultGrouping: {
                 name: 'Agrupación predeterminada',
-                desc: 'Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
+                desc: 'Sin agrupación, la lista ordenada se mantiene plana. Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
                 families: {
                     headers: 'Encabezados',
                     groups: 'Grupos'
                 },
                 options: {
+                    none: 'No agrupar',
                     custom: 'Personalizada',
                     date: 'Fecha',
                     folder: 'Carpeta'

@@ -1285,12 +1285,13 @@ export const STRINGS_ID = {
             },
             defaultGrouping: {
                 name: 'Pengelompokan default',
-                desc: '**Header** memberi anotasi pada daftar yang sudah diurutkan tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
+                desc: 'Tanpa pengelompokan mempertahankan daftar yang diurutkan tetap datar. **Header** memberi anotasi pada daftar tersebut tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
                 families: {
                     headers: 'Header',
                     groups: 'Grup'
                 },
                 options: {
+                    none: 'Tanpa pengelompokan',
                     custom: 'Kustom',
                     date: 'Tanggal',
                     folder: 'Folder'

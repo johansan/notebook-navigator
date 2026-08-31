@@ -94,12 +94,17 @@ export function resolveEffectiveListGroupingForSort({
         return groupBy;
     }
 
+    // Sort-incompatible grouping modes fall back to None because falling back to Custom would
+    // activate frontmatter headers that the user did not select.
     if (getSortField(sortOption) === 'property') {
-        return selectionType === ItemType.FOLDER && groupBy === 'folder' ? 'folder' : 'custom';
+        if (selectionType === ItemType.FOLDER && groupBy === 'folder') {
+            return 'folder';
+        }
+        return groupBy === 'custom' ? 'custom' : 'none';
     }
 
     if (groupBy === 'date' && !isDateSortOption(sortOption)) {
-        return 'custom';
+        return 'none';
     }
 
     return groupBy;
@@ -297,7 +302,7 @@ export function resolveListGroupingOverride({
     selectionType?: ItemType | null;
     groupBy?: ListNoteGroupingOption;
 }): ListGroupingResolution {
-    const globalDefault: ListNoteGroupingOption = noteGrouping ?? 'custom';
+    const globalDefault: ListNoteGroupingOption = noteGrouping ?? 'none';
 
     if (selectionType === ItemType.FOLDER) {
         return {
@@ -388,7 +393,7 @@ export function resolveListGrouping({
     tag,
     propertyNodeId
 }: ResolveListGroupingParams): ListGroupingResolution {
-    const globalDefault: ListNoteGroupingOption = settings.noteGrouping ?? 'custom';
+    const globalDefault: ListNoteGroupingOption = settings.noteGrouping ?? 'none';
 
     // Folder selection: use folder-specific override if set, otherwise use global default
     if (selectionType === ItemType.FOLDER && folderPath) {

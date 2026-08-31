@@ -107,10 +107,11 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.6',
-        date: '2026-08-31',
+        date: '2026-09-01',
         showOnUpdate: false,
         new: [
-            'New setting in Appearance & behavior > Desktop appearance: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.'
+            'New setting in Appearance & behavior > Desktop appearance: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.',
+            'If you do not want to see custom group headers in a specific view like tags or properties, you can now pick the new sort option `None` under `Group by`. This can also be the default group option.'
         ],
         improved: [
             'Rebuilt the **hover tooltips** with the same look as the built-in Obsidian tooltips but with less flickering and support for tag pills and text hierarchy.',

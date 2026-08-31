@@ -1289,12 +1289,13 @@ export const STRINGS_PL = {
             },
             defaultGrouping: {
                 name: 'Domyślne grupowanie',
-                desc: '**Nagłówki** opisują posortowaną listę bez zmiany jej kolejności: Niestandardowe wyświetla nagłówki zdefiniowane w metadanych, a Data wstawia nagłówki dat. **Grupy** zmieniają kolejność listy: grupy folderów i atrybutów są porządkowane osobno, a notatki w każdej grupie zachowują porządek sortowania.',
+                desc: 'Opcja „Nie grupuj” pozostawia posortowaną listę bez podziału na grupy. **Nagłówki** opisują posortowaną listę bez zmiany jej kolejności: Niestandardowe wyświetla nagłówki zdefiniowane w metadanych, a Data wstawia nagłówki dat. **Grupy** zmieniają kolejność listy: grupy folderów i atrybutów są porządkowane osobno, a notatki w każdej grupie zachowują porządek sortowania.',
                 families: {
                     headers: 'Nagłówki',
                     groups: 'Grupy'
                 },
                 options: {
+                    none: 'Nie grupuj',
                     custom: 'Niestandardowe',
                     date: 'Data',
                     folder: 'Folder'

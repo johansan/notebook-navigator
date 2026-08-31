@@ -50,7 +50,7 @@ const activeGroupHeaderWordCountConsumerCache = new WeakMap<
 >();
 const markdownWordCountConsumerChangeStores = new WeakMap<App, { version: number; listeners: Set<() => void> }>();
 
-export type MarkdownWordCountDependency =
+export type MarkdownTextCountDependency =
     { reason: 'appearance'; selectionType: ItemType; key: string } | { reason: 'group-header'; path: string };
 
 /** Result of applying a metadata-backed word-count consumer update. */
@@ -428,13 +428,20 @@ export function removeMarkdownWordCountConsumersInFolder(
 }
 
 /**
- * Lists the non-global settings and custom headers that keep word-count extraction active.
- * Appearance entries consume counts when they explicitly show words. A custom header consumes
- * counts only when it requests them and belongs to a folder, tag, or property list that resolves
- * to custom grouping.
+ * Lists the non-global settings and custom headers that keep word- or character-count extraction
+ * active beyond what the global count type already shows. Appearance entries are included when
+ * they request a count kind the global display omits. Custom headers always consume word counts,
+ * so they are included only while the global display omits words, and only when the header
+ * requests counts and belongs to a folder, tag, or property list that resolves to custom
+ * grouping. An empty result means the global count type fully explains the active extraction.
  */
-export function getMarkdownWordCountDependencies(app: App, settings: NotebookNavigatorSettings): readonly MarkdownWordCountDependency[] {
-    const dependencies: MarkdownWordCountDependency[] = [];
+export function getMarkdownTextCountDependencies(app: App, settings: NotebookNavigatorSettings): readonly MarkdownTextCountDependency[] {
+    const includeWords = !showsWordCount(settings.textCountDisplay);
+    const includeCharacters = !showsCharacterCount(settings.textCountDisplay);
+    const dependencies: MarkdownTextCountDependency[] = [];
+    if (!includeWords && !includeCharacters) {
+        return dependencies;
+    }
     const appearanceRecords = [
         { selectionType: ItemType.FOLDER, appearances: settings.folderAppearances },
         { selectionType: ItemType.TAG, appearances: settings.tagAppearances },
@@ -443,15 +450,22 @@ export function getMarkdownWordCountDependencies(app: App, settings: NotebookNav
 
     appearanceRecords.forEach(({ selectionType, appearances }) => {
         Object.entries(appearances).forEach(([key, appearance]) => {
-            if (appearance.textCount !== undefined && showsWordCount(appearance.textCount)) {
+            if (appearance.textCount === undefined) {
+                return;
+            }
+            const usesWords = includeWords && showsWordCount(appearance.textCount);
+            const usesCharacters = includeCharacters && showsCharacterCount(appearance.textCount);
+            if (usesWords || usesCharacters) {
                 dependencies.push({ reason: 'appearance', selectionType, key });
             }
         });
     });
 
-    getActiveManualSortGroupHeaderWordCountConsumerPaths(app, settings).forEach(path => {
-        dependencies.push({ reason: 'group-header', path });
-    });
+    if (includeWords) {
+        getActiveManualSortGroupHeaderWordCountConsumerPaths(app, settings).forEach(path => {
+            dependencies.push({ reason: 'group-header', path });
+        });
+    }
 
     return dependencies;
 }

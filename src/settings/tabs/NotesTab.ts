@@ -38,9 +38,9 @@ import { formatCommaSeparatedList, parseCommaSeparatedList } from '../../utils/c
 import { EXTERNAL_ICON_PROVIDERS } from '../../services/icons/external/providerRegistry';
 import { FILE_TYPE_ICON_PROVIDER_PRESET_IDS, isFileTypeIconPreset, isFileTypeIconProviderPreset } from '../../utils/fileTypeIconPresets';
 import {
-    getMarkdownWordCountDependencies,
+    getMarkdownTextCountDependencies,
     subscribeMarkdownWordCountConsumerChanges,
-    type MarkdownWordCountDependency
+    type MarkdownTextCountDependency
 } from '../../utils/markdownPipelineContentTypes';
 import { parsePropertyNodeId } from '../../utils/propertyTree';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../types';
@@ -65,14 +65,14 @@ interface FileTypeIconPresetOption {
     isInstalled: boolean;
 }
 
-const MAX_VISIBLE_WORD_COUNT_DEPENDENCIES = 3;
+const MAX_VISIBLE_TEXT_COUNT_DEPENDENCIES = 3;
 
-export function formatWordCountDependencyScope(dependency: MarkdownWordCountDependency): string {
+export function formatTextCountDependencyScope(dependency: MarkdownTextCountDependency): string {
     if (dependency.reason === 'group-header') {
         return dependency.path;
     }
 
-    const labels = strings.settings.items.wordCountActiveNotice.scopes;
+    const labels = strings.settings.items.textCountActiveNotice.scopes;
     switch (dependency.selectionType) {
         case ItemType.FOLDER:
             return labels.folder.replace('{name}', dependency.key);
@@ -94,33 +94,33 @@ export function formatWordCountDependencyScope(dependency: MarkdownWordCountDepe
     }
 }
 
-/** Renders the explanatory footer shown when non-display settings keep word counting active. */
-export function renderWordCountActiveNotice(setting: Setting, context: SettingsTabContext): void {
-    const dependencies = getMarkdownWordCountDependencies(context.app, context.plugin.settings);
-    const copy = strings.settings.items.wordCountActiveNotice;
+/** Renders the explanatory footer shown when non-display settings keep word or character counting active. */
+export function renderTextCountActiveNotice(setting: Setting, context: SettingsTabContext): void {
+    const dependencies = getMarkdownTextCountDependencies(context.app, context.plugin.settings);
+    const copy = strings.settings.items.textCountActiveNotice;
 
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.settingEl.addClass('nn-setting-info-list');
-    setting.settingEl.addClass('nn-setting-word-count-warning');
+    setting.settingEl.addClass('nn-setting-text-count-warning');
     setting.descEl.empty();
 
-    const headerEl = setting.descEl.createDiv({ cls: 'nn-setting-word-count-warning-header' });
-    const iconEl = headerEl.createSpan({ cls: 'nn-setting-word-count-warning-icon', attr: { 'aria-hidden': 'true' } });
+    const headerEl = setting.descEl.createDiv({ cls: 'nn-setting-text-count-warning-header' });
+    const iconEl = headerEl.createSpan({ cls: 'nn-setting-text-count-warning-icon', attr: { 'aria-hidden': 'true' } });
     setIcon(iconEl, 'lucide-triangle-alert');
     headerEl.createEl('strong', { text: copy.title });
 
     setting.descEl.createDiv({ text: copy.summary });
 
     const listEl = setting.descEl.createEl('ol');
-    dependencies.slice(0, MAX_VISIBLE_WORD_COUNT_DEPENDENCIES).forEach(dependency => {
+    dependencies.slice(0, MAX_VISIBLE_TEXT_COUNT_DEPENDENCIES).forEach(dependency => {
         const itemEl = listEl.createEl('li');
         const reason = copy.reasons[dependency.reason];
         itemEl.createEl('strong', { text: reason });
-        itemEl.appendText(`: ${formatWordCountDependencyScope(dependency)}`);
+        itemEl.appendText(`: ${formatTextCountDependencyScope(dependency)}`);
     });
-    if (dependencies.length > MAX_VISIBLE_WORD_COUNT_DEPENDENCIES) {
-        const remainingCount = dependencies.length - MAX_VISIBLE_WORD_COUNT_DEPENDENCIES;
+    if (dependencies.length > MAX_VISIBLE_TEXT_COUNT_DEPENDENCIES) {
+        const remainingCount = dependencies.length - MAX_VISIBLE_TEXT_COUNT_DEPENDENCIES;
         listEl.createEl('li', { text: copy.more.replace('{count}', remainingCount.toString()) });
     }
 }
@@ -557,14 +557,12 @@ export function createNotesSettingDefinitions(context: SettingsTabContext): Sett
                 visible: () => showsWordCount(plugin.settings.textCountDisplay)
             }),
             createRenderDefinition({
-                name: strings.settings.items.wordCountActiveNotice.title,
+                name: strings.settings.items.textCountActiveNotice.title,
                 searchable: false,
-                visible: () =>
-                    !showsWordCount(plugin.settings.textCountDisplay) &&
-                    getMarkdownWordCountDependencies(context.app, plugin.settings).length > 0,
+                visible: () => getMarkdownTextCountDependencies(context.app, plugin.settings).length > 0,
                 render: setting => {
-                    const refresh = () => renderWordCountActiveNotice(setting, context);
-                    context.registerSettingsUpdateListener('notes-word-count-active-notice', refresh);
+                    const refresh = () => renderTextCountActiveNotice(setting, context);
+                    context.registerSettingsUpdateListener('notes-text-count-active-notice', refresh);
                     const unsubscribe = subscribeMarkdownWordCountConsumerChanges(context.app, () => {
                         refresh();
                         context.refreshSettingsDomState();

@@ -1286,12 +1286,13 @@ export const STRINGS_PT = {
             },
             defaultGrouping: {
                 name: 'Agrupamento predefinido',
-                desc: 'Os **cabeçalhos** anotam a lista ordenada sem alterar a sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: os grupos de pastas e propriedades são ordenados por si próprios e as notas dentro de cada grupo seguem a ordem de ordenação.',
+                desc: 'Sem agrupamento, a lista ordenada mantém-se plana. Os **cabeçalhos** anotam a lista ordenada sem alterar a sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: os grupos de pastas e propriedades são ordenados por si próprios e as notas dentro de cada grupo seguem a ordem de ordenação.',
                 families: {
                     headers: 'Cabeçalhos',
                     groups: 'Grupos'
                 },
                 options: {
+                    none: 'Não agrupar',
                     custom: 'Personalizado',
                     date: 'Data',
                     folder: 'Pasta'

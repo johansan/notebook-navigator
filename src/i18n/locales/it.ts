@@ -1283,12 +1283,13 @@ export const STRINGS_IT = {
             },
             defaultGrouping: {
                 name: 'Raggruppamento predefinito',
-                desc: "Le **intestazioni** annotano l'elenco ordinato senza cambiarne l'ordine: Personalizzato mostra le intestazioni definite nel frontmatter e Data inserisce intestazioni di data. I **gruppi** riordinano l'elenco: i gruppi di cartelle e proprietà sono ordinati autonomamente e le note in ogni gruppo seguono l'ordinamento.",
+                desc: "Senza raggruppamento, l'elenco ordinato rimane piatto. Le **intestazioni** annotano l'elenco ordinato senza cambiarne l'ordine: Personalizzato mostra le intestazioni definite nel frontmatter e Data inserisce intestazioni di data. I **gruppi** riordinano l'elenco: i gruppi di cartelle e proprietà sono ordinati autonomamente e le note in ogni gruppo seguono l'ordinamento.",
                 families: {
                     headers: 'Intestazioni',
                     groups: 'Gruppi'
                 },
                 options: {
+                    none: 'Non raggruppare',
                     custom: 'Personalizzato',
                     date: 'Data',
                     folder: 'Cartella'
