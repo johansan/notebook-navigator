@@ -17,7 +17,7 @@
  */
 
 import { useCallback, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
-import { debounce, type TFile } from 'obsidian';
+import { debounce, type App, type TFile } from 'obsidian';
 import type { FileContentType } from '../../interfaces/IContentProvider';
 import type { ContentProviderRegistry } from '../../services/content/ContentProviderRegistry';
 import type { NotebookNavigatorSettings } from '../../settings/types';
@@ -48,6 +48,7 @@ interface PropertyTreeServiceLike {
  * then restores the previous value on completion.
  */
 export function useStorageCacheRebuild(params: {
+    app: App;
     contentRegistryRef: MutableRefObject<ContentProviderRegistry | null>;
     pendingSyncTimeoutIdRef: MutableRefObject<number | null>;
     rebuildFileCacheRef: MutableRefObject<ReturnType<typeof debounce> | null>;
@@ -69,6 +70,7 @@ export function useStorageCacheRebuild(params: {
     getIndexableFiles: () => TFile[];
 }): { rebuildCache: () => Promise<void> } {
     const {
+        app,
         contentRegistryRef,
         pendingSyncTimeoutIdRef,
         rebuildFileCacheRef,
@@ -159,7 +161,7 @@ export function useStorageCacheRebuild(params: {
 
         try {
             const liveSettings = latestSettingsRef.current;
-            const enabledTypes = getCacheRebuildProgressTypes(liveSettings);
+            const enabledTypes = getCacheRebuildProgressTypes(liveSettings, app);
             const total = getContentWorkTotal(getIndexableFiles(), enabledTypes);
             if (total > 0 && enabledTypes.length > 0) {
                 // Persist a rebuild marker so the progress notice can be restored if Obsidian restarts mid-rebuild.
@@ -180,6 +182,7 @@ export function useStorageCacheRebuild(params: {
 
         stoppedRef.current = previousStopped;
     }, [
+        app,
         buildFileCacheFnRef,
         cancelTreeRebuildDebouncer,
         clearCacheRebuildNotice,

@@ -38,7 +38,7 @@
  */
 
 import React, { useRef, useMemo, useEffect, useState, useCallback, useId } from 'react';
-import { TFile, TFolder, setTooltip, setIcon } from 'obsidian';
+import { TFile, TFolder, setIcon } from 'obsidian';
 import { useServices } from '../context/ServicesContext';
 import { useMetadataService } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
@@ -49,12 +49,13 @@ import type { SortOption } from '../settings/types';
 import { ItemType, type NavigationItemType } from '../types';
 import { DateUtils } from '../utils/dateUtils';
 import { runAsyncAction } from '../utils/async';
-import { getTooltipPlacement } from '../utils/domUtils';
 import { openFileInContext } from '../utils/openFileInContext';
 import { FILE_VISIBILITY, getExtensionSuffix, isRasterImageFile, shouldDisplayFile } from '../utils/fileTypeUtils';
 import { resolveFolderDecorationColors } from '../utils/folderDecoration';
 import { resolveFileDragIconId, resolveFileIconId } from '../utils/fileIconUtils';
-import { buildFileTooltip } from '../utils/navigationTooltipUtils';
+import { hasCachedMarkdownWordCountConsumer } from '../utils/markdownPipelineContentTypes';
+import { isInsideNativeTooltipTarget, useTooltip } from '../context/TooltipContext';
+import { FileTooltipContent } from './FileTooltipContent';
 import { getFoldedSearchHighlightRanges } from '../utils/searchHighlight';
 import {
     getFileItemLayoutState,
@@ -84,6 +85,7 @@ import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useMarkdownWordCountConsumerChanges } from '../hooks/useMarkdownWordCountConsumerChanges';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
 import { showsCharacterCount, showsWordCount } from '../settings/types';
@@ -459,6 +461,7 @@ export const FileItem = React.memo(function FileItem({
     // === Hooks (all hooks together at the top) ===
     const { app, isMobile, plugin, commandQueue, fileSystemOps, tagOperations } = useServices();
     const settings = useSettingsState();
+    useMarkdownWordCountConsumerChanges(app);
     const metadataService = useMetadataService();
     const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
     const isCompactMode = appearanceSettings.mode === 'compact';
@@ -466,13 +469,26 @@ export const FileItem = React.memo(function FileItem({
     const shouldShowCharacterCount = showsCharacterCount(appearanceSettings.textCountDisplay);
     const isMarkdownFile = file.extension === 'md';
     const canShowPropertyPills = isMarkdownFile && (!isCompactMode || settings.showFilePropertiesInCompactMode);
-    const shouldLoadTags = isMarkdownFile && appearanceSettings.showTags;
+    // Tooltip tags reuse the pill tag data, so tags load even when tag pills are hidden. The tag
+    // cache only exists while the navigation tags section is enabled, so the tooltip branch checks
+    // that setting instead of acting as a separate tag consumer.
+    const shouldLoadTags =
+        isMarkdownFile &&
+        (appearanceSettings.showTags || (!isMobile && settings.showTags && settings.showTooltips && settings.showTooltipTags));
     const shouldLoadWordCountForDisplay =
         isMarkdownFile &&
         shouldShowWordCount &&
         (settings.textCountPlacement === 'title' || (settings.textCountPlacement === 'property' && canShowPropertyPills));
+    // The tooltip reads a word count only while a display setting keeps the markdown pipeline
+    // extracting counts, because the tooltip setting is not a pipeline consumer and a cached
+    // count without a consumer would go stale after edits.
     const shouldLoadWordCount =
-        shouldLoadWordCountForDisplay || (isMarkdownFile && !isMobile && settings.showTooltips && settings.showTooltipWordCount);
+        shouldLoadWordCountForDisplay ||
+        (isMarkdownFile &&
+            !isMobile &&
+            settings.showTooltips &&
+            settings.showTooltipWordCount &&
+            hasCachedMarkdownWordCountConsumer(settings, app));
     const shouldLoadCharacterCount =
         isMarkdownFile &&
         shouldShowCharacterCount &&
@@ -750,29 +766,35 @@ export const FileItem = React.memo(function FileItem({
         [file, fileSystemOps, inlineRename]
     );
     const propertySearchEvidenceIconId = resolveUXIcon(settings.interfaceIcons, 'nav-property');
-    const { shouldShowFileTags, hasVisiblePillRows, propertySearchEvidenceGroups, propertySearchEvidenceHiddenGroupCount, pillRows } =
-        useFileItemPills({
-            file,
-            isCompactMode,
-            tags,
-            properties,
-            wordCount,
-            characterCount: selectedCharacterCount,
-            wordCountDisplayText,
-            characterCountDisplayText,
-            settings,
-            showTags: appearanceSettings.showTags,
-            showProperties: appearanceSettings.showProperties,
-            textCountDisplay: appearanceSettings.textCountDisplay,
-            visiblePropertyKeys,
-            visibleNavigationPropertyKeys,
-            matchedProperties,
-            hiddenTagVisibility,
-            onModifySearchWithTag,
-            onModifySearchWithProperty,
-            fileItemPillDecorationModel,
-            fileItemPillOrderModel
-        });
+    const {
+        shouldShowFileTags,
+        hasVisiblePillRows,
+        propertySearchEvidenceGroups,
+        propertySearchEvidenceHiddenGroupCount,
+        tooltipTagRow,
+        pillRows
+    } = useFileItemPills({
+        file,
+        isCompactMode,
+        tags,
+        properties,
+        wordCount,
+        characterCount: selectedCharacterCount,
+        wordCountDisplayText,
+        characterCountDisplayText,
+        settings,
+        showTags: appearanceSettings.showTags,
+        showProperties: appearanceSettings.showProperties,
+        textCountDisplay: appearanceSettings.textCountDisplay,
+        visiblePropertyKeys,
+        visibleNavigationPropertyKeys,
+        matchedProperties,
+        hiddenTagVisibility,
+        onModifySearchWithTag,
+        onModifySearchWithProperty,
+        fileItemPillDecorationModel,
+        fileItemPillOrderModel
+    });
     const fileTitleElement = (() => {
         if (inlineRename && renameInputOptions) {
             return (
@@ -1144,43 +1166,50 @@ export const FileItem = React.memo(function FileItem({
         }
     }, [effectiveFeatureImageUrl, useSquareFeatureImage]);
 
-    // Add Obsidian tooltip (desktop only)
-    useEffect(() => {
-        if (!fileRef.current) return;
+    // Locals for the mutable TFile fields so the tooltip memo re-runs on rename and on
+    // timestamp changes; the TFile identity itself is stable across those mutations.
+    const fileName = file.name;
+    const fileCreatedTime = file.stat.ctime;
+    const fileModifiedTime = file.stat.mtime;
 
-        // Skip tooltips on mobile
-        if (isMobile) return;
+    // Hover tooltip content (desktop only). Null disables the tooltip entirely. The element is
+    // recreated when any input changes because the tooltip refreshes on content identity.
+    const tooltipContent = useMemo((): React.ReactNode => {
+        // The tooltip reads file.name, the stat timestamps, and metadata-derived colors at
+        // render time, so those inputs are dependencies even though they are not referenced.
+        void metadataVersion;
+        void fileName;
+        void fileCreatedTime;
+        void fileModifiedTime;
 
-        // Remove tooltip if disabled
-        if (!showTooltips) {
-            setTooltip(fileRef.current, '');
-            return;
+        if (isMobile || !showTooltips) {
+            return null;
         }
 
-        const tooltip = buildFileTooltip({
-            file,
-            displayName,
-            extensionSuffix,
-            settings: {
-                dateFormat: settings.dateFormat,
-                timeFormat: settings.timeFormat,
-                showTooltipPath: settings.showTooltipPath,
-                showTooltipWordCount: settings.showTooltipWordCount
-            },
-            getFileTimestamps,
-            sortOption,
-            unfinishedTaskTooltipText,
-            wordCount
-        });
-
-        setTooltip(fileRef.current, tooltip, {
-            placement: getTooltipPlacement()
-        });
+        return (
+            <FileTooltipContent
+                file={file}
+                displayName={displayName}
+                extensionSuffix={extensionSuffix}
+                settings={{
+                    dateFormat: settings.dateFormat,
+                    timeFormat: settings.timeFormat,
+                    showTooltipPath: settings.showTooltipPath,
+                    showTooltipWordCount: settings.showTooltipWordCount
+                }}
+                getFileTimestamps={getFileTimestamps}
+                sortOption={sortOption}
+                unfinishedTaskTooltipText={unfinishedTaskTooltipText}
+                wordCount={wordCount}
+                tagRow={tooltipTagRow}
+            />
+        );
     }, [
         isMobile,
         file,
-        file.stat.ctime,
-        file.stat.mtime,
+        fileCreatedTime,
+        fileModifiedTime,
+        fileName,
         showTooltips,
         settings.dateFormat,
         settings.timeFormat,
@@ -1191,10 +1220,62 @@ export const FileItem = React.memo(function FileItem({
         getFileTimestamps,
         sortOption,
         metadataVersion,
-        file.name,
+        tooltipTagRow,
         unfinishedTaskTooltipText,
         wordCount
     ]);
+
+    const tooltip = useTooltip();
+
+    const handleTooltipMouseOver = useCallback(
+        (event: React.MouseEvent) => {
+            const row = fileRef.current;
+            if (!row || tooltipContent === null) {
+                return;
+            }
+            // Descendants with native tooltips (quick actions) own the hover; hiding the row
+            // tooltip mirrors how Obsidian shows only the innermost labelled element's tooltip.
+            // The mouseover refire when leaving the descendant restores the row tooltip.
+            if (isInsideNativeTooltipTarget(row, event.target)) {
+                tooltip.hideTooltip(row);
+                return;
+            }
+            tooltip.showTooltip(row, tooltipContent);
+        },
+        [tooltip, tooltipContent]
+    );
+
+    const handleTooltipMouseLeave = useCallback(() => {
+        const row = fileRef.current;
+        if (row) {
+            tooltip.hideTooltip(row);
+        }
+    }, [tooltip]);
+
+    // Refresh a visible or pending tooltip when lazily loaded content (word count, tags,
+    // task counts) arrives while the pointer rests on the row.
+    useEffect(() => {
+        const row = fileRef.current;
+        if (!row) {
+            return;
+        }
+        if (tooltipContent === null) {
+            tooltip.hideTooltip(row);
+            return;
+        }
+        tooltip.updateTooltip(row, tooltipContent);
+    }, [tooltip, tooltipContent]);
+
+    // Hide the tooltip when the row unmounts, otherwise a virtualized scroll can leave a
+    // tooltip anchored to a detached element.
+    useEffect(() => {
+        const row = fileRef.current;
+        return () => {
+            if (row) {
+                tooltip.hideTooltip(row);
+            }
+        };
+    }, [tooltip]);
 
     // Reveals the file by selecting its folder in navigation pane and showing the file in list pane
     const revealFileInNavigation = () => {
@@ -1428,6 +1509,8 @@ export const FileItem = React.memo(function FileItem({
             data-drag-icon-color={dragIconColor}
             onClick={handleItemClick}
             onMouseDown={handleMouseDown}
+            onMouseOver={tooltipContent !== null ? handleTooltipMouseOver : undefined}
+            onMouseLeave={tooltipContent !== null ? handleTooltipMouseLeave : undefined}
             draggable={!isMobile && !disableNativeDrag}
             role="listitem"
             aria-describedby={hiddenDescription ? hiddenDescriptionId : undefined}

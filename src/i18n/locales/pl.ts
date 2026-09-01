@@ -1289,12 +1289,13 @@ export const STRINGS_PL = {
             },
             defaultGrouping: {
                 name: 'Domyślne grupowanie',
-                desc: '**Nagłówki** opisują posortowaną listę bez zmiany jej kolejności: Niestandardowe wyświetla nagłówki zdefiniowane w metadanych, a Data wstawia nagłówki dat. **Grupy** zmieniają kolejność listy: grupy folderów i atrybutów są porządkowane osobno, a notatki w każdej grupie zachowują porządek sortowania.',
+                desc: 'Opcja „Nie grupuj” pozostawia posortowaną listę bez podziału na grupy. **Nagłówki** opisują posortowaną listę bez zmiany jej kolejności: Niestandardowe wyświetla nagłówki zdefiniowane w metadanych, a Data wstawia nagłówki dat. **Grupy** zmieniają kolejność listy: grupy folderów i atrybutów są porządkowane osobno, a notatki w każdej grupie zachowują porządek sortowania.',
                 families: {
                     headers: 'Nagłówki',
                     groups: 'Grupy'
                 },
                 options: {
+                    none: 'Nie grupuj',
                     custom: 'Niestandardowe',
                     date: 'Data',
                     folder: 'Folder'
@@ -1767,9 +1768,13 @@ export const STRINGS_PL = {
                 name: 'Pokaż ścieżkę w podpowiedziach',
                 desc: 'Po najechaniu kursorem wyświetla ścieżkę folderu pod nazwami notatek.'
             },
+            showTooltipTags: {
+                name: 'Pokaż tagi w podpowiedziach',
+                desc: 'Wyświetla tagi notatek w podpowiedziach, gdy sekcja tagów jest włączona.'
+            },
             showTooltipWordCount: {
                 name: 'Pokaż liczbę słów w podpowiedziach',
-                desc: 'Wyświetla liczbę słów notatek w podpowiedziach.'
+                desc: 'Wyświetla liczbę słów w podpowiedziach, gdy liczba słów jest włączona.'
             },
             resetPaneSeparator: {
                 name: 'Przywróć położenie separatora paneli',
@@ -2020,6 +2025,21 @@ export const STRINGS_PL = {
             showTargetPercentage: {
                 name: 'Pokaż procent celu',
                 desc: 'Wyświetlaj tylko procent postępu, gdy dostępna jest docelowa liczba słów.'
+            },
+            textCountActiveNotice: {
+                title: 'Zliczanie jest nadal włączone',
+                summary:
+                    'Liczba słów lub znaków jest nadal obliczana dla wszystkich notatek, ponieważ korzystają z niej następujące elementy:',
+                more: 'i jeszcze {count}',
+                reasons: {
+                    appearance: 'Wygląd plików',
+                    'group-header': 'Nagłówek grupy'
+                },
+                scopes: {
+                    folder: 'Folder: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Właściwość: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Klucze atrybutów (profil sejfu)',

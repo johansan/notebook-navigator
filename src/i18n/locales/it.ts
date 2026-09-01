@@ -1283,12 +1283,13 @@ export const STRINGS_IT = {
             },
             defaultGrouping: {
                 name: 'Raggruppamento predefinito',
-                desc: "Le **intestazioni** annotano l'elenco ordinato senza cambiarne l'ordine: Personalizzato mostra le intestazioni definite nel frontmatter e Data inserisce intestazioni di data. I **gruppi** riordinano l'elenco: i gruppi di cartelle e proprietà sono ordinati autonomamente e le note in ogni gruppo seguono l'ordinamento.",
+                desc: "Senza raggruppamento, l'elenco ordinato rimane piatto. Le **intestazioni** annotano l'elenco ordinato senza cambiarne l'ordine: Personalizzato mostra le intestazioni definite nel frontmatter e Data inserisce intestazioni di data. I **gruppi** riordinano l'elenco: i gruppi di cartelle e proprietà sono ordinati autonomamente e le note in ogni gruppo seguono l'ordinamento.",
                 families: {
                     headers: 'Intestazioni',
                     groups: 'Gruppi'
                 },
                 options: {
+                    none: 'Non raggruppare',
                     custom: 'Personalizzato',
                     date: 'Data',
                     folder: 'Cartella'
@@ -1762,9 +1763,13 @@ export const STRINGS_IT = {
                 name: 'Mostra percorso nei tooltip',
                 desc: 'Visualizza il percorso cartella sotto i nomi note nei tooltip.'
             },
+            showTooltipTags: {
+                name: 'Mostra etichette nei tooltip',
+                desc: 'Visualizza le etichette delle note nei tooltip quando la sezione etichette è attiva.'
+            },
             showTooltipWordCount: {
                 name: 'Mostra conteggio parole nei tooltip',
-                desc: 'Visualizza il conteggio delle parole delle note nei tooltip.'
+                desc: 'Visualizza il conteggio delle parole nei tooltip quando il conteggio delle parole è attivo.'
             },
             resetPaneSeparator: {
                 name: 'Ripristina posizione separatore pannelli',
@@ -2016,6 +2021,21 @@ export const STRINGS_IT = {
             showTargetPercentage: {
                 name: 'Mostra percentuale obiettivo',
                 desc: 'Mostra solo la percentuale di avanzamento quando è disponibile un obiettivo di conteggio parole.'
+            },
+            textCountActiveNotice: {
+                title: 'Il conteggio è ancora attivo',
+                summary:
+                    'I conteggi di parole o caratteri vengono ancora calcolati per tutte le note perché sono utilizzati dai seguenti elementi:',
+                more: 'e altri {count}',
+                reasons: {
+                    appearance: 'Aspetto dei file',
+                    'group-header': 'Intestazione di gruppo'
+                },
+                scopes: {
+                    folder: 'Cartella: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Proprietà: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Chiavi proprietà (profilo vault)',

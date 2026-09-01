@@ -39,6 +39,7 @@ import { useNavigationPaneShortcuts } from '../../hooks/navigationPane/useNaviga
 import { useNavigationPaneTreeInteractions } from '../../hooks/navigationPane/useNavigationPaneTreeInteractions';
 import { useNavigationSearchHighlights } from '../../hooks/navigationPane/useNavigationSearchHighlights';
 import { useStableHandlerFacade } from '../../hooks/useStableHandlerFacade';
+import { useMarkdownWordCountConsumerChanges } from '../../hooks/useMarkdownWordCountConsumerChanges';
 import { buildNavigationInlineRenameTarget, matchNavigationInlineRenameTarget, replacePathLeaf } from './navigationRenameTarget';
 import type { SearchNavFilterState } from '../../types/search';
 import type { NoteCountInfo } from '../../types/noteCounts';
@@ -95,6 +96,9 @@ import type { NavigationRainbowState } from '../../hooks/useNavigationRainbowSta
 import type { NavigationPaneSourceState } from '../../hooks/navigationPane/data/useNavigationPaneSourceState';
 import type { NavigationPaneTreeSectionsResult } from '../../hooks/navigationPane/data/useNavigationPaneTreeSections';
 import type { FolderDecorationModel } from '../../utils/folderDecoration';
+import type { FileItemPillDecorationModel } from '../../utils/fileItemPillDecoration';
+import type { FileItemPillOrderModel } from '../../utils/fileItemPillOrder';
+import { hasCachedMarkdownWordCountConsumer } from '../../utils/markdownPipelineContentTypes';
 import { focusElementPreventScroll } from '../../utils/domUtils';
 
 const EMPTY_INDENT_GUIDE_MAP = new Map<string, number[]>();
@@ -115,6 +119,8 @@ interface NavigationPaneProps {
     navigationSourceState: NavigationPaneSourceState;
     navigationTreeSections: NavigationPaneTreeSectionsResult;
     folderDecorationModel: FolderDecorationModel;
+    fileItemPillDecorationModel: FileItemPillDecorationModel;
+    fileItemPillOrderModel: FileItemPillOrderModel;
     navRainbowState: NavigationRainbowState;
     searchNavFilters?: SearchNavFilterState;
     onExecuteSearchShortcut?: (shortcutKey: string, searchShortcut: import('../../types/shortcuts').SearchShortcut) => Promise<void> | void;
@@ -138,23 +144,32 @@ export const NavigationPane = React.memo(
         const selectionState = useNavigationSelection();
         const selectionDispatch = useSelectionDispatch();
         const settings = useSettingsState();
+        useMarkdownWordCountConsumerChanges(app);
         const activeProfile = useActiveProfile();
         const updateSettings = useSettingsUpdate();
         const uxPreferences = useUXPreferences();
         const uiState = useUIState();
         const uiDispatch = useUIDispatch();
         const { fileData, getFile, getFileDisplayName, getFileTimestamps, isStorageReady } = useFileCache();
+        // Cached word counts are only current while a display setting keeps the markdown
+        // pipeline extracting them; without a consumer a stale count would show after edits.
+        const hasWordCountConsumer = hasCachedMarkdownWordCountConsumer(settings, app);
         const getFileWordCount = useCallback(
             (file: TFile): number | null => {
+                if (!hasWordCountConsumer) {
+                    return null;
+                }
                 return getFile(file.path)?.wordCount ?? null;
             },
-            [getFile]
+            [getFile, hasWordCountConsumer]
         );
         const { startPointerDrag } = usePointerDrag();
         const {
             searchNavFilters,
             onExecuteSearchShortcut,
             rootContainerRef,
+            fileItemPillDecorationModel,
+            fileItemPillOrderModel,
             onNavigateToFolder,
             onRevealTag,
             onRevealProperty,
@@ -1022,6 +1037,8 @@ export const NavigationPane = React.memo(
                 getFileDisplayName,
                 getFileTimestamps,
                 getFileWordCount,
+                fileItemPillDecorationModel,
+                fileItemPillOrderModel,
                 getSolidBackground,
                 shortcuts: shortcutRowHandlers,
                 shortcutUiState,
@@ -1046,6 +1063,8 @@ export const NavigationPane = React.memo(
                 getFileDisplayName,
                 getFileTimestamps,
                 getFileWordCount,
+                fileItemPillDecorationModel,
+                fileItemPillOrderModel,
                 getSolidBackground,
                 handleSectionContextMenu,
                 handleCancelInlineRename,
