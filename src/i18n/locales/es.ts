@@ -1288,12 +1288,13 @@ export const STRINGS_ES = {
             },
             defaultGrouping: {
                 name: 'Agrupación predeterminada',
-                desc: 'Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
+                desc: 'Sin agrupación, la lista ordenada se mantiene plana. Los **encabezados** anotan la lista ordenada sin cambiar su orden: Personalizada muestra los encabezados definidos en el frontmatter y Fecha inserta encabezados de fecha. Los **grupos** reordenan la lista: los grupos de carpetas y propiedades se ordenan por su cuenta y las notas dentro de cada grupo siguen el orden configurado.',
                 families: {
                     headers: 'Encabezados',
                     groups: 'Grupos'
                 },
                 options: {
+                    none: 'No agrupar',
                     custom: 'Personalizada',
                     date: 'Fecha',
                     folder: 'Carpeta'
@@ -1766,9 +1767,13 @@ export const STRINGS_ES = {
                 name: 'Mostrar ruta en tooltips',
                 desc: 'Muestra la ruta de la carpeta debajo del nombre de las notas en los tooltips.'
             },
+            showTooltipTags: {
+                name: 'Mostrar etiquetas en tooltips',
+                desc: 'Muestra las etiquetas de las notas en los tooltips cuando la sección de etiquetas está activada.'
+            },
             showTooltipWordCount: {
                 name: 'Mostrar recuento de palabras en tooltips',
-                desc: 'Muestra el recuento de palabras de las notas en los tooltips.'
+                desc: 'Muestra el recuento de palabras en los tooltips cuando el recuento de palabras está activado.'
             },
             resetPaneSeparator: {
                 name: 'Restablecer posición del separador de paneles',
@@ -2020,6 +2025,21 @@ export const STRINGS_ES = {
             showTargetPercentage: {
                 name: 'Mostrar porcentaje objetivo',
                 desc: 'Mostrar solo el porcentaje de progreso cuando haya un recuento de palabras objetivo disponible.'
+            },
+            textCountActiveNotice: {
+                title: 'El recuento sigue activado',
+                summary:
+                    'Los recuentos de palabras o caracteres se siguen calculando para todas las notas porque los utilizan los siguientes elementos:',
+                more: 'y {count} más',
+                reasons: {
+                    appearance: 'Apariencia de archivos',
+                    'group-header': 'Encabezado de grupo'
+                },
+                scopes: {
+                    folder: 'Carpeta: {name}',
+                    tag: 'Etiqueta: #{name}',
+                    property: 'Propiedad: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Claves de propiedades (perfil de bóveda)',

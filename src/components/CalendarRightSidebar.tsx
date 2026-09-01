@@ -100,10 +100,13 @@ export function CalendarRightSidebar() {
             return;
         }
 
-        const { shouldClearFeatureImage, shouldClearPreview } = getMarkdownPipelineClearFlags({
-            oldSettings,
-            newSettings: settings
-        });
+        const { shouldClearFeatureImage, shouldClearPreview } = getMarkdownPipelineClearFlags(
+            {
+                oldSettings,
+                newSettings: settings
+            },
+            app
+        );
         const enabledFeatureImages = oldSettings.showFeatureImage !== settings.showFeatureImage && settings.showFeatureImage;
         if (!shouldClearFeatureImage && !shouldClearPreview && !enabledFeatureImages) {
             return;
@@ -143,7 +146,7 @@ export function CalendarRightSidebar() {
 
             queueCalendarContentRefresh(files);
         });
-    }, [queueCalendarContentRefresh, settings, storageRuntimeActive]);
+    }, [app, queueCalendarContentRefresh, settings, storageRuntimeActive]);
 
     const handleAddDateFilter = useCallback(
         (dateToken: string) => {

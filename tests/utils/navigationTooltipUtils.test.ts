@@ -19,7 +19,7 @@
 import { describe, expect, it } from 'vitest';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
-import { buildFileTooltip } from '../../src/utils/navigationTooltipUtils';
+import { buildFileTooltipDateLines, buildFileTooltipWordCountLine } from '../../src/utils/navigationTooltipUtils';
 import { formatTextCount } from '../../src/utils/wordCountUtils';
 import { createTestTFile } from './createTestTFile';
 
@@ -39,29 +39,46 @@ const getFileTimestamps = () => ({
 });
 
 describe('navigationTooltipUtils', () => {
-    it('adds word count for markdown note tooltips when enabled', () => {
-        const tooltip = buildFileTooltip({
+    it('builds the word count line for markdown notes when enabled', () => {
+        const line = buildFileTooltipWordCountLine({
             file: createTestTFile('Notes/Counted.md'),
-            displayName: 'Counted',
-            extensionSuffix: '',
             settings: buildSettings({ showTooltipWordCount: true }),
-            getFileTimestamps,
             wordCount: 1234
         });
 
-        expect(tooltip.split('\n')).toContain(`Word count: ${formatTextCount(1234)}`);
+        expect(line).toBe(`Word count: ${formatTextCount(1234)}`);
     });
 
-    it('omits word count when the tooltip subsetting is off', () => {
-        const tooltip = buildFileTooltip({
+    it('omits the word count line for non-markdown files and missing counts', () => {
+        const settings = buildSettings({ showTooltipWordCount: true });
+
+        expect(buildFileTooltipWordCountLine({ file: createTestTFile('Notes/Image.png'), settings, wordCount: 1234 })).toBeNull();
+        expect(buildFileTooltipWordCountLine({ file: createTestTFile('Notes/Counted.md'), settings, wordCount: null })).toBeNull();
+    });
+
+    it('orders date lines by the active sort option', () => {
+        const options = {
+            file: createTestTFile('Notes/Dated.md'),
+            settings: buildSettings({}),
+            getFileTimestamps
+        };
+
+        const modifiedFirst = buildFileTooltipDateLines(options);
+        expect(modifiedFirst[0]).toContain('Last modified at');
+        expect(modifiedFirst[1]).toContain('Created at');
+
+        const createdFirst = buildFileTooltipDateLines({ ...options, sortOption: 'created-desc' });
+        expect(createdFirst[0]).toContain('Created at');
+        expect(createdFirst[1]).toContain('Last modified at');
+    });
+
+    it('omits the word count line when the tooltip subsetting is off', () => {
+        const line = buildFileTooltipWordCountLine({
             file: createTestTFile('Notes/Counted.md'),
-            displayName: 'Counted',
-            extensionSuffix: '',
             settings: buildSettings({ showTooltipWordCount: false }),
-            getFileTimestamps,
             wordCount: 1234
         });
 
-        expect(tooltip).not.toContain('Word count');
+        expect(line).toBeNull();
     });
 });

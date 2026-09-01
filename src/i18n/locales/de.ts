@@ -1288,12 +1288,13 @@ export const STRINGS_DE = {
             },
             defaultGrouping: {
                 name: 'Standardgruppierung',
-                desc: '**Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
+                desc: 'Ohne Gruppierung bleibt die sortierte Liste flach. **Überschriften** kommentieren die sortierte Liste, ohne ihre Reihenfolge zu ändern: Benutzerdefiniert zeigt im Frontmatter definierte Überschriften, Datum fügt Datumsüberschriften ein. **Gruppen** ordnen die Liste neu: Ordner- und Eigenschaftsgruppen werden eigenständig geordnet, und die Notizen in jeder Gruppe folgen der Sortierreihenfolge.',
                 families: {
                     headers: 'Überschriften',
                     groups: 'Gruppen'
                 },
                 options: {
+                    none: 'Nicht gruppieren',
                     custom: 'Benutzerdefiniert',
                     date: 'Datum',
                     folder: 'Ordner'
@@ -1767,9 +1768,13 @@ export const STRINGS_DE = {
                 name: 'Pfad in Tooltips anzeigen',
                 desc: 'Zeigt den Ordnerpfad unter den Notiznamen in Tooltips an.'
             },
+            showTooltipTags: {
+                name: 'Tags in Tooltips anzeigen',
+                desc: 'Zeigt Tags von Notizen in Tooltips an, wenn der Tag-Bereich aktiviert ist.'
+            },
             showTooltipWordCount: {
                 name: 'Wortanzahl in Tooltips anzeigen',
-                desc: 'Zeigt die Wortanzahl von Notizen in Tooltips an.'
+                desc: 'Zeigt die Wortanzahl in Tooltips an, wenn die Wortanzahl aktiviert ist.'
             },
             resetPaneSeparator: {
                 name: 'Position des Fenstertrennelements zurücksetzen',
@@ -2021,6 +2026,21 @@ export const STRINGS_DE = {
             showTargetPercentage: {
                 name: 'Zielprozentsatz anzeigen',
                 desc: 'Nur den Fortschrittsprozentsatz anzeigen, wenn eine Zielwortanzahl verfügbar ist.'
+            },
+            textCountActiveNotice: {
+                title: 'Zählung ist weiterhin aktiv',
+                summary:
+                    'Wort- oder Zeichenanzahlen werden weiterhin für alle Notizen berechnet, weil die folgenden Einträge sie verwenden:',
+                more: 'und {count} weitere',
+                reasons: {
+                    appearance: 'Dateidarstellung',
+                    'group-header': 'Gruppenüberschrift'
+                },
+                scopes: {
+                    folder: 'Ordner: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Eigenschaft: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Eigenschaftsschlüssel (Vault-Profil)',

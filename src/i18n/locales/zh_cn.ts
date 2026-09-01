@@ -1273,12 +1273,13 @@ export const STRINGS_ZH_CN = {
             },
             defaultGrouping: {
                 name: '默认分组',
-                desc: '**标题**在不改变顺序的情况下为已排序的列表添加标注：自定义显示在 frontmatter 中定义的标题，日期插入日期标题。**分组**会重新排列列表：文件夹和属性分组按自身顺序排列，每个分组内的笔记遵循排序方式。',
+                desc: '不分组会将排序结果保持为单一列表。**标题**在不改变顺序的情况下为其添加标注：自定义显示在 frontmatter 中定义的标题，日期插入日期标题。**分组**会重新排列列表：文件夹和属性分组按自身顺序排列，每个分组内的笔记遵循排序方式。',
                 families: {
                     headers: '标题',
                     groups: '分组'
                 },
                 options: {
+                    none: '不分组',
                     custom: '自定义',
                     date: '日期',
                     folder: '文件夹'
@@ -1748,9 +1749,13 @@ export const STRINGS_ZH_CN = {
                 name: '在工具提示中显示路径',
                 desc: '在工具提示中的笔记名称下方显示文件夹路径。'
             },
+            showTooltipTags: {
+                name: '在工具提示中显示标签',
+                desc: '启用标签部分时，在工具提示中显示笔记的标签。'
+            },
             showTooltipWordCount: {
                 name: '在工具提示中显示字数',
-                desc: '在工具提示中显示笔记字数。'
+                desc: '启用字数统计时，在工具提示中显示字数。'
             },
             resetPaneSeparator: {
                 name: '重置窗格分隔符位置',
@@ -1999,6 +2004,20 @@ export const STRINGS_ZH_CN = {
             showTargetPercentage: {
                 name: '显示目标百分比',
                 desc: '有目标字数时，仅显示进度百分比。'
+            },
+            textCountActiveNotice: {
+                title: '计数仍处于启用状态',
+                summary: '由于以下项目使用字数或字符数，系统仍会为所有笔记计算这些数值：',
+                more: '以及另外 {count} 个',
+                reasons: {
+                    appearance: '文件外观',
+                    'group-header': '分组标题'
+                },
+                scopes: {
+                    folder: '文件夹：{name}',
+                    tag: '标签：#{name}',
+                    property: '属性：{name}'
+                }
             },
             propertyKeys: {
                 name: '属性键（仓库配置文件）',

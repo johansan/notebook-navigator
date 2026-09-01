@@ -1284,12 +1284,13 @@ export const STRINGS_VI = {
             },
             defaultGrouping: {
                 name: 'Nhóm mặc định',
-                desc: '**Header** chú thích danh sách đã sắp xếp mà không thay đổi thứ tự: Tùy chỉnh hiển thị header được định nghĩa trong frontmatter và Ngày chèn header ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
+                desc: 'Không nhóm giữ nguyên danh sách đã sắp xếp, không chia danh sách thành các nhóm. **Header** chú thích danh sách đó mà không thay đổi thứ tự: Tùy chỉnh hiển thị header được định nghĩa trong frontmatter và Ngày chèn header ngày. **Nhóm** sắp xếp lại danh sách: nhóm thư mục và thuộc tính được xếp thứ tự riêng, và ghi chú trong mỗi nhóm theo thứ tự sắp xếp.',
                 families: {
                     headers: 'Header',
                     groups: 'Nhóm'
                 },
                 options: {
+                    none: 'Không nhóm',
                     custom: 'Tùy chỉnh',
                     date: 'Ngày',
                     folder: 'Thư mục'
@@ -1762,9 +1763,13 @@ export const STRINGS_VI = {
                 name: 'Hiện đường dẫn trong chú thích',
                 desc: 'Hiển thị đường dẫn thư mục bên dưới tên ghi chú trong chú thích.'
             },
+            showTooltipTags: {
+                name: 'Hiện thẻ trong chú thích',
+                desc: 'Hiển thị thẻ của ghi chú trong chú thích khi phần thẻ được bật.'
+            },
             showTooltipWordCount: {
                 name: 'Hiện số từ trong chú thích',
-                desc: 'Hiển thị số từ của ghi chú trong chú thích.'
+                desc: 'Hiển thị số từ trong chú thích khi số từ được bật.'
             },
             resetPaneSeparator: {
                 name: 'Đặt lại vị trí thanh phân cách',
@@ -2014,6 +2019,20 @@ export const STRINGS_VI = {
             showTargetPercentage: {
                 name: 'Hiển thị phần trăm mục tiêu',
                 desc: 'Chỉ hiển thị phần trăm tiến độ khi có số từ mục tiêu.'
+            },
+            textCountActiveNotice: {
+                title: 'Bộ đếm vẫn đang bật',
+                summary: 'Số từ hoặc ký tự vẫn được tính cho tất cả ghi chú vì các mục sau sử dụng chúng:',
+                more: 'và {count} mục khác',
+                reasons: {
+                    appearance: 'Giao diện tệp',
+                    'group-header': 'Tiêu đề nhóm'
+                },
+                scopes: {
+                    folder: 'Thư mục: {name}',
+                    tag: 'Thẻ: #{name}',
+                    property: 'Thuộc tính: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Khóa thuộc tính (hồ sơ vault)',

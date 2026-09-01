@@ -55,6 +55,7 @@ import { useServices } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import { useContextMenu, hideNavigatorContextMenu } from '../hooks/useContextMenu';
+import { isInsideNativeTooltipTarget, useTooltip } from '../context/TooltipContext';
 import { getIconService, useIconServiceVersion } from '../services/icons';
 import { getTooltipPlacement } from '../utils/domUtils';
 import { getFolderNote } from '../utils/folderNoteLookup';
@@ -297,28 +298,57 @@ export const FolderItem = React.memo(function FolderItem({
         [onNameMouseDown]
     );
 
-    // Add Obsidian tooltip
+    const itemTooltip = useTooltip();
+
+    const handleTooltipMouseOver = useCallback(
+        (event: React.MouseEvent) => {
+            const row = folderRef.current;
+            if (!row || !tooltip) {
+                return;
+            }
+            // Descendants with native tooltips (the hidden-from-parents count indicator) own
+            // the hover; hiding the row tooltip mirrors how Obsidian shows only the innermost
+            // labelled element's tooltip. The mouseover refire when leaving the descendant
+            // restores the row tooltip.
+            if (isInsideNativeTooltipTarget(row, event.target)) {
+                itemTooltip.hideTooltip(row);
+                return;
+            }
+            itemTooltip.showTooltip(row, tooltip);
+        },
+        [itemTooltip, tooltip]
+    );
+
+    const handleTooltipMouseLeave = useCallback(() => {
+        const row = folderRef.current;
+        if (row) {
+            itemTooltip.hideTooltip(row);
+        }
+    }, [itemTooltip]);
+
+    // Refresh a visible or pending tooltip when the folder counts change while hovered.
     useEffect(() => {
-        if (!folderRef.current) return;
-
-        // Skip tooltip creation on mobile
-        if (isMobile) return;
-
-        // Remove tooltip if disabled
-        if (!settings.showTooltips) {
-            setTooltip(folderRef.current, '');
+        const row = folderRef.current;
+        if (!row) {
             return;
         }
-
         if (!tooltip) {
-            setTooltip(folderRef.current, '');
+            itemTooltip.hideTooltip(row);
             return;
         }
+        itemTooltip.updateTooltip(row, tooltip);
+    }, [itemTooltip, tooltip]);
 
-        setTooltip(folderRef.current, tooltip, {
-            placement: getTooltipPlacement()
-        });
-    }, [settings.showTooltips, isMobile, tooltip]);
+    // Hide the tooltip when the row unmounts, otherwise a virtualized scroll can leave a
+    // tooltip anchored to a detached element.
+    useEffect(() => {
+        const row = folderRef.current;
+        return () => {
+            if (row) {
+                itemTooltip.hideTooltip(row);
+            }
+        };
+    }, [itemTooltip]);
 
     useEffect(() => {
         if (chevronRef.current) {
@@ -411,6 +441,8 @@ export const FolderItem = React.memo(function FolderItem({
             data-level={level}
             onClick={onClick}
             onDoubleClick={handleDoubleClick}
+            onMouseOver={tooltip ? handleTooltipMouseOver : undefined}
+            onMouseLeave={tooltip ? handleTooltipMouseLeave : undefined}
             style={folderStyle}
             role="treeitem"
             aria-expanded={hasChildren ? isExpanded : undefined}

@@ -1282,12 +1282,13 @@ export const STRINGS_KO = {
             },
             defaultGrouping: {
                 name: '기본 그룹화',
-                desc: '**머리글**은 순서를 바꾸지 않고 정렬된 목록에 표시를 더합니다. 사용자 지정은 frontmatter에 정의된 머리글을 표시하고, 날짜는 날짜 머리글을 삽입합니다. **그룹**은 목록을 다시 정렬합니다. 폴더와 속성 그룹은 자체적으로 정렬되며 각 그룹 내의 노트는 정렬 순서를 따릅니다.',
+                desc: '그룹화 안 함을 선택하면 정렬된 목록이 그룹 없이 표시됩니다. **머리글**은 순서를 바꾸지 않고 목록에 표시를 더합니다. 사용자 지정은 frontmatter에 정의된 머리글을 표시하고, 날짜는 날짜 머리글을 삽입합니다. **그룹**은 목록을 다시 정렬합니다. 폴더와 속성 그룹은 자체적으로 정렬되며 각 그룹 내의 노트는 정렬 순서를 따릅니다.',
                 families: {
                     headers: '머리글',
                     groups: '그룹'
                 },
                 options: {
+                    none: '그룹화 안 함',
                     custom: '사용자 지정',
                     date: '날짜',
                     folder: '폴더'
@@ -1759,9 +1760,13 @@ export const STRINGS_KO = {
                 name: '도구 설명에 경로 표시',
                 desc: '도구 설명에서 노트 이름 아래에 폴더 경로를 표시합니다.'
             },
+            showTooltipTags: {
+                name: '도구 설명에 태그 표시',
+                desc: '태그 섹션이 활성화된 경우 도구 설명에 노트의 태그를 표시합니다.'
+            },
             showTooltipWordCount: {
                 name: '도구 설명에 단어 수 표시',
-                desc: '도구 설명에 노트의 단어 수를 표시합니다.'
+                desc: '단어 수가 활성화된 경우 도구 설명에 단어 수를 표시합니다.'
             },
             resetPaneSeparator: {
                 name: '창 구분선 위치 초기화',
@@ -2011,6 +2016,20 @@ export const STRINGS_KO = {
             showTargetPercentage: {
                 name: '목표 백분율 표시',
                 desc: '목표 단어 수가 있을 때 진행률 백분율만 표시합니다.'
+            },
+            textCountActiveNotice: {
+                title: '카운트 계산이 계속 활성화되어 있습니다',
+                summary: '다음 항목에서 사용하므로 모든 노트의 단어 수 또는 문자 수를 계속 계산합니다:',
+                more: '외 {count}개',
+                reasons: {
+                    appearance: '파일 모양',
+                    'group-header': '그룹 머리글'
+                },
+                scopes: {
+                    folder: '폴더: {name}',
+                    tag: '태그: #{name}',
+                    property: '속성: {name}'
+                }
             },
             propertyKeys: {
                 name: '속성 키 (보관함 프로필)',
