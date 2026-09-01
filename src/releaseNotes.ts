@@ -108,21 +108,21 @@ const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.3.6',
         date: '2026-09-01',
-        showOnUpdate: false,
+        showOnUpdate: true,
         new: [
-            'New setting in Appearance & behavior > Desktop appearance: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip.',
+            'New setting in Appearance & behavior > Desktop appearance: ==Show tags in tooltips==: displays the tags of a note as colored pills in the hover tooltip. Default disabled.',
             'If you do not want to see custom group headers in a specific view like tags or properties, you can now pick the new sort option `None` under `Group by`. This can also be the default group option.'
         ],
         improved: [
-            'Rebuilt the **hover tooltips** with the same look as the built-in Obsidian tooltips but with less flickering and support for tag pills and text hierarchy.',
-            'Added a notice under File display > Word and character count that lists the file appearances and group headers that keep word or character counting active for counts that ==Count type== does not show.'
+            'Rebuilt the **hover tooltips** with the same look and feel as the built-in Obsidian tooltips but with less flickering and support for tag pills and text hierarchy.',
+            'Added a notice under File display > **Word and character count** that lists the file appearances and group headers that keep word or character counting active, which can have a negative impact on performance.'
         ],
         changed: [
-            'Changed ==Show word count in tooltips== to show word counts only when word counts are enabled, so the tooltip setting no longer keeps word counting running on its own.'
+            'Changed ==Show word count in tooltips== to show word counts only when word counts are enabled, so the tooltip setting no longer keeps word counting enabled just for the tooltip.'
         ],
         fixed: [
-            'Word counting for files now stays disabled for custom sort orders unless a list contains a custom group header that shows a word count.',
-            'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1) [#1466](https://github.com/johansan/notebook-navigator/issues/1466).'
+            'When dragging multiple selected files to a folder, all files are now moved instead of only the first (issue was introduced in 3.2.1) [#1466](https://github.com/johansan/notebook-navigator/issues/1466).',
+            'Word counting for files now stays disabled for custom sort orders unless a list contains a custom group header that shows a word count.'
         ]
     },
     {
