@@ -160,7 +160,7 @@ export function migrateLegacySyncedSettings(params: {
     // Migrate legacy groupByDate boolean to noteGrouping dropdown
     const legacyGroupByDate = mutableSettings.groupByDate;
     if (typeof legacyGroupByDate === 'boolean' && typeof storedNoteGrouping === 'undefined') {
-        settings.noteGrouping = legacyGroupByDate ? 'date' : 'custom';
+        settings.noteGrouping = legacyGroupByDate ? 'date' : 'none';
     }
     delete mutableSettings.groupByDate;
 

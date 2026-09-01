@@ -31,6 +31,7 @@ export type AppearanceBehaviorToggleKey =
     | 'enterToOpenFiles'
     | 'showTooltips'
     | 'showTooltipPath'
+    | 'showTooltipTags'
     | 'showTooltipWordCount'
     | 'showInfoButtons'
     | 'colorIconOnly';
@@ -57,6 +58,7 @@ const CONTROL_KEYS: ReadonlySet<AppearanceBehaviorControlKey> = new Set([
     'desktopBackground',
     'showTooltips',
     'showTooltipPath',
+    'showTooltipTags',
     'showTooltipWordCount',
     'startView',
     'showInfoButtons',
@@ -91,6 +93,7 @@ export function applyAppearanceBehaviorControlValue(
         case 'enterToOpenFiles':
         case 'showTooltips':
         case 'showTooltipPath':
+        case 'showTooltipTags':
         case 'showTooltipWordCount':
         case 'showInfoButtons':
         case 'colorIconOnly':

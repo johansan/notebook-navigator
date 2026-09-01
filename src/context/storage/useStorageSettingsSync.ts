@@ -17,7 +17,7 @@
  */
 
 import { useCallback, useEffect, useRef, type MutableRefObject } from 'react';
-import type { TFile } from 'obsidian';
+import type { App, TFile } from 'obsidian';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import type { ContentProviderType, FileContentType } from '../../interfaces/IContentProvider';
 import type { ContentProviderRegistry } from '../../services/content/ContentProviderRegistry';
@@ -54,6 +54,7 @@ import { haveMarkdownCountConsumersChanged } from '../../utils/markdownPipelineC
  *   new visibility rules.
  */
 export function useStorageSettingsSync(params: {
+    app: App;
     settings: NotebookNavigatorSettings;
     stoppedRef: MutableRefObject<boolean>;
     contentRegistryRef: MutableRefObject<ContentProviderRegistry | null>;
@@ -76,6 +77,7 @@ export function useStorageSettingsSync(params: {
     clearCacheRebuildNotice: () => void;
 }): { resetPendingSettingsChanges: () => void } {
     const {
+        app,
         settings,
         stoppedRef,
         contentRegistryRef,
@@ -145,7 +147,7 @@ export function useStorageSettingsSync(params: {
             const shouldShowIndexNotice = (affectedProviders.length > 0 || enabledFeatureImages) && !stoppedRef.current;
 
             if (shouldShowIndexNotice) {
-                const enabledTypes = getCacheRebuildProgressTypes(newSettings);
+                const enabledTypes = getCacheRebuildProgressTypes(newSettings, app);
                 if (enabledTypes.length > 0) {
                     const state = getCacheRebuildNoticeState();
                     if (state?.source !== 'rebuild') {
@@ -167,7 +169,7 @@ export function useStorageSettingsSync(params: {
                 return;
             }
 
-            const metadataDependentTypes = getMetadataDependentTypes(newSettings);
+            const metadataDependentTypes = getMetadataDependentTypes(newSettings, app);
             const affectedProviderTypeSet = new Set<ContentProviderType>(affectedProviders);
             // Queue only metadata providers that were affected by this settings change.
             const metadataTypesToQueue = metadataDependentTypes.filter(type => affectedProviderTypeSet.has(type));
@@ -191,6 +193,7 @@ export function useStorageSettingsSync(params: {
             }
         },
         [
+            app,
             clearCacheRebuildNotice,
             contentRegistryRef,
             getIndexableFiles,
@@ -273,7 +276,7 @@ export function useStorageSettingsSync(params: {
         const hasRelevantSettingsChange =
             !registry ||
             relevantSettings.some(settingKey => previousSettings[settingKey] !== settings[settingKey]) ||
-            haveMarkdownCountConsumersChanged(previousSettings, settings);
+            haveMarkdownCountConsumersChanged(previousSettings, settings, app);
         if (hasRelevantSettingsChange) {
             scheduleSettingsChanges(previousSettings, settings);
         }
@@ -323,6 +326,7 @@ export function useStorageSettingsSync(params: {
 
         prevSettingsRef.current = settings;
     }, [
+        app,
         contentRegistryRef,
         getIndexableFiles,
         hiddenFileNames,

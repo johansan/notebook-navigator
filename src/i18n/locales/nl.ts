@@ -1288,12 +1288,13 @@ export const STRINGS_NL = {
             },
             defaultGrouping: {
                 name: 'Standaard groepering',
-                desc: '**Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
+                desc: 'Zonder groepering blijft de gesorteerde lijst plat. **Koppen** annoteren de gesorteerde lijst zonder de volgorde te veranderen: Aangepast toont koppen gedefinieerd in frontmatter en Datum voegt datumkoppen toe. **Groepen** herordenen de lijst: map- en eigenschapsgroepen worden zelfstandig geordend en notities binnen elke groep volgen de sorteervolgorde.',
                 families: {
                     headers: 'Koppen',
                     groups: 'Groepen'
                 },
                 options: {
+                    none: 'Niet groeperen',
                     custom: 'Aangepast',
                     date: 'Datum',
                     folder: 'Map'
@@ -1766,9 +1767,13 @@ export const STRINGS_NL = {
                 name: 'Pad in tooltips tonen',
                 desc: 'Het mappad onder notitienamen in tooltips weergeven.'
             },
+            showTooltipTags: {
+                name: 'Tags in tooltips tonen',
+                desc: 'Tags van notities in tooltips weergeven wanneer de tagsectie is ingeschakeld.'
+            },
             showTooltipWordCount: {
                 name: 'Aantal woorden in tooltips tonen',
-                desc: 'Het aantal woorden van notities in tooltips weergeven.'
+                desc: 'Het aantal woorden in tooltips weergeven wanneer het aantal woorden is ingeschakeld.'
             },
             resetPaneSeparator: {
                 name: 'Paneelscheidingspositie resetten',
@@ -2019,6 +2024,20 @@ export const STRINGS_NL = {
             showTargetPercentage: {
                 name: 'Doelpercentage tonen',
                 desc: 'Toon alleen het voortgangspercentage wanneer een doelaantal woorden beschikbaar is.'
+            },
+            textCountActiveNotice: {
+                title: 'Tellen is nog actief',
+                summary: 'Woord- of tekenaantallen worden nog steeds voor alle notities berekend omdat de volgende items ze gebruiken:',
+                more: 'en nog {count}',
+                reasons: {
+                    appearance: 'Bestandsweergave',
+                    'group-header': 'Groepskop'
+                },
+                scopes: {
+                    folder: 'Map: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Eigenschap: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Eigenschapssleutels (kluisprofiel)',

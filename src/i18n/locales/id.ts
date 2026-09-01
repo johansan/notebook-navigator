@@ -1285,12 +1285,13 @@ export const STRINGS_ID = {
             },
             defaultGrouping: {
                 name: 'Pengelompokan default',
-                desc: '**Header** memberi anotasi pada daftar yang sudah diurutkan tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
+                desc: 'Tanpa pengelompokan mempertahankan daftar yang diurutkan tetap datar. **Header** memberi anotasi pada daftar tersebut tanpa mengubah urutannya: Kustom menampilkan header yang didefinisikan dalam frontmatter dan Tanggal menyisipkan header tanggal. **Grup** mengurutkan ulang daftar: grup folder dan properti diurutkan sendiri, dan catatan di dalam setiap grup mengikuti urutan yang dipilih.',
                 families: {
                     headers: 'Header',
                     groups: 'Grup'
                 },
                 options: {
+                    none: 'Tanpa pengelompokan',
                     custom: 'Kustom',
                     date: 'Tanggal',
                     folder: 'Folder'
@@ -1763,9 +1764,13 @@ export const STRINGS_ID = {
                 name: 'Tampilkan path di tooltip',
                 desc: 'Tampilkan path folder di bawah nama catatan di tooltip.'
             },
+            showTooltipTags: {
+                name: 'Tampilkan tag di tooltip',
+                desc: 'Tampilkan tag catatan di tooltip saat bagian tag diaktifkan.'
+            },
             showTooltipWordCount: {
                 name: 'Tampilkan jumlah kata di tooltip',
-                desc: 'Tampilkan jumlah kata catatan di tooltip.'
+                desc: 'Tampilkan jumlah kata di tooltip saat jumlah kata diaktifkan.'
             },
             resetPaneSeparator: {
                 name: 'Atur ulang posisi pemisah panel',
@@ -2015,6 +2020,20 @@ export const STRINGS_ID = {
             showTargetPercentage: {
                 name: 'Tampilkan persentase target',
                 desc: 'Tampilkan hanya persentase kemajuan saat target jumlah kata tersedia.'
+            },
+            textCountActiveNotice: {
+                title: 'Penghitungan masih aktif',
+                summary: 'Jumlah kata atau karakter masih dihitung untuk semua catatan karena digunakan oleh item berikut:',
+                more: 'dan {count} lainnya',
+                reasons: {
+                    appearance: 'Tampilan file',
+                    'group-header': 'Header grup'
+                },
+                scopes: {
+                    folder: 'Folder: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Properti: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Kunci properti (profil vault)',
