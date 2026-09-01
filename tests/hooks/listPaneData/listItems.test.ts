@@ -1072,6 +1072,43 @@ describe('buildListItems pinned display scope', () => {
         expect(items.find(item => item.key === 'header-unsorted')?.groupFilePaths).toEqual([unsortedHeaderFile.path]);
     });
 
+    it('keeps the list flat when grouping is none', () => {
+        const app = createApp();
+        const headerFile = createTestTFile('notes/header.md');
+        const plainFile = createTestTFile('notes/plain.md');
+        app.metadataCache.getFileCache = (file: TFile) => ({
+            frontmatter: file.path === headerFile.path ? { group_header: 'Hidden header' } : {}
+        });
+        const db = createDb({
+            [headerFile.path]: { tags: null, properties: null },
+            [plainFile.path]: { tags: null, properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [headerFile, plainFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'none' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectionType: ItemType.TAG,
+            showHiddenItems: false,
+            sortOption: 'title-asc',
+            manualSortGroupHeaderPropertyKey: 'group_header'
+        });
+
+        expect(getHeaderItems(items)).toEqual([]);
+        expect(getFileItems(items)).toEqual([
+            { path: headerFile.path, isPinned: false },
+            { path: plainFile.path, isPinned: false }
+        ]);
+    });
+
     it('adds manual sort custom header word counts and targets', () => {
         const app = createApp();
         const firstFile = createTestTFile('notes/first.md');

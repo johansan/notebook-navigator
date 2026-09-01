@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Platform, parseYaml, type CachedMetadata, type FrontMatterCache, type TFile } from 'obsidian';
+import { Platform, parseYaml, type App, type CachedMetadata, type FrontMatterCache, type TFile } from 'obsidian';
 import { LIMITS } from '../../constants/limits';
 import { type ContentProviderType } from '../../interfaces/IContentProvider';
 import type { NotebookNavigatorSettings } from '../../settings/types';
-import { type PropertyItem, type PropertyValueKind, FileData } from '../../storage/IndexedDBStorage';
+import { type PropertyItem, FileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance } from '../../storage/fileOperations';
 import { areStringArraysEqual } from '../../utils/arrayUtils';
-import { arePropertyItemsEqual } from '../../utils/propertyUtils';
+import { arePropertyItemsEqual, extractFrontmatterPropertyValues } from '../../utils/propertyUtils';
 import {
     type FenceMarkerChar,
     isFenceClose,
@@ -99,7 +99,8 @@ export type MarkdownPipelineClearFlags = {
 };
 
 export function getMarkdownPipelineClearFlags(
-    context: { oldSettings: NotebookNavigatorSettings; newSettings: NotebookNavigatorSettings } | undefined
+    context: { oldSettings: NotebookNavigatorSettings; newSettings: NotebookNavigatorSettings } | undefined,
+    app?: App
 ): MarkdownPipelineClearFlags {
     if (!context) {
         return {
@@ -145,7 +146,7 @@ export function getMarkdownPipelineClearFlags(
         // frontmatter value is indexed for internal search.
         shouldClearProperties: false,
         shouldClearFeatureImage,
-        shouldClearWordCounts: !hasMarkdownWordCountConsumer(oldSettings) && hasMarkdownWordCountConsumer(newSettings),
+        shouldClearWordCounts: !hasMarkdownWordCountConsumer(oldSettings, app) && hasMarkdownWordCountConsumer(newSettings, app),
         shouldClearCharacterCounts: !hasMarkdownCharacterCountConsumer(oldSettings) && hasMarkdownCharacterCountConsumer(newSettings)
     };
 }
@@ -332,45 +333,6 @@ function countMarkdownTasks(content: string, bodyStartIndex: number): { taskTota
     return { taskTotal, taskUnfinished };
 }
 
-type ExtractedPropertyValue = {
-    value: string;
-    valueKind?: PropertyValueKind;
-};
-
-// Converts frontmatter values into searchable scalar entries.
-// Supports scalars and nested arrays; treats null as unassigned; skips empty strings and non-finite numbers.
-function extractFrontmatterValues(value: unknown): ExtractedPropertyValue[] {
-    if (value === null) {
-        return [{ value: '' }];
-    }
-
-    if (typeof value === 'string') {
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? [{ value: trimmed, valueKind: 'string' }] : [];
-    }
-
-    if (typeof value === 'number') {
-        if (!Number.isFinite(value)) {
-            return [];
-        }
-        return [{ value: value.toString(), valueKind: 'number' }];
-    }
-
-    if (typeof value === 'boolean') {
-        return [{ value: value ? 'true' : 'false', valueKind: 'boolean' }];
-    }
-
-    if (Array.isArray(value)) {
-        const parts: ExtractedPropertyValue[] = [];
-        for (const entry of value) {
-            parts.push(...extractFrontmatterValues(entry));
-        }
-        return parts;
-    }
-
-    return [];
-}
-
 // Builds the indexed property list from every supported frontmatter value. Visibility is applied later by
 // navigation and list consumers, while internal search keeps access to properties hidden from those surfaces.
 function resolvePropertyItemsFromFrontmatter(frontmatter: FrontMatterCache | null): PropertyItem[] {
@@ -383,7 +345,7 @@ function resolvePropertyItemsFromFrontmatter(frontmatter: FrontMatterCache | nul
     const entries: PropertyItem[] = [];
 
     Object.keys(frontmatter).forEach(fieldKey => {
-        const values = extractFrontmatterValues(frontmatter[fieldKey]);
+        const values = extractFrontmatterPropertyValues(frontmatter[fieldKey]);
         if (values.length === 0) {
             return;
         }
@@ -418,7 +380,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
         {
             id: 'wordCount',
             needsProcessing: context => {
-                if (!hasMarkdownWordCountConsumer(context.settings)) {
+                if (!hasMarkdownWordCountConsumer(context.settings, this.app)) {
                     return false;
                 }
                 if (!context.fileData || context.fileModified || context.fileData.wordCount === null) {
@@ -528,8 +490,6 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             'featureImagePixelSize',
             'downloadExternalFeatureImages',
             'textCountDisplay',
-            'showTooltips',
-            'showTooltipWordCount',
             'calendarEnabled',
             'manualSortGroupHeaderProperty',
             'manualSortPropertyKey',
@@ -566,10 +526,13 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
 
     shouldRegenerate(oldSettings: NotebookNavigatorSettings, newSettings: NotebookNavigatorSettings): boolean {
         const { shouldClearPreview, shouldClearProperties, shouldClearFeatureImage, shouldClearWordCounts, shouldClearCharacterCounts } =
-            getMarkdownPipelineClearFlags({
-                oldSettings,
-                newSettings
-            });
+            getMarkdownPipelineClearFlags(
+                {
+                    oldSettings,
+                    newSettings
+                },
+                this.app
+            );
         return (
             shouldClearPreview || shouldClearProperties || shouldClearFeatureImage || shouldClearWordCounts || shouldClearCharacterCounts
         );
@@ -577,7 +540,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
 
     async clearContent(context?: { oldSettings: NotebookNavigatorSettings; newSettings: NotebookNavigatorSettings }): Promise<void> {
         const { shouldClearPreview, shouldClearProperties, shouldClearFeatureImage, shouldClearWordCounts, shouldClearCharacterCounts } =
-            getMarkdownPipelineClearFlags(context);
+            getMarkdownPipelineClearFlags(context, this.app);
 
         if (
             !shouldClearPreview &&
@@ -641,7 +604,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
             }
         }
         const needsProperties = fileData.properties === null;
-        const needsWordCount = hasMarkdownWordCountConsumer(settings) && fileData.wordCount === null;
+        const needsWordCount = hasMarkdownWordCountConsumer(settings, this.app) && fileData.wordCount === null;
         const needsCharacterCount =
             hasMarkdownCharacterCountConsumer(settings) &&
             (fileData.characterCountWithSpaces === null || fileData.characterCountWithoutSpaces === null);
@@ -661,7 +624,7 @@ export class MarkdownPipelineContentProvider extends FeatureImageContentProvider
 
         const previewEnabled = hasMarkdownPreviewConsumer(settings);
         const featureImageEnabled = hasMarkdownFeatureImageConsumer(settings);
-        const wordCountEnabled = hasMarkdownWordCountConsumer(settings);
+        const wordCountEnabled = hasMarkdownWordCountConsumer(settings, this.app);
         const characterCountEnabled = hasMarkdownCharacterCountConsumer(settings);
         const tasksEnabled = hasMarkdownTaskConsumer(settings);
         const previewPropertiesEnabled = previewEnabled && settings.previewProperties.length > 0;

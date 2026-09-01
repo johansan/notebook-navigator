@@ -502,14 +502,13 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
 
             const rebuildOptions = (): void => {
                 dropdown.selectEl.empty();
-                // The entries split into two families: Custom and Date annotate the sorted list
-                // with headers and never change its order, while Folder and property groups
-                // partition the list and order the groups on their own. The optgroup labels make
-                // that split visible in the control itself.
+                // None disables headers, while Custom and Date annotate the sorted list without
+                // changing its order. Folder and property groups partition the list and order the
+                // groups on their own.
                 const headersGroupEl = dropdown.selectEl.createEl('optgroup', {
                     attr: { label: strings.settings.items.defaultGrouping.families.headers }
                 });
-                (['custom', 'date'] as const).forEach(option => {
+                (['none', 'custom', 'date'] as const).forEach(option => {
                     headersGroupEl.createEl('option', { value: option, text: strings.settings.items.defaultGrouping.options[option] });
                 });
                 const groupsGroupEl = dropdown.selectEl.createEl('optgroup', {
@@ -551,7 +550,7 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
         .addDropdown(dropdown => {
             // Group order dropdown sharing the row with the mode dropdown. Groups are arranged by
             // their property value in this order; follow-sort borrows the direction from the sort
-            // order. Base modes have no group order at all — Custom and Date never reorder and
+            // order. Base modes have no group order at all — None, Custom, and Date never reorder and
             // Folder has its own fixed ordering — so the control hides rather than showing a
             // disabled value that would state something false.
             dropdown.selectEl.setAttribute('aria-label', strings.settings.items.defaultGroupingDirection.name);

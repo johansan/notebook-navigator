@@ -24,8 +24,8 @@ import { getIconService, useIconServiceVersion } from '../services/icons';
 import type { ItemType } from '../types';
 import type { ListReorderHandlers } from '../types/listReorder';
 import { ObsidianIcon } from './ObsidianIcon';
-import { Platform, setIcon, setTooltip } from 'obsidian';
-import { getTooltipPlacement } from '../utils/domUtils';
+import { Platform, setIcon } from 'obsidian';
+import { isInsideNativeTooltipTarget, useTooltip } from '../context/TooltipContext';
 
 /**
  * Configuration for the drag handle element that appears in reorderable rows
@@ -86,7 +86,7 @@ interface NavigationListRowProps {
     onLabelMouseDown?: (event: React.MouseEvent<HTMLSpanElement>) => void;
     trailingAccessory?: React.ReactNode;
     showIcon?: boolean;
-    tooltip?: string;
+    tooltip?: React.ReactNode;
     dragRef?: (node: HTMLDivElement | null) => void;
     dragHandleRef?: (node: HTMLSpanElement | null) => void;
     dragAttributes?: React.HTMLAttributes<HTMLElement>;
@@ -293,21 +293,57 @@ export function NavigationListRow({
         [dragRef]
     );
 
+    const itemTooltip = useTooltip();
+    const tooltipContent = !Platform.isMobile && settings.showTooltips && tooltip ? tooltip : null;
+
+    const handleTooltipMouseOver = useCallback(
+        (event: React.MouseEvent) => {
+            const row = rowRef.current;
+            if (!row || tooltipContent === null) {
+                return;
+            }
+            // Descendants with native tooltips own the hover; hiding the row tooltip mirrors
+            // how Obsidian shows only the innermost labelled element's tooltip. The mouseover
+            // refire when leaving the descendant restores the row tooltip.
+            if (isInsideNativeTooltipTarget(row, event.target)) {
+                itemTooltip.hideTooltip(row);
+                return;
+            }
+            itemTooltip.showTooltip(row, tooltipContent);
+        },
+        [itemTooltip, tooltipContent]
+    );
+
+    const handleTooltipMouseLeave = useCallback(() => {
+        const row = rowRef.current;
+        if (row) {
+            itemTooltip.hideTooltip(row);
+        }
+    }, [itemTooltip]);
+
+    // Refresh a visible or pending tooltip when the row's tooltip content changes while hovered.
     useEffect(() => {
         const row = rowRef.current;
         if (!row) {
             return;
         }
-
-        if (Platform.isMobile || !settings.showTooltips || !tooltip) {
-            setTooltip(row, '');
+        if (tooltipContent === null) {
+            itemTooltip.hideTooltip(row);
             return;
         }
+        itemTooltip.updateTooltip(row, tooltipContent);
+    }, [itemTooltip, tooltipContent]);
 
-        setTooltip(row, tooltip, {
-            placement: getTooltipPlacement()
-        });
-    }, [settings.showTooltips, tooltip]);
+    // Hide the tooltip when the row unmounts, otherwise a virtualized scroll can leave a
+    // tooltip anchored to a detached element.
+    useEffect(() => {
+        const row = rowRef.current;
+        return () => {
+            if (row) {
+                itemTooltip.hideTooltip(row);
+            }
+        };
+    }, [itemTooltip]);
 
     const setHandleRef = useCallback(
         (node: HTMLSpanElement | null) => {
@@ -345,6 +381,8 @@ export function NavigationListRow({
             draggable={isNativeDraggable || undefined}
             onClick={onClick}
             onMouseDown={onMouseDown}
+            onMouseOver={tooltipContent !== null ? handleTooltipMouseOver : undefined}
+            onMouseLeave={tooltipContent !== null ? handleTooltipMouseLeave : undefined}
             onContextMenu={onContextMenu}
             onDragOver={dragHandlers?.onDragOver}
             onDragLeave={dragHandlers?.onDragLeave}

@@ -66,6 +66,7 @@ type AutoExpandTarget = { type: 'folder' | 'tag'; path: string };
 
 const SUPPRESS_CLICK_AFTER_DROP_MS = 100;
 const OBSIDIAN_FILE_MIME = 'obsidian/file';
+const OBSIDIAN_FILES_MIME = 'obsidian/files';
 const TEXT_PLAIN_MIME = 'text/plain';
 const TEXT_URI_LIST_MIME = 'text/uri-list';
 
@@ -541,6 +542,12 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 const draggedFiles = getFilesFromPaths(selectedPaths);
                 if (draggedFiles.length > 0) {
                     internalDragSession.setSession({ type: ItemType.FILE, filePaths: draggedFiles.map(file => file.path) });
+                    // The OS drag pasteboard on macOS keeps only the first URL of text/uri-list
+                    // (Chromium OSExchangeDataProviderMac::SetURLs), so the native URI payload alone
+                    // collapses a multi-file drop to one file. Custom MIME entries round-trip through
+                    // the drag session intact, so the complete selection travels in obsidian/files.
+                    // This also covers drops in other windows where the internal drag session is not available.
+                    e.dataTransfer.setData(OBSIDIAN_FILES_MIME, JSON.stringify(draggedFiles.map(file => file.path)));
                     setNativeFileDragPayload(e.dataTransfer, app.vault.getName(), draggedFiles);
                     setDragManagerPayload({
                         type: 'files',
