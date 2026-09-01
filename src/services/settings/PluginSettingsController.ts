@@ -200,27 +200,6 @@ const LEGACY_LOCAL_SYNC_MODE_SETTING_IDS = new Set<SyncModeSettingId>([
     'uiScale'
 ]);
 
-function hasLegacyNoneGroupingInAppearanceMap(value: unknown): boolean {
-    if (!isRecord(value)) {
-        return false;
-    }
-
-    return Object.values(value).some(appearance => isRecord(appearance) && appearance.groupBy === 'none');
-}
-
-function containsLegacyNoneGroupingInStoredData(storedData: Record<string, unknown> | null): boolean {
-    if (!storedData) {
-        return false;
-    }
-
-    return (
-        storedData.noteGrouping === 'none' ||
-        hasLegacyNoneGroupingInAppearanceMap(storedData.folderAppearances) ||
-        hasLegacyNoneGroupingInAppearanceMap(storedData.tagAppearances) ||
-        hasLegacyNoneGroupingInAppearanceMap(storedData.propertyAppearances)
-    );
-}
-
 export class PluginSettingsController {
     private currentSettings: NotebookNavigatorSettings = structuredClone(DEFAULT_SETTINGS);
     private syncModeRegistry: SyncModeRegistry | null = null;
@@ -538,7 +517,6 @@ export class PluginSettingsController {
         const hadMissingPropertyGroupKeyInStoredData = Boolean(
             storedData && !Object.prototype.hasOwnProperty.call(storedData, 'propertyGroupKey')
         );
-        const hadLegacyNoneGroupingInStoredData = containsLegacyNoneGroupingInStoredData(storedData);
         const hadLegacyOpenFolderNotesInNewTabInStoredData = Boolean(
             storedData && Object.prototype.hasOwnProperty.call(storedData, 'openFolderNotesInNewTab')
         );
@@ -825,7 +803,6 @@ export class PluginSettingsController {
             hadMissingPropertyGroupKeyInStoredData ||
             reconciledDefaultFolderSort.changed ||
             reconciledDefaultNoteGrouping.changed ||
-            hadLegacyNoneGroupingInStoredData ||
             hadLegacyOpenFolderNotesInNewTabInStoredData ||
             hadInvalidShiftEnterOpenContextInStoredData ||
             hadInvalidCmdCtrlEnterOpenContextInStoredData ||

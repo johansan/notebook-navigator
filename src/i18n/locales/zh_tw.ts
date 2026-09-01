@@ -1274,12 +1274,13 @@ export const STRINGS_ZH_TW = {
             },
             defaultGrouping: {
                 name: '預設分組',
-                desc: '**標題**在不改變順序的情況下為已排序的列表加上標註：自訂顯示在 frontmatter 中定義的標題，日期插入日期標題。**分組**會重新排列列表：資料夾和屬性分組按自身順序排列，每個分組內的筆記遵循排序方式。',
+                desc: '不分組會將排序結果維持為單一列表。**標題**在不改變順序的情況下為其加上標註：自訂顯示在 frontmatter 中定義的標題，日期插入日期標題。**分組**會重新排列列表：資料夾和屬性分組按自身順序排列，每個分組內的筆記遵循排序方式。',
                 families: {
                     headers: '標題',
                     groups: '分組'
                 },
                 options: {
+                    none: '不分組',
                     custom: '自訂',
                     date: '日期',
                     folder: '資料夾'
@@ -1749,9 +1750,13 @@ export const STRINGS_ZH_TW = {
                 name: '在工具提示中顯示路徑',
                 desc: '在工具提示中的筆記名稱下方顯示資料夾路徑。'
             },
+            showTooltipTags: {
+                name: '在工具提示中顯示標籤',
+                desc: '啟用標籤區段時，在工具提示中顯示筆記的標籤。'
+            },
             showTooltipWordCount: {
                 name: '在工具提示中顯示字數',
-                desc: '在工具提示中顯示筆記字數。'
+                desc: '啟用字數統計時，在工具提示中顯示字數。'
             },
             resetPaneSeparator: {
                 name: '重設窗格分隔符位置',
@@ -2000,6 +2005,20 @@ export const STRINGS_ZH_TW = {
             showTargetPercentage: {
                 name: '顯示目標百分比',
                 desc: '有目標字數時，只顯示進度百分比。'
+            },
+            textCountActiveNotice: {
+                title: '計數仍處於啟用狀態',
+                summary: '由於以下項目使用字數或字元數，系統仍會為所有筆記計算這些數值：',
+                more: '以及另外 {count} 個',
+                reasons: {
+                    appearance: '檔案外觀',
+                    'group-header': '群組標題'
+                },
+                scopes: {
+                    folder: '資料夾：{name}',
+                    tag: '標籤：#{name}',
+                    property: '屬性：{name}'
+                }
             },
             propertyKeys: {
                 name: '屬性鍵（儲存庫設定檔）',

@@ -186,17 +186,21 @@ export function extractFilePathsFromDataTransfer(dataTransfer: DataTransfer | nu
         return [singlePayload];
     }
 
-    const uriListPayload = dataTransfer.getData(TEXT_URI_LIST_MIME);
-    if (isNonEmptyString(uriListPayload)) {
-        const parsed = parseObsidianOpenUriPayload(uriListPayload, options);
+    // Check text/plain before text/uri-list: the macOS drag pasteboard keeps only the first
+    // URL of a multi-URL text/uri-list (Chromium OSExchangeDataProviderMac::SetURLs) while the
+    // plain-text entry carries the complete payload. Reading text/uri-list first would collapse
+    // a multi-file drag to a single file.
+    const plainTextPayload = dataTransfer.getData(TEXT_PLAIN_MIME);
+    if (isNonEmptyString(plainTextPayload)) {
+        const parsed = parseObsidianOpenUriPayload(plainTextPayload, options);
         if (parsed && parsed.length > 0) {
             return parsed;
         }
     }
 
-    const plainTextPayload = dataTransfer.getData(TEXT_PLAIN_MIME);
-    if (isNonEmptyString(plainTextPayload)) {
-        const parsed = parseObsidianOpenUriPayload(plainTextPayload, options);
+    const uriListPayload = dataTransfer.getData(TEXT_URI_LIST_MIME);
+    if (isNonEmptyString(uriListPayload)) {
+        const parsed = parseObsidianOpenUriPayload(uriListPayload, options);
         if (parsed && parsed.length > 0) {
             return parsed;
         }

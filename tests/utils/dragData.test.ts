@@ -73,6 +73,43 @@ describe('dragData', () => {
             ).toEqual(['docs/note.md', 'Assets/image.png']);
         });
 
+        it('reads all paths from obsidian/files when the OS collapsed text/uri-list to one URL', () => {
+            // Models a macOS multi-file drag: the drag pasteboard keeps only the first
+            // text/uri-list URL while obsidian/files and text/plain arrive complete.
+            const fullPayload = [
+                'obsidian://open?vault=My%20Vault&file=Folder%2FA',
+                'obsidian://open?vault=My%20Vault&file=Folder%2FB'
+            ].join('\n');
+            const dataTransfer = createDataTransfer([
+                ['obsidian/files', '["Folder/A.md","Folder/B.md"]'],
+                ['text/uri-list', 'obsidian://open?vault=My%20Vault&file=Folder%2FA'],
+                ['text/plain', fullPayload]
+            ]);
+
+            expect(extractFilePathsFromDataTransfer(dataTransfer)).toEqual(['Folder/A.md', 'Folder/B.md']);
+        });
+
+        it('reads all paths from text/plain when the OS collapsed text/uri-list to one URL', () => {
+            // Models a macOS multi-file drag without an obsidian/files entry: text/plain
+            // carries the complete URI payload and must be read before text/uri-list.
+            const fullPayload = [
+                'obsidian://open?vault=My%20Vault&file=Folder%2FA',
+                'obsidian://open?vault=My%20Vault&file=Folder%2FB'
+            ].join('\n');
+            const existingPaths = new Set(['Folder/A.md', 'Folder/B.md']);
+            const dataTransfer = createDataTransfer([
+                ['text/uri-list', 'obsidian://open?vault=My%20Vault&file=Folder%2FA'],
+                ['text/plain', fullPayload]
+            ]);
+
+            expect(
+                extractFilePathsFromDataTransfer(dataTransfer, {
+                    getPathType: path => (existingPaths.has(path) ? 'file' : null),
+                    vaultName: 'My Vault'
+                })
+            ).toEqual(['Folder/A.md', 'Folder/B.md']);
+        });
+
         it('prefers extensionless markdown notes over same-named folders', () => {
             const payload = 'obsidian://open?vault=My%20Vault&file=Projects';
             const dataTransfer = createDataTransfer([['text/plain', payload]]);

@@ -354,6 +354,21 @@ export function cleanupCollapsedPinnedContextKeys(
     return changed;
 }
 
+/** Returns whether a record has at least one own enumerable entry. */
+export function hasOwnRecordEntries(record: Record<string, string> | undefined): boolean {
+    if (!record) {
+        return false;
+    }
+
+    for (const key in record) {
+        if (Object.prototype.hasOwnProperty.call(record, key)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export function casefold(value: string): string {
     return normalizeCaseInsensitiveIdentifier(value);
 }

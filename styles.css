@@ -1498,6 +1498,123 @@ button.nn-icon-button.nn-icon-button-active svg:not(.nn-vault-icon-svg) {
     stroke-width: 2;
     fill: none;
 }
+/* Source: src/styles/sections/ui-tooltip.css */
+
+/* ========================================================================
+   Custom Item Tooltip
+   ======================================================================== */
+
+/*
+ * Custom hover tooltip for file, folder, and shortcut rows. Mirrors the built-in
+ * Obsidian `.tooltip` element (background, typography, radius, shadow, arrow, and
+ * pop animation) while allowing structured content such as tag pills. The element
+ * is positioned by TooltipContext with `top` at the anchor's vertical center; the
+ * base translateY(-50%) centers instant handoffs, while the animation keyframes
+ * preserve the same centering during the built-in-style pop animation.
+ */
+.nn-tooltip {
+    position: fixed;
+    z-index: var(--layer-tooltip);
+    background-color: var(--background-modifier-message);
+    color: #fafafa;
+    font-size: var(--font-ui-smaller);
+    font-weight: var(--font-medium);
+    line-height: var(--line-height-tight);
+    border-radius: var(--radius-s);
+    padding: var(--size-4-1) var(--size-4-2);
+    max-width: 300px;
+    box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
+    pointer-events: none;
+    text-align: center;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    transform: translateY(-50%);
+    animation: nn-tooltip-pop 200ms forwards ease-in-out;
+}
+
+/* Row-to-row handoffs already passed the initial delay, so replaying the opacity ramp
+   on every dense list row would keep the tooltip in a perpetual fade-in state. */
+.nn-tooltip[data-instant='true'] {
+    animation: none;
+}
+
+@keyframes nn-tooltip-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) scale(1);
+    }
+    20% {
+        opacity: 0.7;
+        transform: translateY(-50%) scale(1.02);
+    }
+    40% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Triangle pointing at the anchor, matching the built-in tooltip arrow */
+.nn-tooltip-arrow {
+    position: absolute;
+    top: calc(50% - 5px);
+    width: 0;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+}
+
+.nn-tooltip[data-placement='right'] .nn-tooltip-arrow {
+    left: -5px;
+    border-right: 5px solid var(--background-modifier-message);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* The arrow box starts at the tooltip's right edge so the triangle base touches it; the
+   built-in offset of calc(100% + 5px) relies on a margin-left the built-in base rule adds */
+.nn-tooltip[data-placement='left'] .nn-tooltip-arrow {
+    left: 100%;
+    border-left: 5px solid var(--background-modifier-message);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* Secondary lines (folder path, dates) sit back so the title and pills read first */
+.nn-tooltip-muted {
+    color: color-mix(in srgb, #fafafa 75%, transparent);
+}
+
+/* Date block separated from the lines above like the blank line in built-in tooltips */
+.nn-tooltip-dates {
+    margin-top: var(--size-4-2);
+}
+
+/* Tag pills wrap to the tooltip width; the tooltip grows in height to fit all tags */
+.nn-tooltip-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--size-4-1);
+    margin-top: var(--size-4-1);
+    margin-bottom: var(--size-4-1);
+}
+
+/* Compact pill sizing inside the tooltip; custom tag colors come from the shared tag
+   pill rules, while uncustomized pills switch to light text and border because the
+   list-pane defaults are unreadable on the dark tooltip background in light themes */
+.nn-tooltip .nn-file-tag {
+    height: 18px;
+    font-size: 11px;
+    padding: 0 6px;
+    --nn-theme-file-tag-color: color-mix(in srgb, #fafafa 85%, transparent);
+    --nn-theme-file-tag-border-color: color-mix(in srgb, #fafafa 40%, transparent);
+    --nn-theme-file-tag-bg: transparent;
+}
 /* Source: src/styles/sections/layout-spacers.css */
 
 /* ========================================================================
@@ -7197,6 +7314,24 @@ body.nn-resizing {
 
 .nn-setting-info-list li + li {
     margin-top: 4px;
+}
+
+.nn-setting-text-count-warning-header {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2-2);
+    margin-bottom: var(--size-2-2);
+}
+
+.nn-setting-text-count-warning-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--text-warning);
+}
+
+.nn-setting-text-count-warning-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Wider text inputs for settings that benefit from more space */

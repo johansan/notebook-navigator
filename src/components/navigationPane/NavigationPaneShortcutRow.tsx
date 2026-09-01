@@ -28,7 +28,8 @@ import { getFolderNote } from '../../utils/folderNoteLookup';
 import { getExtensionSuffix, shouldShowExtensionSuffix } from '../../utils/fileTypeUtils';
 import { shouldExcludeFolderFromDescendants } from '../../utils/fileFilters';
 import { getPathBaseName } from '../../utils/pathUtils';
-import { buildFileTooltip, buildFolderTooltip } from '../../utils/navigationTooltipUtils';
+import { buildFolderTooltip } from '../../utils/navigationTooltipUtils';
+import { FileTooltipContent, FileTooltipTagRow } from '../FileTooltipContent';
 import { ShortcutItem } from '../ShortcutItem';
 import type { NavigationPaneRowProps } from './NavigationPaneItemRenderer.types';
 
@@ -189,16 +190,25 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 canInteract && note ? { type: 'note', key: item.key, file: note } : { type: 'missing', key: item.key, kind: 'note' };
             const shortcutBackground = isMissing ? undefined : getSolidBackground(item.backgroundColor);
             const tooltip =
-                canInteract && note && shouldShowTooltip
-                    ? buildFileTooltip({
-                          file: note,
-                          displayName: noteDisplayName,
-                          extensionSuffix,
-                          settings,
-                          getFileTimestamps: context.getFileTimestamps,
-                          wordCount: context.getFileWordCount(note)
-                      })
-                    : undefined;
+                canInteract && note && shouldShowTooltip ? (
+                    <FileTooltipContent
+                        file={note}
+                        displayName={noteDisplayName}
+                        extensionSuffix={extensionSuffix}
+                        settings={settings}
+                        getFileTimestamps={context.getFileTimestamps}
+                        wordCount={context.getFileWordCount(note)}
+                        tagRow={
+                            settings.showTooltipTags ? (
+                                <FileTooltipTagRow
+                                    file={note}
+                                    fileItemPillDecorationModel={context.fileItemPillDecorationModel}
+                                    fileItemPillOrderModel={context.fileItemPillOrderModel}
+                                />
+                            ) : undefined
+                        }
+                    />
+                ) : undefined;
             const shortcutProps = {
                 icon: isMissing
                     ? 'lucide-alert-triangle'
@@ -403,16 +413,25 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
             const displayName = getFileDisplayName(note);
             const extensionSuffix = shouldShowExtensionSuffix(note) ? getExtensionSuffix(note) : '';
             const label = extensionSuffix ? `${displayName}${extensionSuffix}` : displayName;
-            const tooltip = shouldShowTooltip
-                ? buildFileTooltip({
-                      file: note,
-                      displayName,
-                      extensionSuffix,
-                      settings,
-                      getFileTimestamps: context.getFileTimestamps,
-                      wordCount: context.getFileWordCount(note)
-                  })
-                : undefined;
+            const tooltip = shouldShowTooltip ? (
+                <FileTooltipContent
+                    file={note}
+                    displayName={displayName}
+                    extensionSuffix={extensionSuffix}
+                    settings={settings}
+                    getFileTimestamps={context.getFileTimestamps}
+                    wordCount={context.getFileWordCount(note)}
+                    tagRow={
+                        settings.showTooltipTags ? (
+                            <FileTooltipTagRow
+                                file={note}
+                                fileItemPillDecorationModel={context.fileItemPillDecorationModel}
+                                fileItemPillOrderModel={context.fileItemPillOrderModel}
+                            />
+                        ) : undefined
+                    }
+                />
+            ) : undefined;
 
             return (
                 <ShortcutItem
