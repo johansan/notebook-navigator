@@ -27,17 +27,17 @@ import type { FileVisibility } from './fileTypeUtils';
 import { shouldDisplayFile } from './fileTypeUtils';
 import { formatTextCount } from './wordCountUtils';
 
-type FileTooltipSettings = Pick<NotebookNavigatorSettings, 'dateFormat' | 'timeFormat' | 'showTooltipPath' | 'showTooltipWordCount'>;
-
-interface FileTooltipOptions {
+interface FileTooltipWordCountLineOptions {
     file: TFile;
-    displayName: string;
-    extensionSuffix: string;
-    settings: FileTooltipSettings;
+    settings: Pick<NotebookNavigatorSettings, 'showTooltipWordCount'>;
+    wordCount: number | null | undefined;
+}
+
+interface FileTooltipDateLinesOptions {
+    file: TFile;
+    settings: Pick<NotebookNavigatorSettings, 'dateFormat' | 'timeFormat'>;
     getFileTimestamps: (file: TFile) => { created: number; modified: number };
     sortOption?: string | null | undefined;
-    unfinishedTaskTooltipText?: string | null | undefined;
-    wordCount?: number | null | undefined;
 }
 
 interface FolderTooltipOptions {
@@ -50,51 +50,45 @@ interface FolderTooltipOptions {
     showHiddenItems: boolean;
 }
 
-function formatDateLines(createdDate: string, modifiedDate: string, sortOption?: string | null): string {
-    if (sortOption?.startsWith('created-')) {
-        return `${strings.tooltips.createdAt} ${createdDate}\n${strings.tooltips.lastModifiedAt} ${modifiedDate}`;
-    }
-
-    return `${strings.tooltips.lastModifiedAt} ${modifiedDate}\n${strings.tooltips.createdAt} ${createdDate}`;
-}
-
-export function buildFileTooltip({
+/**
+ * Builds the two date lines of a file tooltip. The line matching the active sort option
+ * comes first: created-date sorts lead with the created line, all other sorts lead with
+ * the modified line.
+ */
+export function buildFileTooltipDateLines({
     file,
-    displayName,
-    extensionSuffix,
     settings,
     getFileTimestamps,
-    sortOption,
-    unfinishedTaskTooltipText,
-    wordCount
-}: FileTooltipOptions): string {
+    sortOption
+}: FileTooltipDateLinesOptions): [string, string] {
     const dateTimeFormat = settings.timeFormat ? `${settings.dateFormat} ${settings.timeFormat}` : settings.dateFormat;
     const timestamps = getFileTimestamps(file);
     const createdDate = DateUtils.formatDate(timestamps.created, dateTimeFormat);
     const modifiedDate = DateUtils.formatDate(timestamps.modified, dateTimeFormat);
-    const topLine = extensionSuffix.length > 0 ? file.name : displayName;
-    const tooltipLines = [topLine];
 
-    if (settings.showTooltipPath) {
-        tooltipLines.push(file.parent?.path ?? '/');
+    if (sortOption?.startsWith('created-')) {
+        return [`${strings.tooltips.createdAt} ${createdDate}`, `${strings.tooltips.lastModifiedAt} ${modifiedDate}`];
     }
 
-    if (unfinishedTaskTooltipText) {
-        tooltipLines.push(unfinishedTaskTooltipText);
-    }
+    return [`${strings.tooltips.lastModifiedAt} ${modifiedDate}`, `${strings.tooltips.createdAt} ${createdDate}`];
+}
 
+/**
+ * Returns the word count line of a file tooltip. Null when the tooltip word count setting is
+ * off, the file is not markdown, or no count is cached for it.
+ */
+export function buildFileTooltipWordCountLine({ file, settings, wordCount }: FileTooltipWordCountLineOptions): string | null {
     if (
-        settings.showTooltipWordCount &&
-        file.extension === 'md' &&
-        typeof wordCount === 'number' &&
-        Number.isFinite(wordCount) &&
-        wordCount >= 0
+        !settings.showTooltipWordCount ||
+        file.extension !== 'md' ||
+        typeof wordCount !== 'number' ||
+        !Number.isFinite(wordCount) ||
+        wordCount < 0
     ) {
-        tooltipLines.push(`${strings.tooltips.wordCount}: ${formatTextCount(wordCount)}`);
+        return null;
     }
 
-    tooltipLines.push('', formatDateLines(createdDate, modifiedDate, sortOption));
-    return tooltipLines.join('\n');
+    return `${strings.tooltips.wordCount}: ${formatTextCount(wordCount)}`;
 }
 
 export function buildFolderTooltip({

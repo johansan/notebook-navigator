@@ -1279,12 +1279,13 @@ export const STRINGS_EN = {
             },
             defaultGrouping: {
                 name: 'Default grouping',
-                desc: '**Headers** annotate the sorted list without changing its order: Custom shows headers defined in frontmatter, and Date inserts date headers. **Groups** reorder the list: folder and property groups are ordered on their own, and notes inside each group follow the sort order.',
+                desc: 'None keeps the sorted list flat. **Headers** annotate it without changing its order: Custom shows headers defined in frontmatter, and Date inserts date headers. **Groups** reorder the list: folder and property groups are ordered on their own, and notes inside each group follow the sort order.',
                 families: {
                     headers: 'Headers',
                     groups: 'Groups'
                 },
                 options: {
+                    none: 'None',
                     custom: 'Custom',
                     date: 'Date',
                     folder: 'Folder'
@@ -1756,9 +1757,13 @@ export const STRINGS_EN = {
                 name: 'Show path in tooltips',
                 desc: 'Display the folder path below note names in tooltips.'
             },
+            showTooltipTags: {
+                name: 'Show tags in tooltips',
+                desc: 'Display note tags in tooltips when the tags section is enabled.'
+            },
             showTooltipWordCount: {
                 name: 'Show word count in tooltips',
-                desc: 'Display note word counts in tooltips.'
+                desc: 'Display word counts in tooltips when word counts are enabled.'
             },
             resetPaneSeparator: {
                 name: 'Reset pane separator position',
@@ -2028,6 +2033,20 @@ export const STRINGS_EN = {
             showTargetPercentage: {
                 name: 'Show target percentage',
                 desc: 'Display only the progress percentage when a target word count is available.'
+            },
+            textCountActiveNotice: {
+                title: 'Counting is still on',
+                summary: 'Word or character counts are still calculated for all notes because they are used by the following:',
+                more: 'and {count} more',
+                reasons: {
+                    appearance: 'File appearance',
+                    'group-header': 'Group header'
+                },
+                scopes: {
+                    folder: 'Folder: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Property: {name}'
+                }
             },
             dateFormat: {
                 name: 'Date format',

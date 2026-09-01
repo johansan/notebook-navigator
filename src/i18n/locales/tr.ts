@@ -1284,12 +1284,13 @@ export const STRINGS_TR = {
             },
             defaultGrouping: {
                 name: 'Varsayılan gruplama',
-                desc: "**Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
+                desc: "Gruplama yok seçeneği sıralanmış listeyi gruplara ayırmadan düz tutar. **Başlıklar**, sıralanmış listeyi sırasını değiştirmeden işaretler: Özel, frontmatter'da tanımlanan başlıkları gösterir; Tarih, tarih başlıkları ekler. **Gruplar** listeyi yeniden sıralar: klasör ve özellik grupları kendi başlarına sıralanır ve her gruptaki notlar sıralama düzenini izler.",
                 families: {
                     headers: 'Başlıklar',
                     groups: 'Gruplar'
                 },
                 options: {
+                    none: 'Gruplama yok',
                     custom: 'Özel',
                     date: 'Tarih',
                     folder: 'Klasör'
@@ -1762,9 +1763,13 @@ export const STRINGS_TR = {
                 name: 'İpuçlarında yolu göster',
                 desc: 'İpuçlarında not adlarının altında klasör yolunu görüntüle.'
             },
+            showTooltipTags: {
+                name: 'İpuçlarında etiketleri göster',
+                desc: 'Etiketler bölümü etkinken ipuçlarında not etiketlerini görüntüle.'
+            },
             showTooltipWordCount: {
                 name: 'İpuçlarında kelime sayısını göster',
-                desc: 'İpuçlarında not kelime sayılarını görüntüle.'
+                desc: 'Kelime sayısı etkinken ipuçlarında kelime sayısını görüntüle.'
             },
             resetPaneSeparator: {
                 name: 'Bölme ayırıcı konumunu sıfırla',
@@ -2014,6 +2019,20 @@ export const STRINGS_TR = {
             showTargetPercentage: {
                 name: 'Hedef yüzdesini göster',
                 desc: 'Hedef kelime sayısı varsa yalnızca ilerleme yüzdesini göster.'
+            },
+            textCountActiveNotice: {
+                title: 'Sayım hâlâ açık',
+                summary: 'Aşağıdaki öğeler kullandığı için kelime veya karakter sayıları tüm notlar için hesaplanmaya devam ediyor:',
+                more: 've {count} tane daha',
+                reasons: {
+                    appearance: 'Dosya görünümü',
+                    'group-header': 'Grup başlığı'
+                },
+                scopes: {
+                    folder: 'Klasör: {name}',
+                    tag: 'Etiket: #{name}',
+                    property: 'Özellik: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Özellik anahtarları (kasa profili)',

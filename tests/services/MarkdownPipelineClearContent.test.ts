@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App } from 'obsidian';
+import { App, TFile } from 'obsidian';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarkdownPipelineContentProvider } from '../../src/services/content/MarkdownPipelineContentProvider';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
@@ -124,29 +124,40 @@ describe('MarkdownPipelineContentProvider clearContent', () => {
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 
-    it('clears word counts when tooltip word count is enabled', async () => {
+    it('does not regenerate word counts when only tooltip word count changes', async () => {
         const provider = new MarkdownPipelineContentProvider(new App());
         const oldSettings = createSettings({ showTooltips: false, showTooltipWordCount: false });
         const newSettings = createSettings({ showTooltips: true, showTooltipWordCount: true });
 
         await provider.clearContent({ oldSettings, newSettings });
 
-        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(true);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledTimes(1);
-        expect(batchClearAllFileContentMock).toHaveBeenCalledWith('wordCount');
+        expect(provider.shouldRegenerate(oldSettings, newSettings)).toBe(false);
+        expect(batchClearAllFileContentMock).not.toHaveBeenCalled();
         expect(batchClearFeatureImageContentMock).not.toHaveBeenCalled();
     });
 
-    it('clears word counts when sorting activates custom group headers', async () => {
-        const provider = new MarkdownPipelineContentProvider(new App());
+    it('clears word counts when grouping activates a consuming custom group header', async () => {
+        const app = new App();
+        const headerFile = new TFile('Projects/Header.md');
+        app.vault.getMarkdownFiles = () => [headerFile];
+        app.vault.getFileByPath = path => (path === headerFile.path ? headerFile : null);
+        app.metadataCache.getFileCache = file =>
+            file.path === headerFile.path
+                ? {
+                      frontmatter: {
+                          group_header: { title: 'Projects', show_word_count: true }
+                      }
+                  }
+                : null;
+        const provider = new MarkdownPipelineContentProvider(app);
         const oldSettings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
-            defaultFolderSort: 'modified-desc'
+            noteGrouping: 'none',
+            defaultFolderSort: 'title-asc'
         });
         const newSettings = createSettings({
             textCountDisplay: 'none',
-            noteGrouping: 'date',
+            noteGrouping: 'custom',
             defaultFolderSort: 'title-asc'
         });
 

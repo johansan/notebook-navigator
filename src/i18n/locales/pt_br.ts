@@ -1288,12 +1288,13 @@ export const STRINGS_PT_BR = {
             },
             defaultGrouping: {
                 name: 'Agrupamento padrão',
-                desc: 'Os **cabeçalhos** anotam a lista ordenada sem alterar sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: grupos de pastas e propriedades são ordenados por conta própria e as notas dentro de cada grupo seguem a ordem de classificação.',
+                desc: 'Sem agrupamento, a lista ordenada permanece plana. Os **cabeçalhos** anotam a lista ordenada sem alterar sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: grupos de pastas e propriedades são ordenados por conta própria e as notas dentro de cada grupo seguem a ordem de classificação.',
                 families: {
                     headers: 'Cabeçalhos',
                     groups: 'Grupos'
                 },
                 options: {
+                    none: 'Não agrupar',
                     custom: 'Personalizado',
                     date: 'Data',
                     folder: 'Pasta'
@@ -1767,9 +1768,13 @@ export const STRINGS_PT_BR = {
                 name: 'Mostrar caminho nas dicas de ferramentas',
                 desc: 'Exibir o caminho da pasta abaixo dos nomes de notas nas dicas de ferramentas.'
             },
+            showTooltipTags: {
+                name: 'Mostrar etiquetas nas dicas de ferramentas',
+                desc: 'Exibir as etiquetas das notas nas dicas de ferramentas quando a seção de etiquetas está ativada.'
+            },
             showTooltipWordCount: {
                 name: 'Mostrar contagem de palavras nas dicas de ferramentas',
-                desc: 'Exibir a contagem de palavras das notas nas dicas de ferramentas.'
+                desc: 'Exibir a contagem de palavras nas dicas de ferramentas quando a contagem de palavras está ativada.'
             },
             resetPaneSeparator: {
                 name: 'Redefinir posição do separador de painéis',
@@ -2020,6 +2025,21 @@ export const STRINGS_PT_BR = {
             showTargetPercentage: {
                 name: 'Mostrar porcentagem da meta',
                 desc: 'Mostrar apenas a porcentagem de progresso quando houver uma contagem de palavras alvo disponível.'
+            },
+            textCountActiveNotice: {
+                title: 'A contagem continua ativa',
+                summary:
+                    'As contagens de palavras ou caracteres continuam sendo calculadas para todas as notas porque são utilizadas pelos seguintes itens:',
+                more: 'e mais {count}',
+                reasons: {
+                    appearance: 'Aparência dos arquivos',
+                    'group-header': 'Cabeçalho de grupo'
+                },
+                scopes: {
+                    folder: 'Pasta: {name}',
+                    tag: 'Tag: #{name}',
+                    property: 'Propriedade: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Chaves de propriedades (perfil do cofre)',

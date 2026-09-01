@@ -1290,12 +1290,13 @@ export const STRINGS_FR = {
             },
             defaultGrouping: {
                 name: 'Regroupement par défaut',
-                desc: "Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
+                desc: "Sans regroupement, la liste triée reste à plat. Les **en-têtes** annotent la liste triée sans changer son ordre : Personnalisé affiche les en-têtes définis dans le frontmatter et Date insère des en-têtes de date. Les **groupes** réordonnent la liste : les groupes de dossiers et de propriétés sont ordonnés séparément et les notes de chaque groupe suivent l'ordre de tri.",
                 families: {
                     headers: 'En-têtes',
                     groups: 'Groupes'
                 },
                 options: {
+                    none: 'Ne pas grouper',
                     custom: 'Personnalisé',
                     date: 'Date',
                     folder: 'Dossier'
@@ -1769,9 +1770,13 @@ export const STRINGS_FR = {
                 name: 'Afficher le chemin dans les infobulles',
                 desc: 'Affiche le chemin du dossier sous le nom des notes dans les infobulles.'
             },
+            showTooltipTags: {
+                name: 'Afficher les mots-clés dans les infobulles',
+                desc: 'Affiche les mots-clés des notes dans les infobulles lorsque la section des mots-clés est activée.'
+            },
             showTooltipWordCount: {
                 name: 'Afficher le nombre de mots dans les infobulles',
-                desc: 'Affiche le nombre de mots des notes dans les infobulles.'
+                desc: 'Affiche le nombre de mots dans les infobulles lorsque le nombre de mots est activé.'
             },
             resetPaneSeparator: {
                 name: 'Réinitialiser la position du séparateur de panneaux',
@@ -2023,6 +2028,21 @@ export const STRINGS_FR = {
             showTargetPercentage: {
                 name: 'Afficher le pourcentage cible',
                 desc: 'Afficher uniquement le pourcentage de progression lorsqu’un objectif de nombre de mots est disponible.'
+            },
+            textCountActiveNotice: {
+                title: 'Le comptage est toujours actif',
+                summary:
+                    'Le nombre de mots ou de caractères est toujours calculé pour toutes les notes car les éléments suivants l’utilisent :',
+                more: 'et {count} de plus',
+                reasons: {
+                    appearance: 'Apparence des fichiers',
+                    'group-header': 'En-tête de groupe'
+                },
+                scopes: {
+                    folder: 'Dossier : {name}',
+                    tag: 'Tag : #{name}',
+                    property: 'Propriété : {name}'
+                }
             },
             propertyKeys: {
                 name: 'Clés de propriétés (profil du coffre)',

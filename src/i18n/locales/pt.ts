@@ -1286,12 +1286,13 @@ export const STRINGS_PT = {
             },
             defaultGrouping: {
                 name: 'Agrupamento predefinido',
-                desc: 'Os **cabeçalhos** anotam a lista ordenada sem alterar a sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: os grupos de pastas e propriedades são ordenados por si próprios e as notas dentro de cada grupo seguem a ordem de ordenação.',
+                desc: 'Sem agrupamento, a lista ordenada mantém-se plana. Os **cabeçalhos** anotam a lista ordenada sem alterar a sua ordem: Personalizado mostra cabeçalhos definidos no frontmatter e Data insere cabeçalhos de data. Os **grupos** reordenam a lista: os grupos de pastas e propriedades são ordenados por si próprios e as notas dentro de cada grupo seguem a ordem de ordenação.',
                 families: {
                     headers: 'Cabeçalhos',
                     groups: 'Grupos'
                 },
                 options: {
+                    none: 'Não agrupar',
                     custom: 'Personalizado',
                     date: 'Data',
                     folder: 'Pasta'
@@ -1765,9 +1766,13 @@ export const STRINGS_PT = {
                 name: 'Mostrar caminho nas dicas',
                 desc: 'Exibir o caminho da pasta abaixo dos nomes das notas nas dicas.'
             },
+            showTooltipTags: {
+                name: 'Mostrar etiquetas nas dicas',
+                desc: 'Exibir as etiquetas das notas nas dicas quando a secção de etiquetas está ativada.'
+            },
             showTooltipWordCount: {
                 name: 'Mostrar contagem de palavras nas dicas',
-                desc: 'Exibir a contagem de palavras das notas nas dicas.'
+                desc: 'Exibir a contagem de palavras nas dicas quando a contagem de palavras está ativada.'
             },
             resetPaneSeparator: {
                 name: 'Repor posição do separador de painéis',
@@ -2018,6 +2023,21 @@ export const STRINGS_PT = {
             showTargetPercentage: {
                 name: 'Mostrar percentagem do objetivo',
                 desc: 'Mostrar apenas a percentagem de progresso quando houver uma contagem de palavras objetivo disponível.'
+            },
+            textCountActiveNotice: {
+                title: 'A contagem continua ativa',
+                summary:
+                    'As contagens de palavras ou caracteres continuam a ser calculadas para todas as notas porque são utilizadas pelos seguintes itens:',
+                more: 'e mais {count}',
+                reasons: {
+                    appearance: 'Aparência dos ficheiros',
+                    'group-header': 'Cabeçalho de grupo'
+                },
+                scopes: {
+                    folder: 'Pasta: {name}',
+                    tag: 'Etiqueta: #{name}',
+                    property: 'Propriedade: {name}'
+                }
             },
             propertyKeys: {
                 name: 'Chaves de propriedades (perfil do cofre)',
