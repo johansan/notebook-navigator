@@ -106,6 +106,12 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.7',
+        date: '2026-09-03',
+        showOnUpdate: false,
+        fixed: ['Color circles at the start of colored highlights introduced in Obsidian 1.14 are now omitted from note preview text.']
+    },
+    {
         version: '3.3.6',
         date: '2026-09-01',
         showOnUpdate: true,
