@@ -33,6 +33,7 @@ import {
 import { getPropertyGroupingKey } from '../../settings/types';
 import { resolvePropertyGroupingDirection } from '../../utils/listGrouping';
 import { partitionPinnedFiles } from '../../utils/fileFinder';
+import { resolvePropertyDisplayText } from '../../utils/propertyUtils';
 import {
     formatManualSortGroupHeaderLabel,
     getCachedManualSortGroupHeader,
@@ -528,7 +529,9 @@ function buildListItemsInternal(
         // order, following how Obsidian Bases groups by property. Files inside each group keep
         // the active sort order. The bucket key joins parts with a separator that cannot appear in
         // trimmed part values, so lists with different element boundaries such as ["a b", "c"] and
-        // ["a", "b c"] stay in separate groups.
+        // ["a", "b c"] stay in separate groups. The label shows link display text instead of the raw
+        // markup so "[[Note]]" reads as "Note", matching the property pills on file rows, while the
+        // bucket key keeps the raw value so "[[Note]]" and "Note" stay separate groups.
         const propertyGroupingDirection = resolvePropertyGroupingDirection(groupingMode, sortOption);
         const propertyGroups = new Map<string, { label: string; numericValue: number | null; files: TFile[] }>();
         const ungroupedFiles: TFile[] = [];
@@ -553,7 +556,7 @@ function buildListItemsInternal(
             // The first file to create a bucket decides whether the group carries a numeric key,
             // matching how the first encountered value becomes the group key in Obsidian Bases.
             propertyGroups.set(bucketKey, {
-                label: groupingValue.parts.join(', '),
+                label: groupingValue.parts.map(part => resolvePropertyDisplayText(part)).join(', '),
                 numericValue: groupingValue.numericValue,
                 files: [file]
             });
