@@ -95,6 +95,25 @@ import { ObsidianIcon } from './ObsidianIcon';
 
 const FEATURE_IMAGE_MAX_ASPECT_RATIO = 16 / 9;
 
+interface FileItemMiddleMouseDownEvent {
+    readonly button: number;
+    preventDefault: () => void;
+}
+
+/**
+ * Prepares a file-row middle click without stopping propagation.
+ * Returns false for other buttons and leaves the event untouched. Returns true after preventing the
+ * browser default so Obsidian's Linux window listener can suppress the corresponding primary-selection paste.
+ */
+export function prepareFileItemMiddleMouseDown(event: FileItemMiddleMouseDownEvent): boolean {
+    if (event.button !== 1) {
+        return false;
+    }
+
+    event.preventDefault();
+    return true;
+}
+
 function formatCountTextLabel(template: string, countText: string): string {
     return template.replace('{count}', countText);
 }
@@ -1337,13 +1356,11 @@ export const FileItem = React.memo(function FileItem({
         });
     };
 
-    // Handle middle mouse button click to open in new tab
     const handleMouseDown = (e: React.MouseEvent) => {
-        if (e.button !== 1) {
+        if (!prepareFileItemMiddleMouseDown(e)) {
             return;
         }
-        e.preventDefault();
-        e.stopPropagation();
+
         runAsyncAction(() => openFileInContext({ app, commandQueue, file, context: 'tab' }));
     };
 

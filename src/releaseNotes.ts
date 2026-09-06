@@ -106,6 +106,15 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.7',
+        date: '2026-09-07',
+        showOnUpdate: false,
+        fixed: [
+            'Obsidian 1.14 added support for colored highlights by placing circles inside the highlight (🔴🟠🟡🟢🔵🟣). These are now removed from the preview text in list pane.',
+            'Middle-clicking a file on Linux now opens it in a new tab without pasting the primary selection into the note.'
+        ]
+    },
+    {
         version: '3.3.6',
         date: '2026-09-01',
         showOnUpdate: true,
