@@ -111,7 +111,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         showOnUpdate: false,
         fixed: [
             'Obsidian 1.14 added support for colored highlights by placing circles inside the highlight (🔴🟠🟡🟢🔵🟣). These are now removed from the preview text in list pane.',
-            'Middle-clicking a file on Linux now opens it in a new tab without pasting the primary selection into the note.'
+            'Middle-clicking a file on Linux now opens it in a new tab without pasting the primary selection into the note.',
+            'When grouping notes by a property with `Group by`, a link value such as `[[Project Note]]` now shows as `Project Note` in the group header, matching how it appears in the property pills [#1478](https://github.com/johansan/notebook-navigator/issues/1478).'
         ]
     },
     {
