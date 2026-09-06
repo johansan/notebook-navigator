@@ -57,6 +57,18 @@ describe('PreviewTextUtils.extractPreviewText', () => {
         expect(preview).toBe('Value with italic content');
     });
 
+    it('removes Obsidian color markers directly after opening highlight delimiters', () => {
+        const content = '==🔴Red== ==🟠Orange== ==🟡Yellow== ==🟢Green== ==🔵 Blue== ==🟣Purple==';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('Red Orange Yellow Green Blue Purple');
+    });
+
+    it('keeps color circles that are not directly after opening highlight delimiters', () => {
+        const content = '== 🔴Anaplan== ==Status 🔴==';
+        const preview = PreviewTextUtils.extractPreviewText(content, skipCodeSettings);
+        expect(preview).toBe('🔴Anaplan Status 🔴');
+    });
+
     it('keeps inline code content while removing backticks when code blocks are included', () => {
         const preview = PreviewTextUtils.extractPreviewText('Example `inline` snippet', includeCodeSettings);
         expect(preview).toBe('Example inline snippet');

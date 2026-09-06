@@ -79,6 +79,7 @@ const REGEX_STRIP_INLINE_MARKDOWN = new RegExp(BASE_PATTERNS.filter(pattern => !
 const REGEX_BLOCKQUOTE_MARKERS = /^\s{0,3}(?:>\s*)+/gm;
 const REGEX_MARKDOWN_HARD_ESCAPES = /\\([\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E])/g;
 const REGEX_MARKDOWN_HARD_LINE_BREAK = /\\\r?\n/g;
+const REGEX_OBSIDIAN_HIGHLIGHT_COLOR_MARKER = /^[🔴🟠🟡🟢🔵🟣]/u;
 
 function protectMarkdownHardEscapes(text: string): { protectedText: string; escapeSegments: string[]; escapeBase: string } {
     if (!text.includes('\\')) {
@@ -393,10 +394,16 @@ export function stripMarkdownSyntax(
             return '';
         }
 
+        // Composite patterns may open bold before the highlight. Check the source position because a
+        // circle at the start of a nested capture is not color syntax unless it directly follows `==`.
+        const highlightContentOffset = match.startsWith('==') ? 2 : match.startsWith('**==') || match.startsWith('__==') ? 4 : -1;
+        const hasHighlightColorMarker =
+            highlightContentOffset >= 0 && REGEX_OBSIDIAN_HIGHLIGHT_COLOR_MARKER.test(match.slice(highlightContentOffset));
+
         for (let i = 0; i < captureLength; i += 1) {
             const capture = args[i];
             if (typeof capture === 'string') {
-                return capture;
+                return hasHighlightColorMarker ? capture.replace(REGEX_OBSIDIAN_HIGHLIGHT_COLOR_MARKER, '') : capture;
             }
         }
 
