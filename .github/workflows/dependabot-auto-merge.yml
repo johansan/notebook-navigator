@@ -31,7 +31,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          if ! gh pr merge --auto --squash "$PR_URL"; then
-            echo "::notice::Could not enable auto-merge. The Dependabot pull request will remain open."
-          fi
+        # Report rejected auto-merge requests as failures so blocked PRs are visible.
+        run: gh pr merge --auto --merge "$PR_URL"
