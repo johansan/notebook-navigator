@@ -11,6 +11,11 @@ updates:
       npm-dependencies:
         patterns:
           - "*"
+      # Group security fixes so one merge does not leave the other fixes behind main.
+      npm-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
     ignore:
       - dependency-name: "react"
         update-types:
