@@ -4,7 +4,7 @@ This directory contains automated Vitest tests and a manual Obsidian console API
 
 ## Automated Tests
 
-Vitest runs every `tests/**/*.test.ts` file in a Node environment. `vitest.config.ts` maps `obsidian`
+Vitest runs every `tests/**/*.test.ts` file in a Node environment. `vitest.config.mts` maps `obsidian`
 imports to `tests/stubs/obsidian.ts` and loads `tests/setup.ts` before each run.
 
 ### Commands
