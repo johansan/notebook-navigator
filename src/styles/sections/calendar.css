@@ -1096,7 +1096,16 @@ button.nn-navigation-calendar-day {
 
 .nn-calendar-right-sidebar {
     --nn-calendar-right-sidebar-bg: var(--background-secondary);
-    overflow: auto;
+    /* The sidebar never scrolls. The calendar height follows its width (square day cells and
+       container-unit font sizes), so with overflow: auto the layout-consuming scrollbar on Windows
+       and Linux shrinks the calendar until it fits, disappears, and reappears on the next hover
+       relayout, which makes the calendar shake. clip rather than hidden because hidden still accepts
+       programmatic scrolling, such as focus() on a partly clipped button, which would shift the
+       content permanently with no way to scroll back. min-height: 0 because clip is not a scroll
+       container, so without it the flex item's automatic minimum size grows to the content height
+       and the surrounding view content starts scrolling instead. */
+    overflow: clip;
+    min-height: 0;
     background-color: var(--nn-calendar-right-sidebar-bg);
 }
 
