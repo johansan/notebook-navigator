@@ -32,6 +32,7 @@ import {
 } from '../../utils/vaultProfiles';
 import { showNotice } from '../../utils/noticeUtils';
 import { usesMobileChrome } from '../../utils/paneLayout';
+import { setElementVisible } from '../dependentSettings';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import type { VaultProfilePropertyKey } from '../types';
 import { isVaultTitleOption } from '../types';
@@ -41,7 +42,7 @@ import type { SettingsTabContext } from './SettingsTabContext';
 
 interface VaultSetupRenderers {
     renderProfileSetting(setting: Setting): void;
-    renderVaultTitleSetting(setting: Setting): void;
+    renderVaultProfileSwitcherSetting(setting: Setting): void;
     renderFileVisibilitySetting(setting: Setting): void;
     renderPropertyKeysSetting(setting: Setting): void;
 }
@@ -58,10 +59,10 @@ function renderVaultSetupSection(context: SettingsTabContext): void {
     const vaultSetupGroup = createGroup(undefined);
 
     vaultSetupGroup.addSetting(setting => renderers.renderProfileSetting(setting));
-    // The vault title places the profile selector in the desktop chrome (desktop and
-    // tablets); phones render the profile trigger in the mobile header instead
+    // The switcher placement applies to the desktop chrome (desktop and tablets); phones
+    // always render the profile trigger in the mobile header instead
     if (!usesMobileChrome()) {
-        vaultSetupGroup.addSetting(setting => renderers.renderVaultTitleSetting(setting));
+        vaultSetupGroup.addSetting(setting => renderers.renderVaultProfileSwitcherSetting(setting));
     }
     vaultSetupGroup.addSetting(setting => renderers.renderFileVisibilitySetting(setting));
     vaultSetupGroup.addSetting(setting => renderers.renderPropertyKeysSetting(setting));
@@ -87,16 +88,19 @@ export function createVaultSetupSettingDefinitions(context: SettingsTabContext):
         })
     ];
 
-    // The vault title places the profile selector in the desktop chrome (desktop and
-    // tablets); phones render the profile trigger in the mobile header instead
+    // The switcher placement applies to the desktop chrome (desktop and tablets); phones
+    // always render the profile trigger in the mobile header instead
     if (!usesMobileChrome()) {
         items.splice(
             1,
             0,
             createRenderDefinition({
-                name: strings.settings.items.vaultTitlePlacement.name,
-                desc: strings.settings.items.vaultTitlePlacement.desc,
-                render: setting => renderers.renderVaultTitleSetting(setting)
+                name: strings.settings.items.vaultProfileSwitcher.name,
+                desc: strings.settings.items.vaultProfileSwitcher.desc,
+                // The switcher only renders with two or more profiles, so the setting stays hidden
+                // until then; otherwise it appears to do nothing
+                visible: () => context.plugin.settings.vaultProfiles.length > 1,
+                render: setting => renderers.renderVaultProfileSwitcherSetting(setting)
             })
         );
     }
@@ -125,6 +129,17 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
     let profileDropdown: DropdownComponent | null = null;
     let fileVisibilityDropdown: DropdownComponent | null = null;
     let propertyKeysSummaryTextEl: HTMLSpanElement | null = null;
+    let vaultProfileSwitcherSetting: Setting | null = null;
+
+    // The switcher only renders with two or more profiles, so the setting stays hidden until then;
+    // otherwise it appears to do nothing. The definition-based tab re-evaluates its `visible`
+    // predicate on settings updates, but the legacy display() path has no such hook, so adding or
+    // deleting a profile re-applies visibility here.
+    const refreshVaultProfileSwitcherVisibility = () => {
+        if (vaultProfileSwitcherSetting) {
+            setElementVisible(vaultProfileSwitcherSetting.settingEl, plugin.settings.vaultProfiles.length > 1);
+        }
+    };
 
     const formatPropertyKeysSummary = (propertyKeys: VaultProfilePropertyKey[]): string => {
         const configuredKeys = propertyKeys.map(entry => entry.key.trim()).filter(key => key.length > 0);
@@ -146,6 +161,7 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
 
     // Updates profile-related UI controls with current settings values.
     const refreshProfileControls = () => {
+        refreshVaultProfileSwitcherVisibility();
         if (profileDropdown) {
             const selectEl = profileDropdown.selectEl;
             while (selectEl.firstChild) {
@@ -275,14 +291,15 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
         addSettingSyncModeToggle({ setting: profileSetting, plugin, settingId: 'vaultProfile' });
     };
 
-    const renderVaultTitleSetting = (setting: Setting): void => {
+    const renderVaultProfileSwitcherSetting = (setting: Setting): void => {
+        vaultProfileSwitcherSetting = setting;
         setting
-            .setName(strings.settings.items.vaultTitlePlacement.name)
-            .setDesc(strings.settings.items.vaultTitlePlacement.desc)
+            .setName(strings.settings.items.vaultProfileSwitcher.name)
+            .setDesc(strings.settings.items.vaultProfileSwitcher.desc)
             .addDropdown(dropdown =>
                 dropdown
-                    .addOption('header', strings.settings.items.vaultTitlePlacement.options.header)
-                    .addOption('navigation', strings.settings.items.vaultTitlePlacement.options.navigation)
+                    .addOption('header', strings.settings.items.vaultProfileSwitcher.options.header)
+                    .addOption('navigation', strings.settings.items.vaultProfileSwitcher.options.navigation)
                     .setValue(plugin.settings.vaultTitle)
                     .onChange(async value => {
                         if (!isVaultTitleOption(value)) {
@@ -292,6 +309,8 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
                         await plugin.saveSettingsAndUpdate();
                     })
             );
+        // This setting renders after the profile setting's own refresh ran, so apply visibility here
+        refreshVaultProfileSwitcherVisibility();
     };
 
     const renderFileVisibilitySetting = (setting: Setting): void => {
@@ -351,7 +370,7 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
 
     return {
         renderProfileSetting,
-        renderVaultTitleSetting,
+        renderVaultProfileSwitcherSetting,
         renderFileVisibilitySetting,
         renderPropertyKeysSetting
     };

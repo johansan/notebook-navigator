@@ -1875,7 +1875,7 @@ export const STRINGS_DE = {
             },
             vaultProfiles: {
                 name: 'Vault-Profil',
-                desc: 'Profile speichern Dateityp-Sichtbarkeit, ausgeblendete Dateien, ausgeblendete Ordner, ausgeblendete Tags, Eigenschaftsregeln für ausgeblendete Notizen, Verknüpfungen und Navigationsbanner. Profile können über die Kopfzeile des Navigationsbereichs gewechselt werden.',
+                desc: 'Profile speichern Dateityp-Sichtbarkeit, ausgeblendete Dateien, ausgeblendete Ordner, ausgeblendete Tags, Eigenschaftsregeln für ausgeblendete Notizen, Verknüpfungen und Navigationsbanner. Profile können hier oder über den Vault-Profil-Umschalter im Navigationsbereich gewechselt werden.',
                 defaultName: 'Standard',
                 addButton: 'Profil hinzufügen',
                 editProfilesButton: 'Profile bearbeiten',
@@ -1895,9 +1895,9 @@ export const STRINGS_DE = {
                     duplicateName: 'Profilname bereits vorhanden'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Platzierung des Vault-Titels',
-                desc: 'Wähle, wo der Vault-Titel angezeigt wird.',
+            vaultProfileSwitcher: {
+                name: 'Vault-Profil-Umschalter',
+                desc: 'Wähle, wo der Vault-Profil-Umschalter angezeigt wird.',
                 options: {
                     header: 'Im Kopfbereich anzeigen',
                     navigation: 'Im Navigationsbereich anzeigen'

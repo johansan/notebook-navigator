@@ -1900,7 +1900,7 @@ export const STRINGS_VI = {
             },
             vaultProfiles: {
                 name: 'Hồ sơ vault',
-                desc: 'Hồ sơ lưu trữ hiển thị loại tệp, tệp ẩn, thư mục ẩn, thẻ ẩn, quy tắc thuộc tính cho ghi chú ẩn, lối tắt và banner điều hướng. Chuyển hồ sơ từ header ngăn điều hướng.',
+                desc: 'Hồ sơ lưu trữ hiển thị loại tệp, tệp ẩn, thư mục ẩn, thẻ ẩn, quy tắc thuộc tính cho ghi chú ẩn, lối tắt và banner điều hướng. Chuyển hồ sơ tại đây hoặc từ trình chuyển hồ sơ vault trong ngăn điều hướng.',
                 defaultName: 'Mặc định',
                 addButton: 'Thêm hồ sơ',
                 editProfilesButton: 'Sửa hồ sơ',
@@ -1920,9 +1920,9 @@ export const STRINGS_VI = {
                     duplicateName: 'Tên hồ sơ đã tồn tại'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Vị trí tiêu đề vault',
-                desc: 'Chọn nơi tiêu đề vault được hiển thị.',
+            vaultProfileSwitcher: {
+                name: 'Trình chuyển hồ sơ vault',
+                desc: 'Chọn nơi trình chuyển hồ sơ vault được hiển thị.',
                 options: {
                     header: 'Hiện ở header',
                     navigation: 'Hiện ở ngăn điều hướng'

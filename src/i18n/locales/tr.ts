@@ -1900,7 +1900,7 @@ export const STRINGS_TR = {
             },
             vaultProfiles: {
                 name: 'Kasa profili',
-                desc: 'Profiller dosya türü görünürlüğünü, gizli dosyaları, gizli klasörleri, gizli etiketleri, gizli notlar için özellik kurallarını, kısayolları ve gezinme afişini saklar. Gezinme bölmesi başlığından profilleri değiştir.',
+                desc: 'Profiller dosya türü görünürlüğünü, gizli dosyaları, gizli klasörleri, gizli etiketleri, gizli notlar için özellik kurallarını, kısayolları ve gezinme afişini saklar. Profilleri buradan veya gezinme bölmesindeki kasa profili değiştiriciden değiştir.',
                 defaultName: 'Varsayılan',
                 addButton: 'Profil ekle',
                 editProfilesButton: 'Profilleri düzenle',
@@ -1920,9 +1920,9 @@ export const STRINGS_TR = {
                     duplicateName: 'Profil adı zaten var'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Kasa başlığı konumu',
-                desc: 'Kasa başlığının gösterileceği yeri seçin.',
+            vaultProfileSwitcher: {
+                name: 'Kasa profili değiştirici',
+                desc: 'Kasa profili değiştiricinin gösterileceği yeri seçin.',
                 options: {
                     header: 'Başlıkta göster',
                     navigation: 'Gezinme bölmesinde göster'

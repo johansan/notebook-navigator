@@ -1902,7 +1902,7 @@ export const STRINGS_IT = {
             },
             vaultProfiles: {
                 name: 'Profilo vault',
-                desc: "I profili memorizzano visibilità tipi file, file nascosti, cartelle nascoste, etichette nascoste, regole di proprietà per note nascoste, scorciatoie e banner navigazione. Cambia profilo dall'intestazione del pannello navigazione.",
+                desc: 'I profili memorizzano visibilità tipi file, file nascosti, cartelle nascoste, etichette nascoste, regole di proprietà per note nascoste, scorciatoie e banner navigazione. Cambia profilo qui o dal selettore profilo vault nel pannello navigazione.',
                 defaultName: 'Predefinito',
                 addButton: 'Aggiungi profilo',
                 editProfilesButton: 'Modifica profili',
@@ -1922,9 +1922,9 @@ export const STRINGS_IT = {
                     duplicateName: 'Nome profilo già esistente'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Posizione titolo vault',
-                desc: 'Scegli dove viene mostrato il titolo del vault.',
+            vaultProfileSwitcher: {
+                name: 'Selettore profilo vault',
+                desc: 'Scegli dove viene mostrato il selettore profilo vault.',
                 options: {
                     header: "Mostra nell'intestazione",
                     navigation: 'Mostra nel pannello di navigazione'

@@ -1877,7 +1877,7 @@ export const STRINGS_FR = {
             },
             vaultProfiles: {
                 name: 'Profil du coffre',
-                desc: "Les profils stockent la visibilité des types de fichiers, les fichiers cachés, les dossiers cachés, les mots-clés cachés, les règles de propriétés pour les notes cachées, les raccourcis et la bannière de navigation. Changez de profil depuis l'en-tête du panneau de navigation.",
+                desc: 'Les profils stockent la visibilité des types de fichiers, les fichiers cachés, les dossiers cachés, les mots-clés cachés, les règles de propriétés pour les notes cachées, les raccourcis et la bannière de navigation. Changez de profil ici ou depuis le sélecteur de profil du coffre dans le panneau de navigation.',
                 defaultName: 'Par défaut',
                 addButton: 'Ajouter un profil',
                 editProfilesButton: 'Modifier les profils',
@@ -1897,9 +1897,9 @@ export const STRINGS_FR = {
                     duplicateName: 'Le nom du profil existe déjà'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Placement du titre du coffre',
-                desc: 'Choisissez où le titre du coffre est affiché.',
+            vaultProfileSwitcher: {
+                name: 'Sélecteur de profil du coffre',
+                desc: 'Choisissez où le sélecteur de profil du coffre est affiché.',
                 options: {
                     header: "Afficher dans l'en-tête",
                     navigation: 'Afficher dans le panneau de navigation'

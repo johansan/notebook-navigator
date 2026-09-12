@@ -1855,7 +1855,7 @@ export const STRINGS_ZH_TW = {
             },
             vaultProfiles: {
                 name: '儲存庫設定檔',
-                desc: '設定檔儲存檔案類型可見性、隱藏檔案、隱藏資料夾、隱藏標籤、隱藏筆記的屬性規則、捷徑和導覽橫幅。從導覽窗格標題切換設定檔。',
+                desc: '設定檔儲存檔案類型可見性、隱藏檔案、隱藏資料夾、隱藏標籤、隱藏筆記的屬性規則、捷徑和導覽橫幅。在此處或從導覽窗格中的儲存庫設定檔切換器切換設定檔。',
                 defaultName: '預設',
                 addButton: '新增設定檔',
                 editProfilesButton: '編輯設定檔',
@@ -1874,9 +1874,9 @@ export const STRINGS_ZH_TW = {
                     duplicateName: '設定檔名稱已存在'
                 }
             },
-            vaultTitlePlacement: {
-                name: '儲存庫標題位置',
-                desc: '選擇儲存庫標題顯示的位置。',
+            vaultProfileSwitcher: {
+                name: '儲存庫設定檔切換器',
+                desc: '選擇儲存庫設定檔切換器顯示的位置。',
                 options: {
                     header: '顯示在標題列',
                     navigation: '顯示在導覽窗格'

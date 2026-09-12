@@ -1901,7 +1901,7 @@ export const STRINGS_ID = {
             },
             vaultProfiles: {
                 name: 'Profil vault',
-                desc: 'Profil menyimpan visibilitas jenis file, file tersembunyi, folder tersembunyi, tag tersembunyi, aturan properti untuk catatan tersembunyi, pintasan, dan banner navigasi. Beralih profil dari header panel navigasi.',
+                desc: 'Profil menyimpan visibilitas jenis file, file tersembunyi, folder tersembunyi, tag tersembunyi, aturan properti untuk catatan tersembunyi, pintasan, dan banner navigasi. Beralih profil di sini atau dari pengalih profil vault di panel navigasi.',
                 defaultName: 'Default',
                 addButton: 'Tambah profil',
                 editProfilesButton: 'Edit profil',
@@ -1921,9 +1921,9 @@ export const STRINGS_ID = {
                     duplicateName: 'Nama profil sudah ada'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Penempatan judul vault',
-                desc: 'Pilih di mana judul vault ditampilkan.',
+            vaultProfileSwitcher: {
+                name: 'Pengalih profil vault',
+                desc: 'Pilih di mana pengalih profil vault ditampilkan.',
                 options: {
                     header: 'Tampilkan di header',
                     navigation: 'Tampilkan di panel navigasi'

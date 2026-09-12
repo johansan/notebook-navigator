@@ -1874,7 +1874,7 @@ export const STRINGS_ES = {
             },
             vaultProfiles: {
                 name: 'Perfil de bóveda',
-                desc: 'Los perfiles almacenan visibilidad de tipos de archivo, archivos ocultos, carpetas ocultas, etiquetas ocultas, reglas de propiedades para notas ocultas, accesos directos y banner de navegación. Cambia de perfil desde el encabezado del panel de navegación.',
+                desc: 'Los perfiles almacenan visibilidad de tipos de archivo, archivos ocultos, carpetas ocultas, etiquetas ocultas, reglas de propiedades para notas ocultas, accesos directos y banner de navegación. Cambia de perfil aquí o desde el selector de perfil de bóveda en el panel de navegación.',
                 defaultName: 'Predeterminado',
                 addButton: 'Añadir perfil',
                 editProfilesButton: 'Editar perfiles',
@@ -1894,9 +1894,9 @@ export const STRINGS_ES = {
                     duplicateName: 'El nombre del perfil ya existe'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Ubicación del título de bóveda',
-                desc: 'Elige dónde se muestra el título de la bóveda.',
+            vaultProfileSwitcher: {
+                name: 'Selector de perfil de bóveda',
+                desc: 'Elige dónde se muestra el selector de perfil de bóveda.',
                 options: {
                     header: 'Mostrar en el encabezado',
                     navigation: 'Mostrar en el panel de navegación'

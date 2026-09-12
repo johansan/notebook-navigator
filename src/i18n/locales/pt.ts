@@ -1904,7 +1904,7 @@ export const STRINGS_PT = {
             },
             vaultProfiles: {
                 name: 'Perfil do cofre',
-                desc: 'Os perfis armazenam visibilidade de tipos de ficheiro, ficheiros ocultos, pastas ocultas, etiquetas ocultas, regras de propriedades para notas ocultas, atalhos e banner de navegação. Mude de perfis a partir do cabeçalho do painel de navegação.',
+                desc: 'Os perfis armazenam visibilidade de tipos de ficheiro, ficheiros ocultos, pastas ocultas, etiquetas ocultas, regras de propriedades para notas ocultas, atalhos e banner de navegação. Mude de perfil aqui ou a partir do seletor de perfil do cofre no painel de navegação.',
                 defaultName: 'Predefinido',
                 addButton: 'Adicionar perfil',
                 editProfilesButton: 'Editar perfis',
@@ -1924,9 +1924,9 @@ export const STRINGS_PT = {
                     duplicateName: 'Nome de perfil já existe'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Posição do título do cofre',
-                desc: 'Escolha onde o título do cofre é mostrado.',
+            vaultProfileSwitcher: {
+                name: 'Seletor de perfil do cofre',
+                desc: 'Escolha onde o seletor de perfil do cofre é mostrado.',
                 options: {
                     header: 'Mostrar no cabeçalho',
                     navigation: 'Mostrar no painel de navegação'

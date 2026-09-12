@@ -106,6 +106,15 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.3.8',
+        date: '2026-09-14',
+        showOnUpdate: false,
+        changed: ['Renamed the `Vault title placement` setting to ==Vault profile switcher==.'],
+        fixed: [
+            'When only one vault profile exists, the ==Vault profile switcher== setting is now hidden, since the switcher only appears with two or more profiles [#1494](https://github.com/johansan/notebook-navigator/issues/1494).'
+        ]
+    },
+    {
         version: '3.3.7',
         date: '2026-09-07',
         showOnUpdate: false,

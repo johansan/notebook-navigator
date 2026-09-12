@@ -1894,7 +1894,7 @@ export const STRINGS_EN = {
             },
             vaultProfiles: {
                 name: 'Vault profile',
-                desc: 'Profiles store file type visibility, hidden files, hidden folders, hidden tags, property rules for hidden notes, shortcuts, and navigation banner. Switch profiles from the navigation pane header.',
+                desc: 'Profiles store file type visibility, hidden files, hidden folders, hidden tags, property rules for hidden notes, shortcuts, and navigation banner. Switch profiles here or from the vault profile switcher in the navigation pane.',
                 defaultName: 'Default',
                 addButton: 'Add profile',
                 editProfilesButton: 'Edit profiles',
@@ -1914,9 +1914,9 @@ export const STRINGS_EN = {
                     duplicateName: 'Profile name already exists'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Vault title placement',
-                desc: 'Choose where the vault title is shown.',
+            vaultProfileSwitcher: {
+                name: 'Vault profile switcher',
+                desc: 'Choose where the vault profile switcher is shown.',
                 options: {
                     header: 'Show in header',
                     navigation: 'Show in navigation pane'

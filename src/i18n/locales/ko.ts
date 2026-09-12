@@ -1897,7 +1897,7 @@ export const STRINGS_KO = {
             },
             vaultProfiles: {
                 name: '보관함 프로필',
-                desc: '프로필은 파일 유형 가시성, 숨겨진 파일, 숨겨진 폴더, 숨겨진 태그, 숨겨진 노트용 속성 규칙, 바로가기, 탐색 배너를 저장합니다. 탐색 창 헤더에서 프로필을 전환합니다.',
+                desc: '프로필은 파일 유형 가시성, 숨겨진 파일, 숨겨진 폴더, 숨겨진 태그, 숨겨진 노트용 속성 규칙, 바로가기, 탐색 배너를 저장합니다. 여기 또는 탐색 창의 보관함 프로필 전환기에서 프로필을 전환합니다.',
                 defaultName: '기본',
                 addButton: '프로필 추가',
                 editProfilesButton: '프로필 편집',
@@ -1917,9 +1917,9 @@ export const STRINGS_KO = {
                     duplicateName: '프로필 이름이 이미 존재합니다'
                 }
             },
-            vaultTitlePlacement: {
-                name: '보관함 제목 위치',
-                desc: '보관함 제목이 표시되는 위치를 선택합니다.',
+            vaultProfileSwitcher: {
+                name: '보관함 프로필 전환기',
+                desc: '보관함 프로필 전환기가 표시되는 위치를 선택합니다.',
                 options: {
                     header: '헤더에 표시',
                     navigation: '탐색 창에 표시'

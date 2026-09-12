@@ -1906,7 +1906,7 @@ export const STRINGS_PL = {
             },
             vaultProfiles: {
                 name: 'Profil sejfu',
-                desc: 'Profile przechowują widoczność typów plików, ukryte pliki, ukryte foldery, ukryte tagi, reguły atrybutów dla ukrytych notatek, skróty i baner nawigacji. Przełącz profile w nagłówku panelu nawigacji.',
+                desc: 'Profile przechowują widoczność typów plików, ukryte pliki, ukryte foldery, ukryte tagi, reguły atrybutów dla ukrytych notatek, skróty i baner nawigacji. Przełączaj profile tutaj lub za pomocą przełącznika profilu sejfu w panelu nawigacji.',
                 defaultName: 'Domyślny',
                 addButton: 'Dodaj profil',
                 editProfilesButton: 'Edytuj profile',
@@ -1926,9 +1926,9 @@ export const STRINGS_PL = {
                     duplicateName: 'Nazwa profilu już istnieje'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Położenie tytułu sejfu',
-                desc: 'Wybierz, gdzie jest widoczny tytuł sejfu.',
+            vaultProfileSwitcher: {
+                name: 'Przełącznik profilu sejfu',
+                desc: 'Wybierz, gdzie jest widoczny przełącznik profilu sejfu.',
                 options: {
                     header: 'Pokaż w nagłówku',
                     navigation: 'Pokaż w panelu nawigacji'

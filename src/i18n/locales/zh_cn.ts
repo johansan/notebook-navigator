@@ -1854,7 +1854,7 @@ export const STRINGS_ZH_CN = {
             },
             vaultProfiles: {
                 name: '仓库配置文件',
-                desc: '配置文件存储文件类型可见性、隐藏文件、隐藏文件夹、隐藏标签、隐藏笔记的属性规则、快捷方式和导航横幅。从导航窗格标题切换配置文件。',
+                desc: '配置文件存储文件类型可见性、隐藏文件、隐藏文件夹、隐藏标签、隐藏笔记的属性规则、快捷方式和导航横幅。在此处或从导航窗格中的仓库配置文件切换器切换配置文件。',
                 defaultName: '默认',
                 addButton: '添加配置文件',
                 editProfilesButton: '编辑配置文件',
@@ -1873,9 +1873,9 @@ export const STRINGS_ZH_CN = {
                     duplicateName: '配置文件名称已存在'
                 }
             },
-            vaultTitlePlacement: {
-                name: '仓库标题位置',
-                desc: '选择仓库标题显示的位置。',
+            vaultProfileSwitcher: {
+                name: '仓库配置文件切换器',
+                desc: '选择仓库配置文件切换器显示的位置。',
                 options: {
                     header: '显示在标题栏',
                     navigation: '显示在导航窗格'

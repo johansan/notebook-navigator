@@ -1905,7 +1905,7 @@ export const STRINGS_NL = {
             },
             vaultProfiles: {
                 name: 'Kluisprofiel',
-                desc: 'Profielen bewaren bestandstypezichtbaarheid, verborgen bestanden, verborgen mappen, verborgen tags, eigenschapsregels voor verborgen notities, snelkoppelingen en navigatiebanner. Wissel van profiel via de koptekst van het navigatiepaneel.',
+                desc: 'Profielen bewaren bestandstypezichtbaarheid, verborgen bestanden, verborgen mappen, verborgen tags, eigenschapsregels voor verborgen notities, snelkoppelingen en navigatiebanner. Wissel van profiel hier of via de kluisprofielwisselaar in het navigatiepaneel.',
                 defaultName: 'Standaard',
                 addButton: 'Profiel toevoegen',
                 editProfilesButton: 'Profielen bewerken',
@@ -1925,9 +1925,9 @@ export const STRINGS_NL = {
                     duplicateName: 'Profielnaam bestaat al'
                 }
             },
-            vaultTitlePlacement: {
-                name: 'Plaatsing kluistitel',
-                desc: 'Kies waar de kluistitel wordt weergegeven.',
+            vaultProfileSwitcher: {
+                name: 'Kluisprofielwisselaar',
+                desc: 'Kies waar de kluisprofielwisselaar wordt weergegeven.',
                 options: {
                     header: 'Weergeven in koptekst',
                     navigation: 'Weergeven in navigatiepaneel'
