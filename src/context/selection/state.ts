@@ -566,6 +566,50 @@ export function selectionReducer(state: SelectionState, action: SelectionAction,
             };
         }
 
+        case 'CLEANUP_MOVED_FILES': {
+            const selectedFiles = new Set(state.selectedFiles);
+            let changed = false;
+            let primaryRemoved = false;
+            for (const { file, originalPath, inCurrentList } of action.movedFiles) {
+                if (inCurrentList) {
+                    // Retained files are re-keyed here instead of waiting for the rename listener, which runs
+                    // after an awaited settings save. Without this, choosing a new primary below could resolve a
+                    // stale path to no file and leave the selection set without a primary.
+                    if (selectedFiles.delete(originalPath)) {
+                        selectedFiles.add(file.path);
+                        changed = true;
+                    }
+                    continue;
+                }
+
+                // Both path forms are removed because the rename listener may already have rewritten this entry.
+                if (selectedFiles.delete(originalPath)) {
+                    changed = true;
+                }
+                if (selectedFiles.delete(file.path)) {
+                    changed = true;
+                }
+                if (state.selectedFile === file || state.selectedFile?.path === originalPath) {
+                    primaryRemoved = true;
+                    changed = true;
+                }
+            }
+
+            if (!changed) {
+                return state;
+            }
+
+            return {
+                ...state,
+                selectedFiles,
+                selectedFile: primaryRemoved ? (app ? getFirstSelectedFile(selectedFiles, app) : null) : state.selectedFile,
+                anchorIndex: selectedFiles.size === 0 ? null : state.anchorIndex,
+                isFolderChangeWithAutoSelect: false,
+                isKeyboardNavigation: false,
+                revealSource: null
+            };
+        }
+
         case 'TOGGLE_FILE_SELECTION': {
             const selectedFiles = new Set(state.selectedFiles);
             if (selectedFiles.has(action.file.path)) {

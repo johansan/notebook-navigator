@@ -26,7 +26,6 @@ import { showNotice } from '../../utils/noticeUtils';
 import { TIMEOUTS } from '../../types/obsidian-extended';
 import { buildFilePathInFolder, buildPathInFolder, generateUniqueFilename } from '../../utils/fileCreationUtils';
 import { EXCALIDRAW_BASENAME_SUFFIX, stripExcalidrawSuffix, isExcalidrawFile } from '../../utils/fileNameUtils';
-import { findNextFileAfterRemoval, updateSelectionAfterFileOperation } from '../../utils/selectionUtils';
 import { getErrorMessage } from '../../utils/errorUtils';
 import type { MoveFilesCommandData } from '../CommandQueueService';
 import type { CommandQueueService } from '../CommandQueueService';
@@ -35,6 +34,7 @@ import type { MoveFileConflictsSetting } from '../../settings/types';
 import { resolveMoveFileConflictsSetting } from '../../settings/types';
 import { FolderPathSettingsSync } from './FolderPathSettingsSync';
 import type { MoveFilesOptions, MoveFilesResult, MoveFolderModalResult, MoveFolderResult } from './types';
+import type { MovedFileSelectionUpdate } from '../../context/selection/types';
 
 interface PlannedFileMove {
     file: TFile;
@@ -130,7 +130,9 @@ export class FileMoveService {
             return result;
         }
 
-        const selectedFileOriginalPath = selectionContext?.selectedFile?.path ?? null;
+        // Original paths are captured before the move because Obsidian rewrites TFile.path in place during a
+        // rename, and the moved-path result from the command queue is keyed by the pre-move path.
+        const originalPathsByFile = new Map(files.map(file => [file, file.path] as const));
         const commandQueue = this.getCommandQueue();
         if (commandQueue) {
             const moveConflictsSetting = this.resolveMoveFileConflictsSetting();
@@ -317,11 +319,21 @@ export class FileMoveService {
             result.skippedCount = moveResult.data.skippedCount;
             result.cancelledCount = moveResult.data.cancelledCount;
 
-            if (selectionContext && selectedFileOriginalPath) {
+            if (selectionContext) {
+                // Only files that actually moved are reported; skipped and cancelled files keep their paths and
+                // their selection. Files that stay in the list are reported too so the reducer can re-key them.
                 const movedPathSet = new Set(moveResult.data.movedSourcePaths);
-                if (movedPathSet.has(selectedFileOriginalPath)) {
-                    const nextFileToSelect = findNextFileAfterRemoval(selectionContext.allFiles, movedPathSet);
-                    await updateSelectionAfterFileOperation(nextFileToSelect, selectionContext.dispatch, this.app);
+                const movedFiles: MovedFileSelectionUpdate[] = [];
+                for (const file of files) {
+                    const originalPath = originalPathsByFile.get(file);
+                    if (originalPath === undefined || !movedPathSet.has(originalPath)) {
+                        continue;
+                    }
+                    movedFiles.push({ file, originalPath, inCurrentList: selectionContext.isFileInCurrentList(file) });
+                }
+
+                if (movedFiles.length > 0) {
+                    selectionContext.dispatch({ type: 'CLEANUP_MOVED_FILES', movedFiles });
                 }
             }
 

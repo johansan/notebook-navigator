@@ -105,20 +105,56 @@ function getFilteredMarkdownFilesForSelection(
     return baseFiles.filter(file => file.extension === 'md');
 }
 
-function isFileVisibleForScopedSelection(
-    file: TFile,
-    options: {
-        showHiddenItems: boolean;
-        excludedFolderPatterns: string[];
-        excludedFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
-        fileNameMatcher: ReturnType<typeof createHiddenFileNameMatcherForVisibility>;
-        shouldFilterHiddenFileTags: boolean;
-        hiddenFileTagVisibility: ReturnType<typeof createHiddenTagVisibility>;
-        hideDrawingPreviewImages: boolean;
-        app: App;
-        db: ReturnType<typeof getDBInstanceOrNull>;
-    }
-): boolean {
+interface ScopedSelectionVisibilityOptions {
+    showHiddenItems: boolean;
+    excludedFolderPatterns: string[];
+    excludedFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
+    fileNameMatcher: ReturnType<typeof createHiddenFileNameMatcherForVisibility>;
+    shouldFilterHiddenFileTags: boolean;
+    hiddenFileTagVisibility: ReturnType<typeof createHiddenTagVisibility>;
+    hideDrawingPreviewImages: boolean;
+    app: App;
+    db: ReturnType<typeof getDBInstanceOrNull>;
+}
+
+/** Builds the per-file visibility rules shared by tag and property lists from the active settings. */
+function createScopedSelectionVisibilityOptions(
+    settings: NotebookNavigatorSettings,
+    visibility: VisibilityPreferences,
+    app: App
+): ScopedSelectionVisibilityOptions {
+    const excludedFileProperties = getActiveHiddenFileProperties(settings);
+    const excludedFileNamePatterns = getActiveHiddenFileNames(settings);
+    const hiddenFileTags = getActiveHiddenFileTags(settings);
+    const hiddenFileTagVisibility = createHiddenTagVisibility(hiddenFileTags, visibility.showHiddenItems);
+    return {
+        showHiddenItems: visibility.showHiddenItems,
+        excludedFolderPatterns: getActiveHiddenFolders(settings),
+        excludedFilePropertyMatcher: createFrontmatterPropertyExclusionMatcher(excludedFileProperties),
+        fileNameMatcher: createHiddenFileNameMatcherForVisibility(excludedFileNamePatterns, visibility.showHiddenItems),
+        shouldFilterHiddenFileTags: hiddenFileTagVisibility.hasHiddenRules && !visibility.showHiddenItems,
+        hiddenFileTagVisibility,
+        hideDrawingPreviewImages: settings.hideDrawingPreviewImages,
+        app,
+        db: getDBInstanceOrNull()
+    };
+}
+
+/**
+ * Returns the per-file visibility check that tag and property lists apply to their candidates: hidden
+ * folders, hidden file names and paths, hidden file properties, companion drawing images, and hidden
+ * file tags. It does not check whether the file carries the selected tag or property.
+ */
+export function createScopedSelectionVisibilityCheck(
+    settings: NotebookNavigatorSettings,
+    visibility: VisibilityPreferences,
+    app: App
+): (file: TFile) => boolean {
+    const options = createScopedSelectionVisibilityOptions(settings, visibility, app);
+    return file => isFileVisibleForScopedSelection(file, options);
+}
+
+function isFileVisibleForScopedSelection(file: TFile, options: ScopedSelectionVisibilityOptions): boolean {
     const {
         showHiddenItems,
         excludedFolderPatterns,
@@ -478,17 +514,10 @@ export function getFilesForTag(
     options?: NavigationFileQueryOptions
 ): TFile[] {
     const hiddenTags = getActiveHiddenTags(settings);
-    const hiddenFileTags = getActiveHiddenFileTags(settings);
-    const excludedFolderPatterns = getActiveHiddenFolders(settings);
-    const excludedFileProperties = getActiveHiddenFileProperties(settings);
-    const excludedFilePropertyMatcher = createFrontmatterPropertyExclusionMatcher(excludedFileProperties);
-    const excludedFileNamePatterns = getActiveHiddenFileNames(settings);
-    const fileNameMatcher = createHiddenFileNameMatcherForVisibility(excludedFileNamePatterns, visibility.showHiddenItems);
     const hiddenTagVisibility = createHiddenTagVisibility(hiddenTags, visibility.showHiddenItems);
     const shouldFilterHiddenTags = hiddenTagVisibility.shouldFilterHiddenTags;
-    const hiddenFileTagVisibility = createHiddenTagVisibility(hiddenFileTags, visibility.showHiddenItems);
-    const shouldFilterHiddenFileTags = hiddenFileTagVisibility.hasHiddenRules && !visibility.showHiddenItems;
-    const db = getDBInstanceOrNull();
+    const visibilityOptions = createScopedSelectionVisibilityOptions(settings, visibility, app);
+    const { db, excludedFolderPatterns, hiddenFileTagVisibility, shouldFilterHiddenFileTags } = visibilityOptions;
     let markdownFilesCache: TFile[] | null = null;
 
     const getMarkdownFiles = (): TFile[] => {
@@ -500,19 +529,7 @@ export function getFilesForTag(
         return markdownFilesCache;
     };
 
-    const matchesCurrentVisibility = (file: TFile): boolean => {
-        return isFileVisibleForScopedSelection(file, {
-            showHiddenItems: visibility.showHiddenItems,
-            excludedFolderPatterns,
-            excludedFilePropertyMatcher,
-            fileNameMatcher,
-            shouldFilterHiddenFileTags,
-            hiddenFileTagVisibility,
-            hideDrawingPreviewImages: settings.hideDrawingPreviewImages,
-            app,
-            db
-        });
-    };
+    const matchesCurrentVisibility = (file: TFile): boolean => isFileVisibleForScopedSelection(file, visibilityOptions);
 
     let filteredFiles: TFile[];
 
@@ -646,16 +663,8 @@ export function getFilesForProperty(
     }
 
     const selectedPropertyKey = normalizedKey ?? '';
-    const excludedFolderPatterns = getActiveHiddenFolders(settings);
-    const excludedFileProperties = getActiveHiddenFileProperties(settings);
-    const excludedFilePropertyMatcher = createFrontmatterPropertyExclusionMatcher(excludedFileProperties);
-    const excludedFileNamePatterns = getActiveHiddenFileNames(settings);
-    const fileNameMatcher = createHiddenFileNameMatcherForVisibility(excludedFileNamePatterns, visibility.showHiddenItems);
-
-    const hiddenFileTags = getActiveHiddenFileTags(settings);
-    const hiddenFileTagVisibility = createHiddenTagVisibility(hiddenFileTags, visibility.showHiddenItems);
-    const shouldFilterHiddenFileTags = hiddenFileTagVisibility.hasHiddenRules && !visibility.showHiddenItems;
-    const db = getDBInstanceOrNull();
+    const visibilityOptions = createScopedSelectionVisibilityOptions(settings, visibility, app);
+    const { db, excludedFolderPatterns, hiddenFileTagVisibility, shouldFilterHiddenFileTags } = visibilityOptions;
     const candidatePaths = (() => {
         if (includesAnyProperty && !visibility.includeDescendantNotes) {
             return new Set<string>();
@@ -683,19 +692,7 @@ export function getFilesForProperty(
         return propertyTreeService.collectFilePaths(valueNodeId, visibility.includeDescendantNotes);
     })();
 
-    const matchesCurrentVisibility = (file: TFile): boolean => {
-        return isFileVisibleForScopedSelection(file, {
-            showHiddenItems: visibility.showHiddenItems,
-            excludedFolderPatterns,
-            excludedFilePropertyMatcher,
-            fileNameMatcher,
-            shouldFilterHiddenFileTags,
-            hiddenFileTagVisibility,
-            hideDrawingPreviewImages: settings.hideDrawingPreviewImages,
-            app,
-            db
-        });
-    };
+    const matchesCurrentVisibility = (file: TFile): boolean => isFileVisibleForScopedSelection(file, visibilityOptions);
 
     const matchedFiles = (() => {
         if (candidatePaths) {

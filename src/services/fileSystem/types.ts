@@ -30,9 +30,13 @@ export interface SelectionContext {
 }
 
 export interface MoveFilesSelectionContext {
-    selectedFile: TFile | null;
     dispatch: SelectionDispatch;
-    allFiles: TFile[];
+    /**
+     * Answers whether a moved file still belongs to the list the selection was made in. It is called
+     * after the move, with the file's new path. Moved files that no longer belong are removed from the
+     * selection; moved files that still belong, and files that were not moved, keep their selection.
+     */
+    isFileInCurrentList: (file: TFile) => boolean;
 }
 
 export interface MoveFilesOptions {

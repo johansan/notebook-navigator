@@ -49,7 +49,7 @@ import {
     type BackgroundMode,
     type DualPaneOrientation
 } from '../types';
-import { getSelectedPath, getFilesForSelection, orderFilesByReference } from '../utils/selectionUtils';
+import { getSelectedPath, createMovedFileListMembershipCheck, orderFilesByReference } from '../utils/selectionUtils';
 import { normalizeNavigationPath } from '../utils/navigationIndex';
 import { createIndexMap } from '../utils/arrayUtils';
 import { deleteSelectedFiles } from '../utils/deleteOperations';
@@ -1071,24 +1071,19 @@ export const NotebookNavigatorComponent = React.memo(
                         return;
                     }
 
-                    // Get all files in the current view for smart selection
-                    const allFiles = getFilesForSelection(
-                        selectionState,
-                        settings,
-                        {
-                            includeDescendantNotes: uxRef.current.includeDescendantNotes,
-                            showHiddenItems: uxRef.current.showHiddenItems
-                        },
-                        app,
-                        tagTreeService,
-                        propertyTreeService
-                    );
-
                     // Move files with modal
                     await fileSystemOps.moveFilesWithModal(selectedFiles, {
-                        selectedFile: selectionState.selectedFile,
                         dispatch: selectionDispatch,
-                        allFiles
+                        isFileInCurrentList: createMovedFileListMembershipCheck(
+                            selectionState,
+                            settings,
+                            {
+                                includeDescendantNotes: uxRef.current.includeDescendantNotes,
+                                showHiddenItems: uxRef.current.showHiddenItems
+                            },
+                            uxRef.current.searchActive,
+                            app
+                        )
                     });
                 },
                 addShortcutForCurrentSelection: async () => {

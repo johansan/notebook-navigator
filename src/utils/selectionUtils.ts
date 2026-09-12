@@ -28,7 +28,7 @@ import {
 import type { NotebookNavigatorSettings } from '../settings/types';
 import type { IPropertyTreeProvider } from '../interfaces/IPropertyTreeProvider';
 import type { ITagTreeProvider } from '../interfaces/ITagTreeProvider';
-import { getFilesForFolder, getFilesForProperty, getFilesForTag } from './fileFinder';
+import { createScopedSelectionVisibilityCheck, getFilesForFolder, getFilesForProperty, getFilesForTag } from './fileFinder';
 
 /**
  * Utilities for managing file selection operations
@@ -52,38 +52,6 @@ export function getSelectedPath(
         return selectionState.selectedProperty;
     }
     return null;
-}
-
-/**
- * Get all files for the current selection (folder or tag)
- * @param selectionState The current selection state
- * @param settings Plugin settings
- * @param visibility Visibility preferences for descendant notes and hidden items display
- * @param app Obsidian app instance
- * @param tagTreeService Tag tree service for tag operations
- * @returns Array of files in the selected folder or with the selected tag
- */
-export function getFilesForSelection(
-    selectionState: SelectionState,
-    settings: NotebookNavigatorSettings,
-    visibility: VisibilityPreferences,
-    app: App,
-    tagTreeService: ITagTreeProvider | null,
-    propertyTreeService: IPropertyTreeProvider | null
-): TFile[] {
-    return getFilesForNavigationSelection(
-        {
-            selectionType: selectionState.selectionType,
-            selectedFolder: selectionState.selectedFolder,
-            selectedTag: selectionState.selectedTag,
-            selectedProperty: selectionState.selectedProperty
-        },
-        settings,
-        visibility,
-        app,
-        tagTreeService,
-        propertyTreeService
-    );
 }
 
 export interface NavigationSelectionScope {
@@ -143,9 +111,64 @@ export function getFilesForNavigationSelection(
 }
 
 /**
- * Find the next file to select after removing files (delete or move)
+ * Creates the list-membership check used to reconcile the file selection after files were moved.
+ * The returned function runs after the move, with the file's new path, and answers whether the file
+ * still belongs to the list the selection was made in.
+ *
+ * Folder lists are recomputed from the vault, which reflects a move as soon as the rename resolves.
+ * Tag and property lists use tree path sets that are refreshed asynchronously, so recomputing them
+ * here can report a moved file as missing. A move preserves the file's tags and properties, so for
+ * those scopes only the per-file visibility rules are re-evaluated: hidden folders, hidden file names
+ * and paths, and companion drawing images can all start matching at the new path or a conflict-renamed
+ * name. The rename handler synchronously seeds the storage mirror at the new path from the existing
+ * record, so the hidden file tag rule can read the moved file's cached tags before the trees refresh.
+ */
+export function createMovedFileListMembershipCheck(
+    selectionScope: NavigationSelectionScope,
+    settings: NotebookNavigatorSettings,
+    visibility: VisibilityPreferences,
+    searchActive: boolean,
+    app: App
+): (file: TFile) => boolean {
+    // Search results are recomputed asynchronously after the storage sync and cannot be evaluated for a
+    // moved file at this point, so a move during an active search always drops the moved files from the
+    // selection. Otherwise a file that a folder: token or a renamed name no longer matches would stay
+    // selected without being visible, and the list refresh does not reconcile that afterwards.
+    if (searchActive) {
+        return () => false;
+    }
+
+    if (selectionScope.selectionType === ItemType.FOLDER) {
+        const selectedFolder = selectionScope.selectedFolder;
+        if (!selectedFolder) {
+            return () => false;
+        }
+
+        // Computed lazily so the folder list is built once, after the move, even when several files moved.
+        let folderFilePaths: Set<string> | null = null;
+        return file => {
+            if (!folderFilePaths) {
+                const folderFiles = getFilesForFolder(selectedFolder, settings, visibility, app, { orderResults: false });
+                folderFilePaths = new Set(folderFiles.map(entry => entry.path));
+            }
+            return folderFilePaths.has(file.path);
+        };
+    }
+
+    const isTagScope = selectionScope.selectionType === ItemType.TAG && !!selectionScope.selectedTag;
+    const isPropertyScope = selectionScope.selectionType === ItemType.PROPERTY && !!selectionScope.selectedProperty;
+    if (isTagScope || isPropertyScope) {
+        return createScopedSelectionVisibilityCheck(settings, visibility, app);
+    }
+
+    return () => false;
+}
+
+/**
+ * Find the next file to select after deleting files. Moves do not use this: a moved file keeps or loses
+ * its selection based on list membership instead, see createMovedFileListMembershipCheck.
  * @param allFiles - All files in the current view
- * @param removedPaths - Set of paths that are being removed (deleted or moved)
+ * @param removedPaths - Set of paths that are being removed
  * @returns The file to select after removal, or null if none
  */
 export function findNextFileAfterRemoval(allFiles: readonly TFile[], removedPaths: Set<string>): TFile | null {

@@ -17,7 +17,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { TFile, TFolder } from 'obsidian';
+import { App, TFile, TFolder } from 'obsidian';
 import { selectionReducer } from '../../src/context/selection/state';
 import type { SelectionState } from '../../src/context/selection/types';
 import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
@@ -328,5 +328,158 @@ describe('selectionReducer navigation history', () => {
         });
 
         expect(cleanupState).toBe(selectedState);
+    });
+});
+
+describe('selectionReducer CLEANUP_MOVED_FILES', () => {
+    function createApp(files: TFile[]): App {
+        const app = new App();
+        const filesByPath = new Map(files.map(file => [file.path, file]));
+        Object.assign(app.vault, {
+            getFileByPath(path: string): TFile | null {
+                return filesByPath.get(path) ?? null;
+            }
+        });
+        return app;
+    }
+
+    it('removes moved-out files whether the selection holds their old or new path and keeps the rest', () => {
+        const root = createFolder('/');
+        const alpha = createFolder('Alpha', root);
+        const beta = createFolder('Beta', root);
+        const primary = createFile('Alpha/primary.md', alpha);
+        const kept = createFile('Alpha/kept.md', alpha);
+        const rewritten = createFile('Alpha/rewritten.md', alpha);
+
+        const initialState = createSelectionState(root);
+        const selectedState = selectionReducer(initialState, {
+            type: 'SET_FILE_SELECTION',
+            files: [primary, kept, rewritten],
+            selectedFile: primary
+        });
+        // The rename listener already rewrote one path; the other still holds the pre-move path.
+        const pathUpdatedState = selectionReducer(selectedState, {
+            type: 'UPDATE_FILE_PATH',
+            oldPath: 'Alpha/rewritten.md',
+            newPath: 'Beta/rewritten.md'
+        });
+        // Obsidian rewrites TFile.path in place during a rename.
+        primary.path = 'Beta/primary.md';
+        primary.parent = beta;
+        rewritten.path = 'Beta/rewritten.md';
+        rewritten.parent = beta;
+        const app = createApp([primary, kept, rewritten]);
+
+        const cleanedState = selectionReducer(
+            pathUpdatedState,
+            {
+                type: 'CLEANUP_MOVED_FILES',
+                movedFiles: [
+                    { file: primary, originalPath: 'Alpha/primary.md', inCurrentList: false },
+                    { file: rewritten, originalPath: 'Alpha/rewritten.md', inCurrentList: false }
+                ]
+            },
+            app
+        );
+
+        expect(Array.from(cleanedState.selectedFiles)).toEqual(['Alpha/kept.md']);
+        expect(cleanedState.selectedFile).toBe(kept);
+    });
+
+    it('re-keys retained moved files before choosing the new primary', () => {
+        const root = createFolder('/');
+        const alpha = createFolder('Alpha', root);
+        const archive = createFolder('Alpha/Archive', alpha);
+        const primary = createFile('Alpha/primary.md', alpha);
+        const retained = createFile('Alpha/retained.md', alpha);
+
+        const initialState = createSelectionState(root);
+        const selectedState = selectionReducer(initialState, {
+            type: 'SET_FILE_SELECTION',
+            files: [primary, retained],
+            selectedFile: primary
+        });
+        // No rename notification has arrived yet: the selection still holds both pre-move paths, and the
+        // vault only knows the files under their new paths.
+        primary.path = 'Alpha/Archive/primary.md';
+        primary.parent = archive;
+        retained.path = 'Alpha/Archive/retained.md';
+        retained.parent = archive;
+        const app = createApp([primary, retained]);
+
+        const cleanedState = selectionReducer(
+            selectedState,
+            {
+                type: 'CLEANUP_MOVED_FILES',
+                movedFiles: [
+                    { file: primary, originalPath: 'Alpha/primary.md', inCurrentList: false },
+                    { file: retained, originalPath: 'Alpha/retained.md', inCurrentList: true }
+                ]
+            },
+            app
+        );
+
+        expect(Array.from(cleanedState.selectedFiles)).toEqual(['Alpha/Archive/retained.md']);
+        expect(cleanedState.selectedFile).toBe(retained);
+
+        // A late rename notification for the retained file is then a no-op.
+        const lateRenameState = selectionReducer(cleanedState, {
+            type: 'UPDATE_FILE_PATH',
+            oldPath: 'Alpha/retained.md',
+            newPath: 'Alpha/Archive/retained.md'
+        });
+        expect(Array.from(lateRenameState.selectedFiles)).toEqual(['Alpha/Archive/retained.md']);
+        expect(lateRenameState.selectedFile).toBe(retained);
+    });
+
+    it('clears the primary file and anchor when every selected file left the list', () => {
+        const root = createFolder('/');
+        const alpha = createFolder('Alpha', root);
+        const moved = createFile('Alpha/moved.md', alpha);
+        const alsoMoved = createFile('Alpha/also-moved.md', alpha);
+        const app = createApp([moved, alsoMoved]);
+
+        const initialState = createSelectionState(root);
+        const primaryState = selectionReducer(initialState, { type: 'SET_SELECTED_FILE', file: moved });
+        const selectedState = selectionReducer(primaryState, { type: 'TOGGLE_FILE_SELECTION', file: alsoMoved, anchorIndex: 3 });
+        expect(selectedState.anchorIndex).toBe(3);
+        expect(selectedState.selectedFile).toBe(moved);
+
+        const cleanedState = selectionReducer(
+            selectedState,
+            {
+                type: 'CLEANUP_MOVED_FILES',
+                movedFiles: [
+                    { file: moved, originalPath: 'Alpha/moved.md', inCurrentList: false },
+                    { file: alsoMoved, originalPath: 'Alpha/also-moved.md', inCurrentList: false }
+                ]
+            },
+            app
+        );
+
+        expect(cleanedState.selectedFiles.size).toBe(0);
+        expect(cleanedState.selectedFile).toBeNull();
+        expect(cleanedState.anchorIndex).toBeNull();
+    });
+
+    it('returns the same state when no selected file was moved', () => {
+        const root = createFolder('/');
+        const alpha = createFolder('Alpha', root);
+        const kept = createFile('Alpha/kept.md', alpha);
+        const other = createFile('Alpha/other.md', alpha);
+        const app = createApp([kept, other]);
+
+        const initialState = createSelectionState(root);
+        const selectedState = selectionReducer(initialState, { type: 'SET_SELECTED_FILE', file: kept });
+        const cleanedState = selectionReducer(
+            selectedState,
+            {
+                type: 'CLEANUP_MOVED_FILES',
+                movedFiles: [{ file: other, originalPath: 'Alpha/other.md', inCurrentList: false }]
+            },
+            app
+        );
+
+        expect(cleanedState).toBe(selectedState);
     });
 });

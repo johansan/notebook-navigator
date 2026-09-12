@@ -47,6 +47,14 @@ export interface SelectionState {
     navigationHistoryIndex: number;
 }
 
+/** One moved file for CLEANUP_MOVED_FILES. `file.path` already holds the post-move path. */
+export interface MovedFileSelectionUpdate {
+    file: TFile;
+    originalPath: string;
+    /** Whether the file still belongs to the list the selection was made in, evaluated after the move. */
+    inCurrentList: boolean;
+}
+
 export type SelectionAction =
     | {
           type: 'SET_SELECTED_FOLDER';
@@ -90,6 +98,7 @@ export type SelectionAction =
     | { type: 'CLEAR_REVEAL_OPERATION' }
     | { type: 'CLEANUP_DELETED_FOLDER'; deletedPath: string }
     | { type: 'CLEANUP_DELETED_FILE'; deletedPath: string; nextFileToSelect?: TFile | null }
+    | { type: 'CLEANUP_MOVED_FILES'; movedFiles: readonly MovedFileSelectionUpdate[] }
     | { type: 'TOGGLE_FILE_SELECTION'; file: TFile; anchorIndex?: number }
     | { type: 'EXTEND_SELECTION'; toIndex: number; files: TFile[]; allFiles: TFile[] }
     | { type: 'CLEAR_FILE_SELECTION' }

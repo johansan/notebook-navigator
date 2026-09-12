@@ -42,7 +42,7 @@ import {
     hasPotentialObsidianFileDragType
 } from '../utils/dragData';
 import { FolderMoveError } from '../services/FileSystemService';
-import { getFilesForNavigationSelection } from '../utils/selectionUtils';
+import { createMovedFileListMembershipCheck } from '../utils/selectionUtils';
 import {
     expandNavigationTreeItems,
     getFolderAncestorPaths,
@@ -212,7 +212,7 @@ const setNativeFileDragPayload = (dataTransfer: DataTransfer, vaultName: string,
 };
 
 export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>) {
-    const { app, isMobile, tagTreeService, propertyTreeService } = useServices();
+    const { app, isMobile, tagTreeService } = useServices();
     const fileSystemOps = useFileSystemOps();
     const tagOperations = useTagOperations();
     const selectionState = useSelectionState();
@@ -222,6 +222,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const internalDragSession = useInternalDragSession();
     const includeDescendantNotes = uxPreferences.includeDescendantNotes;
     const showHiddenItems = uxPreferences.showHiddenItems;
+    const searchActive = uxPreferences.searchActive;
     const expansionState = useExpansionState();
     const expansionDispatch = useExpansionDispatch();
     const dragOverElement = useRef<HTMLElement | null>(null);
@@ -363,25 +364,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     );
 
     /**
-     * Helper function to get current file list based on selection
-     */
-    const getCurrentFileList = useCallback((): TFile[] => {
-        return getFilesForNavigationSelection(
-            {
-                selectionType: selectionState.selectionType,
-                selectedFolder: selectionState.selectedFolder,
-                selectedTag: selectionState.selectedTag,
-                selectedProperty: selectionState.selectedProperty
-            },
-            settings,
-            { includeDescendantNotes, showHiddenItems },
-            app,
-            tagTreeService,
-            propertyTreeService
-        );
-    }, [selectionState, settings, includeDescendantNotes, showHiddenItems, app, tagTreeService, propertyTreeService]);
-
-    /**
      * Converts an array of file paths to TFile objects
      */
     const getFilesFromPaths = useCallback(
@@ -454,19 +436,40 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
      */
     const moveFilesWithContext = useCallback(
         async (files: TFile[], targetFolder: TFolder) => {
-            const currentFiles = getCurrentFileList();
             await fileSystemOps.moveFilesToFolder({
                 files,
                 targetFolder,
                 selectionContext: {
-                    selectedFile: selectionState.selectedFile,
                     dispatch,
-                    allFiles: currentFiles
+                    isFileInCurrentList: createMovedFileListMembershipCheck(
+                        {
+                            selectionType: selectionState.selectionType,
+                            selectedFolder: selectionState.selectedFolder,
+                            selectedTag: selectionState.selectedTag,
+                            selectedProperty: selectionState.selectedProperty
+                        },
+                        settings,
+                        { includeDescendantNotes, showHiddenItems },
+                        searchActive,
+                        app
+                    )
                 },
                 showNotifications: true
             });
         },
-        [fileSystemOps, getCurrentFileList, selectionState.selectedFile, dispatch]
+        [
+            app,
+            dispatch,
+            fileSystemOps,
+            includeDescendantNotes,
+            searchActive,
+            selectionState.selectedFolder,
+            selectionState.selectedProperty,
+            selectionState.selectedTag,
+            selectionState.selectionType,
+            settings,
+            showHiddenItems
+        ]
     );
 
     const getMarkdownFilesFromDragEvent = useCallback(

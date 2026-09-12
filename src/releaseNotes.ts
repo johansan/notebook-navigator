@@ -112,7 +112,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         changed: ['Renamed the `Vault title placement` setting to ==Vault profile switcher==.'],
         fixed: [
             'When only one vault profile exists, the ==Vault profile switcher== setting is now hidden, since the switcher only appears with two or more profiles [#1494](https://github.com/johansan/notebook-navigator/issues/1494).',
-            'When the calendar in the right sidebar was slightly taller than its pane on Windows or Linux, hovering days or the month header made the calendar shake as the scrollbar appeared and disappeared. The calendar sidebar now never scrolls and keeps a stable size [#1492](https://github.com/johansan/notebook-navigator/issues/1492).'
+            'When the calendar in the right sidebar was slightly taller than its pane on Windows or Linux, hovering days or the month header made the calendar shake as the scrollbar appeared and disappeared. The calendar sidebar now never scrolls and keeps a stable size [#1492](https://github.com/johansan/notebook-navigator/issues/1492).',
+            'When moving selected files, files that remain in the current list, such as notes moved between folders while a tag is selected, now stay selected, and only files that leave the list are deselected [#1488](https://github.com/johansan/notebook-navigator/issues/1488).'
         ]
     },
     {

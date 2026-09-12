@@ -37,7 +37,12 @@ import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFil
 import { addFolderStyleChangeActions, addFolderStyleMenu, addStyleMenu } from './styleMenuBuilder';
 import { resolveIconForMenu, resolveUXIconForMenu } from '../uxIcons';
 import { isFolderNote } from '../../utils/folderNoteLookup';
-import { getFilesForNavigationSelection, getNavigatorPinContext, orderFilesByReference } from '../selectionUtils';
+import {
+    getFilesForNavigationSelection,
+    getNavigatorPinContext,
+    orderFilesByReference,
+    createMovedFileListMembershipCheck
+} from '../selectionUtils';
 import { collectFileMenuPropertyActions, type FileMenuPropertyAction } from '../../utils/propertyMenuActions';
 import { INTERNAL_NOTEBOOK_NAVIGATOR_API } from '../../api/NotebookNavigatorAPI';
 import { getManualSortGroupHeaderPropertyKey } from '../manualSort';
@@ -127,7 +132,8 @@ function resolveFileMenuPropertyActionIcon(
  */
 export function buildFileMenu(params: FileMenuBuilderParams): void {
     const { file, menu, services, settings, state, dispatchers, options } = params;
-    const { app, isMobile, fileSystemOps, metadataService, tagTreeService, propertyTreeService, commandQueue, visibility } = services;
+    const { app, isMobile, fileSystemOps, metadataService, tagTreeService, propertyTreeService, commandQueue, visibility, searchActive } =
+        services;
     const { selectionState } = state;
     const { selectionDispatch } = dispatchers;
 
@@ -404,9 +410,8 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
                         .filter((f): f is TFile => !!f);
 
                     await fileSystemOps.moveFilesWithModal(currentFiles, {
-                        selectedFile: selectionState.selectedFile,
                         dispatch: selectionDispatch,
-                        allFiles: getCachedFileList()
+                        isFileInCurrentList: createMovedFileListMembershipCheck(selectionState, settings, visibility, searchActive, app)
                     });
                 }
             );
@@ -546,9 +551,8 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
                     .setIcon('lucide-folder-input'),
                 async () => {
                     await fileSystemOps.moveFilesWithModal([file], {
-                        selectedFile: selectionState.selectedFile,
                         dispatch: selectionDispatch,
-                        allFiles: getCachedFileList()
+                        isFileInCurrentList: createMovedFileListMembershipCheck(selectionState, settings, visibility, searchActive, app)
                     });
                 }
             );
