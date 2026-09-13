@@ -95,6 +95,109 @@
     margin-top: 4px;
 }
 
+/* Folder template rows in File operations & templates > Templates: path text, then the scope dropdown and remove button on the right */
+.nn-setting-folder-template-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+
+.nn-setting-folder-template-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nn-setting-folder-template-row + .nn-setting-folder-template-row {
+    margin-top: 6px;
+}
+
+.nn-setting-folder-template-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.nn-setting-folder-template-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.nn-setting-folder-template-remove {
+    padding: 2px;
+}
+
+/* Template command rows in File operations & templates: name and summary on the left, edit and remove on the right */
+.nn-setting-template-commands {
+    flex-wrap: wrap;
+}
+
+/* Only the list wraps: the description shrinks so the add button stays on the first line */
+.nn-setting-template-commands > .setting-item-info {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.nn-setting-template-commands > .setting-item-control {
+    flex: 0 0 auto;
+}
+
+.nn-setting-template-command-list {
+    flex-basis: 100%;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+
+.nn-setting-template-command-list:empty {
+    display: none;
+}
+
+.nn-setting-template-command-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nn-setting-template-command-row + .nn-setting-template-command-row {
+    margin-top: 6px;
+}
+
+.nn-setting-template-command-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.nn-setting-template-command-name {
+    color: var(--text-normal);
+}
+
+.nn-setting-template-command-summary {
+    font-size: var(--font-ui-smaller);
+}
+
+.nn-setting-template-command-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Icon button next to the placement dropdown in the template command modal, and the icon shown in the command list */
+.nn-template-command-icon-button {
+    margin-inline-end: 8px;
+}
+
+.nn-setting-template-command-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-end: 4px;
+    color: var(--text-muted);
+}
+
 .nn-setting-text-count-warning-header {
     display: flex;
     align-items: center;

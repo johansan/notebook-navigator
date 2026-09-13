@@ -132,3 +132,8 @@ export function normalizeOptionalVaultFolderPath(value: string | null | undefine
     const withoutTrailingSlash = withoutLeadingSlash.replace(/\/+$/u, '');
     return withoutTrailingSlash.length > 0 ? withoutTrailingSlash : null;
 }
+
+/** Formats a vault folder path for display with a leading slash, so the root and nested folders read the same way. */
+export function formatFolderPathForDisplay(folderPath: string): string {
+    return folderPath === '/' || folderPath === '' ? '/' : `/${folderPath}`;
+}

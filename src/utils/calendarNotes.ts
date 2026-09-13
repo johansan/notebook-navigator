@@ -32,7 +32,13 @@ import {
     normalizeCalendarVaultFolderPath,
     splitCalendarCustomPattern
 } from './calendarCustomNotePatterns';
-import { createMarkdownFileFromTemplatePreferTemplater } from './fileCreationUtils';
+import {
+    createMarkdownFileFromTemplate,
+    getFolderTemplateFile,
+    getMarkdownTemplateFile,
+    prepareMarkdownTemplate,
+    type TemplateSettings
+} from './fileCreationUtils';
 import type { MomentApi, MomentInstance } from './moment';
 
 export type CalendarNoteKind = 'day' | 'week' | 'month' | 'quarter' | 'year';
@@ -117,6 +123,19 @@ export function resolveCalendarCustomNotePathDate(
     return date.clone().locale(calendarLocale);
 }
 
+/** Resolved location of a calendar note plus the date and file name pattern it was built from. */
+export interface CalendarNoteLocation {
+    folderPath: string;
+    fileName: string;
+    filePath: string;
+    /** File name pattern rendered with the note date. */
+    formattedFilePattern: string;
+    /** Moment pattern of the file name, used as the default `{{date}}` format in templates. */
+    filePattern: string;
+    /** Localized date the path was built from: the start of the period for weekly notes. */
+    date: MomentInstance;
+}
+
 export function buildCustomCalendarFilePathForPattern(
     date: MomentInstance,
     settings: {
@@ -124,7 +143,7 @@ export function buildCustomCalendarFilePathForPattern(
     },
     calendarCustomFilePattern: string,
     fallbackPattern?: string
-): { folderPath: string; fileName: string; filePath: string; formattedFilePattern: string } {
+): CalendarNoteLocation {
     const customRootFolder = normalizeCalendarCustomRootFolder(settings.calendarCustomRootFolder);
     const { folderPattern: customFolderPattern, filePattern: customFilePattern } = splitCalendarCustomPattern(
         calendarCustomFilePattern,
@@ -142,7 +161,7 @@ export function buildCustomCalendarFilePathForPattern(
     const fileName = ensureMarkdownFileName(formattedFilePattern);
     const filePath = folderPath === '/' ? fileName : normalizePath(`${folderPath}/${fileName}`);
 
-    return { folderPath, fileName, filePath, formattedFilePattern };
+    return { folderPath, fileName, filePath, formattedFilePattern, filePattern: customFilePattern, date };
 }
 
 /** Creates nested folders recursively if they don't exist, returns final folder or null when a path segment is not a folder. */
@@ -179,28 +198,75 @@ function getCalendarNoteBaseName(fileName: string): string | null {
     return baseName.length > 0 ? baseName : null;
 }
 
+/**
+ * Returns the start of the period a calendar note covers. Weekly targets already carry their week anchor, so only
+ * the time of day is dropped; other kinds are moved to the first day of their month, quarter or year so `{{date}}`
+ * describes the note instead of the day it was created on.
+ */
+function getCalendarTemplateDate(kind: CalendarNoteKind, date: MomentInstance): MomentInstance {
+    switch (kind) {
+        case 'month':
+            return date.clone().startOf('month');
+        case 'quarter':
+            return date.clone().startOf('quarter');
+        case 'year':
+            return date.clone().startOf('year');
+        default:
+            return date.clone().startOf('day');
+    }
+}
+
+/**
+ * Creates a calendar note at `target`, applying the template with the configured engine.
+ * Returns null when creation stopped after a notice. Throws on invalid targets and vault failures.
+ */
 export async function createCalendarMarkdownFile(
     app: App,
-    folderPath: string,
-    fileName: string,
-    templatePath?: string | null
-): Promise<TFile> {
-    const baseName = getCalendarNoteBaseName(fileName);
+    kind: CalendarNoteKind,
+    target: CalendarNoteLocation,
+    templatePath: string | null,
+    templateSettings: TemplateSettings
+): Promise<TFile | null> {
+    const baseName = getCalendarNoteBaseName(target.fileName);
     if (!baseName) {
         throw new Error('Invalid calendar note filename');
     }
 
-    const folder = await ensureCalendarFolderExists(app, folderPath);
+    // A configured calendar template wins even when its file is missing; folder templates only fill the gap when none is set.
+    // The template is resolved from the target path before any folder exists, so prompts can run first and a cancelled
+    // prompt leaves no empty folders behind.
+    const templateFile = templatePath
+        ? getMarkdownTemplateFile(app, templatePath, 'calendar note')
+        : getFolderTemplateFile(app, templateSettings, target.folderPath);
+    const preparedTemplate = await prepareMarkdownTemplate({
+        app,
+        templateFile,
+        settings: templateSettings,
+        templateErrorContext: 'calendar note'
+    });
+    if (!preparedTemplate) {
+        return null;
+    }
+
+    const folder = await ensureCalendarFolderExists(app, target.folderPath);
     if (!folder) {
         throw new Error('Calendar folder path is not a folder');
     }
 
-    return createMarkdownFileFromTemplatePreferTemplater({
+    const formatTemplateDate = createCalendarCustomDateFormatter(target.filePattern);
+    return createMarkdownFileFromTemplate({
         app,
         folder,
         baseName,
-        templatePath,
-        templateErrorContext: 'calendar',
-        templaterCreationErrorContext: 'calendar note'
+        preparedTemplate,
+        settings: templateSettings,
+        // Weekly notes anchor weekday tokens on the period start so ISO weeks keep every weekday inside the note's week.
+        templateDate: {
+            date: getCalendarTemplateDate(kind, target.date),
+            // Format before stripping the extension, because Moment literals such as `[.md]` render it too.
+            dateFormat: date => getCalendarNoteBaseName(formatTemplateDate(date)) ?? '',
+            weekdayBase: kind === 'week' ? 'note-date' : 'locale-week'
+        },
+        templateErrorContext: 'calendar note'
     });
 }

@@ -111,8 +111,16 @@ export const STRINGS_AR = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'فشل في قراءة قالب الملاحظة اليومية.',
         createFailed: 'تعذر إنشاء الملاحظة اليومية.'
+    },
+
+    templates: {
+        invalidTokens: 'القالب "{name}" يحتوي على رموز غير صالحة: {tokens}',
+        readFailed: 'تعذّر قراءة القالب "{name}". تم إنشاء الملاحظة بدونه.',
+        folderNotSet: 'اضبط مجلد القوالب في عمليات الملفات والقوالب > قوالب قبل إنشاء ملاحظات من القوالب.',
+        templateNotFound: 'لم يتم العثور على القالب "{name}".',
+        folderNotFound: 'لم يتم العثور على المجلد "{name}".',
+        templaterMissing: 'إضافة Templater غير مثبتة. غيّر محرك القوالب في عمليات الملفات والقوالب > قوالب.'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_AR = {
             duplicateFolder: 'تكرار المجلد',
             searchInFolder: 'البحث في المجلد',
             createFolderNote: 'إنشاء ملاحظة مجلد',
+            setFolderTemplate: 'تعيين قالب المجلد...',
+            changeFolderTemplate: 'تغيير قالب المجلد...',
+            removeFolderTemplate: 'إزالة قالب المجلد',
             detachFolderNote: 'فصل ملاحظة المجلد',
             deleteFolderNote: 'حذف ملاحظة المجلد',
             changeIcon: 'تغيير الأيقونة',
@@ -712,7 +723,28 @@ export const STRINGS_AR = {
                 dismiss: 'للإغلاق'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'إضافة أمر',
+            titleEdit: 'تحرير الأمر',
+            name: 'اسم الأمر',
+            namePlaceholder: 'ملاحظة اجتماع جديدة',
+            template: 'القالب',
+            templateDesc: 'اختياري. بدون قالب، يُطبَّق قالب مجلد المجلد الهدف إن كان معيّنًا.',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: 'صيغة اسم الملف',
+            fileNameFormatDesc:
+                'تُستبدل الرموز مثل {{date:YYYYMMDD}} و{{prompt:Title}} عند تشغيل الأمر. يطلب كل إدخال قيمة، وتحصل التسمية نفسها في القالب على القيمة نفسها.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: 'الموقع',
+            folder: 'المجلد',
+            folderPlaceholder: 'Meetings',
+            icon: 'أيقونة',
+            placement: 'زر',
+            placementNone: 'لا شيء',
+            placementRibbon: 'الشريط',
+            placementTabBar: 'شريط التبويبات'
+        },
+        templateFile: {
             placeholder: 'البحث عن القوالب...',
             instructions: {
                 navigate: 'للتنقل',
@@ -1095,10 +1127,11 @@ export const STRINGS_AR = {
                 }
             },
             fileOperations: {
-                label: 'عمليات الملفات',
-                description: 'قوالب، تأكيدات الحذف والمرفقات وسلوك تعارض نقل الملفات.',
+                label: 'عمليات الملفات والقوالب',
+                description: 'القوالب وأوامر إنشاء الملاحظات وتأكيدات الحذف والمرفقات وسلوك تعارض نقل الملفات.',
                 groups: {
-                    templates: 'قوالب'
+                    templates: 'قوالب',
+                    templateCommands: 'أوامر إنشاء الملاحظات'
                 }
             },
             frontmatterFields: {
@@ -1706,11 +1739,11 @@ export const STRINGS_AR = {
                 name: 'موقع مجلد القوالب',
                 desc: 'يعرض منتقي ملفات القوالب الملاحظات من هذا المجلد.',
                 placeholder: 'قوالب',
-                usage: 'تُستخدم بواسطة ملاحظات التقويم وملاحظات المجلد. اضبط القوالب في التقويم > تكامل التقويم والمجلدات وملاحظات المجلد > ملفات ملاحظات المجلد.'
+                usage: 'تُستخدم القوالب الموجودة في مجلد القوالب بواسطة ملاحظات التقويم وملاحظات المجلد وقوالب المجلدات وملاحظة جديدة من قالب. اضبط قوالب التقويم في التقويم > تكامل التقويم وقوالب ملاحظات المجلد في المجلدات وملاحظات المجلد > ملفات ملاحظات المجلد.'
             },
             calendarDailyNotePattern: {
                 name: 'الملاحظات اليومية',
-                desc: 'تنسيق المسار باستخدام تنسيق تاريخ Moment. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات > قوالب.',
+                desc: 'تنسيق المسار باستخدام تنسيق تاريخ Moment. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات والقوالب > قوالب.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'يجب أن يقوم النمط بتنسيق التاريخ ثم تحليله مرة أخرى كتاريخ كامل (السنة، الشهر، اليوم).'
             },
@@ -1718,15 +1751,42 @@ export const STRINGS_AR = {
                 momentDescPrefix: 'تنسيق المسار باستخدام ',
                 momentLinkText: 'تنسيق تاريخ Moment',
                 momentDescSuffix:
-                    '. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات > قوالب.',
-                templateTokenNoticeLabel: 'مهم!',
-                templateTokenNotice:
-                    'دعم القوالب يتطلب إضافة Templater. الصيغ المدمجة مثل {{date}} و {{title}} لا تعمل إلا عندما يكون {source} مضبوطًا على {option}.',
+                    '. ضع أسماء المجلدات الفرعية بين أقواس معقوفة، مثال [Work]/YYYY. انقر على أيقونة القالب لتعيين قالب. حدد موقع مجلد القوالب في عمليات الملفات والقوالب > قوالب.',
                 example: 'الصيغة الحالية: {path}'
             },
-            templaterSupport: {
-                installed: '✅ تم تثبيت إضافة Templater مع دعم كامل للقوالب.',
-                missing: '⚠️ ثبّت إضافة Templater للحصول على دعم القوالب.'
+            templateEngine: {
+                name: 'محرك القوالب',
+                desc: 'المحرك الذي يعالج ملفات القوالب عندما ينشئ Notebook Navigator الملاحظات. يستخدم الوضع التلقائي Templater للقوالب التي تحتوي على <% عندما تكون إضافة Templater مثبتة. تستخدم بقية القوالب المحرك المدمج.',
+                options: {
+                    automatic: 'تلقائي',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'إضافة Templater: مثبتة',
+                templaterNotInstalled: 'إضافة Templater: غير مثبتة',
+                tokens: 'الرموز المدمجة: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} إلى {{sunday}}, {{cursor}}. اكتب {{!date}} للإبقاء على {{date}} كنص.',
+                usage: 'تُستبدل رموز القالب مثل {{title}} و{{date}} عند إنشاء الملاحظة. اضبط محرك القوالب في عمليات الملفات والقوالب > قوالب.'
+            },
+            showFolderTemplateIcons: {
+                name: 'إظهار أيقونات قوالب المجلدات',
+                desc: 'يميّز المجلدات التي لها قالب خاص بأيقونة في لوحة التنقل.'
+            },
+            templateCommands: {
+                name: 'الأوامر',
+                desc: 'ينشئ كل أمر ملاحظة باسم ملف مُولَّد من قالبه الخاص أو من قالب المجلد. شغّله من لوحة الأوامر أو اربطه باختصار أو زر.',
+                empty: 'لم تتم إضافة أوامر.',
+                add: 'إضافة أمر',
+                edit: 'تحرير',
+                unnamed: 'أمر بلا اسم',
+                locationCurrent: 'المجلد الحالي',
+                locationFolder: 'مجلد محدد'
+            },
+            folderTemplates: {
+                name: 'قوالب المجلدات',
+                desc: 'تستخدم الملاحظات الجديدة قالب مجلدها أو أقرب مجلد أصل. عيّن القوالب من قائمة سياق المجلد. قوالب التقويم والملاحظات اليومية وملاحظات المجلد لها الأولوية.',
+                empty: 'لم يتم تعيين قوالب مجلدات.',
+                scopeSubfolders: 'المجلد والمجلدات الفرعية',
+                scopeFolder: 'هذا المجلد فقط'
             },
             calendarWeeklyNotePattern: {
                 name: 'الملاحظات الأسبوعية',
@@ -2446,7 +2506,7 @@ export const STRINGS_AR = {
             },
             folderNoteTemplate: {
                 name: 'قالب ملاحظة المجلد',
-                desc: 'ملف قالب يُستخدم عند إنشاء ملاحظات المجلد. يمكن لقوالب Markdown استخدام Templater. تُنسخ قوالب Canvas وBase كمحتوى للملف. حدد موقع مجلد القوالب في عمليات الملفات > قوالب.',
+                desc: 'ملف قالب يُستخدم عند إنشاء ملاحظات المجلد. يمكن لقوالب Markdown استخدام Templater. تُنسخ قوالب Canvas وBase كمحتوى للملف. حدد موقع مجلد القوالب في عمليات الملفات والقوالب > قوالب.',
                 formatWarning: 'يجب أن يتطابق تنسيق القالب مع نوع ملاحظة المجلد المحدد: .md أو .canvas أو .base.'
             },
             folderNamesOpenFolderNotes: {

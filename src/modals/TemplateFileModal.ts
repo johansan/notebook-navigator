@@ -24,14 +24,14 @@ import type { MaybePromise } from '../utils/async';
 import { BaseSuggestModal } from './BaseSuggestModal';
 
 /** Modal for selecting a template file from the configured template folder. */
-export class CalendarTemplateModal extends BaseSuggestModal<TFile> {
+export class TemplateFileModal extends BaseSuggestModal<TFile> {
     private templateFolder: string;
 
     constructor(app: App, templateFolder: string, onChoose: (file: TFile) => MaybePromise) {
-        super(app, onChoose, strings.modals.calendarTemplate.placeholder, {
-            navigate: strings.modals.calendarTemplate.instructions.navigate,
-            action: strings.modals.calendarTemplate.instructions.select,
-            dismiss: strings.modals.calendarTemplate.instructions.dismiss
+        super(app, onChoose, strings.modals.templateFile.placeholder, {
+            navigate: strings.modals.templateFile.instructions.navigate,
+            action: strings.modals.templateFile.instructions.select,
+            dismiss: strings.modals.templateFile.instructions.dismiss
         });
 
         this.templateFolder = normalizeCalendarCustomRootFolder(templateFolder);

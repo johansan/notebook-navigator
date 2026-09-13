@@ -23,7 +23,6 @@ import { isFolderNoteCreationPreference } from '../../../types/folderNote';
 import { FOLDER_NOTE_NAME_PATTERN_TOKEN } from '../../../utils/folderNoteName';
 import { isFolderNoteTemplateCompatible, isSupportedFolderNoteExtension } from '../../../utils/folderNotes';
 import { normalizeOptionalVaultFilePath } from '../../../utils/pathUtils';
-import { getTemplaterCreateNoteFromTemplate } from '../../../utils/templaterIntegration';
 import { setElementVisible, wireToggleSettingWithDependentSection } from '../../dependentSettings';
 import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
@@ -241,16 +240,12 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
     context.registerSettingsUpdateListener('folders-folder-note-template-warning', updateTemplateWarning);
     updateTemplateWarning();
 
-    folderNoteFilesGroup.addSetting(setting => renderFolderNoteTemplateInfoSetting(setting, context));
+    folderNoteFilesGroup.addSetting(setting => renderFolderNoteTemplateInfoSetting(setting));
 }
 
-function renderFolderNoteTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
+function renderFolderNoteTemplateInfoSetting(setting: Setting): void {
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
-
-    const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.templaterSupport.installed
-        : strings.settings.items.templaterSupport.missing;
-    setting.descEl.createEl('strong', { text: templaterSupportText });
+    setting.descEl.createDiv({ text: strings.settings.items.templateEngine.usage });
 }

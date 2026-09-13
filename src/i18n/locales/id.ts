@@ -111,8 +111,16 @@ export const STRINGS_ID = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Gagal membaca template catatan harian.',
         createFailed: 'Tidak dapat membuat catatan harian.'
+    },
+
+    templates: {
+        invalidTokens: 'Template "{name}" berisi token yang tidak valid: {tokens}',
+        readFailed: 'Template "{name}" tidak dapat dibaca. Catatan dibuat tanpa template.',
+        folderNotSet: 'Atur folder template di Operasi file & template > Template sebelum membuat catatan dari template.',
+        templateNotFound: 'Template "{name}" tidak ditemukan.',
+        folderNotFound: 'Folder "{name}" tidak ditemukan.',
+        templaterMissing: 'Plugin Templater tidak terpasang. Ubah mesin template di Operasi file & template > Template.'
     },
 
     shortcuts: {
@@ -362,6 +370,9 @@ export const STRINGS_ID = {
             duplicateFolder: 'Duplikat folder',
             searchInFolder: 'Cari di folder',
             createFolderNote: 'Buat catatan folder',
+            setFolderTemplate: 'Atur template folder...',
+            changeFolderTemplate: 'Ubah template folder...',
+            removeFolderTemplate: 'Hapus template folder',
             detachFolderNote: 'Lepaskan catatan folder',
             deleteFolderNote: 'Hapus catatan folder',
             changeIcon: 'Ubah ikon',
@@ -715,7 +726,28 @@ export const STRINGS_ID = {
                 dismiss: 'untuk menutup'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Tambah perintah',
+            titleEdit: 'Edit perintah',
+            name: 'Nama perintah',
+            namePlaceholder: 'Catatan rapat baru',
+            template: 'Template',
+            templateDesc: 'Opsional. Tanpa template, template folder dari folder tujuan diterapkan jika ada.',
+            templatePlaceholder: 'Template/Rapat.md',
+            fileNameFormat: 'Format nama file',
+            fileNameFormatDesc:
+                'Token seperti {{date:YYYYMMDD}} dan {{prompt:Judul}} diganti saat perintah dijalankan. Setiap prompt meminta nilai, dan label yang sama di template menerima nilai yang sama.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Judul}}',
+            location: 'Lokasi',
+            folder: 'Folder',
+            folderPlaceholder: 'Rapat',
+            icon: 'Ikon',
+            placement: 'Tombol',
+            placementNone: 'Tidak ada',
+            placementRibbon: 'Ribbon',
+            placementTabBar: 'Bilah tab'
+        },
+        templateFile: {
             placeholder: 'Cari template...',
             instructions: {
                 navigate: 'untuk navigasi',
@@ -1099,10 +1131,12 @@ export const STRINGS_ID = {
                 }
             },
             fileOperations: {
-                label: 'Operasi file',
-                description: 'Folder template, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
+                label: 'Operasi file & template',
+                description:
+                    'Template, perintah pembuatan catatan, konfirmasi hapus, lampiran, dan perilaku konflik saat memindahkan file.',
                 groups: {
-                    templates: 'Template'
+                    templates: 'Template',
+                    templateCommands: 'Perintah pembuatan catatan'
                 }
             },
             frontmatterFields: {
@@ -1711,11 +1745,11 @@ export const STRINGS_ID = {
                 name: 'Lokasi folder template',
                 desc: 'Pemilih file template menampilkan catatan dari folder ini.',
                 placeholder: 'Template',
-                usage: 'Digunakan oleh catatan kalender dan catatan folder. Konfigurasi template di Kalender > Integrasi kalender dan Folder & catatan folder > File catatan folder.'
+                usage: 'Template di folder template digunakan oleh catatan kalender, catatan folder, template folder, dan Catatan baru dari template. Konfigurasi template kalender di Kalender > Integrasi kalender dan template catatan folder di Folder & catatan folder > File catatan folder.'
             },
             calendarDailyNotePattern: {
                 name: 'Catatan harian',
-                desc: 'Format jalur menggunakan format tanggal Moment. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder template di Operasi file > Template.',
+                desc: 'Format jalur menggunakan format tanggal Moment. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder template di Operasi file & template > Template.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai tanggal lengkap (tahun, bulan, hari).'
             },
@@ -1723,15 +1757,42 @@ export const STRINGS_ID = {
                 momentDescPrefix: 'Format jalur menggunakan ',
                 momentLinkText: 'format tanggal Moment',
                 momentDescSuffix:
-                    '. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder template di Operasi file > Template.',
-                templateTokenNoticeLabel: 'Penting!',
-                templateTokenNotice:
-                    'Dukungan template memerlukan plugin Templater. Format bawaan seperti {{date}} dan {{title}} hanya berfungsi jika {source} disetel ke {option}.',
+                    '. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder template di Operasi file & template > Template.',
                 example: 'Sintaks saat ini: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Plugin Templater terpasang dengan dukungan template penuh.',
-                missing: '⚠️ Pasang plugin Templater untuk dukungan template.'
+            templateEngine: {
+                name: 'Mesin template',
+                desc: 'Mesin yang memproses file template saat Notebook Navigator membuat catatan. Otomatis menggunakan Templater untuk template yang berisi <% saat plugin Templater terpasang. Semua template lainnya menggunakan mesin bawaan.',
+                options: {
+                    automatic: 'Otomatis',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater: terpasang',
+                templaterNotInstalled: 'Plugin Templater: tidak terpasang',
+                tokens: 'Token bawaan: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} hingga {{sunday}}, {{cursor}}. Tulis {{!date}} untuk mempertahankan {{date}} sebagai teks.',
+                usage: 'Token template seperti {{title}} dan {{date}} diganti saat catatan dibuat. Konfigurasi mesin template di Operasi file & template > Template.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Tampilkan ikon template folder',
+                desc: 'Menandai folder yang memiliki template sendiri dengan ikon di panel navigasi.'
+            },
+            templateCommands: {
+                name: 'Perintah',
+                desc: 'Setiap perintah membuat catatan dengan nama file yang dihasilkan, dari templatenya sendiri atau template folder. Jalankan dari palet perintah, atau kaitkan dengan pintasan atau tombol.',
+                empty: 'Belum ada perintah.',
+                add: 'Tambah perintah',
+                edit: 'Edit',
+                unnamed: 'Perintah tanpa nama',
+                locationCurrent: 'Folder saat ini',
+                locationFolder: 'Folder tertentu'
+            },
+            folderTemplates: {
+                name: 'Template folder',
+                desc: 'Catatan baru menggunakan template foldernya atau folder induk terdekat. Atur template dari menu konteks folder. Template kalender, catatan harian, dan catatan folder lebih diutamakan.',
+                empty: 'Belum ada template folder.',
+                scopeSubfolders: 'Folder dan subfolder',
+                scopeFolder: 'Hanya folder ini'
             },
             calendarWeeklyNotePattern: {
                 name: 'Catatan mingguan',
@@ -2451,7 +2512,7 @@ export const STRINGS_ID = {
             },
             folderNoteTemplate: {
                 name: 'Template catatan folder',
-                desc: 'File template yang digunakan saat membuat catatan folder. Template Markdown dapat menggunakan Templater. Template Canvas dan Base disalin sebagai isi file. Atur lokasi folder template di Operasi file > Template.',
+                desc: 'File template yang digunakan saat membuat catatan folder. Template Markdown dapat menggunakan Templater. Template Canvas dan Base disalin sebagai isi file. Atur lokasi folder template di Operasi file & template > Template.',
                 formatWarning: 'Format template harus cocok dengan jenis catatan folder yang dipilih: .md, .canvas, atau .base.'
             },
             folderNamesOpenFolderNotes: {

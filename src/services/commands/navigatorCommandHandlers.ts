@@ -61,7 +61,6 @@ import {
 } from '../../types';
 import { normalizeTagPath } from '../../utils/tagUtils';
 import { isNoteShortcut, type ShortcutEntry } from '../../types/shortcuts';
-import { getTemplaterCreateNewNoteFromTemplate } from '../../utils/templaterIntegration';
 import { getLeafSplitLocation } from '../../utils/workspaceSplit';
 import { openFileInContext } from '../../utils/openFileInContext';
 import { resolveNoteShortcutTarget } from '../../utils/shortcutPathResolver';
@@ -537,25 +536,23 @@ async function createAndOpenCustomCalendarNote(plugin: NotebookNavigatorPlugin, 
     const settings = { calendarCustomRootFolder: getActiveVaultProfile(plugin.settings).periodicNotesFolder };
     const templatePath = getCalendarTemplatePath(kind, plugin.settings);
 
-    const { folderPath, fileName, filePath } = buildCustomCalendarFilePathForPattern(
-        date,
-        settings,
-        config.calendarCustomFilePattern,
-        config.fallbackPattern
-    );
+    const target = buildCustomCalendarFilePathForPattern(date, settings, config.calendarCustomFilePattern, config.fallbackPattern);
 
-    const existing = plugin.app.vault.getAbstractFileByPath(filePath);
+    const existing = plugin.app.vault.getAbstractFileByPath(target.filePath);
     if (existing instanceof TFile) {
         await openFileInActiveLeaf(plugin, existing);
         return;
     }
 
-    let created: TFile;
+    let created: TFile | null;
     try {
-        created = await createCalendarMarkdownFile(plugin.app, folderPath, fileName, templatePath);
+        created = await createCalendarMarkdownFile(plugin.app, kind, target, templatePath, plugin.settings);
     } catch (error) {
         console.error('Failed to create calendar note', error);
         showNotice(strings.common.unknownError, { variant: 'warning' });
+        return;
+    }
+    if (!created) {
         return;
     }
 
@@ -591,7 +588,7 @@ async function openCalendarNoteForToday(plugin: NotebookNavigatorPlugin, kind: C
             const filename = getDailyNoteFilename(dailyNoteDate, dailyNoteSettings);
 
             const createFile = async () => {
-                const created = await createDailyNote(plugin.app, dailyNoteDate, dailyNoteSettings);
+                const created = await createDailyNote(plugin.app, dailyNoteDate, dailyNoteSettings, plugin.settings);
                 if (!created) {
                     return;
                 }
@@ -1044,28 +1041,17 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         }
     });
 
-    // Command to create a new note from template in the currently selected folder (requires Templater)
+    // Command to create a new note from template in the currently selected folder
     plugin.addCommand({
         id: 'new-note-from-template',
         name: strings.commands.createNewNoteFromTemplate,
-        checkCallback: (checking: boolean) => {
-            const createNewNoteFromTemplate = getTemplaterCreateNewNoteFromTemplate(plugin.app);
-            if (!createNewNoteFromTemplate) {
-                return false;
-            }
-
-            if (checking) {
-                return true;
-            }
-
+        callback: () => {
             runAsyncAction(async () => {
                 const view = await ensureNavigatorOpen(plugin);
                 if (view) {
                     await view.createNoteFromTemplateInSelectedFolder();
                 }
             });
-
-            return true;
         }
     });
 

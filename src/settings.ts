@@ -913,4 +913,3 @@ export type {
     PropertySortSecondaryOption,
     AlphabeticalDateMode
 } from './settings/types';
-export { DEFAULT_SETTINGS } from './settings/defaultSettings';

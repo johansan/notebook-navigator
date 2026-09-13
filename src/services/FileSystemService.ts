@@ -28,8 +28,8 @@ import { ExtendedApp, TIMEOUTS, OBSIDIAN_COMMANDS } from '../types/obsidian-exte
 import {
     buildFilePathInFolder,
     buildPathInFolder,
-    createFileWithOptions,
     createDatabaseContent,
+    createFileWithOptions,
     generateUniqueFilename
 } from '../utils/fileCreationUtils';
 import {
@@ -402,6 +402,60 @@ export class FileSystemOperations {
     }
 
     /**
+     * Applies an assignment to existing frontmatter, retaining its key spelling and list shape. Key nodes clear the
+     * value and boolean nodes use scalar booleans. Returns true when mutated, or false when left untouched because
+     * the requested value is already present or the assignment has no usable value. Persistence belongs to the caller.
+     */
+    private applyPropertyNodeAssignment(frontmatter: Record<string, unknown>, assignment: ResolvedPropertyNodeAssignment): boolean {
+        const targetPropertyKey = findMatchingRecordKey(frontmatter, assignment.propertyKey) ?? assignment.propertyKey;
+        const currentValue = frontmatter[targetPropertyKey];
+
+        if (assignment.nodeKind === 'key') {
+            if (currentValue === null) {
+                return false;
+            }
+            // Boolean values have their own child nodes, so a key node must remain empty;
+            // otherwise Obsidian flags the assigned `true` when the registered type is not checkbox.
+            frontmatter[targetPropertyKey] = null;
+            return true;
+        }
+
+        if (assignment.writeValueKind === 'boolean') {
+            const desiredValue = assignment.writeValue;
+            if (typeof desiredValue !== 'boolean' || currentValue === desiredValue || (desiredValue && currentValue === null)) {
+                return false;
+            }
+            frontmatter[targetPropertyKey] = desiredValue;
+            return true;
+        }
+
+        const desiredValue = assignment.desiredValue;
+        const normalizedDesiredValue = assignment.normalizedDesiredValue;
+        if (!desiredValue || !normalizedDesiredValue) {
+            return false;
+        }
+        if (typeof currentValue === 'string' && this.shouldKeepCurrentPropertyString(currentValue, desiredValue, normalizedDesiredValue)) {
+            return false;
+        }
+
+        const isUnknownArray = (value: unknown): value is unknown[] => Array.isArray(value);
+        if (isUnknownArray(currentValue)) {
+            if (
+                currentValue.length === 1 &&
+                typeof currentValue[0] === 'string' &&
+                this.shouldKeepCurrentPropertyString(currentValue[0], desiredValue, normalizedDesiredValue)
+            ) {
+                return false;
+            }
+            // A template can already define a list property; replacing its value must keep the list representation.
+            frontmatter[targetPropertyKey] = [desiredValue];
+        } else {
+            frontmatter[targetPropertyKey] = desiredValue;
+        }
+        return true;
+    }
+
+    /**
      * Resolves a property node id into a normalized frontmatter assignment.
      */
     private resolvePropertyNodeAssignment(propertyNodeId: string): ResolvedPropertyNodeAssignment | null {
@@ -768,6 +822,7 @@ export class FileSystemOperations {
             extension: 'md',
             content: '',
             openInNewTab,
+            templateSettings: this.settingsProvider.settings,
             afterCreate: async createdFile => {
                 deferredManualSortPrompt.run = await this.applyManualSortNewFilePlacement(createdFile, resolvedManualSortContext, {
                     deferCompactionPrompt: true
@@ -781,7 +836,7 @@ export class FileSystemOperations {
 
     /**
      * Creates a new markdown file in the user's configured default location and adds the selected tag in frontmatter.
-     * Uses Obsidian's markdown file creation API so plugin hooks run on creation.
+     * Applies the target folder's template before updating frontmatter.
      * @param tagPath - Canonical tag path without # prefix
      * @param sourcePath - Current file path used for "same folder as current file" preference
      * @param openInNewTab - Whether the file should open in a new tab
@@ -808,13 +863,33 @@ export class FileSystemOperations {
             const sourceFilePath = sourcePath?.trim().length ? sourcePath : activeFilePath;
             const defaultParent = this.app.fileManager.getNewFileParent(sourceFilePath ?? '');
             const targetFolder = defaultParent instanceof TFolder ? defaultParent : this.app.vault.getRoot();
-            const fileName = generateUniqueFilename(targetFolder.path, strings.fileSystem.defaultNames.untitled, 'md', this.app);
-            const file = await this.app.fileManager.createNewMarkdownFile(targetFolder, fileName);
+            const file = await createFileWithOptions(targetFolder, this.app, {
+                extension: 'md',
+                openFile: false,
+                templateSettings: this.settingsProvider.settings
+            });
+            if (!file) {
+                return null;
+            }
 
             try {
                 // Mutate frontmatter through Obsidian's API so YAML serialization matches other tag operations.
                 await this.app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
-                    frontmatter.tags = [resolvedTagPath];
+                    // A folder template may already define tags, so the selected tag is added to them rather than replacing them.
+                    // Obsidian accepts `Tags` as well as `tags`; a second field would leave the selected tag unread.
+                    const tagField = findMatchingRecordKey(frontmatter, 'tags') ?? 'tags';
+                    const existing = frontmatter[tagField];
+                    const tags = Array.isArray(existing)
+                        ? existing.filter((tag): tag is string => typeof tag === 'string')
+                        : typeof existing === 'string' && existing.length > 0
+                          ? [existing]
+                          : [];
+                    // Compare canonical paths because prefixes, case and Unicode spelling can differ for the same tag.
+                    // Keep the template's original values instead of rewriting their spelling during the merge.
+                    if (!tags.some(tag => normalizeTagPath(tag) === normalizedTag)) {
+                        tags.push(resolvedTagPath);
+                    }
+                    frontmatter[tagField] = tags;
                 });
             } catch (error) {
                 console.error('[Notebook Navigator] Failed to update created note tags', error);
@@ -842,7 +917,7 @@ export class FileSystemOperations {
 
     /**
      * Creates a new markdown file in the user's configured default location and applies the selected property.
-     * Uses Obsidian's markdown file creation API so plugin hooks run on creation.
+     * Applies the target folder's template before updating frontmatter.
      * @param propertyNodeId - Canonical property node id (`key:<property>` or `key:<property>=<value>`)
      * @param sourcePath - Current file path used for "same folder as current file" preference
      * @param openInNewTab - Whether the file should open in a new tab
@@ -869,20 +944,24 @@ export class FileSystemOperations {
             normalizedPropertyNodeId ?? ''
         );
 
-        const propertyValue: unknown = assignment.writeValue;
-
         try {
             const activeFilePath = this.app.workspace.getActiveFile()?.path ?? '';
             const sourceFilePath = sourcePath?.trim().length ? sourcePath : activeFilePath;
             const defaultParent = this.app.fileManager.getNewFileParent(sourceFilePath ?? '');
             const targetFolder = defaultParent instanceof TFolder ? defaultParent : this.app.vault.getRoot();
-            const fileName = generateUniqueFilename(targetFolder.path, strings.fileSystem.defaultNames.untitled, 'md', this.app);
-            const file = await this.app.fileManager.createNewMarkdownFile(targetFolder, fileName);
+            const file = await createFileWithOptions(targetFolder, this.app, {
+                extension: 'md',
+                openFile: false,
+                templateSettings: this.settingsProvider.settings
+            });
+            if (!file) {
+                return null;
+            }
 
             try {
                 // Mutate frontmatter through Obsidian's API so YAML serialization matches other property operations.
                 await this.app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
-                    frontmatter[assignment.propertyKey] = propertyValue;
+                    this.applyPropertyNodeAssignment(frontmatter, assignment);
                 });
             } catch (error) {
                 console.error('[Notebook Navigator] Failed to update created note properties', error);
@@ -932,10 +1011,6 @@ export class FileSystemOperations {
             return { updated: 0, skipped: 0 };
         }
 
-        const normalizedPropertyKey = casefold(assignment.propertyKey);
-
-        const isUnknownArray = (value: unknown): value is unknown[] => Array.isArray(value);
-
         let updated = 0;
         let skipped = 0;
 
@@ -944,76 +1019,7 @@ export class FileSystemOperations {
                 let didChange = false;
 
                 await this.app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
-                    const resolveExistingFrontmatterKey = (): string | null => {
-                        for (const existingKey of Object.keys(frontmatter)) {
-                            if (casefold(existingKey) === normalizedPropertyKey) {
-                                return existingKey;
-                            }
-                        }
-                        return null;
-                    };
-
-                    const targetPropertyKey = resolveExistingFrontmatterKey() ?? assignment.propertyKey;
-                    const currentValue = frontmatter[targetPropertyKey];
-
-                    if (assignment.nodeKind === 'key') {
-                        if (currentValue === null) {
-                            return;
-                        }
-
-                        // Boolean values have their own child nodes, so a key node must remain empty;
-                        // otherwise Obsidian flags the assigned `true` when the registered type is not checkbox.
-                        frontmatter[targetPropertyKey] = null;
-                        didChange = true;
-                        return;
-                    }
-
-                    if (assignment.writeValueKind === 'boolean') {
-                        const desiredValue = assignment.writeValue;
-                        if (typeof desiredValue !== 'boolean') {
-                            return;
-                        }
-
-                        if (currentValue === desiredValue || (desiredValue && currentValue === null)) {
-                            return;
-                        }
-
-                        frontmatter[targetPropertyKey] = desiredValue;
-                        didChange = true;
-                        return;
-                    }
-
-                    const desiredValue = assignment.desiredValue;
-                    const normalizedDesiredValue = assignment.normalizedDesiredValue;
-                    if (!desiredValue || !normalizedDesiredValue) {
-                        return;
-                    }
-
-                    if (typeof currentValue === 'string') {
-                        if (this.shouldKeepCurrentPropertyString(currentValue, desiredValue, normalizedDesiredValue)) {
-                            return;
-                        }
-                        frontmatter[targetPropertyKey] = desiredValue;
-                        didChange = true;
-                        return;
-                    }
-
-                    if (isUnknownArray(currentValue)) {
-                        const isSingleMatch =
-                            currentValue.length === 1 &&
-                            typeof currentValue[0] === 'string' &&
-                            this.shouldKeepCurrentPropertyString(currentValue[0], desiredValue, normalizedDesiredValue);
-                        if (isSingleMatch) {
-                            return;
-                        }
-
-                        frontmatter[targetPropertyKey] = [desiredValue];
-                        didChange = true;
-                        return;
-                    }
-
-                    frontmatter[targetPropertyKey] = desiredValue;
-                    didChange = true;
+                    didChange = this.applyPropertyNodeAssignment(frontmatter, assignment);
                 });
 
                 if (didChange) {

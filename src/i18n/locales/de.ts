@@ -110,8 +110,17 @@ export const STRINGS_DE = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Vorlage für tägliche Notizen konnte nicht gelesen werden.',
         createFailed: 'Tägliche Notiz konnte nicht erstellt werden.'
+    },
+
+    templates: {
+        invalidTokens: 'Vorlage "{name}" enthält ungültige Platzhalter: {tokens}',
+        readFailed: 'Die Vorlage "{name}" konnte nicht gelesen werden. Die Notiz wurde ohne Vorlage erstellt.',
+        folderNotSet: 'Lege den Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen fest, bevor du Notizen aus Vorlagen erstellst.',
+        templateNotFound: 'Vorlage "{name}" wurde nicht gefunden.',
+        folderNotFound: 'Ordner "{name}" wurde nicht gefunden.',
+        templaterMissing:
+            'Das Templater-Plugin ist nicht installiert. Ändere die Vorlagen-Engine unter Dateioperationen & Vorlagen > Vorlagen.'
     },
 
     shortcuts: {
@@ -362,6 +371,9 @@ export const STRINGS_DE = {
             duplicateFolder: 'Ordner duplizieren',
             searchInFolder: 'In Ordner suchen',
             createFolderNote: 'Ordnernotiz erstellen',
+            setFolderTemplate: 'Ordnervorlage festlegen...',
+            changeFolderTemplate: 'Ordnervorlage ändern...',
+            removeFolderTemplate: 'Ordnervorlage entfernen',
             detachFolderNote: 'Ordnernotiz lösen',
             deleteFolderNote: 'Ordnernotiz löschen',
             changeIcon: 'Symbol ändern',
@@ -715,7 +727,28 @@ export const STRINGS_DE = {
                 dismiss: 'zum Abbrechen'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Befehl hinzufügen',
+            titleEdit: 'Befehl bearbeiten',
+            name: 'Befehlsname',
+            namePlaceholder: 'Neue Besprechungsnotiz',
+            template: 'Vorlage',
+            templateDesc: 'Optional. Ohne Vorlage gilt die Ordnervorlage des Zielordners, falls eine festgelegt ist.',
+            templatePlaceholder: 'Vorlagen/Besprechung.md',
+            fileNameFormat: 'Dateinamenformat',
+            fileNameFormatDesc:
+                'Platzhalter wie {{date:YYYYMMDD}} und {{prompt:Titel}} werden beim Ausführen des Befehls ersetzt. Jede Abfrage fragt nach einem Wert, und dieselbe Bezeichnung in der Vorlage erhält denselben Wert.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titel}}',
+            location: 'Speicherort',
+            folder: 'Ordner',
+            folderPlaceholder: 'Besprechungen',
+            icon: 'Symbol',
+            placement: 'Schaltfläche',
+            placementNone: 'Keine',
+            placementRibbon: 'Menüband',
+            placementTabBar: 'Tab-Leiste'
+        },
+        templateFile: {
             placeholder: 'Vorlagen durchsuchen...',
             instructions: {
                 navigate: 'zum Navigieren',
@@ -1102,10 +1135,12 @@ export const STRINGS_DE = {
                 }
             },
             fileOperations: {
-                label: 'Dateioperationen',
-                description: 'Vorlagen, Löschbestätigungen, Anhänge und Verhalten bei Dateikonflikten beim Verschieben.',
+                label: 'Dateioperationen & Vorlagen',
+                description:
+                    'Vorlagen, Befehle zum Erstellen von Notizen, Löschbestätigungen, Anhänge und Verhalten bei Konflikten beim Verschieben von Dateien.',
                 groups: {
-                    templates: 'Vorlagen'
+                    templates: 'Vorlagen',
+                    templateCommands: 'Befehle zum Erstellen von Notizen'
                 }
             },
             frontmatterFields: {
@@ -1714,11 +1749,11 @@ export const STRINGS_DE = {
                 name: 'Vorlagenordner',
                 desc: 'Die Vorlagenauswahl zeigt Notizen aus diesem Ordner.',
                 placeholder: 'Vorlagen',
-                usage: 'Wird von Kalendernotizen und Ordnernotizen verwendet. Vorlagen unter Kalender > Kalenderintegration und Ordner & Ordnernotizen > Ordnernotiz-Dateien konfigurieren.'
+                usage: 'Vorlagen im Vorlagenordner werden von Kalendernotizen, Ordnernotizen, Ordnervorlagen und Neue Notiz aus Vorlage verwendet. Kalendervorlagen unter Kalender > Kalenderintegration und Ordnernotiz-Vorlagen unter Ordner & Ordnernotizen > Ordnernotiz-Dateien konfigurieren.'
             },
             calendarDailyNotePattern: {
                 name: 'Tägliche Notizen',
-                desc: 'Pfad mit Moment-Datumsformat formatieren. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicke auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen > Vorlagen festlegen.',
+                desc: 'Pfad mit Moment-Datumsformat formatieren. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicke auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen festlegen.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Das Muster muss als vollständiges Datum (Jahr, Monat, Tag) formatiert und wieder geparst werden können.'
             },
@@ -1726,15 +1761,42 @@ export const STRINGS_DE = {
                 momentDescPrefix: 'Pfad formatieren mit ',
                 momentLinkText: 'Moment-Datumsformat',
                 momentDescSuffix:
-                    '. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicke auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen > Vorlagen festlegen.',
-                templateTokenNoticeLabel: 'Wichtig!',
-                templateTokenNotice:
-                    'Vorlagenunterstützung erfordert das Templater-Plugin. Integrierte Formate wie {{date}} und {{title}} funktionieren nur, wenn {source} auf {option} gesetzt ist.',
+                    '. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicke auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen festlegen.',
                 example: 'Aktuelle Syntax: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Das Templater-Plugin ist mit voller Vorlagenunterstützung installiert.',
-                missing: '⚠️ Installiere das Templater-Plugin für Vorlagenunterstützung.'
+            templateEngine: {
+                name: 'Vorlagen-Engine',
+                desc: 'Engine, die Vorlagendateien verarbeitet, wenn Notebook Navigator Notizen erstellt. Automatisch verwendet Templater für Vorlagen, die <% enthalten, wenn das Templater-Plugin installiert ist. Alle anderen Vorlagen verwenden die integrierte Engine.',
+                options: {
+                    automatic: 'Automatisch',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater-Plugin: installiert',
+                templaterNotInstalled: 'Templater-Plugin: nicht installiert',
+                tokens: 'Integrierte Platzhalter: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} bis {{sunday}}, {{cursor}}. Schreibe {{!date}}, um {{date}} als Text zu behalten.',
+                usage: 'Vorlagen-Platzhalter wie {{title}} und {{date}} werden beim Erstellen der Notiz ersetzt. Die Vorlagen-Engine wird unter Dateioperationen & Vorlagen > Vorlagen konfiguriert.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Ordnervorlagen-Symbole anzeigen',
+                desc: 'Markiert Ordner mit eigener Ordnervorlage durch ein Symbol im Navigationsbereich.'
+            },
+            templateCommands: {
+                name: 'Befehle',
+                desc: 'Jeder Befehl erstellt eine Notiz mit einem generierten Dateinamen, aus einer eigenen Vorlage oder der Ordnervorlage. Führe ihn über die Befehlspalette aus oder belege ihn mit einem Hotkey oder einer Schaltfläche.',
+                empty: 'Keine Befehle hinzugefügt.',
+                add: 'Befehl hinzufügen',
+                edit: 'Bearbeiten',
+                unnamed: 'Unbenannter Befehl',
+                locationCurrent: 'Aktueller Ordner',
+                locationFolder: 'Bestimmter Ordner'
+            },
+            folderTemplates: {
+                name: 'Ordnervorlagen',
+                desc: 'Neue Notizen verwenden die Vorlage ihres Ordners oder des nächsten übergeordneten Ordners. Vorlagen werden im Kontextmenü des Ordners festgelegt. Kalender-, Tagesnotiz- und Ordnernotiz-Vorlagen haben Vorrang.',
+                empty: 'Keine Ordnervorlagen festgelegt.',
+                scopeSubfolders: 'Ordner und Unterordner',
+                scopeFolder: 'Nur dieser Ordner'
             },
             calendarWeeklyNotePattern: {
                 name: 'Wöchentliche Notizen',
@@ -2457,7 +2519,7 @@ export const STRINGS_DE = {
             },
             folderNoteTemplate: {
                 name: 'Ordnernotiz-Vorlage',
-                desc: 'Vorlagendatei, die beim Erstellen von Ordnernotizen verwendet wird. Markdown-Vorlagen können Templater verwenden. Canvas- und Base-Vorlagen werden als Dateiinhalt kopiert. Vorlagenordner unter Dateioperationen > Vorlagen festlegen.',
+                desc: 'Vorlagendatei, die beim Erstellen von Ordnernotizen verwendet wird. Markdown-Vorlagen können Templater verwenden. Canvas- und Base-Vorlagen werden als Dateiinhalt kopiert. Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen festlegen.',
                 formatWarning: 'Das Vorlagenformat muss dem ausgewählten Ordnernotiztyp entsprechen: .md, .canvas oder .base.'
             },
             folderNamesOpenFolderNotes: {

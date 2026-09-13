@@ -51,6 +51,8 @@ interface IconPickerModalOptions {
     showRemoveButton?: boolean;
     /** When true, icon selection does not persist to metadata service */
     disableMetadataUpdates?: boolean;
+    /** Limits the picker to these providers. With one provider the tab row shows only that provider and no All tab. */
+    providerIds?: string[];
 }
 
 /**
@@ -76,6 +78,7 @@ export class IconPickerModal extends Modal {
     private tabContainer!: HTMLDivElement;
     private domDisposers: (() => void)[] = [];
     private providerTabs: HTMLElement[] = [];
+    private providerIds: string[] | null = null;
     private currentIcon: string | undefined;
     private removeButton: HTMLButtonElement | null = null;
     private providerLinkContainer: HTMLDivElement | null = null;
@@ -104,6 +107,7 @@ export class IconPickerModal extends Modal {
         this.titleOverride = options.titleOverride;
         this.showRemoveButton = options.showRemoveButton !== false;
         this.disableMetadataUpdates = options.disableMetadataUpdates === true;
+        this.providerIds = options.providerIds ?? null;
         this.currentIcon =
             options.currentIconId === undefined && !this.disableMetadataUpdates
                 ? this.getCurrentIconForItem()
@@ -237,12 +241,18 @@ export class IconPickerModal extends Modal {
         this.tabContainer.setAttribute('role', 'tablist');
         this.providerTabs = [];
 
-        const providers = this.sortProvidersForDisplay(this.iconService.getAllProviders().slice());
-        const resolvedProviderId = this.resolveInitialProvider(providers);
+        const allowedProviderIds = this.providerIds;
+        const providers = this.sortProvidersForDisplay(
+            this.iconService.getAllProviders().filter(provider => !allowedProviderIds || allowedProviderIds.includes(provider.id))
+        );
+        // A restricted picker starts on its first allowed provider and does not change the shared last-used provider,
+        // so other pickers keep their own selection.
+        const resolvedProviderId = allowedProviderIds ? (providers[0]?.id ?? ALL_PROVIDERS_TAB_ID) : this.resolveInitialProvider(providers);
         this.currentProvider = resolvedProviderId;
-        IconPickerModal.setLastUsedProvider(resolvedProviderId);
-
-        this.addProviderTab(ALL_PROVIDERS_TAB_ID, strings.modals.iconPicker.allTabLabel);
+        if (!allowedProviderIds) {
+            IconPickerModal.setLastUsedProvider(resolvedProviderId);
+            this.addProviderTab(ALL_PROVIDERS_TAB_ID, strings.modals.iconPicker.allTabLabel);
+        }
 
         providers.forEach(provider => {
             this.addProviderTab(provider.id, provider.name);
@@ -269,7 +279,9 @@ export class IconPickerModal extends Modal {
             addAsyncEventListener(tab, 'click', () => {
                 this.setActiveProviderTab(providerId);
                 this.currentProvider = providerId;
-                IconPickerModal.setLastUsedProvider(providerId);
+                if (!this.providerIds) {
+                    IconPickerModal.setLastUsedProvider(providerId);
+                }
                 this.updateResults();
                 this.resetResultsScroll();
             })

@@ -110,8 +110,18 @@ export const STRINGS_ES = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'No se pudo leer la plantilla de notas diarias.',
         createFailed: 'No se pudo crear la nota diaria.'
+    },
+
+    templates: {
+        invalidTokens: 'La plantilla "{name}" contiene marcadores no válidos: {tokens}',
+        readFailed: 'No se pudo leer la plantilla "{name}". La nota se creó sin ella.',
+        folderNotSet:
+            'Configura la carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas antes de crear notas desde plantillas.',
+        templateNotFound: 'No se encontró la plantilla "{name}".',
+        folderNotFound: 'No se encontró la carpeta "{name}".',
+        templaterMissing:
+            'El plugin Templater no está instalado. Cambia el motor de plantillas en Operaciones de archivos y plantillas > Plantillas.'
     },
 
     shortcuts: {
@@ -362,6 +372,9 @@ export const STRINGS_ES = {
             duplicateFolder: 'Duplicar carpeta',
             searchInFolder: 'Buscar en carpeta',
             createFolderNote: 'Crear nota de carpeta',
+            setFolderTemplate: 'Establecer plantilla de carpeta...',
+            changeFolderTemplate: 'Cambiar plantilla de carpeta...',
+            removeFolderTemplate: 'Quitar plantilla de carpeta',
             detachFolderNote: 'Desvincular nota de carpeta',
             deleteFolderNote: 'Eliminar nota de carpeta',
             changeIcon: 'Cambiar icono',
@@ -715,7 +728,28 @@ export const STRINGS_ES = {
                 dismiss: 'para cancelar'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Añadir comando',
+            titleEdit: 'Editar comando',
+            name: 'Nombre del comando',
+            namePlaceholder: 'Nueva nota de reunión',
+            template: 'Plantilla',
+            templateDesc: 'Opcional. Sin plantilla se aplica la plantilla de carpeta de la carpeta de destino, si está definida.',
+            templatePlaceholder: 'Plantillas/Reunión.md',
+            fileNameFormat: 'Formato del nombre de archivo',
+            fileNameFormatDesc:
+                'Los marcadores como {{date:YYYYMMDD}} y {{prompt:Título}} se sustituyen al ejecutar el comando. Cada marcador de pregunta pide un valor, y la misma etiqueta en la plantilla recibe el mismo valor.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Título}}',
+            location: 'Ubicación',
+            folder: 'Carpeta',
+            folderPlaceholder: 'Reuniones',
+            icon: 'Icono',
+            placement: 'Botón',
+            placementNone: 'Ninguno',
+            placementRibbon: 'Cinta',
+            placementTabBar: 'Barra de pestañas'
+        },
+        templateFile: {
             placeholder: 'Buscar plantillas...',
             instructions: {
                 navigate: 'para navegar',
@@ -1100,10 +1134,12 @@ export const STRINGS_ES = {
                 }
             },
             fileOperations: {
-                label: 'Operaciones de archivos',
-                description: 'Plantillas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
+                label: 'Operaciones de archivos y plantillas',
+                description:
+                    'Plantillas, comandos de creación de notas, confirmaciones de eliminación, adjuntos y comportamiento ante conflictos al mover archivos.',
                 groups: {
-                    templates: 'Plantillas'
+                    templates: 'Plantillas',
+                    templateCommands: 'Comandos de creación de notas'
                 }
             },
             frontmatterFields: {
@@ -1714,11 +1750,11 @@ export const STRINGS_ES = {
                 name: 'Ubicación de carpeta de plantillas',
                 desc: 'El selector de archivos de plantilla muestra notas de esta carpeta.',
                 placeholder: 'Plantillas',
-                usage: 'Se usa en notas de calendario y notas de carpeta. Configura las plantillas en Calendario > Integración de calendario y Carpetas y notas de carpeta > Archivos de notas de carpeta.'
+                usage: 'Las plantillas de la carpeta de plantillas se usan en notas de calendario, notas de carpeta, plantillas de carpeta y Nueva nota desde plantilla. Configura las plantillas de calendario en Calendario > Integración de calendario y las de notas de carpeta en Carpetas y notas de carpeta > Archivos de notas de carpeta.'
             },
             calendarDailyNotePattern: {
                 name: 'Notas diarias',
-                desc: 'Formatear ruta usando formato de fecha de Moment. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos > Plantillas.',
+                desc: 'Formatear ruta usando formato de fecha de Moment. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'El patrón debe formatear y volver a analizarse como una fecha completa (año, mes, día).'
             },
@@ -1726,15 +1762,42 @@ export const STRINGS_ES = {
                 momentDescPrefix: 'Formatear ruta usando ',
                 momentLinkText: 'formato de fecha Moment',
                 momentDescSuffix:
-                    '. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos > Plantillas.',
-                templateTokenNoticeLabel: '¡Importante!',
-                templateTokenNotice:
-                    'El soporte de plantillas requiere el plugin Templater. Los formatos integrados como {{date}} y {{title}} solo funcionan cuando {source} está configurado como {option}.',
+                    '. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas.',
                 example: 'Sintaxis actual: {path}'
             },
-            templaterSupport: {
-                installed: '✅ El plugin Templater está instalado con soporte completo de plantillas.',
-                missing: '⚠️ Instala el plugin Templater para obtener soporte de plantillas.'
+            templateEngine: {
+                name: 'Motor de plantillas',
+                desc: 'Motor que procesa los archivos de plantilla cuando Notebook Navigator crea notas. Automático usa Templater para las plantillas que contienen <% cuando el plugin Templater está instalado. El resto de plantillas usan el motor integrado.',
+                options: {
+                    automatic: 'Automático',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater: instalado',
+                templaterNotInstalled: 'Plugin Templater: no instalado',
+                tokens: 'Marcadores integrados: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Escribe {{!date}} para mantener {{date}} como texto.',
+                usage: 'Los marcadores de plantilla como {{title}} y {{date}} se sustituyen al crear la nota. Configura el motor de plantillas en Operaciones de archivos y plantillas > Plantillas.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Mostrar iconos de plantilla de carpeta',
+                desc: 'Marca con un icono en el panel de navegación las carpetas que tienen su propia plantilla.'
+            },
+            templateCommands: {
+                name: 'Comandos',
+                desc: 'Cada comando crea una nota con un nombre de archivo generado, desde su propia plantilla o desde la plantilla de carpeta. Ejecútalo desde la paleta de comandos o asígnalo a un atajo o a un botón.',
+                empty: 'No hay comandos añadidos.',
+                add: 'Añadir comando',
+                edit: 'Editar',
+                unnamed: 'Comando sin nombre',
+                locationCurrent: 'Carpeta actual',
+                locationFolder: 'Carpeta específica'
+            },
+            folderTemplates: {
+                name: 'Plantillas de carpeta',
+                desc: 'Las notas nuevas usan la plantilla de su carpeta o de la carpeta superior más cercana. Establece las plantillas desde el menú contextual de la carpeta. Las plantillas de calendario, notas diarias y notas de carpeta tienen prioridad.',
+                empty: 'No hay plantillas de carpeta.',
+                scopeSubfolders: 'Carpeta y subcarpetas',
+                scopeFolder: 'Solo esta carpeta'
             },
             calendarWeeklyNotePattern: {
                 name: 'Notas semanales',
@@ -2457,7 +2520,7 @@ export const STRINGS_ES = {
             },
             folderNoteTemplate: {
                 name: 'Plantilla de nota de carpeta',
-                desc: 'Archivo de plantilla usado al crear notas de carpeta. Las plantillas Markdown pueden usar Templater. Las plantillas Canvas y Base se copian como contenido del archivo. Establece la ubicación de la carpeta de plantillas en Operaciones de archivos > Plantillas.',
+                desc: 'Archivo de plantilla usado al crear notas de carpeta. Las plantillas Markdown pueden usar Templater. Las plantillas Canvas y Base se copian como contenido del archivo. Establece la ubicación de la carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas.',
                 formatWarning:
                     'El formato de la plantilla debe coincidir con el tipo de nota de carpeta seleccionado: .md, .canvas o .base.'
             },

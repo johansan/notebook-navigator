@@ -111,8 +111,16 @@ export const STRINGS_FA = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'خواندن الگوی یادداشت روزانه ناموفق بود.',
         createFailed: 'ایجاد یادداشت روزانه ممکن نیست.'
+    },
+
+    templates: {
+        invalidTokens: 'الگوی "{name}" شامل توکن‌های نامعتبر است: {tokens}',
+        readFailed: 'خواندن الگوی "{name}" ممکن نبود. یادداشت بدون الگو ایجاد شد.',
+        folderNotSet: 'پیش از ایجاد یادداشت از الگو، پوشه الگوها را در عملیات فایل و الگوها > الگوها تنظیم کنید.',
+        templateNotFound: 'الگوی "{name}" پیدا نشد.',
+        folderNotFound: 'پوشه "{name}" پیدا نشد.',
+        templaterMissing: 'افزونه Templater نصب نیست. موتور الگو را در عملیات فایل و الگوها > الگوها تغییر دهید.'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_FA = {
             duplicateFolder: 'کپی پوشه',
             searchInFolder: 'جستجو در پوشه',
             createFolderNote: 'ایجاد یادداشت پوشه',
+            setFolderTemplate: 'تنظیم الگوی پوشه...',
+            changeFolderTemplate: 'تغییر الگوی پوشه...',
+            removeFolderTemplate: 'حذف الگوی پوشه',
             detachFolderNote: 'جدا کردن یادداشت پوشه',
             deleteFolderNote: 'حذف یادداشت پوشه',
             changeIcon: 'تغییر آیکون',
@@ -715,7 +726,28 @@ export const STRINGS_FA = {
                 dismiss: 'برای بستن'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'افزودن فرمان',
+            titleEdit: 'ویرایش فرمان',
+            name: 'نام فرمان',
+            namePlaceholder: 'یادداشت جلسه جدید',
+            template: 'الگو',
+            templateDesc: 'اختیاری. بدون الگو، در صورت تنظیم، الگوی پوشه مقصد اعمال می‌شود.',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: 'قالب نام فایل',
+            fileNameFormatDesc:
+                'توکن‌هایی مانند {{date:YYYYMMDD}} و {{prompt:Title}} هنگام اجرای فرمان جایگزین می‌شوند. هر پرسش یک مقدار می‌خواهد و همان برچسب در الگو همان مقدار را دریافت می‌کند.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: 'محل',
+            folder: 'پوشه',
+            folderPlaceholder: 'Meetings',
+            icon: 'آیکون',
+            placement: 'دکمه',
+            placementNone: 'هیچ',
+            placementRibbon: 'ریبون',
+            placementTabBar: 'نوار زبانه‌ها'
+        },
+        templateFile: {
             placeholder: 'جستجوی الگوها...',
             instructions: {
                 navigate: 'برای ناوبری',
@@ -1099,10 +1131,11 @@ export const STRINGS_FA = {
                 }
             },
             fileOperations: {
-                label: 'عملیات فایل',
-                description: 'الگوها، تأییدیه‌های حذف، پیوست‌ها و رفتار تعارض در جابجایی فایل.',
+                label: 'عملیات فایل و الگوها',
+                description: 'الگوها، فرمان‌های ایجاد یادداشت، تأیید حذف، پیوست‌ها و رفتار در تعارض هنگام انتقال فایل.',
                 groups: {
-                    templates: 'الگوها'
+                    templates: 'الگوها',
+                    templateCommands: 'فرمان‌های ایجاد یادداشت'
                 }
             },
             frontmatterFields: {
@@ -1711,11 +1744,11 @@ export const STRINGS_FA = {
                 name: 'محل پوشه الگوها',
                 desc: 'انتخابگر فایل الگو یادداشت‌های این پوشه را نمایش می‌دهد.',
                 placeholder: 'الگوها',
-                usage: 'برای یادداشت‌های تقویم و یادداشت‌های پوشه استفاده می‌شود. الگوها را در تقویم > یکپارچه‌سازی تقویم و پوشه‌ها و یادداشت‌های پوشه > فایل‌های یادداشت پوشه پیکربندی کنید.'
+                usage: 'الگوهای موجود در پوشه الگوها برای یادداشت‌های تقویم، یادداشت‌های پوشه، الگوهای پوشه و یادداشت جدید از الگو استفاده می‌شوند. الگوهای تقویم را در تقویم > یکپارچه‌سازی تقویم و الگوهای یادداشت پوشه را در پوشه‌ها و یادداشت‌های پوشه > فایل‌های یادداشت پوشه پیکربندی کنید.'
             },
             calendarDailyNotePattern: {
                 name: 'یادداشت‌های روزانه',
-                desc: 'قالب‌بندی مسیر با استفاده از قالب تاریخ Moment. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
+                desc: 'قالب‌بندی مسیر با استفاده از قالب تاریخ Moment. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل و الگوها > الگوها تنظیم کنید.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'الگو باید بتواند به یک تاریخ کامل (سال، ماه، روز) قالب‌بندی شود و دوباره به همان تاریخ تجزیه شود.'
             },
@@ -1723,15 +1756,42 @@ export const STRINGS_FA = {
                 momentDescPrefix: 'قالب‌بندی مسیر با استفاده از ',
                 momentLinkText: 'فرمت تاریخ Moment',
                 momentDescSuffix:
-                    '. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
-                templateTokenNoticeLabel: 'مهم!',
-                templateTokenNotice:
-                    'پشتیبانی از الگوها به افزونه Templater نیاز دارد. قالب‌های داخلی مانند {{date}} و {{title}} فقط زمانی کار می‌کنند که {source} روی {option} تنظیم شده باشد.',
+                    '. نام زیرپوشه‌ها را در کروشه قرار دهید، مثال [Work]/YYYY. روی آیکون الگو کلیک کنید تا الگو تنظیم شود. محل پوشه الگوها را در عملیات فایل و الگوها > الگوها تنظیم کنید.',
                 example: 'نحوه نگارش فعلی: {path}'
             },
-            templaterSupport: {
-                installed: '✅ افزونه Templater با پشتیبانی کامل از الگوها نصب شده است.',
-                missing: '⚠️ برای پشتیبانی از الگوها، افزونه Templater را نصب کنید.'
+            templateEngine: {
+                name: 'موتور الگو',
+                desc: 'موتوری که هنگام ایجاد یادداشت توسط Notebook Navigator فایل‌های الگو را پردازش می‌کند. حالت خودکار در صورت نصب بودن افزونه Templater، برای الگوهایی که شامل <% هستند از Templater استفاده می‌کند. سایر الگوها از موتور داخلی استفاده می‌کنند.',
+                options: {
+                    automatic: 'خودکار',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'افزونه Templater: نصب شده',
+                templaterNotInstalled: 'افزونه Templater: نصب نشده',
+                tokens: 'توکن‌های داخلی: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} تا {{sunday}}, {{cursor}}. برای حفظ {{date}} به‌صورت متن، {{!date}} بنویسید.',
+                usage: 'توکن‌های الگو مانند {{title}} و {{date}} هنگام ایجاد یادداشت جایگزین می‌شوند. موتور الگو را در عملیات فایل و الگوها > الگوها پیکربندی کنید.'
+            },
+            showFolderTemplateIcons: {
+                name: 'نمایش آیکون الگوی پوشه',
+                desc: 'پوشه‌هایی را که الگوی اختصاصی دارند با یک آیکون در پنجره ناوبری مشخص می‌کند.'
+            },
+            templateCommands: {
+                name: 'فرمان‌ها',
+                desc: 'هر فرمان یادداشتی با نام فایل تولیدشده، از الگوی خودش یا الگوی پوشه می‌سازد. آن را از پالت فرمان اجرا کنید یا به یک کلید میانبر یا دکمه اختصاص دهید.',
+                empty: 'فرمانی افزوده نشده است.',
+                add: 'افزودن فرمان',
+                edit: 'ویرایش',
+                unnamed: 'فرمان بی‌نام',
+                locationCurrent: 'پوشه فعلی',
+                locationFolder: 'پوشه مشخص'
+            },
+            folderTemplates: {
+                name: 'الگوهای پوشه',
+                desc: 'یادداشت‌های جدید از الگوی پوشه خود یا نزدیک‌ترین پوشه والد استفاده می‌کنند. الگوها را از منوی زمینه پوشه تنظیم کنید. الگوهای تقویم، یادداشت روزانه و یادداشت پوشه اولویت دارند.',
+                empty: 'هیچ الگوی پوشه‌ای تنظیم نشده است.',
+                scopeSubfolders: 'پوشه و زیرپوشه‌ها',
+                scopeFolder: 'فقط این پوشه'
             },
             calendarWeeklyNotePattern: {
                 name: 'یادداشت‌های هفتگی',
@@ -2451,7 +2511,7 @@ export const STRINGS_FA = {
             },
             folderNoteTemplate: {
                 name: 'الگوی یادداشت پوشه',
-                desc: 'فایل الگویی که هنگام ایجاد یادداشت‌های پوشه استفاده می‌شود. الگوهای Markdown می‌توانند از Templater استفاده کنند. الگوهای Canvas و Base به‌عنوان محتوای فایل کپی می‌شوند. محل پوشه الگوها را در عملیات فایل > الگوها تنظیم کنید.',
+                desc: 'فایل الگویی که هنگام ایجاد یادداشت‌های پوشه استفاده می‌شود. الگوهای Markdown می‌توانند از Templater استفاده کنند. الگوهای Canvas و Base به‌عنوان محتوای فایل کپی می‌شوند. محل پوشه الگوها را در عملیات فایل و الگوها > الگوها تنظیم کنید.',
                 formatWarning: 'قالب الگو باید با نوع یادداشت پوشه انتخاب‌شده مطابقت داشته باشد: .md، .canvas یا .base.'
             },
             folderNamesOpenFolderNotes: {

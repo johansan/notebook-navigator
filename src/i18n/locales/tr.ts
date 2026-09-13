@@ -111,8 +111,16 @@ export const STRINGS_TR = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Günlük not şablonu okunamadı.',
         createFailed: 'Günlük not oluşturulamadı.'
+    },
+
+    templates: {
+        invalidTokens: '"{name}" şablonu geçersiz belirteçler içeriyor: {tokens}',
+        readFailed: '"{name}" şablonu okunamadı. Not şablon olmadan oluşturuldu.',
+        folderNotSet: 'Şablondan not oluşturmadan önce Dosya işlemleri ve şablonlar > Şablonlar bölümünde şablon klasörünü ayarlayın.',
+        templateNotFound: '"{name}" şablonu bulunamadı.',
+        folderNotFound: '"{name}" klasörü bulunamadı.',
+        templaterMissing: 'Templater eklentisi yüklü değil. Şablon motorunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden değiştirin.'
     },
 
     shortcuts: {
@@ -362,6 +370,9 @@ export const STRINGS_TR = {
             duplicateFolder: 'Klasörü çoğalt',
             searchInFolder: 'Klasörde ara',
             createFolderNote: 'Klasör notu oluştur',
+            setFolderTemplate: 'Klasör şablonu ayarla...',
+            changeFolderTemplate: 'Klasör şablonunu değiştir...',
+            removeFolderTemplate: 'Klasör şablonunu kaldır',
             detachFolderNote: 'Klasör notunu ayır',
             deleteFolderNote: 'Klasör notunu sil',
             changeIcon: 'Simgeyi değiştir',
@@ -714,7 +725,28 @@ export const STRINGS_TR = {
                 dismiss: 'kapatmak için'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Komut ekle',
+            titleEdit: 'Komutu düzenle',
+            name: 'Komut adı',
+            namePlaceholder: 'Yeni toplantı notu',
+            template: 'Şablon',
+            templateDesc: 'İsteğe bağlı. Şablon yoksa, ayarlanmışsa hedef klasörün klasör şablonu uygulanır.',
+            templatePlaceholder: 'Şablonlar/Toplantı.md',
+            fileNameFormat: 'Dosya adı biçimi',
+            fileNameFormatDesc:
+                '{{date:YYYYMMDD}} ve {{prompt:Başlık}} gibi belirteçler komut çalıştığında değiştirilir. Her istem bir değer sorar ve şablondaki aynı etiket aynı değeri alır.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Başlık}}',
+            location: 'Konum',
+            folder: 'Klasör',
+            folderPlaceholder: 'Toplantılar',
+            icon: 'Simge',
+            placement: 'Düğme',
+            placementNone: 'Yok',
+            placementRibbon: 'Şerit',
+            placementTabBar: 'Sekme çubuğu'
+        },
+        templateFile: {
             placeholder: 'Şablon ara...',
             instructions: {
                 navigate: 'gezinmek için',
@@ -1097,10 +1129,11 @@ export const STRINGS_TR = {
                 }
             },
             fileOperations: {
-                label: 'Dosya işlemleri',
-                description: 'Şablonlar, silme onayları, ekler ve dosya taşıma çakışma davranışı.',
+                label: 'Dosya işlemleri ve şablonlar',
+                description: 'Şablonlar, not oluşturma komutları, silme onayları, ekler ve dosya taşıma çakışmalarındaki davranış.',
                 groups: {
-                    templates: 'Şablonlar'
+                    templates: 'Şablonlar',
+                    templateCommands: 'Not oluşturma komutları'
                 }
             },
             frontmatterFields: {
@@ -1710,11 +1743,11 @@ export const STRINGS_TR = {
                 name: 'Şablon klasörü konumu',
                 desc: 'Şablon dosya seçici bu klasördeki notları gösterir.',
                 placeholder: 'Şablonlar',
-                usage: 'Takvim notları ve klasör notları tarafından kullanılır. Şablonları Takvim > Takvim entegrasyonu ve Klasörler ve klasör notları > Klasör notu dosyaları bölümünde yapılandırın.'
+                usage: 'Şablon klasöründeki şablonlar takvim notları, klasör notları, klasör şablonları ve Şablondan yeni not tarafından kullanılır. Takvim şablonlarını Takvim > Takvim entegrasyonu, klasör notu şablonlarını Klasörler ve klasör notları > Klasör notu dosyaları bölümünde yapılandırın.'
             },
             calendarDailyNotePattern: {
                 name: 'Günlük notlar',
-                desc: 'Moment tarih biçimini kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri > Şablonlar bölümünden ayarlayın.',
+                desc: 'Moment tarih biçimini kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden ayarlayın.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Desen, tam bir tarih (yıl, ay, gün) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.'
             },
@@ -1722,15 +1755,42 @@ export const STRINGS_TR = {
                 momentDescPrefix: '',
                 momentLinkText: 'Moment tarih biçimi',
                 momentDescSuffix:
-                    ' kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri > Şablonlar bölümünden ayarlayın.',
-                templateTokenNoticeLabel: 'Önemli!',
-                templateTokenNotice:
-                    'Şablon desteği Templater eklentisini gerektirir. {{date}} ve {{title}} gibi yerleşik biçimler yalnızca {source} ayarı {option} olarak seçildiğinde kullanılabilir.',
+                    ' kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden ayarlayın.',
                 example: 'Geçerli sözdizimi: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Templater eklentisi tam şablon desteğiyle yüklü.',
-                missing: '⚠️ Şablon desteği için Templater eklentisini yükleyin.'
+            templateEngine: {
+                name: 'Şablon motoru',
+                desc: 'Notebook Navigator not oluştururken şablon dosyalarını işleyen motor. Otomatik, Templater eklentisi yüklüyse <% içeren şablonlar için Templater kullanır. Diğer tüm şablonlar yerleşik motoru kullanır.',
+                options: {
+                    automatic: 'Otomatik',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater eklentisi: yüklü',
+                templaterNotInstalled: 'Templater eklentisi: yüklü değil',
+                tokens: 'Yerleşik belirteçler: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} - {{sunday}}, {{cursor}}. {{date}} metnini olduğu gibi bırakmak için {{!date}} yazın.',
+                usage: '{{title}} ve {{date}} gibi şablon belirteçleri not oluşturulurken değiştirilir. Şablon motorunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden yapılandırın.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Klasör şablonu simgelerini göster',
+                desc: 'Kendi klasör şablonu olan klasörleri gezinti bölmesinde bir simgeyle işaretler.'
+            },
+            templateCommands: {
+                name: 'Komutlar',
+                desc: 'Her komut, kendi şablonundan veya klasör şablonundan oluşturulan bir dosya adıyla not oluşturur. Komut paletinden çalıştırın veya bir kısayola ya da düğmeye bağlayın.',
+                empty: 'Komut eklenmedi.',
+                add: 'Komut ekle',
+                edit: 'Düzenle',
+                unnamed: 'Adsız komut',
+                locationCurrent: 'Geçerli klasör',
+                locationFolder: 'Belirli klasör'
+            },
+            folderTemplates: {
+                name: 'Klasör şablonları',
+                desc: 'Yeni notlar kendi klasörünün veya en yakın üst klasörün şablonunu kullanır. Şablonları klasörün bağlam menüsünden ayarlayın. Takvim, günlük not ve klasör notu şablonları önceliklidir.',
+                empty: 'Klasör şablonu ayarlanmadı.',
+                scopeSubfolders: 'Klasör ve alt klasörler',
+                scopeFolder: 'Yalnızca bu klasör'
             },
             calendarWeeklyNotePattern: {
                 name: 'Haftalık notlar',
@@ -2450,7 +2510,7 @@ export const STRINGS_TR = {
             },
             folderNoteTemplate: {
                 name: 'Klasör notu şablonu',
-                desc: 'Klasör notları oluşturulurken kullanılan şablon dosyası. Markdown şablonları Templater kullanabilir. Canvas ve Base şablonları dosya içeriği olarak kopyalanır. Şablon klasörü konumunu Dosya işlemleri > Şablonlar bölümünden ayarlayın.',
+                desc: 'Klasör notları oluşturulurken kullanılan şablon dosyası. Markdown şablonları Templater kullanabilir. Canvas ve Base şablonları dosya içeriği olarak kopyalanır. Şablon klasörü konumunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden ayarlayın.',
                 formatWarning: 'Şablon biçimi seçilen klasör notu türüyle eşleşmelidir: .md, .canvas veya .base.'
             },
             folderNamesOpenFolderNotes: {

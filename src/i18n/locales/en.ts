@@ -111,8 +111,16 @@ export const STRINGS_EN = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Failed to read the daily note template.',
         createFailed: 'Unable to create daily note.'
+    },
+
+    templates: {
+        invalidTokens: 'Template "{name}" contains invalid tokens: {tokens}',
+        readFailed: 'Failed to read the template "{name}". The note was created without it.',
+        folderNotSet: 'Set the template folder in File operations & templates > Templates before creating notes from templates.',
+        templateNotFound: 'Template "{name}" was not found.',
+        folderNotFound: 'Folder "{name}" was not found.',
+        templaterMissing: 'The Templater plugin is not installed. Change the template engine in File operations & templates > Templates.'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_EN = {
             duplicateFolder: 'Duplicate folder',
             searchInFolder: 'Search in folder',
             createFolderNote: 'Create folder note',
+            setFolderTemplate: 'Set folder template...',
+            changeFolderTemplate: 'Change folder template...',
+            removeFolderTemplate: 'Remove folder template',
             detachFolderNote: 'Detach folder note',
             deleteFolderNote: 'Delete folder note',
             changeIcon: 'Change icon',
@@ -710,7 +721,28 @@ export const STRINGS_EN = {
                 dismiss: 'to dismiss'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Add command',
+            titleEdit: 'Edit command',
+            name: 'Command name',
+            namePlaceholder: 'New meeting note',
+            template: 'Template',
+            templateDesc: 'Optional. Without a template, the folder template of the target folder applies when one is set.',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: 'File name format',
+            fileNameFormatDesc:
+                'Tokens such as {{date:YYYYMMDD}} and {{prompt:Title}} are replaced when the command runs. Each prompt asks for a value, and the same label in the template receives the same value.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: 'Location',
+            folder: 'Folder',
+            folderPlaceholder: 'Meetings',
+            icon: 'Icon',
+            placement: 'Button',
+            placementNone: 'None',
+            placementRibbon: 'Ribbon',
+            placementTabBar: 'Tab bar'
+        },
+        templateFile: {
             placeholder: 'Search templates...',
             instructions: {
                 navigate: 'to navigate',
@@ -1093,10 +1125,11 @@ export const STRINGS_EN = {
                 }
             },
             fileOperations: {
-                label: 'File operations',
-                description: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
+                label: 'File operations & templates',
+                description: 'Templates, create note commands, delete confirmations, attachments, and file move conflict behavior.',
                 groups: {
-                    templates: 'Templates'
+                    templates: 'Templates',
+                    templateCommands: 'Create note commands'
                 }
             },
             frontmatterFields: {
@@ -1704,11 +1737,11 @@ export const STRINGS_EN = {
                 name: 'Template folder location',
                 desc: 'Template file picker shows notes from this folder.',
                 placeholder: 'Templates',
-                usage: 'Used by calendar notes and folder notes. Configure templates in Calendar > Calendar integration and Folders & folder notes > Folder note files.'
+                usage: 'Templates in the template folder are used by calendar notes, folder notes, folder templates and New note from template. Configure calendar templates in Calendar > Calendar integration and folder note templates in Folders & folder notes > Folder note files.'
             },
             calendarDailyNotePattern: {
                 name: 'Daily notes',
-                desc: 'Format path using Moment date format. Wrap subfolder names in brackets, e.g., [Work]/YYYY. Click template icon to set template. Set template folder location in File operations > Templates.',
+                desc: 'Format path using Moment date format. Wrap subfolder names in brackets, e.g., [Work]/YYYY. Click template icon to set template. Set template folder location in File operations & templates > Templates.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Pattern must format and parse back to a full date (year, month, day).'
             },
@@ -1716,15 +1749,42 @@ export const STRINGS_EN = {
                 momentDescPrefix: 'Format path using ',
                 momentLinkText: 'Moment date format',
                 momentDescSuffix:
-                    '. Wrap subfolder names in brackets, e.g., [Work]/YYYY. Click template icon to set template. Set template folder location in File operations > Templates.',
-                templateTokenNoticeLabel: 'Important!',
-                templateTokenNotice:
-                    'Template support requires the Templater plugin. Built-in formats such as {{date}} and {{title}} can only be used when {source} is set to {option}.',
+                    '. Wrap subfolder names in brackets, e.g., [Work]/YYYY. Click template icon to set template. Set template folder location in File operations & templates > Templates.',
                 example: 'Current syntax: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Templater plugin is installed with full template support.',
-                missing: '⚠️ Install Templater plugin for template support.'
+            templateEngine: {
+                name: 'Template engine',
+                desc: 'Engine that processes template files when Notebook Navigator creates notes. Automatic uses Templater for templates that contain <% when the Templater plugin is installed. All other templates use the built-in engine.',
+                options: {
+                    automatic: 'Automatic',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater plugin: installed',
+                templaterNotInstalled: 'Templater plugin: not installed',
+                tokens: 'Built-in tokens: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} to {{sunday}}, {{cursor}}. Write {{!date}} to keep {{date}} as text.',
+                usage: 'Template tokens such as {{title}} and {{date}} are replaced when the note is created. Configure the template engine in File operations & templates > Templates.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Show folder template icons',
+                desc: 'Marks folders that have their own folder template with an icon in the navigation pane.'
+            },
+            templateCommands: {
+                name: 'Commands',
+                desc: 'Each command creates a note with a generated file name, from its own template or the folder template. Run it from the command palette, or bind it to a hotkey or a toolbar button.',
+                empty: 'No commands added.',
+                add: 'Add command',
+                edit: 'Edit',
+                unnamed: 'Unnamed command',
+                locationCurrent: 'Current folder',
+                locationFolder: 'Specific folder'
+            },
+            folderTemplates: {
+                name: 'Folder templates',
+                desc: 'New notes use the template of their folder or of the closest parent folder. Set templates from the folder context menu. Calendar, daily note and folder note templates take precedence.',
+                empty: 'No folder templates set.',
+                scopeSubfolders: 'Folder and subfolders',
+                scopeFolder: 'This folder only'
             },
             calendarWeeklyNotePattern: {
                 name: 'Weekly notes',
@@ -2443,7 +2503,7 @@ export const STRINGS_EN = {
             },
             folderNoteTemplate: {
                 name: 'Folder note template',
-                desc: 'Template file used when creating folder notes. Markdown templates can use Templater. Canvas and Base templates are copied as file content. Set template folder location in File operations > Templates.',
+                desc: 'Template file used when creating folder notes. Markdown templates can use Templater. Canvas and Base templates are copied as file content. Set template folder location in File operations & templates > Templates.',
                 formatWarning: 'Template format must match the selected folder note type: .md, .canvas, or .base.'
             },
             folderNamesOpenFolderNotes: {

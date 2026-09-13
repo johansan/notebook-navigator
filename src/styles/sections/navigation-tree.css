@@ -323,6 +323,20 @@
 }
 
 /* Folder file count - shows number of files in folder */
+/* Marks folders that have their own folder template. Placed before the note count. */
+.nn-navitem-template-indicator {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-inline-end: 4px;
+    color: var(--nn-theme-navitem-count-color);
+}
+
+.nn-navitem-template-indicator svg {
+    width: 12px;
+    height: 12px;
+}
+
 .nn-navitem-count {
     font-size: var(--nn-navitem-count-font-size);
     font-weight: var(--nn-theme-navitem-count-font-weight);

@@ -72,7 +72,10 @@ import {
     normalizeListSortOverride,
     resolveDeleteAttachmentsSetting,
     type NotebookNavigatorSettings,
-    resolveMoveFileConflictsSetting
+    isFolderTemplateMapping,
+    resolveMoveFileConflictsSetting,
+    resolveTemplateEngineSetting,
+    sanitizeTemplateCommands
 } from '../../settings/types';
 import { LEGACY_STORAGE_KEYS, LOCALSTORAGE_VERSION, localStorage } from '../../utils/localStorage';
 import { clearHiddenFileNameMatcherCache } from '../../utils/fileFilters';
@@ -694,6 +697,10 @@ export class PluginSettingsController {
         this.currentSettings.moveFileConflicts = resolveMoveFileConflictsSetting(
             this.currentSettings.moveFileConflicts,
             DEFAULT_SETTINGS.moveFileConflicts
+        );
+        this.currentSettings.templateEngine = resolveTemplateEngineSetting(
+            this.currentSettings.templateEngine,
+            DEFAULT_SETTINGS.templateEngine
         );
 
         let uiScaleMigrated = false;
@@ -1371,6 +1378,8 @@ export class PluginSettingsController {
             sanitizeRecord(record, isSettingSyncMode);
 
         this.currentSettings.folderColors = sanitizeStringMap(this.currentSettings.folderColors);
+        this.currentSettings.folderTemplates = sanitizeRecord(this.currentSettings.folderTemplates, isFolderTemplateMapping);
+        this.currentSettings.templateCommands = sanitizeTemplateCommands(this.currentSettings.templateCommands);
         this.currentSettings.folderBackgroundColors = sanitizeStringMap(this.currentSettings.folderBackgroundColors);
         this.currentSettings.fileColors = sanitizeStringMap(this.currentSettings.fileColors);
         this.currentSettings.fileBackgroundColors = sanitizeStringMap(this.currentSettings.fileBackgroundColors);

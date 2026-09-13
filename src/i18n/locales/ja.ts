@@ -110,8 +110,18 @@ export const STRINGS_JA = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'デイリーノートのテンプレートを読み込めませんでした。',
         createFailed: 'デイリーノートを作成できませんでした。'
+    },
+
+    templates: {
+        invalidTokens: 'テンプレート「{name}」に無効なトークンが含まれています: {tokens}',
+        readFailed: 'テンプレート「{name}」を読み込めませんでした。ノートはテンプレートなしで作成されました。',
+        folderNotSet:
+            'テンプレートからノートを作成する前に、ファイル操作とテンプレート > テンプレート でテンプレートフォルダを設定してください。',
+        templateNotFound: 'テンプレート「{name}」が見つかりません。',
+        folderNotFound: 'フォルダ「{name}」が見つかりません。',
+        templaterMissing:
+            'Templaterプラグインがインストールされていません。ファイル操作とテンプレート > テンプレート でテンプレートエンジンを変更してください。'
     },
 
     shortcuts: {
@@ -361,6 +371,9 @@ export const STRINGS_JA = {
             duplicateFolder: 'フォルダを複製',
             searchInFolder: 'フォルダ内を検索',
             createFolderNote: 'フォルダノートを作成',
+            setFolderTemplate: 'フォルダテンプレートを設定...',
+            changeFolderTemplate: 'フォルダテンプレートを変更...',
+            removeFolderTemplate: 'フォルダテンプレートを削除',
             detachFolderNote: 'フォルダノートを解除',
             deleteFolderNote: 'フォルダノートを削除',
             changeIcon: 'アイコンを変更',
@@ -713,7 +726,28 @@ export const STRINGS_JA = {
                 dismiss: 'でキャンセル'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'コマンドを追加',
+            titleEdit: 'コマンドを編集',
+            name: 'コマンド名',
+            namePlaceholder: '新しい会議ノート',
+            template: 'テンプレート',
+            templateDesc: '省略可能。テンプレートがない場合、設定されていれば対象フォルダのフォルダテンプレートが適用されます。',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: 'ファイル名の形式',
+            fileNameFormatDesc:
+                '{{date:YYYYMMDD}} や {{prompt:Title}} などのトークンはコマンド実行時に置き換えられます。各プロンプトは値を尋ね、テンプレート内の同じラベルには同じ値が入ります。',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: '場所',
+            folder: 'フォルダ',
+            folderPlaceholder: 'Meetings',
+            icon: 'アイコン',
+            placement: 'ボタン',
+            placementNone: 'なし',
+            placementRibbon: 'リボン',
+            placementTabBar: 'タブバー'
+        },
+        templateFile: {
             placeholder: 'テンプレートを検索...',
             instructions: {
                 navigate: 'でナビゲート',
@@ -1098,10 +1132,11 @@ export const STRINGS_JA = {
                 }
             },
             fileOperations: {
-                label: 'ファイル操作',
-                description: 'テンプレート、削除確認、添付ファイル、ファイル移動時の競合動作。',
+                label: 'ファイル操作とテンプレート',
+                description: 'テンプレート、ノート作成コマンド、削除の確認、添付ファイル、ファイル移動時の競合の動作。',
                 groups: {
-                    templates: 'テンプレート'
+                    templates: 'テンプレート',
+                    templateCommands: 'ノート作成コマンド'
                 }
             },
             frontmatterFields: {
@@ -1709,11 +1744,11 @@ export const STRINGS_JA = {
                 name: 'テンプレートフォルダの場所',
                 desc: 'テンプレートファイルピッカーはこのフォルダからノートを表示します。',
                 placeholder: 'テンプレート',
-                usage: 'カレンダーノートとフォルダノートで使用されます。テンプレートは カレンダー > カレンダー連携 と フォルダとフォルダノート > フォルダノートファイル で設定します。'
+                usage: 'テンプレートフォルダ内のテンプレートは、カレンダーノート、フォルダノート、フォルダテンプレート、テンプレートから新規ノートで使用されます。カレンダーのテンプレートは カレンダー > カレンダー連携 で、フォルダノートのテンプレートは フォルダとフォルダノート > フォルダノートファイル で設定します。'
             },
             calendarDailyNotePattern: {
                 name: 'デイリーノート',
-                desc: 'Moment 日付フォーマットを使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作 > テンプレートで設定してください。',
+                desc: 'Moment 日付フォーマットを使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作とテンプレート > テンプレートで設定してください。',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'パターンは完全な日付（年、月、日）としてフォーマットされ、再度パースできる必要があります。'
             },
@@ -1721,15 +1756,42 @@ export const STRINGS_JA = {
                 momentDescPrefix: '',
                 momentLinkText: 'Moment 日付フォーマット',
                 momentDescSuffix:
-                    'を使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作 > テンプレートで設定してください。',
-                templateTokenNoticeLabel: '重要！',
-                templateTokenNotice:
-                    'テンプレートのサポートには Templater プラグインが必要です。{{date}} や {{title}} などの組み込み形式は、{source} が {option} に設定されている場合にのみ使用できます。',
+                    'を使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作とテンプレート > テンプレートで設定してください。',
                 example: '現在の構文: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Templater プラグインがインストールされており、テンプレートの完全サポートが利用できます。',
-                missing: '⚠️ テンプレートのサポートを利用するには、Templater プラグインをインストールしてください。'
+            templateEngine: {
+                name: 'テンプレートエンジン',
+                desc: 'Notebook Navigatorがノートを作成するときにテンプレートファイルを処理するエンジン。 自動は、Templaterプラグインがインストールされている場合、<% を含むテンプレートにTemplaterを使用します。それ以外のテンプレートは内蔵エンジンを使用します。',
+                options: {
+                    automatic: '自動',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templaterプラグイン: インストール済み',
+                templaterNotInstalled: 'Templaterプラグイン: 未インストール',
+                tokens: '内蔵トークン: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}}〜{{sunday}}, {{cursor}}。{{date}} をそのまま残すには {{!date}} と書きます。',
+                usage: '{{title}} や {{date}} などのテンプレートトークンはノート作成時に置き換えられます。テンプレートエンジンは ファイル操作とテンプレート > テンプレート で設定します。'
+            },
+            showFolderTemplateIcons: {
+                name: 'フォルダテンプレートのアイコンを表示',
+                desc: '独自のフォルダテンプレートを持つフォルダをナビゲーションペインにアイコンで示します。'
+            },
+            templateCommands: {
+                name: 'コマンド',
+                desc: '各コマンドは、独自のテンプレートまたはフォルダテンプレートから、生成されたファイル名でノートを作成します。コマンドパレットから実行するか、ホットキーやボタンに割り当てます。',
+                empty: 'コマンドはありません。',
+                add: 'コマンドを追加',
+                edit: '編集',
+                unnamed: '名前のないコマンド',
+                locationCurrent: '現在のフォルダ',
+                locationFolder: '特定のフォルダ'
+            },
+            folderTemplates: {
+                name: 'フォルダテンプレート',
+                desc: '新規ノートは、そのフォルダまたは最も近い親フォルダのテンプレートを使用します。テンプレートはフォルダのコンテキストメニューで設定します。カレンダー、デイリーノート、フォルダノートのテンプレートが優先されます。',
+                empty: 'フォルダテンプレートは設定されていません。',
+                scopeSubfolders: 'フォルダとサブフォルダ',
+                scopeFolder: 'このフォルダのみ'
             },
             calendarWeeklyNotePattern: {
                 name: 'ウィークリーノート',
@@ -2449,7 +2511,7 @@ export const STRINGS_JA = {
             },
             folderNoteTemplate: {
                 name: 'フォルダノートテンプレート',
-                desc: 'フォルダノート作成時に使用するテンプレートファイル。MarkdownテンプレートではTemplaterを使用できます。CanvasとBaseテンプレートはファイル内容としてコピーされます。テンプレートフォルダの場所はファイル操作 > テンプレートで設定してください。',
+                desc: 'フォルダノート作成時に使用するテンプレートファイル。MarkdownテンプレートではTemplaterを使用できます。CanvasとBaseテンプレートはファイル内容としてコピーされます。テンプレートフォルダの場所はファイル操作とテンプレート > テンプレートで設定してください。',
                 formatWarning: 'テンプレート形式は選択したフォルダノートの種類と一致している必要があります: .md、.canvas、.base。'
             },
             folderNamesOpenFolderNotes: {

@@ -403,6 +403,101 @@ export type CalendarIntegrationMode = 'daily-notes' | 'notebook-navigator';
 /** Locale source used when Notebook Navigator formats periodic note paths */
 export type CalendarPeriodicNotesLocaleSource = 'calendar' | 'obsidian';
 
+/**
+ * Engine that processes template files when Notebook Navigator creates notes.
+ * - `automatic`: Templater when it is installed and the template contains Templater commands, otherwise the built-in engine.
+ * - `builtin`: the built-in `{{token}}` engine.
+ * - `templater`: the Templater plugin. Note creation stops with a notice when Templater is not installed.
+ */
+export type TemplateEngineSetting = 'automatic' | 'builtin' | 'templater';
+
+export function isTemplateEngineSetting(value: unknown): value is TemplateEngineSetting {
+    return value === 'automatic' || value === 'builtin' || value === 'templater';
+}
+
+export function resolveTemplateEngineSetting(value: unknown, fallback: TemplateEngineSetting): TemplateEngineSetting {
+    return isTemplateEngineSetting(value) ? value : fallback;
+}
+
+/** Template assigned to a folder from the folder context menu. */
+export interface FolderTemplateMapping {
+    /** Vault path of the template file. */
+    template: string;
+    /** Whether notes created in subfolders use this template too, unless a closer folder has its own applicable mapping. */
+    includeSubfolders: boolean;
+}
+
+/** Where a template command creates its note. */
+export type TemplateCommandLocation = 'current' | 'folder';
+
+/** Where a template command shows a button besides the command palette. */
+export type TemplateCommandPlacement = 'none' | 'ribbon' | 'tabBar';
+
+export const DEFAULT_TEMPLATE_COMMAND_ICON = 'lucide-file-plus';
+
+/** A user-defined command that creates a note from a template with a generated file name. */
+export interface TemplateCommand {
+    /** Stable id used in the Obsidian command id, so hotkeys survive renames. */
+    id: string;
+    name: string;
+    /** Vault path of the template file. */
+    template: string;
+    /** File name without extension; template tokens are replaced when the command runs. */
+    fileNameFormat: string;
+    location: TemplateCommandLocation;
+    /** Target folder path when `location` is `folder`. */
+    folder: string;
+    /** Icon id shown on the ribbon or tab bar button. */
+    icon: string;
+    placement: TemplateCommandPlacement;
+}
+
+export function isTemplateCommandLocation(value: unknown): value is TemplateCommandLocation {
+    return value === 'current' || value === 'folder';
+}
+
+export function isTemplateCommandPlacement(value: unknown): value is TemplateCommandPlacement {
+    return value === 'none' || value === 'ribbon' || value === 'tabBar';
+}
+
+/** Drops malformed entries and duplicate ids from persisted template commands. */
+export function sanitizeTemplateCommands(value: unknown): TemplateCommand[] {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+    const seenIds = new Set<string>();
+    const commands: TemplateCommand[] = [];
+    value.forEach((entry: unknown) => {
+        if (typeof entry !== 'object' || entry === null) {
+            return;
+        }
+        const record = entry as Record<string, unknown>;
+        if (typeof record.id !== 'string' || !record.id || seenIds.has(record.id) || typeof record.name !== 'string') {
+            return;
+        }
+        seenIds.add(record.id);
+        commands.push({
+            id: record.id,
+            name: record.name,
+            template: typeof record.template === 'string' ? record.template : '',
+            fileNameFormat: typeof record.fileNameFormat === 'string' ? record.fileNameFormat : '',
+            location: isTemplateCommandLocation(record.location) ? record.location : 'current',
+            folder: typeof record.folder === 'string' ? record.folder : '',
+            icon: typeof record.icon === 'string' && record.icon ? record.icon : DEFAULT_TEMPLATE_COMMAND_ICON,
+            placement: isTemplateCommandPlacement(record.placement) ? record.placement : 'none'
+        });
+    });
+    return commands;
+}
+
+export function isFolderTemplateMapping(value: unknown): value is FolderTemplateMapping {
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+    const record = value as Record<string, unknown>;
+    return typeof record.template === 'string' && typeof record.includeSubfolders === 'boolean';
+}
+
 export function isCalendarPeriodicNotesLocaleSource(value: unknown): value is CalendarPeriodicNotesLocaleSource {
     return value === 'calendar' || value === 'obsidian';
 }
@@ -670,6 +765,13 @@ export interface NotebookNavigatorSettings {
     dateFormat: string;
     timeFormat: string;
     calendarTemplateFolder: string;
+    templateEngine: TemplateEngineSetting;
+    /** Folder path (root is `/`) to template mapping. New notes use the closest applicable mapping in their folder ancestry. */
+    folderTemplates: Record<string, FolderTemplateMapping>;
+    /** Marks folders that have their own folder template with an icon in the navigation pane. */
+    showFolderTemplateIcons: boolean;
+    /** User-defined commands that create a note from a template. */
+    templateCommands: TemplateCommand[];
 
     // Files tab
     confirmBeforeDelete: boolean;

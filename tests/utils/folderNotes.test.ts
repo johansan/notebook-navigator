@@ -187,7 +187,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'markdown',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: DEFAULT_SETTINGS.folderNoteTemplate
+                folderNoteTemplate: DEFAULT_SETTINGS.folderNoteTemplate,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );
@@ -222,7 +227,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'markdown',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: DEFAULT_SETTINGS.folderNoteTemplate
+                folderNoteTemplate: DEFAULT_SETTINGS.folderNoteTemplate,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null,
             {
@@ -236,7 +246,7 @@ describe('root folder notes', () => {
         expect(openFile).not.toHaveBeenCalled();
     });
 
-    it('uses Templater directly when a configured folder note template is available', async () => {
+    it('uses Templater for folder note templates with Templater commands when Templater is installed', async () => {
         const app = new App();
         const root = createRootFolder(app, 'Shared Scratch');
         const templateFile = createTestTFile('Templates/Folder.md');
@@ -248,6 +258,7 @@ describe('root folder notes', () => {
         getTestVault(app).registerFile(templateFile);
         registerTemplater(app, createNoteFromTemplate);
         app.fileManager.createNewMarkdownFile = createNewMarkdownFile;
+        app.vault.cachedRead = vi.fn(async () => '<% tp.file.title %>');
         app.workspace = {
             getLeaf: vi.fn(() => ({ openFile }))
         } as unknown as App['workspace'];
@@ -258,7 +269,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'markdown',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: templateFile.path
+                folderNoteTemplate: templateFile.path,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );
@@ -269,20 +285,22 @@ describe('root folder notes', () => {
         expect(openFile).toHaveBeenCalledWith(createdFile, { active: true });
     });
 
-    it('copies folder note template content when Templater is unavailable', async () => {
+    it('renders folder note templates with the built-in engine when Templater is unavailable', async () => {
         const app = new App();
         const root = createRootFolder(app, 'Shared Scratch');
         const templateFile = createTestTFile('Templates/Folder.md');
         const createdFile = createTestTFile('Shared Scratch.md');
-        const templateContent = '---\ncreated: <% tp.file.creation_date("YYYY-MM-DD") %>\n---\n';
+        const templateContent = '# {{title}} in {{folder}}\ncreated: <% tp.file.creation_date("YYYY-MM-DD") %>\n';
         const openFile = vi.fn().mockResolvedValue(undefined);
         const createNewMarkdownFile = vi.fn(async () => createdFile);
-        const read = vi.fn(async () => templateContent);
+        const cachedRead = vi.fn(async () => templateContent);
+        const create = vi.fn(async () => createdFile);
         const modify = vi.fn(async () => undefined);
 
         getTestVault(app).registerFile(templateFile);
         app.fileManager.createNewMarkdownFile = createNewMarkdownFile;
-        app.vault.read = read;
+        app.vault.cachedRead = cachedRead;
+        getTestVault(app).create = create;
         app.vault.modify = modify;
         app.workspace = {
             getLeaf: vi.fn(() => ({ openFile }))
@@ -294,15 +312,25 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'markdown',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: templateFile.path
+                folderNoteTemplate: templateFile.path,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );
 
         expect(created).toBe(createdFile);
-        expect(createNewMarkdownFile).toHaveBeenCalledWith(root, 'Shared Scratch');
-        expect(read).toHaveBeenCalledWith(templateFile);
-        expect(modify).toHaveBeenCalledWith(createdFile, templateContent);
+        expect(createNewMarkdownFile).not.toHaveBeenCalled();
+        expect(cachedRead).toHaveBeenCalledWith(templateFile);
+        // The vault root is reported as an empty folder name. Templater commands stay untouched.
+        expect(create).toHaveBeenCalledWith(
+            'Shared Scratch.md',
+            '# Shared Scratch in \ncreated: <% tp.file.creation_date("YYYY-MM-DD") %>\n'
+        );
+        expect(modify).not.toHaveBeenCalled();
         expect(openFile).toHaveBeenCalledWith(createdFile, { active: true });
     });
 
@@ -335,7 +363,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'canvas',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: templateFile.path
+                folderNoteTemplate: templateFile.path,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );
@@ -375,7 +408,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'base',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: templateFile.path
+                folderNoteTemplate: templateFile.path,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );
@@ -410,7 +448,12 @@ describe('root folder notes', () => {
             {
                 folderNoteType: 'canvas',
                 folderNoteNamePattern: '',
-                folderNoteTemplate: templateFile.path
+                folderNoteTemplate: templateFile.path,
+
+                templateEngine: DEFAULT_SETTINGS.templateEngine,
+                dateFormat: 'YYYY-MM-DD',
+                timeFormat: 'HH:mm',
+                folderTemplates: {}
             },
             null
         );

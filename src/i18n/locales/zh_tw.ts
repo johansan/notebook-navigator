@@ -110,8 +110,16 @@ export const STRINGS_ZH_TW = {
     },
 
     dailyNotes: {
-        templateReadFailed: '讀取每日筆記範本失敗。',
         createFailed: '建立每日筆記失敗。'
+    },
+
+    templates: {
+        invalidTokens: '範本「{name}」包含無效的佔位符：{tokens}',
+        readFailed: '無法讀取範本「{name}」。筆記已在沒有範本的情況下建立。',
+        folderNotSet: '從範本新建筆記前，請先在檔案操作與範本 > 範本中設定範本資料夾。',
+        templateNotFound: '找不到範本「{name}」。',
+        folderNotFound: '找不到資料夾「{name}」。',
+        templaterMissing: '未安裝 Templater 外掛。請在檔案操作與範本 > 範本中變更範本引擎。'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_ZH_TW = {
             duplicateFolder: '複製資料夾',
             searchInFolder: '在資料夾中搜尋',
             createFolderNote: '建立資料夾筆記',
+            setFolderTemplate: '設定資料夾範本...',
+            changeFolderTemplate: '變更資料夾範本...',
+            removeFolderTemplate: '移除資料夾範本',
             detachFolderNote: '解除資料夾筆記',
             deleteFolderNote: '刪除資料夾筆記',
             changeIcon: '變更圖示',
@@ -708,7 +719,28 @@ export const STRINGS_ZH_TW = {
                 dismiss: '取消'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: '新增命令',
+            titleEdit: '編輯命令',
+            name: '命令名稱',
+            namePlaceholder: '新增會議筆記',
+            template: '範本',
+            templateDesc: '選填。未設定範本時，若目標資料夾有資料夾範本則使用它。',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: '檔名格式',
+            fileNameFormatDesc:
+                '{{date:YYYYMMDD}}、{{prompt:Title}} 等佔位符會在執行命令時被取代。每個提示都會詢問一個值，範本中相同的標籤會取得相同的值。',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: '位置',
+            folder: '資料夾',
+            folderPlaceholder: 'Meetings',
+            icon: '圖示',
+            placement: '按鈕',
+            placementNone: '無',
+            placementRibbon: '功能區',
+            placementTabBar: '分頁列'
+        },
+        templateFile: {
             placeholder: '搜尋範本...',
             instructions: {
                 navigate: '導覽',
@@ -1091,10 +1123,11 @@ export const STRINGS_ZH_TW = {
                 }
             },
             fileOperations: {
-                label: '檔案操作',
-                description: '範本、刪除確認、附件與檔案移動衝突行為。',
+                label: '檔案操作與範本',
+                description: '範本、新建筆記命令、刪除確認、附件以及移動檔案衝突時的行為。',
                 groups: {
-                    templates: '範本'
+                    templates: '範本',
+                    templateCommands: '新建筆記命令'
                 }
             },
             frontmatterFields: {
@@ -1699,11 +1732,11 @@ export const STRINGS_ZH_TW = {
                 name: '範本資料夾位置',
                 desc: '範本檔案選擇器顯示此資料夾中的筆記。',
                 placeholder: '範本',
-                usage: '用於日曆筆記與資料夾筆記。在導覽日曆 > 日曆整合和資料夾與資料夾筆記 > 資料夾筆記檔案中設定範本。'
+                usage: '範本資料夾中的範本用於日曆筆記、資料夾筆記、資料夾範本與從範本新建筆記。在導覽日曆 > 日曆整合中設定日曆範本，在資料夾與資料夾筆記 > 資料夾筆記檔案中設定資料夾筆記範本。'
             },
             calendarDailyNotePattern: {
                 name: '每日筆記',
-                desc: '使用 Moment 日期格式設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作 > 範本中設定範本資料夾位置。',
+                desc: '使用 Moment 日期格式設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作與範本 > 範本中設定範本資料夾位置。',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: '模式必須能格式化並重新解析為完整日期（年、月、日）。'
             },
@@ -1711,14 +1744,42 @@ export const STRINGS_ZH_TW = {
                 momentDescPrefix: '使用 ',
                 momentLinkText: 'Moment 日期格式',
                 momentDescSuffix:
-                    ' 設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作 > 範本中設定範本資料夾位置。',
-                templateTokenNoticeLabel: '重要！',
-                templateTokenNotice: '範本功能需要 Templater 外掛程式。{{date}} 與 {{title}} 等內建格式僅在{source}設定為{option}時可用。',
+                    ' 設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作與範本 > 範本中設定範本資料夾位置。',
                 example: '目前語法：{path}'
             },
-            templaterSupport: {
-                installed: '✅ 已安裝 Templater 外掛程式，支援完整範本功能。',
-                missing: '⚠️ 安裝 Templater 外掛程式以支援範本功能。'
+            templateEngine: {
+                name: '範本引擎',
+                desc: 'Notebook Navigator 建立筆記時處理範本檔案的引擎。 自動模式在已安裝 Templater 外掛時，對包含 <% 的範本使用 Templater，其他範本使用內建引擎。',
+                options: {
+                    automatic: '自動',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater 外掛：已安裝',
+                templaterNotInstalled: 'Templater 外掛：未安裝',
+                tokens: '內建佔位符：{{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} 至 {{sunday}}, {{cursor}}。寫 {{!date}} 可將 {{date}} 保留為文字。',
+                usage: '{{title}}、{{date}} 等範本佔位符會在建立筆記時被取代。請在檔案操作與範本 > 範本中設定範本引擎。'
+            },
+            showFolderTemplateIcons: {
+                name: '顯示資料夾範本圖示',
+                desc: '在導覽窗格中以圖示標記設定了自己範本的資料夾。'
+            },
+            templateCommands: {
+                name: '命令',
+                desc: '每個命令都會以自己的範本或資料夾範本建立一則筆記並自動產生檔名。可從命令面板執行，或綁定到快捷鍵或按鈕。',
+                empty: '尚未新增命令。',
+                add: '新增命令',
+                edit: '編輯',
+                unnamed: '未命名命令',
+                locationCurrent: '目前資料夾',
+                locationFolder: '指定資料夾'
+            },
+            folderTemplates: {
+                name: '資料夾範本',
+                desc: '新筆記使用其所在資料夾或最近上層資料夾的範本。在資料夾右鍵選單中設定範本。日曆、每日筆記和資料夾筆記的範本優先。',
+                empty: '未設定資料夾範本。',
+                scopeSubfolders: '資料夾及子資料夾',
+                scopeFolder: '僅此資料夾'
             },
             calendarWeeklyNotePattern: {
                 name: '週記',
@@ -2436,7 +2497,7 @@ export const STRINGS_ZH_TW = {
             },
             folderNoteTemplate: {
                 name: '資料夾筆記範本',
-                desc: '建立資料夾筆記時使用的範本檔案。Markdown 範本可以使用 Templater。Canvas 和 Base 範本會作為檔案內容複製。在檔案操作 > 範本中設定範本資料夾位置。',
+                desc: '建立資料夾筆記時使用的範本檔案。Markdown 範本可以使用 Templater。Canvas 和 Base 範本會作為檔案內容複製。在檔案操作與範本 > 範本中設定範本資料夾位置。',
                 formatWarning: '範本格式必須與所選資料夾筆記類型相符：.md、.canvas 或 .base。'
             },
             folderNamesOpenFolderNotes: {

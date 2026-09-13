@@ -112,8 +112,18 @@ export const STRINGS_NL = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Kan de sjabloon voor dagelijkse notities niet lezen.',
         createFailed: 'Kan dagelijkse notitie niet aanmaken.'
+    },
+
+    templates: {
+        invalidTokens: 'Sjabloon "{name}" bevat ongeldige tokens: {tokens}',
+        readFailed: 'Sjabloon "{name}" kon niet worden gelezen. De notitie is zonder sjabloon aangemaakt.',
+        folderNotSet:
+            'Stel de sjabloonmap in onder Bestandsbewerkingen & sjablonen > Sjablonen voordat je notities uit sjablonen aanmaakt.',
+        templateNotFound: 'Sjabloon "{name}" is niet gevonden.',
+        folderNotFound: 'Map "{name}" is niet gevonden.',
+        templaterMissing:
+            'De Templater-plugin is niet geïnstalleerd. Wijzig de sjabloonengine onder Bestandsbewerkingen & sjablonen > Sjablonen.'
     },
 
     shortcuts: {
@@ -364,6 +374,9 @@ export const STRINGS_NL = {
             duplicateFolder: 'Map dupliceren',
             searchInFolder: 'Zoeken in map',
             createFolderNote: 'Mapnotitie maken',
+            setFolderTemplate: 'Mapsjabloon instellen...',
+            changeFolderTemplate: 'Mapsjabloon wijzigen...',
+            removeFolderTemplate: 'Mapsjabloon verwijderen',
             detachFolderNote: 'Mapnotitie loskoppelen',
             deleteFolderNote: 'Mapnotitie verwijderen',
             changeIcon: 'Pictogram wijzigen',
@@ -716,7 +729,28 @@ export const STRINGS_NL = {
                 dismiss: 'om te sluiten'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Opdracht toevoegen',
+            titleEdit: 'Opdracht bewerken',
+            name: 'Opdrachtnaam',
+            namePlaceholder: 'Nieuwe vergadernotitie',
+            template: 'Sjabloon',
+            templateDesc: 'Optioneel. Zonder sjabloon geldt het mapsjabloon van de doelmap, als dat is ingesteld.',
+            templatePlaceholder: 'Sjablonen/Vergadering.md',
+            fileNameFormat: 'Bestandsnaamformaat',
+            fileNameFormatDesc:
+                'Tokens zoals {{date:YYYYMMDD}} en {{prompt:Titel}} worden vervangen wanneer de opdracht wordt uitgevoerd. Elke prompt vraagt om een waarde, en hetzelfde label in het sjabloon krijgt dezelfde waarde.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titel}}',
+            location: 'Locatie',
+            folder: 'Map',
+            folderPlaceholder: 'Vergaderingen',
+            icon: 'Pictogram',
+            placement: 'Knop',
+            placementNone: 'Geen',
+            placementRibbon: 'Lint',
+            placementTabBar: 'Tabbladbalk'
+        },
+        templateFile: {
             placeholder: 'Sjablonen zoeken...',
             instructions: {
                 navigate: 'om te navigeren',
@@ -1101,10 +1135,12 @@ export const STRINGS_NL = {
                 }
             },
             fileOperations: {
-                label: 'Bestandsbewerkingen',
-                description: 'Sjablonen, verwijderingsbevestigingen, bijlagen en gedrag bij bestandsverplaatsingsconflicten.',
+                label: 'Bestandsbewerkingen & sjablonen',
+                description:
+                    'Sjablonen, opdrachten voor nieuwe notities, verwijderbevestigingen, bijlagen en gedrag bij conflicten bij het verplaatsen van bestanden.',
                 groups: {
-                    templates: 'Sjablonen'
+                    templates: 'Sjablonen',
+                    templateCommands: 'Opdrachten voor nieuwe notities'
                 }
             },
             frontmatterFields: {
@@ -1714,11 +1750,11 @@ export const STRINGS_NL = {
                 name: 'Sjabloonmaplocatie',
                 desc: 'De sjabloonbestandskiezer toont notities uit deze map.',
                 placeholder: 'Sjablonen',
-                usage: 'Gebruikt door kalendernotities en mapnotities. Configureer sjablonen in Kalender > Kalenderintegratie en Mappen & mapnotities > Mapnotitiebestanden.'
+                usage: 'Sjablonen in de sjabloonmap worden gebruikt door kalendernotities, mapnotities, mapsjablonen en Nieuwe notitie uit sjabloon. Configureer kalendersjablonen in Kalender > Kalenderintegratie en mapnotitiesjablonen in Mappen & mapnotities > Mapnotitiebestanden.'
             },
             calendarDailyNotePattern: {
                 name: 'Dagelijkse notities',
-                desc: 'Pad formatteren met Moment-datumnotatie. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen > Sjablonen.',
+                desc: 'Pad formatteren met Moment-datumnotatie. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen & sjablonen > Sjablonen.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige datum (jaar, maand, dag).'
             },
@@ -1726,15 +1762,42 @@ export const STRINGS_NL = {
                 momentDescPrefix: 'Pad formatteren met ',
                 momentLinkText: 'Moment-datumnotatie',
                 momentDescSuffix:
-                    '. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen > Sjablonen.',
-                templateTokenNoticeLabel: 'Belangrijk!',
-                templateTokenNotice:
-                    'Sjabloonondersteuning vereist de Templater-plug-in. Ingebouwde formaten zoals {{date}} en {{title}} werken alleen wanneer {source} is ingesteld op {option}.',
+                    '. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen & sjablonen > Sjablonen.',
                 example: 'Huidige syntaxis: {path}'
             },
-            templaterSupport: {
-                installed: '✅ De Templater-plug-in is geïnstalleerd met volledige sjabloonondersteuning.',
-                missing: '⚠️ Installeer de Templater-plug-in voor sjabloonondersteuning.'
+            templateEngine: {
+                name: 'Sjabloonengine',
+                desc: 'Engine die sjabloonbestanden verwerkt wanneer Notebook Navigator notities aanmaakt. Automatisch gebruikt Templater voor sjablonen die <% bevatten wanneer de Templater-plugin is geïnstalleerd. Alle andere sjablonen gebruiken de ingebouwde engine.',
+                options: {
+                    automatic: 'Automatisch',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater-plugin: geïnstalleerd',
+                templaterNotInstalled: 'Templater-plugin: niet geïnstalleerd',
+                tokens: 'Ingebouwde tokens: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} tot {{sunday}}, {{cursor}}. Schrijf {{!date}} om {{date}} als tekst te behouden.',
+                usage: 'Sjabloontokens zoals {{title}} en {{date}} worden vervangen bij het aanmaken van de notitie. Configureer de sjabloonengine onder Bestandsbewerkingen & sjablonen > Sjablonen.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Mapsjabloonpictogrammen tonen',
+                desc: 'Markeert mappen met een eigen mapsjabloon met een pictogram in het navigatiepaneel.'
+            },
+            templateCommands: {
+                name: 'Opdrachten',
+                desc: 'Elke opdracht maakt een notitie met een gegenereerde bestandsnaam, uit een eigen sjabloon of het mapsjabloon. Voer hem uit via het opdrachtenpalet of koppel hem aan een sneltoets of knop.',
+                empty: 'Geen opdrachten toegevoegd.',
+                add: 'Opdracht toevoegen',
+                edit: 'Bewerken',
+                unnamed: 'Naamloze opdracht',
+                locationCurrent: 'Huidige map',
+                locationFolder: 'Specifieke map'
+            },
+            folderTemplates: {
+                name: 'Mapsjablonen',
+                desc: 'Nieuwe notities gebruiken het sjabloon van hun map of van de dichtstbijzijnde bovenliggende map. Stel sjablonen in via het contextmenu van de map. Kalender-, dagnotitie- en mapnotitiesjablonen hebben voorrang.',
+                empty: 'Geen mapsjablonen ingesteld.',
+                scopeSubfolders: 'Map en submappen',
+                scopeFolder: 'Alleen deze map'
             },
             calendarWeeklyNotePattern: {
                 name: 'Wekelijkse notities',
@@ -2455,7 +2518,7 @@ export const STRINGS_NL = {
             },
             folderNoteTemplate: {
                 name: 'Mapnotitiesjabloon',
-                desc: 'Sjabloonbestand dat wordt gebruikt bij het maken van mapnotities. Markdown-sjablonen kunnen Templater gebruiken. Canvas- en Base-sjablonen worden als bestandsinhoud gekopieerd. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen > Sjablonen.',
+                desc: 'Sjabloonbestand dat wordt gebruikt bij het maken van mapnotities. Markdown-sjablonen kunnen Templater gebruiken. Canvas- en Base-sjablonen worden als bestandsinhoud gekopieerd. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen & sjablonen > Sjablonen.',
                 formatWarning: 'De sjabloonindeling moet overeenkomen met het geselecteerde type mapnotitie: .md, .canvas of .base.'
             },
             folderNamesOpenFolderNotes: {

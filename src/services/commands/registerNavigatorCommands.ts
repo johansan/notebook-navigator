@@ -57,7 +57,7 @@ const STATIC_COMMAND_SPECS: NavigatorCommandSpec[] = [
     { id: 'collapse-expand', name: strings.commands.collapseExpand },
     { id: 'collapse-expand-selected-item', name: strings.commands.collapseExpandSelectedItem },
     { id: 'new-note', name: strings.commands.createNewNote },
-    { id: 'new-note-from-template', name: strings.commands.createNewNoteFromTemplate, checkable: true },
+    { id: 'new-note-from-template', name: strings.commands.createNewNoteFromTemplate },
     { id: 'move-files', name: strings.commands.moveFiles },
     { id: 'merge-notes', name: strings.commands.mergeNotes },
     { id: 'select-next-file', name: strings.commands.selectNextFile },

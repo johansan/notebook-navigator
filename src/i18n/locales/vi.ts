@@ -111,8 +111,16 @@ export const STRINGS_VI = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Không thể đọc mẫu ghi chú hàng ngày.',
         createFailed: 'Không thể tạo ghi chú hàng ngày.'
+    },
+
+    templates: {
+        invalidTokens: 'Mẫu "{name}" chứa token không hợp lệ: {tokens}',
+        readFailed: 'Không thể đọc mẫu "{name}". Ghi chú đã được tạo mà không có mẫu.',
+        folderNotSet: 'Đặt thư mục mẫu trong Thao tác tệp & mẫu > Mẫu trước khi tạo ghi chú từ mẫu.',
+        templateNotFound: 'Không tìm thấy mẫu "{name}".',
+        folderNotFound: 'Không tìm thấy thư mục "{name}".',
+        templaterMissing: 'Plugin Templater chưa được cài đặt. Thay đổi công cụ mẫu trong Thao tác tệp & mẫu > Mẫu.'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_VI = {
             duplicateFolder: 'Nhân bản thư mục',
             searchInFolder: 'Tìm trong thư mục',
             createFolderNote: 'Tạo ghi chú thư mục',
+            setFolderTemplate: 'Đặt mẫu thư mục...',
+            changeFolderTemplate: 'Đổi mẫu thư mục...',
+            removeFolderTemplate: 'Gỡ mẫu thư mục',
             detachFolderNote: 'Tách ghi chú thư mục',
             deleteFolderNote: 'Xóa ghi chú thư mục',
             changeIcon: 'Đổi biểu tượng',
@@ -714,7 +725,28 @@ export const STRINGS_VI = {
                 dismiss: 'để đóng'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Thêm lệnh',
+            titleEdit: 'Sửa lệnh',
+            name: 'Tên lệnh',
+            namePlaceholder: 'Ghi chú cuộc họp mới',
+            template: 'Mẫu',
+            templateDesc: 'Tùy chọn. Nếu không có mẫu, mẫu thư mục của thư mục đích sẽ được áp dụng nếu đã đặt.',
+            templatePlaceholder: 'Mẫu/Cuộc họp.md',
+            fileNameFormat: 'Định dạng tên tệp',
+            fileNameFormatDesc:
+                'Các token như {{date:YYYYMMDD}} và {{prompt:Tiêu đề}} được thay thế khi chạy lệnh. Mỗi lời nhắc hỏi một giá trị, và cùng nhãn trong mẫu nhận cùng giá trị đó.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Tiêu đề}}',
+            location: 'Vị trí',
+            folder: 'Thư mục',
+            folderPlaceholder: 'Cuộc họp',
+            icon: 'Biểu tượng',
+            placement: 'Nút',
+            placementNone: 'Không',
+            placementRibbon: 'Thanh ribbon',
+            placementTabBar: 'Thanh tab'
+        },
+        templateFile: {
             placeholder: 'Tìm mẫu...',
             instructions: {
                 navigate: 'để điều hướng',
@@ -1098,10 +1130,11 @@ export const STRINGS_VI = {
                 }
             },
             fileOperations: {
-                label: 'Thao tác tệp',
-                description: 'Mẫu, xác nhận xóa, tệp đính kèm và hành vi xung đột khi di chuyển tệp.',
+                label: 'Thao tác tệp & mẫu',
+                description: 'Mẫu, lệnh tạo ghi chú, xác nhận xóa, tệp đính kèm và cách xử lý xung đột khi di chuyển tệp.',
                 groups: {
-                    templates: 'Mẫu'
+                    templates: 'Mẫu',
+                    templateCommands: 'Lệnh tạo ghi chú'
                 }
             },
             frontmatterFields: {
@@ -1710,11 +1743,11 @@ export const STRINGS_VI = {
                 name: 'Vị trí thư mục mẫu',
                 desc: 'Trình chọn tệp mẫu hiển thị ghi chú từ thư mục này.',
                 placeholder: 'Mẫu',
-                usage: 'Được dùng bởi ghi chú lịch và ghi chú thư mục. Cấu hình mẫu trong Lịch > Tích hợp lịch và Thư mục và ghi chú thư mục > Tệp ghi chú thư mục.'
+                usage: 'Các mẫu trong thư mục mẫu được dùng bởi ghi chú lịch, ghi chú thư mục, mẫu thư mục và Ghi chú mới từ mẫu. Cấu hình mẫu lịch trong Lịch > Tích hợp lịch và mẫu ghi chú thư mục trong Thư mục và ghi chú thư mục > Tệp ghi chú thư mục.'
             },
             calendarDailyNotePattern: {
                 name: 'Ghi chú hàng ngày',
-                desc: 'Định dạng đường dẫn sử dụng định dạng ngày Moment. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp > Mẫu.',
+                desc: 'Định dạng đường dẫn sử dụng định dạng ngày Moment. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp & mẫu > Mẫu.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Mẫu phải có thể định dạng và phân tích lại thành một ngày đầy đủ (năm, tháng, ngày).'
             },
@@ -1722,15 +1755,42 @@ export const STRINGS_VI = {
                 momentDescPrefix: 'Định dạng đường dẫn sử dụng ',
                 momentLinkText: 'định dạng ngày Moment',
                 momentDescSuffix:
-                    '. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp > Mẫu.',
-                templateTokenNoticeLabel: 'Quan trọng!',
-                templateTokenNotice:
-                    'Hỗ trợ mẫu yêu cầu plugin Templater. Các định dạng tích hợp như {{date}} và {{title}} chỉ dùng được khi {source} được đặt thành {option}.',
+                    '. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp & mẫu > Mẫu.',
                 example: 'Cú pháp hiện tại: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Plugin Templater đã được cài đặt với hỗ trợ mẫu đầy đủ.',
-                missing: '⚠️ Cài đặt plugin Templater để hỗ trợ mẫu.'
+            templateEngine: {
+                name: 'Công cụ mẫu',
+                desc: 'Công cụ xử lý các tệp mẫu khi Notebook Navigator tạo ghi chú. Tự động dùng Templater cho các mẫu chứa <% khi plugin Templater được cài đặt. Tất cả các mẫu khác dùng công cụ tích hợp.',
+                options: {
+                    automatic: 'Tự động',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater: đã cài đặt',
+                templaterNotInstalled: 'Plugin Templater: chưa cài đặt',
+                tokens: 'Token tích hợp: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} đến {{sunday}}, {{cursor}}. Viết {{!date}} để giữ {{date}} dưới dạng văn bản.',
+                usage: 'Các token mẫu như {{title}} và {{date}} được thay thế khi tạo ghi chú. Cấu hình công cụ mẫu trong Thao tác tệp & mẫu > Mẫu.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Hiện biểu tượng mẫu thư mục',
+                desc: 'Đánh dấu bằng biểu tượng trong ngăn điều hướng các thư mục có mẫu riêng.'
+            },
+            templateCommands: {
+                name: 'Lệnh',
+                desc: 'Mỗi lệnh tạo một ghi chú với tên tệp được tạo tự động, từ mẫu riêng hoặc mẫu thư mục. Chạy lệnh từ bảng lệnh hoặc gán cho phím tắt hay nút bấm.',
+                empty: 'Chưa có lệnh nào.',
+                add: 'Thêm lệnh',
+                edit: 'Sửa',
+                unnamed: 'Lệnh chưa đặt tên',
+                locationCurrent: 'Thư mục hiện tại',
+                locationFolder: 'Thư mục cụ thể'
+            },
+            folderTemplates: {
+                name: 'Mẫu thư mục',
+                desc: 'Ghi chú mới dùng mẫu của thư mục chứa nó hoặc của thư mục cha gần nhất. Đặt mẫu từ menu ngữ cảnh của thư mục. Mẫu lịch, ghi chú hằng ngày và ghi chú thư mục được ưu tiên.',
+                empty: 'Chưa đặt mẫu thư mục nào.',
+                scopeSubfolders: 'Thư mục và thư mục con',
+                scopeFolder: 'Chỉ thư mục này'
             },
             calendarWeeklyNotePattern: {
                 name: 'Ghi chú hàng tuần',
@@ -2450,7 +2510,7 @@ export const STRINGS_VI = {
             },
             folderNoteTemplate: {
                 name: 'Mẫu ghi chú thư mục',
-                desc: 'Tệp mẫu được dùng khi tạo ghi chú thư mục. Mẫu Markdown có thể dùng Templater. Mẫu Canvas và Base được sao chép dưới dạng nội dung tệp. Đặt vị trí thư mục mẫu trong Thao tác tệp > Mẫu.',
+                desc: 'Tệp mẫu được dùng khi tạo ghi chú thư mục. Mẫu Markdown có thể dùng Templater. Mẫu Canvas và Base được sao chép dưới dạng nội dung tệp. Đặt vị trí thư mục mẫu trong Thao tác tệp & mẫu > Mẫu.',
                 formatWarning: 'Định dạng mẫu phải khớp với loại ghi chú thư mục đã chọn: .md, .canvas hoặc .base.'
             },
             folderNamesOpenFolderNotes: {

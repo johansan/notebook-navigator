@@ -23,6 +23,7 @@ import { getIconService } from '../icons';
 import { runAsyncAction } from '../../utils/async';
 import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../../constants/notebookNavigatorIcon';
 import { removeHiddenFolderExactMatches, updateHiddenFolderExactMatches } from '../../utils/vaultProfiles';
+import { applyPendingTemplateCursor } from '../../utils/templateCursor';
 import {
     invalidateVaultIconSvgCache,
     isVaultIconFile,
@@ -135,10 +136,16 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
         runAsyncAction(() => plugin.activateView());
     });
 
-    // Track file opens for recent notes history
+    // Track file opens for recent notes history and place the cursor of notes created from templates
     plugin.registerEvent(
         plugin.app.workspace.on('file-open', file => {
-            if (!(file instanceof TFile) || plugin.isFileInRightSidebar(file)) {
+            if (!(file instanceof TFile)) {
+                return;
+            }
+
+            applyPendingTemplateCursor(plugin.app, file);
+
+            if (plugin.isFileInRightSidebar(file)) {
                 return;
             }
 

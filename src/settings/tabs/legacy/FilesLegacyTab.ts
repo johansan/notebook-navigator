@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Setting } from 'obsidian';
 import { strings } from '../../../i18n';
 import { FolderPathInputSuggest } from '../../../suggest/FolderPathInputSuggest';
-import { normalizeCalendarCustomRootFolder } from '../../../utils/calendarCustomNotePatterns';
-import { getTemplaterCreateNoteFromTemplate } from '../../../utils/templaterIntegration';
+import { normalizeOptionalVaultFolderPath } from '../../../utils/pathUtils';
 import { createSettingGroupFactory } from '../../settingGroups';
-import { isDeleteAttachmentsSetting, isMoveFileConflictsSetting } from '../../types';
+import { isDeleteAttachmentsSetting, isMoveFileConflictsSetting, isTemplateEngineSetting } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
+import { renderTemplateCommandsSetting } from '../TemplateCommandsSection';
+import { renderFolderTemplatesSetting, renderTemplateInfoSetting } from '../FilesTab';
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
 export function renderFilesTab(context: SettingsTabContext, heading?: string): void {
@@ -90,9 +90,10 @@ export function renderFilesTab(context: SettingsTabContext, heading?: string): v
             strings.settings.items.templateFolderLocation.name,
             strings.settings.items.templateFolderLocation.desc,
             strings.settings.items.templateFolderLocation.placeholder,
-            () => normalizeCalendarCustomRootFolder(plugin.settings.calendarTemplateFolder),
+            () => normalizeOptionalVaultFolderPath(plugin.settings.calendarTemplateFolder) ?? '',
             value => {
-                plugin.settings.calendarTemplateFolder = normalizeCalendarCustomRootFolder(value);
+                // Keep an explicitly selected vault root distinct from an unset template folder.
+                plugin.settings.calendarTemplateFolder = normalizeOptionalVaultFolderPath(value) ?? '';
             }
         );
     });
@@ -103,18 +104,40 @@ export function renderFilesTab(context: SettingsTabContext, heading?: string): v
         templateFolderInputEl.addEventListener('click', () => folderSuggest.open());
     }
 
-    templatesGroup.addSetting(setting => renderTemplateFolderInfoSetting(setting, context));
-}
+    templatesGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.templateEngine.name)
+            .setDesc(strings.settings.items.templateEngine.desc)
+            .addDropdown(dropdown => {
+                dropdown
+                    .addOption('automatic', strings.settings.items.templateEngine.options.automatic)
+                    .addOption('builtin', strings.settings.items.templateEngine.options.builtin)
+                    .addOption('templater', strings.settings.items.templateEngine.options.templater)
+                    .setValue(plugin.settings.templateEngine)
+                    .onChange(async value => {
+                        if (!isTemplateEngineSetting(value)) {
+                            return;
+                        }
+                        plugin.settings.templateEngine = value;
+                        await plugin.saveSettingsAndUpdate();
+                    });
+            });
+    });
 
-function renderTemplateFolderInfoSetting(setting: Setting, context: SettingsTabContext): void {
-    setting.setName('').setDesc('');
-    setting.settingEl.addClass('nn-setting-info-container');
-    setting.descEl.empty();
+    templatesGroup.addSetting(setting => {
+        setting
+            .setName(strings.settings.items.showFolderTemplateIcons.name)
+            .setDesc(strings.settings.items.showFolderTemplateIcons.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.showFolderTemplateIcons).onChange(async value => {
+                    plugin.settings.showFolderTemplateIcons = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+            );
+    });
+    templatesGroup.addSetting(setting => renderFolderTemplatesSetting(setting, context));
+    templatesGroup.addSetting(setting => renderTemplateInfoSetting(setting, context));
 
-    setting.descEl.createDiv({ text: strings.settings.items.templateFolderLocation.usage });
-
-    const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.templaterSupport.installed
-        : strings.settings.items.templaterSupport.missing;
-    setting.descEl.append(createEl('br'), createEl('strong', { text: templaterSupportText }));
+    const commandsGroup = createGroup(strings.settings.pages.fileOperations.groups.templateCommands);
+    commandsGroup.addSetting(setting => renderTemplateCommandsSetting(setting, context));
 }

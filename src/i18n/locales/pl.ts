@@ -111,8 +111,16 @@ export const STRINGS_PL = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Nie udało się odczytać szablonu dziennika.',
         createFailed: 'Nie można utworzyć dziennika.'
+    },
+
+    templates: {
+        invalidTokens: 'Szablon "{name}" zawiera nieprawidłowe tokeny: {tokens}',
+        readFailed: 'Nie udało się odczytać szablonu "{name}". Notatka została utworzona bez niego.',
+        folderNotSet: 'Ustaw folder szablonów w Operacje na plikach i szablony > Szablony, zanim utworzysz notatki na podstawie szablonów.',
+        templateNotFound: 'Nie znaleziono szablonu "{name}".',
+        folderNotFound: 'Nie znaleziono folderu "{name}".',
+        templaterMissing: 'Wtyczka Templater nie jest zainstalowana. Zmień silnik szablonów w Operacje na plikach i szablony > Szablony.'
     },
 
     shortcuts: {
@@ -362,6 +370,9 @@ export const STRINGS_PL = {
             duplicateFolder: 'Duplikuj folder',
             searchInFolder: 'Szukaj w folderze',
             createFolderNote: 'Utwórz notatkę folderu',
+            setFolderTemplate: 'Ustaw szablon folderu...',
+            changeFolderTemplate: 'Zmień szablon folderu...',
+            removeFolderTemplate: 'Usuń szablon folderu',
             detachFolderNote: 'Odłącz notatkę folderu',
             deleteFolderNote: 'Usuń notatkę folderu',
             changeIcon: 'Zmień ikonkę',
@@ -718,7 +729,28 @@ export const STRINGS_PL = {
                 dismiss: 'aby anulować'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Dodaj polecenie',
+            titleEdit: 'Edytuj polecenie',
+            name: 'Nazwa polecenia',
+            namePlaceholder: 'Nowa notatka ze spotkania',
+            template: 'Szablon',
+            templateDesc: 'Opcjonalne. Bez szablonu stosowany jest szablon folderu docelowego, jeśli jest ustawiony.',
+            templatePlaceholder: 'Szablony/Spotkanie.md',
+            fileNameFormat: 'Format nazwy pliku',
+            fileNameFormatDesc:
+                'Tokeny takie jak {{date:YYYYMMDD}} i {{prompt:Tytuł}} są zastępowane podczas uruchamiania polecenia. Każdy monit pyta o wartość, a ta sama etykieta w szablonie otrzymuje tę samą wartość.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Tytuł}}',
+            location: 'Lokalizacja',
+            folder: 'Folder',
+            folderPlaceholder: 'Spotkania',
+            icon: 'Ikona',
+            placement: 'Przycisk',
+            placementNone: 'Brak',
+            placementRibbon: 'Wstążka',
+            placementTabBar: 'Pasek kart'
+        },
+        templateFile: {
             placeholder: 'Wyszukaj szablony...',
             instructions: {
                 navigate: 'aby przejść',
@@ -1103,10 +1135,12 @@ export const STRINGS_PL = {
                 }
             },
             fileOperations: {
-                label: 'Operacje na plikach',
-                description: 'Szablony, potwierdzenia usunięcia, załączniki i zachowanie przy konflikcie przenoszenia plików.',
+                label: 'Operacje na plikach i szablony',
+                description:
+                    'Szablony, polecenia tworzenia notatek, potwierdzenia usuwania, załączniki i zachowanie przy konfliktach podczas przenoszenia plików.',
                 groups: {
-                    templates: 'Szablony'
+                    templates: 'Szablony',
+                    templateCommands: 'Polecenia tworzenia notatek'
                 }
             },
             frontmatterFields: {
@@ -1715,11 +1749,11 @@ export const STRINGS_PL = {
                 name: 'Lokalizacja folderu szablonów',
                 desc: 'Wybór pliku szablonu pokazuje notatki z tego folderu.',
                 placeholder: 'Szablony',
-                usage: 'Używane przez notatki kalendarza i notatki folderów. Skonfiguruj szablony w Kalendarz > Integracja z kalendarzem oraz Foldery i notatki folderu > Pliki notatek folderów.'
+                usage: 'Szablony w folderze szablonów są używane przez notatki kalendarza, notatki folderów, szablony folderów i Nowa notatka na podstawie szablonu. Szablony kalendarza skonfiguruj w Kalendarz > Integracja z kalendarzem, a szablony notatek folderów w Foldery i notatki folderu > Pliki notatek folderów.'
             },
             calendarDailyNotePattern: {
                 name: 'Notatki dziennika',
-                desc: 'Sformatuj ścieżkę przy użyciu formatu daty Moment. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach > Szablony.',
+                desc: 'Sformatuj ścieżkę przy użyciu formatu daty Moment. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach i szablony > Szablony.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać kompletną datę (rok, miesiąc, dzień).'
             },
@@ -1727,15 +1761,42 @@ export const STRINGS_PL = {
                 momentDescPrefix: 'Sformatuj ścieżkę przy użyciu ',
                 momentLinkText: 'formatu daty Moment',
                 momentDescSuffix:
-                    '. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach > Szablony.',
-                templateTokenNoticeLabel: 'Ważne!',
-                templateTokenNotice:
-                    'Obsługa szablonów wymaga wtyczki Templater. Wbudowane formaty, takie jak {{date}} i {{title}}, działają tylko wtedy, gdy {source} jest ustawione na {option}.',
+                    '. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach i szablony > Szablony.',
                 example: 'Aktywna składnia: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Wtyczka Templater jest zainstalowana i zapewnia pełną obsługę szablonów.',
-                missing: '⚠️ Zainstaluj wtyczkę Templater, aby uzyskać obsługę szablonów.'
+            templateEngine: {
+                name: 'Silnik szablonów',
+                desc: 'Silnik przetwarzający pliki szablonów podczas tworzenia notatek przez Notebook Navigator. Automatycznie używa Templater dla szablonów zawierających <%, gdy wtyczka Templater jest zainstalowana. Pozostałe szablony używają wbudowanego silnika.',
+                options: {
+                    automatic: 'Automatycznie',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Wtyczka Templater: zainstalowana',
+                templaterNotInstalled: 'Wtyczka Templater: niezainstalowana',
+                tokens: 'Wbudowane tokeny: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} do {{sunday}}, {{cursor}}. Wpisz {{!date}}, aby zachować {{date}} jako tekst.',
+                usage: 'Tokeny szablonów, takie jak {{title}} i {{date}}, są zastępowane podczas tworzenia notatki. Skonfiguruj silnik szablonów w Operacje na plikach i szablony > Szablony.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Pokazuj ikony szablonów folderów',
+                desc: 'Oznacza ikoną w panelu nawigacji foldery, które mają własny szablon.'
+            },
+            templateCommands: {
+                name: 'Polecenia',
+                desc: 'Każde polecenie tworzy notatkę z wygenerowaną nazwą pliku, z własnego szablonu lub szablonu folderu. Uruchom je z palety poleceń albo przypisz do skrótu lub przycisku.',
+                empty: 'Brak dodanych poleceń.',
+                add: 'Dodaj polecenie',
+                edit: 'Edytuj',
+                unnamed: 'Polecenie bez nazwy',
+                locationCurrent: 'Bieżący folder',
+                locationFolder: 'Wybrany folder'
+            },
+            folderTemplates: {
+                name: 'Szablony folderów',
+                desc: 'Nowe notatki używają szablonu swojego folderu lub najbliższego folderu nadrzędnego. Szablony ustawia się w menu kontekstowym folderu. Szablony kalendarza, notatek dziennych i notatek folderu mają pierwszeństwo.',
+                empty: 'Brak szablonów folderów.',
+                scopeSubfolders: 'Folder i podfoldery',
+                scopeFolder: 'Tylko ten folder'
             },
             calendarWeeklyNotePattern: {
                 name: 'Notatki tygodniowe',
@@ -2457,7 +2518,7 @@ export const STRINGS_PL = {
             },
             folderNoteTemplate: {
                 name: 'Szablon notatki folderu',
-                desc: 'Plik szablonu używany podczas tworzenia notatek folderów. Szablony Markdown mogą używać Templatera. Szablony Canvas i Base są kopiowane jako zawartość pliku. Ustaw lokalizację folderu szablonów w Operacje na plikach > Szablony.',
+                desc: 'Plik szablonu używany podczas tworzenia notatek folderów. Szablony Markdown mogą używać Templatera. Szablony Canvas i Base są kopiowane jako zawartość pliku. Ustaw lokalizację folderu szablonów w Operacje na plikach i szablony > Szablony.',
                 formatWarning: 'Format szablonu musi odpowiadać wybranemu typowi notatki folderu: .md, .canvas lub .base.'
             },
             folderNamesOpenFolderNotes: {

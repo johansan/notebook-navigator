@@ -106,10 +106,20 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
-        version: '3.3.8',
+        version: '3.4.0',
         date: '2026-09-14',
-        showOnUpdate: false,
-        changed: ['Renamed the `Vault title placement` setting to ==Vault profile switcher==.'],
+        showOnUpdate: true,
+        info: 'Several users told us they hesitate to install Templater, QuickAdd and Commander because all three carry a "Caution" rating in the community plugin directory. This release adds the parts of those plugins that Notebook Navigator users asked for: a built-in template engine, folder templates and create note commands with their own ribbon or tab bar buttons, so those plugins are no longer needed for daily notes, folder notes and templated notes.',
+        new: [
+            'Built-in template engine for calendar notes, folder notes and `New note from template` that replaces tokens such as `{{title}}`, `{{date}}`, `{{date+1d}}`, `{{yesterday}}`, `{{monday}}`, `{{time}}`, `{{now}}` and `{{cursor}}` without the Templater plugin (see the Templates section in the README for the full list).',
+            'New setting in File operations & templates > Templates: ==Template engine== with `Automatic` (Templater for templates containing `<%` when it is installed, otherwise the built-in engine), `Notebook Navigator` and `Templater`.',
+            'Create note commands: under File operations & templates you can add commands that create a note with a generated file name such as `{{date:YYYYMMDD}} {{prompt:Title}}` from a template or the folder template, in the current or a specific folder, ready to run from the command palette, a hotkey, or a button with its own icon on the ribbon or the tab bar.',
+            'Folder templates: right-click a folder, including the vault root, and choose `Set folder template...` so every new note in that folder or its subfolders starts from the template, with the closest folder winning; File operations & templates > Templates lists them with a `This folder only` option and a remove button, and folders with a template show an icon in the navigation pane (==Show folder template icons==).'
+        ],
+        changed: [
+            'Changed `New note from template` to work without Templater by picking templates from ==Template folder location== and placing the cursor at `{{cursor}}` when the built-in engine creates the note.',
+            'Renamed the `Vault title placement` setting to ==Vault profile switcher==.'
+        ],
         fixed: [
             'When only one vault profile exists, the ==Vault profile switcher== setting is now hidden, since the switcher only appears with two or more profiles [#1494](https://github.com/johansan/notebook-navigator/issues/1494).',
             'When the calendar in the right sidebar was slightly taller than its pane on Windows or Linux, hovering days or the month header made the calendar shake as the scrollbar appeared and disappeared. The calendar sidebar now never scrolls and keeps a stable size [#1492](https://github.com/johansan/notebook-navigator/issues/1492).',

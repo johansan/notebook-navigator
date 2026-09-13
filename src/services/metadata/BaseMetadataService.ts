@@ -20,6 +20,7 @@ import { App } from 'obsidian';
 import {
     normalizeListSortOverride,
     type AlphaSortOrder,
+    type FolderTemplateMapping,
     type ListSortOverrideValue,
     type NotebookNavigatorSettings
 } from '../../settings/types';
@@ -42,6 +43,7 @@ type MetadataFields = {
     folderSortOverrides: Record<string, ListSortOverrideValue>;
     folderTreeSortOverrides: Record<string, AlphaSortOrder>;
     folderAppearances: Record<string, ListPaneAppearance>;
+    folderTemplates: Record<string, FolderTemplateMapping>;
     fileIcons: Record<string, string>;
     fileColors: Record<string, string>;
     fileBackgroundColors: Record<string, string>;

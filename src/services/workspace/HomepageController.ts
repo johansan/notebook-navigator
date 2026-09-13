@@ -355,7 +355,12 @@ export default class HomepageController {
                 return null;
             }
 
-            return createDailyNote(this.plugin.app, date.clone().locale(resolveDailyNoteLocale(momentApi)), dailyNoteSettings);
+            return createDailyNote(
+                this.plugin.app,
+                date.clone().locale(resolveDailyNoteLocale(momentApi)),
+                dailyNoteSettings,
+                this.plugin.settings
+            );
         }
 
         const config = getCalendarNoteConfig(kind, this.plugin.settings);
@@ -379,7 +384,7 @@ export default class HomepageController {
 
         try {
             const templatePath = getCalendarTemplatePath(kind, this.plugin.settings);
-            return await createCalendarMarkdownFile(this.plugin.app, expected.folderPath, expected.fileName, templatePath);
+            return await createCalendarMarkdownFile(this.plugin.app, kind, expected, templatePath, this.plugin.settings);
         } catch (error) {
             console.error('Failed to create homepage note', error);
             return null;

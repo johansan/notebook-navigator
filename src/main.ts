@@ -59,6 +59,12 @@ import { runAsyncAction } from './utils/async';
 import WorkspaceCoordinator from './services/workspace/WorkspaceCoordinator';
 import HomepageController from './services/workspace/HomepageController';
 import { FolderNoteSidebarService } from './services/workspace/FolderNoteSidebarService';
+import {
+    disposeTemplateCommandButtons,
+    startTemplateCommandButtons,
+    syncTemplateCommandButtons,
+    syncTemplateCommands
+} from './services/commands/templateCommands';
 import registerWorkspaceEvents from './services/workspace/registerWorkspaceEvents';
 import registerNavigatorCommands from './services/commands/registerNavigatorCommands';
 import type { RevealFileOptions } from './hooks/useNavigatorReveal';
@@ -788,6 +794,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         // Register commands
         registerNavigatorCommands(this);
+        // Template commands come from settings, so they are registered now and again whenever settings change.
+        syncTemplateCommands(this);
+        startTemplateCommandButtons(this);
+        this.registerSettingsUpdateListener('template-commands', () => {
+            syncTemplateCommands(this);
+            syncTemplateCommandButtons(this);
+        });
 
         // ==== Settings tab ====
         this.settingTab = new LazyNotebookNavigatorSettingTab(this.app, this);
@@ -1407,6 +1420,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         this.folderNoteSidebarService?.dispose();
         this.folderNoteSidebarService = null;
+        disposeTemplateCommandButtons(this);
 
         // Clear all listeners first to prevent any callbacks during cleanup
         this.settingsUpdateListeners.clear();

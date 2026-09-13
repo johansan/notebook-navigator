@@ -50,7 +50,7 @@
  */
 
 import React, { useRef, useEffect, useMemo, useCallback } from 'react';
-import { TFolder, setTooltip } from 'obsidian';
+import { TFolder, setTooltip, setIcon } from 'obsidian';
 import { useServices } from '../context/ServicesContext';
 import { useSettingsState } from '../context/SettingsContext';
 import { useUXPreferences } from '../context/UXPreferencesContext';
@@ -148,6 +148,12 @@ export const FolderItem = React.memo(function FolderItem({
     const chevronRef = React.useRef<HTMLDivElement | null>(null);
     const iconRef = React.useRef<HTMLSpanElement | null>(null);
     const noteCountRef = React.useRef<HTMLSpanElement | null>(null);
+    const templateIndicatorRef = React.useRef<HTMLSpanElement | null>(null);
+    // Only folders with their own mapping are marked; inherited templates are not, so the marker shows where templates are set
+    const folderTemplatePath =
+        settings.showFolderTemplateIcons && Object.prototype.hasOwnProperty.call(settings.folderTemplates, folder.path)
+            ? settings.folderTemplates[folder.path].template
+            : undefined;
     const iconVersion = useIconServiceVersion();
 
     // Merge provided count info with default values to ensure all properties are present
@@ -358,6 +364,17 @@ export const FolderItem = React.memo(function FolderItem({
         }
     }, [iconVersion, isExpanded, settings.interfaceIcons]);
 
+    // Render the folder template marker and name the template in its tooltip
+    useEffect(() => {
+        const indicator = templateIndicatorRef.current;
+        if (!indicator || !folderTemplatePath) {
+            return;
+        }
+        setIcon(indicator, 'lucide-notepad-text-dashed');
+        const templateName = folderTemplatePath.split('/').pop()?.replace(/\.md$/i, '') ?? folderTemplatePath;
+        setTooltip(indicator, templateName, { placement: 'top' });
+    }, [folderTemplatePath]);
+
     // Update folder icon
     useEffect(() => {
         if (iconRef.current && shouldShowFolderIcon) {
@@ -473,6 +490,7 @@ export const FolderItem = React.memo(function FolderItem({
                     </span>
                 )}
                 <span className="nn-navitem-spacer nn-navitem-spacer--leader" />
+                {folderTemplatePath !== undefined && <span ref={templateIndicatorRef} className="nn-navitem-template-indicator" />}
                 {shouldDisplayCount && (
                     <span ref={noteCountRef} className="nn-navitem-count">
                         {noteCountDisplay.label}

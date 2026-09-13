@@ -111,8 +111,16 @@ export const STRINGS_IT = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Impossibile leggere il modello della nota giornaliera.',
         createFailed: 'Impossibile creare la nota giornaliera.'
+    },
+
+    templates: {
+        invalidTokens: 'Il modello "{name}" contiene token non validi: {tokens}',
+        readFailed: 'Impossibile leggere il modello "{name}". La nota è stata creata senza di esso.',
+        folderNotSet: 'Imposta la cartella dei modelli in Operazioni sui file e modelli > Modelli prima di creare note da modello.',
+        templateNotFound: 'Il modello "{name}" non è stato trovato.',
+        folderNotFound: 'La cartella "{name}" non è stata trovata.',
+        templaterMissing: 'Il plugin Templater non è installato. Cambia il motore dei modelli in Operazioni sui file e modelli > Modelli.'
     },
 
     shortcuts: {
@@ -361,6 +369,9 @@ export const STRINGS_IT = {
             duplicateFolder: 'Duplica cartella',
             searchInFolder: 'Cerca nella cartella',
             createFolderNote: 'Crea nota cartella',
+            setFolderTemplate: 'Imposta modello cartella...',
+            changeFolderTemplate: 'Cambia modello cartella...',
+            removeFolderTemplate: 'Rimuovi modello cartella',
             detachFolderNote: 'Scollega nota cartella',
             deleteFolderNote: 'Elimina nota cartella',
             changeIcon: 'Cambia icona',
@@ -712,7 +723,28 @@ export const STRINGS_IT = {
                 dismiss: 'per chiudere'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Aggiungi comando',
+            titleEdit: 'Modifica comando',
+            name: 'Nome del comando',
+            namePlaceholder: 'Nuova nota riunione',
+            template: 'Modello',
+            templateDesc: 'Facoltativo. Senza modello si applica il modello cartella della cartella di destinazione, se impostato.',
+            templatePlaceholder: 'Modelli/Riunione.md',
+            fileNameFormat: 'Formato del nome file',
+            fileNameFormatDesc:
+                "I token come {{date:YYYYMMDD}} e {{prompt:Titolo}} vengono sostituiti all'esecuzione del comando. Ogni prompt chiede un valore e la stessa etichetta nel modello riceve lo stesso valore.",
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titolo}}',
+            location: 'Posizione',
+            folder: 'Cartella',
+            folderPlaceholder: 'Riunioni',
+            icon: 'Icona',
+            placement: 'Pulsante',
+            placementNone: 'Nessuno',
+            placementRibbon: 'Barra multifunzione',
+            placementTabBar: 'Barra delle schede'
+        },
+        templateFile: {
             placeholder: 'Cerca modelli...',
             instructions: {
                 navigate: 'per navigare',
@@ -1096,10 +1128,12 @@ export const STRINGS_IT = {
                 }
             },
             fileOperations: {
-                label: 'Operazioni sui file',
-                description: 'Modelli, conferme di eliminazione, allegati e comportamento in caso di conflitti di spostamento dei file.',
+                label: 'Operazioni sui file e modelli',
+                description:
+                    'Modelli, comandi di creazione note, conferme di eliminazione, allegati e comportamento nei conflitti di spostamento dei file.',
                 groups: {
-                    templates: 'Modelli'
+                    templates: 'Modelli',
+                    templateCommands: 'Comandi di creazione note'
                 }
             },
             frontmatterFields: {
@@ -1709,11 +1743,11 @@ export const STRINGS_IT = {
                 name: 'Posizione cartella modelli',
                 desc: 'Il selettore file modello mostra le note da questa cartella.',
                 placeholder: 'Modelli',
-                usage: 'Usato dalle note calendario e dalle note cartella. Configura i modelli in Calendario > Integrazione calendario e Cartelle e note cartella > File note cartella.'
+                usage: 'I modelli nella cartella dei modelli sono usati dalle note calendario, dalle note cartella, dai modelli cartella e da Nuova nota da modello. Configura i modelli del calendario in Calendario > Integrazione calendario e quelli delle note cartella in Cartelle e note cartella > File note cartella.'
             },
             calendarDailyNotePattern: {
                 name: 'Note giornaliere',
-                desc: "Formatta percorso usando formato data Moment. Racchiudi i nomi delle sottocartelle tra parentesi quadre, es. [Work]/YYYY. Clicca sull'icona del modello per impostare un modello. Imposta la posizione della cartella modelli in Operazioni sui file > Modelli.",
+                desc: "Formatta percorso usando formato data Moment. Racchiudi i nomi delle sottocartelle tra parentesi quadre, es. [Work]/YYYY. Clicca sull'icona del modello per impostare un modello. Imposta la posizione della cartella modelli in Operazioni sui file e modelli > Modelli.",
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Il modello deve poter essere formattato e rianalizzato come una data completa (anno, mese, giorno).'
             },
@@ -1721,15 +1755,42 @@ export const STRINGS_IT = {
                 momentDescPrefix: 'Formatta percorso usando ',
                 momentLinkText: 'formato data Moment',
                 momentDescSuffix:
-                    ". Racchiudi i nomi delle sottocartelle tra parentesi quadre, es. [Work]/YYYY. Clicca sull'icona del modello per impostare un modello. Imposta la posizione della cartella modelli in Operazioni sui file > Modelli.",
-                templateTokenNoticeLabel: 'Importante!',
-                templateTokenNotice:
-                    'Il supporto ai modelli richiede il plugin Templater. I formati integrati come {{date}} e {{title}} funzionano solo quando {source} è impostato su {option}.',
+                    ". Racchiudi i nomi delle sottocartelle tra parentesi quadre, es. [Work]/YYYY. Clicca sull'icona del modello per impostare un modello. Imposta la posizione della cartella modelli in Operazioni sui file e modelli > Modelli.",
                 example: 'Sintassi attuale: {path}'
             },
-            templaterSupport: {
-                installed: '✅ Il plugin Templater è installato con supporto completo ai modelli.',
-                missing: '⚠️ Installa il plugin Templater per il supporto ai modelli.'
+            templateEngine: {
+                name: 'Motore dei modelli',
+                desc: 'Motore che elabora i file modello quando Notebook Navigator crea note. Automatico usa Templater per i modelli che contengono <% quando il plugin Templater è installato. Tutti gli altri modelli usano il motore integrato.',
+                options: {
+                    automatic: 'Automatico',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater: installato',
+                templaterNotInstalled: 'Plugin Templater: non installato',
+                tokens: 'Token integrati: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Scrivi {{!date}} per mantenere {{date}} come testo.',
+                usage: 'I token dei modelli come {{title}} e {{date}} vengono sostituiti alla creazione della nota. Configura il motore dei modelli in Operazioni sui file e modelli > Modelli.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Mostra icone dei modelli cartella',
+                desc: "Contrassegna con un'icona nel riquadro di navigazione le cartelle che hanno un proprio modello."
+            },
+            templateCommands: {
+                name: 'Comandi',
+                desc: 'Ogni comando crea una nota con un nome file generato, dal proprio modello o dal modello cartella. Eseguilo dalla palette dei comandi oppure assegnalo a una scorciatoia o a un pulsante.',
+                empty: 'Nessun comando aggiunto.',
+                add: 'Aggiungi comando',
+                edit: 'Modifica',
+                unnamed: 'Comando senza nome',
+                locationCurrent: 'Cartella corrente',
+                locationFolder: 'Cartella specifica'
+            },
+            folderTemplates: {
+                name: 'Modelli cartella',
+                desc: 'Le nuove note usano il modello della loro cartella o della cartella superiore più vicina. Imposta i modelli dal menu contestuale della cartella. I modelli di calendario, note giornaliere e note cartella hanno la precedenza.',
+                empty: 'Nessun modello cartella impostato.',
+                scopeSubfolders: 'Cartella e sottocartelle',
+                scopeFolder: 'Solo questa cartella'
             },
             calendarWeeklyNotePattern: {
                 name: 'Note settimanali',
@@ -2453,7 +2514,7 @@ export const STRINGS_IT = {
             },
             folderNoteTemplate: {
                 name: 'Modello nota cartella',
-                desc: 'File modello usato durante la creazione delle note cartella. I modelli Markdown possono usare Templater. I modelli Canvas e Base vengono copiati come contenuto del file. Imposta la posizione della cartella modelli in Operazioni sui file > Modelli.',
+                desc: 'File modello usato durante la creazione delle note cartella. I modelli Markdown possono usare Templater. I modelli Canvas e Base vengono copiati come contenuto del file. Imposta la posizione della cartella modelli in Operazioni sui file e modelli > Modelli.',
                 formatWarning: 'Il formato del modello deve corrispondere al tipo di nota cartella selezionato: .md, .canvas o .base.'
             },
             folderNamesOpenFolderNotes: {

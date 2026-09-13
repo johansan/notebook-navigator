@@ -111,8 +111,17 @@ export const STRINGS_PT_BR = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Falha ao ler o modelo de nota diária.',
         createFailed: 'Não foi possível criar a nota diária.'
+    },
+
+    templates: {
+        invalidTokens: 'O modelo "{name}" contém tokens inválidos: {tokens}',
+        readFailed: 'Não foi possível ler o modelo "{name}". A nota foi criada sem ele.',
+        folderNotSet: 'Defina a pasta de modelos em Operações de arquivo e modelos > Modelos antes de criar notas a partir de modelos.',
+        templateNotFound: 'O modelo "{name}" não foi encontrado.',
+        folderNotFound: 'A pasta "{name}" não foi encontrada.',
+        templaterMissing:
+            'O plugin Templater não está instalado. Altere o mecanismo de modelos em Operações de arquivo e modelos > Modelos.'
     },
 
     shortcuts: {
@@ -363,6 +372,9 @@ export const STRINGS_PT_BR = {
             duplicateFolder: 'Duplicar pasta',
             searchInFolder: 'Pesquisar na pasta',
             createFolderNote: 'Criar nota de pasta',
+            setFolderTemplate: 'Definir modelo da pasta...',
+            changeFolderTemplate: 'Alterar modelo da pasta...',
+            removeFolderTemplate: 'Remover modelo da pasta',
             detachFolderNote: 'Desvincular nota de pasta',
             deleteFolderNote: 'Excluir nota de pasta',
             changeIcon: 'Alterar ícone',
@@ -716,7 +728,28 @@ export const STRINGS_PT_BR = {
                 dismiss: 'para descartar'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Adicionar comando',
+            titleEdit: 'Editar comando',
+            name: 'Nome do comando',
+            namePlaceholder: 'Nova nota de reunião',
+            template: 'Modelo',
+            templateDesc: 'Opcional. Sem modelo, aplica-se o modelo de pasta da pasta de destino, se houver.',
+            templatePlaceholder: 'Modelos/Reunião.md',
+            fileNameFormat: 'Formato do nome do arquivo',
+            fileNameFormatDesc:
+                'Tokens como {{date:YYYYMMDD}} e {{prompt:Título}} são substituídos ao executar o comando. Cada prompt pede um valor, e o mesmo rótulo no modelo recebe o mesmo valor.',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Título}}',
+            location: 'Local',
+            folder: 'Pasta',
+            folderPlaceholder: 'Reuniões',
+            icon: 'Ícone',
+            placement: 'Botão',
+            placementNone: 'Nenhum',
+            placementRibbon: 'Faixa lateral',
+            placementTabBar: 'Barra de abas'
+        },
+        templateFile: {
             placeholder: 'Pesquisar modelos...',
             instructions: {
                 navigate: 'para navegar',
@@ -1101,10 +1134,12 @@ export const STRINGS_PT_BR = {
                 }
             },
             fileOperations: {
-                label: 'Operações de arquivo',
-                description: 'Modelos, confirmações de exclusão, anexos e comportamento de conflito ao mover arquivos.',
+                label: 'Operações de arquivo e modelos',
+                description:
+                    'Modelos, comandos de criação de notas, confirmações de exclusão, anexos e comportamento em conflitos ao mover arquivos.',
                 groups: {
-                    templates: 'Modelos'
+                    templates: 'Modelos',
+                    templateCommands: 'Comandos de criação de notas'
                 }
             },
             frontmatterFields: {
@@ -1714,11 +1749,11 @@ export const STRINGS_PT_BR = {
                 name: 'Localização da pasta de modelos',
                 desc: 'O seletor de arquivos de modelo mostra notas desta pasta.',
                 placeholder: 'Modelos',
-                usage: 'Usada por notas de calendário e notas de pasta. Configure os modelos em Calendário > Integração do calendário e Pastas e notas de pasta > Arquivos de notas de pasta.'
+                usage: 'Os modelos na pasta de modelos são usados por notas de calendário, notas de pasta, modelos de pasta e Nova nota a partir de modelo. Configure os modelos de calendário em Calendário > Integração do calendário e os de notas de pasta em Pastas e notas de pasta > Arquivos de notas de pasta.'
             },
             calendarDailyNotePattern: {
                 name: 'Notas diárias',
-                desc: 'Formatar caminho usando formato de data Moment. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de arquivo > Modelos.',
+                desc: 'Formatar caminho usando formato de data Moment. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de arquivo e modelos > Modelos.',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'O padrão deve ser formatado e analisado novamente como uma data completa (ano, mês, dia).'
             },
@@ -1726,15 +1761,42 @@ export const STRINGS_PT_BR = {
                 momentDescPrefix: 'Formatar caminho usando ',
                 momentLinkText: 'formato de data Moment',
                 momentDescSuffix:
-                    '. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de arquivo > Modelos.',
-                templateTokenNoticeLabel: 'Importante!',
-                templateTokenNotice:
-                    'O suporte a modelos requer o plugin Templater. Formatos integrados como {{date}} e {{title}} só funcionam quando {source} está definido como {option}.',
+                    '. Coloque nomes de subpastas entre colchetes, ex. [Work]/YYYY. Clique no ícone de modelo para definir um modelo. Definir localização da pasta de modelos em Operações de arquivo e modelos > Modelos.',
                 example: 'Sintaxe atual: {path}'
             },
-            templaterSupport: {
-                installed: '✅ O plugin Templater está instalado com suporte completo a modelos.',
-                missing: '⚠️ Instale o plugin Templater para suporte a modelos.'
+            templateEngine: {
+                name: 'Mecanismo de modelos',
+                desc: 'Mecanismo que processa os arquivos de modelo quando o Notebook Navigator cria notas. Automático usa o Templater para modelos que contêm <% quando o plugin Templater está instalado. Todos os outros modelos usam o mecanismo integrado.',
+                options: {
+                    automatic: 'Automático',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater: instalado',
+                templaterNotInstalled: 'Plugin Templater: não instalado',
+                tokens: 'Tokens integrados: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Escreva {{!date}} para manter {{date}} como texto.',
+                usage: 'Tokens de modelo como {{title}} e {{date}} são substituídos ao criar a nota. Configure o mecanismo de modelos em Operações de arquivo e modelos > Modelos.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Mostrar ícones de modelo de pasta',
+                desc: 'Marca com um ícone no painel de navegação as pastas que têm seu próprio modelo.'
+            },
+            templateCommands: {
+                name: 'Comandos',
+                desc: 'Cada comando cria uma nota com um nome de arquivo gerado, a partir do próprio modelo ou do modelo de pasta. Execute-o pela paleta de comandos ou vincule-o a um atalho ou botão.',
+                empty: 'Nenhum comando adicionado.',
+                add: 'Adicionar comando',
+                edit: 'Editar',
+                unnamed: 'Comando sem nome',
+                locationCurrent: 'Pasta atual',
+                locationFolder: 'Pasta específica'
+            },
+            folderTemplates: {
+                name: 'Modelos de pasta',
+                desc: 'Novas notas usam o modelo da sua pasta ou da pasta superior mais próxima. Defina os modelos no menu de contexto da pasta. Modelos de calendário, notas diárias e notas de pasta têm prioridade.',
+                empty: 'Nenhum modelo de pasta definido.',
+                scopeSubfolders: 'Pasta e subpastas',
+                scopeFolder: 'Somente esta pasta'
             },
             calendarWeeklyNotePattern: {
                 name: 'Notas semanais',
@@ -2457,7 +2519,7 @@ export const STRINGS_PT_BR = {
             },
             folderNoteTemplate: {
                 name: 'Modelo de nota de pasta',
-                desc: 'Arquivo de modelo usado ao criar notas de pasta. Os modelos Markdown podem usar o Templater. Os modelos Canvas e Base são copiados como conteúdo do arquivo. Definir localização da pasta de modelos em Operações de arquivo > Modelos.',
+                desc: 'Arquivo de modelo usado ao criar notas de pasta. Os modelos Markdown podem usar o Templater. Os modelos Canvas e Base são copiados como conteúdo do arquivo. Definir localização da pasta de modelos em Operações de arquivo e modelos > Modelos.',
                 formatWarning: 'O formato do modelo deve corresponder ao tipo de nota de pasta selecionado: .md, .canvas ou .base.'
             },
             folderNamesOpenFolderNotes: {

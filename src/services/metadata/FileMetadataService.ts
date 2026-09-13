@@ -24,6 +24,7 @@ import { isNoteShortcut } from '../../types/shortcuts';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { getDBInstance } from '../../storage/fileOperations';
 import { deserializeIconFromFrontmatterCompat, normalizeCanonicalIconId, serializeIconForFrontmatter } from '../../utils/iconizeFormat';
+import { renameTemplateReferences } from '../../utils/fileCreationUtils';
 import { findMatchingRecordKey, normalizePinnedNoteContext } from '../../utils/recordUtils';
 import { createShortcutTargetPathEventMatcher } from '../../utils/shortcutPathResolver';
 
@@ -534,6 +535,7 @@ export class FileMetadataService extends BaseMetadataService {
             changed = this.updateNestedPaths(settings.fileIcons, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.fileColors, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.fileBackgroundColors, oldPath, newPath) || changed;
+            changed = renameTemplateReferences(settings, oldPath, newPath) || changed;
 
             if (oldVaultIconId && newVaultIconId) {
                 changed = this.updateVaultIconReferencesInSettings(settings, oldVaultIconId, newVaultIconId) || changed;

@@ -65,7 +65,7 @@ import {
 } from '../utils/paneLayout';
 import { confirmRemoveAllTagsFromFiles, openAddTagToFilesModal, removeTagFromFilesWithPrompt } from '../utils/tagModalHelpers';
 import { normalizeTagPath } from '../utils/tagUtils';
-import { getTemplaterCreateNewNoteFromTemplate } from '../utils/templaterIntegration';
+import { createNoteFromTemplateInFolder } from '../utils/fileCreationUtils';
 import { normalizePropertyNodeId } from '../utils/propertyTree';
 import { collectFileMenuPropertyActions } from '../utils/propertyMenuActions';
 import { openMergeNotesModal } from '../utils/mergeNotesModal';
@@ -1055,12 +1055,7 @@ export const NotebookNavigatorComponent = React.memo(
                         return;
                     }
 
-                    const createNewNoteFromTemplate = getTemplaterCreateNewNoteFromTemplate(app);
-                    if (!createNewNoteFromTemplate) {
-                        return;
-                    }
-
-                    await createNewNoteFromTemplate(selectionState.selectedFolder);
+                    await createNoteFromTemplateInFolder(app, settings, selectionState.selectedFolder);
                 },
                 moveSelectedFiles: async () => {
                     // Get selected files

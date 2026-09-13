@@ -44,6 +44,8 @@ export interface MomentInstance {
     month(): number;
     year(): number;
     date(): number;
+    /** Day of the week, 0 = Sunday. */
+    day(): number;
     set(values: Record<string, number>): MomentInstance;
     get(unit: string): number;
     toDate(): Date;

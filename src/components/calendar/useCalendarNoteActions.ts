@@ -173,13 +173,16 @@ export function useCalendarNoteActions({
                     return;
                 }
 
-                let created: TFile;
+                let created: TFile | null;
                 try {
                     const templatePath = getCalendarTemplatePath(kind, settings);
-                    created = await createCalendarMarkdownFile(app, resolvedPath.folderPath, resolvedPath.fileName, templatePath);
+                    created = await createCalendarMarkdownFile(app, kind, resolvedPath, templatePath, settings);
                 } catch (error) {
                     console.error('Failed to create calendar note', error);
                     showNotice(strings.common.unknownError);
+                    return;
+                }
+                if (!created) {
                     return;
                 }
 
@@ -256,7 +259,7 @@ export function useCalendarNoteActions({
                         return;
                     }
 
-                    const created = await createDailyNote(app, localizedDate, resolvedDailySettings);
+                    const created = await createDailyNote(app, localizedDate, resolvedDailySettings, settings);
                     if (!created) {
                         return;
                     }

@@ -20,7 +20,7 @@ import { ExtraButtonComponent, Setting } from 'obsidian';
 import type { SettingDefinitionRender } from 'obsidian';
 import { MOMENT_FORMAT_DOCS_URL } from '../../constants/urls';
 import { strings } from '../../i18n';
-import { CalendarTemplateModal } from '../../modals/CalendarTemplateModal';
+import { TemplateFileModal } from '../../modals/TemplateFileModal';
 import { runAsyncAction } from '../../utils/async';
 import {
     createCalendarCustomDateFormatter,
@@ -45,7 +45,6 @@ import {
 } from '../../utils/calendarCustomNotePatterns';
 import { resolveCalendarCustomNotePathDate, type CalendarNoteKind } from '../../utils/calendarNotes';
 import { getMomentApi, type MomentApi } from '../../utils/moment';
-import { getTemplaterCreateNoteFromTemplate } from '../../utils/templaterIntegration';
 import { setElementVisible } from '../dependentSettings';
 import { createRenderDefinition } from '../nativeSettingControls';
 import { createInlineExternalLinkText } from './externalLink';
@@ -292,7 +291,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
                 }
 
                 const templateFolder = plugin.settings.calendarTemplateFolder;
-                new CalendarTemplateModal(context.app, templateFolder, async file => {
+                new TemplateFileModal(context.app, templateFolder, async file => {
                     params.setTemplatePath(file.path);
                     requestVisibilityRefresh();
                     await plugin.saveSettingsAndUpdate();
@@ -473,24 +472,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
             link: { text: strings.settings.items.calendarPeriodicNotePatterns.momentLinkText, href: MOMENT_FORMAT_DOCS_URL },
             suffix: strings.settings.items.calendarPeriodicNotePatterns.momentDescSuffix
         });
-        const templaterSupportText = getTemplaterCreateNoteFromTemplate(context.app)
-            ? strings.settings.items.templaterSupport.installed
-            : strings.settings.items.templaterSupport.missing;
-        // Built-in formats such as {{date}} are only applied when daily notes come from the Daily Notes core plugin,
-        // so this section leaves them literally. The setting name and option label are substituted from the dropdown
-        // strings so the notice keeps matching the control it refers to in every locale.
-        const tokenNoticeText = strings.settings.items.calendarPeriodicNotePatterns.templateTokenNotice
-            .replace('{source}', strings.settings.items.dailyNoteSource.name)
-            .replace('{option}', strings.settings.items.dailyNoteSource.options.dailyNotes);
-        description.append(
-            createEl('br'),
-            createEl('br'),
-            createEl('strong', { text: templaterSupportText }),
-            createEl('br'),
-            createEl('br'),
-            createEl('strong', { text: strings.settings.items.calendarPeriodicNotePatterns.templateTokenNoticeLabel }),
-            ` ${tokenNoticeText}`
-        );
+        description.append(createEl('br'), createEl('br'), strings.settings.items.templateEngine.usage);
         setting.descEl.append(description);
     };
 

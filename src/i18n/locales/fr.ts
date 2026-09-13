@@ -111,8 +111,18 @@ export const STRINGS_FR = {
     },
 
     dailyNotes: {
-        templateReadFailed: 'Échec de la lecture du modèle de note quotidienne.',
         createFailed: 'Impossible de créer la note quotidienne.'
+    },
+
+    templates: {
+        invalidTokens: 'Le modèle "{name}" contient des jetons non valides : {tokens}',
+        readFailed: 'Impossible de lire le modèle "{name}". La note a été créée sans lui.',
+        folderNotSet:
+            'Définissez le dossier des modèles dans Opérations sur les fichiers et modèles > Modèles avant de créer des notes depuis un modèle.',
+        templateNotFound: 'Le modèle "{name}" est introuvable.',
+        folderNotFound: 'Le dossier "{name}" est introuvable.',
+        templaterMissing:
+            "Le plugin Templater n'est pas installé. Modifiez le moteur de modèles dans Opérations sur les fichiers et modèles > Modèles."
     },
 
     shortcuts: {
@@ -363,6 +373,9 @@ export const STRINGS_FR = {
             duplicateFolder: 'Dupliquer le dossier',
             searchInFolder: 'Rechercher dans le dossier',
             createFolderNote: 'Créer une note de dossier',
+            setFolderTemplate: 'Définir le modèle de dossier...',
+            changeFolderTemplate: 'Changer le modèle de dossier...',
+            removeFolderTemplate: 'Retirer le modèle de dossier',
             detachFolderNote: 'Détacher la note de dossier',
             deleteFolderNote: 'Supprimer la note de dossier',
             changeIcon: "Changer l'icône",
@@ -717,7 +730,28 @@ export const STRINGS_FR = {
                 dismiss: 'pour annuler'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: 'Ajouter une commande',
+            titleEdit: 'Modifier la commande',
+            name: 'Nom de la commande',
+            namePlaceholder: 'Nouvelle note de réunion',
+            template: 'Modèle',
+            templateDesc: "Facultatif. Sans modèle, le modèle de dossier du dossier cible s'applique s'il est défini.",
+            templatePlaceholder: 'Modèles/Réunion.md',
+            fileNameFormat: 'Format du nom de fichier',
+            fileNameFormatDesc:
+                "Les jetons tels que {{date:YYYYMMDD}} et {{prompt:Titre}} sont remplacés à l'exécution de la commande. Chaque invite demande une valeur, et la même étiquette dans le modèle reçoit la même valeur.",
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titre}}',
+            location: 'Emplacement',
+            folder: 'Dossier',
+            folderPlaceholder: 'Réunions',
+            icon: 'Icône',
+            placement: 'Bouton',
+            placementNone: 'Aucun',
+            placementRibbon: 'Ruban',
+            placementTabBar: "Barre d'onglets"
+        },
+        templateFile: {
             placeholder: 'Rechercher des modèles...',
             instructions: {
                 navigate: 'pour naviguer',
@@ -1102,11 +1136,12 @@ export const STRINGS_FR = {
                 }
             },
             fileOperations: {
-                label: 'Opérations sur les fichiers',
+                label: 'Opérations sur les fichiers et modèles',
                 description:
-                    'Modèles, confirmations de suppression, pièces jointes et comportement en cas de conflit de déplacement de fichiers.',
+                    'Modèles, commandes de création de notes, confirmations de suppression, pièces jointes et gestion des conflits lors du déplacement de fichiers.',
                 groups: {
-                    templates: 'Modèles'
+                    templates: 'Modèles',
+                    templateCommands: 'Commandes de création de notes'
                 }
             },
             frontmatterFields: {
@@ -1716,11 +1751,11 @@ export const STRINGS_FR = {
                 name: 'Emplacement du dossier de modèles',
                 desc: 'Le sélecteur de fichiers de modèles affiche les notes de ce dossier.',
                 placeholder: 'Modèles',
-                usage: 'Utilisé par les notes de calendrier et les notes de dossier. Configurez les modèles dans Calendrier > Intégration du calendrier et Dossiers et notes de dossier > Fichiers de notes de dossier.'
+                usage: 'Les modèles du dossier de modèles sont utilisés par les notes de calendrier, les notes de dossier, les modèles de dossier et Nouvelle note depuis un modèle. Configurez les modèles de calendrier dans Calendrier > Intégration du calendrier et ceux des notes de dossier dans Dossiers et notes de dossier > Fichiers de notes de dossier.'
             },
             calendarDailyNotePattern: {
                 name: 'Notes quotidiennes',
-                desc: "Formater le chemin en utilisant le format de date Moment. Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers > Modèles.",
+                desc: "Formater le chemin en utilisant le format de date Moment. Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers et modèles > Modèles.",
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: 'Le modèle doit pouvoir être formaté et ré-analysé comme une date complète (année, mois, jour).'
             },
@@ -1728,15 +1763,42 @@ export const STRINGS_FR = {
                 momentDescPrefix: 'Formater le chemin en utilisant le ',
                 momentLinkText: 'format de date Moment',
                 momentDescSuffix:
-                    ". Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers > Modèles.",
-                templateTokenNoticeLabel: 'Important !',
-                templateTokenNotice:
-                    'La prise en charge des modèles nécessite le plugin Templater. Les formats intégrés comme {{date}} et {{title}} fonctionnent uniquement lorsque {source} est défini sur {option}.',
+                    ". Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers et modèles > Modèles.",
                 example: 'Syntaxe actuelle : {path}'
             },
-            templaterSupport: {
-                installed: '✅ Le plugin Templater est installé avec la prise en charge complète des modèles.',
-                missing: '⚠️ Installez le plugin Templater pour la prise en charge des modèles.'
+            templateEngine: {
+                name: 'Moteur de modèles',
+                desc: 'Moteur qui traite les fichiers de modèle lorsque Notebook Navigator crée des notes. Automatique utilise Templater pour les modèles contenant <% lorsque le plugin Templater est installé. Tous les autres modèles utilisent le moteur intégré.',
+                options: {
+                    automatic: 'Automatique',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Plugin Templater : installé',
+                templaterNotInstalled: 'Plugin Templater : non installé',
+                tokens: 'Jetons intégrés : {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} à {{sunday}}, {{cursor}}. Écrivez {{!date}} pour conserver {{date}} en texte.',
+                usage: 'Les jetons de modèle tels que {{title}} et {{date}} sont remplacés à la création de la note. Configurez le moteur de modèles dans Opérations sur les fichiers et modèles > Modèles.'
+            },
+            showFolderTemplateIcons: {
+                name: 'Afficher les icônes de modèle de dossier',
+                desc: 'Signale par une icône dans le volet de navigation les dossiers ayant leur propre modèle.'
+            },
+            templateCommands: {
+                name: 'Commandes',
+                desc: 'Chaque commande crée une note avec un nom de fichier généré, depuis son propre modèle ou le modèle de dossier. Lancez-la depuis la palette de commandes, ou associez-la à un raccourci ou à un bouton.',
+                empty: 'Aucune commande ajoutée.',
+                add: 'Ajouter une commande',
+                edit: 'Modifier',
+                unnamed: 'Commande sans nom',
+                locationCurrent: 'Dossier actuel',
+                locationFolder: 'Dossier spécifique'
+            },
+            folderTemplates: {
+                name: 'Modèles de dossier',
+                desc: 'Les nouvelles notes utilisent le modèle de leur dossier ou du dossier parent le plus proche. Définissez les modèles depuis le menu contextuel du dossier. Les modèles de calendrier, de notes quotidiennes et de notes de dossier sont prioritaires.',
+                empty: 'Aucun modèle de dossier défini.',
+                scopeSubfolders: 'Dossier et sous-dossiers',
+                scopeFolder: 'Ce dossier uniquement'
             },
             calendarWeeklyNotePattern: {
                 name: 'Notes hebdomadaires',
@@ -2460,7 +2522,7 @@ export const STRINGS_FR = {
             },
             folderNoteTemplate: {
                 name: 'Modèle de note de dossier',
-                desc: "Fichier modèle utilisé lors de la création de notes de dossier. Les modèles Markdown peuvent utiliser Templater. Les modèles Canvas et Base sont copiés comme contenu de fichier. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers > Modèles.",
+                desc: "Fichier modèle utilisé lors de la création de notes de dossier. Les modèles Markdown peuvent utiliser Templater. Les modèles Canvas et Base sont copiés comme contenu de fichier. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers et modèles > Modèles.",
                 formatWarning: 'Le format du modèle doit correspondre au type de note de dossier sélectionné : .md, .canvas ou .base.'
             },
             folderNamesOpenFolderNotes: {

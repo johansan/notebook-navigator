@@ -24,7 +24,8 @@ import {
     buildCustomCalendarFilePathForPattern,
     buildCustomCalendarMomentPattern,
     getCalendarNoteConfig,
-    resolveCalendarCustomNotePathDate
+    resolveCalendarCustomNotePathDate,
+    type CalendarNoteLocation
 } from '../../utils/calendarNotes';
 import type { MomentApi, MomentInstance } from '../../utils/moment';
 import type { CalendarNoteTarget, CustomCalendarNoteConfig, CustomCalendarNoteKind } from './types';
@@ -34,11 +35,7 @@ export interface CalendarNotePathResolverContext {
     momentPattern: string;
 }
 
-export interface ResolvedCalendarNotePath {
-    folderPath: string;
-    fileName: string;
-    filePath: string;
-}
+export type ResolvedCalendarNotePath = CalendarNoteLocation;
 
 export interface CalendarNoteRootFolderSettings {
     calendarCustomRootFolder: string;

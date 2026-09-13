@@ -330,7 +330,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 **Important:** Obsidian has no context of "current folder or tag", so when creating notes in Obsidian by default they are created in the root folder, same folder as current file, or a specific folder. When working with Notebook Navigator you always want to create new notes in the currently selected folder or tag, so the first thing you should do is bind `Cmd/Ctrl+N` to `Notebook Navigator: Create new note` so new notes are always created in the currently selected folder or tag. The same also applies to moving and deleting files. This is why you should use these commands instead of the built-in Obsidian commands when using Notebook Navigator.
 
 - `Notebook Navigator: Create new note` Create note in currently selected folder. **Suggestion:** Bind `Cmd/Ctrl+N` to this command (unbind from Obsidian's default "Create new note" first)
-- `Notebook Navigator: Create new note from template` Create note from template in currently selected folder (requires Templater)
+- `Notebook Navigator: Create new note from template` Create note from template in currently selected folder
 - `Notebook Navigator: Move files` Move selected files to another folder. Selects next file in current folder
 - `Notebook Navigator: Merge notes` Create one note from selected Markdown notes in the current list order
 - `Notebook Navigator: Convert to folder note` Create a folder matching the file name and move the file inside as the folder note
@@ -477,9 +477,109 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Drag and drop** - File moves, tagging, shortcut assignment, tag tree reparenting, spring-loaded folders
 - **Context menus** - Create notes/folders/canvases/bases/drawings and run file/tag actions
 - **Drawings** - Create Excalidraw and Tldraw drawings from navigation and list pane menus
-- **Templates** - New note from template commands with the Templater plugin
+- **Templates** - Built-in template engine with `{{title}}`, `{{date}}`, `{{cursor}}` and other tokens for calendar notes, folder notes and new notes from template, plus optional Templater support (see [10.6 Templates](#106-templates))
 - **File operations** - Create, rename, duplicate, move, trash files and folders
 - **Filtering** - Folder/tag/note/file exclusions with patterns and frontmatter properties
+
+<br/>
+
+### 10.6 Templates
+
+Templates are markdown notes stored in the folder set under **File operations & templates > Templates > Template folder location**. Notebook Navigator applies them when it creates calendar notes, folder notes, notes created with `New note from template` and, through folder templates, any new note in a folder. Daily notes that Notebook Navigator creates with the Daily Notes core plugin settings use the template configured in that plugin. The **Template engine** setting selects how a template is processed:
+
+| Engine             | Behavior                                                                                                                            |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Automatic          | Uses Templater for templates that contain `<%` when the Templater plugin is installed. All other templates use the built-in engine. |
+| Notebook Navigator | Always uses the built-in engine.                                                                                                    |
+| Templater          | Always uses the Templater plugin.                                                                                                   |
+
+One engine processes each template. In Automatic mode a template that contains `<%` is handed to Templater as a whole, and any `{{...}}` tokens in it stay as written.
+
+**Using Templater alongside Notebook Navigator.** With the engine set to `Notebook Navigator`, Templater's commands, hotkeys and `Insert template` keep working, and `<%...%>` text in templates is left unchanged. Templater's `Trigger Templater on new file creation` option is independent of this setting: when it is on, Templater also processes every note Notebook Navigator creates, runs any `<%...%>` commands in it and can apply its own folder templates to notes whose body is empty apart from frontmatter. Turn that option off when Notebook Navigator handles creation templates, or exclude the folders Notebook Navigator manages in Templater's settings.
+
+The built-in engine replaces the tokens below when the note is created. Unknown `{{...}}` text is left unchanged, so templates shared with other plugins keep working. Write `{{!date}}` to keep `{{date}}` as text. In quoted frontmatter values such as `title: "{{prompt:Title}}"`, replacements escape quotes and backslashes according to the YAML quote style.
+
+| Token                               | Result                                                                                                                                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `{{title}}`                         | File name of the note without extension                                                                                                                                                                                        |
+| `{{folder}}`                        | Name of the folder containing the note                                                                                                                                                                                         |
+| `{{path}}`                          | Vault path of the note                                                                                                                                                                                                         |
+| `{{date}}`                          | Date of the note. Periodic notes use the start of their period and format it with their file name pattern. Other notes use today in the format from General > Formatting > Date format.                                        |
+| `{{date:FORMAT}}`                   | Date of the note in a [Moment format](https://momentjs.com/docs/#/displaying/format/), for example `{{date:dddd, MMMM D}}`                                                                                                     |
+| `{{date+1d}}`, `{{date-2w:FORMAT}}` | Date of the note with an offset. Units: `y` year, `Q` quarter, `M` month, `w` week, `d` day, `h` hour, `m` minute, `s` second                                                                                                  |
+| `{{yesterday}}`, `{{tomorrow}}`     | Day before or after the note date, in the same default format as `{{date}}` unless a format is given                                                                                                                           |
+| `{{monday}}` to `{{sunday}}`        | Days of the week that contains the note date, in the Date format setting unless a format is given. Weekly notes use the seven days starting at the note date.                                                                  |
+| `{{time}}`, `{{time:FORMAT}}`       | Current time in the format from General > Formatting > Time format                                                                                                                                                             |
+| `{{today}}`, `{{today:FORMAT}}`     | Current date in the format from General > Formatting > Date format. Use `{{today:YYYY-MM-DD}}` for date properties in frontmatter.                                                                                             |
+| `{{now}}`, `{{now:FORMAT}}`         | Current date and time as an ISO 8601 timestamp, default `YYYY-MM-DD[T]HH:mm:ssZ`, the format Notebook Navigator reads from frontmatter                                                                                         |
+| `{{cursor}}`                        | Removed from the note. The editor cursor is placed here when the note opens.                                                                                                                                                   |
+| `{{prompt:Label}}`                  | Asks for a value when the note is created and inserts it. The same label used more than once, including in a command's file name format, is asked once. `{{value:Label}}` works the same way, and a label defaults to `Value`. |
+
+**Folder templates**
+
+A folder template applies to every note created in that folder and, by default, its subfolders. Right-click a folder, including the vault root, and choose `Set folder template...`. The closest folder with an applicable template wins, so a template on the root folder acts as the default for the whole vault and a template on `Personal/DailyNotes` overrides it there. Explicit templates configured for calendar notes, daily notes and folder notes take precedence over folder templates. The configured folder templates are listed under File operations & templates > Templates, where each one can be limited to `This folder only` or removed. Folders with their own template show a small icon before their note count in the navigation pane; **Show folder template icons** turns that off.
+
+Folder templates apply to notes created by Notebook Navigator: `New note`, notes created from a tag or property, calendar notes, daily notes and folder notes. Notes created by Obsidian itself or by other plugins are not filled.
+
+**Examples**
+
+A standard template for all notes, set as the folder template of the root folder `/`:
+
+```markdown
+---
+created: "{{now}}"
+---
+```
+
+A calendar note template that asks for a title when the note is created. Set it under Calendar > Calendar integration, or as the folder template of the daily notes folder, where it overrides the root template. With `Name fields` under Frontmatter set to `title`, the list pane shows the entered title instead of the file name:
+
+```markdown
+---
+created: "{{now}}"
+title: "{{prompt:Title}}"
+---
+
+## Tasks
+
+- [ ] {{cursor}}
+
+## Notes
+```
+
+**Create note commands**
+
+Under File operations & templates > Create note commands you can add your own commands. Each command has a name, an optional template, a file name format, a location, either the folder currently selected in the navigator or a specific folder, and an optional button with its own icon on the ribbon or on the tab bar of every note. Without a template the folder template of the target folder applies, so a folder that already has one only needs the command for its name and prompts. Running the command asks for every `{{prompt:Label}}` value in the file name format and the template, creates the note with the generated name and opens it. Commands appear in the command palette as `Notebook Navigator: <name>`, so they can also be bound to hotkeys.
+
+Example meeting note command with the file name format `{{date:YYYYMMDD}} {{prompt:Title}}` and this template:
+
+```markdown
+---
+title: "{{prompt:Title}}"
+created: "{{now}}"
+---
+
+## Attendees
+
+- {{cursor}}
+
+## Notes
+```
+
+Running it asks for the title once, names the note `20260916 Weekly sync` and writes the same title into the `title` property.
+
+Weekly note template:
+
+```markdown
+# Week {{date:ww}} of {{date:gggg}}
+
+- [[{{monday:YYYY-MM-DD}}]]
+- [[{{tuesday:YYYY-MM-DD}}]]
+- [[{{wednesday:YYYY-MM-DD}}]]
+- [[{{thursday:YYYY-MM-DD}}]]
+- [[{{friday:YYYY-MM-DD}}]]
+
+{{cursor}}
+```
 
 <br/>
 

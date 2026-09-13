@@ -27,7 +27,8 @@ import {
     SYNC_MODE_SETTING_IDS,
     type NavRainbowSettings,
     type NotebookNavigatorSettings,
-    type SettingSyncMode
+    type SettingSyncMode,
+    type FolderTemplateMapping
 } from './types';
 import { sanitizeRecord } from '../utils/recordUtils';
 import {
@@ -222,6 +223,10 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     dateFormat: 'MMM D, YYYY',
     timeFormat: 'h:mm a',
     calendarTemplateFolder: '',
+    templateEngine: 'automatic',
+    folderTemplates: sanitizeRecord<FolderTemplateMapping>(undefined),
+    showFolderTemplateIcons: true,
+    templateCommands: [],
 
     // Files tab
     confirmBeforeDelete: true,

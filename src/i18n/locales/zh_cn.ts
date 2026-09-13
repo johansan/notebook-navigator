@@ -110,8 +110,16 @@ export const STRINGS_ZH_CN = {
     },
 
     dailyNotes: {
-        templateReadFailed: '读取日记模板失败。',
         createFailed: '创建日记失败。'
+    },
+
+    templates: {
+        invalidTokens: '模板“{name}”包含无效的占位符：{tokens}',
+        readFailed: '无法读取模板“{name}”。笔记已在没有模板的情况下创建。',
+        folderNotSet: '从模板新建笔记前，请先在文件操作与模板 > 模板中设置模板文件夹。',
+        templateNotFound: '未找到模板“{name}”。',
+        folderNotFound: '未找到文件夹“{name}”。',
+        templaterMissing: '未安装 Templater 插件。请在文件操作与模板 > 模板中更改模板引擎。'
     },
 
     shortcuts: {
@@ -360,6 +368,9 @@ export const STRINGS_ZH_CN = {
             duplicateFolder: '复制文件夹',
             searchInFolder: '在文件夹中搜索',
             createFolderNote: '创建文件夹笔记',
+            setFolderTemplate: '设置文件夹模板...',
+            changeFolderTemplate: '更改文件夹模板...',
+            removeFolderTemplate: '移除文件夹模板',
             detachFolderNote: '解除文件夹笔记关联',
             deleteFolderNote: '删除文件夹笔记',
             changeIcon: '更改图标',
@@ -707,7 +718,28 @@ export const STRINGS_ZH_CN = {
                 dismiss: '取消'
             }
         },
-        calendarTemplate: {
+        templateCommand: {
+            titleAdd: '添加命令',
+            titleEdit: '编辑命令',
+            name: '命令名称',
+            namePlaceholder: '新建会议笔记',
+            template: '模板',
+            templateDesc: '可选。未设置模板时，若目标文件夹有文件夹模板则使用它。',
+            templatePlaceholder: 'Templates/Meeting.md',
+            fileNameFormat: '文件名格式',
+            fileNameFormatDesc:
+                '{{date:YYYYMMDD}}、{{prompt:Title}} 等占位符会在运行命令时被替换。每个提示都会询问一个值，模板中相同的标签会获得相同的值。',
+            fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
+            location: '位置',
+            folder: '文件夹',
+            folderPlaceholder: 'Meetings',
+            icon: '图标',
+            placement: '按钮',
+            placementNone: '无',
+            placementRibbon: '功能区',
+            placementTabBar: '标签栏'
+        },
+        templateFile: {
             placeholder: '搜索模板...',
             instructions: {
                 navigate: '导航',
@@ -1090,10 +1122,11 @@ export const STRINGS_ZH_CN = {
                 }
             },
             fileOperations: {
-                label: '文件操作',
-                description: '模板、删除确认、附件和文件移动冲突行为。',
+                label: '文件操作与模板',
+                description: '模板、新建笔记命令、删除确认、附件以及移动文件冲突时的行为。',
                 groups: {
-                    templates: '模板'
+                    templates: '模板',
+                    templateCommands: '新建笔记命令'
                 }
             },
             frontmatterFields: {
@@ -1698,11 +1731,11 @@ export const STRINGS_ZH_CN = {
                 name: '模板文件夹位置',
                 desc: '模板文件选择器显示此文件夹中的笔记。',
                 placeholder: '模板',
-                usage: '用于日历笔记和文件夹笔记。在导航日历 > 日历集成和文件夹和文件夹笔记 > 文件夹笔记文件中配置模板。'
+                usage: '模板文件夹中的模板用于日历笔记、文件夹笔记、文件夹模板和从模板新建笔记。在导航日历 > 日历集成中配置日历模板，在文件夹和文件夹笔记 > 文件夹笔记文件中配置文件夹笔记模板。'
             },
             calendarDailyNotePattern: {
                 name: '日记',
-                desc: '使用 Moment 日期格式设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
+                desc: '使用 Moment 日期格式设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作与模板 > 模板中设置模板文件夹位置。',
                 placeholder: 'YYYY/YYYYMMDD',
                 parsingError: '模式必须能格式化并重新解析为完整日期（年、月、日）。'
             },
@@ -1710,14 +1743,42 @@ export const STRINGS_ZH_CN = {
                 momentDescPrefix: '使用 ',
                 momentLinkText: 'Moment 日期格式',
                 momentDescSuffix:
-                    ' 设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作 > 模板中设置模板文件夹位置。',
-                templateTokenNoticeLabel: '重要！',
-                templateTokenNotice: '模板功能需要 Templater 插件。{{date}} 和 {{title}} 等内置格式仅在{source}设置为{option}时可用。',
+                    ' 设置路径。将子文件夹名称用方括号括起来，例如 [Work]/YYYY。点击模板图标设置模板。在文件操作与模板 > 模板中设置模板文件夹位置。',
                 example: '当前语法：{path}'
             },
-            templaterSupport: {
-                installed: '✅ 已安装 Templater 插件，支持完整模板功能。',
-                missing: '⚠️ 安装 Templater 插件以支持模板功能。'
+            templateEngine: {
+                name: '模板引擎',
+                desc: 'Notebook Navigator 创建笔记时处理模板文件的引擎。 自动模式在已安装 Templater 插件时，对包含 <% 的模板使用 Templater，其他模板使用内置引擎。',
+                options: {
+                    automatic: '自动',
+                    builtin: 'Notebook Navigator',
+                    templater: 'Templater'
+                },
+                templaterInstalled: 'Templater 插件：已安装',
+                templaterNotInstalled: 'Templater 插件：未安装',
+                tokens: '内置占位符：{{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} 至 {{sunday}}, {{cursor}}。写 {{!date}} 可将 {{date}} 保留为文本。',
+                usage: '{{title}}、{{date}} 等模板占位符会在创建笔记时被替换。请在文件操作与模板 > 模板中配置模板引擎。'
+            },
+            showFolderTemplateIcons: {
+                name: '显示文件夹模板图标',
+                desc: '在导航窗格中用图标标记设置了自己模板的文件夹。'
+            },
+            templateCommands: {
+                name: '命令',
+                desc: '每个命令都会用自己的模板或文件夹模板创建一篇笔记并自动生成文件名。可从命令面板运行，或绑定到快捷键或按钮。',
+                empty: '尚未添加命令。',
+                add: '添加命令',
+                edit: '编辑',
+                unnamed: '未命名命令',
+                locationCurrent: '当前文件夹',
+                locationFolder: '指定文件夹'
+            },
+            folderTemplates: {
+                name: '文件夹模板',
+                desc: '新笔记使用其所在文件夹或最近的上级文件夹的模板。在文件夹右键菜单中设置模板。日历、日记和文件夹笔记的模板优先。',
+                empty: '未设置文件夹模板。',
+                scopeSubfolders: '文件夹及子文件夹',
+                scopeFolder: '仅此文件夹'
             },
             calendarWeeklyNotePattern: {
                 name: '周记',
@@ -2435,7 +2496,7 @@ export const STRINGS_ZH_CN = {
             },
             folderNoteTemplate: {
                 name: '文件夹笔记模板',
-                desc: '创建文件夹笔记时使用的模板文件。Markdown 模板可以使用 Templater。Canvas 和 Base 模板会作为文件内容复制。在文件操作 > 模板中设置模板文件夹位置。',
+                desc: '创建文件夹笔记时使用的模板文件。Markdown 模板可以使用 Templater。Canvas 和 Base 模板会作为文件内容复制。在文件操作与模板 > 模板中设置模板文件夹位置。',
                 formatWarning: '模板格式必须与所选文件夹笔记类型匹配：.md、.canvas 或 .base。'
             },
             folderNamesOpenFolderNotes: {

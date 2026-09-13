@@ -18,9 +18,10 @@
 
 import { App, TFile, TFolder, normalizePath } from 'obsidian';
 import { strings } from '../i18n';
+import { createMarkdownFileFromTemplate, getFolderTemplateFile, prepareMarkdownTemplate, type TemplateSettings } from './fileCreationUtils';
 import { getInternalPlugin } from './typeGuards';
 import { isPlainObjectRecordValue, isStringRecordValue } from './recordUtils';
-import { getMomentApi, type MomentInstance } from './moment';
+import type { MomentInstance } from './moment';
 import { showNotice } from './noticeUtils';
 
 const DAILY_NOTES_PLUGIN_ID = 'daily-notes';
@@ -42,37 +43,6 @@ interface DailyNotesInternalPlugin {
 interface FoldManager {
     load: (file: TFile) => unknown;
     save: (file: TFile, foldInfo: unknown) => void;
-}
-
-type DailyNotesDeltaUnit = 'y' | 'Q' | 'M' | 'm' | 'w' | 'd' | 'h' | 's';
-
-/** Normalizes date/time delta units used in daily note templates to moment-compatible units */
-function normalizeDailyNotesDeltaUnit(value: string): DailyNotesDeltaUnit | null {
-    switch (value) {
-        case 'y':
-        case 'Y':
-            return 'y';
-        case 'q':
-        case 'Q':
-            return 'Q';
-        case 'm':
-            return 'm';
-        case 'M':
-            return 'M';
-        case 'w':
-        case 'W':
-            return 'w';
-        case 'd':
-            return 'd';
-        case 'h':
-        case 'H':
-            return 'h';
-        case 's':
-        case 'S':
-            return 's';
-        default:
-            return null;
-    }
 }
 
 function isFoldManager(value: unknown): value is FoldManager {
@@ -115,8 +85,8 @@ export function getDailyNoteSettings(app: App): DailyNoteSettings | null {
 }
 
 export function getDailyNoteFilename(date: MomentInstance, settings: DailyNoteSettings): string {
-    const title = formatDailyNoteTitle(date, settings.format);
-    return `${title}.md`;
+    const path = getDailyNotePath(date, settings);
+    return path.slice(path.lastIndexOf('/') + 1);
 }
 
 export function getDailyNotePath(date: MomentInstance, settings: DailyNoteSettings): string {
@@ -124,13 +94,9 @@ export function getDailyNotePath(date: MomentInstance, settings: DailyNoteSettin
     const formatted = date.format(settings.format);
     const combined = settings.folder ? `${settings.folder}/${formatted}` : formatted;
     const normalized = normalizePath(combined);
-    return normalized.endsWith('.md') ? normalized : `${normalized}.md`;
-}
-
-function formatDailyNoteTitle(date: MomentInstance, format: string): string {
-    const formatted = date.format(format);
-    const basename = formatted.split('/').pop() ?? formatted;
-    return basename.replace(/\.md$/i, '');
+    // Creation always writes a lowercase extension. Normalize literal extensions here too, otherwise lookup can
+    // search for a different path when the format ends in `[.MD]` or `[.Md]`.
+    return `${normalized.replace(/\.md$/i, '')}.md`;
 }
 
 export function getDailyNoteFile(app: App, date: MomentInstance, settings: DailyNoteSettings): TFile | null {
@@ -163,86 +129,39 @@ async function ensureFolderExists(app: App, path: string): Promise<void> {
     }
 }
 
-async function readTemplateInfo(app: App, templatePath: string): Promise<{ contents: string; foldInfo: unknown }> {
+/** Resolves the Daily Notes template setting to a file. The core plugin stores a link path without extension. */
+function getDailyNoteTemplateFile(app: App, templatePath: string): TFile | null {
     const normalized = normalizePath(templatePath);
     if (!normalized || normalized === '/') {
-        return { contents: '', foldInfo: null };
+        return null;
     }
-
-    try {
-        // Templates are resolved the same way Obsidian does in other contexts: first matching linkpath destination.
-        const templateFile = app.metadataCache.getFirstLinkpathDest(normalized, '');
-        if (!templateFile) {
-            return { contents: '', foldInfo: null };
-        }
-
-        const contents = await app.vault.cachedRead(templateFile);
-        // Preserve fold state from the template (best-effort) so new notes look like the template.
-        const foldManager = getFoldManager(app);
-        const foldInfo = foldManager?.load(templateFile) ?? null;
-        return { contents, foldInfo };
-    } catch (error) {
-        console.error(`Failed to read the daily note template "${normalized}"`, error);
-        showNotice(strings.dailyNotes.templateReadFailed);
-        return { contents: '', foldInfo: null };
-    }
+    // Templates are resolved the same way Obsidian does in other contexts: first matching linkpath destination.
+    return app.metadataCache.getFirstLinkpathDest(normalized, '');
 }
 
-function renderDailyNoteTemplate(template: string, date: MomentInstance, noteTitle: string, format: string): string {
-    if (!template) {
-        return '';
+/** Returns the folder that `ensureFolderExists` created for the note path. Throws so a missing folder never sends the note to the vault root. */
+function getParentFolder(app: App, path: string): TFolder {
+    const parentPath = path.split('/').slice(0, -1).join('/');
+    if (!parentPath) {
+        return app.vault.getRoot();
     }
-
-    const momentApi = getMomentApi();
-    if (!momentApi) {
-        return template;
+    const parent = app.vault.getAbstractFileByPath(parentPath);
+    if (!(parent instanceof TFolder)) {
+        throw new Error(`Daily note folder "${parentPath}" is missing.`);
     }
-
-    const now = momentApi();
-    const time = now.format('HH:mm');
-
-    // Support a small subset of Obsidian's template tokens commonly used with Daily Notes.
-    // - Basic tokens: {{date}}, {{time}}, {{title}}
-    // - Relative tokens: {{yesterday}}, {{tomorrow}}
-    // - Calculated tokens: {{date +1d:YYYY-MM-DD}} / {{time -2h:HH:mm}}
-    return template
-        .replace(/{{\s*date\s*}}/gi, noteTitle)
-        .replace(/{{\s*time\s*}}/gi, time)
-        .replace(/{{\s*title\s*}}/gi, noteTitle)
-        .replace(
-            /{{\s*(date|time)\s*(([+-]\d+)([yQmwdhs]))?\s*(:.+?)?}}/gi,
-            (
-                _match,
-                timeOrDate: string,
-                _calcGroup: string | undefined,
-                deltaRaw: string | undefined,
-                unitRaw: string | undefined,
-                formatRaw: string | undefined
-            ) => {
-                const isTimeToken = timeOrDate.toLowerCase() === 'time';
-                const currentDate = date.clone().set({
-                    hour: now.get('hour'),
-                    minute: now.get('minute'),
-                    second: now.get('second')
-                });
-
-                const deltaUnit = unitRaw ? normalizeDailyNotesDeltaUnit(unitRaw) : null;
-                if (deltaRaw && deltaUnit) {
-                    currentDate.add(Number.parseInt(deltaRaw, 10), deltaUnit);
-                }
-
-                if (formatRaw) {
-                    return currentDate.format(formatRaw.substring(1).trim());
-                }
-
-                return isTimeToken ? currentDate.format('HH:mm') : formatDailyNoteTitle(currentDate, format);
-            }
-        )
-        .replace(/{{\s*yesterday\s*}}/gi, formatDailyNoteTitle(date.clone().subtract(1, 'day'), format))
-        .replace(/{{\s*tomorrow\s*}}/gi, formatDailyNoteTitle(date.clone().add(1, 'day'), format));
+    return parent;
 }
 
-export async function createDailyNote(app: App, date: MomentInstance, settings: DailyNoteSettings): Promise<TFile | null> {
+/**
+ * Creates the daily note for `date` using the Daily Notes core plugin settings. Returns the existing note when it is
+ * already present. Returns null when creation failed or stopped after a notice.
+ */
+export async function createDailyNote(
+    app: App,
+    date: MomentInstance,
+    settings: DailyNoteSettings,
+    templateSettings: TemplateSettings
+): Promise<TFile | null> {
     const path = getDailyNotePath(date, settings);
     const existing = app.vault.getAbstractFileByPath(path);
     if (existing instanceof TFile) {
@@ -250,16 +169,47 @@ export async function createDailyNote(app: App, date: MomentInstance, settings: 
     }
 
     try {
+        // The Daily Notes template wins even when its file is missing; folder templates only fill the gap when none is set.
+        // The template is resolved from the note path before its folders exist, so prompts run first and a cancelled
+        // prompt leaves no empty folders behind.
+        const folderPath = path.split('/').slice(0, -1).join('/') || '/';
+        const templateFile = settings.template
+            ? getDailyNoteTemplateFile(app, settings.template)
+            : getFolderTemplateFile(app, templateSettings, folderPath);
+        const preparedTemplate = await prepareMarkdownTemplate({
+            app,
+            templateFile,
+            settings: templateSettings,
+            templateErrorContext: 'daily note'
+        });
+        if (!preparedTemplate) {
+            return null;
+        }
+
         await ensureFolderExists(app, path);
+        const folder = getParentFolder(app, path);
+        const createdFile = await createMarkdownFileFromTemplate({
+            app,
+            folder,
+            baseName: path.slice(path.lastIndexOf('/') + 1, -3),
+            preparedTemplate,
+            settings: templateSettings,
+            // Format first and then take the basename, so Moment literals and path segments follow the filename rules.
+            templateDate: { date, dateFormat: value => getDailyNoteFilename(value, settings).slice(0, -3) },
+            templateErrorContext: 'daily note'
+        });
+        if (!createdFile) {
+            return null;
+        }
 
-        const { contents: templateContents, foldInfo } = await readTemplateInfo(app, settings.template);
-        const noteTitle = formatDailyNoteTitle(date, settings.format);
-
-        const createdFile = await app.vault.create(path, renderDailyNoteTemplate(templateContents, date, noteTitle, settings.format));
-        if (foldInfo) {
+        if (templateFile) {
+            // Preserve fold state from the template (best-effort) so new notes look like the template.
             try {
                 const foldManager = getFoldManager(app);
-                foldManager?.save(createdFile, foldInfo);
+                const foldInfo = foldManager?.load(templateFile) ?? null;
+                if (foldInfo) {
+                    foldManager?.save(createdFile, foldInfo);
+                }
             } catch {
                 // ignore
             }

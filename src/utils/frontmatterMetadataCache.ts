@@ -23,7 +23,7 @@ import { localStorage } from './localStorage';
 import type { FileData } from '../storage/IndexedDBStorage';
 import { extractFreshMetadataFromFileData, type ProcessedMetadata } from './metadataExtractor';
 
-export const FRONTMATTER_METADATA_CACHE_SETTINGS = [
+const FRONTMATTER_METADATA_CACHE_SETTINGS = [
     'useFrontmatterMetadata',
     'frontmatterNameField',
     'frontmatterIconField',

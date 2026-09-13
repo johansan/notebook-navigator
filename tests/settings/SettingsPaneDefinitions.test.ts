@@ -86,8 +86,8 @@ const EXPECTED_PANES: Array<{ id: SettingsPaneId; label: string; description: st
     },
     {
         id: 'file-operations',
-        label: 'File operations',
-        description: 'Template folder, delete confirmations, attachments, and file move conflict behavior.',
+        label: 'File operations & templates',
+        description: 'Templates, create note commands, delete confirmations, attachments, and file move conflict behavior.',
         native: true
     },
     {
