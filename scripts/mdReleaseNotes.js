@@ -71,6 +71,19 @@ const printSection = (title, items) => {
     console.log();
 };
 
+if (release.banner) {
+    const bannerPath = path.join(__dirname, '..', 'images', 'version-banners', release.banner);
+    if (!fs.existsSync(bannerPath)) {
+        console.error(`Release banner not found for version ${release.version}: images/version-banners/${release.banner}`);
+        process.exit(1);
+    }
+
+    // Keep the requested tag, including a leading v, so banners use the released revision instead of changing with main.
+    const tag = versionArg || release.version;
+    const bannerUrl = `https://raw.githubusercontent.com/johansan/notebook-navigator/${encodeURIComponent(tag)}/images/version-banners/${encodeURIComponent(release.banner)}`;
+    console.log(`![Notebook Navigator ${release.version}](${bannerUrl})\n`);
+}
+
 if (release.info) {
     console.log(`${convertMarkdown(release.info)}\n`);
 }

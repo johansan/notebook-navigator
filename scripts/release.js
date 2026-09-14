@@ -729,11 +729,12 @@ function validateReleaseNotes(version) {
     try {
         execFileSync(process.execPath, [path.join(projectRoot, 'scripts', 'mdReleaseNotes.js'), version], {
             cwd: projectRoot,
-            stdio: 'ignore'
+            stdio: ['ignore', 'pipe', 'pipe']
         });
     } catch (e) {
-        console.error(`❌ Release notes missing for version ${version}`);
-        console.error('   Add an entry to src/releaseNotes.ts before publishing');
+        console.error(`❌ Could not generate release notes for version ${version}`);
+        console.error(`   ${getCommandErrorMessage(e)}`);
+        console.error('   Check src/releaseNotes.ts and its referenced banner file before publishing');
         process.exit(1);
     }
 

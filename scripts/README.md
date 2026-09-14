@@ -151,6 +151,8 @@ node scripts/mdReleaseNotes.js 3.2.2      # Print release notes for a specific v
 - Reads release notes from `src/releaseNotes.ts`
 - Defaults to the latest release notes entry
 - Accepts a version argument, with or without a leading `v`
+- Prepends the optional release banner from `images/version-banners/`, using an image URL pinned to the release tag
+- Fails if a declared banner file is missing
 - Converts TypeScript object format to clean Markdown
 - Outputs formatted release notes ready for GitHub release descriptions
 - Automatically used by the release process
