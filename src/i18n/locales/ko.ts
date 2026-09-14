@@ -1193,6 +1193,10 @@ export const STRINGS_KO = {
                     hidden: '표시하지 않음'
                 }
             },
+            colorListPaneTitle: {
+                name: '목록 창 제목에 색상 적용',
+                desc: '선택한 폴더, 태그 또는 속성의 색상을 목록 창 제목에 적용합니다.'
+            },
             defaultSortOrder: {
                 name: '기본 정렬 순서',
                 desc: '노트의 기본 정렬 순서를 선택하세요. 정렬에 사용할 속성의 속성이 추가 정렬 옵션으로 표시됩니다.',

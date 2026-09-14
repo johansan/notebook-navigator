@@ -1197,6 +1197,10 @@ export const STRINGS_ID = {
                     hidden: 'Jangan tampilkan'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Warnai judul panel daftar',
+                desc: 'Menerapkan warna folder, tag, atau properti yang dipilih ke judul panel daftar.'
+            },
             defaultSortOrder: {
                 name: 'Urutan default',
                 desc: 'Pilih urutan default untuk catatan. Properti dari Properti urutan muncul sebagai opsi urutan tambahan.',

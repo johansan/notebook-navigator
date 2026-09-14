@@ -1201,6 +1201,10 @@ export const STRINGS_PT_BR = {
                     hidden: 'Não mostrar'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Colorir o título do painel de lista',
+                desc: 'Aplica a cor da pasta, etiqueta ou propriedade selecionada ao título do painel de lista.'
+            },
             defaultSortOrder: {
                 name: 'Ordem de classificação padrão',
                 desc: 'Escolha a ordem de classificação padrão para as notas. As propriedades de Propriedades de classificação aparecem como opções de classificação adicionais.',

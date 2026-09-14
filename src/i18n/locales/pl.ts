@@ -1201,6 +1201,10 @@ export const STRINGS_PL = {
                     hidden: 'Ukryj'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Koloruj tytuł panelu listy',
+                desc: 'Stosuje kolor wybranego folderu, tagu lub atrybutu do tytułu panelu listy.'
+            },
             defaultSortOrder: {
                 name: 'Domyślny porządek sortowania',
                 desc: 'Wybierz domyślny porządek sortowania notatek. Atrybuty z ustawienia Atrybuty sortowania pojawiają się jako dodatkowe opcje sortowania.',

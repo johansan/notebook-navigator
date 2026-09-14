@@ -321,6 +321,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     confirmBeforeManualSort: true,
     revealFileOnListChanges: true,
     listPaneTitle: 'header',
+    colorListPaneTitle: false,
     noteGrouping: 'date',
     showSelectedNavigationPills: false,
     stickyGroupHeaders: true,

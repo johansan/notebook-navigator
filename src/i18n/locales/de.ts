@@ -1201,6 +1201,10 @@ export const STRINGS_DE = {
                     hidden: 'Nicht anzeigen'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Titel des Listenbereichs einfärben',
+                desc: 'Wendet die Farbe des ausgewählten Ordners, Tags oder der ausgewählten Eigenschaft auf den Titel des Listenbereichs an.'
+            },
             defaultSortOrder: {
                 name: 'Standard-Sortierreihenfolge',
                 desc: 'Wähle die Standard-Sortierreihenfolge für Notizen. Eigenschaften aus Sortiereigenschaften erscheinen als zusätzliche Sortieroptionen.',

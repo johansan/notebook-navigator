@@ -1188,6 +1188,10 @@ export const STRINGS_ZH_TW = {
                     hidden: '不顯示'
                 }
             },
+            colorListPaneTitle: {
+                name: '為列表窗格標題著色',
+                desc: '將所選資料夾、標籤或屬性的顏色套用至列表窗格標題。'
+            },
             defaultSortOrder: {
                 name: '預設排序方式',
                 desc: '選擇筆記的預設排序方式。「用於排序的屬性」中的屬性會作為額外的排序選項顯示。',

@@ -1202,6 +1202,10 @@ export const STRINGS_ES = {
                     hidden: 'No mostrar'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Colorear el título del panel de lista',
+                desc: 'Aplica el color de la carpeta, etiqueta o propiedad seleccionada al título del panel de lista.'
+            },
             defaultSortOrder: {
                 name: 'Orden predeterminado',
                 desc: 'Elige el orden predeterminado para las notas. Las propiedades de Propiedades de orden aparecen como opciones de orden adicionales.',

@@ -1190,6 +1190,10 @@ export const STRINGS_EN = {
                     hidden: 'Do not show'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Color list pane title',
+                desc: 'Apply the color of the selected folder, tag or property to the list pane title.'
+            },
             defaultSortOrder: {
                 name: 'Default sort order',
                 desc: 'Choose the default sort order for notes. Properties from Sorting properties appear as additional sort options.',

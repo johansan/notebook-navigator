@@ -1198,6 +1198,10 @@ export const STRINGS_PT = {
                     hidden: 'Não mostrar'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Colorir o título do painel de lista',
+                desc: 'Aplica a cor da pasta, etiqueta ou propriedade selecionada ao título do painel de lista.'
+            },
             defaultSortOrder: {
                 name: 'Ordem de ordenação predefinida',
                 desc: 'Escolha a ordem de ordenação predefinida para notas. As propriedades de Propriedades de ordenação aparecem como opções de ordenação adicionais.',

@@ -72,6 +72,54 @@ function createPropertyNode(params: {
 }
 
 describe('fileItemPillDecoration', () => {
+    it.each(['root', 'all', 'child'] as const)('keeps empty tag sections aligned with the %s rainbow scope', scope => {
+        const palette = ['#112233', '#445566'];
+        const expectedColor = scope === 'child' ? undefined : palette[0];
+
+        for (const rootTagKeys of [[], [UNTAGGED_TAG_ID]]) {
+            const colors = buildFileItemTagRainbowColors({
+                visibleTagTree: new Map(),
+                rootTagKeys,
+                rootTagOrderMap: new Map(),
+                palette,
+                scope,
+                showAllTagsFolder: true,
+                inheritColors: false
+            });
+
+            expect(colors.rootColor).toBe(expectedColor);
+            expect(colors.colorsByPath.get(UNTAGGED_TAG_ID)).toBe(rootTagKeys.length > 0 ? expectedColor : undefined);
+            expect(colors.colorsByPath.size).toBe(rootTagKeys.length > 0 && expectedColor ? 1 : 0);
+        }
+    });
+
+    it.each(['root', 'all', 'child'] as const)('keeps empty property sections aligned with the %s rainbow scope', scope => {
+        const palette = ['#112233', '#445566'];
+        const keyNode = createPropertyNode({ id: 'key:status', kind: 'key', key: 'status', valuePath: null, name: 'status' });
+        const propertyTree = new Map([['status', keyNode]]);
+
+        for (const source of [
+            { propertyTree: new Map<string, PropertyTreeNode>(), visiblePropertyNavigationKeySet: new Set(['status']) },
+            { propertyTree, visiblePropertyNavigationKeySet: new Set<string>() },
+            { propertyTree, visiblePropertyNavigationKeySet: new Set(['missing']) }
+        ]) {
+            const colors = buildFileItemPropertyRainbowColors({
+                ...source,
+                rootPropertyOrderMap: new Map(),
+                propertyKeyComparator: (a, b) => a.key.localeCompare(b.key),
+                palette,
+                scope,
+                showAllPropertiesFolder: true,
+                propertySortOrder: 'alpha-asc',
+                includeDescendantNotes: false
+            });
+
+            expect(colors.rootColor).toBe(scope === 'child' ? undefined : palette[0]);
+            expect(colors.colorsByNodeId.size).toBe(0);
+            expect(colors.rootColorsByKey.size).toBe(0);
+        }
+    });
+
     it('builds tag colors for descendant tags without depending on expanded nav rows', () => {
         const palette = createPalette();
         const childNode = createTagNode('alpha/child');

@@ -160,10 +160,11 @@ export function buildFileItemTagRainbowColors(params: {
         childSortOrderOverrides
     } = params;
 
-    if (palette.length === 0 || visibleTagTree.size === 0) {
+    if (palette.length === 0) {
         return createEmptyTagRainbowColors();
     }
 
+    // The Tags root and Untagged can remain visible without real tags, so their colors must still be built.
     const rootNodes = Array.from(visibleTagTree.values());
     const baseComparator = tagComparator ?? compareTagsAlphabetically;
     const effectiveComparator =
@@ -267,14 +268,15 @@ export function buildFileItemPropertyRainbowColors(params: {
         includeDescendantNotes
     } = params;
 
-    if (palette.length === 0 || propertyTree.size === 0 || visiblePropertyNavigationKeySet.size === 0) {
+    if (palette.length === 0) {
         return createEmptyPropertyRainbowColors();
     }
 
-    const keyNodes = Array.from(propertyTree.values()).filter(node => visiblePropertyNavigationKeySet.has(node.key));
-    if (keyNodes.length === 0) {
-        return createEmptyPropertyRainbowColors();
-    }
+    // The Properties root remains visible without matching keys, so the palette must still reach its color builder.
+    const keyNodes =
+        visiblePropertyNavigationKeySet.size > 0
+            ? Array.from(propertyTree.values()).filter(node => visiblePropertyNavigationKeySet.has(node.key))
+            : [];
 
     const effectiveComparator =
         rootPropertyOrderMap.size > 0

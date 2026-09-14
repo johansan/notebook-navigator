@@ -271,6 +271,10 @@ function createListAppearanceDefinitionGroup(context: SettingsTabContext): Setti
     }
 
     items.push(
+        createToggleDefinition('colorListPaneTitle', {
+            name: strings.settings.items.colorListPaneTitle.name,
+            desc: strings.settings.items.colorListPaneTitle.desc
+        }),
         createDropdownDefinition('defaultListMode', {
             name: strings.settings.items.defaultListMode.name,
             desc: strings.settings.items.defaultListMode.desc,

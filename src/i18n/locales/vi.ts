@@ -1195,6 +1195,10 @@ export const STRINGS_VI = {
                     hidden: 'Không hiện'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Tô màu tiêu đề ngăn danh sách',
+                desc: 'Áp dụng màu của thư mục, thẻ hoặc thuộc tính đã chọn cho tiêu đề ngăn danh sách.'
+            },
             defaultSortOrder: {
                 name: 'Thứ tự sắp xếp mặc định',
                 desc: 'Chọn thứ tự sắp xếp mặc định cho ghi chú. Các thuộc tính từ Thuộc tính sắp xếp xuất hiện dưới dạng tùy chọn sắp xếp bổ sung.',

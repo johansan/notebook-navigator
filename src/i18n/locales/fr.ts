@@ -1203,6 +1203,10 @@ export const STRINGS_FR = {
                     hidden: 'Ne pas afficher'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Colorer le titre du panneau de liste',
+                desc: 'Applique la couleur du dossier, du mot-clé ou de la propriété sélectionné au titre du panneau de liste.'
+            },
             defaultSortOrder: {
                 name: 'Ordre de tri par défaut',
                 desc: "Choisissez l'ordre de tri par défaut des notes. Les propriétés de Propriétés de tri apparaissent comme options de tri supplémentaires.",

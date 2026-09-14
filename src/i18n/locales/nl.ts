@@ -1202,6 +1202,10 @@ export const STRINGS_NL = {
                     hidden: 'Niet tonen'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Titel lijstpaneel kleuren',
+                desc: 'Past de kleur van de geselecteerde map, tag of eigenschap toe op de titel van het lijstpaneel.'
+            },
             defaultSortOrder: {
                 name: 'Standaard sorteervolgorde',
                 desc: 'Kies de standaard sorteervolgorde voor notities. Eigenschappen uit Sorteereigenschappen verschijnen als extra sorteeropties.',

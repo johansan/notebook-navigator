@@ -877,6 +877,8 @@ export interface NotebookNavigatorSettings {
     confirmBeforeManualSort: boolean;
     revealFileOnListChanges: boolean;
     listPaneTitle: ListPaneTitleOption;
+    // Applies the selected folder, tag, or property color to the list pane title text and icon.
+    colorListPaneTitle: boolean;
     // Supports base modes and property grouping encoded as `property:<key>`, `property-desc:<key>`,
     // or `property-follow:<key>`. Property keys must match an entry in propertyGroupKey;
     // reconciliation resets to the default grouping when the key is removed from the configured list.

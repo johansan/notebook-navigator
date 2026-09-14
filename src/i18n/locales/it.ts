@@ -1195,6 +1195,10 @@ export const STRINGS_IT = {
                     hidden: 'Non mostrare'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Colora il titolo del pannello lista',
+                desc: 'Applica il colore della cartella, etichetta o proprietà selezionata al titolo del pannello lista.'
+            },
             defaultSortOrder: {
                 name: 'Ordinamento predefinito',
                 desc: "Scegli l'ordinamento predefinito per le note. Le proprietà di Proprietà di ordinamento appaiono come opzioni di ordinamento aggiuntive.",

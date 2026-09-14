@@ -1187,6 +1187,10 @@ export const STRINGS_ZH_CN = {
                     hidden: '不显示'
                 }
             },
+            colorListPaneTitle: {
+                name: '为列表窗格标题着色',
+                desc: '将所选文件夹、标签或属性的颜色应用于列表窗格标题。'
+            },
             defaultSortOrder: {
                 name: '默认排序方式',
                 desc: '选择笔记的默认排序方式。“用于排序的属性”中的属性会作为额外的排序选项显示。',

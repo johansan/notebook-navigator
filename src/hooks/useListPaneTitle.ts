@@ -26,7 +26,7 @@ import { useFileCache } from '../context/StorageContext';
 import { useExpansionState } from '../context/ExpansionContext';
 import { strings } from '../i18n';
 import { getDBInstance } from '../storage/fileOperations';
-import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
+import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, TAGS_ROOT_VIRTUAL_FOLDER_ID, UNTAGGED_TAG_ID } from '../types';
 import { FOLDER_NOTE_TYPE_EXTENSIONS } from '../types/folderNote';
 import { hasSubfolders } from '../utils/fileFilters';
 import { resolveFolderNoteName } from '../utils/folderNoteName';
@@ -38,6 +38,13 @@ import { buildPropertyKeyNodeId, parsePropertyNodeId, type PropertySelectionNode
 import { resolveFolderDisplayName, resolveFolderDisplayPathSegments } from '../utils/folderDisplayName';
 import { resolveRootFolderNoteSourceName } from '../utils/folderNoteLookup';
 import { isFolderEffectivelyExpanded } from '../utils/navigationExpansion';
+import { resolveFolderDecorationColors, type FolderDecorationModel } from '../utils/folderDecoration';
+import {
+    resolveFileItemPropertyDecorationColors,
+    resolveFileItemTagDecorationColors,
+    type FileItemPillDecorationModel
+} from '../utils/fileItemPillDecoration';
+import { applyRainbowOverlay } from '../utils/navigationRainbow';
 
 const FOLDER_NOTE_EXTENSIONS = Object.values(FOLDER_NOTE_TYPE_EXTENSIONS);
 
@@ -82,11 +89,18 @@ export type BreadcrumbSegment =
           isLast: boolean;
       };
 
+interface UseListPaneTitleParams {
+    folderDecorationModel: FolderDecorationModel;
+    fileItemPillDecorationModel: FileItemPillDecorationModel;
+}
+
 interface UseListPaneTitleResult {
     desktopTitle: string;
     breadcrumbSegments: BreadcrumbSegment[];
     iconName: string;
     showIcon: boolean;
+    /** Color of the selected navigation item; undefined when the title color setting is off or no color applies */
+    titleColor: string | undefined;
     selectionType: ItemType | null;
 }
 
@@ -95,7 +109,7 @@ interface ListPaneTitleMemoResult {
     breadcrumbSegments: BreadcrumbSegment[];
 }
 
-export function useListPaneTitle(): UseListPaneTitleResult {
+export function useListPaneTitle({ folderDecorationModel, fileItemPillDecorationModel }: UseListPaneTitleParams): UseListPaneTitleResult {
     const { app } = useServices();
     const settings = useSettingsState();
     const uxPreferences = useUXPreferences();
@@ -207,6 +221,11 @@ export function useListPaneTitle(): UseListPaneTitleResult {
             folderIcons: settings.folderIcons || {},
             tagIcons: settings.tagIcons || {},
             propertyIcons: settings.propertyIcons || {},
+            // Color records are compared by content because metadata services can update them in place.
+            folderColors: settings.folderColors || {},
+            tagColors: settings.tagColors || {},
+            propertyColors: settings.propertyColors || {},
+            virtualFolderColors: settings.virtualFolderColors || {},
             enableFolderNotes: settings.enableFolderNotes,
             folderNoteNamePattern: settings.folderNoteNamePattern,
             useFrontmatterMetadata: settings.useFrontmatterMetadata,
@@ -292,6 +311,87 @@ export function useListPaneTitle(): UseListPaneTitleResult {
         settings.showRootFolder,
         settings.showTagIcons,
         metadataVersion
+    ]);
+
+    // Resolves the color the navigation pane shows for the current selection so the title matches the
+    // selected item: custom colors, colors inherited from ancestors or the Tags/Properties root folders,
+    // and rainbow colors. Only the foreground color is used because the title has no background.
+    const titleColor = useMemo((): string | undefined => {
+        // Forces recompute when folder note metadata or color records change.
+        void metadataVersion;
+        if (!settings.colorListPaneTitle) {
+            return undefined;
+        }
+
+        if (selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder) {
+            const folderPath = selectionState.selectedFolder.path;
+            return resolveFolderDecorationColors({
+                model: folderDecorationModel,
+                folderPath,
+                color: metadataService.getFolderColor(folderPath),
+                backgroundColor: undefined
+            }).color;
+        }
+
+        if (selectionState.selectionType === ItemType.TAG && selectionState.selectedTag) {
+            const tag = selectionState.selectedTag;
+            const tagsRootColor = settings.virtualFolderColors[TAGS_ROOT_VIRTUAL_FOLDER_ID];
+            // The tagged collection is selected through the Tags root folder, so it shows that folder's color.
+            if (tag === TAGGED_TAG_ID) {
+                return applyRainbowOverlay({
+                    mode: fileItemPillDecorationModel.navRainbowMode,
+                    rainbowColor: fileItemPillDecorationModel.tagRainbowColors.rootColor,
+                    color: tagsRootColor,
+                    backgroundColor: undefined
+                }).color;
+            }
+
+            const inheritsRootColor = settings.showAllTagsFolder && settings.inheritTagColors;
+            return resolveFileItemTagDecorationColors({
+                model: fileItemPillDecorationModel,
+                tagPath: tag,
+                color: metadataService.getTagColor(tag) ?? (inheritsRootColor ? tagsRootColor : undefined),
+                backgroundColor: undefined
+            }).color;
+        }
+
+        if (selectionState.selectionType === ItemType.PROPERTY && selectionState.selectedProperty) {
+            const nodeId = selectionState.selectedProperty;
+            const propertiesRootColor = settings.virtualFolderColors[PROPERTIES_ROOT_VIRTUAL_FOLDER_ID];
+            if (nodeId === PROPERTIES_ROOT_VIRTUAL_FOLDER_ID) {
+                return applyRainbowOverlay({
+                    mode: fileItemPillDecorationModel.navRainbowMode,
+                    rainbowColor: fileItemPillDecorationModel.propertyRainbowColors.rootColor,
+                    color: propertiesRootColor,
+                    backgroundColor: undefined
+                }).color;
+            }
+
+            const inheritsRootColor = settings.showAllPropertiesFolder && settings.inheritPropertyColors;
+            return resolveFileItemPropertyDecorationColors({
+                model: fileItemPillDecorationModel,
+                nodeId,
+                color: metadataService.getPropertyColor(nodeId) ?? (inheritsRootColor ? propertiesRootColor : undefined),
+                backgroundColor: undefined
+            }).color;
+        }
+
+        return undefined;
+    }, [
+        fileItemPillDecorationModel,
+        folderDecorationModel,
+        metadataService,
+        metadataVersion,
+        selectionState.selectedFolder,
+        selectionState.selectedProperty,
+        selectionState.selectedTag,
+        selectionState.selectionType,
+        settings.colorListPaneTitle,
+        settings.inheritPropertyColors,
+        settings.inheritTagColors,
+        settings.showAllPropertiesFolder,
+        settings.showAllTagsFolder,
+        settings.virtualFolderColors
     ]);
 
     const { desktopTitle, breadcrumbSegments } = useMemo<ListPaneTitleMemoResult>(() => {
@@ -482,6 +582,7 @@ export function useListPaneTitle(): UseListPaneTitleResult {
         desktopTitle,
         breadcrumbSegments,
         iconName,
+        titleColor,
         showIcon:
             (selectionState.selectionType === ItemType.FOLDER && settings.showFolderIcons && iconName.length > 0) ||
             (selectionState.selectionType === ItemType.TAG && settings.showTagIcons && iconName.length > 0) ||

@@ -28,14 +28,17 @@ import { resolveFolderNoteClickOpenContext } from '../utils/keyboardOpenContext'
 
 interface ListPaneTitleAreaProps {
     desktopTitle: string;
+    titleColor?: string;
 }
 
-export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktopTitle }: ListPaneTitleAreaProps) {
+export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktopTitle, titleColor }: ListPaneTitleAreaProps) {
     const { app, plugin } = useServices();
     const commandQueue = useCommandQueue();
     const settings = useSettingsState();
     const selectionState = useSelectionState();
     const selectionDispatch = useSelectionDispatch();
+    // The title keeps the theme color when custom colors are limited to icons, matching navigation items.
+    const titleTextColor = titleColor && !settings.colorIconOnly ? titleColor : undefined;
 
     // Folder note interactions only apply when a folder is selected.
     const selectedFolder = selectionState.selectionType === ItemType.FOLDER ? selectionState.selectedFolder : null;
@@ -132,6 +135,7 @@ export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktop
                         className={`nn-list-title-label${selectedFolderNote ? ' nn-list-title-label--folder-note' : ''}`}
                         onClick={selectedFolderNote ? handleFolderNoteClick : undefined}
                         onMouseDown={selectedFolderNote ? handleFolderNoteMouseDown : undefined}
+                        style={titleTextColor ? { color: titleTextColor } : undefined}
                     >
                         {desktopTitle}
                     </span>

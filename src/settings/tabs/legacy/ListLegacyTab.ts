@@ -86,6 +86,16 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             });
         }
 
+        addToggleSetting(
+            appearanceGroup.addSetting,
+            strings.settings.items.colorListPaneTitle.name,
+            strings.settings.items.colorListPaneTitle.desc,
+            () => plugin.settings.colorListPaneTitle,
+            value => {
+                plugin.settings.colorListPaneTitle = value;
+            }
+        );
+
         appearanceGroup.addSetting(setting => {
             setting
                 .setName(strings.settings.items.defaultListMode.name)

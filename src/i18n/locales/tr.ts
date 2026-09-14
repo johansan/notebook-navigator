@@ -1195,6 +1195,10 @@ export const STRINGS_TR = {
                     hidden: 'Gösterme'
                 }
             },
+            colorListPaneTitle: {
+                name: 'Liste bölmesi başlığını renklendir',
+                desc: 'Seçili klasörün, etiketin veya özelliğin rengini liste bölmesi başlığına uygular.'
+            },
             defaultSortOrder: {
                 name: 'Varsayılan sıralama düzeni',
                 desc: 'Notlar için varsayılan sıralama düzenini seçin. Sıralama özellikleri altındaki özellikler ek sıralama seçenekleri olarak görünür.',
