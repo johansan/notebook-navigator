@@ -106,11 +106,11 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
-        version: '3.4.0',
+        version: '3.4.1',
         date: '2026-09-14',
         showOnUpdate: true,
-        banner: '3.4.0.jpg',
-        info: 'Many users told me they do not want to install [Templater](https://community.obsidian.md/plugins/templater-obsidian), [QuickAdd](https://community.obsidian.md/plugins/quickadd) or [Commander](https://community.obsidian.md/plugins/cmdr) since they all carry a **"Caution"** rating in the Obsidian community plugin directory. Notebook Navigator 3.4 adds important parts of those plugins to its core: a customizable built-in template engine (Templater), new create note commands (QuickAdd) and the option to place commands to the ribbon or tab bar buttons (Commander). Thank you for using Notebook Navigator!',
+        banner: '3.4.1.jpg',
+        info: 'Many users told me they do not want to install [Templater](https://community.obsidian.md/plugins/templater-obsidian), [QuickAdd](https://community.obsidian.md/plugins/quickadd) or [Commander](https://community.obsidian.md/plugins/cmdr) but would still want the functionality from those plugins. Notebook Navigator 3.4 adds important parts of those plugins to its core: a customizable built-in template engine (Templater), new create note commands (QuickAdd) and the option to place commands to the ribbon or tab bar buttons (Commander). Thank you for using Notebook Navigator!',
         new: [
             'A new customizable built-in template engine for calendar notes, folder notes and `New note from template` that replaces tokens such as `{{title}}`, `{{date}}`, `{{date+1d}}`, `{{yesterday}}`, `{{monday}}`, `{{time}}`, `{{now}}` and `{{cursor}}` without needing the Templater plugin (see the [Templates section in the README](https://github.com/johansan/notebook-navigator#106-templates) for the full list).',
             'New setting in `File operations & templates`: ==Template engine== with `Automatic` (will use Templater for files containing `<%`, otherwise the built-in engine), `Notebook Navigator` and `Templater`.',
