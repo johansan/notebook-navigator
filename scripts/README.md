@@ -79,11 +79,11 @@ Automates the release process for the Obsidian plugin.
 **Usage:**
 
 ```bash
-node scripts/release.js                    # Publish an untagged merged version, or choose the next release
-node scripts/release.js patch              # Prepare a patch release PR
-node scripts/release.js minor              # Prepare a minor release PR
-node scripts/release.js major              # Prepare a major release PR
-node scripts/release.js patch --dry-run    # Preview release PR preparation
+node scripts/release.js                    # Publish an untagged version on main, or choose the next release
+node scripts/release.js patch              # Publish a patch release
+node scripts/release.js minor              # Publish a minor release
+node scripts/release.js major              # Publish a major release
+node scripts/release.js patch --dry-run    # Preview the release without making changes
 ```
 
 **Features:**
@@ -91,8 +91,8 @@ node scripts/release.js patch --dry-run    # Preview release PR preparation
 - Increments version numbers in `manifest.json`, `package.json`, `package-lock.json`, and `versions.json`
 - Validates git repository state (clean, on main branch, synced with remote)
 - Runs build verification before release
-- Creates a release branch and pull request with the version bump
-- With GitHub CLI, waits for release pull request checks, merges the pull request, then publishes by creating and pushing a git tag
+- Commits and pushes the version bump directly to `main`
+- Waits for the `Quality checks` workflow on that exact main commit before creating and pushing its release tag
 - Pushes the tag to trigger the GitHub Actions release workflow
 - Verifies the remote tag, GitHub release assets, release workflow result, and artifact attestations after publishing
 
@@ -107,9 +107,11 @@ node scripts/release.js patch --dry-run    # Preview release PR preparation
 - Never manually modify version numbers in files
 - Always commit all changes before running
 - Must be on main branch and synced with remote
-- An authenticated GitHub CLI is required for release pull request automation
-- If the script creates a pull request, leave it running while CI completes; it merges the pull request when checks pass and GitHub allows the merge
-- If you stop the script after merging the release pull request, run `node scripts/release.js` again to publish
+- An authenticated GitHub CLI is required to verify main CI and the published release
+- Leave the script running while CI completes; it publishes the tag after main CI passes
+- If you stop after pushing the version commit and before creating the tag, run `node scripts/release.js` again to publish
+- A rejected main push retains the local version commit; resolve the push failure, run `git push origin main`, then run `node scripts/release.js`
+- `--dry-run` previews writes, commits, pushes, and tagging without changing files, Git refs, or GitHub; it skips builds and CI waits
 
 ## gitdump.sh
 
