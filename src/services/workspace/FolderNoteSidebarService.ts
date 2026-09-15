@@ -26,7 +26,9 @@ import { getLeafSplitLocation } from '../../utils/workspaceSplit';
 const SETTINGS_LISTENER_ID = 'folder-note-sidebar-service';
 const SIDEBAR_OPEN_SUPPRESSION_MS = 1000;
 const PLACEHOLDER_VIEW_STATE: ViewState = { type: NOTEBOOK_NAVIGATOR_FOLDER_NOTE_SIDEBAR_VIEW, state: {} };
-const FOLDER_NOTE_DOCUMENT_VIEW_TYPES = new Set(['markdown', 'canvas', 'base', 'excalidraw']);
+// Obsidian uses "bases" as the view type for .base files; using the extension here
+// prevents companion leaf reuse and duplicate cleanup when switching folder notes.
+const FOLDER_NOTE_DOCUMENT_VIEW_TYPES = new Set(['markdown', 'canvas', 'bases', 'excalidraw']);
 
 interface WorkspaceWithActiveLeaf {
     activeLeaf?: WorkspaceLeaf | null;

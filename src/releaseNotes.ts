@@ -106,6 +106,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.4.2',
+        date: '2026-09-15',
+        showOnUpdate: false,
+        fixed: [
+            'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).'
+        ]
+    },
+    {
         version: '3.4.1',
         date: '2026-09-14',
         showOnUpdate: true,

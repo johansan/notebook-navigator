@@ -190,6 +190,110 @@ describe('FolderNoteSidebarService', () => {
         expect(workspace.revealLeaf).toHaveBeenCalledWith(companionLeaf.leaf);
     });
 
+    it('reuses one companion leaf when switching between Bases and Markdown folder notes', async () => {
+        const app = new App();
+        const root = createTestFolder(app, '/');
+        const projects = createTestFolder(app, 'Projects', root);
+        const archive = createTestFolder(app, 'Archive', root);
+        const baseFolderNote = addFileToFolder(app, projects, 'Projects/index.base');
+        const markdownFolderNote = addFileToFolder(app, archive, 'Archive/index.md');
+        const rightSplit = {};
+        const leaves: TestWorkspaceLeaf[] = [];
+        const workspace = {
+            rootSplit: {},
+            leftSplit: {},
+            rightSplit,
+            activeLeaf: null,
+            getRightLeaf: vi.fn(() => {
+                const viewState = { type: 'empty', state: { file: '' } };
+                const companionLeaf = createRightSidebarLeaf(viewState, rightSplit);
+                companionLeaf.openFile.mockImplementation((file: ReturnType<typeof createTestTFile>) => {
+                    // Obsidian reports .base documents as "bases" after openFile completes.
+                    viewState.type = file.extension === 'base' ? 'bases' : 'markdown';
+                    viewState.state.file = file.path;
+                });
+                leaves.push(companionLeaf);
+                return companionLeaf.leaf;
+            }),
+            iterateAllLeaves: vi.fn((callback: (leaf: WorkspaceLeaf) => void) => {
+                leaves.forEach(({ leaf }) => callback(leaf));
+            }),
+            revealLeaf: vi.fn().mockResolvedValue(undefined),
+            setActiveLeaf: vi.fn()
+        };
+        app.workspace = workspace as unknown as App['workspace'];
+        const plugin = {
+            app,
+            settings: {
+                enableFolderNotes: true,
+                folderNoteOpenLocation: 'right-sidebar',
+                showNearestFolderNoteInSidebar: true,
+                folderNoteNamePattern: 'index'
+            },
+            isShuttingDown: () => false
+        } as unknown as NotebookNavigatorPlugin;
+        const service = new FolderNoteSidebarService(plugin);
+
+        await service.handleWorkspaceReady();
+        for (const folder of [projects, archive, projects, archive, projects]) {
+            await service.syncToSelectedFolder(folder);
+
+            expect(workspace.getRightLeaf).toHaveBeenCalledTimes(1);
+            expect(leaves[0]?.openFile).toHaveBeenLastCalledWith(folder === projects ? baseFolderNote : markdownFolderNote, {
+                active: false
+            });
+        }
+
+        await service.syncToSelectedFolder(projects);
+
+        expect(leaves[0]?.openFile).toHaveBeenCalledTimes(5);
+        expect(leaves[0]?.detach).not.toHaveBeenCalled();
+    });
+
+    it('reuses a restored Bases folder-note leaf and removes its duplicate before switching folders', async () => {
+        const app = new App();
+        const root = createTestFolder(app, '/');
+        const projects = createTestFolder(app, 'Projects', root);
+        const archive = createTestFolder(app, 'Archive', root);
+        const baseFolderNote = addFileToFolder(app, projects, 'Projects/index.base');
+        const markdownFolderNote = addFileToFolder(app, archive, 'Archive/index.md');
+        const rightSplit = {};
+        const restoredLeaf = createRightSidebarLeaf({ type: 'bases', state: { file: baseFolderNote.path } }, rightSplit);
+        const duplicateLeaf = createRightSidebarLeaf({ type: 'bases', state: { file: baseFolderNote.path } }, rightSplit);
+        const workspace = {
+            rootSplit: {},
+            leftSplit: {},
+            rightSplit,
+            activeLeaf: null,
+            getRightLeaf: vi.fn(),
+            iterateAllLeaves: vi.fn((callback: (leaf: WorkspaceLeaf) => void) => {
+                callback(restoredLeaf.leaf);
+                callback(duplicateLeaf.leaf);
+            }),
+            revealLeaf: vi.fn().mockResolvedValue(undefined),
+            setActiveLeaf: vi.fn()
+        };
+        app.workspace = workspace as unknown as App['workspace'];
+        const plugin = {
+            app,
+            settings: {
+                enableFolderNotes: true,
+                folderNoteOpenLocation: 'right-sidebar',
+                folderNoteNamePattern: 'index'
+            },
+            isShuttingDown: () => false
+        } as unknown as NotebookNavigatorPlugin;
+        const service = new FolderNoteSidebarService(plugin);
+
+        await service.openFolderNote(markdownFolderNote);
+
+        expect(workspace.getRightLeaf).not.toHaveBeenCalled();
+        expect(restoredLeaf.openFile).toHaveBeenCalledWith(markdownFolderNote, { active: false });
+        expect(restoredLeaf.detach).not.toHaveBeenCalled();
+        expect(duplicateLeaf.detach).toHaveBeenCalledTimes(1);
+        expect(duplicateLeaf.openFile).not.toHaveBeenCalled();
+    });
+
     it('switches the companion leaf to the folder note placeholder when no folder note resolves', async () => {
         const app = new App();
         const rightSplit = {};
