@@ -1772,6 +1772,11 @@ export const STRINGS_TR = {
                 },
                 templaterInstalled: 'Templater eklentisi: yüklü',
                 templaterNotInstalled: 'Templater eklentisi: yüklü değil',
+                templaterAutomatic:
+                    'Templater komutları (<%) içeren şablonlar Templater tarafından işlenir. Diğer tüm şablonlar yerleşik motor tarafından işlenir.',
+                templaterUsage: 'Tüm şablonlar Templater tarafından işlenir. Şablon dosyalarındaki yerleşik belirteçler değiştirilmez.',
+                templaterMissingWarning:
+                    'Şablonlardan not oluşturulamıyor. {location} bölümünde {setting} ayarını {automatic} veya {builtin} olarak değiştirin ya da Templater eklentisini yükleyip etkinleştirin.',
                 tokens: 'Yerleşik belirteçler: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} - {{sunday}}, {{cursor}}. {{date}} metnini olduğu gibi bırakmak için {{!date}} yazın.',
                 usage: '{{title}} ve {{date}} gibi şablon belirteçleri not oluşturulurken değiştirilir. Şablon motorunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden yapılandırın.'
             },

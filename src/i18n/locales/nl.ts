@@ -1779,6 +1779,12 @@ export const STRINGS_NL = {
                 },
                 templaterInstalled: 'Templater-plugin: geïnstalleerd',
                 templaterNotInstalled: 'Templater-plugin: niet geïnstalleerd',
+                templaterAutomatic:
+                    'Sjablonen die Templater-opdrachten (<%) bevatten, worden door Templater verwerkt. Alle andere sjablonen worden door de ingebouwde engine verwerkt.',
+                templaterUsage:
+                    'Alle sjablonen worden door Templater verwerkt. Ingebouwde tokens in sjabloonbestanden worden niet vervangen.',
+                templaterMissingWarning:
+                    'Notities kunnen niet vanuit sjablonen worden aangemaakt. Wijzig {setting} in {automatic} of {builtin} onder {location}, of installeer en activeer de Templater-plugin.',
                 tokens: 'Ingebouwde tokens: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} tot {{sunday}}, {{cursor}}. Schrijf {{!date}} om {{date}} als tekst te behouden.',
                 usage: 'Sjabloontokens zoals {{title}} en {{date}} worden vervangen bij het aanmaken van de notitie. Configureer de sjabloonengine onder Bestandsbewerkingen & sjablonen > Sjablonen.'
             },

@@ -1772,6 +1772,12 @@ export const STRINGS_IT = {
                 },
                 templaterInstalled: 'Plugin Templater: installato',
                 templaterNotInstalled: 'Plugin Templater: non installato',
+                templaterAutomatic:
+                    'I modelli che contengono comandi Templater (<%) vengono elaborati da Templater. Tutti gli altri modelli vengono elaborati dal motore integrato.',
+                templaterUsage:
+                    'Tutti i modelli vengono elaborati da Templater. I token integrati nei file modello non vengono sostituiti.',
+                templaterMissingWarning:
+                    'Non è possibile creare note dai modelli. Cambia {setting} in {automatic} o {builtin} in {location}, oppure installa e attiva il plugin Templater.',
                 tokens: 'Token integrati: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Scrivi {{!date}} per mantenere {{date}} come testo.',
                 usage: 'I token dei modelli come {{title}} e {{date}} vengono sostituiti alla creazione della nota. Configura il motore dei modelli in Operazioni sui file e modelli > Modelli.'
             },

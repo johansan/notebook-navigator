@@ -1780,6 +1780,12 @@ export const STRINGS_FR = {
                 },
                 templaterInstalled: 'Plugin Templater : installé',
                 templaterNotInstalled: 'Plugin Templater : non installé',
+                templaterAutomatic:
+                    'Les modèles contenant des commandes Templater (<%) sont traités par Templater. Tous les autres modèles sont traités par le moteur intégré.',
+                templaterUsage:
+                    'Tous les modèles sont traités par Templater. Les jetons intégrés des fichiers de modèle ne sont pas remplacés.',
+                templaterMissingWarning:
+                    'Impossible de créer des notes à partir de modèles. Dans {location}, réglez {setting} sur {automatic} ou {builtin}, ou installez et activez le plugin Templater.',
                 tokens: 'Jetons intégrés : {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} à {{sunday}}, {{cursor}}. Écrivez {{!date}} pour conserver {{date}} en texte.',
                 usage: 'Les jetons de modèle tels que {{title}} et {{date}} sont remplacés à la création de la note. Configurez le moteur de modèles dans Opérations sur les fichiers et modèles > Modèles.'
             },

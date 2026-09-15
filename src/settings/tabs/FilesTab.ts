@@ -21,7 +21,8 @@ import { runAsyncAction } from '../../utils/async';
 import { formatFolderPathForDisplay } from '../../utils/pathUtils';
 import { strings } from '../../i18n';
 import { naturalCompare } from '../../utils/sortUtils';
-import { getTemplaterCreateNoteFromTemplate } from '../../utils/templaterIntegration';
+import { setElementVisible } from '../dependentSettings';
+import { renderTemplateEngineStatus } from '../templateEngineStatus';
 import {
     createDropdownDefinition,
     createFolderDefinition,
@@ -110,18 +111,15 @@ export function renderTemplateInfoSetting(setting: Setting, context: SettingsTab
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
 
-    const templaterStatusText = getTemplaterCreateNoteFromTemplate(context.app)
-        ? strings.settings.items.templateEngine.templaterInstalled
-        : strings.settings.items.templateEngine.templaterNotInstalled;
-    setting.descEl.append(
-        strings.settings.items.templateFolderLocation.usage,
-        createEl('br'),
-        createEl('br'),
-        strings.settings.items.templateEngine.tokens,
-        createEl('br'),
-        createEl('br'),
-        createEl('strong', { text: templaterStatusText })
-    );
+    setting.descEl.createDiv({ text: strings.settings.items.templateFolderLocation.usage });
+    const tokensEl = setting.descEl.createDiv({ cls: 'nn-setting-template-tokens', text: strings.settings.items.templateEngine.tokens });
+    // Templater receives template files unprocessed, so the token list is hidden while the Templater engine is selected.
+    const updateTokens = () => {
+        setElementVisible(tokensEl, context.plugin.settings.templateEngine !== 'templater');
+    };
+    context.registerSettingsUpdateListener('files-template-tokens', updateTokens);
+    updateTokens();
+    renderTemplateEngineStatus(setting, context, 'files-template-engine-status');
 }
 
 /** Lists folder templates with scope and removal controls in the native and legacy Files tabs. */

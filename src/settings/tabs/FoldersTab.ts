@@ -34,6 +34,7 @@ import { FOLDER_NOTE_NAME_PATTERN_TOKEN } from '../../utils/folderNoteName';
 import { normalizeOptionalVaultFilePath } from '../../utils/pathUtils';
 import { isFolderNoteTemplateCompatible, isSupportedFolderNoteExtension } from '../../utils/folderNotes';
 import { setElementVisible } from '../dependentSettings';
+import { renderTemplateEngineStatus } from '../templateEngineStatus';
 
 /** Builds native 1.13 setting definitions for folder and folder note settings. */
 export function createFoldersSettingDefinitions(context: SettingsTabContext, heading?: string): SettingDefinitionItem[] {
@@ -125,7 +126,7 @@ export function createFoldersSettingDefinitions(context: SettingsTabContext, hea
                 createRenderDefinition({
                     name: 'Templates',
                     searchable: false,
-                    render: setting => renderFolderNoteTemplateInfoSetting(setting)
+                    render: setting => renderFolderNoteTemplateInfoSetting(setting, context)
                 })
             ],
             { visible: () => plugin.settings.enableFolderNotes }
@@ -194,9 +195,10 @@ function renderFolderNoteTemplateSetting(setting: Setting, context: SettingsTabC
     updateWarning();
 }
 
-function renderFolderNoteTemplateInfoSetting(setting: Setting): void {
+export function renderFolderNoteTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
     setting.descEl.createDiv({ text: strings.settings.items.templateEngine.usage });
+    renderTemplateEngineStatus(setting, context, 'folders-template-engine-status');
 }

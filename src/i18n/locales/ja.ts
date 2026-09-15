@@ -1773,6 +1773,11 @@ export const STRINGS_JA = {
                 },
                 templaterInstalled: 'Templaterプラグイン: インストール済み',
                 templaterNotInstalled: 'Templaterプラグイン: 未インストール',
+                templaterAutomatic:
+                    'Templaterコマンド（<%）を含むテンプレートはTemplaterで処理されます。それ以外のテンプレートは内蔵エンジンで処理されます。',
+                templaterUsage: 'すべてのテンプレートはTemplaterで処理されます。テンプレートファイル内の内蔵トークンは置き換えられません。',
+                templaterMissingWarning:
+                    'テンプレートからノートを作成できません。{location}で{setting}を{automatic}または{builtin}に変更するか、Templaterプラグインをインストールして有効にしてください。',
                 tokens: '内蔵トークン: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}}〜{{sunday}}, {{cursor}}。{{date}} をそのまま残すには {{!date}} と書きます。',
                 usage: '{{title}} や {{date}} などのテンプレートトークンはノート作成時に置き換えられます。テンプレートエンジンは ファイル操作とテンプレート > テンプレート で設定します。'
             },

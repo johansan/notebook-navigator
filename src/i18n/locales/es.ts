@@ -1779,6 +1779,12 @@ export const STRINGS_ES = {
                 },
                 templaterInstalled: 'Plugin Templater: instalado',
                 templaterNotInstalled: 'Plugin Templater: no instalado',
+                templaterAutomatic:
+                    'Las plantillas que contienen comandos de Templater (<%) se procesan con Templater. Todas las demás plantillas se procesan con el motor integrado.',
+                templaterUsage:
+                    'Todas las plantillas se procesan con Templater. Los marcadores integrados de los archivos de plantilla no se reemplazan.',
+                templaterMissingWarning:
+                    'No se pueden crear notas a partir de plantillas. Cambia {setting} a {automatic} o {builtin} en {location}, o instala y activa el plugin Templater.',
                 tokens: 'Marcadores integrados: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Escribe {{!date}} para mantener {{date}} como texto.',
                 usage: 'Los marcadores de plantilla como {{title}} y {{date}} se sustituyen al crear la nota. Configura el motor de plantillas en Operaciones de archivos y plantillas > Plantillas.'
             },

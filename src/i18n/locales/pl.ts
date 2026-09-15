@@ -1778,6 +1778,12 @@ export const STRINGS_PL = {
                 },
                 templaterInstalled: 'Wtyczka Templater: zainstalowana',
                 templaterNotInstalled: 'Wtyczka Templater: niezainstalowana',
+                templaterAutomatic:
+                    'Szablony zawierające polecenia Templater (<%) są przetwarzane przez Templater. Pozostałe szablony są przetwarzane przez wbudowany silnik.',
+                templaterUsage:
+                    'Wszystkie szablony są przetwarzane przez Templater. Wbudowane tokeny w plikach szablonów nie są zastępowane.',
+                templaterMissingWarning:
+                    'Nie można tworzyć notatek z szablonów. Zmień {setting} na {automatic} lub {builtin} w {location} albo zainstaluj i włącz wtyczkę Templater.',
                 tokens: 'Wbudowane tokeny: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} do {{sunday}}, {{cursor}}. Wpisz {{!date}}, aby zachować {{date}} jako tekst.',
                 usage: 'Tokeny szablonów, takie jak {{title}} i {{date}}, są zastępowane podczas tworzenia notatki. Skonfiguruj silnik szablonów w Operacje na plikach i szablony > Szablony.'
             },

@@ -1760,6 +1760,10 @@ export const STRINGS_ZH_CN = {
                 },
                 templaterInstalled: 'Templater 插件：已安装',
                 templaterNotInstalled: 'Templater 插件：未安装',
+                templaterAutomatic: '包含 Templater 命令（<%）的模板由 Templater 处理，其他模板由内置引擎处理。',
+                templaterUsage: '所有模板都由 Templater 处理。模板文件中的内置占位符不会被替换。',
+                templaterMissingWarning:
+                    '无法从模板创建笔记。请在{location}中将{setting}更改为{automatic}或{builtin}，或安装并启用 Templater 插件。',
                 tokens: '内置占位符：{{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} 至 {{sunday}}, {{cursor}}。写 {{!date}} 可将 {{date}} 保留为文本。',
                 usage: '{{title}}、{{date}} 等模板占位符会在创建笔记时被替换。请在文件操作与模板 > 模板中配置模板引擎。'
             },

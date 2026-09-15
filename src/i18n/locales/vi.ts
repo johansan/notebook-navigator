@@ -1772,6 +1772,11 @@ export const STRINGS_VI = {
                 },
                 templaterInstalled: 'Plugin Templater: đã cài đặt',
                 templaterNotInstalled: 'Plugin Templater: chưa cài đặt',
+                templaterAutomatic:
+                    'Các mẫu chứa lệnh Templater (<%) được Templater xử lý. Tất cả các mẫu khác được công cụ tích hợp xử lý.',
+                templaterUsage: 'Tất cả các mẫu đều được Templater xử lý. Token tích hợp trong tệp mẫu không được thay thế.',
+                templaterMissingWarning:
+                    'Không thể tạo ghi chú từ mẫu. Đổi {setting} thành {automatic} hoặc {builtin} trong {location}, hoặc cài đặt và bật plugin Templater.',
                 tokens: 'Token tích hợp: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} đến {{sunday}}, {{cursor}}. Viết {{!date}} để giữ {{date}} dưới dạng văn bản.',
                 usage: 'Các token mẫu như {{title}} và {{date}} được thay thế khi tạo ghi chú. Cấu hình công cụ mẫu trong Thao tác tệp & mẫu > Mẫu.'
             },

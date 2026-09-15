@@ -20,6 +20,7 @@ import { ExtraButtonComponent, Setting } from 'obsidian';
 import type { SettingDefinitionRender } from 'obsidian';
 import { MOMENT_FORMAT_DOCS_URL } from '../../constants/urls';
 import { strings } from '../../i18n';
+import { renderTemplateEngineStatus } from '../templateEngineStatus';
 import { TemplateFileModal } from '../../modals/TemplateFileModal';
 import { runAsyncAction } from '../../utils/async';
 import {
@@ -474,6 +475,7 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         });
         description.append(createEl('br'), createEl('br'), strings.settings.items.templateEngine.usage);
         setting.descEl.append(description);
+        renderTemplateEngineStatus(setting, context, 'calendar-template-engine-status');
     };
 
     const renderCalendarTemplateIndicators = (): void => {

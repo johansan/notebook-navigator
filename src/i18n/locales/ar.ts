@@ -1768,6 +1768,11 @@ export const STRINGS_AR = {
                 },
                 templaterInstalled: 'إضافة Templater: مثبتة',
                 templaterNotInstalled: 'إضافة Templater: غير مثبتة',
+                templaterAutomatic:
+                    'تتم معالجة القوالب التي تحتوي على أوامر Templater (<%) بواسطة Templater. تتم معالجة بقية القوالب بواسطة المحرك المدمج.',
+                templaterUsage: 'تتم معالجة جميع القوالب بواسطة Templater. لا يتم استبدال الرموز المدمجة في ملفات القوالب.',
+                templaterMissingWarning:
+                    'لا يمكن إنشاء الملاحظات من القوالب. غيّر {setting} إلى {automatic} أو {builtin} في {location}، أو ثبّت إضافة Templater وفعّلها.',
                 tokens: 'الرموز المدمجة: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} إلى {{sunday}}, {{cursor}}. اكتب {{!date}} للإبقاء على {{date}} كنص.',
                 usage: 'تُستبدل رموز القالب مثل {{title}} و{{date}} عند إنشاء الملاحظة. اضبط محرك القوالب في عمليات الملفات والقوالب > قوالب.'
             },

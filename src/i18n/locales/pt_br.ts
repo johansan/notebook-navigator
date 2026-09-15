@@ -1778,6 +1778,12 @@ export const STRINGS_PT_BR = {
                 },
                 templaterInstalled: 'Plugin Templater: instalado',
                 templaterNotInstalled: 'Plugin Templater: não instalado',
+                templaterAutomatic:
+                    'Os modelos que contêm comandos do Templater (<%) são processados pelo Templater. Todos os outros modelos são processados pelo mecanismo integrado.',
+                templaterUsage:
+                    'Todos os modelos são processados pelo Templater. Os tokens integrados nos arquivos de modelo não são substituídos.',
+                templaterMissingWarning:
+                    'Não é possível criar notas a partir de modelos. Altere {setting} para {automatic} ou {builtin} em {location}, ou instale e ative o plugin Templater.',
                 tokens: 'Tokens integrados: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} a {{sunday}}, {{cursor}}. Escreva {{!date}} para manter {{date}} como texto.',
                 usage: 'Tokens de modelo como {{title}} e {{date}} são substituídos ao criar a nota. Configure o mecanismo de modelos em Operações de arquivo e modelos > Modelos.'
             },

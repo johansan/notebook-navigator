@@ -1772,6 +1772,11 @@ export const STRINGS_RU = {
                 },
                 templaterInstalled: 'Плагин Templater: установлен',
                 templaterNotInstalled: 'Плагин Templater: не установлен',
+                templaterAutomatic:
+                    'Шаблоны, содержащие команды Templater (<%), обрабатываются Templater. Все остальные шаблоны обрабатываются встроенным движком.',
+                templaterUsage: 'Все шаблоны обрабатываются Templater. Встроенные токены в файлах шаблонов не заменяются.',
+                templaterMissingWarning:
+                    'Заметки нельзя создать из шаблонов. В разделе {location} измените {setting} на {automatic} или {builtin} либо установите и включите плагин Templater.',
                 tokens: 'Встроенные токены: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} — {{sunday}}, {{cursor}}. Напишите {{!date}}, чтобы оставить {{date}} как текст.',
                 usage: 'Токены шаблона, такие как {{title}} и {{date}}, заменяются при создании заметки. Настройте движок шаблонов в разделе Операции с файлами и шаблоны > Шаблоны.'
             },

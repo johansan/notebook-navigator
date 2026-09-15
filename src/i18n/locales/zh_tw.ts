@@ -1761,6 +1761,10 @@ export const STRINGS_ZH_TW = {
                 },
                 templaterInstalled: 'Templater 外掛：已安裝',
                 templaterNotInstalled: 'Templater 外掛：未安裝',
+                templaterAutomatic: '包含 Templater 命令（<%）的範本由 Templater 處理，其他範本由內建引擎處理。',
+                templaterUsage: '所有範本都由 Templater 處理。範本檔案中的內建佔位符不會被取代。',
+                templaterMissingWarning:
+                    '無法從範本建立筆記。請在{location}中將{setting}變更為{automatic}或{builtin}，或安裝並啟用 Templater 外掛。',
                 tokens: '內建佔位符：{{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} 至 {{sunday}}, {{cursor}}。寫 {{!date}} 可將 {{date}} 保留為文字。',
                 usage: '{{title}}、{{date}} 等範本佔位符會在建立筆記時被取代。請在檔案操作與範本 > 範本中設定範本引擎。'
             },

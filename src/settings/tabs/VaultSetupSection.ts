@@ -39,6 +39,7 @@ import { isVaultTitleOption } from '../types';
 import { createGroupDefinition, createRenderDefinition } from '../nativeSettingControls';
 import { createSettingGroupFactory } from '../settingGroups';
 import type { SettingsTabContext } from './SettingsTabContext';
+import { renderTemplateEngineWarningSetting } from '../templateEngineStatus';
 
 interface VaultSetupRenderers {
     renderProfileSetting(setting: Setting): void;
@@ -66,6 +67,7 @@ function renderVaultSetupSection(context: SettingsTabContext): void {
     }
     vaultSetupGroup.addSetting(setting => renderers.renderFileVisibilitySetting(setting));
     vaultSetupGroup.addSetting(setting => renderers.renderPropertyKeysSetting(setting));
+    vaultSetupGroup.addSetting(setting => renderTemplateEngineWarningSetting(setting, context));
 }
 
 export function createVaultSetupSettingDefinitions(context: SettingsTabContext): SettingDefinitionGroup[] {
@@ -85,6 +87,11 @@ export function createVaultSetupSettingDefinitions(context: SettingsTabContext):
             name: strings.settings.items.propertyKeys.name,
             desc: strings.settings.items.propertyKeys.desc,
             render: setting => renderers.renderPropertyKeysSetting(setting)
+        }),
+        createRenderDefinition({
+            name: strings.settings.items.templateEngine.name,
+            searchable: false,
+            render: setting => renderTemplateEngineWarningSetting(setting, context)
         })
     ];
 

@@ -1766,6 +1766,11 @@ export const STRINGS_EN = {
                 },
                 templaterInstalled: 'Templater plugin: installed',
                 templaterNotInstalled: 'Templater plugin: not installed',
+                templaterAutomatic:
+                    'Templates that contain Templater commands (<%) are processed by Templater. All other templates are processed by the built-in engine.',
+                templaterUsage: 'All templates are processed by Templater. Built-in tokens in template files are not replaced.',
+                templaterMissingWarning:
+                    'Notes cannot be created from templates. Change {setting} to {automatic} or {builtin} in {location}, or install and enable the Templater plugin.',
                 tokens: 'Built-in tokens: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} to {{sunday}}, {{cursor}}. Write {{!date}} to keep {{date}} as text.',
                 usage: 'Template tokens such as {{title}} and {{date}} are replaced when the note is created. Configure the template engine in File operations & templates > Templates.'
             },

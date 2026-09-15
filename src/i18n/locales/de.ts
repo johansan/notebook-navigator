@@ -1778,6 +1778,12 @@ export const STRINGS_DE = {
                 },
                 templaterInstalled: 'Templater-Plugin: installiert',
                 templaterNotInstalled: 'Templater-Plugin: nicht installiert',
+                templaterAutomatic:
+                    'Vorlagen, die Templater-Befehle (<%) enthalten, werden von Templater verarbeitet. Alle anderen Vorlagen werden von der integrierten Engine verarbeitet.',
+                templaterUsage:
+                    'Alle Vorlagen werden von Templater verarbeitet. Integrierte Platzhalter in Vorlagendateien werden nicht ersetzt.',
+                templaterMissingWarning:
+                    'Notizen können nicht aus Vorlagen erstellt werden. Ändere {setting} unter {location} auf {automatic} oder {builtin}, oder installiere und aktiviere das Templater-Plugin.',
                 tokens: 'Integrierte Platzhalter: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} bis {{sunday}}, {{cursor}}. Schreibe {{!date}}, um {{date}} als Text zu behalten.',
                 usage: 'Vorlagen-Platzhalter wie {{title}} und {{date}} werden beim Erstellen der Notiz ersetzt. Die Vorlagen-Engine wird unter Dateioperationen & Vorlagen > Vorlagen konfiguriert.'
             },

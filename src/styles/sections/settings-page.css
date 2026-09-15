@@ -55,6 +55,27 @@
     font-weight: 600;
 }
 
+.nn-setting-template-tokens,
+.nn-setting-template-status:not(:first-child) {
+    margin-top: 1em;
+}
+
+.nn-setting-template-status-header {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2-2);
+}
+
+.nn-setting-template-status-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.nn-setting-template-status-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
 .nn-setting-calendar-pattern-example-text {
     font-size: inherit;
     font-weight: var(--font-semibold);

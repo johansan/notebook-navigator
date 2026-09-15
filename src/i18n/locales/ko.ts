@@ -1769,6 +1769,10 @@ export const STRINGS_KO = {
                 },
                 templaterInstalled: 'Templater 플러그인: 설치됨',
                 templaterNotInstalled: 'Templater 플러그인: 설치되지 않음',
+                templaterAutomatic: 'Templater 명령(<%)이 포함된 템플릿은 Templater가 처리합니다. 그 외 템플릿은 내장 엔진이 처리합니다.',
+                templaterUsage: '모든 템플릿은 Templater가 처리합니다. 템플릿 파일의 내장 토큰은 치환되지 않습니다.',
+                templaterMissingWarning:
+                    '템플릿으로 노트를 만들 수 없습니다. {location}에서 {setting}을 {automatic} 또는 {builtin}로 변경하거나 Templater 플러그인을 설치하고 활성화하세요.',
                 tokens: '내장 토큰: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}}~{{sunday}}, {{cursor}}. {{date}}를 텍스트로 유지하려면 {{!date}}로 작성하세요.',
                 usage: '{{title}}, {{date}} 같은 템플릿 토큰은 노트를 만들 때 치환됩니다. 템플릿 엔진은 파일 작업 및 템플릿 > 템플릿에서 설정하세요.'
             },

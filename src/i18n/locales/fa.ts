@@ -1773,6 +1773,11 @@ export const STRINGS_FA = {
                 },
                 templaterInstalled: 'افزونه Templater: نصب شده',
                 templaterNotInstalled: 'افزونه Templater: نصب نشده',
+                templaterAutomatic:
+                    'الگوهایی که شامل دستورات Templater (<%) هستند توسط Templater پردازش می‌شوند. سایر الگوها توسط موتور داخلی پردازش می‌شوند.',
+                templaterUsage: 'همه الگوها توسط Templater پردازش می‌شوند. توکن‌های داخلی در فایل‌های الگو جایگزین نمی‌شوند.',
+                templaterMissingWarning:
+                    'نمی‌توان یادداشت‌ها را از الگوها ایجاد کرد. در {location}، {setting} را به {automatic} یا {builtin} تغییر دهید، یا افزونه Templater را نصب و فعال کنید.',
                 tokens: 'توکن‌های داخلی: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} تا {{sunday}}, {{cursor}}. برای حفظ {{date}} به‌صورت متن، {{!date}} بنویسید.',
                 usage: 'توکن‌های الگو مانند {{title}} و {{date}} هنگام ایجاد یادداشت جایگزین می‌شوند. موتور الگو را در عملیات فایل و الگوها > الگوها پیکربندی کنید.'
             },

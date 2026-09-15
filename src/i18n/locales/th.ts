@@ -1766,6 +1766,11 @@ export const STRINGS_TH = {
                 },
                 templaterInstalled: 'ปลั๊กอิน Templater: ติดตั้งแล้ว',
                 templaterNotInstalled: 'ปลั๊กอิน Templater: ยังไม่ได้ติดตั้ง',
+                templaterAutomatic:
+                    'เทมเพลตที่มีคำสั่ง Templater (<%) จะประมวลผลด้วย Templater ส่วนเทมเพลตอื่นทั้งหมดจะประมวลผลด้วยเอนจินในตัว',
+                templaterUsage: 'เทมเพลตทั้งหมดจะประมวลผลด้วย Templater โทเค็นในตัวในไฟล์เทมเพลตจะไม่ถูกแทนที่',
+                templaterMissingWarning:
+                    'ไม่สามารถสร้างโน้ตจากเทมเพลตได้ เปลี่ยน {setting} เป็น {automatic} หรือ {builtin} ใน {location} หรือติดตั้งและเปิดใช้งานปลั๊กอิน Templater',
                 tokens: 'โทเค็นในตัว: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} ถึง {{sunday}}, {{cursor}} เขียน {{!date}} เพื่อคง {{date}} ไว้เป็นข้อความ',
                 usage: 'โทเค็นเทมเพลต เช่น {{title}} และ {{date}} จะถูกแทนที่เมื่อสร้างโน้ต กำหนดค่าเอนจินเทมเพลตได้ใน การดำเนินการกับไฟล์และเทมเพลต > เทมเพลต'
             },

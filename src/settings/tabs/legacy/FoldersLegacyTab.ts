@@ -28,6 +28,7 @@ import { createSettingGroupFactory } from '../../settingGroups';
 import { addSettingSyncModeToggle } from '../../syncModeToggle';
 import { isAlphaSortOrder, isFolderNoteOpenLocation } from '../../types';
 import type { SettingsTabContext } from '../SettingsTabContext';
+import { renderFolderNoteTemplateInfoSetting } from '../FoldersTab';
 
 /** Legacy settings renderer used only by Obsidian versions before native 1.13 setting definitions. */
 export function renderFoldersTab(context: SettingsTabContext, heading?: string): void {
@@ -240,12 +241,5 @@ export function renderFoldersTab(context: SettingsTabContext, heading?: string):
     context.registerSettingsUpdateListener('folders-folder-note-template-warning', updateTemplateWarning);
     updateTemplateWarning();
 
-    folderNoteFilesGroup.addSetting(setting => renderFolderNoteTemplateInfoSetting(setting));
-}
-
-function renderFolderNoteTemplateInfoSetting(setting: Setting): void {
-    setting.setName('').setDesc('');
-    setting.settingEl.addClass('nn-setting-info-container');
-    setting.descEl.empty();
-    setting.descEl.createDiv({ text: strings.settings.items.templateEngine.usage });
+    folderNoteFilesGroup.addSetting(setting => renderFolderNoteTemplateInfoSetting(setting, context));
 }

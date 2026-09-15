@@ -1773,6 +1773,11 @@ export const STRINGS_UK = {
                 },
                 templaterInstalled: 'Плагін Templater: встановлено',
                 templaterNotInstalled: 'Плагін Templater: не встановлено',
+                templaterAutomatic:
+                    'Шаблони, що містять команди Templater (<%), обробляються Templater. Усі інші шаблони обробляються вбудованим рушієм.',
+                templaterUsage: 'Усі шаблони обробляються Templater. Вбудовані токени у файлах шаблонів не замінюються.',
+                templaterMissingWarning:
+                    'Нотатки не можна створити з шаблонів. У розділі {location} змініть {setting} на {automatic} або {builtin} чи встановіть і ввімкніть плагін Templater.',
                 tokens: 'Вбудовані токени: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} — {{sunday}}, {{cursor}}. Напишіть {{!date}}, щоб залишити {{date}} як текст.',
                 usage: 'Токени шаблону, як-от {{title}} і {{date}}, замінюються під час створення нотатки. Налаштуйте рушій шаблонів у розділі Операції з файлами та шаблони > Шаблони.'
             },

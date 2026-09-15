@@ -1774,6 +1774,11 @@ export const STRINGS_ID = {
                 },
                 templaterInstalled: 'Plugin Templater: terpasang',
                 templaterNotInstalled: 'Plugin Templater: tidak terpasang',
+                templaterAutomatic:
+                    'Template yang berisi perintah Templater (<%) diproses oleh Templater. Semua template lainnya diproses oleh mesin bawaan.',
+                templaterUsage: 'Semua template diproses oleh Templater. Token bawaan di file template tidak diganti.',
+                templaterMissingWarning:
+                    'Catatan tidak dapat dibuat dari template. Ubah {setting} ke {automatic} atau {builtin} di {location}, atau pasang dan aktifkan plugin Templater.',
                 tokens: 'Token bawaan: {{title}}, {{folder}}, {{path}}, {{date}}, {{date:FORMAT}}, {{date+1d}}, {{time}}, {{today}}, {{now}}, {{yesterday}}, {{tomorrow}}, {{monday}} hingga {{sunday}}, {{cursor}}. Tulis {{!date}} untuk mempertahankan {{date}} sebagai teks.',
                 usage: 'Token template seperti {{title}} dan {{date}} diganti saat catatan dibuat. Konfigurasi mesin template di Operasi file & template > Template.'
             },
