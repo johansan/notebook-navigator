@@ -24,6 +24,7 @@ import { promptForTemplateValues } from '../../src/modals/TemplatePromptModal';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { applyNativeSettingControlValue } from '../../src/settings/nativeSettingControls';
 import { createNoteFromTemplateInFolder } from '../../src/utils/fileCreationUtils';
+import { hasPendingTemplateCursor } from '../../src/utils/templateCursor';
 import { createTestTFile } from './createTestTFile';
 
 vi.mock('../../src/modals/TemplatePromptModal', () => ({ promptForTemplateValues: vi.fn() }));
@@ -209,6 +210,58 @@ describe('createNoteFromTemplateInFolder', () => {
 
         expect(templater.templater.create_new_note_from_template).toHaveBeenCalledWith(templateFile, folder, 'Untitled', true);
         expect(create).not.toHaveBeenCalled();
+    });
+
+    it('places the prompted template cursor after opening replaces the previous editor document', async () => {
+        const app = new App();
+        const picker = captureTemplateChoice();
+        const templateFile = createTestTFile('Templates/Dagbok.md');
+        const createdFile = createTestTFile('Projects/Untitled cursor.md');
+        let cursor = { line: 0, ch: 0 };
+        const editor = {
+            setCursor: vi.fn((position: { line: number; ch: number }) => {
+                cursor = position;
+            }),
+            focus: vi.fn()
+        };
+        let finishOpen = () => {
+            throw new Error('File open has not started');
+        };
+        const openFile = vi.fn(
+            () =>
+                new Promise<void>(resolve => {
+                    finishOpen = () => {
+                        // Obsidian resets selection when it loads the document, after publishing the new file path.
+                        cursor = { line: 0, ch: 0 };
+                        resolve();
+                    };
+                })
+        );
+        app.vault.create = vi.fn(async () => createdFile);
+        app.vault.cachedRead = vi.fn(async () => '---\ncreated: {{now}}\ntitle: {{Prompt:Title}}\n---\n\n## Test\n\n- {{cursor}}\n');
+        app.workspace = {
+            activeEditor: { file: createdFile, editor },
+            getLeaf: vi.fn(() => ({ openFile }))
+        } as unknown as App['workspace'];
+        vi.mocked(promptForTemplateValues).mockResolvedValue({ Title: 'Cursor test' });
+
+        await createNoteFromTemplateInFolder(
+            app,
+            { ...DEFAULT_SETTINGS, templateEngine: 'builtin', calendarTemplateFolder: 'Templates' },
+            createFolder('Projects')
+        );
+        const creation = picker.choose(templateFile);
+        await vi.waitFor(() => expect(openFile).toHaveBeenCalledOnce());
+
+        expect(editor.setCursor).not.toHaveBeenCalled();
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(true);
+        finishOpen();
+        await creation;
+
+        expect(promptForTemplateValues).toHaveBeenCalledExactlyOnceWith(app, ['Title']);
+        expect(cursor).toEqual({ line: 7, ch: 2 });
+        expect(editor.focus).toHaveBeenCalledOnce();
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
     });
 
     it('writes parseable frontmatter with the entered title when creating a note from a prompted template', async () => {

@@ -22,7 +22,7 @@ import type { TemplateCursorPosition } from './templateRenderer';
 /**
  * Cursor positions recorded when a template with `{{cursor}}` is rendered. The note is created by one code path and
  * opened by another (calendar, commands, homepage, folder notes), so the position is stored by path and applied when
- * the file opens in an editor instead of being threaded through every open call.
+ * the file has finished opening in an editor instead of being threaded through every creation call.
  */
 
 interface PendingTemplateCursor {
@@ -79,31 +79,25 @@ export function hasPendingTemplateCursor(path: string): boolean {
 }
 
 /**
- * Applies the pending cursor for a file that was just opened. Called from the workspace `file-open` handler, which
- * only fires for the active file, and directly by callers that open notes in the background.
- * The cursor moves on the next animation frame because the editor content is not guaranteed to be loaded when the
- * event fires. The entry is only removed after the cursor was placed, so a later open can still apply it before it
- * expires when no editor for the file exists yet.
+ * Applies the pending cursor after the caller has awaited the file-opening operation. Obsidian can emit `file-open`
+ * after assigning the new file to a view but before replacing its previous document, so neither that event nor an
+ * animation frame guarantees that cursor placement will survive loading the new note.
+ * Consumes the position only when an editor shows the file; otherwise retains it until another completed open or expiry.
  */
 export function applyPendingTemplateCursor(app: App, file: TFile): void {
-    if (!getPendingCursor(file.path)) {
+    const entry = getPendingCursor(file.path);
+    if (!entry) {
         return;
     }
 
-    window.requestAnimationFrame(() => {
-        const entry = getPendingCursor(file.path);
-        if (!entry) {
-            return;
-        }
-        const editor = findEditorForFile(app, file.path);
-        if (!editor) {
-            return;
-        }
-        pendingCursors.delete(file.path);
-        editor.setCursor(entry.position);
-        // Only the editor the user is already in receives focus, so notes opened in the background stay there.
-        if (app.workspace.activeEditor?.editor === editor) {
-            editor.focus();
-        }
-    });
+    const editor = findEditorForFile(app, file.path);
+    if (!editor) {
+        return;
+    }
+    editor.setCursor(entry.position);
+    pendingCursors.delete(file.path);
+    // Only the editor the user is already in receives focus, so notes opened in the background stay there.
+    if (app.workspace.activeEditor?.editor === editor) {
+        editor.focus();
+    }
 }

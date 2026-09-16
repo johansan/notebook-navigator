@@ -293,8 +293,9 @@ export async function createFolderNote(
             active: true,
             openInRightSidebar: options?.openInRightSidebar
         });
-        // Folder notes opened in the right sidebar are not the active file, so the workspace `file-open` event that
-        // normally places a template cursor does not fire for them.
+        // The plain-leaf and right sidebar routes inside openFolderNoteFile call leaf.openFile without applying the
+        // cursor, so it is applied here after every route has finished loading the note. Without this call only
+        // the openFileInContext route would place the cursor.
         applyPendingTemplateCursor(app, file);
         return file;
     } catch (error) {

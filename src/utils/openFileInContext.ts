@@ -19,6 +19,7 @@
 import { Platform } from 'obsidian';
 import type { App, PaneType, TFile } from 'obsidian';
 import type { CommandQueueService } from '../services/CommandQueueService';
+import { applyPendingTemplateCursor } from './templateCursor';
 
 interface OpenFileInContextParams {
     app: App;
@@ -41,6 +42,7 @@ export async function openFileInContext({ app, commandQueue, file, context, acti
             throw new Error(`Unable to open file in ${resolvedContext} context: leaf not available`);
         }
         await leaf.openFile(file, { active });
+        applyPendingTemplateCursor(app, file);
     };
 
     // Execute through command queue if available to track file open context

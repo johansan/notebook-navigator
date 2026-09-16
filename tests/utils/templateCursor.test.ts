@@ -17,7 +17,7 @@
  */
 
 import { App, MarkdownView, type TFile, type WorkspaceLeaf } from 'obsidian';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { applyPendingTemplateCursor, hasPendingTemplateCursor, schedulePendingTemplateCursor } from '../../src/utils/templateCursor';
 import { createTestTFile } from './createTestTFile';
 
@@ -42,16 +42,7 @@ function createApp(options: { activeFile?: TFile; activeEditor?: TestEditor; lea
 }
 
 describe('template cursor placement', () => {
-    beforeEach(() => {
-        // Runs the frame callback immediately so assertions can follow the call synchronously.
-        vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
-            callback(0);
-            return 0;
-        });
-    });
-
     afterEach(() => {
-        vi.unstubAllGlobals();
         vi.restoreAllMocks();
     });
 

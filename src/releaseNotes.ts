@@ -110,7 +110,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-09-15',
         showOnUpdate: false,
         fixed: [
-            'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).'
+            'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
+            '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).'
         ]
     },
     {

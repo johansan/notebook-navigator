@@ -34,6 +34,7 @@ import { localStorage } from '../../utils/localStorage';
 import { getMomentApi } from '../../utils/moment';
 import { showNotice } from '../../utils/noticeUtils';
 import { renderNoteTemplate } from '../../utils/templateRenderer';
+import { applyPendingTemplateCursor } from '../../utils/templateCursor';
 
 const COMMAND_ID_PREFIX = 'template-command-';
 
@@ -334,4 +335,5 @@ export async function runTemplateCommand(plugin: NotebookNavigatorPlugin, comman
 
     const leaf = app.workspace.getLeaf(settings.createNewNotesInNewTab);
     await leaf.openFile(created, { state: { mode: 'source' }, active: true });
+    applyPendingTemplateCursor(app, created);
 }

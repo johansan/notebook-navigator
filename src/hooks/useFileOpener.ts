@@ -23,6 +23,7 @@ import { useServices } from '../context/ServicesContext';
 import { getSupportedLeaves, isSupportedLeafType } from '../types';
 import { runAsyncAction } from '../utils/async';
 import { getLeafSplitLocation } from '../utils/workspaceSplit';
+import { applyPendingTemplateCursor } from '../utils/templateCursor';
 
 interface OpenFileOptions {
     /** Optional target leaf for opening the file */
@@ -126,6 +127,7 @@ export async function openFileInResolvedLeaf(app: App, leaf: WorkspaceLeaf | nul
     }
 
     await leaf.openFile(file, { active });
+    applyPendingTemplateCursor(app, file);
 }
 
 /**

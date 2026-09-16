@@ -36,6 +36,7 @@ import { getCurrentLanguage } from '../../i18n';
 import { getMomentApi, resolveCalendarLocales, resolveCalendarPeriodicNotesLocale, resolveDailyNoteLocale } from '../../utils/moment';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import type { HomepageSource } from '../../settings/types';
+import { applyPendingTemplateCursor } from '../../utils/templateCursor';
 
 // Indicates what triggered the homepage opening
 type HomepageTrigger = 'startup' | 'command';
@@ -180,15 +181,17 @@ export default class HomepageController {
         // Use command queue to track the homepage open operation if available
         const { commandQueue } = this.plugin;
         if (commandQueue) {
-            const result = await commandQueue.executeHomepageOpen(homepageFile, () =>
-                this.plugin.app.workspace.openLinkText(homepageFile.path, '', false)
-            );
+            const result = await commandQueue.executeHomepageOpen(homepageFile, async () => {
+                await this.plugin.app.workspace.openLinkText(homepageFile.path, '', false);
+                applyPendingTemplateCursor(this.plugin.app, homepageFile);
+            });
 
             return result.success;
         }
 
         // Fallback for when command queue is not available
         await this.plugin.app.workspace.openLinkText(homepageFile.path, '', false);
+        applyPendingTemplateCursor(this.plugin.app, homepageFile);
         return true;
     }
 

@@ -28,7 +28,7 @@ import { showNotice } from './noticeUtils';
 import { normalizeCalendarCustomRootFolder } from './calendarCustomNotePatterns';
 import { normalizeOptionalVaultFilePath } from './pathUtils';
 import { sanitizeRecord } from './recordUtils';
-import { hasPendingTemplateCursor, schedulePendingTemplateCursor } from './templateCursor';
+import { applyPendingTemplateCursor, hasPendingTemplateCursor, schedulePendingTemplateCursor } from './templateCursor';
 import { collectTemplatePrompts, containsTemplaterCommands, renderNoteTemplate, type TemplateRenderResult } from './templateRenderer';
 import { getTemplaterCreateNewNoteFromTemplate, getTemplaterCreateNoteFromTemplate } from './templaterIntegration';
 
@@ -631,6 +631,7 @@ export async function createNoteFromTemplateInFolder(
             const hasCursor = hasPendingTemplateCursor(created.path);
             const leaf = app.workspace.getLeaf(settings.createNewNotesInNewTab);
             await leaf.openFile(created, { state: { mode: 'source' }, active: true });
+            applyPendingTemplateCursor(app, created);
             if (!hasCursor) {
                 window.setTimeout(() => {
                     executeCommand(app, OBSIDIAN_COMMANDS.EDIT_FILE_TITLE);

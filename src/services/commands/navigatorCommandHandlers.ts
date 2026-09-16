@@ -63,6 +63,7 @@ import { normalizeTagPath } from '../../utils/tagUtils';
 import { isNoteShortcut, type ShortcutEntry } from '../../types/shortcuts';
 import { getLeafSplitLocation } from '../../utils/workspaceSplit';
 import { openFileInContext } from '../../utils/openFileInContext';
+import { applyPendingTemplateCursor } from '../../utils/templateCursor';
 import { resolveNoteShortcutTarget } from '../../utils/shortcutPathResolver';
 import {
     canRestorePropertySelectionNodeId,
@@ -521,6 +522,7 @@ async function openFileInActiveLeaf(plugin: NotebookNavigatorPlugin, file: TFile
             return;
         }
         await leaf.openFile(file, { active: true });
+        applyPendingTemplateCursor(plugin.app, file);
     };
 
     if (plugin.commandQueue) {
