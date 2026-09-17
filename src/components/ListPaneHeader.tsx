@@ -214,9 +214,10 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                 return;
             }
 
-            // Middle-click opens in a new tab and suppresses default browser behavior.
+            // Prevents the default without stopping propagation: Obsidian's Linux window listener only blocks the
+            // primary-selection paste on mouseup after it sees a default-prevented mousedown, so stopping propagation
+            // here would paste the selection into the opened note.
             event.preventDefault();
-            event.stopPropagation();
             revealFolderNoteInNavigator(selectionDispatch, selectedFolderNote);
 
             runAsyncAction(() =>

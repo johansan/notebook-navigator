@@ -111,7 +111,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         showOnUpdate: false,
         fixed: [
             'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
-            '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).'
+            '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
+            'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux now opens them in a new tab without pasting the primary selection into the note [#1505](https://github.com/johansan/notebook-navigator/issues/1505).'
         ]
     },
     {

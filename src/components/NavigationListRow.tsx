@@ -250,7 +250,11 @@ export function NavigationListRow({
             if (!onLabelMouseDown) {
                 return;
             }
-            event.stopPropagation();
+            // Middle-click must reach Obsidian's Linux window listener after the callback prevents the default;
+            // otherwise mouseup can paste the primary selection into the opened folder note.
+            if (event.button !== 1) {
+                event.stopPropagation();
+            }
             onLabelMouseDown(event);
         },
         [onLabelMouseDown]

@@ -297,7 +297,11 @@ export const FolderItem = React.memo(function FolderItem({
         (e: React.MouseEvent<HTMLSpanElement>) => {
             hideNavigatorContextMenu();
             if (onNameMouseDown) {
-                e.stopPropagation();
+                // Middle-click must reach Obsidian's Linux window listener after the callback prevents the default;
+                // otherwise mouseup can paste the primary selection into the opened folder note.
+                if (e.button !== 1) {
+                    e.stopPropagation();
+                }
                 onNameMouseDown(e);
             }
         },

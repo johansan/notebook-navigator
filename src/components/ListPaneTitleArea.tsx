@@ -109,9 +109,10 @@ export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktop
                 return;
             }
 
-            // Middle-click always opens folder notes in a new tab.
+            // Prevents the default without stopping propagation: Obsidian's Linux window listener only blocks the
+            // primary-selection paste on mouseup after it sees a default-prevented mousedown, so stopping propagation
+            // here would paste the selection into the opened note.
             event.preventDefault();
-            event.stopPropagation();
             revealFolderNoteInNavigator(selectionDispatch, selectedFolderNote);
 
             runAsyncAction(() =>

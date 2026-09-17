@@ -1247,8 +1247,10 @@ export function Calendar({
                 return false;
             }
 
+            // Prevents the default without stopping propagation: Obsidian's Linux window listener only blocks the
+            // primary-selection paste on mouseup after it sees a default-prevented mousedown, so stopping propagation
+            // here would paste the selection into the opened note.
             event.preventDefault();
-            event.stopPropagation();
             clearHoverTooltip();
             return true;
         },

@@ -216,8 +216,10 @@ export function useNavigationPaneShortcutActions({
                 return;
             }
 
+            // Prevents the default without stopping propagation: Obsidian's Linux window listener only blocks the
+            // primary-selection paste on mouseup after it sees a default-prevented mousedown, so stopping propagation
+            // here would paste the selection into the opened note.
             event.preventDefault();
-            event.stopPropagation();
             selectionDispatch({ type: 'SET_SELECTED_FOLDER', folder, autoSelectedFile: null });
             revealFolderNoteInNavigator(selectionDispatch, folderNote);
             runAsyncAction(() =>
@@ -282,8 +284,10 @@ export function useNavigationPaneShortcutActions({
                 return;
             }
 
+            // Prevents the default without stopping propagation: Obsidian's Linux window listener only blocks the
+            // primary-selection paste on mouseup after it sees a default-prevented mousedown, so stopping propagation
+            // here would paste the selection into the opened note.
             event.preventDefault();
-            event.stopPropagation();
             runAsyncAction(() => openFileInContext({ app, commandQueue, file: note, context: 'tab' }));
         },
         [app, commandQueue]
