@@ -617,11 +617,19 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 - **Paths and identifiers:** Startup initialization, PDF diagnostics, and error cases can include the Obsidian app/vault identifier, vault-relative PDF paths, or error stack details. Review and redact the file before sharing it publicly.
 - **Upload:** Notebook Navigator does not upload debug files. They are shared only if you upload, attach, or sync them outside the plugin.
 
-### 11.5 Privacy and data handling
+### 11.5 Language downloads
+
+- **Request:** `https://github.com/johansan/notebook-navigator/releases/download/<installed-version>/languages.json`
+- **Frequency:** On startup when the language pack matching the installed plugin is not cached. All languages are downloaded together.
+- **Storage:** Each language is stored separately in vault-local IndexedDB on the device. Later launches read only the selected language without a network request.
+- **Offline use:** English is bundled. Settings remain available during downloads. The navigator shows a loading screen with **Continue in English**; failed downloads also use English. A download completed after continuing in English is used on the next launch.
+- **Data:** Sends standard HTTP metadata; does not include vault content. Downloaded files contain text data, while language formatting functions remain bundled with the plugin.
+
+### 11.6 Privacy and data handling
 
 - Notebook Navigator does not send note content, file names, tags, or debug files to a Notebook Navigator server.
 - Requests to GitHub, YouTube, and any external image host are made directly from your device and include standard HTTP metadata (IP address, user-agent, and similar).
-- Downloaded icon packs and images are stored locally (IndexedDB). Recent notes/files and UI state are stored locally (Obsidian local storage).
+- Downloaded languages, icon packs, and images are stored locally (IndexedDB). Recent notes/files and UI state are stored locally (Obsidian local storage).
 
 <br/>
 

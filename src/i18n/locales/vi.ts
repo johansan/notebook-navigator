@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_VI = {
+    language: {
+        downloading: 'Đang tải ngôn ngữ…',
+        continueInEnglish: 'Tiếp tục bằng tiếng Anh',
+        downloadFailed: 'Không tải được ngôn ngữ. Notebook Navigator đang sử dụng tiếng Anh.'
+    },
     // Common UI elements
     common: {
         cancel: 'Hủy', // Button text for canceling dialogs and operations (English: Cancel)

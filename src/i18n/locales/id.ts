@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_ID = {
+    language: {
+        downloading: 'Mengunduh bahasa…',
+        continueInEnglish: 'Lanjutkan dalam bahasa Inggris',
+        downloadFailed: 'Unduhan bahasa gagal. Notebook Navigator menggunakan bahasa Inggris.'
+    },
     // Common UI elements
     common: {
         cancel: 'Batal',

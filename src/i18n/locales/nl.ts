@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_NL = {
+    language: {
+        downloading: 'Talen downloaden…',
+        continueInEnglish: 'Doorgaan in het Engels',
+        downloadFailed: 'Talen downloaden mislukt. Notebook Navigator gebruikt Engels.'
+    },
     // Common UI elements
     common: {
         cancel: 'Annuleren',

@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_PT = {
+    language: {
+        downloading: 'A transferir idiomas…',
+        continueInEnglish: 'Continuar em inglês',
+        downloadFailed: 'A transferência dos idiomas falhou. O Notebook Navigator está a usar inglês.'
+    },
     // Common UI elements
     common: {
         cancel: 'Cancelar', // Button text for canceling dialogs and operations (English: Cancel)

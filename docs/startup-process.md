@@ -104,13 +104,18 @@ show progress.
 1. Obsidian calls `Plugin.onload()`.
 2. Initialize vault-scoped localStorage (`localStorage.init`) and startup diagnostics (`DebugLoggingService`) before any database work.
 3. Register the plugin icon with Obsidian (`addIcon(...)`).
-4. Initialize IndexedDB early via `initializeDatabase(appId, ...)`.
+4. Initialize the language service and start a bounded local language-cache read. English and locale-specific date/time defaults are already bundled. Await only the cache read before loading settings; a missing pack starts a background download of the installed release's `languages.json`. Each validated locale is cached separately in one IndexedDB transaction.
+   - Navigator and calendar view providers wait behind a language-loading boundary. Settings stay usable in English.
+   - Commands and the first-launch welcome modal wait for language readiness so their labels are captured once.
+   - Download failures or **Continue in English** release the boundary with bundled English. Late downloads populate the cache without changing an already-open English navigator.
+   - A valid cache activates the selected language without a network request. Plugin unload discards pending download results.
+5. Initialize IndexedDB early via `initializeDatabase(appId, ...)`.
    - Starts `db.init()` (schema check + `MemoryFileCache` hydration) asynchronously before views mount.
    - Operation is idempotent to support rapid enable/disable cycles.
    - Configures per-platform feature-image blob and preview-text cache limits.
    - Preview text strings stay in `filePreviews` and load on demand; the bounded preview-text warmup starts lazily
      after explicit preview loads.
-5. Load settings from `data.json` and run migrations (`loadSettingsAtStartup`).
+6. Load settings from `data.json` and run migrations (`loadSettingsAtStartup`).
    - Classify each read: `loaded` (stored record read and applied through the settings pipeline), `missing` (no
      `data.json`), or `unavailable` (`data.json` exists but cannot be read or parsed). Non-`loaded` results apply
      nothing.
@@ -140,32 +145,32 @@ show progress.
      default date/time formats, migrates folder note template settings, and normalizes tag, property, and navigation
      separator settings. Reset and settings import apply raw records through the same pipeline in memory and persist
      once, without rereading `data.json`.
-6. Sync local mirrors and load per-device UX preferences.
+7. Sync local mirrors and load per-device UX preferences.
    - Resolve sync-mode local mirrors from vault-scoped localStorage.
    - Load UX preferences from vault-scoped localStorage.
-7. Handle first-launch setup when no saved data exists.
+8. Handle first-launch setup when no saved data exists.
    - Clear plugin localStorage keys (preserving IndexedDB version markers).
    - Re-seed per-device localStorage mirrors for sync-mode settings and UX preferences.
    - Expand the root folder when `showRootFolder` is enabled.
    - Persist the current localStorage version (`LOCALSTORAGE_VERSION`).
-8. Initialize recent data and UX tracking.
+9. Initialize recent data and UX tracking.
    - `RecentDataManager` loads persisted recent notes and icons.
    - `RecentNotesService` is created; `registerWorkspaceEvents` wires file-open tracking later in startup.
-9. Construct core services and controllers:
+10. Construct core services and controllers:
    - `WorkspaceCoordinator` and `HomepageController` manage view activation and homepage flow.
    - `FolderNoteSidebarService` manages the right-sidebar companion leaf for folder notes.
    - `MetadataService`, `TagOperations`, `PropertyOperations`, `TagTreeService`, `PropertyTreeService`, and `CommandQueueService`.
    - `FileSystemOperations` wired with tag tree, property tree, and visibility preferences.
    - `OmnisearchService`, `NotebookNavigatorAPI`, and `ReleaseCheckService`.
    - `ExternalIconProviderController` initializes icon providers and syncs settings.
-10. Register view, commands, settings tab, and workspace integrations.
+11. Register view, commands, settings tab, and workspace integrations.
    - Register `NOTEBOOK_NAVIGATOR_VIEW` (`NotebookNavigatorView`),
      `NOTEBOOK_NAVIGATOR_CALENDAR_VIEW` (`NotebookNavigatorCalendarView`), and
      `NOTEBOOK_NAVIGATOR_FOLDER_NOTE_SIDEBAR_VIEW` (`FolderNoteSidebarPlaceholderView`).
    - `registerNavigatorCommands` registers command palette metadata and lazy-loads command handlers on first use.
    - `registerWorkspaceEvents` adds editor/file-menu reveal actions, the ribbon icon, recent-note tracking,
      hidden-folder rename/delete sync, vault-icon asset notifications, and file/folder rename/delete handlers.
-11. Wait for `workspace.onLayoutReady()`.
+12. Wait for `workspace.onLayoutReady()`.
    - `HomepageController.handleWorkspaceReady()` activates the view on first launch and opens the configured homepage target when it resolves.
    - `FolderNoteSidebarService.handleWorkspaceReady()` synchronizes the folder-note companion leaf when right-sidebar
      folder notes are active.

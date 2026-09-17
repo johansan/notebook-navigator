@@ -16,197 +16,90 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * Central export point for internationalization
- * Dynamically loads the appropriate language based on Obsidian's language setting
- */
 import { getLanguage } from 'obsidian';
-import type { STRINGS_EN } from './locales/en';
+import { STRINGS_EN } from './locales/en';
+import { LANGUAGE_METADATA, type LanguageCode } from './localeMetadata';
+import { sanitizeRecord } from '../utils/recordUtils';
 
-// Type for the translation strings structure
+// Bootstrap labels are bundled in localeMetadata before the full language data is available.
+// unused-strings keep language settings.items.dateFormat.placeholder settings.items.timeFormat.placeholder
 type TranslationStrings = typeof STRINGS_EN;
 
-// Supported Obsidian languages with Notebook Navigator translations.
-//
-// Obsidian-supported languages:
-// ✅ ar     - Arabic
-// ❌ am     - Amharic
-// ❌ be     - Belarusian
-// ❌ da     - Danish
-// ✅ de     - German
-// ✅ en     - English
-// ❌ en-GB  - English (UK)
-// ✅ es     - Spanish
-// ✅ fa     - Persian (Farsi)
-// ✅ fr     - French
-// ✅ id     - Indonesian
-// ✅ it     - Italian
-// ✅ ja     - Japanese
-// ✅ ko     - Korean
-// ❌ lv     - Latvian
-// ❌ ne     - Nepali
-// ✅ nl     - Dutch
-// ❌ no     - Norwegian
-// ✅ pl     - Polish
-// ✅ pt     - Portuguese
-// ✅ pt-BR  - Portuguese (Brazil)
-// ✅ ru     - Russian
-// ❌ sq     - Albanian
-// ✅ th     - Thai
-// ✅ tr     - Turkish
-// ✅ uk     - Ukrainian
-// ✅ vi     - Vietnamese
-// ✅ zh     - Chinese (Simplified)
-// ✅ zh-TW  - Chinese (Traditional)
-const SUPPORTED_LANGUAGES = new Set([
-    'ar',
-    'de',
-    'en',
-    'es',
-    'fa',
-    'fr',
-    'id',
-    'it',
-    'ja',
-    'ko',
-    'nl',
-    'pl',
-    'pt',
-    'pt-BR',
-    'ru',
-    'th',
-    'tr',
-    'uk',
-    'vi',
-    'zh',
-    'zh-CN',
-    'zh_cn',
-    'zh-TW',
-    'zh_tw'
-]);
+// Imports retain this live binding. Module-level copies of individual labels must instead read at use time.
+export let strings: TranslationStrings = STRINGS_EN;
 
-let englishStrings: TranslationStrings | null = null;
-
-/* eslint-disable @typescript-eslint/no-require-imports -- Literal CommonJS requires keep locale modules bundled while deferring locale initialization. */
-function getEnglishStrings(): TranslationStrings {
-    if (!englishStrings) {
-        englishStrings = (require('./locales/en.ts') as typeof import('./locales/en')).STRINGS_EN;
-    }
-    return englishStrings;
-}
-
-function loadLocaleOverrides(locale: string): TranslationStrings | undefined {
-    switch (locale) {
-        case 'ar':
-            return (require('./locales/ar.ts') as typeof import('./locales/ar')).STRINGS_AR;
-        case 'de':
-            return (require('./locales/de.ts') as typeof import('./locales/de')).STRINGS_DE;
-        case 'es':
-            return (require('./locales/es.ts') as typeof import('./locales/es')).STRINGS_ES;
-        case 'fa':
-            return (require('./locales/fa.ts') as typeof import('./locales/fa')).STRINGS_FA;
-        case 'fr':
-            return (require('./locales/fr.ts') as typeof import('./locales/fr')).STRINGS_FR;
-        case 'id':
-            return (require('./locales/id.ts') as typeof import('./locales/id')).STRINGS_ID;
-        case 'it':
-            return (require('./locales/it.ts') as typeof import('./locales/it')).STRINGS_IT;
-        case 'ja':
-            return (require('./locales/ja.ts') as typeof import('./locales/ja')).STRINGS_JA;
-        case 'ko':
-            return (require('./locales/ko.ts') as typeof import('./locales/ko')).STRINGS_KO;
-        case 'nl':
-            return (require('./locales/nl.ts') as typeof import('./locales/nl')).STRINGS_NL;
-        case 'pl':
-            return (require('./locales/pl.ts') as typeof import('./locales/pl')).STRINGS_PL;
-        case 'pt':
-            return (require('./locales/pt.ts') as typeof import('./locales/pt')).STRINGS_PT;
-        case 'pt-BR':
-            return (require('./locales/pt_br.ts') as typeof import('./locales/pt_br')).STRINGS_PT_BR;
-        case 'ru':
-            return (require('./locales/ru.ts') as typeof import('./locales/ru')).STRINGS_RU;
-        case 'th':
-            return (require('./locales/th.ts') as typeof import('./locales/th')).STRINGS_TH;
-        case 'tr':
-            return (require('./locales/tr.ts') as typeof import('./locales/tr')).STRINGS_TR;
-        case 'uk':
-            return (require('./locales/uk.ts') as typeof import('./locales/uk')).STRINGS_UK;
-        case 'vi':
-            return (require('./locales/vi.ts') as typeof import('./locales/vi')).STRINGS_VI;
-        case 'zh':
-        case 'zh-CN':
-        case 'zh_cn':
-            return (require('./locales/zh_cn.ts') as typeof import('./locales/zh_cn')).STRINGS_ZH_CN;
-        case 'zh-TW':
-        case 'zh_tw':
-            return (require('./locales/zh_tw.ts') as typeof import('./locales/zh_tw')).STRINGS_ZH_TW;
-        case 'en':
-            return getEnglishStrings();
-        default:
-            return undefined;
-    }
-}
-/* eslint-enable @typescript-eslint/no-require-imports -- Locale modules are loaded through literal CommonJS requires above. */
-
-const resolvedLanguageCache = new Map<string, TranslationStrings>();
-
-function getResolvedStrings(locale: string): TranslationStrings {
-    if (locale === 'en') {
-        return getEnglishStrings();
-    }
-
-    const cached = resolvedLanguageCache.get(locale);
-    if (cached) {
-        return cached;
-    }
-
-    const loadedLocale = loadLocaleOverrides(locale);
-    if (loadedLocale) {
-        resolvedLanguageCache.set(locale, loadedLocale);
-        return loadedLocale;
-    }
-
-    return getEnglishStrings();
-}
-
-/**
- * Gets the current language setting from Obsidian
- */
 export function getCurrentLanguage(): string {
     return getLanguage();
 }
 
-/**
- * Detects the current Obsidian language setting
- * Falls back to English if the language is not supported
- */
-function getObsidianLanguage(): string {
-    const locale = getCurrentLanguage();
+export function getLanguageCode(): LanguageCode {
+    const language = getCurrentLanguage();
+    const normalized =
+        language === 'pt-BR'
+            ? 'pt_br'
+            : ['zh', 'zh-CN', 'zh_cn'].includes(language)
+              ? 'zh_cn'
+              : ['zh-TW', 'zh_tw'].includes(language)
+                ? 'zh_tw'
+                : language;
+    return isLanguageCode(normalized) ? normalized : 'en';
+}
 
-    if (locale && SUPPORTED_LANGUAGES.has(locale)) {
-        return locale;
+function isLanguageCode(value: string): value is LanguageCode {
+    return Object.prototype.hasOwnProperty.call(LANGUAGE_METADATA, value);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** Validates every leaf against English, including array lengths and the null slots occupied by bundled functions. */
+export function isLanguageData(value: unknown, reference: unknown = STRINGS_EN): boolean {
+    if (typeof reference === 'string') return typeof value === 'string';
+    if (typeof reference === 'function') return value === null;
+    if (Array.isArray(reference)) {
+        return (
+            Array.isArray(value) &&
+            value.length === reference.length &&
+            reference.every((item, index) => isLanguageData(value[index], item))
+        );
     }
-
-    return 'en';
+    if (!isRecord(reference) || !isRecord(value) || Object.keys(value).length !== Object.keys(reference).length) return false;
+    return Object.entries(reference).every(
+        ([key, child]) => Object.prototype.hasOwnProperty.call(value, key) && isLanguageData(value[key], child)
+    );
 }
 
-// Export the appropriate language strings based on Obsidian's setting
-export const strings: TranslationStrings = getResolvedStrings(getObsidianLanguage());
+/** Restores trusted local formatters into validated data. Downloaded content is never evaluated as JavaScript. */
+function restoreLanguage(value: unknown, formatters: Record<string, unknown>, path: string[] = []): unknown {
+    if (value === null) return formatters[path.join('.')];
+    if (Array.isArray(value)) return value.map((child, index) => restoreLanguage(child, formatters, [...path, String(index)]));
+    if (isRecord(value)) {
+        const result = sanitizeRecord<unknown>(undefined);
+        for (const [key, child] of Object.entries(value)) result[key] = restoreLanguage(child, formatters, [...path, key]);
+        return result;
+    }
+    return value;
+}
 
-/**
- * Get the default date format for the current language
- * Uses Moment format tokens
- */
+/** Applies a complete, validated language; invalid data leaves the existing language untouched. */
+export function applyLanguage(locale: LanguageCode, data: unknown): boolean {
+    if (!isLanguageData(data)) return false;
+    // Shape validation covers all data leaves; the generated formatter map supplies the matching function signatures.
+    strings = restoreLanguage(data, LANGUAGE_METADATA[locale].formatters) as TranslationStrings;
+    return true;
+}
+
+export function applyEnglish(): void {
+    strings = STRINGS_EN;
+}
+
+// Defaults must follow the requested language even while its UI strings are downloading, otherwise first-launch
+// settings would permanently save English date/time formats before the localized UI becomes available.
 export function getDefaultDateFormat(): string {
-    const localeStrings = getResolvedStrings(getObsidianLanguage());
-    return localeStrings.settings.items.dateFormat.placeholder || 'MMM D, YYYY';
+    return LANGUAGE_METADATA[getLanguageCode()].dateFormat || 'MMM D, YYYY';
 }
 
-/**
- * Get the default time format for the current language
- * Uses Moment format tokens
- */
 export function getDefaultTimeFormat(): string {
-    const localeStrings = getResolvedStrings(getObsidianLanguage());
-    return localeStrings.settings.items.timeFormat.placeholder || 'h:mm a';
+    return LANGUAGE_METADATA[getLanguageCode()].timeFormat || 'h:mm a';
 }

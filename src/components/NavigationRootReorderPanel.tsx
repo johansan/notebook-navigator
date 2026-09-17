@@ -63,8 +63,6 @@ interface NavigationRootReorderPanelProps {
     canReorderProperties: boolean;
 }
 
-const RESET_FOLDER_LABEL = strings.navigationPane.resetRootToAlpha;
-
 interface RootSortableEntry {
     sortableId: string;
     item: RootReorderRenderItem;
@@ -438,7 +436,10 @@ export function NavigationRootReorderPanel({
                                         {shouldRenderFolders && folderEntries.length > 0 ? (
                                             <SortableList entries={folderEntries} canReorder={canReorderFolders} isMobile={isMobile}>
                                                 {showRootFolderReset ? (
-                                                    <ResetAction label={RESET_FOLDER_LABEL} onClick={handleResetFolders} />
+                                                    <ResetAction
+                                                        label={strings.navigationPane.resetRootToAlpha}
+                                                        onClick={handleResetFolders}
+                                                    />
                                                 ) : null}
                                             </SortableList>
                                         ) : null}
@@ -467,7 +468,7 @@ export function NavigationRootReorderPanel({
                                     <div className="nn-root-reorder-section">
                                         <SortableList entries={folderEntries} canReorder={canReorderFolders} isMobile={isMobile}>
                                             {showRootFolderReset ? (
-                                                <ResetAction label={RESET_FOLDER_LABEL} onClick={handleResetFolders} />
+                                                <ResetAction label={strings.navigationPane.resetRootToAlpha} onClick={handleResetFolders} />
                                             ) : null}
                                         </SortableList>
                                     </div>

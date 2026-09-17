@@ -20,6 +20,7 @@ import { App, PluginSettingTab, requireApiVersion, type SettingDefinitionItem } 
 import type NotebookNavigatorPlugin from '../main';
 import type { NotebookNavigatorSettingTab } from '../settings';
 import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../constants/notebookNavigatorIcon';
+import { strings } from '../i18n';
 
 /**
  * Lightweight settings tab shell. Startup search indexing stays lightweight;
@@ -28,6 +29,8 @@ import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../constants/notebookNavigatorIcon';
 export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
     private readonly plugin: NotebookNavigatorPlugin;
     private delegate: NotebookNavigatorSettingTab | null = null;
+    private definitionLanguage: typeof strings | null = null;
+    private languageRefreshPending = false;
 
     constructor(app: App, plugin: NotebookNavigatorPlugin) {
         super(app, plugin);
@@ -40,7 +43,15 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
             return [];
         }
 
+        this.definitionLanguage = strings;
         return this.getDelegate().getSettingDefinitions();
+    }
+
+    /** Rebuilds Obsidian's cached labels after loading a language, preserving an open settings form until it closes. */
+    refreshLanguage(): void {
+        if (this.definitionLanguage === null || this.definitionLanguage === strings) return;
+        this.languageRefreshPending = true;
+        if (!this.containerEl.isConnected) this.refreshLanguageDefinitions();
     }
 
     getControlValue(key: string): unknown {
@@ -64,10 +75,22 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
         if (this.delegate) {
             this.syncDelegateContainer();
             this.delegate.hide();
-            return;
+        } else {
+            super.hide();
         }
 
-        super.hide();
+        if (this.languageRefreshPending) {
+            // Obsidian clears its active tab after hide() returns. Updating earlier would render the closing form again.
+            window.setTimeout(() => {
+                if (!this.plugin.isShuttingDown()) this.refreshLanguageDefinitions();
+            }, 0);
+        }
+    }
+
+    private refreshLanguageDefinitions(): void {
+        this.languageRefreshPending = false;
+        const update: unknown = Reflect.get(this, 'update');
+        if (typeof update === 'function') Reflect.apply(update, this, []);
     }
 
     private getDelegate(): NotebookNavigatorSettingTab {

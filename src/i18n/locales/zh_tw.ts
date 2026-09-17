@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_ZH_TW = {
+    language: {
+        downloading: '正在下載語言…',
+        continueInEnglish: '繼續使用英語',
+        downloadFailed: '語言下載失敗。Notebook Navigator 正在使用英語。'
+    },
     // Common UI elements
     common: {
         cancel: '取消',

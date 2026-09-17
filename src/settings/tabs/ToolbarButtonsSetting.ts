@@ -31,25 +31,35 @@ type ToolbarButtonConfig<T extends string> = {
     label: string;
 } & ({ iconType: 'ux'; iconId: UXIconId } | { iconType: 'raw'; iconId: string });
 
-const NAVIGATION_TOOLBAR_BUTTONS: ToolbarButtonConfig<NavigationToolbarButtonId>[] = [
-    { id: 'toggleDualPane', iconType: 'ux', iconId: 'nav-show-dual-pane', label: strings.paneHeader.showDualPane },
-    { id: 'expandCollapse', iconType: 'ux', iconId: 'nav-expand-all', label: strings.paneHeader.expandAllFolders },
-    { id: 'hiddenItems', iconType: 'ux', iconId: 'nav-hidden-items', label: strings.paneHeader.showExcludedItems },
-    { id: 'calendar', iconType: 'ux', iconId: 'nav-calendar', label: strings.paneHeader.showCalendar },
-    { id: 'rootReorder', iconType: 'ux', iconId: 'nav-root-reorder', label: strings.paneHeader.reorderRootFolders },
-    { id: 'newFolder', iconType: 'ux', iconId: 'nav-new-folder', label: strings.paneHeader.newFolder }
-];
+// Resolve labels when settings render, because this module can load while English is still the fallback.
+function getNavigationToolbarButtons(): ToolbarButtonConfig<NavigationToolbarButtonId>[] {
+    return [
+        { id: 'toggleDualPane', iconType: 'ux', iconId: 'nav-show-dual-pane', label: strings.paneHeader.showDualPane },
+        { id: 'expandCollapse', iconType: 'ux', iconId: 'nav-expand-all', label: strings.paneHeader.expandAllFolders },
+        { id: 'hiddenItems', iconType: 'ux', iconId: 'nav-hidden-items', label: strings.paneHeader.showExcludedItems },
+        { id: 'calendar', iconType: 'ux', iconId: 'nav-calendar', label: strings.paneHeader.showCalendar },
+        { id: 'rootReorder', iconType: 'ux', iconId: 'nav-root-reorder', label: strings.paneHeader.reorderRootFolders },
+        { id: 'newFolder', iconType: 'ux', iconId: 'nav-new-folder', label: strings.paneHeader.newFolder }
+    ];
+}
 
-const LIST_TOOLBAR_BUTTONS: ToolbarButtonConfig<ListToolbarButtonId>[] = [
-    { id: 'back', iconType: 'raw', iconId: Platform.isAndroidApp ? 'arrow-left' : 'chevron-left', label: strings.paneHeader.showFolders },
-    { id: 'search', iconType: 'ux', iconId: 'list-search', label: strings.paneHeader.search },
-    { id: 'reveal', iconType: 'ux', iconId: 'list-reveal-file', label: strings.commands.revealFile },
-    { id: 'descendants', iconType: 'ux', iconId: 'list-descendants', label: strings.settings.items.includeDescendantNotes.name },
-    { id: 'groupExpansion', iconType: 'ux', iconId: 'list-expand-all', label: strings.commands.collapseExpandListGroups },
-    { id: 'sort', iconType: 'ux', iconId: 'list-sort-ascending', label: strings.paneHeader.changeSortAndGroup },
-    { id: 'appearance', iconType: 'ux', iconId: 'list-appearance', label: strings.paneHeader.changeAppearance },
-    { id: 'newNote', iconType: 'ux', iconId: 'list-new-note', label: strings.paneHeader.newNote }
-];
+function getListToolbarButtons(): ToolbarButtonConfig<ListToolbarButtonId>[] {
+    return [
+        {
+            id: 'back',
+            iconType: 'raw',
+            iconId: Platform.isAndroidApp ? 'arrow-left' : 'chevron-left',
+            label: strings.paneHeader.showFolders
+        },
+        { id: 'search', iconType: 'ux', iconId: 'list-search', label: strings.paneHeader.search },
+        { id: 'reveal', iconType: 'ux', iconId: 'list-reveal-file', label: strings.commands.revealFile },
+        { id: 'descendants', iconType: 'ux', iconId: 'list-descendants', label: strings.settings.items.includeDescendantNotes.name },
+        { id: 'groupExpansion', iconType: 'ux', iconId: 'list-expand-all', label: strings.commands.collapseExpandListGroups },
+        { id: 'sort', iconType: 'ux', iconId: 'list-sort-ascending', label: strings.paneHeader.changeSortAndGroup },
+        { id: 'appearance', iconType: 'ux', iconId: 'list-appearance', label: strings.paneHeader.changeAppearance },
+        { id: 'newNote', iconType: 'ux', iconId: 'list-new-note', label: strings.paneHeader.newNote }
+    ];
+}
 
 /** Renders the button visibility grid for one toolbar. Both grids persist the shared toolbarVisibility setting. */
 export function renderToolbarButtonsSetting(
@@ -68,7 +78,7 @@ export function renderToolbarButtonsSetting(
     };
 
     if (toolbar === 'navigation') {
-        const navigationToolbarButtons = NAVIGATION_TOOLBAR_BUTTONS.filter(button => {
+        const navigationToolbarButtons = getNavigationToolbarButtons().filter(button => {
             if (button.id === 'calendar') {
                 return plugin.settings.calendarEnabled;
             }
@@ -89,7 +99,7 @@ export function renderToolbarButtonsSetting(
     } else {
         createToolbarButtonGroup({
             gridEl,
-            buttons: LIST_TOOLBAR_BUTTONS,
+            buttons: getListToolbarButtons(),
             interfaceIcons: plugin.settings.interfaceIcons,
             state: plugin.settings.toolbarVisibility.list,
             onToggle

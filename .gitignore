@@ -40,3 +40,6 @@ web/
 # Obsidian
 .obsidian
 release-notes.md
+
+# Generated release language pack
+languages.json

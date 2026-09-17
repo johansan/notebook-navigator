@@ -27,7 +27,8 @@ import {
     type VaultProfilePropertyKey
 } from '../settings/types';
 import { isSearchShortcut, type ShortcutEntry } from '../types/shortcuts';
-import { strings } from '../i18n';
+import { getLanguageCode, strings } from '../i18n';
+import { LANGUAGE_METADATA } from '../i18n/localeMetadata';
 import { normalizeCalendarCustomRootFolder } from './calendarCustomNotePatterns';
 import { FILE_VISIBILITY, type FileVisibility } from './fileTypeUtils';
 import { showNotice } from './noticeUtils';
@@ -818,9 +819,9 @@ function dedupeCanonicalHiddenTagPatterns(patterns: string[]): string[] {
     return uniquePatterns;
 }
 
-// Returns the localized name for the default profile, falling back to English if not available
+// Profile normalization persists this name before a download can finish, so use the bundled requested-language default.
 export function getLocalizedDefaultVaultProfileName(): string {
-    const localizedName = strings.settings.items.vaultProfiles.defaultName?.trim();
+    const localizedName = LANGUAGE_METADATA[getLanguageCode()].defaultVaultProfileName.trim();
     if (localizedName && localizedName.length > 0) {
         return localizedName;
     }

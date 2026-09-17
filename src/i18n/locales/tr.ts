@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_TR = {
+    language: {
+        downloading: 'Diller indiriliyor…',
+        continueInEnglish: 'İngilizce devam et',
+        downloadFailed: 'Diller indirilemedi. Notebook Navigator İngilizce kullanıyor.'
+    },
     // Common UI elements
     common: {
         cancel: 'İptal', // Button text for canceling dialogs and operations (English: Cancel)

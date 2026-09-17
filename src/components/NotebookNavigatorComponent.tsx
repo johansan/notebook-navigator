@@ -18,7 +18,7 @@
 
 // src/components/NotebookNavigatorComponent.tsx
 import React, { useEffect, useImperativeHandle, forwardRef, useRef, useState, useCallback, useLayoutEffect, useMemo } from 'react';
-import { TFile, TFolder } from 'obsidian';
+import { Platform, TFile, TFolder } from 'obsidian';
 import { useExpansionState } from '../context/ExpansionContext';
 import { useSelectionState, useSelectionDispatch, resolvePrimarySelectedFile } from '../context/SelectionContext';
 import { useServices } from '../context/ServicesContext';
@@ -55,7 +55,7 @@ import { createIndexMap } from '../utils/arrayUtils';
 import { deleteSelectedFiles } from '../utils/deleteOperations';
 import { calculateCompactListMetrics } from '../utils/listPaneMetrics';
 import { getNavigationPaneSizing } from '../utils/paneSizing';
-import { getAndroidFontScale } from '../utils/androidFontScale';
+import { getAndroidFontScale, propagateAndroidFontCompensationToMobileRoot } from '../utils/androidFontScale';
 import {
     getBackgroundClasses,
     getSinglePaneEntryView,
@@ -393,6 +393,14 @@ export const NotebookNavigatorComponent = React.memo(
         // Ref callback that stores the navigator root element
         const containerCallbackRef = useCallback((node: HTMLDivElement | null) => {
             containerRef.current = node;
+            if (Platform.isAndroidApp && node) {
+                const viewContainer = node.closest('.notebook-navigator');
+                if (viewContainer instanceof HTMLElement) {
+                    // Language and storage loading can delay this mount. Copy compensation before layout effects
+                    // measure the real navigator, because the mobile root overrides inherited font-size variables.
+                    propagateAndroidFontCompensationToMobileRoot(viewContainer);
+                }
+            }
         }, []);
 
         useEffect(() => {

@@ -52,3 +52,5 @@ yarn.lock
 # Minified files
 *.min.js
 *.min.css
+# Generated release language pack
+languages.json

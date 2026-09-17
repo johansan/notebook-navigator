@@ -69,8 +69,6 @@ export type SectionReorderRenderItem = RootReorderRenderItem & {
 };
 
 const TAGS_VIRTUAL_REORDER_KEY = '__nn-tags-root__';
-const REMOVE_MISSING_LABEL = strings.common.remove;
-
 export interface UseNavigationRootReorderOptions {
     app: App;
     items: CombinedNavigationItem[];
@@ -612,7 +610,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                     }
                 }}
             >
-                {REMOVE_MISSING_LABEL}
+                {strings.common.remove}
             </span>
         );
     }, []);

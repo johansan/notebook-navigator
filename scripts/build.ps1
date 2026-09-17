@@ -115,6 +115,13 @@ if (($env:Path -split ';') -notcontains $ResolvedNodeDir) {
     $env:Path = "$ResolvedNodeDir;$env:Path"
 }
 
+Write-Host 'Generating language pack...'
+$languages = Invoke-BuildCommand -FilePath $Npm -ArgumentList @('run', 'build:languages')
+if ($languages.Status -ne 0) {
+    Write-Host "$ErrorMark Language generation failed"
+    exit 1
+}
+
 Write-Host 'Generating icon constants...'
 $icon = Invoke-BuildCommand -FilePath $Npm -ArgumentList @('run', 'build:icons')
 

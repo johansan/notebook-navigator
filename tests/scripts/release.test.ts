@@ -97,7 +97,7 @@ function createFixture(version = '1.0.0', tagged = true): Fixture {
         "export const RELEASE_NOTES = [{ version: '1.0.0' }, { version: '1.1.0' }];\n"
     );
     fs.writeFileSync(path.join(root, 'styles.css'), '/* fixture styles */\n');
-    fs.writeFileSync(path.join(root, '.gitignore'), '.release.lock\nmain.js\n');
+    fs.writeFileSync(path.join(root, '.gitignore'), '.release.lock\nmain.js\nlanguages.json\n');
     writeJson(root, 'manifest.json', { id: 'test', name: 'Test', version, minAppVersion: '1.11.0', description: 'Test', author: 'Test' });
     writeJson(root, 'package.json', { version, scripts: { build: 'test', 'lint:styles': 'test' } });
     writeJson(root, 'package-lock.json', { version, packages: { '': { version } } });
@@ -145,6 +145,7 @@ function runRelease(fixture: Fixture, args: string[], options: RunOptions = {}) 
         } else if (command === path.join(fixture.root, 'scripts/build.sh')) {
             if (options.failBuild) throw new Error('Build failed');
             fs.writeFileSync(path.join(fixture.root, 'main.js'), '// built fixture\n');
+            fs.writeFileSync(path.join(fixture.root, 'languages.json'), '{}');
             if (options.changeGeneratedFile) fs.appendFileSync(path.join(fixture.root, 'styles.css'), '/* changed */\n');
         } else if (command === 'gh') {
             const operation = commandArgs.slice(0, 2).join(' ');
@@ -186,11 +187,12 @@ function runRelease(fixture: Fixture, args: string[], options: RunOptions = {}) 
             } else if (operation === 'release view') {
                 result = JSON.stringify({
                     url: 'https://example.test/release',
-                    assets: ['main.js', 'manifest.json', 'styles.css'].map(name => ({ name }))
+                    assets: ['main.js', 'manifest.json', 'styles.css', 'languages.json'].map(name => ({ name }))
                 });
             } else if (operation === 'release download') {
                 const directory = commandArgs[commandArgs.indexOf('--dir') + 1];
-                for (const name of ['main.js', 'manifest.json', 'styles.css']) fs.writeFileSync(path.join(directory, name), name);
+                for (const name of ['main.js', 'manifest.json', 'styles.css', 'languages.json'])
+                    fs.writeFileSync(path.join(directory, name), name);
             } else if (operation === 'attestation verify') {
                 result = 'verified';
             } else if (operation === 'pr list') {
@@ -317,7 +319,7 @@ describe('release.js', () => {
         expect(ci).toBeGreaterThan(push);
         expect(result.calls[ci]).toContain(commit);
         expect(tag).toBeGreaterThan(ci);
-        expect(result.calls.filter(call => call[0] === 'gh' && call[1] === 'attestation')).toHaveLength(3);
+        expect(result.calls.filter(call => call[0] === 'gh' && call[1] === 'attestation')).toHaveLength(4);
         expect(result.calls.some(call => call[0] === 'gh' && call[1] === 'pr')).toBe(false);
     });
 

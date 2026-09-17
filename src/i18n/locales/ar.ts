@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_AR = {
+    language: {
+        downloading: 'جارٍ تنزيل اللغات…',
+        continueInEnglish: 'المتابعة بالإنجليزية',
+        downloadFailed: 'تعذّر تنزيل اللغات. يستخدم Notebook Navigator اللغة الإنجليزية.'
+    },
     // Common UI elements
     common: {
         cancel: 'إلغاء', // Button text for canceling dialogs and operations (English: Cancel)

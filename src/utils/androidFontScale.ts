@@ -81,6 +81,7 @@
  * FILES INVOLVED:
  * - src/utils/androidFontScale.ts: Detection and font-size variable compensation
  * - src/view/NotebookNavigatorView.tsx: Calls applyAndroidFontCompensation before React
+ * - src/components/NotebookNavigatorComponent.tsx: Copies compensation when the navigator root mounts
  * - styles.css: "Android textZoom Compensation" section for CSS-based compensation
  */
 

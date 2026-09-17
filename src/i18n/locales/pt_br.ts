@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_PT_BR = {
+    language: {
+        downloading: 'Baixando idiomas…',
+        continueInEnglish: 'Continuar em inglês',
+        downloadFailed: 'Não foi possível baixar os idiomas. O Notebook Navigator está usando inglês.'
+    },
     // Common UI elements
     common: {
         cancel: 'Cancelar',

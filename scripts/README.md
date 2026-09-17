@@ -233,3 +233,11 @@ Runs the icon pack updater from `icon-assets/scripts/update-icon-packs.ts`.
 - Uses `npx tsx` to run the TypeScript updater
 - Supports updating all packs or selected pack IDs
 - Supports check-only, forced update, and local manifest regeneration modes
+
+## build-languages.mjs
+
+Generates `languages.json` and `src/i18n/localeMetadata.ts` from the locale source files. Locale text and arrays are emitted as JSON; function-valued entries remain in the generated TypeScript alongside startup labels and date/time defaults. English remains bundled in full.
+
+Run `npm run build:languages` after editing locales. The build scripts and esbuild also run this automatically. The generated TypeScript is committed; `languages.json` is an ignored build artifact, published and attested alongside the other release assets. Downloads use the installed release tag, and the generated data ID prevents cached or downloaded text from a different build from being applied.
+
+Production builds report the byte size of `main.js`, warn at 4,500,000 bytes, and fail at 5,000,000 bytes.

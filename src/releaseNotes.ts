@@ -109,10 +109,15 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.4.2',
         date: '2026-09-15',
         showOnUpdate: false,
+        improved: [
+            'Moved all translations except English out of the plugin into a language pack that is downloaded once per plugin version and cached on the device, reducing the plugin file from 4.9 MB to 2.6 MB, keeping it well below the 5 MB file size limit of Obsidian Sync Standard, and improving startup times.'
+        ],
         changed: [
             'Changed ==Color list pane title== to apply the color to the title text even when ==Apply color to icons only== is enabled.'
         ],
         fixed: [
+            'Android text sizes now remain consistent when language downloads delay startup.',
+            'The default vault profile now uses the selected language on first launch while translations are downloading.',
             'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
             '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
             'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux now opens them in a new tab without pasting the primary selection into the note [#1505](https://github.com/johansan/notebook-navigator/issues/1505).'

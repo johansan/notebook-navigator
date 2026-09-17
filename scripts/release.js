@@ -64,7 +64,7 @@ const os = require('os');
 const projectRoot = path.join(__dirname, '..');
 const validReleaseTypes = ['patch', 'minor', 'major'];
 const lockFilePath = path.join(projectRoot, '.release.lock');
-const releaseAssetNames = ['main.js', 'manifest.json', 'styles.css'];
+const releaseAssetNames = ['main.js', 'manifest.json', 'styles.css', 'languages.json'];
 const attestedReleaseAssetNames = releaseAssetNames;
 const releaseWorkflowPath = '.github/workflows/release.yml';
 const mainWorkflowPath = '.github/workflows/ci.yml';
@@ -636,7 +636,7 @@ function verifyBuild() {
         }
 
         // Verify build output exists
-        const expectedFiles = ['main.js', 'manifest.json', 'styles.css'];
+        const expectedFiles = ['main.js', 'manifest.json', 'styles.css', 'languages.json'];
         const missingFiles = expectedFiles.filter(file => !fs.existsSync(path.join(projectRoot, file)));
 
         if (missingFiles.length > 0) {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/main.ts"],
+  "entry": ["src/i18n/locales/*.ts"],
   "project": ["src/**/*.{ts,tsx}"],
   "ignoreDependencies": ["tsx"],
   "ignoreIssues": {

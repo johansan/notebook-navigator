@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_KO = {
+    language: {
+        downloading: '언어 다운로드 중…',
+        continueInEnglish: '영어로 계속',
+        downloadFailed: '언어를 다운로드하지 못했습니다. Notebook Navigator가 영어를 사용합니다.'
+    },
     // Common UI elements
     common: {
         cancel: '취소', // Button text for canceling dialogs and operations (English: Cancel)

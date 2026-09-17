@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_ZH_CN = {
+    language: {
+        downloading: '正在下载语言…',
+        continueInEnglish: '继续使用英语',
+        downloadFailed: '语言下载失败。Notebook Navigator 正在使用英语。'
+    },
     // Common UI elements
     common: {
         cancel: '取消', // Button text for canceling dialogs and operations (English: Cancel)

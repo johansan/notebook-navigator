@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_TH = {
+    language: {
+        downloading: 'กำลังดาวน์โหลดภาษา…',
+        continueInEnglish: 'ดำเนินการต่อเป็นภาษาอังกฤษ',
+        downloadFailed: 'ดาวน์โหลดภาษาไม่สำเร็จ Notebook Navigator กำลังใช้ภาษาอังกฤษ'
+    },
     // Common UI elements
     common: {
         cancel: 'ยกเลิก',

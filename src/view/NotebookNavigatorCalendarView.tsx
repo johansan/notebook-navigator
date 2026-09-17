@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { LanguageLoadingBoundary } from '../components/LanguageLoadingBoundary';
 import React from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { ItemView, Platform, WorkspaceLeaf } from 'obsidian';
@@ -27,6 +28,7 @@ import { strings } from '../i18n';
 import type NotebookNavigatorPlugin from '../main';
 import { NOTEBOOK_NAVIGATOR_CALENDAR_VIEW } from '../types';
 import { resolveUXIconForMenu } from '../utils/uxIcons';
+import { runAsyncAction } from '../utils/async';
 import {
     IOS_FLOATING_TOOLBARS_CLASS,
     setupNotebookNavigatorViewContainer,
@@ -105,15 +107,22 @@ export class NotebookNavigatorCalendarView extends ItemView {
         this.root = createRoot(container);
         this.root.render(
             <React.StrictMode>
-                <SettingsProvider plugin={this.plugin}>
-                    <UXPreferencesProvider plugin={this.plugin}>
-                        <ServicesProvider plugin={this.plugin}>
-                            <CalendarRightSidebar />
-                        </ServicesProvider>
-                    </UXPreferencesProvider>
-                </SettingsProvider>
+                <LanguageLoadingBoundary service={this.plugin.languageService}>
+                    <SettingsProvider plugin={this.plugin}>
+                        <UXPreferencesProvider plugin={this.plugin}>
+                            <ServicesProvider plugin={this.plugin}>
+                                <CalendarRightSidebar />
+                            </ServicesProvider>
+                        </UXPreferencesProvider>
+                    </SettingsProvider>
+                </LanguageLoadingBoundary>
             </React.StrictMode>
         );
+        // Obsidian creates the tab header before the loading boundary opens, so its cached English title must be refreshed.
+        runAsyncAction(async () => {
+            await this.plugin.languageService.ready;
+            if (this.root) this.updateLeafHeader();
+        });
     }
 
     async onClose() {

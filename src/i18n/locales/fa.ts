@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_FA = {
+    language: {
+        downloading: 'در حال دانلود زبان‌ها…',
+        continueInEnglish: 'ادامه به انگلیسی',
+        downloadFailed: 'دانلود زبان‌ها ناموفق بود. Notebook Navigator از انگلیسی استفاده می‌کند.'
+    },
     // Common UI elements
     common: {
         cancel: 'لغو',

@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_UK = {
+    language: {
+        downloading: 'Завантаження мов…',
+        continueInEnglish: 'Продовжити англійською',
+        downloadFailed: 'Не вдалося завантажити мови. Notebook Navigator використовує англійську.'
+    },
     // Common UI elements
     common: {
         cancel: 'Скасувати', // Button text for canceling dialogs and operations (English: Cancel)

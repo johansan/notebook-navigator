@@ -21,6 +21,11 @@
  * Organized by feature/component for easy maintenance
  */
 export const STRINGS_JA = {
+    language: {
+        downloading: '言語をダウンロード中…',
+        continueInEnglish: '英語で続行',
+        downloadFailed: '言語のダウンロードに失敗しました。Notebook Navigator は英語を使用しています。'
+    },
     // Common UI elements
     common: {
         cancel: 'キャンセル', // Button text for canceling dialogs and operations (English: Cancel)

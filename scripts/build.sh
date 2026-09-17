@@ -28,6 +28,13 @@ cd "$SCRIPT_DIR/.."
 BUILD_WARNINGS=0
 BUILD_ERRORS=0
 
+# Locale metadata is required by TypeScript, lint, and tests, before the final production build.
+echo "Generating language pack..."
+if ! npm run build:languages; then
+    echo "❌ Language generation failed"
+    exit 1
+fi
+
 # Step 0: Generate icon constants (keeps src/constants/notebookNavigatorIcon.ts in sync with icon.svg)
 echo "Generating icon constants..."
 ICON_OUTPUT=$(npm run build:icons 2>&1)

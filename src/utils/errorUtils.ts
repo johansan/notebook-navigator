@@ -19,12 +19,10 @@
 import { strings } from '../i18n';
 import { isRecord } from './typeGuards';
 
-const DEFAULT_UNKNOWN_ERROR = strings.common.unknownError;
-
 /**
  * Converts any value to an Error object
  */
-function toError(error: unknown, fallback: string = DEFAULT_UNKNOWN_ERROR): Error {
+function toError(error: unknown, fallback: string = strings.common.unknownError): Error {
     if (error instanceof Error) {
         return error;
     }
@@ -56,7 +54,7 @@ function toError(error: unknown, fallback: string = DEFAULT_UNKNOWN_ERROR): Erro
 /**
  * Extracts a readable error message from any value
  */
-export function getErrorMessage(error: unknown, fallback: string = DEFAULT_UNKNOWN_ERROR): string {
+export function getErrorMessage(error: unknown, fallback: string = strings.common.unknownError): string {
     if (error instanceof Error && error.message) {
         return error.message;
     }
