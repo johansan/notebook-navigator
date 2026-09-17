@@ -82,8 +82,6 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
     const uiState = useUIState();
     const uiDispatch = useUIDispatch();
     const listPaneTitlePreference = settings.listPaneTitle ?? 'header';
-    // The title text keeps the theme color when custom colors are limited to icons, matching navigation items.
-    const titleTextColor = titleColor && !settings.colorIconOnly ? titleColor : undefined;
     const iconVersion = useIconServiceVersion();
     const listToolbarVisibility = settings.toolbarVisibility.list;
     const showRevealButton = listToolbarVisibility.reveal;
@@ -264,7 +262,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                         className={`nn-path-current${isCurrentFolderNoteSegment ? ' nn-pane-header-folder-note' : ''}`}
                         onClick={isCurrentFolderNoteSegment ? handleSelectedFolderNoteClick : undefined}
                         onMouseDown={isCurrentFolderNoteSegment ? handleSelectedFolderNoteMouseDown : undefined}
-                        style={segment.isLast && titleTextColor ? { color: titleTextColor } : undefined}
+                        style={segment.isLast && titleColor ? { color: titleColor } : undefined}
                     >
                         {segment.label}
                     </span>
@@ -311,7 +309,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
         selectedFolderNote,
         handleSelectedFolderNoteClick,
         handleSelectedFolderNoteMouseDown,
-        titleTextColor
+        titleColor
     ]);
 
     const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -412,7 +410,7 @@ export const ListPaneHeader = React.memo(function ListPaneHeader({
                         <span ref={iconRef} className="nn-pane-header-icon" style={titleColor ? { color: titleColor } : undefined} />
                     )}
                     {shouldShowHeaderTitle && (
-                        <span className="nn-pane-header-text" style={titleTextColor ? { color: titleTextColor } : undefined}>
+                        <span className="nn-pane-header-text" style={titleColor ? { color: titleColor } : undefined}>
                             {breadcrumbContent}
                         </span>
                     )}

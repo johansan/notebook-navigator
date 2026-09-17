@@ -109,6 +109,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.4.2',
         date: '2026-09-15',
         showOnUpdate: false,
+        changed: [
+            'Changed ==Color list pane title== to apply the color to the title text even when ==Apply color to icons only== is enabled.'
+        ],
         fixed: [
             'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
             '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
