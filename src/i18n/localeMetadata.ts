@@ -20,725 +20,728 @@
 
 export const LANGUAGE_DATA_ID = '16e53bd04ae6e2a8f9cd4ea0dff02052da78f480a3b9e89891cb46cd63c42e61';
 export const LANGUAGE_METADATA = {
-  ar: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'h:mm a',
-    defaultVaultProfileName: 'افتراضي',
-    bootstrap: {
-      downloading: 'جارٍ تنزيل اللغات…',
-      continueInEnglish: 'المتابعة بالإنجليزية',
-      downloadFailed: 'تعذّر تنزيل اللغات. يستخدم Notebook Navigator اللغة الإنجليزية.'
+    ar: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'h:mm a',
+        defaultVaultProfileName: 'افتراضي',
+        bootstrap: {
+            downloading: 'جارٍ تنزيل اللغات…',
+            continueInEnglish: 'المتابعة بالإنجليزية',
+            downloadFailed: 'تعذّر تنزيل اللغات. يستخدم Notebook Navigator اللغة الإنجليزية.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `تطبيق الفرز والتجميع على ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `تطبيق المظهر على ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `إعادة تعيين المظهر في ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) =>
+                rows === 1 ? 'صف عنوان واحد' : rows === 2 ? 'صفا عنوان' : `${rows} صفوف عنوان`,
+            'folderAppearance.previewRows.option': (rows: number) =>
+                rows === 1 ? 'صف معاينة واحد' : rows === 2 ? 'صفا معاينة' : `${rows} صفوف معاينة`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `تطبيق الفرز والتجميع على ${target}؟`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `تطبيق المظهر على ${target}؟`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `إعادة تعيين المظهر في ${target}؟`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `سيتغير المظهر لـ ${count} من العناصر. المظاهر المخصصة الحالية التي ستُستبدل: ${replacedCount}. تُنسخ تفضيلات المظهر المحفوظة مرة واحدة؛ ويُحتفظ بالفرز والتجميع. لا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `سيُعاد تعيين المظهر لـ ${count} من العناصر. يُحتفظ بالفرز والتجميع. هذا تغيير لمرة واحدة؛ ولا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `التجاوزات الحالية التي ستتغير: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `يبدّل العرض الحالي إلى الفرز اليدوي باستخدام "${property}". تحرير الترتيب يكتب قيم فهرس رقمية إلى تلك الخاصية في ${count} من الملاحظات حسب الحاجة.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `يؤدي هذا إلى إزالة "${property}" من ${count} من الملاحظات في القائمة الحالية. سيتم مسح ترتيب الفرز اليدوي لتلك الملاحظات.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `إعادة الترتيب هذه تحتاج إلى مساحة رقمية أكبر. ${count} من الملاحظات ستحصل على قيم فهرس جديدة.`,
+            'modals.navRainbowSection.title': (section: string) => `ألوان قوس قزح: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `نقل ${name} إلى مجلد...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} من الملفات`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `تطبيق الفرز والتجميع على ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `تطبيق المظهر على ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `إعادة تعيين المظهر في ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) =>
-        rows === 1 ? 'صف عنوان واحد' : rows === 2 ? 'صفا عنوان' : `${rows} صفوف عنوان`,
-      'folderAppearance.previewRows.option': (rows: number) =>
-        rows === 1 ? 'صف معاينة واحد' : rows === 2 ? 'صفا معاينة' : `${rows} صفوف معاينة`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `تطبيق الفرز والتجميع على ${target}؟`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `تطبيق المظهر على ${target}؟`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `إعادة تعيين المظهر في ${target}؟`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `سيتغير المظهر لـ ${count} من العناصر. المظاهر المخصصة الحالية التي ستُستبدل: ${replacedCount}. تُنسخ تفضيلات المظهر المحفوظة مرة واحدة؛ ويُحتفظ بالفرز والتجميع. لا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `سيُعاد تعيين المظهر لـ ${count} من العناصر. يُحتفظ بالفرز والتجميع. هذا تغيير لمرة واحدة؛ ولا ترتبط التغييرات المستقبلية والعناصر الفرعية الجديدة.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `التجاوزات الحالية التي ستتغير: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `يبدّل العرض الحالي إلى الفرز اليدوي باستخدام "${property}". تحرير الترتيب يكتب قيم فهرس رقمية إلى تلك الخاصية في ${count} من الملاحظات حسب الحاجة.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `يؤدي هذا إلى إزالة "${property}" من ${count} من الملاحظات في القائمة الحالية. سيتم مسح ترتيب الفرز اليدوي لتلك الملاحظات.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `إعادة الترتيب هذه تحتاج إلى مساحة رقمية أكبر. ${count} من الملاحظات ستحصل على قيم فهرس جديدة.`,
-      'modals.navRainbowSection.title': (section: string) => `ألوان قوس قزح: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `نقل ${name} إلى مجلد...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} من الملفات`
-    }
-  },
-  de: {
-    dateFormat: 'DD.MM.YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Standard',
-    bootstrap: {
-      downloading: 'Sprachen werden heruntergeladen…',
-      continueInEnglish: 'Auf Englisch fortfahren',
-      downloadFailed: 'Sprachdownload fehlgeschlagen. Notebook Navigator verwendet Englisch.'
+    de: {
+        dateFormat: 'DD.MM.YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Standard',
+        bootstrap: {
+            downloading: 'Sprachen werden heruntergeladen…',
+            continueInEnglish: 'Auf Englisch fortfahren',
+            downloadFailed: 'Sprachdownload fehlgeschlagen. Notebook Navigator verwendet Englisch.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sortierung und Gruppierung auf ${target} anwenden`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Darstellung auf ${target} anwenden`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Darstellung für ${target} zurücksetzen`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} Titelzeile${rows === 1 ? '' : 'n'}`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sortierung und Gruppierung auf ${target} anwenden?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Darstellung auf ${target} anwenden?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Darstellung für ${target} zurücksetzen?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Die Darstellung ändert sich für ${count} ${count === 1 ? 'Element' : 'Elemente'}. Ersetzte vorhandene Anpassungen: ${replacedCount}. Gespeicherte Darstellungseinstellungen werden einmalig kopiert; Sortierung und Gruppierung bleiben erhalten. Künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Die Darstellung wird für ${count} ${count === 1 ? 'Element' : 'Elemente'} zurückgesetzt. Sortierung und Gruppierung bleiben erhalten. Dies ist eine einmalige Änderung; künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Vorhandene Überschreibungen, die sich ändern: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Wechselt die aktuelle Ansicht zur manuellen Sortierung mit „${property}“. Beim Bearbeiten der Reihenfolge werden numerische Indexwerte bei Bedarf in diese Eigenschaft in ${count} ${count === 1 ? 'Notiz' : 'Notizen'} geschrieben.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Entfernt „${property}“ aus ${count} ${count === 1 ? 'Notiz' : 'Notizen'} in der aktuellen Liste. Die manuelle Sortierreihenfolge dieser Notizen wird gelöscht.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Diese Neuanordnung benötigt mehr numerischen Raum. ${count} ${count === 1 ? 'Notiz erhält' : 'Notizen erhalten'} neue Indexwerte.`,
+            'modals.navRainbowSection.title': (section: string) => `Regenbogenfarben: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `In Ordner verschieben: ${name}...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} Dateien`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sortierung und Gruppierung auf ${target} anwenden`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Darstellung auf ${target} anwenden`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Darstellung für ${target} zurücksetzen`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} Titelzeile${rows === 1 ? '' : 'n'}`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} Vorschauzeile${rows === 1 ? '' : 'n'}`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sortierung und Gruppierung auf ${target} anwenden?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Darstellung auf ${target} anwenden?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Darstellung für ${target} zurücksetzen?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Die Darstellung ändert sich für ${count} ${count === 1 ? 'Element' : 'Elemente'}. Ersetzte vorhandene Anpassungen: ${replacedCount}. Gespeicherte Darstellungseinstellungen werden einmalig kopiert; Sortierung und Gruppierung bleiben erhalten. Künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Die Darstellung wird für ${count} ${count === 1 ? 'Element' : 'Elemente'} zurückgesetzt. Sortierung und Gruppierung bleiben erhalten. Dies ist eine einmalige Änderung; künftige Änderungen und neue Unterelemente sind nicht verknüpft.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Vorhandene Überschreibungen, die sich ändern: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Wechselt die aktuelle Ansicht zur manuellen Sortierung mit „${property}“. Beim Bearbeiten der Reihenfolge werden numerische Indexwerte bei Bedarf in diese Eigenschaft in ${count} ${count === 1 ? 'Notiz' : 'Notizen'} geschrieben.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Entfernt „${property}“ aus ${count} ${count === 1 ? 'Notiz' : 'Notizen'} in der aktuellen Liste. Die manuelle Sortierreihenfolge dieser Notizen wird gelöscht.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Diese Neuanordnung benötigt mehr numerischen Raum. ${count} ${count === 1 ? 'Notiz erhält' : 'Notizen erhalten'} neue Indexwerte.`,
-      'modals.navRainbowSection.title': (section: string) => `Regenbogenfarben: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `In Ordner verschieben: ${name}...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} Dateien`
-    }
-  },
-  en: {
-    dateFormat: 'MMM D, YYYY',
-    timeFormat: 'h:mm a',
-    defaultVaultProfileName: 'Default',
-    bootstrap: {
-      downloading: 'Downloading languages…',
-      continueInEnglish: 'Continue in English',
-      downloadFailed: 'Language download failed. Notebook Navigator is using English.'
+    en: {
+        dateFormat: 'MMM D, YYYY',
+        timeFormat: 'h:mm a',
+        defaultVaultProfileName: 'Default',
+        bootstrap: {
+            downloading: 'Downloading languages…',
+            continueInEnglish: 'Continue in English',
+            downloadFailed: 'Language download failed. Notebook Navigator is using English.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Apply sort and group to ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Apply appearance to ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Reset appearance in ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} title row${rows === 1 ? '' : 's'}`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Apply sort and group to ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Apply appearance to ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Reset appearance in ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Appearance will change for ${count} ${count === 1 ? 'item' : 'items'}. Existing custom appearances replaced: ${replacedCount}. Saved appearance preferences are copied once; sort and grouping are preserved. Future changes and new descendants are not linked.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Appearance will be reset for ${count} ${count === 1 ? 'item' : 'items'}. Sort and grouping are preserved. This is a one-time change; future changes and new descendants are not linked.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Existing overrides that will change: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `This switches the current view to manual sort using "${property}". Editing the order writes numeric index values to that property in ${count} ${count === 1 ? 'note' : 'notes'} as needed.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `This removes "${property}" from ${count} ${count === 1 ? 'note' : 'notes'} in the current list. Manual sort order will be cleared for those notes.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `This reorder needs more numeric space. ${count} ${count === 1 ? 'note' : 'notes'} will receive new index values.`,
+            'modals.navRainbowSection.title': (section: string) => `Rainbow colors: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Move ${name} to folder...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} files`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Apply sort and group to ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Apply appearance to ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Reset appearance in ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} title row${rows === 1 ? '' : 's'}`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} preview row${rows === 1 ? '' : 's'}`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Apply sort and group to ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Apply appearance to ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Reset appearance in ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Appearance will change for ${count} ${count === 1 ? 'item' : 'items'}. Existing custom appearances replaced: ${replacedCount}. Saved appearance preferences are copied once; sort and grouping are preserved. Future changes and new descendants are not linked.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Appearance will be reset for ${count} ${count === 1 ? 'item' : 'items'}. Sort and grouping are preserved. This is a one-time change; future changes and new descendants are not linked.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Existing overrides that will change: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `This switches the current view to manual sort using "${property}". Editing the order writes numeric index values to that property in ${count} ${count === 1 ? 'note' : 'notes'} as needed.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `This removes "${property}" from ${count} ${count === 1 ? 'note' : 'notes'} in the current list. Manual sort order will be cleared for those notes.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `This reorder needs more numeric space. ${count} ${count === 1 ? 'note' : 'notes'} will receive new index values.`,
-      'modals.navRainbowSection.title': (section: string) => `Rainbow colors: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Move ${name} to folder...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} files`
-    }
-  },
-  es: {
-    dateFormat: 'D [de] MMMM [de] YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Predeterminado',
-    bootstrap: {
-      downloading: 'Descargando idiomas…',
-      continueInEnglish: 'Continuar en inglés',
-      downloadFailed: 'No se pudieron descargar los idiomas. Notebook Navigator usa inglés.'
+    es: {
+        dateFormat: 'D [de] MMMM [de] YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Predeterminado',
+        bootstrap: {
+            downloading: 'Descargando idiomas…',
+            continueInEnglish: 'Continuar en inglés',
+            downloadFailed: 'No se pudieron descargar los idiomas. Notebook Navigator usa inglés.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar orden y agrupación a ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar apariencia a ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Restablecer la apariencia en ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de título`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de vista previa`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `¿Aplicar orden y agrupación a ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `¿Aplicar apariencia a ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `¿Restablecer la apariencia en ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `La apariencia cambiará para ${count} ${count === 1 ? 'elemento' : 'elementos'}. Apariencias personalizadas existentes reemplazadas: ${replacedCount}. Las preferencias de apariencia guardadas se copian una vez; se conservan la ordenación y la agrupación. Los cambios futuros y los nuevos descendientes no quedan vinculados.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `La apariencia se restablecerá para ${count} ${count === 1 ? 'elemento' : 'elementos'}. Se conservan la ordenación y la agrupación. Es un cambio único; los cambios futuros y los nuevos descendientes no quedan vinculados.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Anulaciones existentes que cambiarán: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Esto cambia la vista actual al orden manual usando "${property}". Editar el orden escribe valores numéricos de índice en esa propiedad en ${count} ${count === 1 ? 'nota' : 'notas'} según sea necesario.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Esto elimina "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} en la lista actual. Se borrará el orden manual de esas notas.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Esta reordenación necesita más espacio numérico. ${count} ${count === 1 ? 'nota recibirá' : 'notas recibirán'} nuevos valores de índice.`,
+            'modals.navRainbowSection.title': (section: string) => `Colores arcoíris: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} a carpeta...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} archivos`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar orden y agrupación a ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar apariencia a ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Restablecer la apariencia en ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de título`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} fila${rows === 1 ? '' : 's'} de vista previa`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `¿Aplicar orden y agrupación a ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `¿Aplicar apariencia a ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `¿Restablecer la apariencia en ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `La apariencia cambiará para ${count} ${count === 1 ? 'elemento' : 'elementos'}. Apariencias personalizadas existentes reemplazadas: ${replacedCount}. Las preferencias de apariencia guardadas se copian una vez; se conservan la ordenación y la agrupación. Los cambios futuros y los nuevos descendientes no quedan vinculados.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `La apariencia se restablecerá para ${count} ${count === 1 ? 'elemento' : 'elementos'}. Se conservan la ordenación y la agrupación. Es un cambio único; los cambios futuros y los nuevos descendientes no quedan vinculados.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Anulaciones existentes que cambiarán: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Esto cambia la vista actual al orden manual usando "${property}". Editar el orden escribe valores numéricos de índice en esa propiedad en ${count} ${count === 1 ? 'nota' : 'notas'} según sea necesario.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Esto elimina "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} en la lista actual. Se borrará el orden manual de esas notas.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Esta reordenación necesita más espacio numérico. ${count} ${count === 1 ? 'nota recibirá' : 'notas recibirán'} nuevos valores de índice.`,
-      'modals.navRainbowSection.title': (section: string) => `Colores arcoíris: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} a carpeta...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} archivos`
-    }
-  },
-  fa: {
-    dateFormat: 'YYYY/MM/DD',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'پیش‌فرض',
-    bootstrap: {
-      downloading: 'در حال دانلود زبان‌ها…',
-      continueInEnglish: 'ادامه به انگلیسی',
-      downloadFailed: 'دانلود زبان‌ها ناموفق بود. Notebook Navigator از انگلیسی استفاده می‌کند.'
+    fa: {
+        dateFormat: 'YYYY/MM/DD',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'پیش‌فرض',
+        bootstrap: {
+            downloading: 'در حال دانلود زبان‌ها…',
+            continueInEnglish: 'ادامه به انگلیسی',
+            downloadFailed: 'دانلود زبان‌ها ناموفق بود. Notebook Navigator از انگلیسی استفاده می‌کند.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `اعمال مرتب‌سازی و گروه‌بندی به ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `اعمال ظاهر به ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `بازنشانی ظاهر در ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} ردیف عنوان`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} ردیف پیش‌نمایش`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `مرتب‌سازی و گروه‌بندی به ${target} اعمال شود؟`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `ظاهر به ${target} اعمال شود؟`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `ظاهر در ${target} بازنشانی شود؟`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `ظاهر ${count} مورد تغییر می‌کند. ظاهرهای سفارشی موجود که جایگزین می‌شوند: ${replacedCount}. ترجیحات ذخیره‌شدهٔ ظاهر یک‌بار کپی می‌شوند؛ مرتب‌سازی و گروه‌بندی حفظ می‌شوند. تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `ظاهر ${count} مورد بازنشانی می‌شود. مرتب‌سازی و گروه‌بندی حفظ می‌شوند. این تغییر یک‌باره است؛ تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `بازنویسی‌های موجود که تغییر خواهند کرد: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `این کار نمای فعلی را به مرتب‌سازی دستی با استفاده از «${property}» تغییر می‌دهد. ویرایش ترتیب، مقادیر شاخص عددی را در صورت نیاز در این ویژگی برای ${count} یادداشت می‌نویسد.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `این کار «${property}» را از ${count} ${count === 1 ? 'یادداشت' : 'یادداشت'} در فهرست فعلی حذف می‌کند. ترتیب مرتب‌سازی دستی برای آن یادداشت‌ها پاک خواهد شد.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `این بازآرایی به فضای عددی بیشتری نیاز دارد. ${count} یادداشت مقادیر شاخص جدید دریافت می‌کند.`,
+            'modals.navRainbowSection.title': (section: string) => `رنگ‌های رنگین‌کمان: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `انتقال ${name} به پوشه...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} فایل`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `اعمال مرتب‌سازی و گروه‌بندی به ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `اعمال ظاهر به ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `بازنشانی ظاهر در ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} ردیف عنوان`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} ردیف پیش‌نمایش`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `مرتب‌سازی و گروه‌بندی به ${target} اعمال شود؟`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `ظاهر به ${target} اعمال شود؟`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `ظاهر در ${target} بازنشانی شود؟`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `ظاهر ${count} مورد تغییر می‌کند. ظاهرهای سفارشی موجود که جایگزین می‌شوند: ${replacedCount}. ترجیحات ذخیره‌شدهٔ ظاهر یک‌بار کپی می‌شوند؛ مرتب‌سازی و گروه‌بندی حفظ می‌شوند. تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `ظاهر ${count} مورد بازنشانی می‌شود. مرتب‌سازی و گروه‌بندی حفظ می‌شوند. این تغییر یک‌باره است؛ تغییرات آینده و موارد فرزند جدید پیوند داده نمی‌شوند.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `بازنویسی‌های موجود که تغییر خواهند کرد: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `این کار نمای فعلی را به مرتب‌سازی دستی با استفاده از «${property}» تغییر می‌دهد. ویرایش ترتیب، مقادیر شاخص عددی را در صورت نیاز در این ویژگی برای ${count} یادداشت می‌نویسد.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `این کار «${property}» را از ${count} ${count === 1 ? 'یادداشت' : 'یادداشت'} در فهرست فعلی حذف می‌کند. ترتیب مرتب‌سازی دستی برای آن یادداشت‌ها پاک خواهد شد.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `این بازآرایی به فضای عددی بیشتری نیاز دارد. ${count} یادداشت مقادیر شاخص جدید دریافت می‌کند.`,
-      'modals.navRainbowSection.title': (section: string) => `رنگ‌های رنگین‌کمان: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `انتقال ${name} به پوشه...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} فایل`
-    }
-  },
-  fr: {
-    dateFormat: 'D MMMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Par défaut',
-    bootstrap: {
-      downloading: 'Téléchargement des langues…',
-      continueInEnglish: 'Continuer en anglais',
-      downloadFailed: 'Le téléchargement des langues a échoué. Notebook Navigator utilise l’anglais.'
+    fr: {
+        dateFormat: 'D MMMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Par défaut',
+        bootstrap: {
+            downloading: 'Téléchargement des langues…',
+            continueInEnglish: 'Continuer en anglais',
+            downloadFailed: 'Le téléchargement des langues a échoué. Notebook Navigator utilise l’anglais.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Appliquer le tri et le regroupement aux ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Appliquer l'apparence aux ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Réinitialiser l’apparence dans les ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Appliquer le tri et le regroupement aux ${target} ?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Appliquer l'apparence aux ${target} ?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Réinitialiser l’apparence dans les ${target} ?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `L’apparence changera pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Apparences personnalisées existantes remplacées : ${replacedCount}. Les préférences d’apparence enregistrées sont copiées une seule fois ; le tri et le regroupement sont conservés. Les changements futurs et les nouveaux descendants ne sont pas liés.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `L’apparence sera réinitialisée pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Le tri et le regroupement sont conservés. Cette modification est ponctuelle ; les changements futurs et les nouveaux descendants ne sont pas liés.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Remplacements existants qui seront modifiés : ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Ceci bascule la vue actuelle sur le tri manuel en utilisant « ${property} ». La modification de l'ordre écrit des valeurs numériques dans cette propriété sur ${count} ${count === 1 ? 'note' : 'notes'} au besoin.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Ceci supprime « ${property} » de ${count} ${count === 1 ? 'note' : 'notes'} dans la liste actuelle. L'ordre de tri manuel sera effacé pour ces notes.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Cette réorganisation nécessite plus d'espace numérique. ${count} ${count === 1 ? 'note recevra' : 'notes recevront'} de nouvelles valeurs numériques.`,
+            'modals.navRainbowSection.title': (section: string) => `Couleurs arc-en-ciel : ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Déplacer ${name} vers le dossier...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} fichiers`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Appliquer le tri et le regroupement aux ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Appliquer l'apparence aux ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Réinitialiser l’apparence dans les ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} de titre`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} ligne${rows === 1 ? '' : 's'} d'aperçu`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Appliquer le tri et le regroupement aux ${target} ?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Appliquer l'apparence aux ${target} ?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Réinitialiser l’apparence dans les ${target} ?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `L’apparence changera pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Apparences personnalisées existantes remplacées : ${replacedCount}. Les préférences d’apparence enregistrées sont copiées une seule fois ; le tri et le regroupement sont conservés. Les changements futurs et les nouveaux descendants ne sont pas liés.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `L’apparence sera réinitialisée pour ${count} ${count === 1 ? 'élément' : 'éléments'}. Le tri et le regroupement sont conservés. Cette modification est ponctuelle ; les changements futurs et les nouveaux descendants ne sont pas liés.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Remplacements existants qui seront modifiés : ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Ceci bascule la vue actuelle sur le tri manuel en utilisant « ${property} ». La modification de l'ordre écrit des valeurs numériques dans cette propriété sur ${count} ${count === 1 ? 'note' : 'notes'} au besoin.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Ceci supprime « ${property} » de ${count} ${count === 1 ? 'note' : 'notes'} dans la liste actuelle. L'ordre de tri manuel sera effacé pour ces notes.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Cette réorganisation nécessite plus d'espace numérique. ${count} ${count === 1 ? 'note recevra' : 'notes recevront'} de nouvelles valeurs numériques.`,
-      'modals.navRainbowSection.title': (section: string) => `Couleurs arc-en-ciel : ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Déplacer ${name} vers le dossier...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} fichiers`
-    }
-  },
-  id: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Default',
-    bootstrap: {
-      downloading: 'Mengunduh bahasa…',
-      continueInEnglish: 'Lanjutkan dalam bahasa Inggris',
-      downloadFailed: 'Unduhan bahasa gagal. Notebook Navigator menggunakan bahasa Inggris.'
+    id: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Default',
+        bootstrap: {
+            downloading: 'Mengunduh bahasa…',
+            continueInEnglish: 'Lanjutkan dalam bahasa Inggris',
+            downloadFailed: 'Unduhan bahasa gagal. Notebook Navigator menggunakan bahasa Inggris.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Terapkan urutan dan grup ke ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Terapkan tampilan ke ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Atur ulang tampilan di ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} baris judul`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} baris pratinjau`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Terapkan urutan dan grup ke ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Terapkan tampilan ke ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Atur ulang tampilan di ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Tampilan akan berubah untuk ${count} item. Tampilan khusus yang ada dan diganti: ${replacedCount}. Preferensi tampilan tersimpan disalin satu kali; pengurutan dan pengelompokan dipertahankan. Perubahan mendatang dan turunan baru tidak ditautkan.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Tampilan akan diatur ulang untuk ${count} item. Pengurutan dan pengelompokan dipertahankan. Ini adalah perubahan satu kali; perubahan mendatang dan turunan baru tidak ditautkan.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Penimpaan yang ada dan akan berubah: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Ini akan mengalihkan tampilan saat ini ke urutan manual menggunakan "${property}". Mengedit urutan akan menulis nilai indeks numerik ke properti tersebut di ${count} catatan sesuai kebutuhan.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Ini akan menghapus "${property}" dari ${count} catatan di daftar saat ini. Urutan manual akan dihapus untuk catatan tersebut.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Pengaturan ulang ini memerlukan lebih banyak ruang numerik. ${count} catatan akan menerima nilai indeks baru.`,
+            'modals.navRainbowSection.title': (section: string) => `Warna pelangi: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Pindahkan ${name} ke folder...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} file`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Terapkan urutan dan grup ke ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Terapkan tampilan ke ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Atur ulang tampilan di ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} baris judul`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} baris pratinjau`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Terapkan urutan dan grup ke ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Terapkan tampilan ke ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Atur ulang tampilan di ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Tampilan akan berubah untuk ${count} item. Tampilan khusus yang ada dan diganti: ${replacedCount}. Preferensi tampilan tersimpan disalin satu kali; pengurutan dan pengelompokan dipertahankan. Perubahan mendatang dan turunan baru tidak ditautkan.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Tampilan akan diatur ulang untuk ${count} item. Pengurutan dan pengelompokan dipertahankan. Ini adalah perubahan satu kali; perubahan mendatang dan turunan baru tidak ditautkan.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Penimpaan yang ada dan akan berubah: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Ini akan mengalihkan tampilan saat ini ke urutan manual menggunakan "${property}". Mengedit urutan akan menulis nilai indeks numerik ke properti tersebut di ${count} catatan sesuai kebutuhan.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Ini akan menghapus "${property}" dari ${count} catatan di daftar saat ini. Urutan manual akan dihapus untuk catatan tersebut.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Pengaturan ulang ini memerlukan lebih banyak ruang numerik. ${count} catatan akan menerima nilai indeks baru.`,
-      'modals.navRainbowSection.title': (section: string) => `Warna pelangi: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Pindahkan ${name} ke folder...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} file`
-    }
-  },
-  it: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Predefinito',
-    bootstrap: {
-      downloading: 'Download delle lingue…',
-      continueInEnglish: 'Continua in inglese',
-      downloadFailed: 'Download delle lingue non riuscito. Notebook Navigator usa l’inglese.'
+    it: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Predefinito',
+        bootstrap: {
+            downloading: 'Download delle lingue…',
+            continueInEnglish: 'Continua in inglese',
+            downloadFailed: 'Download delle lingue non riuscito. Notebook Navigator usa l’inglese.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Applica ordinamento e raggruppamento a ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Applica aspetto a ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Reimposta aspetto in ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} titolo`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Applicare ordinamento e raggruppamento a ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Applicare aspetto a ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Reimpostare aspetto in ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `L'aspetto cambierà per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Aspetti personalizzati esistenti sostituiti: ${replacedCount}. Le preferenze di aspetto salvate vengono copiate una sola volta; ordinamento e raggruppamento restano invariati. Le modifiche future e i nuovi discendenti non sono collegati.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `L'aspetto verrà reimpostato per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Ordinamento e raggruppamento restano invariati. È una modifica una tantum; le modifiche future e i nuovi discendenti non sono collegati.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Sostituzioni esistenti che cambieranno: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Questo cambia la vista corrente all'ordinamento manuale usando "${property}". La modifica dell'ordine scrive valori indice numerici in quella proprietà in ${count} ${count === 1 ? 'nota' : 'note'} secondo necessità.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Questo rimuove "${property}" da ${count} ${count === 1 ? 'nota' : 'note'} nella lista corrente. L'ordinamento manuale verrà cancellato per quelle note.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Questo riordino richiede più spazio numerico. ${count} ${count === 1 ? 'nota riceverà' : 'note riceveranno'} nuovi valori indice.`,
+            'modals.navRainbowSection.title': (section: string) => `Colori arcobaleno: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Sposta ${name} nella cartella...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} file`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Applica ordinamento e raggruppamento a ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Applica aspetto a ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Reimposta aspetto in ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} titolo`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} ${rows === 1 ? 'riga' : 'righe'} anteprima`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Applicare ordinamento e raggruppamento a ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Applicare aspetto a ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Reimpostare aspetto in ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `L'aspetto cambierà per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Aspetti personalizzati esistenti sostituiti: ${replacedCount}. Le preferenze di aspetto salvate vengono copiate una sola volta; ordinamento e raggruppamento restano invariati. Le modifiche future e i nuovi discendenti non sono collegati.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `L'aspetto verrà reimpostato per ${count} ${count === 1 ? 'elemento' : 'elementi'}. Ordinamento e raggruppamento restano invariati. È una modifica una tantum; le modifiche future e i nuovi discendenti non sono collegati.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Sostituzioni esistenti che cambieranno: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Questo cambia la vista corrente all'ordinamento manuale usando "${property}". La modifica dell'ordine scrive valori indice numerici in quella proprietà in ${count} ${count === 1 ? 'nota' : 'note'} secondo necessità.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Questo rimuove "${property}" da ${count} ${count === 1 ? 'nota' : 'note'} nella lista corrente. L'ordinamento manuale verrà cancellato per quelle note.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Questo riordino richiede più spazio numerico. ${count} ${count === 1 ? 'nota riceverà' : 'note riceveranno'} nuovi valori indice.`,
-      'modals.navRainbowSection.title': (section: string) => `Colori arcobaleno: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Sposta ${name} nella cartella...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} file`
-    }
-  },
-  ja: {
-    dateFormat: 'YYYY年M月D日',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'デフォルト',
-    bootstrap: {
-      downloading: '言語をダウンロード中…',
-      continueInEnglish: '英語で続行',
-      downloadFailed: '言語のダウンロードに失敗しました。Notebook Navigator は英語を使用しています。'
+    ja: {
+        dateFormat: 'YYYY年M月D日',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'デフォルト',
+        bootstrap: {
+            downloading: '言語をダウンロード中…',
+            continueInEnglish: '英語で続行',
+            downloadFailed: '言語のダウンロードに失敗しました。Notebook Navigator は英語を使用しています。'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `${target}に並べ替えとグループ化を適用`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `${target}に外観を適用`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `${target}の外観をリセット`,
+            'folderAppearance.titleRows.option': (rows: number) => `タイトル${rows}行`,
+            'folderAppearance.previewRows.option': (rows: number) => `プレビュー${rows}行`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `${target}に並べ替えとグループ化を適用しますか？`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `${target}に外観を適用しますか？`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target}の外観をリセットしますか？`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `${count}件の外観が変更されます。既存のカスタム外観の置換数：${replacedCount}。保存済みの外観設定が一度だけコピーされ、並べ替えとグループ化は保持されます。今後の変更や新しい子項目は連動しません。`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `${count}件の外観がリセットされます。並べ替えとグループ化は保持されます。これは一度限りの変更で、今後の変更や新しい子項目は連動しません。`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `変更される既存のオーバーライド: ${count}。`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `現在のビューを「${property}」を使った手動並べ替えに切り替えます。並び順を編集すると、必要に応じて ${count} 件のノートのそのプロパティに数値インデックス値が書き込まれます。`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `現在のリストの ${count} 件のノートから「${property}」を削除します。それらのノートの手動並べ替え順はクリアされます。`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `この並べ替えにはより多くの数値領域が必要です。${count} 件のノートに新しいインデックス値が割り当てられます。`,
+            'modals.navRainbowSection.title': (section: string) => `レインボーカラー: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `${name} をフォルダに移動...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 個のファイル`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `${target}に並べ替えとグループ化を適用`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `${target}に外観を適用`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `${target}の外観をリセット`,
-      'folderAppearance.titleRows.option': (rows: number) => `タイトル${rows}行`,
-      'folderAppearance.previewRows.option': (rows: number) => `プレビュー${rows}行`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `${target}に並べ替えとグループ化を適用しますか？`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `${target}に外観を適用しますか？`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target}の外観をリセットしますか？`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `${count}件の外観が変更されます。既存のカスタム外観の置換数：${replacedCount}。保存済みの外観設定が一度だけコピーされ、並べ替えとグループ化は保持されます。今後の変更や新しい子項目は連動しません。`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `${count}件の外観がリセットされます。並べ替えとグループ化は保持されます。これは一度限りの変更で、今後の変更や新しい子項目は連動しません。`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `変更される既存のオーバーライド: ${count}。`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `現在のビューを「${property}」を使った手動並べ替えに切り替えます。並び順を編集すると、必要に応じて ${count} 件のノートのそのプロパティに数値インデックス値が書き込まれます。`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `現在のリストの ${count} 件のノートから「${property}」を削除します。それらのノートの手動並べ替え順はクリアされます。`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `この並べ替えにはより多くの数値領域が必要です。${count} 件のノートに新しいインデックス値が割り当てられます。`,
-      'modals.navRainbowSection.title': (section: string) => `レインボーカラー: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `${name} をフォルダに移動...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 個のファイル`
-    }
-  },
-  ko: {
-    dateFormat: 'YYYY년 M월 D일',
-    timeFormat: 'a h:mm',
-    defaultVaultProfileName: '기본',
-    bootstrap: {
-      downloading: '언어 다운로드 중…',
-      continueInEnglish: '영어로 계속',
-      downloadFailed: '언어를 다운로드하지 못했습니다. Notebook Navigator가 영어를 사용합니다.'
+    ko: {
+        dateFormat: 'YYYY년 M월 D일',
+        timeFormat: 'a h:mm',
+        defaultVaultProfileName: '기본',
+        bootstrap: {
+            downloading: '언어 다운로드 중…',
+            continueInEnglish: '영어로 계속',
+            downloadFailed: '언어를 다운로드하지 못했습니다. Notebook Navigator가 영어를 사용합니다.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `${target}에 정렬 및 그룹 적용`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `${target}에 모양 적용`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `${target}의 모양 재설정`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows}개 제목 행`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows}개 미리보기 행`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `${target}에 정렬 및 그룹을 적용하시겠습니까?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `${target}에 모양을 적용하시겠습니까?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target}의 모양을 재설정하시겠습니까?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `${count}개 항목의 모양이 변경됩니다. 교체되는 기존 사용자 지정 모양: ${replacedCount}개. 저장된 모양 설정이 한 번 복사되며 정렬과 그룹화는 유지됩니다. 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `${count}개 항목의 모양이 재설정됩니다. 정렬과 그룹화는 유지됩니다. 일회성 변경이며 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `변경될 기존 재정의: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `현재 보기를 "${property}"을(를) 사용한 수동 정렬로 전환합니다. 순서를 편집하면 필요에 따라 ${count}개 노트의 해당 속성에 숫자 인덱스 값이 기록됩니다.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `현재 목록의 ${count}개 노트에서 "${property}"을(를) 제거합니다. 해당 노트의 수동 정렬 순서가 초기화됩니다.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `이 재정렬에는 더 많은 숫자 공간이 필요합니다. ${count}개 노트에 새로운 인덱스 값이 할당됩니다.`,
+            'modals.navRainbowSection.title': (section: string) => `무지개 색상: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `${name}을(를) 폴더로 이동...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count}개의 파일`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `${target}에 정렬 및 그룹 적용`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `${target}에 모양 적용`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `${target}의 모양 재설정`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows}개 제목 행`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows}개 미리보기 행`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `${target}에 정렬 및 그룹을 적용하시겠습니까?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `${target}에 모양을 적용하시겠습니까?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target}의 모양을 재설정하시겠습니까?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `${count}개 항목의 모양이 변경됩니다. 교체되는 기존 사용자 지정 모양: ${replacedCount}개. 저장된 모양 설정이 한 번 복사되며 정렬과 그룹화는 유지됩니다. 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `${count}개 항목의 모양이 재설정됩니다. 정렬과 그룹화는 유지됩니다. 일회성 변경이며 이후 변경 사항과 새 하위 항목은 연결되지 않습니다.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `변경될 기존 재정의: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `현재 보기를 "${property}"을(를) 사용한 수동 정렬로 전환합니다. 순서를 편집하면 필요에 따라 ${count}개 노트의 해당 속성에 숫자 인덱스 값이 기록됩니다.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `현재 목록의 ${count}개 노트에서 "${property}"을(를) 제거합니다. 해당 노트의 수동 정렬 순서가 초기화됩니다.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `이 재정렬에는 더 많은 숫자 공간이 필요합니다. ${count}개 노트에 새로운 인덱스 값이 할당됩니다.`,
-      'modals.navRainbowSection.title': (section: string) => `무지개 색상: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `${name}을(를) 폴더로 이동...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count}개의 파일`
-    }
-  },
-  nl: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Standaard',
-    bootstrap: {
-      downloading: 'Talen downloaden…',
-      continueInEnglish: 'Doorgaan in het Engels',
-      downloadFailed: 'Talen downloaden mislukt. Notebook Navigator gebruikt Engels.'
+    nl: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Standaard',
+        bootstrap: {
+            downloading: 'Talen downloaden…',
+            continueInEnglish: 'Doorgaan in het Engels',
+            downloadFailed: 'Talen downloaden mislukt. Notebook Navigator gebruikt Engels.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sortering en groepering toepassen op ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Uiterlijk toepassen op ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Uiterlijk in ${target} herstellen`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} titelrij${rows === 1 ? '' : 'en'}`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sortering en groepering toepassen op ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Uiterlijk toepassen op ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Uiterlijk in ${target} herstellen?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Het uiterlijk verandert voor ${count} ${count === 1 ? 'item' : 'items'}. Bestaande aangepaste uiterlijkinstellingen vervangen: ${replacedCount}. Opgeslagen voorkeuren voor uiterlijk worden eenmaal gekopieerd; sortering en groepering blijven behouden. Toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Het uiterlijk wordt hersteld voor ${count} ${count === 1 ? 'item' : 'items'}. Sortering en groepering blijven behouden. Dit is een eenmalige wijziging; toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Bestaande overschrijvingen die wijzigen: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Dit schakelt de huidige weergave over naar handmatig sorteren met "${property}". Bij het bewerken van de volgorde worden indien nodig numerieke indexwaarden naar die eigenschap geschreven in ${count} ${count === 1 ? 'notitie' : 'notities'}.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Dit verwijdert "${property}" uit ${count} ${count === 1 ? 'notitie' : 'notities'} in de huidige lijst. Voor die notities wordt de handmatige sorteervolgorde gewist.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Deze herordening heeft meer numerieke ruimte nodig. ${count} ${count === 1 ? 'notitie krijgt' : 'notities krijgen'} nieuwe indexwaarden.`,
+            'modals.navRainbowSection.title': (section: string) => `Regenboogkleuren: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Verplaats ${name} naar map...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} bestanden`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sortering en groepering toepassen op ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Uiterlijk toepassen op ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Uiterlijk in ${target} herstellen`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} titelrij${rows === 1 ? '' : 'en'}`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} voorbeeldrij${rows === 1 ? '' : 'en'}`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sortering en groepering toepassen op ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Uiterlijk toepassen op ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Uiterlijk in ${target} herstellen?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Het uiterlijk verandert voor ${count} ${count === 1 ? 'item' : 'items'}. Bestaande aangepaste uiterlijkinstellingen vervangen: ${replacedCount}. Opgeslagen voorkeuren voor uiterlijk worden eenmaal gekopieerd; sortering en groepering blijven behouden. Toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Het uiterlijk wordt hersteld voor ${count} ${count === 1 ? 'item' : 'items'}. Sortering en groepering blijven behouden. Dit is een eenmalige wijziging; toekomstige wijzigingen en nieuwe onderliggende items worden niet gekoppeld.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Bestaande overschrijvingen die wijzigen: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Dit schakelt de huidige weergave over naar handmatig sorteren met "${property}". Bij het bewerken van de volgorde worden indien nodig numerieke indexwaarden naar die eigenschap geschreven in ${count} ${count === 1 ? 'notitie' : 'notities'}.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Dit verwijdert "${property}" uit ${count} ${count === 1 ? 'notitie' : 'notities'} in de huidige lijst. Voor die notities wordt de handmatige sorteervolgorde gewist.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Deze herordening heeft meer numerieke ruimte nodig. ${count} ${count === 1 ? 'notitie krijgt' : 'notities krijgen'} nieuwe indexwaarden.`,
-      'modals.navRainbowSection.title': (section: string) => `Regenboogkleuren: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Verplaats ${name} naar map...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} bestanden`
-    }
-  },
-  pl: {
-    dateFormat: 'DD.MM.YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Domyślny',
-    bootstrap: {
-      downloading: 'Pobieranie języków…',
-      continueInEnglish: 'Kontynuuj po angielsku',
-      downloadFailed: 'Nie udało się pobrać języków. Notebook Navigator używa języka angielskiego.'
+    pl: {
+        dateFormat: 'DD.MM.YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Domyślny',
+        bootstrap: {
+            downloading: 'Pobieranie języków…',
+            continueInEnglish: 'Kontynuuj po angielsku',
+            downloadFailed: 'Nie udało się pobrać języków. Notebook Navigator używa języka angielskiego.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Zastosuj wygląd dla ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Zresetuj wygląd dla ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} tytułu`,
+            'folderAppearance.previewRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Zastosuj wygląd dla ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Zresetować wygląd dla ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Wygląd zmieni się dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Zastąpione istniejące niestandardowe wyglądy: ${replacedCount}. Zapisane preferencje wyglądu zostaną skopiowane jednorazowo; sortowanie i grupowanie pozostaną bez zmian. Przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Wygląd zostanie zresetowany dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Sortowanie i grupowanie pozostaną bez zmian. Jest to jednorazowa zmiana; przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Istniejące nadpisania do zmiany: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Przełącza bieżący widok na sortowanie ręczne z użyciem „${property}”. Edycja kolejności w razie potrzeby zapisuje wartości indeksu liczbowego do tego atrybutu w ${count} ${count === 1 ? 'notatce' : 'notatkach'}.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Usuwa „${property}” z ${count} ${count === 1 ? 'notatki' : 'notatek'} na bieżącej liście. Kolejność sortowania ręcznego zostanie wyczyszczona dla tych notatek.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Ta zmiana kolejności wymaga więcej miejsca na wartości liczbowe. ${count} ${count === 1 ? 'notatka otrzyma' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'notatki otrzymają' : 'notatek otrzyma'} nowe wartości indeksu.`,
+            'modals.navRainbowSection.title': (section: string) => `Kolory tęczy: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Przenieś ${name} do folderu...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) =>
+                `${count} ${count === 1 ? 'plik' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'pliki' : 'plików'}`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Zastosuj wygląd dla ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Zresetuj wygląd dla ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) =>
-        `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} tytułu`,
-      'folderAppearance.previewRows.option': (rows: number) =>
-        `${rows} ${rows === 1 ? 'wiersz' : rows === 2 || rows === 3 || rows === 4 ? 'wiersze' : 'wierszy'} podglądu`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Zastosuj sortowanie i grupowanie dla ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Zastosuj wygląd dla ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Zresetować wygląd dla ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Wygląd zmieni się dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Zastąpione istniejące niestandardowe wyglądy: ${replacedCount}. Zapisane preferencje wyglądu zostaną skopiowane jednorazowo; sortowanie i grupowanie pozostaną bez zmian. Przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Wygląd zostanie zresetowany dla ${count} ${count === 1 ? 'elementu' : 'elementów'}. Sortowanie i grupowanie pozostaną bez zmian. Jest to jednorazowa zmiana; przyszłe zmiany i nowe elementy podrzędne nie będą połączone.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Istniejące nadpisania do zmiany: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Przełącza bieżący widok na sortowanie ręczne z użyciem „${property}”. Edycja kolejności w razie potrzeby zapisuje wartości indeksu liczbowego do tego atrybutu w ${count} ${count === 1 ? 'notatce' : 'notatkach'}.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Usuwa „${property}” z ${count} ${count === 1 ? 'notatki' : 'notatek'} na bieżącej liście. Kolejność sortowania ręcznego zostanie wyczyszczona dla tych notatek.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Ta zmiana kolejności wymaga więcej miejsca na wartości liczbowe. ${count} ${count === 1 ? 'notatka otrzyma' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'notatki otrzymają' : 'notatek otrzyma'} nowe wartości indeksu.`,
-      'modals.navRainbowSection.title': (section: string) => `Kolory tęczy: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Przenieś ${name} do folderu...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) =>
-        `${count} ${count === 1 ? 'plik' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'pliki' : 'plików'}`
-    }
-  },
-  pt: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Predefinido',
-    bootstrap: {
-      downloading: 'A transferir idiomas…',
-      continueInEnglish: 'Continuar em inglês',
-      downloadFailed: 'A transferência dos idiomas falhou. O Notebook Navigator está a usar inglês.'
+    pt: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Predefinido',
+        bootstrap: {
+            downloading: 'A transferir idiomas…',
+            continueInEnglish: 'Continuar em inglês',
+            downloadFailed: 'A transferência dos idiomas falhou. O Notebook Navigator está a usar inglês.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar ordenação e agrupamento a ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar aparência a ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Repor aparência em ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Aplicar ordenação e agrupamento a ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Aplicar aparência a ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Repor aparência em ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `A aparência será alterada para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência guardadas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam associados.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `A aparência será reposta para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam associados.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Substituições existentes que serão alteradas: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Isto muda a vista atual para ordenação manual usando "${property}". Editar a ordem escreve valores de índice numéricos nessa propriedade em ${count} ${count === 1 ? 'nota' : 'notas'} conforme necessário.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Isto remove "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} na lista atual. A ordem de ordenação manual será apagada para essas notas.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Esta reordenação precisa de mais espaço numérico. ${count} ${count === 1 ? 'nota receberá' : 'notas receberão'} novos valores de índice.`,
+            'modals.navRainbowSection.title': (section: string) => `Cores arco-íris: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} para pasta...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} ficheiros`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar ordenação e agrupamento a ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar aparência a ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Repor aparência em ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de pré-visualização`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Aplicar ordenação e agrupamento a ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Aplicar aparência a ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Repor aparência em ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `A aparência será alterada para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência guardadas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam associados.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `A aparência será reposta para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam associados.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Substituições existentes que serão alteradas: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Isto muda a vista atual para ordenação manual usando "${property}". Editar a ordem escreve valores de índice numéricos nessa propriedade em ${count} ${count === 1 ? 'nota' : 'notas'} conforme necessário.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Isto remove "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} na lista atual. A ordem de ordenação manual será apagada para essas notas.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Esta reordenação precisa de mais espaço numérico. ${count} ${count === 1 ? 'nota receberá' : 'notas receberão'} novos valores de índice.`,
-      'modals.navRainbowSection.title': (section: string) => `Cores arco-íris: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} para pasta...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} ficheiros`
-    }
-  },
-  pt_br: {
-    dateFormat: 'DD/MM/YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Padrão',
-    bootstrap: {
-      downloading: 'Baixando idiomas…',
-      continueInEnglish: 'Continuar em inglês',
-      downloadFailed: 'Não foi possível baixar os idiomas. O Notebook Navigator está usando inglês.'
+    pt_br: {
+        dateFormat: 'DD/MM/YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Padrão',
+        bootstrap: {
+            downloading: 'Baixando idiomas…',
+            continueInEnglish: 'Continuar em inglês',
+            downloadFailed: 'Não foi possível baixar os idiomas. O Notebook Navigator está usando inglês.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar classificação e agrupamento a ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar aparência a ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Redefinir aparência em ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de visualização`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Aplicar classificação e agrupamento a ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Aplicar aparência a ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Redefinir aparência em ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `A aparência mudará para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência salvas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam vinculados.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `A aparência será redefinida para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam vinculados.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Substituições existentes que serão alteradas: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Isso muda a visualização atual para classificação manual usando "${property}". Editar a ordem grava valores numéricos de índice nessa propriedade em ${count} ${count === 1 ? 'nota' : 'notas'} conforme necessário.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Isso remove "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} na lista atual. A ordem de classificação manual será limpa para essas notas.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Esta reordenação precisa de mais espaço numérico. ${count} ${count === 1 ? 'nota receberá' : 'notas receberão'} novos valores de índice.`,
+            'modals.navRainbowSection.title': (section: string) => `Cores arco-íris: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} para pasta...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} arquivos`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Aplicar classificação e agrupamento a ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Aplicar aparência a ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Redefinir aparência em ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de título`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} linha${rows === 1 ? '' : 's'} de visualização`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Aplicar classificação e agrupamento a ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Aplicar aparência a ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Redefinir aparência em ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `A aparência mudará para ${count} ${count === 1 ? 'item' : 'itens'}. Aparências personalizadas existentes substituídas: ${replacedCount}. As preferências de aparência salvas são copiadas uma vez; a ordenação e o agrupamento são preservados. Alterações futuras e novos descendentes não ficam vinculados.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `A aparência será redefinida para ${count} ${count === 1 ? 'item' : 'itens'}. A ordenação e o agrupamento são preservados. Esta é uma alteração única; alterações futuras e novos descendentes não ficam vinculados.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Substituições existentes que serão alteradas: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Isso muda a visualização atual para classificação manual usando "${property}". Editar a ordem grava valores numéricos de índice nessa propriedade em ${count} ${count === 1 ? 'nota' : 'notas'} conforme necessário.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Isso remove "${property}" de ${count} ${count === 1 ? 'nota' : 'notas'} na lista atual. A ordem de classificação manual será limpa para essas notas.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Esta reordenação precisa de mais espaço numérico. ${count} ${count === 1 ? 'nota receberá' : 'notas receberão'} novos valores de índice.`,
-      'modals.navRainbowSection.title': (section: string) => `Cores arco-íris: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Mover ${name} para pasta...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} arquivos`
-    }
-  },
-  ru: {
-    dateFormat: 'D MMMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'По умолчанию',
-    bootstrap: {
-      downloading: 'Загрузка языков…',
-      continueInEnglish: 'Продолжить на английском',
-      downloadFailed: 'Не удалось загрузить языки. Notebook Navigator использует английский.'
+    ru: {
+        dateFormat: 'D MMMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'По умолчанию',
+        bootstrap: {
+            downloading: 'Загрузка языков…',
+            continueInEnglish: 'Продолжить на английском',
+            downloadFailed: 'Не удалось загрузить языки. Notebook Navigator использует английский.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Применить сортировку и группировку для ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Применить оформление для ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Сбросить оформление для ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`,
+            'folderAppearance.previewRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Применить сортировку и группировку для ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Применить оформление для ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Сбросить оформление для ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Оформление изменится для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'элемента' : 'элементов'}. Заменено существующих индивидуальных оформлений: ${replacedCount}. Сохранённые настройки оформления копируются один раз; сортировка и группировка сохраняются. Будущие изменения и новые дочерние элементы не связываются.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Оформление будет сброшено для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'элемента' : 'элементов'}. Сортировка и группировка сохраняются. Это разовое изменение; будущие изменения и новые дочерние элементы не связываются.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Существующих переопределений, которые изменятся: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Переключает текущий вид на ручную сортировку с использованием «${property}». При изменении порядка числовые значения индекса записываются в это свойство в ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметке' : 'заметках'} по мере необходимости.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Это удалит «${property}» из ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметки' : 'заметок'} в текущем списке. Порядок ручной сортировки будет сброшен для этих заметок.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Эта перестановка требует больше числового пространства. ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметка получит' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'заметки получат' : 'заметок получат'} новые значения индекса.`,
+            'modals.navRainbowSection.title': (section: string) => `Цвета радуги: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Переместить ${name} в папку...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) =>
+                `${count} ${count % 10 === 1 && count % 100 !== 11 ? 'файл' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'файла' : 'файлов'}`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Применить сортировку и группировку для ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Применить оформление для ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Сбросить оформление для ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} заголовка`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} ${rows === 1 ? 'строка' : rows < 5 ? 'строки' : 'строк'} превью`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Применить сортировку и группировку для ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Применить оформление для ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Сбросить оформление для ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Оформление изменится для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'элемента' : 'элементов'}. Заменено существующих индивидуальных оформлений: ${replacedCount}. Сохранённые настройки оформления копируются один раз; сортировка и группировка сохраняются. Будущие изменения и новые дочерние элементы не связываются.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Оформление будет сброшено для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'элемента' : 'элементов'}. Сортировка и группировка сохраняются. Это разовое изменение; будущие изменения и новые дочерние элементы не связываются.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Существующих переопределений, которые изменятся: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Переключает текущий вид на ручную сортировку с использованием «${property}». При изменении порядка числовые значения индекса записываются в это свойство в ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметке' : 'заметках'} по мере необходимости.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Это удалит «${property}» из ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметки' : 'заметок'} в текущем списке. Порядок ручной сортировки будет сброшен для этих заметок.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Эта перестановка требует больше числового пространства. ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'заметка получит' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'заметки получат' : 'заметок получат'} новые значения индекса.`,
-      'modals.navRainbowSection.title': (section: string) => `Цвета радуги: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Переместить ${name} в папку...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) =>
-        `${count} ${count % 10 === 1 && count % 100 !== 11 ? 'файл' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'файла' : 'файлов'}`
-    }
-  },
-  th: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'ค่าเริ่มต้น',
-    bootstrap: {
-      downloading: 'กำลังดาวน์โหลดภาษา…',
-      continueInEnglish: 'ดำเนินการต่อเป็นภาษาอังกฤษ',
-      downloadFailed: 'ดาวน์โหลดภาษาไม่สำเร็จ Notebook Navigator กำลังใช้ภาษาอังกฤษ'
+    th: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'ค่าเริ่มต้น',
+        bootstrap: {
+            downloading: 'กำลังดาวน์โหลดภาษา…',
+            continueInEnglish: 'ดำเนินการต่อเป็นภาษาอังกฤษ',
+            downloadFailed: 'ดาวน์โหลดภาษาไม่สำเร็จ Notebook Navigator กำลังใช้ภาษาอังกฤษ'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `ใช้ลักษณะกับ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `รีเซ็ตลักษณะใน${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} แถวชื่อเรื่อง`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} แถวตัวอย่าง`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `ใช้ลักษณะกับ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `รีเซ็ตลักษณะใน${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `ลักษณะจะเปลี่ยนสำหรับ ${count} รายการ ลักษณะแบบกำหนดเองเดิมที่จะถูกแทนที่: ${replacedCount} ค่าลักษณะที่บันทึกไว้จะถูกคัดลอกครั้งเดียว โดยคงการเรียงลำดับและการจัดกลุ่มไว้ การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `ลักษณะจะถูกรีเซ็ตสำหรับ ${count} รายการ โดยคงการเรียงลำดับและการจัดกลุ่มไว้ นี่เป็นการเปลี่ยนแปลงครั้งเดียว การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `การแทนที่ที่มีอยู่ซึ่งจะเปลี่ยนแปลง: ${count}`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `จะสลับมุมมองปัจจุบันเป็นการจัดเรียงด้วยตนเองโดยใช้ "${property}" การแก้ไขลำดับจะเขียนค่าดัชนีตัวเลขลงในคุณสมบัตินั้นใน ${count} โน้ต ตามความจำเป็น`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `จะลบ "${property}" ออกจาก ${count} โน้ตในรายการปัจจุบัน ลำดับการจัดเรียงด้วยตนเองของโน้ตเหล่านั้นจะถูกล้าง`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `การจัดเรียงใหม่นี้ต้องการพื้นที่ตัวเลขเพิ่มเติม ${count} โน้ต จะได้รับค่าดัชนีใหม่`,
+            'modals.navRainbowSection.title': (section: string) => `สีรุ้ง: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `ย้าย ${name} ไปยังโฟลเดอร์...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} ไฟล์`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `ใช้ลักษณะกับ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `รีเซ็ตลักษณะใน${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} แถวชื่อเรื่อง`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} แถวตัวอย่าง`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `ใช้การเรียงและการจัดกลุ่มกับ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `ใช้ลักษณะกับ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `รีเซ็ตลักษณะใน${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `ลักษณะจะเปลี่ยนสำหรับ ${count} รายการ ลักษณะแบบกำหนดเองเดิมที่จะถูกแทนที่: ${replacedCount} ค่าลักษณะที่บันทึกไว้จะถูกคัดลอกครั้งเดียว โดยคงการเรียงลำดับและการจัดกลุ่มไว้ การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `ลักษณะจะถูกรีเซ็ตสำหรับ ${count} รายการ โดยคงการเรียงลำดับและการจัดกลุ่มไว้ นี่เป็นการเปลี่ยนแปลงครั้งเดียว การเปลี่ยนแปลงในอนาคตและรายการย่อยใหม่จะไม่เชื่อมโยงกัน`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `การแทนที่ที่มีอยู่ซึ่งจะเปลี่ยนแปลง: ${count}`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `จะสลับมุมมองปัจจุบันเป็นการจัดเรียงด้วยตนเองโดยใช้ "${property}" การแก้ไขลำดับจะเขียนค่าดัชนีตัวเลขลงในคุณสมบัตินั้นใน ${count} โน้ต ตามความจำเป็น`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `จะลบ "${property}" ออกจาก ${count} โน้ตในรายการปัจจุบัน ลำดับการจัดเรียงด้วยตนเองของโน้ตเหล่านั้นจะถูกล้าง`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `การจัดเรียงใหม่นี้ต้องการพื้นที่ตัวเลขเพิ่มเติม ${count} โน้ต จะได้รับค่าดัชนีใหม่`,
-      'modals.navRainbowSection.title': (section: string) => `สีรุ้ง: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `ย้าย ${name} ไปยังโฟลเดอร์...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} ไฟล์`
-    }
-  },
-  tr: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Varsayılan',
-    bootstrap: {
-      downloading: 'Diller indiriliyor…',
-      continueInEnglish: 'İngilizce devam et',
-      downloadFailed: 'Diller indirilemedi. Notebook Navigator İngilizce kullanıyor.'
+    tr: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Varsayılan',
+        bootstrap: {
+            downloading: 'Diller indiriliyor…',
+            continueInEnglish: 'İngilizce devam et',
+            downloadFailed: 'Diller indirilemedi. Notebook Navigator İngilizce kullanıyor.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sıralama ve gruplandırmayı ${target} için uygula`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Görünümü ${target} için uygula`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `${target} için görünümü sıfırla`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} başlık satırı`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} önizleme satırı`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sıralama ve gruplandırma ${target} için uygulansın mı?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Görünüm ${target} için uygulansın mı?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target} için görünüm sıfırlansın mı?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için değişecek. Değiştirilecek mevcut özel görünümler: ${replacedCount}. Kayıtlı görünüm tercihleri bir kez kopyalanır; sıralama ve gruplama korunur. Gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için sıfırlanacak. Sıralama ve gruplama korunur. Bu tek seferlik bir değişikliktir; gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Değişecek mevcut geçersiz kılmalar: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Bu, geçerli görünümü "${property}" kullanarak manuel sıralamaya geçirir. Sıralamayı düzenlemek, gerektiğinde ${count} ${count === 1 ? 'nottaki' : 'nottaki'} bu özelliğe sayısal indeks değerleri yazar.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Bu işlem, geçerli listedeki ${count} ${count === 1 ? 'nottan' : 'nottan'} "${property}" özelliğini kaldırır. Bu notlar için manuel sıralama düzeni temizlenecek.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Bu yeniden sıralama daha fazla sayısal alana ihtiyaç duyar. ${count} ${count === 1 ? 'not' : 'not'} yeni indeks değerleri alacak.`,
+            'modals.navRainbowSection.title': (section: string) => `Gökkuşağı renkleri: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `${name} öğesini klasöre taşı...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} dosya`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Sıralama ve gruplandırmayı ${target} için uygula`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Görünümü ${target} için uygula`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `${target} için görünümü sıfırla`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} başlık satırı`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} önizleme satırı`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Sıralama ve gruplandırma ${target} için uygulansın mı?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Görünüm ${target} için uygulansın mı?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `${target} için görünüm sıfırlansın mı?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için değişecek. Değiştirilecek mevcut özel görünümler: ${replacedCount}. Kayıtlı görünüm tercihleri bir kez kopyalanır; sıralama ve gruplama korunur. Gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Görünüm ${count} ${count === 1 ? 'öğe' : 'öğe'} için sıfırlanacak. Sıralama ve gruplama korunur. Bu tek seferlik bir değişikliktir; gelecekteki değişiklikler ve yeni alt öğeler bağlanmaz.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Değişecek mevcut geçersiz kılmalar: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Bu, geçerli görünümü "${property}" kullanarak manuel sıralamaya geçirir. Sıralamayı düzenlemek, gerektiğinde ${count} ${count === 1 ? 'nottaki' : 'nottaki'} bu özelliğe sayısal indeks değerleri yazar.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Bu işlem, geçerli listedeki ${count} ${count === 1 ? 'nottan' : 'nottan'} "${property}" özelliğini kaldırır. Bu notlar için manuel sıralama düzeni temizlenecek.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Bu yeniden sıralama daha fazla sayısal alana ihtiyaç duyar. ${count} ${count === 1 ? 'not' : 'not'} yeni indeks değerleri alacak.`,
-      'modals.navRainbowSection.title': (section: string) => `Gökkuşağı renkleri: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `${name} öğesini klasöre taşı...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} dosya`
-    }
-  },
-  uk: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'За замовчуванням',
-    bootstrap: {
-      downloading: 'Завантаження мов…',
-      continueInEnglish: 'Продовжити англійською',
-      downloadFailed: 'Не вдалося завантажити мови. Notebook Navigator використовує англійську.'
+    uk: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'За замовчуванням',
+        bootstrap: {
+            downloading: 'Завантаження мов…',
+            continueInEnglish: 'Продовжити англійською',
+            downloadFailed: 'Не вдалося завантажити мови. Notebook Navigator використовує англійську.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Застосувати сортування та групування для ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Застосувати оформлення для ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Скинути оформлення для ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} заголовка`,
+            'folderAppearance.previewRows.option': (rows: number) =>
+                `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Застосувати сортування та групування для ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Застосувати оформлення для ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Скинути оформлення для ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Оформлення зміниться для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'елемента' : 'елементів'}. Замінено наявних власних оформлень: ${replacedCount}. Збережені налаштування оформлення копіюються один раз; сортування й групування зберігаються. Майбутні зміни та нові дочірні елементи не пов’язуються.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Оформлення буде скинуто для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'елемента' : 'елементів'}. Сортування й групування зберігаються. Це одноразова зміна; майбутні зміни та нові дочірні елементи не пов’язуються.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Наявних перевизначень, які зміняться: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Перемикає поточний вигляд на ручне сортування з використанням «${property}». Редагування порядку записує числові значення індексу в цю властивість у ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатці' : 'нотатках'} за потреби.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Це вилучить «${property}» з ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатки' : 'нотаток'} у поточному списку. Порядок ручного сортування буде очищено для цих нотаток.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Це перевпорядкування потребує більше числового простору. ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатка отримає' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'нотатки отримають' : 'нотаток отримають'} нові значення індексу.`,
+            'modals.navRainbowSection.title': (section: string) => `Кольори веселки: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Перемістити ${name} до теки...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) =>
+                `${count} ${count % 10 === 1 && count % 100 !== 11 ? 'файл' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'файли' : 'файлів'}`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Застосувати сортування та групування для ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Застосувати оформлення для ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Скинути оформлення для ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} заголовка`,
-      'folderAppearance.previewRows.option': (rows: number) =>
-        `${rows} ${rows === 1 ? 'рядок' : rows < 5 ? 'рядки' : 'рядків'} попереднього перегляду`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Застосувати сортування та групування для ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Застосувати оформлення для ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Скинути оформлення для ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Оформлення зміниться для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'елемента' : 'елементів'}. Замінено наявних власних оформлень: ${replacedCount}. Збережені налаштування оформлення копіюються один раз; сортування й групування зберігаються. Майбутні зміни та нові дочірні елементи не пов’язуються.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Оформлення буде скинуто для ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'елемента' : 'елементів'}. Сортування й групування зберігаються. Це одноразова зміна; майбутні зміни та нові дочірні елементи не пов’язуються.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Наявних перевизначень, які зміняться: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Перемикає поточний вигляд на ручне сортування з використанням «${property}». Редагування порядку записує числові значення індексу в цю властивість у ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатці' : 'нотатках'} за потреби.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Це вилучить «${property}» з ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатки' : 'нотаток'} у поточному списку. Порядок ручного сортування буде очищено для цих нотаток.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Це перевпорядкування потребує більше числового простору. ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'нотатка отримає' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'нотатки отримають' : 'нотаток отримають'} нові значення індексу.`,
-      'modals.navRainbowSection.title': (section: string) => `Кольори веселки: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Перемістити ${name} до теки...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) =>
-        `${count} ${count % 10 === 1 && count % 100 !== 11 ? 'файл' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'файли' : 'файлів'}`
-    }
-  },
-  vi: {
-    dateFormat: 'D MMM YYYY',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: 'Mặc định',
-    bootstrap: {
-      downloading: 'Đang tải ngôn ngữ…',
-      continueInEnglish: 'Tiếp tục bằng tiếng Anh',
-      downloadFailed: 'Không tải được ngôn ngữ. Notebook Navigator đang sử dụng tiếng Anh.'
+    vi: {
+        dateFormat: 'D MMM YYYY',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: 'Mặc định',
+        bootstrap: {
+            downloading: 'Đang tải ngôn ngữ…',
+            continueInEnglish: 'Tiếp tục bằng tiếng Anh',
+            downloadFailed: 'Không tải được ngôn ngữ. Notebook Navigator đang sử dụng tiếng Anh.'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `Áp dụng giao diện cho ${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `Đặt lại giao diện trong ${target}`,
+            'folderAppearance.titleRows.option': (rows: number) => `${rows} dòng tiêu đề`,
+            'folderAppearance.previewRows.option': (rows: number) => `${rows} dòng xem trước`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}?`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `Áp dụng giao diện cho ${target}?`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `Đặt lại giao diện trong ${target}?`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `Giao diện sẽ thay đổi cho ${count} ${count === 1 ? 'mục' : 'mục'}. Giao diện tùy chỉnh hiện có bị thay thế: ${replacedCount}. Các tùy chọn giao diện đã lưu được sao chép một lần; cách sắp xếp và nhóm được giữ nguyên. Thay đổi trong tương lai và mục con mới không được liên kết.`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `Giao diện sẽ được đặt lại cho ${count} ${count === 1 ? 'mục' : 'mục'}. Cách sắp xếp và nhóm được giữ nguyên. Đây là thay đổi một lần; thay đổi trong tương lai và mục con mới không được liên kết.`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `Ghi đè hiện có sẽ thay đổi: ${count}.`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `Việc này chuyển chế độ xem hiện tại sang sắp xếp thủ công bằng "${property}". Việc chỉnh sửa thứ tự sẽ ghi giá trị chỉ số vào thuộc tính đó trong ${count} ghi chú khi cần.`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `Việc này xóa "${property}" khỏi ${count} ghi chú trong danh sách hiện tại. Thứ tự sắp xếp thủ công sẽ bị xóa cho các ghi chú đó.`,
+            'modals.manualSortConfirm.compactMessage': (count: number) =>
+                `Việc sắp xếp lại này cần thêm khoảng trống số. ${count} ghi chú sẽ nhận giá trị chỉ số mới.`,
+            'modals.navRainbowSection.title': (section: string) => `Màu cầu vồng: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `Di chuyển ${name} đến thư mục...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} tệp`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `Áp dụng giao diện cho ${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `Đặt lại giao diện trong ${target}`,
-      'folderAppearance.titleRows.option': (rows: number) => `${rows} dòng tiêu đề`,
-      'folderAppearance.previewRows.option': (rows: number) => `${rows} dòng xem trước`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `Áp dụng sắp xếp và nhóm cho ${target}?`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `Áp dụng giao diện cho ${target}?`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `Đặt lại giao diện trong ${target}?`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `Giao diện sẽ thay đổi cho ${count} ${count === 1 ? 'mục' : 'mục'}. Giao diện tùy chỉnh hiện có bị thay thế: ${replacedCount}. Các tùy chọn giao diện đã lưu được sao chép một lần; cách sắp xếp và nhóm được giữ nguyên. Thay đổi trong tương lai và mục con mới không được liên kết.`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `Giao diện sẽ được đặt lại cho ${count} ${count === 1 ? 'mục' : 'mục'}. Cách sắp xếp và nhóm được giữ nguyên. Đây là thay đổi một lần; thay đổi trong tương lai và mục con mới không được liên kết.`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `Ghi đè hiện có sẽ thay đổi: ${count}.`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `Việc này chuyển chế độ xem hiện tại sang sắp xếp thủ công bằng "${property}". Việc chỉnh sửa thứ tự sẽ ghi giá trị chỉ số vào thuộc tính đó trong ${count} ghi chú khi cần.`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `Việc này xóa "${property}" khỏi ${count} ghi chú trong danh sách hiện tại. Thứ tự sắp xếp thủ công sẽ bị xóa cho các ghi chú đó.`,
-      'modals.manualSortConfirm.compactMessage': (count: number) =>
-        `Việc sắp xếp lại này cần thêm khoảng trống số. ${count} ghi chú sẽ nhận giá trị chỉ số mới.`,
-      'modals.navRainbowSection.title': (section: string) => `Màu cầu vồng: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `Di chuyển ${name} đến thư mục...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} tệp`
-    }
-  },
-  zh_cn: {
-    dateFormat: 'YYYY年M月D日',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: '默认',
-    bootstrap: {
-      downloading: '正在下载语言…',
-      continueInEnglish: '继续使用英语',
-      downloadFailed: '语言下载失败。Notebook Navigator 正在使用英语。'
+    zh_cn: {
+        dateFormat: 'YYYY年M月D日',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: '默认',
+        bootstrap: {
+            downloading: '正在下载语言…',
+            continueInEnglish: '继续使用英语',
+            downloadFailed: '语言下载失败。Notebook Navigator 正在使用英语。'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `将排序和分组应用到${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `将外观应用到${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `重置${target}中的外观`,
+            'folderAppearance.titleRows.option': (rows: number) => `标题${rows}行`,
+            'folderAppearance.previewRows.option': (rows: number) => `预览${rows}行`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `将排序和分组应用到${target}？`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `将外观应用到${target}？`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `重置${target}中的外观？`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `将更改 ${count} 项的外观。将替换现有自定义外观：${replacedCount}。已保存的外观偏好只复制一次；排序和分组保持不变。以后所做的更改和新建的后代项目不会联动。`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `将重置 ${count} 项的外观。排序和分组保持不变。这是一次性更改；以后所做的更改和新建的后代项目不会联动。`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `将更改的现有覆盖：${count}。`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `这会将当前视图切换为使用“${property}”的手动排序。编辑顺序时会按需将数字索引值写入 ${count} 条笔记的该属性。`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `这将从当前列表中的 ${count} 篇笔记中移除“${property}”。这些笔记的手动排序顺序将被清除。`,
+            'modals.manualSortConfirm.compactMessage': (count: number) => `此次重新排序需要更多数字空间。${count} 条笔记将获得新的索引值。`,
+            'modals.navRainbowSection.title': (section: string) => `彩虹颜色：${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `将 ${name} 移动到文件夹...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 个文件`
+        }
     },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `将排序和分组应用到${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `将外观应用到${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `重置${target}中的外观`,
-      'folderAppearance.titleRows.option': (rows: number) => `标题${rows}行`,
-      'folderAppearance.previewRows.option': (rows: number) => `预览${rows}行`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `将排序和分组应用到${target}？`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `将外观应用到${target}？`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `重置${target}中的外观？`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `将更改 ${count} 项的外观。将替换现有自定义外观：${replacedCount}。已保存的外观偏好只复制一次；排序和分组保持不变。以后所做的更改和新建的后代项目不会联动。`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `将重置 ${count} 项的外观。排序和分组保持不变。这是一次性更改；以后所做的更改和新建的后代项目不会联动。`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `将更改的现有覆盖：${count}。`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `这会将当前视图切换为使用“${property}”的手动排序。编辑顺序时会按需将数字索引值写入 ${count} 条笔记的该属性。`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `这将从当前列表中的 ${count} 篇笔记中移除“${property}”。这些笔记的手动排序顺序将被清除。`,
-      'modals.manualSortConfirm.compactMessage': (count: number) => `此次重新排序需要更多数字空间。${count} 条笔记将获得新的索引值。`,
-      'modals.navRainbowSection.title': (section: string) => `彩虹颜色：${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `将 ${name} 移动到文件夹...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 个文件`
+    zh_tw: {
+        dateFormat: 'YYYY年M月D日',
+        timeFormat: 'HH:mm',
+        defaultVaultProfileName: '預設',
+        bootstrap: {
+            downloading: '正在下載語言…',
+            continueInEnglish: '繼續使用英語',
+            downloadFailed: '語言下載失敗。Notebook Navigator 正在使用英語。'
+        },
+        formatters: {
+            'paneHeader.applySortAndGroupToDescendants': (target: string) => `將排序與分組套用到${target}`,
+            'paneHeader.applyAppearanceToDescendants': (target: string) => `將外觀套用到${target}`,
+            'paneHeader.resetAppearanceInDescendants': (target: string) => `重設${target}中的外觀`,
+            'folderAppearance.titleRows.option': (rows: number) => `標題${rows}行`,
+            'folderAppearance.previewRows.option': (rows: number) => `預覽${rows}行`,
+            'modals.bulkApply.applySortAndGroupTitle': (target: string) => `將排序與分組套用到${target}？`,
+            'modals.bulkApply.applyAppearanceTitle': (target: string) => `將外觀套用到${target}？`,
+            'modals.bulkApply.resetAppearanceTitle': (target: string) => `重設${target}中的外觀？`,
+            'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
+                `將變更 ${count} 項的外觀。將取代現有自訂外觀：${replacedCount}。已儲存的外觀偏好只會複製一次；排序和分組保持不變。日後的變更和新增的後代項目不會連動。`,
+            'modals.bulkApply.resetAppearanceMessage': (count: number) =>
+                `將重設 ${count} 項的外觀。排序和分組保持不變。這是一次性變更；日後的變更和新增的後代項目不會連動。`,
+            'modals.bulkApply.affectedCountMessage': (count: number) => `將更改的現有覆寫：${count}。`,
+            'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
+                `這會將目前檢視切換為使用「${property}」的手動排序。編輯順序時會依需要將數字索引值寫入該屬性，影響 ${count} 則筆記。`,
+            'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
+                `這會從目前列表中的 ${count} 則筆記移除「${property}」。這些筆記的手動排序順序將被清除。`,
+            'modals.manualSortConfirm.compactMessage': (count: number) => `此次重新排序需要更多數字空間。${count} 則筆記將獲得新的索引值。`,
+            'modals.navRainbowSection.title': (section: string) => `彩虹顏色: ${section}`,
+            'modals.folderSuggest.placeholder': (name: string) => `將 ${name} 移動至資料夾...`,
+            'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 個檔案`
+        }
     }
-  },
-  zh_tw: {
-    dateFormat: 'YYYY年M月D日',
-    timeFormat: 'HH:mm',
-    defaultVaultProfileName: '預設',
-    bootstrap: {
-      downloading: '正在下載語言…',
-      continueInEnglish: '繼續使用英語',
-      downloadFailed: '語言下載失敗。Notebook Navigator 正在使用英語。'
-    },
-    formatters: {
-      'paneHeader.applySortAndGroupToDescendants': (target: string) => `將排序與分組套用到${target}`,
-      'paneHeader.applyAppearanceToDescendants': (target: string) => `將外觀套用到${target}`,
-      'paneHeader.resetAppearanceInDescendants': (target: string) => `重設${target}中的外觀`,
-      'folderAppearance.titleRows.option': (rows: number) => `標題${rows}行`,
-      'folderAppearance.previewRows.option': (rows: number) => `預覽${rows}行`,
-      'modals.bulkApply.applySortAndGroupTitle': (target: string) => `將排序與分組套用到${target}？`,
-      'modals.bulkApply.applyAppearanceTitle': (target: string) => `將外觀套用到${target}？`,
-      'modals.bulkApply.resetAppearanceTitle': (target: string) => `重設${target}中的外觀？`,
-      'modals.bulkApply.applyAppearanceMessage': (count: number, replacedCount: number) =>
-        `將變更 ${count} 項的外觀。將取代現有自訂外觀：${replacedCount}。已儲存的外觀偏好只會複製一次；排序和分組保持不變。日後的變更和新增的後代項目不會連動。`,
-      'modals.bulkApply.resetAppearanceMessage': (count: number) =>
-        `將重設 ${count} 項的外觀。排序和分組保持不變。這是一次性變更；日後的變更和新增的後代項目不會連動。`,
-      'modals.bulkApply.affectedCountMessage': (count: number) => `將更改的現有覆寫：${count}。`,
-      'modals.manualSortConfirm.propertySortMessage': (property: string, count: number) =>
-        `這會將目前檢視切換為使用「${property}」的手動排序。編輯順序時會依需要將數字索引值寫入該屬性，影響 ${count} 則筆記。`,
-      'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
-        `這會從目前列表中的 ${count} 則筆記移除「${property}」。這些筆記的手動排序順序將被清除。`,
-      'modals.manualSortConfirm.compactMessage': (count: number) => `此次重新排序需要更多數字空間。${count} 則筆記將獲得新的索引值。`,
-      'modals.navRainbowSection.title': (section: string) => `彩虹顏色: ${section}`,
-      'modals.folderSuggest.placeholder': (name: string) => `將 ${name} 移動至資料夾...`,
-      'modals.folderSuggest.multipleFilesLabel': (count: number) => `${count} 個檔案`
-    }
-  }
 };
 export type LanguageCode = keyof typeof LANGUAGE_METADATA;

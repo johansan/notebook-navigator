@@ -111,7 +111,7 @@ export async function buildLanguages(root = projectRoot) {
         export type LanguageCode = keyof typeof LANGUAGE_METADATA;
     `;
     const formatted = await prettier.format(code, {
-        ...(await prettier.resolveConfig(path.join(root, '.prettierrc.json'))),
+        ...(await prettier.resolveConfig(path.join(root, 'src/i18n/localeMetadata.ts'))),
         parser: 'typescript'
     });
     await writeChanged(path.join(root, 'src/i18n/localeMetadata.ts'), formatted);
