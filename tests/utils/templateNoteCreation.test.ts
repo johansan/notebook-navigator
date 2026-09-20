@@ -23,7 +23,7 @@ import { TemplateFileModal } from '../../src/modals/TemplateFileModal';
 import { promptForTemplateValues } from '../../src/modals/TemplatePromptModal';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { applyNativeSettingControlValue } from '../../src/settings/nativeSettingControls';
-import { createNoteFromTemplateInFolder } from '../../src/utils/fileCreationUtils';
+import { createMarkdownFileFromTemplate, createNoteFromTemplateInFolder } from '../../src/utils/fileCreationUtils';
 import { hasPendingTemplateCursor } from '../../src/utils/templateCursor';
 import { createTestTFile } from './createTestTFile';
 
@@ -190,7 +190,8 @@ describe('createNoteFromTemplateInFolder', () => {
         const templateFile = createTestTFile('Templates/Meeting.md');
         const folder = createFolder('Projects');
         const create = vi.fn();
-        templater.templater.create_new_note_from_template.mockResolvedValue(createTestTFile('Projects/Untitled.md'));
+        const createdFile = createTestTFile('Projects/Untitled.md');
+        templater.templater.create_new_note_from_template.mockResolvedValue(createdFile);
         app.vault.create = create;
         app.vault.cachedRead = vi.fn(async () => '<% tp.file.title %>');
 
@@ -210,6 +211,8 @@ describe('createNoteFromTemplateInFolder', () => {
 
         expect(templater.templater.create_new_note_from_template).toHaveBeenCalledWith(templateFile, folder, 'Untitled', true);
         expect(create).not.toHaveBeenCalled();
+        // Templater opens the note and runs its own cursor jump, so no jump is scheduled for a later open.
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
     });
 
     it('places the prompted template cursor after opening replaces the previous editor document', async () => {
@@ -291,5 +294,81 @@ describe('createNoteFromTemplateInFolder', () => {
         expect(parseYaml(content.slice(4, frontmatterEnd))).toEqual({ title: value });
         expect(content.slice(frontmatterEnd)).toBe(`\n---\n# ${value}`);
         expect(openFile).toHaveBeenCalledWith(createdFile, { state: { mode: 'source' }, active: true });
+    });
+});
+
+describe('createMarkdownFileFromTemplate with Templater', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    interface TemplaterCreation {
+        app: App;
+        templater: TestTemplaterPlugin;
+        templateFile: TFile;
+        createdFile: TFile;
+        folder: TFolder;
+    }
+
+    function setupTemplaterCreation(templatePath: string, createdPath: string): TemplaterCreation {
+        const app = new App();
+        const templater = registerTemplater(app);
+        const templateFile = createTestTFile(templatePath);
+        const createdFile = createTestTFile(createdPath);
+        templater.templater.create_new_note_from_template.mockResolvedValue(createdFile);
+        app.vault.cachedRead = vi.fn(async () => '# <% tp.file.title %>\n\n<% tp.file.cursor() %>\n');
+        return { app, templater, templateFile, createdFile, folder: createFolder('Projects') };
+    }
+
+    it('schedules the Templater cursor jump when the caller opens the note', async () => {
+        const { app, templater, templateFile, createdFile, folder } = setupTemplaterCreation(
+            'Templates/Cursor.md',
+            'Projects/Cursor note.md'
+        );
+
+        const created = await createMarkdownFileFromTemplate({
+            app,
+            folder,
+            baseName: 'Cursor note',
+            templateFile,
+            settings: { ...DEFAULT_SETTINGS, templateEngine: 'templater' },
+            templateErrorContext: 'note'
+        });
+
+        expect(created).toBe(createdFile);
+        expect(templater.templater.create_new_note_from_template).toHaveBeenCalledWith(templateFile, folder, 'Cursor note', false);
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(true);
+    });
+
+    it('does not schedule the jump when Templater opens the note itself', async () => {
+        const { app, templateFile, createdFile, folder } = setupTemplaterCreation('Templates/Opened.md', 'Projects/Opened note.md');
+
+        await createMarkdownFileFromTemplate({
+            app,
+            folder,
+            baseName: 'Opened note',
+            templateFile,
+            settings: { ...DEFAULT_SETTINGS, templateEngine: 'templater' },
+            openTemplaterNote: true,
+            templateErrorContext: 'note'
+        });
+
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
+    });
+
+    it('does not schedule the jump for notes that go straight into title editing', async () => {
+        const { app, templateFile, createdFile, folder } = setupTemplaterCreation('Templates/Titled.md', 'Projects/Titled note.md');
+
+        await createMarkdownFileFromTemplate({
+            app,
+            folder,
+            baseName: 'Titled note',
+            templateFile,
+            settings: { ...DEFAULT_SETTINGS, templateEngine: 'templater' },
+            placeCursor: false,
+            templateErrorContext: 'note'
+        });
+
+        expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
     });
 });

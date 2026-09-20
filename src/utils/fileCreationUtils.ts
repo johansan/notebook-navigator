@@ -28,7 +28,12 @@ import { showNotice } from './noticeUtils';
 import { normalizeCalendarCustomRootFolder } from './calendarCustomNotePatterns';
 import { normalizeOptionalVaultFilePath } from './pathUtils';
 import { sanitizeRecord } from './recordUtils';
-import { applyPendingTemplateCursor, hasPendingTemplateCursor, schedulePendingTemplateCursor } from './templateCursor';
+import {
+    applyPendingTemplateCursor,
+    hasPendingTemplateCursor,
+    schedulePendingTemplateCursor,
+    schedulePendingTemplaterCursor
+} from './templateCursor';
 import { collectTemplatePrompts, containsTemplaterCommands, renderNoteTemplate, type TemplateRenderResult } from './templateRenderer';
 import { getTemplaterCreateNewNoteFromTemplate, getTemplaterCreateNoteFromTemplate } from './templaterIntegration';
 
@@ -192,13 +197,17 @@ type CreateMarkdownFileFromTemplateOptions = {
     /** Date context for built-in date tokens. Omitted or null resolves `{{date}}` to the current date with the default format. */
     templateDate?: TemplateDateContext | null;
     /**
-     * Whether a `{{cursor}}` token schedules cursor placement when the note opens. Defaults to true. Notes that enter
-     * title editing right after creation pass false so the cursor jump does not interrupt naming the note.
+     * Whether a `{{cursor}}` token or a Templater cursor marker schedules cursor placement when the note opens.
+     * Defaults to true. Notes that enter title editing right after creation pass false so the cursor jump does not
+     * interrupt naming the note.
      */
     placeCursor?: boolean;
     /** Choose an unused name after preparation and reserve it until creation finishes. Fixed periodic/folder note names omit this. */
     ensureUniqueName?: boolean;
-    /** Let Templater open the note and apply its own cursor/title behavior; built-in notes are opened by the caller. */
+    /**
+     * Let Templater open the note and apply its own cursor/title behavior. Otherwise the caller opens the note and
+     * the Templater cursor jump runs through the pending cursor store after that open.
+     */
     openTemplaterNote?: boolean;
     /** Label used in log messages and the Templater failure error, such as `folder note`. */
     templateErrorContext: string;
@@ -546,10 +555,17 @@ export async function createMarkdownFileFromTemplate({
         if (engine === 'templater') {
             const createFromTemplater = getTemplaterCreateNoteFromTemplate(app);
             const created = createFromTemplater ? await createFromTemplater(sourceFile, folder, baseName, openTemplaterNote) : undefined;
-            if (created instanceof TFile) {
-                return created;
+            if (!(created instanceof TFile)) {
+                throw new Error(`Templater did not create the ${templateErrorContext}`);
             }
-            throw new Error(`Templater did not create the ${templateErrorContext}`);
+            // Templater removes its `<% tp.file.cursor() %>` markers only when it opens the note itself. When the caller
+            // opens the note, the jump runs after that open through the pending cursor store; without this entry the
+            // markers stay in the note. `placeCursor` is respected so notes that go straight into title editing are not
+            // interrupted.
+            if (!openTemplaterNote && placeCursor) {
+                schedulePendingTemplaterCursor(created.path);
+            }
+            return created;
         }
 
         const path = buildFilePathInFolder(folder.path, baseName, 'md');

@@ -18,16 +18,26 @@
 
 import { App, MarkdownView, type TFile, type WorkspaceLeaf } from 'obsidian';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applyPendingTemplateCursor, hasPendingTemplateCursor, schedulePendingTemplateCursor } from '../../src/utils/templateCursor';
+import { TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID } from '../../src/constants/pluginIds';
+import {
+    applyPendingTemplateCursor,
+    applyPendingTemplaterCursorOnFileOpen,
+    hasPendingTemplateCursor,
+    schedulePendingTemplateCursor,
+    schedulePendingTemplaterCursor
+} from '../../src/utils/templateCursor';
 import { createTestTFile } from './createTestTFile';
 
 interface TestEditor {
     setCursor: ReturnType<typeof vi.fn>;
     focus: ReturnType<typeof vi.fn>;
+    getValue: () => string;
 }
 
-function createEditor(): TestEditor {
-    return { setCursor: vi.fn(), focus: vi.fn() };
+const TEMPLATER_CURSOR_CONTENT = '# Meeting\n\n<% tp.file.cursor() %>\n';
+
+function createEditor(content = ''): TestEditor {
+    return { setCursor: vi.fn(), focus: vi.fn(), getValue: () => content };
 }
 
 function createApp(options: { activeFile?: TFile; activeEditor?: TestEditor; leaves?: MarkdownView[] }): App {
@@ -97,5 +107,139 @@ describe('template cursor placement', () => {
         expect(hasPendingTemplateCursor(file.path)).toBe(false);
         applyPendingTemplateCursor(app, file);
         expect(editor.setCursor).not.toHaveBeenCalled();
+    });
+
+    it('runs the Templater jump command once in the active editor and clears the entry', () => {
+        const file = createTestTFile('Meetings/Weekly sync.md');
+        const editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        const app = createApp({ activeFile: file, activeEditor: editor });
+        const executeCommandById = vi.fn(() => true);
+        Reflect.set(app, 'commands', { executeCommandById });
+        schedulePendingTemplaterCursor(file.path);
+
+        // Folder notes apply the cursor twice for one open; the second call must not consume another cursor stop.
+        applyPendingTemplateCursor(app, file);
+        applyPendingTemplateCursor(app, file);
+
+        expect(executeCommandById).toHaveBeenCalledExactlyOnceWith(TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID);
+        expect(editor.setCursor).not.toHaveBeenCalled();
+        expect(editor.focus).toHaveBeenCalledOnce();
+        expect(hasPendingTemplateCursor(file.path)).toBe(false);
+    });
+
+    it('keeps a Templater entry while the file is only open in a background leaf', () => {
+        const file = createTestTFile('Projects/Templater project.md');
+        const view = new MarkdownView();
+        view.file = file;
+        view.editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        const app = createApp({ activeFile: createTestTFile('Projects/Other.md'), activeEditor: createEditor(), leaves: [view] });
+        const executeCommandById = vi.fn(() => true);
+        Reflect.set(app, 'commands', { executeCommandById });
+        schedulePendingTemplaterCursor(file.path);
+
+        applyPendingTemplateCursor(app, file);
+
+        expect(executeCommandById).not.toHaveBeenCalled();
+        expect(hasPendingTemplateCursor(file.path)).toBe(true);
+    });
+
+    it.each(['# Previous note\n', TEMPLATER_CURSOR_CONTENT])(
+        'ignores file-open before loading finishes with previous content %j',
+        content => {
+            const file = createTestTFile('Projects/Loading.md');
+            const app = createApp({ activeFile: file, activeEditor: createEditor(content) });
+            const executeCommandById = vi.fn(() => true);
+            Reflect.set(app, 'commands', { executeCommandById });
+            schedulePendingTemplaterCursor(file.path);
+
+            applyPendingTemplaterCursorOnFileOpen(app, file);
+
+            expect(executeCommandById).not.toHaveBeenCalled();
+            expect(hasPendingTemplateCursor(file.path)).toBe(true);
+        }
+    );
+
+    it('runs the Templater jump on file-open once a background note becomes the active editor', () => {
+        const file = createTestTFile('Projects/Sidebar folder note.md');
+        const editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        const view = new MarkdownView();
+        view.file = file;
+        view.editor = editor;
+        const app = createApp({ activeFile: createTestTFile('Projects/Other.md'), activeEditor: createEditor(), leaves: [view] });
+        const executeCommandById = vi.fn(() => true);
+        Reflect.set(app, 'commands', { executeCommandById });
+        schedulePendingTemplaterCursor(file.path);
+
+        applyPendingTemplateCursor(app, file);
+        expect(executeCommandById).not.toHaveBeenCalled();
+        app.workspace.activeEditor = view;
+        applyPendingTemplaterCursorOnFileOpen(app, file);
+        applyPendingTemplaterCursorOnFileOpen(app, file);
+
+        expect(executeCommandById).toHaveBeenCalledExactlyOnceWith(TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID);
+        expect(editor.focus).toHaveBeenCalledOnce();
+        expect(hasPendingTemplateCursor(file.path)).toBe(false);
+    });
+
+    it('waits for the new editor to finish loading when a background note opens in another leaf', () => {
+        const file = createTestTFile('Projects/Another leaf.md');
+        const view = new MarkdownView();
+        view.file = file;
+        view.editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        const app = createApp({ leaves: [view] });
+        const executeCommandById = vi.fn(() => true);
+        Reflect.set(app, 'commands', { executeCommandById });
+        schedulePendingTemplaterCursor(file.path);
+        applyPendingTemplateCursor(app, file);
+
+        const otherView = new MarkdownView();
+        otherView.file = file;
+        otherView.editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        app.workspace.activeEditor = otherView;
+        applyPendingTemplaterCursorOnFileOpen(app, file);
+
+        expect(executeCommandById).not.toHaveBeenCalled();
+        expect(hasPendingTemplateCursor(file.path)).toBe(true);
+
+        applyPendingTemplateCursor(app, file);
+        expect(executeCommandById).toHaveBeenCalledExactlyOnceWith(TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID);
+    });
+
+    it('requires another completed open after the loaded editor switches to a different note', () => {
+        const file = createTestTFile('Projects/Reopened.md');
+        const otherFile = createTestTFile('Templates/Previous.md');
+        const view = new MarkdownView();
+        view.file = file;
+        view.editor = createEditor(TEMPLATER_CURSOR_CONTENT);
+        const app = createApp({ leaves: [view] });
+        const executeCommandById = vi.fn(() => true);
+        Reflect.set(app, 'commands', { executeCommandById });
+        schedulePendingTemplaterCursor(file.path);
+        applyPendingTemplateCursor(app, file);
+
+        app.workspace.activeEditor = view;
+        view.file = otherFile;
+        applyPendingTemplaterCursorOnFileOpen(app, otherFile);
+        // The same editor object can publish the pending file path before replacing the other note's content.
+        view.file = file;
+        applyPendingTemplaterCursorOnFileOpen(app, file);
+
+        expect(executeCommandById).not.toHaveBeenCalled();
+        expect(hasPendingTemplateCursor(file.path)).toBe(true);
+
+        applyPendingTemplateCursor(app, file);
+        expect(executeCommandById).toHaveBeenCalledExactlyOnceWith(TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID);
+    });
+
+    it('leaves position entries untouched on file-open', () => {
+        const file = createTestTFile('Daily/2026-09-20.md');
+        const editor = createEditor();
+        const app = createApp({ activeFile: file, activeEditor: editor });
+        schedulePendingTemplateCursor(file.path, { line: 3, ch: 0 });
+
+        applyPendingTemplaterCursorOnFileOpen(app, file);
+
+        expect(editor.setCursor).not.toHaveBeenCalled();
+        expect(hasPendingTemplateCursor(file.path)).toBe(true);
     });
 });

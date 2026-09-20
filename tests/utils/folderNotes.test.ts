@@ -260,6 +260,7 @@ describe('root folder notes', () => {
         app.fileManager.createNewMarkdownFile = createNewMarkdownFile;
         app.vault.cachedRead = vi.fn(async () => '<% tp.file.title %>');
         app.workspace = {
+            iterateAllLeaves: vi.fn(),
             getLeaf: vi.fn(() => ({ openFile }))
         } as unknown as App['workspace'];
 
@@ -303,6 +304,7 @@ describe('root folder notes', () => {
         getTestVault(app).create = create;
         app.vault.modify = modify;
         app.workspace = {
+            iterateAllLeaves: vi.fn(),
             getLeaf: vi.fn(() => ({ openFile }))
         } as unknown as App['workspace'];
 

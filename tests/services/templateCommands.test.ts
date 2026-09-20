@@ -32,7 +32,8 @@ import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { TemplateCommand } from '../../src/settings/types';
 import { sanitizeTemplateCommands } from '../../src/settings/types';
 import { createTestTFile } from '../utils/createTestTFile';
-import { TEMPLATER_PLUGIN_ID } from '../../src/constants/pluginIds';
+import { TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID, TEMPLATER_PLUGIN_ID } from '../../src/constants/pluginIds';
+import { applyPendingTemplaterCursorOnFileOpen, hasPendingTemplateCursor } from '../../src/utils/templateCursor';
 
 vi.mock('../../src/modals/TemplatePromptModal', () => ({
     promptForTemplateValues: vi.fn()
@@ -268,7 +269,7 @@ describe('template commands', () => {
     });
 
     it.each(['automatic', 'templater'] as const)(
-        'keeps filename prompts but skips body prompts with the %s Templater path',
+        'keeps filename prompts, skips body prompts and runs the Templater cursor jump with the %s Templater path',
         async templateEngine => {
             const app = new App();
             const root = createFolder(app, '/', null);
@@ -276,7 +277,28 @@ describe('template commands', () => {
             const templateFile = createTestTFile('Templates/Meeting.md');
             const createdFile = createTestTFile('Meetings/Weekly sync.md');
             const createFromTemplater = vi.fn(async () => createdFile);
-            const openFile = vi.fn(async () => undefined);
+            const templateContent = '<% tp.file.title %> {{prompt:Ignored}} {{prompt:Title}}\nBefore <% tp.file.cursor() %>';
+            const createdContent = 'Weekly sync {{prompt:Ignored}} {{prompt:Title}}\nBefore <% tp.file.cursor() %>';
+            let content = templateContent;
+            let finishOpen = () => {
+                throw new Error('File open has not started');
+            };
+            const view = new MarkdownView();
+            view.file = templateFile;
+            const focusEditor = vi.fn();
+            view.editor = { focus: focusEditor, getValue: () => content } as unknown as MarkdownView['editor'];
+            const openFile = vi.fn(
+                () =>
+                    new Promise<void>(resolve => {
+                        // The early event sees the new path with the old template's marker still in the editor.
+                        view.file = createdFile;
+                        applyPendingTemplaterCursorOnFileOpen(app, createdFile);
+                        finishOpen = () => {
+                            content = createdContent;
+                            resolve();
+                        };
+                    })
+            );
             const templater = new TestTemplaterPlugin(app, {
                 id: TEMPLATER_PLUGIN_ID,
                 name: 'Templater',
@@ -288,18 +310,39 @@ describe('template commands', () => {
             Reflect.set(templater, 'templater', { create_new_note_from_template: createFromTemplater });
             Reflect.set(app, 'plugins', { plugins: { [TEMPLATER_PLUGIN_ID]: templater } });
             getTestVault(app).registerFile(templateFile);
-            const cachedRead = vi.fn(async () => '<% tp.file.title %> {{prompt:Ignored}} {{prompt:Title}}');
+            const cachedRead = vi.fn(async () => templateContent);
             app.vault.cachedRead = cachedRead;
-            app.workspace = { getLeaf: vi.fn(() => ({ openFile })) } as unknown as App['workspace'];
+            const executeCommandById = vi.fn(() => {
+                expect(content).toBe(createdContent);
+                content = content.replace('<% tp.file.cursor() %>', '');
+                return true;
+            });
+            Reflect.set(app, 'commands', { executeCommandById });
+            app.workspace = {
+                activeEditor: view,
+                getLeaf: vi.fn(() => ({ openFile }))
+            } as unknown as App['workspace'];
             vi.mocked(promptForTemplateValues).mockResolvedValue({ Title: 'Weekly sync' });
             const { plugin } = createPlugin(app, [createCommand({ location: 'folder', folder: 'Meetings' })]);
             plugin.settings.templateEngine = templateEngine;
 
-            await runTemplateCommand(plugin, 'meeting');
+            const creation = runTemplateCommand(plugin, 'meeting');
+            await vi.waitFor(() => expect(openFile).toHaveBeenCalledOnce());
+            expect(executeCommandById).not.toHaveBeenCalled();
+            expect(content).toBe(templateContent);
+            expect(hasPendingTemplateCursor(createdFile.path)).toBe(true);
+            finishOpen();
+            await creation;
 
             expect(promptForTemplateValues).toHaveBeenCalledExactlyOnceWith(app, ['Title']);
             expect(createFromTemplater).toHaveBeenCalledWith(templateFile, folder, 'Weekly sync', false);
             expect(openFile).toHaveBeenCalledWith(createdFile, { state: { mode: 'source' }, active: true });
+            // Templater leaves its cursor markers in the note, so its jump command runs after the note has opened.
+            expect(executeCommandById).toHaveBeenCalledExactlyOnceWith(TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID);
+            expect(openFile.mock.invocationCallOrder[0]).toBeLessThan(executeCommandById.mock.invocationCallOrder[0]);
+            expect(content).toBe(createdContent.replace('<% tp.file.cursor() %>', ''));
+            expect(focusEditor).toHaveBeenCalledOnce();
+            expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
             expect(cachedRead).toHaveBeenCalledTimes(1);
         }
     );
