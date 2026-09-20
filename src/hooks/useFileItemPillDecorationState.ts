@@ -30,11 +30,18 @@ import type { NavigationPaneTreeSectionsResult } from './navigationPane/data/use
 
 interface UseFileItemPillDecorationStateParams {
     sourceState: NavigationPaneSourceState;
-    treeSections: Pick<NavigationPaneTreeSectionsResult, 'renderTagTree' | 'renderedRootTagKeys'>;
+    treeSections: Pick<NavigationPaneTreeSectionsResult, 'unscopedRootTagKeys'>;
     includeDescendantNotes: boolean;
     navRainbowState: NavigationRainbowState;
 }
 
+/**
+ * Builds the tag and property rainbow color maps used by navigation rows, list pane pills, and the list pane title.
+ *
+ * Colors are assigned from the unfiltered tag and property trees, which already exclude hidden items, and not from the
+ * trees rendered in the navigation pane. Filter by selection narrows the rendered trees, and assigning from those would
+ * redistribute the palette over fewer items so every remaining tag or property changed color on each selection change.
+ */
 export function useFileItemPillDecorationState({
     sourceState,
     treeSections,
@@ -55,8 +62,8 @@ export function useFileItemPillDecorationState({
         }
 
         return buildFileItemTagRainbowColors({
-            visibleTagTree: treeSections.renderTagTree,
-            rootTagKeys: treeSections.renderedRootTagKeys,
+            visibleTagTree: sourceState.visibleTagTree,
+            rootTagKeys: treeSections.unscopedRootTagKeys,
             rootTagOrderMap: sourceState.rootTagOrderMap,
             tagComparator: sourceState.tagComparator,
             palette,
@@ -71,10 +78,10 @@ export function useFileItemPillDecorationState({
         settings.inheritTagColors,
         settings.showAllTagsFolder,
         settings.tagTreeSortOverrides,
-        treeSections.renderedRootTagKeys,
-        treeSections.renderTagTree,
+        treeSections.unscopedRootTagKeys,
         sourceState.rootTagOrderMap,
-        sourceState.tagComparator
+        sourceState.tagComparator,
+        sourceState.visibleTagTree
     ]);
 
     const propertyRainbowColors = useMemo(() => {

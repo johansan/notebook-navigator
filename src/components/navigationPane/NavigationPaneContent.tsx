@@ -468,6 +468,8 @@ export const NavigationPane = React.memo(
             treeSections: props.navigationTreeSections,
             folderDecorationModel: props.folderDecorationModel,
             navRainbowState: props.navRainbowState,
+            tagRainbowColors: fileItemPillDecorationModel.tagRainbowColors,
+            propertyRainbowColors: fileItemPillDecorationModel.propertyRainbowColors,
             shortcutsExpanded: shortcuts.shortcutsExpanded,
             recentNotesExpanded: shortcuts.recentNotesExpanded,
             pinShortcuts: uiState.pinShortcuts && settings.showShortcuts,

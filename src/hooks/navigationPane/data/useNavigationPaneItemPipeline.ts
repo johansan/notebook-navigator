@@ -32,10 +32,10 @@ import type { NavigationRainbowState } from '../../useNavigationRainbowState';
 import type { FolderDecorationModel } from '../../../utils/folderDecoration';
 import { buildNavigationPathIndexMap } from '../../../utils/navigationIndex';
 import {
-    buildPropertyRainbowColors,
     buildRecentRainbowColors,
     buildShortcutRainbowColors,
-    buildTagRainbowColors
+    type PropertyRainbowColors,
+    type TagRainbowColors
 } from '../../../utils/navigationRainbow';
 import { sanitizeNavigationSectionOrder } from '../../../utils/navigationSections';
 import {
@@ -63,6 +63,10 @@ export interface UseNavigationPaneItemPipelineParams {
     getFileDisplayName: (file: TFile) => string;
     folderDecorationModel: FolderDecorationModel;
     navRainbowState: NavigationRainbowState;
+    /** Tag rainbow colors shared with the list pane, assigned from the unfiltered tag tree rather than tagItems */
+    tagRainbowColors: TagRainbowColors;
+    /** Property rainbow colors shared with the list pane, assigned from the unfiltered property tree rather than propertyItems */
+    propertyRainbowColors: PropertyRainbowColors;
     sectionOrder: NavigationSectionIdType[];
     showHiddenItems: boolean;
     pinShortcuts: boolean;
@@ -117,6 +121,8 @@ export function useNavigationPaneItemPipeline({
     getFileDisplayName,
     folderDecorationModel,
     navRainbowState,
+    tagRainbowColors,
+    propertyRainbowColors,
     sectionOrder,
     showHiddenItems,
     pinShortcuts,
@@ -399,36 +405,6 @@ export function useNavigationPaneItemPipeline({
 
         return result;
     }, [firstSectionId, items, parsedNavigationSeparators, pinShortcuts, sectionSpacerMap, showHiddenItems]);
-
-    const tagRainbowColors = useMemo(() => {
-        const palette = navRainbowPalettes.tag;
-        if (!palette) {
-            return { colorsByPath: new Map<string, string>(), rootColor: undefined, getInheritedColor: (_path: string) => undefined };
-        }
-
-        return buildTagRainbowColors({
-            items: tagItems,
-            palette,
-            scope: navRainbow.tags.scope,
-            rootLevel: settings.showAllTagsFolder ? 1 : 0,
-            showAllTagsFolder: settings.showAllTagsFolder,
-            inheritColors: settings.inheritTagColors
-        });
-    }, [navRainbow.tags.scope, navRainbowPalettes.tag, settings.inheritTagColors, settings.showAllTagsFolder, tagItems]);
-
-    const propertyRainbowColors = useMemo(() => {
-        const palette = navRainbowPalettes.property;
-        if (!palette) {
-            return { colorsByNodeId: new Map<string, string>(), rootColor: undefined, rootColorsByKey: new Map<string, string>() };
-        }
-
-        return buildPropertyRainbowColors({
-            items: propertyItems,
-            palette,
-            scope: navRainbow.properties.scope,
-            showAllPropertiesFolder: settings.showAllPropertiesFolder
-        });
-    }, [navRainbow.properties.scope, navRainbowPalettes.property, propertyItems, settings.showAllPropertiesFolder]);
 
     const shortcutRainbowColors = useMemo(() => {
         const palette = navRainbowPalettes.shortcut;

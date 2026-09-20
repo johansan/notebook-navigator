@@ -70,7 +70,8 @@ Expensive data shaping lives outside component bodies. Examples:
   colours, and tracks virtual folders, banners, pinned shortcuts, and section ordering.
 - `useFolderDecorationState`, `useNavigationPaneSourceState`, `useNavigationPaneTreeSections`, and
   `useFileItemPillDecorationState` assemble the shared folder/tag/property source trees, root ordering, visibility
-  filters, and rainbow/metadata decoration models consumed by both panes.
+  filters, and rainbow/metadata decoration models consumed by both panes. Tag and property rainbow colors are assigned
+  from the unfiltered trees, so filter by selection does not change them.
 - `useNavigationRootReorder` exposes drag-and-drop reorder state and render helpers for root folders, tags, properties, and section
   headers.
 - `useListPaneData` assembles list pane items (pinned files, spacers, group headers, search metadata, hidden item

@@ -120,7 +120,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'The default vault profile now uses the selected language on first launch while translations are downloading.',
             'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
             '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
-            'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux now opens them in a new tab without pasting the primary selection into the note [#1505](https://github.com/johansan/notebook-navigator/issues/1505).'
+            'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux now opens them in a new tab without pasting the primary selection into the note [#1505](https://github.com/johansan/notebook-navigator/issues/1505).',
+            'Tags and properties now keep their rainbow colors when ==Filter tags by selection== or ==Filter properties by selection== narrows the navigation pane, and the colors now match the tag and property pills in the list pane.'
         ]
     },
     {

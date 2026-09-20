@@ -20,10 +20,12 @@ import React from 'react';
 import { App, TFolder, type TAbstractFile } from 'obsidian';
 import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
+import { DEFAULT_SETTINGS, NAV_RAINBOW_DEFAULTS } from '../../src/settings/defaultSettings';
 import type { NotebookNavigatorSettings } from '../../src/settings/types';
+import { useSettingsState } from '../../src/context/SettingsContext';
+import type { MetadataService } from '../../src/services/MetadataService';
 import type { PropertyItem } from '../../src/storage/IndexedDBStorage';
-import { ItemType, NavigationPaneItemType } from '../../src/types';
+import { ItemType, NavigationPaneItemType, NavigationSectionId } from '../../src/types';
 import type { TagTreeNode, PropertyTreeNode } from '../../src/types/storage';
 import { createHiddenTagVisibility } from '../../src/utils/tagPrefixMatcher';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
@@ -32,9 +34,21 @@ import {
     useNavigationPaneTreeSections,
     type NavigationPaneTreeSectionsResult
 } from '../../src/hooks/navigationPane/data/useNavigationPaneTreeSections';
+import { useNavigationPaneItemPipeline } from '../../src/hooks/navigationPane/data/useNavigationPaneItemPipeline';
+import { useFileItemPillDecorationState } from '../../src/hooks/useFileItemPillDecorationState';
+import type { NavigationRainbowState } from '../../src/hooks/useNavigationRainbowState';
+import {
+    resolveFileItemPropertyDecorationColors,
+    resolveFileItemTagDecorationColors,
+    type FileItemPillDecorationModel
+} from '../../src/utils/fileItemPillDecoration';
 import { createTestTFile } from '../utils/createTestTFile';
 
 const dbFileDataByPath = new Map<string, { tags: string[] | null; properties: PropertyItem[] | null }>();
+
+vi.mock('../../src/context/SettingsContext', () => ({
+    useSettingsState: vi.fn()
+}));
 
 vi.mock('../../src/storage/fileOperations', () => ({
     getDBInstanceOrNull: () => ({
@@ -186,6 +200,207 @@ function createSourceState(params?: {
 }
 
 describe('useNavigationPaneTreeSections', () => {
+    it.each(['root', 'all', 'child'] as const)(
+        'keeps navigation and pill colors stable across folder selections with %s rainbow scope',
+        scope => {
+            dbFileDataByPath.clear();
+
+            const otherFile = createTestTFile('notes/other/other.md');
+            const selectedFile = createTestTFile('notes/project/selected.md');
+            dbFileDataByPath.set(otherFile.path, {
+                tags: ['#alpha', '#beta/one'],
+                properties: [
+                    { fieldKey: 'Priority', value: 'High', valueKind: 'string' },
+                    { fieldKey: 'Status', value: 'Closed', valueKind: 'string' }
+                ]
+            });
+            dbFileDataByPath.set(selectedFile.path, {
+                tags: ['#beta/two'],
+                properties: [{ fieldKey: 'Status', value: 'Open', valueKind: 'string' }]
+            });
+            const otherFolder = createFolder('notes/other', [otherFile]);
+            const selectedFolder = createFolder('notes/project', [selectedFile]);
+            const emptyFolder = createFolder('notes/empty');
+            const allFolder = createFolder('notes', [otherFolder, selectedFolder, emptyFolder]);
+            Reflect.set(otherFile, 'parent', otherFolder);
+            Reflect.set(selectedFile, 'parent', selectedFolder);
+
+            const alphaNode = createTagNode('alpha', 'alpha');
+            const betaNode = createTagNode('beta', 'beta');
+            betaNode.children.set('one', createTagNode('beta/one', 'beta/one'));
+            betaNode.children.set('two', createTagNode('beta/two', 'beta/two'));
+            const closedNode = createPropertyValueNode('status', 'closed', 'Closed', [otherFile.path]);
+            const openNode = createPropertyValueNode('status', 'open', 'Open', [selectedFile.path]);
+            const statusNode = createPropertyKeyNode('status', 'Status', [otherFile.path, selectedFile.path], [closedNode, openNode]);
+            const priorityNode = createPropertyKeyNode(
+                'priority',
+                'Priority',
+                [otherFile.path],
+                [createPropertyValueNode('priority', 'high', 'High', [otherFile.path])]
+            );
+            const sourceState = createSourceState({
+                visibleTagTree: new Map([
+                    ['alpha', alphaNode],
+                    ['beta', betaNode]
+                ]),
+                propertyTree: new Map([
+                    ['priority', priorityNode],
+                    ['status', statusNode]
+                ]),
+                visiblePropertyNavigationKeySet: new Set(['priority', 'status'])
+            });
+            const settings = createSettings({
+                showProperties: true,
+                showAllPropertiesFolder: false,
+                scopePropertiesToCurrentContext: true,
+                inheritTagColors: true,
+                inheritPropertyColors: true
+            });
+            vi.mocked(useSettingsState).mockReturnValue(settings);
+            const palette = ['#112233', '#445566'];
+            const navRainbowState: NavigationRainbowState = {
+                navRainbow: {
+                    ...NAV_RAINBOW_DEFAULTS,
+                    mode: 'foreground',
+                    tags: { ...NAV_RAINBOW_DEFAULTS.tags, enabled: true, scope },
+                    properties: { ...NAV_RAINBOW_DEFAULTS.properties, enabled: true, scope }
+                },
+                navRainbowPalettes: { folder: null, tag: palette, property: palette, shortcut: null, recent: null }
+            };
+            const metadataService = {
+                getNavigationSeparatorsVersion: () => 0,
+                getTagColorData: () => ({}),
+                getPropertyColorData: () => ({}),
+                getTagIcon: () => undefined,
+                getPropertyIcon: () => undefined
+            } as unknown as MetadataService;
+            const app = new App();
+
+            function renderSelection(folder: TFolder) {
+                const snapshots: {
+                    tagColors: Map<string, string | undefined>;
+                    propertyColors: Map<string, string | undefined>;
+                    model: FileItemPillDecorationModel;
+                }[] = [];
+
+                function Harness() {
+                    const treeSections = useNavigationPaneTreeSections({
+                        app,
+                        settings,
+                        expansionState: {
+                            expandedFolders: new Set(),
+                            expandedTags: new Set(['beta']),
+                            expandedProperties: new Set([statusNode.id, priorityNode.id]),
+                            expandedVirtualFolders: new Set()
+                        },
+                        showHiddenItems: false,
+                        includeDescendantNotes: true,
+                        sourceState,
+                        selectionScope: { selectionType: ItemType.FOLDER, selectedFolder: folder },
+                        tagTreeService: null,
+                        propertyTreeService: null
+                    });
+                    const model = useFileItemPillDecorationState({
+                        sourceState,
+                        treeSections,
+                        includeDescendantNotes: true,
+                        navRainbowState
+                    });
+                    const pipeline = useNavigationPaneItemPipeline({
+                        app,
+                        settings,
+                        metadataService,
+                        fileNameIconNeedles: [],
+                        getFileDisplayName: file => file.basename,
+                        folderDecorationModel: {
+                            isExcludedPath: () => false,
+                            folderRainbowColors: { colorsByPath: new Map(), rootColor: undefined, getInheritedColor: () => undefined },
+                            navRainbowMode: 'none',
+                            folderRainbowScope: 'root',
+                            showRootFolder: false
+                        },
+                        navRainbowState,
+                        tagRainbowColors: model.tagRainbowColors,
+                        propertyRainbowColors: model.propertyRainbowColors,
+                        sectionOrder: [NavigationSectionId.TAGS, NavigationSectionId.PROPERTIES],
+                        showHiddenItems: false,
+                        pinShortcuts: false,
+                        shouldPinRecentNotes: false,
+                        propertiesSectionActive: treeSections.propertiesSectionActive,
+                        folderItems: [],
+                        tagItems: treeSections.tagItems,
+                        propertyItems: treeSections.propertyItems,
+                        shortcutItems: [],
+                        recentNotesItems: [],
+                        parsedExcludedFolders: [],
+                        metadataDecorationVersion: 0
+                    });
+                    const tagColors = new Map<string, string | undefined>();
+                    const propertyColors = new Map<string, string | undefined>();
+                    for (const item of pipeline.items) {
+                        if (item.type === NavigationPaneItemType.TAG) {
+                            tagColors.set(item.data.path, item.color);
+                        } else if (
+                            item.type === NavigationPaneItemType.PROPERTY_KEY ||
+                            item.type === NavigationPaneItemType.PROPERTY_VALUE
+                        ) {
+                            propertyColors.set(item.data.id, item.color);
+                        }
+                    }
+                    snapshots.push({ tagColors, propertyColors, model });
+                    return null;
+                }
+
+                renderToStaticMarkup(React.createElement(Harness));
+                const snapshot = snapshots[0];
+                if (!snapshot) {
+                    throw new Error('Expected rainbow selection snapshot');
+                }
+                return snapshot;
+            }
+
+            const all = renderSelection(allFolder);
+            const selected = renderSelection(selectedFolder);
+            const empty = renderSelection(emptyFolder);
+            const restored = renderSelection(allFolder);
+
+            expect([...all.tagColors.keys()]).toEqual(['alpha', 'beta', 'beta/one', 'beta/two']);
+            expect([...selected.tagColors.keys()]).toEqual(['beta', 'beta/two']);
+            expect([...selected.propertyColors.keys()]).toEqual([statusNode.id, openNode.id]);
+            expect(empty.tagColors.size).toBe(0);
+            expect(empty.propertyColors.size).toBe(0);
+            // Both selected children lose an earlier sibling, so rebuilding colors from scoped rows would change their color.
+            expect(all.tagColors.get('beta/two')).toBe(palette[1]);
+            expect(all.propertyColors.get(openNode.id)).toBe(palette[1]);
+            for (const snapshot of [selected, empty, restored]) {
+                expect(snapshot.model.tagRainbowColors.colorsByPath).toEqual(all.model.tagRainbowColors.colorsByPath);
+                expect(snapshot.model.propertyRainbowColors.colorsByNodeId).toEqual(all.model.propertyRainbowColors.colorsByNodeId);
+                for (const [path, color] of snapshot.tagColors) {
+                    expect(color).toBe(all.tagColors.get(path));
+                    expect(
+                        resolveFileItemTagDecorationColors({
+                            model: snapshot.model,
+                            tagPath: path,
+                            color: undefined,
+                            backgroundColor: undefined
+                        }).color
+                    ).toBe(color);
+                }
+                for (const [nodeId, color] of snapshot.propertyColors) {
+                    expect(color).toBe(all.propertyColors.get(nodeId));
+                    expect(
+                        resolveFileItemPropertyDecorationColors({
+                            model: snapshot.model,
+                            nodeId,
+                            color: undefined,
+                            backgroundColor: undefined
+                        }).color
+                    ).toBe(color);
+                }
+            }
+        }
+    );
+
     it('keeps global root tag ordering available while scoped rendering shows only current-context tags', () => {
         dbFileDataByPath.clear();
 
@@ -244,6 +459,7 @@ describe('useNavigationPaneTreeSections', () => {
         expect(renderTagTreeKeys).toEqual(['alpha']);
         expect(rootOrderingTagTreeKeys).toEqual(['alpha', 'beta']);
         expect(result.resolvedRootTagKeys).toEqual(['alpha', 'beta']);
+        expect(result.unscopedRootTagKeys).toEqual(['alpha', 'beta']);
         expect(renderedItemTypes).toEqual([NavigationPaneItemType.TAG]);
         expect(renderedItemKeys).toEqual(['alpha']);
         const firstRenderedTagItem = result.tagItems[0];

@@ -79,7 +79,8 @@ export interface NavigationPaneTreeSectionsResult {
     folderItems: CombinedNavigationItem[];
     tagItems: CombinedNavigationItem[];
     renderTagTree: Map<string, TagTreeNode>;
-    renderedRootTagKeys: string[];
+    /** Root tag keys of the unfiltered tree in navigation order; source for rainbow color slots shared by both panes */
+    unscopedRootTagKeys: string[];
     rootOrderingTagTree: Map<string, TagTreeNode>;
     resolvedRootTagKeys: string[];
     tagsVirtualFolderHasChildren: boolean;
@@ -400,22 +401,18 @@ export function useNavigationPaneTreeSections({
     const rootOrderingTagTree = useMemo(() => globalRootTagOrdering.rootNodeMap, [globalRootTagOrdering.rootNodeMap]);
     const resolvedRootTagKeys = useMemo(() => globalRootTagOrdering.resolvedRootTagKeys, [globalRootTagOrdering.resolvedRootTagKeys]);
 
-    const isScopedTagSectionSource = scopedTagSectionSource !== null;
-    const scopedUntaggedCount = scopedTagSectionSource?.untaggedCount;
-    const renderedRootUntaggedCount = scopedUntaggedCount ?? sourceState.untaggedCount;
-    const renderedRootHiddenTagNodes = isScopedTagSectionSource ? undefined : sourceState.hiddenRootTagNodes;
-    const renderedRootNodeMap = renderRootTagOrdering.rootNodeMap;
-    const renderedResolvedRootTagKeys = renderRootTagOrdering.resolvedRootTagKeys;
-
-    const renderedRootTagKeys = useMemo((): string[] => {
+    // Root tag keys of the unfiltered tree in navigation order, without hidden root tags or Untagged when they are not shown.
+    // Rainbow colors are assigned from this list rather than the scoped tree, so tags keep their color slots when filter by
+    // selection narrows the rendered tags; otherwise every remaining tag would shift color on each selection change.
+    const unscopedRootTagKeys = useMemo((): string[] => {
         if (!settings.showTags) {
             return [];
         }
 
-        const shouldIncludeUntagged = settings.showUntagged && renderedRootUntaggedCount > 0;
+        const shouldIncludeUntagged = settings.showUntagged && sourceState.untaggedCount > 0;
 
-        return renderedResolvedRootTagKeys.filter(key => {
-            if (renderedRootHiddenTagNodes?.has(key) && !showHiddenItems) {
+        return globalRootTagOrdering.resolvedRootTagKeys.filter(key => {
+            if (sourceState.hiddenRootTagNodes.has(key) && !showHiddenItems) {
                 return false;
             }
 
@@ -423,16 +420,15 @@ export function useNavigationPaneTreeSections({
                 return shouldIncludeUntagged;
             }
 
-            return renderedRootNodeMap.has(key);
+            return globalRootTagOrdering.rootNodeMap.has(key);
         });
     }, [
-        renderedRootHiddenTagNodes,
-        renderedRootNodeMap,
-        renderedRootUntaggedCount,
-        renderedResolvedRootTagKeys,
+        globalRootTagOrdering,
         settings.showTags,
         settings.showUntagged,
-        showHiddenItems
+        showHiddenItems,
+        sourceState.hiddenRootTagNodes,
+        sourceState.untaggedCount
     ]);
 
     const { tagItems, tagsVirtualFolderHasChildren } = useMemo((): {
@@ -925,7 +921,7 @@ export function useNavigationPaneTreeSections({
         folderItems,
         tagItems,
         renderTagTree,
-        renderedRootTagKeys,
+        unscopedRootTagKeys,
         rootOrderingTagTree,
         resolvedRootTagKeys,
         tagsVirtualFolderHasChildren,
