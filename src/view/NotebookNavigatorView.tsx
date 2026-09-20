@@ -25,6 +25,7 @@ import type { NotebookNavigatorHandle } from '../components/NotebookNavigatorCom
 import type { RevealFileOptions, NavigateToFolderOptions } from '../hooks/useNavigatorReveal';
 import type { NavigateToPropertyOptions } from '../utils/propertyNavigation';
 import type { NavigateToTagOptions } from '../utils/tagNavigation';
+import type { ShortcutCommandContext } from '../utils/selectionUtils';
 import { ExpansionProvider } from '../context/ExpansionContext';
 import { SelectionProvider } from '../context/SelectionContext';
 import { ServicesProvider } from '../context/ServicesContext';
@@ -397,10 +398,11 @@ export class NotebookNavigatorView extends ItemView {
     }
 
     /**
-     * Adds the current navigator selection or active file to shortcuts
+     * Toggles the shortcut for the item the command context identifies: the navigator
+     * selection when the user was working in the navigator, otherwise the file open in the editor.
      */
-    async addShortcutForCurrentSelection(): Promise<void> {
-        await this.componentHandle?.addShortcutForCurrentSelection();
+    async addShortcutForCurrentSelection(context: ShortcutCommandContext): Promise<void> {
+        await this.componentHandle?.addShortcutForCurrentSelection(context);
     }
 
     /**

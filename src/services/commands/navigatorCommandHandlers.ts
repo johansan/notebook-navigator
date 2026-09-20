@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { FileView, Platform, TFile, TFolder, type WorkspaceLeaf } from 'obsidian';
+import { FileView, Platform, TFile, TFolder, View, type WorkspaceLeaf } from 'obsidian';
 import type NotebookNavigatorPlugin from '../../main';
 import { getCurrentLanguage, strings } from '../../i18n';
 import {
@@ -73,7 +73,13 @@ import {
     parseStoredPropertySelectionNodeId,
     type PropertySelectionNodeId
 } from '../../utils/propertyTree';
-import { getAdjacentFile, getFilesForNavigationSelection, getPinnedSectionCollapseKey } from '../../utils/selectionUtils';
+import {
+    getAdjacentFile,
+    getFilesForNavigationSelection,
+    getPinnedSectionCollapseKey,
+    type ShortcutCommandContext
+} from '../../utils/selectionUtils';
+import { supportsKeyboardInteractions } from '../../utils/paneLayout';
 
 /**
  * Reveals the navigator view and focuses whichever pane is currently visible
@@ -179,6 +185,43 @@ function getNavigatorViewIfMounted(plugin: NotebookNavigatorPlugin, existingLeav
     const leaf = navigatorLeaves[0];
     const view = leaf.view;
     return isNotebookNavigatorView(view) ? view : null;
+}
+
+/**
+ * Returns whether the Add to shortcuts command should act on the navigator selection instead of
+ * the file open in the editor. Must run before the navigator is revealed, because revealing can
+ * move focus into it and would make every invocation look like it came from the navigator.
+ */
+function isNavigatorSelectionContext(plugin: NotebookNavigatorPlugin, leaf: WorkspaceLeaf, view: NotebookNavigatorView): boolean {
+    const { workspace } = plugin.app;
+    const splitLocation = getLeafSplitLocation(plugin.app, leaf);
+
+    // A collapsed sidebar or closed mobile drawer hides the navigator, so the user is working
+    // in the editor even though the navigator still holds an earlier folder, tag, or file selection.
+    if (splitLocation === 'left-sidebar' && workspace.leftSplit.collapsed) {
+        return false;
+    }
+    if (splitLocation === 'right-sidebar' && workspace.rightSplit.collapsed) {
+        return false;
+    }
+
+    // Phones skip navigator focus tracking, so an open drawer is the only signal that the user
+    // is working in the navigator.
+    if (!supportsKeyboardInteractions()) {
+        return true;
+    }
+
+    // Keyboard focus inside the navigator covers hotkeys and the command palette alike, because
+    // Obsidian restores focus to the previously focused element before running a palette command.
+    const containerEl = view.containerEl;
+    const activeElement = containerEl.ownerDocument.activeElement;
+    if (activeElement && containerEl.contains(activeElement)) {
+        return true;
+    }
+
+    // Closing a context menu can leave focus on the document body while the navigator is still
+    // the active leaf, so the active leaf is the second signal.
+    return workspace.getActiveViewOfType(View)?.leaf === leaf;
 }
 
 /**
@@ -1478,16 +1521,26 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         }
     });
 
-    // Command to add the current selection or active file to shortcuts
+    // Command to toggle the shortcut for the navigator selection or the active file
     plugin.addCommand({
         id: 'add-shortcut',
         name: strings.commands.addShortcut,
         callback: () => {
             // Wrap shortcut creation with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
-                if (view) {
-                    await view.addShortcutForCurrentSelection();
+                // Capture the context before ensureNavigatorOpen runs: revealing the navigator can
+                // move focus into it, and creating the view activates its leaf, which would change
+                // both the focus signals and the file getActiveFile() reports.
+                const navigatorLeaves = plugin.getNavigatorLeaves();
+                const mountedView = getNavigatorViewIfMounted(plugin, navigatorLeaves);
+                const context: ShortcutCommandContext = {
+                    useNavigatorSelection: mountedView !== null && isNavigatorSelectionContext(plugin, navigatorLeaves[0], mountedView),
+                    activeFile: plugin.app.workspace.getActiveFile()
+                };
+
+                const view = await ensureNavigatorOpen(plugin, navigatorLeaves);
+                if (view && (await view.whenReady())) {
+                    await view.addShortcutForCurrentSelection(context);
                 }
             });
         }

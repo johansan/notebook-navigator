@@ -292,7 +292,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Navigate to property` Search dialog to jump to any property key or value
 - `Notebook Navigator: Navigate back` Moves to the previous folder, tag, or property selection in navigator history
 - `Notebook Navigator: Navigate forward` Moves to the next folder, tag, or property selection in navigator history
-- `Notebook Navigator: Add to shortcuts` Adds or removes the current file, folder, tag, or property from shortcuts
+- `Notebook Navigator: Add to shortcuts` Adds or removes the active note from shortcuts, or the selected note, folder, tag, or property when the navigator is focused
 - `Notebook Navigator: Open shortcut 1-9` Opens shortcut by its position in the shortcuts list
 - `Notebook Navigator: Search` Opens quick search field or focuses it if already open. Search persists between sessions. **Suggestion:** Bind to a shortcut key like `Cmd/Ctrl+Shift+S` for quick file filtering
 - `Notebook Navigator: Search whole vault` Selects the vault root folder and opens search with subfolders included (available when either `Show root folder` or `Show hidden items` is enabled)

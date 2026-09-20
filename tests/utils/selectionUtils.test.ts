@@ -17,7 +17,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { orderFilesByReference } from '../../src/utils/selectionUtils';
+import { orderFilesByReference, resolveShortcutTargetFromNavigatorSelection } from '../../src/utils/selectionUtils';
 import { createTestTFile } from './createTestTFile';
 
 describe('orderFilesByReference', () => {
@@ -30,5 +30,68 @@ describe('orderFilesByReference', () => {
         const ordered = orderFilesByReference([third, first, second], [outsideReference, second, first]);
 
         expect(ordered.map(file => file.path)).toEqual([second.path, first.path, third.path]);
+    });
+});
+
+describe('resolveShortcutTargetFromNavigatorSelection', () => {
+    const emptySelection = {
+        selectedFilePath: null,
+        selectedFolderPath: null,
+        selectedTag: null,
+        selectedProperty: null
+    };
+
+    it('resolves the selected note when the list pane is active', () => {
+        expect(
+            resolveShortcutTargetFromNavigatorSelection({
+                ...emptySelection,
+                activePane: 'files',
+                selectedFilePath: 'Notes/First.md',
+                selectedFolderPath: 'Notes'
+            })
+        ).toEqual({ type: 'note', path: 'Notes/First.md' });
+    });
+
+    it('does not fall back to the folder when the list pane has no selection', () => {
+        expect(
+            resolveShortcutTargetFromNavigatorSelection({
+                ...emptySelection,
+                activePane: 'files',
+                selectedFolderPath: 'Notes'
+            })
+        ).toBeNull();
+    });
+
+    it('resolves the selected folder when the navigation pane is active even with a selected note', () => {
+        expect(
+            resolveShortcutTargetFromNavigatorSelection({
+                ...emptySelection,
+                activePane: 'navigation',
+                selectedFilePath: 'Notes/First.md',
+                selectedFolderPath: 'Notes'
+            })
+        ).toEqual({ type: 'folder', path: 'Notes' });
+    });
+
+    it('resolves the selected tag and property when the navigation pane is active', () => {
+        expect(
+            resolveShortcutTargetFromNavigatorSelection({
+                ...emptySelection,
+                activePane: 'navigation',
+                selectedTag: 'projects/active'
+            })
+        ).toEqual({ type: 'tag', tagPath: 'projects/active' });
+
+        expect(
+            resolveShortcutTargetFromNavigatorSelection({
+                ...emptySelection,
+                activePane: 'navigation',
+                selectedProperty: 'status:done'
+            })
+        ).toEqual({ type: 'property', nodeId: 'status:done' });
+    });
+
+    it('returns null when the navigation pane has no selection', () => {
+        expect(resolveShortcutTargetFromNavigatorSelection({ ...emptySelection, activePane: 'navigation' })).toBeNull();
     });
 });

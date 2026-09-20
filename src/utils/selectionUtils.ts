@@ -29,6 +29,7 @@ import type { NotebookNavigatorSettings } from '../settings/types';
 import type { IPropertyTreeProvider } from '../interfaces/IPropertyTreeProvider';
 import type { ITagTreeProvider } from '../interfaces/ITagTreeProvider';
 import { createScopedSelectionVisibilityCheck, getFilesForFolder, getFilesForProperty, getFilesForTag } from './fileFinder';
+import type { PropertySelectionNodeId } from './propertyTree';
 
 /**
  * Utilities for managing file selection operations
@@ -352,4 +353,55 @@ export async function updateSelectionAfterFileOperation(
     } catch (error) {
         console.error('Failed to open next file:', error);
     }
+}
+
+/**
+ * Context the Add to shortcuts command captures before it reveals the navigator.
+ */
+export interface ShortcutCommandContext {
+    /** True when the user was working in the navigator, so the navigator selection is the target */
+    useNavigatorSelection: boolean;
+    /** File open in the editor when the command ran; null when no file is open */
+    activeFile: TFile | null;
+}
+
+/** Navigator item the Add to shortcuts command toggles */
+export type ShortcutCommandTarget =
+    | { type: 'note'; path: string }
+    | { type: 'folder'; path: string }
+    | { type: 'tag'; tagPath: string }
+    | { type: 'property'; nodeId: PropertySelectionNodeId };
+
+export interface ShortcutSelectionSource {
+    /** Pane the user is working in; search focus counts as the list pane */
+    activePane: 'navigation' | 'files';
+    /** First selected file in the list pane, or null when the list has no selection */
+    selectedFilePath: string | null;
+    selectedFolderPath: string | null;
+    selectedTag: string | null;
+    selectedProperty: PropertySelectionNodeId | null;
+}
+
+/**
+ * Resolves the navigator item that the Add to shortcuts command toggles.
+ * The list pane resolves to the selected note and the navigation pane resolves to the
+ * selected tag, property, or folder. Returns null when the active pane has no selection
+ * instead of falling back to the other pane, because a remembered folder or tag is not what
+ * the user is looking at and the toggle would then remove an unrelated shortcut.
+ */
+export function resolveShortcutTargetFromNavigatorSelection(source: ShortcutSelectionSource): ShortcutCommandTarget | null {
+    if (source.activePane === 'files') {
+        return source.selectedFilePath ? { type: 'note', path: source.selectedFilePath } : null;
+    }
+
+    if (source.selectedTag) {
+        return { type: 'tag', tagPath: source.selectedTag };
+    }
+    if (source.selectedProperty) {
+        return { type: 'property', nodeId: source.selectedProperty };
+    }
+    if (source.selectedFolderPath) {
+        return { type: 'folder', path: source.selectedFolderPath };
+    }
+    return null;
 }
