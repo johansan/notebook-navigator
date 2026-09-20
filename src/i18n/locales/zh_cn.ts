@@ -120,6 +120,7 @@ export const STRINGS_ZH_CN = {
 
     templates: {
         invalidTokens: '模板“{name}”包含无效的占位符：{tokens}',
+        invalidFileNameTokens: '“{name}”的文件名格式包含无效的占位符：{tokens}',
         readFailed: '无法读取模板“{name}”。笔记已在没有模板的情况下创建。',
         folderNotSet: '从模板新建笔记前，请先在文件操作与模板 > 模板中设置模板文件夹。',
         templateNotFound: '未找到模板“{name}”。',
@@ -733,7 +734,7 @@ export const STRINGS_ZH_CN = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: '文件名格式',
             fileNameFormatDesc:
-                '{{date:YYYYMMDD}}、{{prompt:Title}} 等占位符会在运行命令时被替换。每个提示都会询问一个值，模板中相同的标签会获得相同的值。',
+                '{{date:YYYYMMDD}}、{{prompt:Title}} 等占位符会在运行命令时被替换。每个提示都会询问一个值，模板中相同的标签会获得相同的值。{{number}} 比文件夹中名称模式相同的笔记所用的最大编号大 1，{{number:00}} 会用零补齐位数。模板中也可以使用 {{number}}，{{title}} 会插入生成的文件名。',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: '位置',
             folder: '文件夹',

@@ -209,6 +209,39 @@ describe('renderNoteTemplate', () => {
         ]);
     });
 
+    it('renders number tokens with zero padding from the context number', () => {
+        const result = renderNoteTemplate('{{number}} {{ NUMBER:000 }} {{number:0}} {{number:00}}', createContext({ number: 7 }));
+        expect(result.content).toBe('7 007 7 07');
+        expect(result.numberSlots).toEqual([]);
+        expect(result.invalidTokens).toEqual([]);
+        // Padding is a minimum width, so longer numbers are never truncated.
+        expect(renderNoteTemplate('{{number:00}}', createContext({ number: 123 })).content).toBe('123');
+    });
+
+    it('keeps number tokens without a value and reports them, while escaped tokens stay literal', () => {
+        const result = renderNoteTemplate('# {{number}} {{!number:00}}', createContext());
+        expect(result.content).toBe('# {{number}} {{number:00}}');
+        expect(result.invalidTokens).toEqual(['{{number}}']);
+    });
+
+    it('reports malformed number tokens and leaves unknown lookalikes silent', () => {
+        const template = '{{number+1}} {{number+1d}} {{number:2}} {{number:}} {{number-x}} {{numbers}} {{title:00}}';
+        const result = renderNoteTemplate(template, createContext({ number: 3 }));
+        expect(result.content).toBe(template);
+        expect(result.invalidTokens).toEqual(['{{number+1}}', '{{number+1d}}', '{{number:2}}', '{{number:}}', '{{title:00}}']);
+    });
+
+    it('removes number tokens in slot mode and reports their positions and padding in order', () => {
+        const template = '{{prompt:Project}}-{{number:000}} ({{number}}) {{!number}}';
+        const result = renderNoteTemplate(template, createContext({ number: 'slot', promptValues: { Project: 'A' } }));
+        expect(result.content).toBe('A- () {{number}}');
+        expect(result.numberSlots).toEqual([
+            { offset: 2, padding: 3 },
+            { offset: 4, padding: 1 }
+        ]);
+        expect(result.invalidTokens).toEqual([]);
+    });
+
     it.each(['A "quoted" title', String.raw`C:\notes\topic`, 'A "quote" and \\backslash', 'Line one\nLine two\t😀'])(
         'preserves the prompt value %j in double-quoted frontmatter and Markdown',
         value => {

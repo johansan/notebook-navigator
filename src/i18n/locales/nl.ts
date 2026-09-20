@@ -122,6 +122,7 @@ export const STRINGS_NL = {
 
     templates: {
         invalidTokens: 'Sjabloon "{name}" bevat ongeldige tokens: {tokens}',
+        invalidFileNameTokens: 'De bestandsnaamindeling van "{name}" bevat ongeldige tokens: {tokens}',
         readFailed: 'Sjabloon "{name}" kon niet worden gelezen. De notitie is zonder sjabloon aangemaakt.',
         folderNotSet:
             'Stel de sjabloonmap in onder Bestandsbewerkingen & sjablonen > Sjablonen voordat je notities uit sjablonen aanmaakt.',
@@ -744,7 +745,7 @@ export const STRINGS_NL = {
             templatePlaceholder: 'Sjablonen/Vergadering.md',
             fileNameFormat: 'Bestandsnaamformaat',
             fileNameFormatDesc:
-                'Tokens zoals {{date:YYYYMMDD}} en {{prompt:Titel}} worden vervangen wanneer de opdracht wordt uitgevoerd. Elke prompt vraagt om een waarde, en hetzelfde label in het sjabloon krijgt dezelfde waarde.',
+                'Tokens zoals {{date:YYYYMMDD}} en {{prompt:Titel}} worden vervangen wanneer de opdracht wordt uitgevoerd. Elke prompt vraagt om een waarde, en hetzelfde label in het sjabloon krijgt dezelfde waarde. {{number}} is één hoger dan het hoogste nummer dat notities in de map met hetzelfde naampatroon gebruiken, en {{number:00}} vult het aan met nullen. Het sjabloon kan {{number}} ook gebruiken, en {{title}} voegt de gegenereerde bestandsnaam in.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titel}}',
             location: 'Locatie',
             folder: 'Map',

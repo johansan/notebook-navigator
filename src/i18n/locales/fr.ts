@@ -121,6 +121,7 @@ export const STRINGS_FR = {
 
     templates: {
         invalidTokens: 'Le modèle "{name}" contient des jetons non valides : {tokens}',
+        invalidFileNameTokens: 'Le format de nom de fichier de "{name}" contient des jetons non valides : {tokens}',
         readFailed: 'Impossible de lire le modèle "{name}". La note a été créée sans lui.',
         folderNotSet:
             'Définissez le dossier des modèles dans Opérations sur les fichiers et modèles > Modèles avant de créer des notes depuis un modèle.',
@@ -745,7 +746,7 @@ export const STRINGS_FR = {
             templatePlaceholder: 'Modèles/Réunion.md',
             fileNameFormat: 'Format du nom de fichier',
             fileNameFormatDesc:
-                "Les jetons tels que {{date:YYYYMMDD}} et {{prompt:Titre}} sont remplacés à l'exécution de la commande. Chaque invite demande une valeur, et la même étiquette dans le modèle reçoit la même valeur.",
+                "Les jetons tels que {{date:YYYYMMDD}} et {{prompt:Titre}} sont remplacés à l'exécution de la commande. Chaque invite demande une valeur, et la même étiquette dans le modèle reçoit la même valeur. {{number}} vaut un de plus que le numéro le plus élevé utilisé par les notes du dossier ayant le même motif de nom, et {{number:00}} le complète avec des zéros. Le modèle peut aussi utiliser {{number}}, et {{title}} insère le nom de fichier généré.",
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titre}}',
             location: 'Emplacement',
             folder: 'Dossier',

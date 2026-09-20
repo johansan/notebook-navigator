@@ -121,6 +121,7 @@ export const STRINGS_TR = {
 
     templates: {
         invalidTokens: '"{name}" şablonu geçersiz belirteçler içeriyor: {tokens}',
+        invalidFileNameTokens: '"{name}" komutunun dosya adı biçimi geçersiz belirteçler içeriyor: {tokens}',
         readFailed: '"{name}" şablonu okunamadı. Not şablon olmadan oluşturuldu.',
         folderNotSet: 'Şablondan not oluşturmadan önce Dosya işlemleri ve şablonlar > Şablonlar bölümünde şablon klasörünü ayarlayın.',
         templateNotFound: '"{name}" şablonu bulunamadı.',
@@ -740,7 +741,7 @@ export const STRINGS_TR = {
             templatePlaceholder: 'Şablonlar/Toplantı.md',
             fileNameFormat: 'Dosya adı biçimi',
             fileNameFormatDesc:
-                '{{date:YYYYMMDD}} ve {{prompt:Başlık}} gibi belirteçler komut çalıştığında değiştirilir. Her istem bir değer sorar ve şablondaki aynı etiket aynı değeri alır.',
+                '{{date:YYYYMMDD}} ve {{prompt:Başlık}} gibi belirteçler komut çalıştığında değiştirilir. Her istem bir değer sorar ve şablondaki aynı etiket aynı değeri alır. {{number}}, klasörde aynı ad desenini kullanan notların en yüksek numarasından bir fazlasıdır ve {{number:00}} başına sıfır ekler. Şablon da {{number}} kullanabilir ve {{title}} oluşturulan dosya adını ekler.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Başlık}}',
             location: 'Konum',
             folder: 'Klasör',

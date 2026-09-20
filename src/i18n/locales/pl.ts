@@ -121,6 +121,7 @@ export const STRINGS_PL = {
 
     templates: {
         invalidTokens: 'Szablon "{name}" zawiera nieprawidłowe tokeny: {tokens}',
+        invalidFileNameTokens: 'Format nazwy pliku polecenia "{name}" zawiera nieprawidłowe tokeny: {tokens}',
         readFailed: 'Nie udało się odczytać szablonu "{name}". Notatka została utworzona bez niego.',
         folderNotSet: 'Ustaw folder szablonów w Operacje na plikach i szablony > Szablony, zanim utworzysz notatki na podstawie szablonów.',
         templateNotFound: 'Nie znaleziono szablonu "{name}".',
@@ -744,7 +745,7 @@ export const STRINGS_PL = {
             templatePlaceholder: 'Szablony/Spotkanie.md',
             fileNameFormat: 'Format nazwy pliku',
             fileNameFormatDesc:
-                'Tokeny takie jak {{date:YYYYMMDD}} i {{prompt:Tytuł}} są zastępowane podczas uruchamiania polecenia. Każdy monit pyta o wartość, a ta sama etykieta w szablonie otrzymuje tę samą wartość.',
+                'Tokeny takie jak {{date:YYYYMMDD}} i {{prompt:Tytuł}} są zastępowane podczas uruchamiania polecenia. Każdy monit pyta o wartość, a ta sama etykieta w szablonie otrzymuje tę samą wartość. {{number}} jest o jeden większy od najwyższego numeru używanego przez notatki w folderze o tym samym wzorcu nazwy, a {{number:00}} uzupełnia go zerami. Szablon również może używać {{number}}, a {{title}} wstawia wygenerowaną nazwę pliku.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Tytuł}}',
             location: 'Lokalizacja',
             folder: 'Folder',

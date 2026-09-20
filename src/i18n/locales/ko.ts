@@ -120,6 +120,7 @@ export const STRINGS_KO = {
 
     templates: {
         invalidTokens: '템플릿 "{name}"에 잘못된 토큰이 있습니다: {tokens}',
+        invalidFileNameTokens: '"{name}"의 파일 이름 형식에 잘못된 토큰이 있습니다: {tokens}',
         readFailed: '템플릿 "{name}"을(를) 읽을 수 없습니다. 노트는 템플릿 없이 만들어졌습니다.',
         folderNotSet: '템플릿으로 노트를 만들기 전에 파일 작업 및 템플릿 > 템플릿에서 템플릿 폴더를 설정하세요.',
         templateNotFound: '템플릿 "{name}"을(를) 찾을 수 없습니다.',
@@ -738,7 +739,7 @@ export const STRINGS_KO = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: '파일 이름 형식',
             fileNameFormatDesc:
-                '{{date:YYYYMMDD}}, {{prompt:Title}} 같은 토큰은 명령을 실행할 때 치환됩니다. 각 프롬프트는 값을 묻고, 템플릿의 같은 레이블은 같은 값을 받습니다.',
+                '{{date:YYYYMMDD}}, {{prompt:Title}} 같은 토큰은 명령을 실행할 때 치환됩니다. 각 프롬프트는 값을 묻고, 템플릿의 같은 레이블은 같은 값을 받습니다. {{number}}는 폴더에서 같은 이름 패턴을 사용하는 노트의 가장 큰 번호보다 1 큰 값이고, {{number:00}}은 0으로 자릿수를 채웁니다. 템플릿에서도 {{number}}를 사용할 수 있고, {{title}}은 생성된 파일 이름을 삽입합니다.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: '위치',
             folder: '폴더',

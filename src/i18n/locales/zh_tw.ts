@@ -120,6 +120,7 @@ export const STRINGS_ZH_TW = {
 
     templates: {
         invalidTokens: '範本「{name}」包含無效的佔位符：{tokens}',
+        invalidFileNameTokens: '「{name}」的檔案名稱格式包含無效的佔位符：{tokens}',
         readFailed: '無法讀取範本「{name}」。筆記已在沒有範本的情況下建立。',
         folderNotSet: '從範本新建筆記前，請先在檔案操作與範本 > 範本中設定範本資料夾。',
         templateNotFound: '找不到範本「{name}」。',
@@ -734,7 +735,7 @@ export const STRINGS_ZH_TW = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: '檔名格式',
             fileNameFormatDesc:
-                '{{date:YYYYMMDD}}、{{prompt:Title}} 等佔位符會在執行命令時被取代。每個提示都會詢問一個值，範本中相同的標籤會取得相同的值。',
+                '{{date:YYYYMMDD}}、{{prompt:Title}} 等佔位符會在執行命令時被取代。每個提示都會詢問一個值，範本中相同的標籤會取得相同的值。{{number}} 比資料夾中名稱模式相同的筆記所用的最大編號大 1，{{number:00}} 會用零補齊位數。範本中也可以使用 {{number}}，{{title}} 會插入產生的檔案名稱。',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: '位置',
             folder: '資料夾',

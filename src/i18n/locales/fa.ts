@@ -121,6 +121,7 @@ export const STRINGS_FA = {
 
     templates: {
         invalidTokens: 'الگوی "{name}" شامل توکن‌های نامعتبر است: {tokens}',
+        invalidFileNameTokens: 'قالب نام فایل "{name}" شامل توکن‌های نامعتبر است: {tokens}',
         readFailed: 'خواندن الگوی "{name}" ممکن نبود. یادداشت بدون الگو ایجاد شد.',
         folderNotSet: 'پیش از ایجاد یادداشت از الگو، پوشه الگوها را در عملیات فایل و الگوها > الگوها تنظیم کنید.',
         templateNotFound: 'الگوی "{name}" پیدا نشد.',
@@ -741,7 +742,7 @@ export const STRINGS_FA = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: 'قالب نام فایل',
             fileNameFormatDesc:
-                'توکن‌هایی مانند {{date:YYYYMMDD}} و {{prompt:Title}} هنگام اجرای فرمان جایگزین می‌شوند. هر پرسش یک مقدار می‌خواهد و همان برچسب در الگو همان مقدار را دریافت می‌کند.',
+                'توکن‌هایی مانند {{date:YYYYMMDD}} و {{prompt:Title}} هنگام اجرای فرمان جایگزین می‌شوند. هر پرسش یک مقدار می‌خواهد و همان برچسب در الگو همان مقدار را دریافت می‌کند. {{number}} یک واحد بیشتر از بزرگ‌ترین شماره‌ای است که یادداشت‌های پوشه با همان الگوی نام استفاده کرده‌اند و {{number:00}} آن را با صفر پر می‌کند. الگو نیز می‌تواند از {{number}} استفاده کند و {{title}} نام فایل تولیدشده را درج می‌کند.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: 'محل',
             folder: 'پوشه',

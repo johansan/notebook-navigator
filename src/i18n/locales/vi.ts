@@ -121,6 +121,7 @@ export const STRINGS_VI = {
 
     templates: {
         invalidTokens: 'Mẫu "{name}" chứa token không hợp lệ: {tokens}',
+        invalidFileNameTokens: 'Định dạng tên tệp của "{name}" chứa token không hợp lệ: {tokens}',
         readFailed: 'Không thể đọc mẫu "{name}". Ghi chú đã được tạo mà không có mẫu.',
         folderNotSet: 'Đặt thư mục mẫu trong Thao tác tệp & mẫu > Mẫu trước khi tạo ghi chú từ mẫu.',
         templateNotFound: 'Không tìm thấy mẫu "{name}".',
@@ -740,7 +741,7 @@ export const STRINGS_VI = {
             templatePlaceholder: 'Mẫu/Cuộc họp.md',
             fileNameFormat: 'Định dạng tên tệp',
             fileNameFormatDesc:
-                'Các token như {{date:YYYYMMDD}} và {{prompt:Tiêu đề}} được thay thế khi chạy lệnh. Mỗi lời nhắc hỏi một giá trị, và cùng nhãn trong mẫu nhận cùng giá trị đó.',
+                'Các token như {{date:YYYYMMDD}} và {{prompt:Tiêu đề}} được thay thế khi chạy lệnh. Mỗi lời nhắc hỏi một giá trị, và cùng nhãn trong mẫu nhận cùng giá trị đó. {{number}} lớn hơn một so với số cao nhất mà các ghi chú trong thư mục có cùng mẫu tên đang dùng, và {{number:00}} thêm số 0 vào trước. Mẫu cũng có thể dùng {{number}}, và {{title}} chèn tên tệp đã tạo.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Tiêu đề}}',
             location: 'Vị trí',
             folder: 'Thư mục',

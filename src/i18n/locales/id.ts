@@ -121,6 +121,7 @@ export const STRINGS_ID = {
 
     templates: {
         invalidTokens: 'Template "{name}" berisi token yang tidak valid: {tokens}',
+        invalidFileNameTokens: 'Format nama file "{name}" berisi token yang tidak valid: {tokens}',
         readFailed: 'Template "{name}" tidak dapat dibaca. Catatan dibuat tanpa template.',
         folderNotSet: 'Atur folder template di Operasi file & template > Template sebelum membuat catatan dari template.',
         templateNotFound: 'Template "{name}" tidak ditemukan.',
@@ -741,7 +742,7 @@ export const STRINGS_ID = {
             templatePlaceholder: 'Template/Rapat.md',
             fileNameFormat: 'Format nama file',
             fileNameFormatDesc:
-                'Token seperti {{date:YYYYMMDD}} dan {{prompt:Judul}} diganti saat perintah dijalankan. Setiap prompt meminta nilai, dan label yang sama di template menerima nilai yang sama.',
+                'Token seperti {{date:YYYYMMDD}} dan {{prompt:Judul}} diganti saat perintah dijalankan. Setiap prompt meminta nilai, dan label yang sama di template menerima nilai yang sama. {{number}} satu lebih besar dari nomor tertinggi yang dipakai catatan di folder dengan pola nama yang sama, dan {{number:00}} mengisinya dengan nol di depan. Template juga dapat memakai {{number}}, dan {{title}} menyisipkan nama file yang dihasilkan.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Judul}}',
             location: 'Lokasi',
             folder: 'Folder',

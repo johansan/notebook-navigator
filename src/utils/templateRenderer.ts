@@ -32,9 +32,12 @@ import type { MomentApi, MomentInstance } from './moment';
  * - `{{cursor}}` marks where the editor cursor is placed after the note opens
  * - `{{prompt:Label}}` asks the user for a value before the note is created; `{{value:Label}}` is an alias and the
  *   label defaults to `Value`
+ * - `{{number}}` is the number chosen for a numbered file name; `{{number:00}}` pads it with zeros to the length of the
+ *   format
  * - `{{!name}}` writes the literal text `{{name}}`
  *
- * Offsets and formats only apply to date and clock tokens. Offsets use moment units: y, Q, M, w, d, h, m, s.
+ * Offsets and formats only apply to date and clock tokens, except for the zero padding of `{{number}}`. Offsets use
+ * moment units: y, Q, M, w, d, h, m, s.
  * A token cannot contain braces, so formats cannot use `{` or `}`. Rendering is a single pass: replacement text is
  * never parsed again.
  */
@@ -71,6 +74,14 @@ export interface TemplateRenderContext {
     now?: MomentInstance;
     /** Values entered for `{{prompt:Label}}` tokens, keyed by label. A prompt token without a value is reported as invalid. */
     promptValues?: Record<string, string>;
+    /**
+     * Value of `{{number}}` tokens.
+     * - A number renders with the zero padding of each token.
+     * - `slot` removes each token and reports its position and padding in `numberSlots`, so a file name format can be
+     *   matched against the notes in a folder before the number is chosen.
+     * - Undefined reports the token as invalid, because only notes created with a numbered file name have a value.
+     */
+    number?: number | 'slot';
 }
 
 export interface TemplateCursorPosition {
@@ -78,11 +89,19 @@ export interface TemplateCursorPosition {
     ch: number;
 }
 
+/** Position of a `{{number}}` token removed from the rendered content and the minimum digit count of its format. */
+export interface TemplateNumberSlot {
+    offset: number;
+    padding: number;
+}
+
 export interface TemplateRenderResult {
     /** Rendered template content with `{{cursor}}` tokens removed. */
     content: string;
     /** Position of the first `{{cursor}}` token in the rendered content, or null when the template has none. */
     cursor: TemplateCursorPosition | null;
+    /** `{{number}}` tokens removed from the content in order of appearance. Empty unless the context number is `slot`. */
+    numberSlots: TemplateNumberSlot[];
     /** Known tokens that could not be parsed or rendered, as they appear in the template. They stay in the content unchanged. */
     invalidTokens: string[];
 }
@@ -111,6 +130,9 @@ const DATE_TOKENS = new Set(['date', 'yesterday', 'tomorrow', 'time', 'today', '
 const PROMPT_TOKENS = new Set(['prompt', 'value']);
 /** Label shown for `{{prompt}}` and `{{value}}` without a label. */
 const DEFAULT_PROMPT_LABEL = 'Value';
+const NUMBER_TOKEN = 'number';
+/** The format of a number token is its zero padding, so only a run of zeros is accepted. */
+const NUMBER_PADDING_PATTERN = /^0+$/;
 
 /** Matches a candidate token. The inner text is parsed separately so malformed known tokens can be reported. */
 const TOKEN_PATTERN = /\{\{([^{}]*)\}\}/g;
@@ -201,12 +223,16 @@ function parseTokenBody(body: string): ParsedToken | null {
         }
         format = format ?? DEFAULT_PROMPT_LABEL;
     }
+    // A number takes no offset; its only format is the zero padding.
+    if (name === NUMBER_TOKEN && (offset || (format !== null && !NUMBER_PADDING_PATTERN.test(format)))) {
+        return null;
+    }
 
     return { name, offset, format };
 }
 
 function isKnownTokenName(name: string): boolean {
-    return TEXT_TOKENS.has(name) || DATE_TOKENS.has(name) || PROMPT_TOKENS.has(name);
+    return TEXT_TOKENS.has(name) || DATE_TOKENS.has(name) || PROMPT_TOKENS.has(name) || name === NUMBER_TOKEN;
 }
 
 /** Returns the labels of all prompt tokens in a template in order of appearance, without duplicates. */
@@ -454,11 +480,13 @@ function getQuotedFrontmatterRanges(template: string): QuotedFrontmatterRange[] 
  * - Known tokens that fail to parse or render are copied unchanged and listed in `invalidTokens`.
  * - Date and clock tokens are copied unchanged when no moment API is available.
  * - `{{cursor}}` tokens are removed; the position of the first one is returned.
+ * - `{{number}}` tokens render the context number, or are removed and reported as slots when the number is `slot`.
  * - Replacements inside quoted frontmatter scalars are escaped for that quote style; other replacements stay literal.
  */
 export function renderNoteTemplate(template: string, context: TemplateRenderContext): TemplateRenderResult {
     const output: string[] = [];
     const invalidTokens: string[] = [];
+    const numberSlots: TemplateNumberSlot[] = [];
     let cursorOffset: number | null = null;
     let outputLength = 0;
     let lastIndex = 0;
@@ -546,6 +574,20 @@ export function renderNoteTemplate(template: string, context: TemplateRenderCont
                 appendValue(value, match.index);
                 break;
             }
+            case NUMBER_TOKEN: {
+                const padding = token.format?.length ?? 1;
+                if (context.number === 'slot') {
+                    numberSlots.push({ offset: outputLength, padding });
+                    break;
+                }
+                if (typeof context.number !== 'number') {
+                    invalidTokens.push(raw);
+                    append(raw);
+                    break;
+                }
+                appendValue(String(context.number).padStart(padding, '0'), match.index);
+                break;
+            }
             default: {
                 if (!context.momentApi) {
                     append(raw);
@@ -569,6 +611,7 @@ export function renderNoteTemplate(template: string, context: TemplateRenderCont
     return {
         content,
         cursor: cursorOffset === null ? null : getCursorPosition(content, cursorOffset),
+        numberSlots,
         invalidTokens
     };
 }

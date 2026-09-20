@@ -34,7 +34,13 @@ import {
     schedulePendingTemplateCursor,
     schedulePendingTemplaterCursor
 } from './templateCursor';
-import { collectTemplatePrompts, containsTemplaterCommands, renderNoteTemplate, type TemplateRenderResult } from './templateRenderer';
+import {
+    collectTemplatePrompts,
+    containsTemplaterCommands,
+    renderNoteTemplate,
+    type TemplateNumberSlot,
+    type TemplateRenderResult
+} from './templateRenderer';
 import { getTemplaterCreateNewNoteFromTemplate, getTemplaterCreateNoteFromTemplate } from './templaterIntegration';
 
 /**
@@ -192,7 +198,11 @@ const pendingTemplatePaths = new WeakMap<App, Set<string>>();
 type CreateMarkdownFileFromTemplateOptions = {
     app: App;
     folder: TFolder;
-    baseName: string;
+    /**
+     * Name of the note without extension. A numbered name gets its number from the notes already in the folder and
+     * the pending reservations, then continues like `ensureUniqueName`.
+     */
+    baseName: string | NumberedBaseName;
     settings: TemplateSettings;
     /** Date context for built-in date tokens. Omitted or null resolves `{{date}}` to the current date with the default format. */
     templateDate?: TemplateDateContext | null;
@@ -213,20 +223,108 @@ type CreateMarkdownFileFromTemplateOptions = {
     templateErrorContext: string;
 } & ({ templateFile: TFile | null; preparedTemplate?: never } | { templateFile?: never; preparedTemplate: PreparedMarkdownTemplate });
 
-/**
- * Turns generated text into a usable note name: characters Obsidian rejects in file names are removed, whitespace is
- * collapsed, and trailing dots are dropped. Returns an empty string when nothing usable remains.
- */
-export function sanitizeNoteBaseName(value: string): string {
-    const withoutControlCharacters = Array.from(value)
+/** Removes control characters and characters forbidden in file names, and collapses whitespace runs to one space. */
+function cleanNoteNameText(value: string): string {
+    return Array.from(value)
         .filter(character => character.charCodeAt(0) >= 32)
-        .join('');
-    return withoutControlCharacters
+        .join('')
         .replace(/[\\/:*?"<>|]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .replace(/\.+$/, '')
-        .trim();
+        .replace(/\s+/g, ' ');
+}
+
+/** Minimum digit count of a `{{number}}` token inside a note name. */
+export interface NoteNumberSlot {
+    padding: number;
+}
+
+/**
+ * Base name of a note split around its `{{number}}` tokens. Text parts hold sanitized file name text and slot parts
+ * hold the padding of each token. `formatNumberedBaseName` assembles the name once `allocateNoteNumber` has chosen the
+ * number from the notes already in the target folder.
+ */
+export type NumberedBaseName = (string | NoteNumberSlot)[];
+
+/**
+ * Splits rendered file name text at its number slots and sanitizes it into a valid note name: control and forbidden
+ * characters are removed, whitespace runs collapse to one space, and surrounding whitespace and trailing periods are
+ * trimmed. Each text part is cleaned on its own because cleaning the joined text would lose the slot positions. The
+ * result equals cleaning the final name: a slot renders as digits, so whitespace runs never cross one, and only the
+ * start of the first part and the end of the last part are trimmed. Empty text parts are dropped, so text without
+ * characters or slots gives an empty array.
+ */
+export function sanitizeNumberedBaseName(content: string, slots: TemplateNumberSlot[]): NumberedBaseName {
+    const texts: string[] = [];
+    let start = 0;
+    slots.forEach(slot => {
+        texts.push(cleanNoteNameText(content.slice(start, slot.offset)));
+        start = slot.offset;
+    });
+    texts.push(cleanNoteNameText(content.slice(start)));
+    // Only the ends of the whole name are trimmed; the space between a slot and the next text part is kept.
+    texts[0] = texts[0].trimStart();
+    const last = texts.length - 1;
+    texts[last] = texts[last].trimEnd().replace(/\.+$/, '').trimEnd();
+
+    const parts: NumberedBaseName = [];
+    texts.forEach((text, index) => {
+        if (text) {
+            parts.push(text);
+        }
+        if (index < slots.length) {
+            parts.push({ padding: slots[index].padding });
+        }
+    });
+    return parts;
+}
+
+/** Escapes regex metacharacters so file name text matches literally. */
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Chooses the number of a numbered base name: one above the highest number used by a markdown path in `occupiedPaths`
+ * that lies directly in the folder and whose name matches the text parts with digits in every slot, or 1 when none
+ * matches. Paths are compared in lowercase and digit width is ignored, so `Note 7` and `note 007` both count as 7.
+ * Repeated slots must hold the same number. Numbers at or beyond the safe integer range are skipped because they
+ * cannot be continued exactly. Returns null for a name without slots, so a `{{number}}` in the note body alone never
+ * starts a sequence.
+ */
+export function allocateNoteNumber(folderPath: string, baseName: NumberedBaseName, occupiedPaths: ReadonlySet<string>): number | null {
+    if (!baseName.some(part => typeof part !== 'string')) {
+        return null;
+    }
+    const folderKey = folderPath === '/' ? '' : folderPath.toLowerCase();
+    const pattern = new RegExp(
+        `^${baseName.map(part => (typeof part === 'string' ? escapeRegExp(part.toLowerCase()) : '(\\d+)')).join('')}$`
+    );
+    let highest = 0;
+    occupiedPaths.forEach(path => {
+        if (!path.endsWith('.md')) {
+            return;
+        }
+        const slash = path.lastIndexOf('/');
+        if ((slash === -1 ? '' : path.slice(0, slash)) !== folderKey) {
+            return;
+        }
+        const match = pattern.exec(path.slice(slash + 1, -3));
+        if (!match) {
+            return;
+        }
+        const values = match.slice(1).map(digits => Number.parseInt(digits, 10));
+        if (values[0] >= Number.MAX_SAFE_INTEGER || values.some(value => value !== values[0])) {
+            return;
+        }
+        highest = Math.max(highest, values[0]);
+    });
+    return highest + 1;
+}
+
+/** Joins a numbered base name with the number zero-padded to each slot's width. Slots stay empty without a number. */
+export function formatNumberedBaseName(baseName: NumberedBaseName, number: number | null): string {
+    return baseName
+        .map(part => (typeof part === 'string' ? part : number === null ? '' : String(number).padStart(part.padding, '0')))
+        .join('');
 }
 
 /**
@@ -403,7 +501,7 @@ function renderTemplateContent(
     templateFile: TFile,
     templateContent: string,
     settings: TemplateSettings,
-    note: { folder: TFolder; baseName: string; path: string },
+    note: { folder: TFolder; baseName: string; path: string; number: number | null },
     templateDate?: TemplateDateContext | null,
     promptValues?: Record<string, string>
 ): TemplateRenderResult {
@@ -417,7 +515,8 @@ function renderTemplateContent(
         todayFormat: settings.dateFormat,
         timeFormat: settings.timeFormat,
         weekdayBase: templateDate?.weekdayBase,
-        promptValues
+        promptValues,
+        number: note.number ?? undefined
     });
 
     if (rendered.invalidTokens.length > 0) {
@@ -502,8 +601,8 @@ export async function prepareMarkdownTemplate({
  *
  * @returns The created file. Returns null without writing when a prompt is cancelled or required Templater is missing.
  * A prepared template is reused without reading or prompting again. Throws when the vault write fails or Templater
- * does not return a file. With `ensureUniqueName`, the final unused name is chosen after preparation and reserved
- * until the write settles; fixed note names are left unchanged otherwise.
+ * does not return a file. With `ensureUniqueName` or a numbered name, the number and the final unused name are chosen
+ * after preparation and reserved until the write settles; fixed note names are left unchanged otherwise.
  */
 export async function createMarkdownFileFromTemplate({
     app,
@@ -531,13 +630,20 @@ export async function createMarkdownFileFromTemplate({
     }
 
     let reservedPath: string | null = null;
+    let noteNumber: number | null = null;
+    let name = typeof baseName === 'string' ? baseName : '';
     const pendingPaths = pendingTemplatePaths.get(app) ?? new Set<string>();
-    if (ensureUniqueName) {
+    if (ensureUniqueName || typeof baseName !== 'string') {
         // Reads and prompts can yield while another note arrives. Pending writes are reserved too because the vault
-        // may not expose their files yet; otherwise overlapping creation calls can choose the same path.
+        // may not expose their files yet; otherwise overlapping creation calls can choose the same path or number.
         const occupiedPaths = new Set([...folder.children.map(child => child.path.toLowerCase()), ...pendingPaths]);
-        baseName = generateUniqueFilename(folder.path, baseName, 'md', app, { occupiedPaths, useVaultLookup: false, ignoreCase: true });
-        reservedPath = buildFilePathInFolder(folder.path, baseName, 'md').toLowerCase();
+        if (typeof baseName !== 'string') {
+            // The number comes from the same snapshot that the reservation below protects, so no await may separate them.
+            noteNumber = allocateNoteNumber(folder.path, baseName, occupiedPaths);
+            name = formatNumberedBaseName(baseName, noteNumber);
+        }
+        name = generateUniqueFilename(folder.path, name, 'md', app, { occupiedPaths, useVaultLookup: false, ignoreCase: true });
+        reservedPath = buildFilePathInFolder(folder.path, name, 'md').toLowerCase();
         pendingPaths.add(reservedPath);
         pendingTemplatePaths.set(app, pendingPaths);
     }
@@ -545,7 +651,7 @@ export async function createMarkdownFileFromTemplate({
     try {
         const { templateFile: sourceFile, content, engine, promptValues } = prepared;
         if (!sourceFile || content === null) {
-            const created = await app.fileManager.createNewMarkdownFile(folder, baseName);
+            const created = await app.fileManager.createNewMarkdownFile(folder, name);
             if (sourceFile) {
                 showNotice(strings.templates.readFailed.replace('{name}', sourceFile.basename), { variant: 'warning' });
             }
@@ -554,7 +660,7 @@ export async function createMarkdownFileFromTemplate({
 
         if (engine === 'templater') {
             const createFromTemplater = getTemplaterCreateNoteFromTemplate(app);
-            const created = createFromTemplater ? await createFromTemplater(sourceFile, folder, baseName, openTemplaterNote) : undefined;
+            const created = createFromTemplater ? await createFromTemplater(sourceFile, folder, name, openTemplaterNote) : undefined;
             if (!(created instanceof TFile)) {
                 throw new Error(`Templater did not create the ${templateErrorContext}`);
             }
@@ -568,8 +674,15 @@ export async function createMarkdownFileFromTemplate({
             return created;
         }
 
-        const path = buildFilePathInFolder(folder.path, baseName, 'md');
-        const rendered = renderTemplateContent(sourceFile, content, settings, { folder, baseName, path }, templateDate, promptValues);
+        const path = buildFilePathInFolder(folder.path, name, 'md');
+        const rendered = renderTemplateContent(
+            sourceFile,
+            content,
+            settings,
+            { folder, baseName: name, path, number: noteNumber },
+            templateDate,
+            promptValues
+        );
 
         // The content is written by the same call that creates the file, so plugins reacting to new files never see an
         // empty note. Templater's folder templates can still apply when the rendered body is empty apart from frontmatter.

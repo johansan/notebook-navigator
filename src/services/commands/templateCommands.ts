@@ -28,7 +28,8 @@ import {
     getFolderTemplateFile,
     getMarkdownTemplateFile,
     prepareMarkdownTemplate,
-    sanitizeNoteBaseName
+    sanitizeNumberedBaseName,
+    type NumberedBaseName
 } from '../../utils/fileCreationUtils';
 import { localStorage } from '../../utils/localStorage';
 import { getMomentApi } from '../../utils/moment';
@@ -257,13 +258,20 @@ export function resolveTemplateCommandFolder(app: App, command: TemplateCommand)
     return activeParent instanceof TFolder ? activeParent : app.vault.getRoot();
 }
 
-/** Renders the file name format with the entered prompt values; note creation chooses and reserves an unused name. */
+export interface TemplateCommandFileName {
+    /** Sanitized name parts around `{{number}}` slots. Note creation chooses the number and reserves an unused name. */
+    baseName: NumberedBaseName;
+    /** Known tokens in the format that could not be parsed, as written. The command stops instead of naming a note after them. */
+    invalidTokens: string[];
+}
+
+/** Renders the file name format with the entered prompt values, keeping `{{number}}` tokens as slots. */
 export function buildTemplateCommandFileName(
     settings: Pick<NotebookNavigatorSettings, 'dateFormat' | 'timeFormat'>,
     command: TemplateCommand,
     folder: TFolder,
     promptValues: Record<string, string>
-): string {
+): TemplateCommandFileName {
     const rendered = renderNoteTemplate(command.fileNameFormat, {
         momentApi: getMomentApi(),
         title: '',
@@ -273,9 +281,14 @@ export function buildTemplateCommandFileName(
         dateFormat: settings.dateFormat,
         todayFormat: settings.dateFormat,
         timeFormat: settings.timeFormat,
-        promptValues
+        promptValues,
+        number: 'slot'
     });
-    return sanitizeNoteBaseName(rendered.content) || strings.fileSystem.defaultNames.untitled;
+    const baseName = sanitizeNumberedBaseName(rendered.content, rendered.numberSlots);
+    return {
+        baseName: baseName.length > 0 ? baseName : [strings.fileSystem.defaultNames.untitled],
+        invalidTokens: rendered.invalidTokens
+    };
 }
 
 /** Runs a template command: prompts for values, creates the note with a generated name and opens it. */
@@ -315,10 +328,20 @@ export async function runTemplateCommand(plugin: NotebookNavigatorPlugin, comman
         if (!preparedTemplate) {
             return;
         }
+        const fileName = buildTemplateCommandFileName(settings, command, folder, preparedTemplate.promptValues);
+        if (fileName.invalidTokens.length > 0) {
+            showNotice(
+                strings.templates.invalidFileNameTokens
+                    .replace('{name}', command.name)
+                    .replace('{tokens}', fileName.invalidTokens.join(' ')),
+                { variant: 'warning' }
+            );
+            return;
+        }
         created = await createMarkdownFileFromTemplate({
             app,
             folder,
-            baseName: buildTemplateCommandFileName(settings, command, folder, preparedTemplate.promptValues),
+            baseName: fileName.baseName,
             preparedTemplate,
             settings,
             ensureUniqueName: true,

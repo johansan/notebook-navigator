@@ -120,6 +120,7 @@ export const STRINGS_DE = {
 
     templates: {
         invalidTokens: 'Vorlage "{name}" enthält ungültige Platzhalter: {tokens}',
+        invalidFileNameTokens: 'Das Dateinamenformat von "{name}" enthält ungültige Platzhalter: {tokens}',
         readFailed: 'Die Vorlage "{name}" konnte nicht gelesen werden. Die Notiz wurde ohne Vorlage erstellt.',
         folderNotSet: 'Lege den Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen fest, bevor du Notizen aus Vorlagen erstellst.',
         templateNotFound: 'Vorlage "{name}" wurde nicht gefunden.',
@@ -742,7 +743,7 @@ export const STRINGS_DE = {
             templatePlaceholder: 'Vorlagen/Besprechung.md',
             fileNameFormat: 'Dateinamenformat',
             fileNameFormatDesc:
-                'Platzhalter wie {{date:YYYYMMDD}} und {{prompt:Titel}} werden beim Ausführen des Befehls ersetzt. Jede Abfrage fragt nach einem Wert, und dieselbe Bezeichnung in der Vorlage erhält denselben Wert.',
+                'Platzhalter wie {{date:YYYYMMDD}} und {{prompt:Titel}} werden beim Ausführen des Befehls ersetzt. Jede Abfrage fragt nach einem Wert, und dieselbe Bezeichnung in der Vorlage erhält denselben Wert. {{number}} ist um eins höher als die höchste Nummer, die Notizen im Ordner mit demselben Namensmuster verwenden, und {{number:00}} füllt sie mit Nullen auf. Die Vorlage kann {{number}} ebenfalls verwenden, und {{title}} fügt den erzeugten Dateinamen ein.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titel}}',
             location: 'Speicherort',
             folder: 'Ordner',

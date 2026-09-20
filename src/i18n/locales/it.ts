@@ -121,6 +121,7 @@ export const STRINGS_IT = {
 
     templates: {
         invalidTokens: 'Il modello "{name}" contiene token non validi: {tokens}',
+        invalidFileNameTokens: 'Il formato del nome file di "{name}" contiene token non validi: {tokens}',
         readFailed: 'Impossibile leggere il modello "{name}". La nota è stata creata senza di esso.',
         folderNotSet: 'Imposta la cartella dei modelli in Operazioni sui file e modelli > Modelli prima di creare note da modello.',
         templateNotFound: 'Il modello "{name}" non è stato trovato.',
@@ -738,7 +739,7 @@ export const STRINGS_IT = {
             templatePlaceholder: 'Modelli/Riunione.md',
             fileNameFormat: 'Formato del nome file',
             fileNameFormatDesc:
-                "I token come {{date:YYYYMMDD}} e {{prompt:Titolo}} vengono sostituiti all'esecuzione del comando. Ogni prompt chiede un valore e la stessa etichetta nel modello riceve lo stesso valore.",
+                "I token come {{date:YYYYMMDD}} e {{prompt:Titolo}} vengono sostituiti all'esecuzione del comando. Ogni prompt chiede un valore e la stessa etichetta nel modello riceve lo stesso valore. {{number}} è uno in più del numero più alto usato dalle note nella cartella con lo stesso schema di nome, e {{number:00}} lo completa con zeri. Anche il modello può usare {{number}}, e {{title}} inserisce il nome file generato.",
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Titolo}}',
             location: 'Posizione',
             folder: 'Cartella',

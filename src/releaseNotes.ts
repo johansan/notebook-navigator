@@ -109,6 +109,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.4.2',
         date: '2026-09-15',
         showOnUpdate: false,
+        new: [
+            'New `{{number}}` token for the file name format of ==Create note commands==: `Note {{number:00}}` names notes `Note 01`, `Note 02` and so on, continuing from the highest number already used by notes with the same name pattern in the folder, and templates can insert the same number with `{{number}}`.'
+        ],
         improved: [
             'Moved all translations except English out of the plugin into a language pack that is downloaded once per plugin version and cached on the device, reducing the plugin file from 4.9 MB to 2.6 MB, keeping it well below the 5 MB file size limit of Obsidian Sync Standard, and improving startup times.'
         ],

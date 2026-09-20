@@ -23,7 +23,12 @@ import { TemplateFileModal } from '../../src/modals/TemplateFileModal';
 import { promptForTemplateValues } from '../../src/modals/TemplatePromptModal';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { applyNativeSettingControlValue } from '../../src/settings/nativeSettingControls';
-import { createMarkdownFileFromTemplate, createNoteFromTemplateInFolder } from '../../src/utils/fileCreationUtils';
+import {
+    allocateNoteNumber,
+    createMarkdownFileFromTemplate,
+    createNoteFromTemplateInFolder,
+    formatNumberedBaseName
+} from '../../src/utils/fileCreationUtils';
 import { hasPendingTemplateCursor } from '../../src/utils/templateCursor';
 import { createTestTFile } from './createTestTFile';
 
@@ -370,5 +375,35 @@ describe('createMarkdownFileFromTemplate with Templater', () => {
         });
 
         expect(hasPendingTemplateCursor(createdFile.path)).toBe(false);
+    });
+});
+
+describe('allocateNoteNumber', () => {
+    it('continues from the highest matching number in the folder and ignores other paths', () => {
+        const occupied = new Set([
+            'notes/note (a) 02.md',
+            'notes/note (a) 7.md',
+            'notes/note (a) 010.md',
+            'notes/note (a) 11 draft.md',
+            'notes/note (a) 12.txt',
+            'notes/sub/note (a) 40.md',
+            'note (a) 50.md',
+            'notes/note (a) 99999999999999999.md'
+        ]);
+        const baseName = ['Note (A) ', { padding: 2 }];
+
+        expect(allocateNoteNumber('Notes', baseName, occupied)).toBe(11);
+        expect(allocateNoteNumber('/', baseName, occupied)).toBe(51);
+        expect(allocateNoteNumber('Other', baseName, occupied)).toBe(1);
+        expect(allocateNoteNumber('Notes', ['Note (A) 5'], occupied)).toBeNull();
+        expect(formatNumberedBaseName(baseName, 11)).toBe('Note (A) 11');
+        expect(formatNumberedBaseName(baseName, 7)).toBe('Note (A) 07');
+    });
+
+    it('requires repeated slots to hold the same number', () => {
+        const baseName = [{ padding: 1 }, ' - ', { padding: 3 }];
+
+        expect(allocateNoteNumber('/', baseName, new Set(['7 - 007.md', '8 - 999.md']))).toBe(8);
+        expect(formatNumberedBaseName(baseName, 8)).toBe('8 - 008');
     });
 });

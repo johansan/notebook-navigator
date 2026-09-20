@@ -121,6 +121,7 @@ export const STRINGS_TH = {
 
     templates: {
         invalidTokens: 'เทมเพลต "{name}" มีโทเค็นที่ไม่ถูกต้อง: {tokens}',
+        invalidFileNameTokens: 'รูปแบบชื่อไฟล์ของ "{name}" มีโทเค็นที่ไม่ถูกต้อง: {tokens}',
         readFailed: 'ไม่สามารถอ่านเทมเพลต "{name}" ได้ สร้างโน้ตโดยไม่ใช้เทมเพลต',
         folderNotSet: 'ตั้งค่าโฟลเดอร์เทมเพลตใน การดำเนินการกับไฟล์และเทมเพลต > เทมเพลต ก่อนสร้างโน้ตจากเทมเพลต',
         templateNotFound: 'ไม่พบเทมเพลต "{name}"',
@@ -735,7 +736,7 @@ export const STRINGS_TH = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: 'รูปแบบชื่อไฟล์',
             fileNameFormatDesc:
-                'โทเค็นเช่น {{date:YYYYMMDD}} และ {{prompt:Title}} จะถูกแทนที่เมื่อเรียกใช้คำสั่ง แต่ละพรอมต์จะถามค่า และป้ายชื่อเดียวกันในเทมเพลตจะได้รับค่าเดียวกัน',
+                'โทเค็นเช่น {{date:YYYYMMDD}} และ {{prompt:Title}} จะถูกแทนที่เมื่อเรียกใช้คำสั่ง แต่ละพรอมต์จะถามค่า และป้ายชื่อเดียวกันในเทมเพลตจะได้รับค่าเดียวกัน {{number}} คือค่าที่มากกว่าหมายเลขสูงสุดที่โน้ตในโฟลเดอร์ซึ่งมีรูปแบบชื่อเดียวกันใช้อยู่หนึ่ง และ {{number:00}} จะเติมศูนย์ข้างหน้า เทมเพลตก็ใช้ {{number}} ได้เช่นกัน และ {{title}} จะแทรกชื่อไฟล์ที่สร้างขึ้น',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: 'ตำแหน่ง',
             folder: 'โฟลเดอร์',

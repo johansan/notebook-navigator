@@ -121,6 +121,7 @@ export const STRINGS_PT = {
 
     templates: {
         invalidTokens: 'O modelo "{name}" contém tokens inválidos: {tokens}',
+        invalidFileNameTokens: 'O formato de nome de ficheiro de "{name}" contém tokens inválidos: {tokens}',
         readFailed: 'Não foi possível ler o modelo "{name}". A nota foi criada sem ele.',
         folderNotSet: 'Defina a pasta de modelos em Operações de ficheiros e modelos > Modelos antes de criar notas a partir de modelos.',
         templateNotFound: 'O modelo "{name}" não foi encontrado.',
@@ -741,7 +742,7 @@ export const STRINGS_PT = {
             templatePlaceholder: 'Modelos/Reunião.md',
             fileNameFormat: 'Formato do nome do ficheiro',
             fileNameFormatDesc:
-                'Tokens como {{date:YYYYMMDD}} e {{prompt:Título}} são substituídos ao executar o comando. Cada pedido pede um valor, e a mesma etiqueta no modelo recebe o mesmo valor.',
+                'Tokens como {{date:YYYYMMDD}} e {{prompt:Título}} são substituídos ao executar o comando. Cada pedido pede um valor, e a mesma etiqueta no modelo recebe o mesmo valor. {{number}} é um a mais que o maior número usado pelas notas da pasta com o mesmo padrão de nome, e {{number:00}} preenche-o com zeros. O modelo também pode usar {{number}}, e {{title}} insere o nome de ficheiro gerado.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Título}}',
             location: 'Localização',
             folder: 'Pasta',

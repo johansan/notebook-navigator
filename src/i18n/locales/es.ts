@@ -120,6 +120,7 @@ export const STRINGS_ES = {
 
     templates: {
         invalidTokens: 'La plantilla "{name}" contiene marcadores no válidos: {tokens}',
+        invalidFileNameTokens: 'El formato de nombre de archivo de "{name}" contiene marcadores no válidos: {tokens}',
         readFailed: 'No se pudo leer la plantilla "{name}". La nota se creó sin ella.',
         folderNotSet:
             'Configura la carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas antes de crear notas desde plantillas.',
@@ -743,7 +744,7 @@ export const STRINGS_ES = {
             templatePlaceholder: 'Plantillas/Reunión.md',
             fileNameFormat: 'Formato del nombre de archivo',
             fileNameFormatDesc:
-                'Los marcadores como {{date:YYYYMMDD}} y {{prompt:Título}} se sustituyen al ejecutar el comando. Cada marcador de pregunta pide un valor, y la misma etiqueta en la plantilla recibe el mismo valor.',
+                'Los marcadores como {{date:YYYYMMDD}} y {{prompt:Título}} se sustituyen al ejecutar el comando. Cada marcador de pregunta pide un valor, y la misma etiqueta en la plantilla recibe el mismo valor. {{number}} es uno más que el número más alto usado por las notas de la carpeta con el mismo patrón de nombre, y {{number:00}} lo rellena con ceros. La plantilla también puede usar {{number}}, y {{title}} inserta el nombre de archivo generado.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Título}}',
             location: 'Ubicación',
             folder: 'Carpeta',

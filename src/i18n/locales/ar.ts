@@ -121,6 +121,7 @@ export const STRINGS_AR = {
 
     templates: {
         invalidTokens: 'القالب "{name}" يحتوي على رموز غير صالحة: {tokens}',
+        invalidFileNameTokens: 'تنسيق اسم الملف للأمر "{name}" يحتوي على رموز غير صالحة: {tokens}',
         readFailed: 'تعذّر قراءة القالب "{name}". تم إنشاء الملاحظة بدونه.',
         folderNotSet: 'اضبط مجلد القوالب في عمليات الملفات والقوالب > قوالب قبل إنشاء ملاحظات من القوالب.',
         templateNotFound: 'لم يتم العثور على القالب "{name}".',
@@ -738,7 +739,7 @@ export const STRINGS_AR = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: 'صيغة اسم الملف',
             fileNameFormatDesc:
-                'تُستبدل الرموز مثل {{date:YYYYMMDD}} و{{prompt:Title}} عند تشغيل الأمر. يطلب كل إدخال قيمة، وتحصل التسمية نفسها في القالب على القيمة نفسها.',
+                'تُستبدل الرموز مثل {{date:YYYYMMDD}} و{{prompt:Title}} عند تشغيل الأمر. يطلب كل إدخال قيمة، وتحصل التسمية نفسها في القالب على القيمة نفسها. {{number}} أكبر بواحد من أعلى رقم تستخدمه الملاحظات في المجلد بنمط الاسم نفسه، و{{number:00}} يضيف أصفارًا في البداية. يمكن للقالب استخدام {{number}} أيضًا، ويُدرج {{title}} اسم الملف المُنشأ.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: 'الموقع',
             folder: 'المجلد',

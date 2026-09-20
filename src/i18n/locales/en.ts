@@ -121,6 +121,7 @@ export const STRINGS_EN = {
 
     templates: {
         invalidTokens: 'Template "{name}" contains invalid tokens: {tokens}',
+        invalidFileNameTokens: 'The file name format of "{name}" contains invalid tokens: {tokens}',
         readFailed: 'Failed to read the template "{name}". The note was created without it.',
         folderNotSet: 'Set the template folder in File operations & templates > Templates before creating notes from templates.',
         templateNotFound: 'Template "{name}" was not found.',
@@ -736,7 +737,7 @@ export const STRINGS_EN = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: 'File name format',
             fileNameFormatDesc:
-                'Tokens such as {{date:YYYYMMDD}} and {{prompt:Title}} are replaced when the command runs. Each prompt asks for a value, and the same label in the template receives the same value.',
+                'Tokens such as {{date:YYYYMMDD}} and {{prompt:Title}} are replaced when the command runs. Each prompt asks for a value, and the same label in the template receives the same value. {{number}} is one higher than the highest number used by notes in the folder with the same name pattern, and {{number:00}} pads it with zeros. The template can use {{number}} as well, and {{title}} inserts the generated file name.',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: 'Location',
             folder: 'Folder',

@@ -514,6 +514,7 @@ The built-in engine replaces the tokens below when the note is created. Unknown 
 | `{{now}}`, `{{now:FORMAT}}`         | Current date and time as an ISO 8601 timestamp, default `YYYY-MM-DD[T]HH:mm:ssZ`, the format Notebook Navigator reads from frontmatter                                                                                         |
 | `{{cursor}}`                        | Removed from the note. The editor cursor is placed here when the note opens.                                                                                                                                                   |
 | `{{prompt:Label}}`                  | Asks for a value when the note is created and inserts it. The same label used more than once, including in a command's file name format, is asked once. `{{value:Label}}` works the same way, and a label defaults to `Value`. |
+| `{{number}}`, `{{number:00}}`       | Next number in the file name format of a create note command: one higher than the highest number used by notes in the target folder with the same name pattern, or 1 when there are none. `{{number:00}}` pads it with zeros to the length of the format. In the template of a note created that way, `{{number}}` inserts the same number and `{{title}}` the generated file name, such as `Note 01`. |
 
 **Folder templates**
 
@@ -566,6 +567,8 @@ created: "{{now}}"
 ```
 
 Running it asks for the title once, names the note `20260916 Weekly sync` and writes the same title into the `title` property.
+
+A file name format with `{{number}}` continues a sequence: `Note {{number:00}}` names the notes `Note 01`, `Note 02` and so on, and `{{prompt:Project}} {{number:000}}` keeps a separate sequence per project. The number is one higher than the highest number used by notes in the target folder whose names match the rest of the format, so deleting a lower note leaves a gap while deleting the highest note frees its number. The template of that note can use `{{number}}` for the number on its own, while `{{title}}` gives the generated file name such as `Note 01`.
 
 Weekly note template:
 

@@ -120,6 +120,7 @@ export const STRINGS_JA = {
 
     templates: {
         invalidTokens: 'テンプレート「{name}」に無効なトークンが含まれています: {tokens}',
+        invalidFileNameTokens: '「{name}」のファイル名形式に無効なトークンが含まれています: {tokens}',
         readFailed: 'テンプレート「{name}」を読み込めませんでした。ノートはテンプレートなしで作成されました。',
         folderNotSet:
             'テンプレートからノートを作成する前に、ファイル操作とテンプレート > テンプレート でテンプレートフォルダを設定してください。',
@@ -741,7 +742,7 @@ export const STRINGS_JA = {
             templatePlaceholder: 'Templates/Meeting.md',
             fileNameFormat: 'ファイル名の形式',
             fileNameFormatDesc:
-                '{{date:YYYYMMDD}} や {{prompt:Title}} などのトークンはコマンド実行時に置き換えられます。各プロンプトは値を尋ね、テンプレート内の同じラベルには同じ値が入ります。',
+                '{{date:YYYYMMDD}} や {{prompt:Title}} などのトークンはコマンド実行時に置き換えられます。各プロンプトは値を尋ね、テンプレート内の同じラベルには同じ値が入ります。{{number}} は、同じ名前パターンのフォルダー内ノートで使われている最大の番号に 1 を足した値で、{{number:00}} はゼロで桁を埋めます。テンプレートでも {{number}} を使え、{{title}} は生成されたファイル名を挿入します。',
             fileNameFormatPlaceholder: '{{date:YYYYMMDD}} {{prompt:Title}}',
             location: '場所',
             folder: 'フォルダ',
