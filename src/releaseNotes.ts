@@ -114,20 +114,18 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New `{{number}}` token for the file name format of ==Create note commands==: `Note {{number:00}}` names notes `Note 01`, `Note 02` and so on, continuing from the highest number already used by notes with the same name pattern in the folder, and templates can insert the same number with `{{number}}`.'
         ],
         improved: [
-            'Moved all translations except English out of the plugin into a language pack that is downloaded once per plugin version and cached on the device, reducing the plugin file from 4.9 MB to 2.6 MB, keeping it well below the 5 MB file size limit of Obsidian Sync Standard, and improving startup times.'
+            'Moved all translations except English out of the plugin into a language pack that is downloaded once per plugin version and cached on the device, **reducing the plugin file size from 4.9 MB to 2.6 MB**, keeping it well below the 5 MB file size limit of Obsidian Sync Standard, and improving startup times.'
         ],
         changed: [
             'Changed ==Color list pane title== to apply the color to the title text even when ==Apply color to icons only== is enabled.'
         ],
         fixed: [
-            'Android text sizes now remain consistent when language downloads delay startup.',
-            'The default vault profile now uses the selected language on first launch while translations are downloading.',
-            'Base folder notes now reuse the same right sidebar pane when switching folders [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
-            '`{{cursor}}` now positions the cursor after the new note finishes loading [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
-            'Templater `<% tp.file.cursor() %>` markers now place the cursor after new notes finish opening, including folder notes activated in the right sidebar [#1510](https://github.com/johansan/notebook-navigator/issues/1510).',
-            'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux now opens them in a new tab without pasting the primary selection into the note [#1505](https://github.com/johansan/notebook-navigator/issues/1505).',
-            'Tags and properties now keep their rainbow colors when ==Filter tags by selection== or ==Filter properties by selection== narrows the navigation pane, and the colors now match the tag and property pills in the list pane.',
-            '`Add to shortcuts` now adds the note open in the editor when the navigator is hidden or not focused, and the selected folder, tag, or property when the navigation pane is focused [#1511](https://github.com/johansan/notebook-navigator/issues/1511).'
+            'Switching between a Base folder note and another folder note in the right sidebar added a new pane each time and has been fixed [#1498](https://github.com/johansan/notebook-navigator/issues/1498).',
+            '`{{cursor}}` in a template did not move the cursor in new notes and has been fixed [#1501](https://github.com/johansan/notebook-navigator/issues/1501).',
+            'Templater `<% tp.file.cursor() %>` was left as text in notes created by ==Create note commands==, folder notes, and calendar notes and has been fixed [#1510](https://github.com/johansan/notebook-navigator/issues/1510).',
+            'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux pasted the primary selection into the note and has been fixed [#1505](https://github.com/johansan/notebook-navigator/issues/1505).',
+            'Tag and property rainbow colors shifted on each selection with ==Filter tags by selection== or ==Filter properties by selection== enabled and did not match the list pane pills, which has been fixed.',
+            '`Add to shortcuts` from the command palette added a previously selected folder or tag instead of the open note and has been fixed [#1511](https://github.com/johansan/notebook-navigator/issues/1511).'
         ]
     },
     {
