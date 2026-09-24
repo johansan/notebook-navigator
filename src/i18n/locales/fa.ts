@@ -91,6 +91,7 @@ export const STRINGS_FA = {
         pinShortcutsAndRecentFiles: 'سنجاق کردن میانبرها و فایل‌های اخیر',
         unpinShortcuts: 'برداشتن سنجاق میانبرها',
         unpinShortcutsAndRecentFiles: 'برداشتن سنجاق میانبرها و فایل‌های اخیر',
+        resizePinnedShortcuts: 'تغییر اندازه میانبرهای سنجاق‌شده',
         profileMenuAria: 'تغییر پروفایل خزانه'
     },
 

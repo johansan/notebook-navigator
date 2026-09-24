@@ -90,6 +90,7 @@ export const STRINGS_ES = {
         pinShortcutsAndRecentFiles: 'Fijar accesos directos y archivos recientes',
         unpinShortcuts: 'Desfijar accesos directos',
         unpinShortcutsAndRecentFiles: 'Desfijar accesos directos y archivos recientes',
+        resizePinnedShortcuts: 'Cambiar el tamaño de los accesos directos fijados',
         profileMenuAria: 'Cambiar perfil de bóveda'
     },
 

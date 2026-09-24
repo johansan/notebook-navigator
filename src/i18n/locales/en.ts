@@ -91,6 +91,7 @@ export const STRINGS_EN = {
         pinShortcutsAndRecentFiles: 'Pin shortcuts and recent files',
         unpinShortcuts: 'Unpin shortcuts',
         unpinShortcutsAndRecentFiles: 'Unpin shortcuts and recent files',
+        resizePinnedShortcuts: 'Resize pinned shortcuts',
         profileMenuAria: 'Change vault profile'
     },
 

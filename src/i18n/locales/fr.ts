@@ -91,6 +91,7 @@ export const STRINGS_FR = {
         pinShortcutsAndRecentFiles: 'Épingler les raccourcis et fichiers récents',
         unpinShortcuts: 'Détacher les raccourcis',
         unpinShortcutsAndRecentFiles: 'Détacher les raccourcis et fichiers récents',
+        resizePinnedShortcuts: 'Redimensionner les raccourcis épinglés',
         profileMenuAria: 'Changer le profil du coffre'
     },
 

@@ -91,6 +91,7 @@ export const STRINGS_PL = {
         pinShortcutsAndRecentFiles: 'Przypnij skróty i ostatnie pliki',
         unpinShortcuts: 'Odepnij skróty',
         unpinShortcutsAndRecentFiles: 'Odepnij skróty i ostatnie pliki',
+        resizePinnedShortcuts: 'Zmień rozmiar przypiętych skrótów',
         profileMenuAria: 'Zmień profil sejfu'
     },
 

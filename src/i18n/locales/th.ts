@@ -91,6 +91,7 @@ export const STRINGS_TH = {
         pinShortcutsAndRecentFiles: 'ปักหมุดทางลัดและไฟล์ล่าสุด',
         unpinShortcuts: 'เลิกปักหมุดทางลัด',
         unpinShortcutsAndRecentFiles: 'เลิกปักหมุดทางลัดและไฟล์ล่าสุด',
+        resizePinnedShortcuts: 'ปรับขนาดทางลัดที่ปักหมุด',
         profileMenuAria: 'เปลี่ยนโปรไฟล์ห้องนิรภัย'
     },
 

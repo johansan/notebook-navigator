@@ -92,6 +92,7 @@ export const STRINGS_NL = {
         pinShortcutsAndRecentFiles: 'Snelkoppelingen en recente bestanden vastpinnen',
         unpinShortcuts: 'Snelkoppelingen losmaken',
         unpinShortcutsAndRecentFiles: 'Snelkoppelingen en recente bestanden losmaken',
+        resizePinnedShortcuts: 'Grootte van vastgepinde snelkoppelingen wijzigen',
         profileMenuAria: 'Kluisprofiel wijzigen'
     },
 

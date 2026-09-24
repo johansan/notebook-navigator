@@ -91,6 +91,7 @@ export const STRINGS_VI = {
         pinShortcutsAndRecentFiles: 'Ghim lối tắt và tệp gần đây',
         unpinShortcuts: 'Bỏ ghim lối tắt',
         unpinShortcutsAndRecentFiles: 'Bỏ ghim lối tắt và tệp gần đây',
+        resizePinnedShortcuts: 'Thay đổi kích thước lối tắt đã ghim',
         profileMenuAria: 'Đổi hồ sơ vault'
     },
 

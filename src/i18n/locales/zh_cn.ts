@@ -90,6 +90,7 @@ export const STRINGS_ZH_CN = {
         pinShortcutsAndRecentFiles: '固定快捷方式和最近文件',
         unpinShortcuts: '取消固定快捷方式',
         unpinShortcutsAndRecentFiles: '取消固定快捷方式和最近文件',
+        resizePinnedShortcuts: '调整固定快捷方式的大小',
         profileMenuAria: '更改仓库配置文件'
     },
 

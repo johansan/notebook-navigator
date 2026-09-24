@@ -90,6 +90,7 @@ export const STRINGS_KO = {
         pinShortcutsAndRecentFiles: '바로가기와 최근 파일을 고정',
         unpinShortcuts: '바로가기 고정을 해제',
         unpinShortcutsAndRecentFiles: '바로가기와 최근 파일 고정을 해제',
+        resizePinnedShortcuts: '고정된 바로가기 크기 조정',
         profileMenuAria: '보관함 프로필 변경'
     },
 

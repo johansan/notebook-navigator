@@ -20,6 +20,7 @@ import React from 'react';
 import type { Virtualizer } from '@tanstack/react-virtual';
 import type { CombinedNavigationItem } from '../../types/virtualization';
 import type { CSSPropertiesWithVars } from '../../types';
+import { strings } from '../../i18n';
 import { getNavigationItemRenderKey } from '../../utils/navigationIndex';
 import { NavigationPaneHeader } from '../NavigationPaneHeader';
 import { VaultTitleArea } from '../VaultTitleArea';
@@ -238,7 +239,7 @@ export function NavigationPaneLayout({
                             className="nn-shortcuts-resize-handle"
                             role="separator"
                             aria-orientation="horizontal"
-                            aria-label="Resize pinned shortcuts"
+                            aria-label={strings.navigationPane.resizePinnedShortcuts}
                             onPointerDown={onPinnedShortcutsResizePointerDown}
                         />
                     </div>

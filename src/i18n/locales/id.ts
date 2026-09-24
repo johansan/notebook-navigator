@@ -91,6 +91,7 @@ export const STRINGS_ID = {
         pinShortcutsAndRecentFiles: 'Sematkan pintasan dan file terbaru',
         unpinShortcuts: 'Lepas sematan pintasan',
         unpinShortcutsAndRecentFiles: 'Lepas sematan pintasan dan file terbaru',
+        resizePinnedShortcuts: 'Ubah ukuran pintasan yang disematkan',
         profileMenuAria: 'Ubah profil vault'
     },
 

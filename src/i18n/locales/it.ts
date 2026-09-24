@@ -91,6 +91,7 @@ export const STRINGS_IT = {
         pinShortcutsAndRecentFiles: 'Fissa scorciatoie e file recenti',
         unpinShortcuts: 'Rimuovi fissatura scorciatoie',
         unpinShortcutsAndRecentFiles: 'Rimuovi fissatura scorciatoie e file recenti',
+        resizePinnedShortcuts: 'Ridimensiona le scorciatoie fissate',
         profileMenuAria: 'Cambia profilo vault'
     },
 

@@ -91,6 +91,7 @@ export const STRINGS_AR = {
         pinShortcutsAndRecentFiles: 'تثبيت الاختصارات والملفات الحديثة',
         unpinShortcuts: 'إلغاء تثبيت الاختصارات',
         unpinShortcutsAndRecentFiles: 'إلغاء تثبيت الاختصارات والملفات الحديثة',
+        resizePinnedShortcuts: 'تغيير حجم الاختصارات المثبتة',
         profileMenuAria: 'تغيير ملف تعريف الخزنة'
     },
 

@@ -90,6 +90,7 @@ export const STRINGS_DE = {
         pinShortcutsAndRecentFiles: 'Verknüpfungen und zuletzt verwendete Dateien anheften',
         unpinShortcuts: 'Anheftung von Verknüpfungen aufheben',
         unpinShortcutsAndRecentFiles: 'Anheftung von Verknüpfungen und zuletzt verwendeten Dateien aufheben',
+        resizePinnedShortcuts: 'Größe der angehefteten Verknüpfungen ändern',
         profileMenuAria: 'Vault-Profil ändern'
     },
 

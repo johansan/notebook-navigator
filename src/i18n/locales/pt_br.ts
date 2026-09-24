@@ -91,6 +91,7 @@ export const STRINGS_PT_BR = {
         pinShortcutsAndRecentFiles: 'Fixar atalhos e arquivos recentes',
         unpinShortcuts: 'Desafixar atalhos',
         unpinShortcutsAndRecentFiles: 'Desafixar atalhos e arquivos recentes',
+        resizePinnedShortcuts: 'Redimensionar atalhos fixados',
         profileMenuAria: 'Alterar perfil do cofre'
     },
 

@@ -91,6 +91,7 @@ export const STRINGS_RU = {
         pinShortcutsAndRecentFiles: 'Закрепить ярлыки и недавние файлы',
         unpinShortcuts: 'Открепить ярлыки',
         unpinShortcutsAndRecentFiles: 'Открепить ярлыки и недавние файлы',
+        resizePinnedShortcuts: 'Изменить размер закреплённых ярлыков',
         profileMenuAria: 'Сменить профиль хранилища'
     },
 

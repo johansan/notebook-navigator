@@ -90,6 +90,7 @@ export const STRINGS_JA = {
         pinShortcutsAndRecentFiles: 'ショートカットと最近のファイルを固定',
         unpinShortcuts: 'ショートカットの固定を解除',
         unpinShortcutsAndRecentFiles: 'ショートカットと最近のファイルの固定を解除',
+        resizePinnedShortcuts: '固定したショートカットのサイズを変更',
         profileMenuAria: '保管庫プロファイルを変更'
     },
 

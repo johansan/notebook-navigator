@@ -90,6 +90,7 @@ export const STRINGS_ZH_TW = {
         pinShortcutsAndRecentFiles: '釘選捷徑和最近檔案',
         unpinShortcuts: '取消釘選捷徑',
         unpinShortcutsAndRecentFiles: '取消釘選捷徑和最近檔案',
+        resizePinnedShortcuts: '調整釘選捷徑的大小',
         profileMenuAria: '變更儲存庫設定檔'
     },
 

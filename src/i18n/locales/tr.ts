@@ -91,6 +91,7 @@ export const STRINGS_TR = {
         pinShortcutsAndRecentFiles: 'Kısayolları ve son dosyaları sabitle',
         unpinShortcuts: 'Kısayolları sabitlemeden çıkar',
         unpinShortcutsAndRecentFiles: 'Kısayolları ve son dosyaları sabitlemeden çıkar',
+        resizePinnedShortcuts: 'Sabitlenmiş kısayolları yeniden boyutlandır',
         profileMenuAria: 'Kasa profilini değiştir'
     },
 

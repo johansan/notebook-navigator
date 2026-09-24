@@ -92,6 +92,7 @@ export const STRINGS_UK = {
         pinShortcutsAndRecentFiles: 'Закріпити ярлики та останні файли',
         unpinShortcuts: 'Відкріпити ярлики',
         unpinShortcutsAndRecentFiles: 'Відкріпити ярлики та останні файли',
+        resizePinnedShortcuts: 'Змінити розмір закріплених ярликів',
         profileMenuAria: 'Змінити профіль сховища'
     },
 
