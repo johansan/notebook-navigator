@@ -107,7 +107,7 @@ show progress.
 4. Initialize the language service and start a bounded local language-cache read. English and locale-specific date/time defaults are already bundled. Await only the cache read before loading settings; a missing pack starts a background download of the installed release's `languages.json`. Each validated locale is cached separately in one IndexedDB transaction.
    - Navigator and calendar view providers wait behind a language-loading boundary. Settings stay usable in English.
    - Commands and the first-launch welcome modal wait for language readiness so their labels are captured once.
-   - Download failures or **Continue in English** release the boundary with bundled English. Late downloads populate the cache without changing an already-open English navigator.
+   - Download failures, a request still running after 30 seconds, or **Continue in English** release the boundary with bundled English. The request keeps running in those last two cases, and a valid late response populates the cache for the next launch without changing the already-open English navigator.
    - A valid cache activates the selected language without a network request. Plugin unload discards pending download results.
 5. Initialize IndexedDB early via `initializeDatabase(appId, ...)`.
    - Starts `db.init()` (schema check + `MemoryFileCache` hydration) asynchronously before views mount.

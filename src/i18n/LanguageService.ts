@@ -115,16 +115,49 @@ export class LanguageService {
         this.resolveReady();
     }
 
+    /**
+     * Waits up to 30 seconds for the request, then caches and applies the pack. The deadline only releases the loading
+     * screen in English: the request keeps running and a valid late response is cached for the next launch. Otherwise a
+     * connection too slow to finish within the deadline would restart the download and time out on every launch.
+     */
     private async download(): Promise<void> {
+        const request = this.requestPack();
+        let locales: Record<string, unknown> | null;
         try {
-            const response = await waitFor(
-                requestUrl({
-                    url: `https://github.com/johansan/notebook-navigator/releases/download/${encodeURIComponent(this.version)}/languages.json`
-                }),
-                30000,
-                this.controller.signal
-            );
+            locales = await waitFor(request, 30000, this.controller.signal);
+        } catch (error) {
             if (this.controller.signal.aborted) return;
+            console.error('Language download did not finish in time and continues in the background:', error);
+            this.useEnglishForSession();
+            // englishForSession keeps the open UI in English, so the late pack only fills the cache.
+            void request.then(async late => {
+                if (late) await this.cachePack(late);
+            });
+            return;
+        }
+        // The request can settle before plugin unload while this continuation runs after it.
+        if (this.controller.signal.aborted) return;
+        if (!locales) {
+            this.useEnglishForSession();
+            return;
+        }
+        await this.cachePack(locales);
+        if (this.controller.signal.aborted) return;
+        if (!this.englishForSession) applyLanguage(this.locale, locales[this.locale]);
+        this.finish(false);
+    }
+
+    /**
+     * Downloads and validates the pack for this plugin version. Resolves with the validated locales, or with null after a
+     * logged failure or plugin unload. Never rejects, so a request that outlives the download deadline cannot surface as an
+     * unhandled rejection. requestUrl has no cancellation, so unload only stops the result from being used.
+     */
+    private async requestPack(): Promise<Record<string, unknown> | null> {
+        try {
+            const response = await requestUrl({
+                url: `https://github.com/johansan/notebook-navigator/releases/download/${encodeURIComponent(this.version)}/languages.json`
+            });
+            if (this.controller.signal.aborted) return null;
             const pack: unknown = JSON.parse(response.text);
             if (!isRecord(pack) || pack.version !== this.version || pack.id !== LANGUAGE_DATA_ID || !isRecord(pack.locales)) {
                 throw new Error('Language pack does not match the installed plugin');
@@ -134,23 +167,28 @@ export class LanguageService {
             if (Object.keys(locales).length !== codes.length || !codes.every(locale => isLanguageData(locales[locale]))) {
                 throw new Error('Language pack contains invalid translations');
             }
-            try {
-                await waitFor(this.cache.put(this.pack, locales), 2000, this.controller.signal);
-            } catch (error) {
-                if (this.controller.signal.aborted) return;
-                // A storage failure must not discard a valid download; this launch can still use its selected language.
-                console.error('Failed to cache language data:', error);
-            }
-            if (this.controller.signal.aborted) return;
-            if (!this.englishForSession) applyLanguage(this.locale, locales[this.locale]);
-            this.finish(false);
+            return locales;
         } catch (error) {
-            if (this.controller.signal.aborted) return;
-            console.error('Failed to download language data:', error);
-            this.englishForSession = true;
-            applyEnglish();
-            this.finish(true);
+            if (!this.controller.signal.aborted) console.error('Failed to download language data:', error);
+            return null;
         }
+    }
+
+    /** Stores a validated pack with its own bounded wait. Starts no new write after plugin unload and never rejects. */
+    private async cachePack(locales: Record<string, unknown>): Promise<void> {
+        if (this.controller.signal.aborted) return;
+        try {
+            await waitFor(this.cache.put(this.pack, locales), 2000, this.controller.signal);
+        } catch (error) {
+            // A storage failure must not discard a valid download; this launch can still use its selected language.
+            if (!this.controller.signal.aborted) console.error('Failed to cache language data:', error);
+        }
+    }
+
+    private useEnglishForSession(): void {
+        this.englishForSession = true;
+        applyEnglish();
+        this.finish(true);
     }
 
     private finish(failed: boolean): void {

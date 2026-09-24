@@ -296,9 +296,50 @@ describe('language startup and downloads', () => {
             expect(cache.writes).toBe(0);
         }
     );
-    it('times out a stalled request and ignores its later response', async () => {
+    it.each(['deadline', 'continue-in-English'])(
+        'caches a response that arrives after the %s for the next launch without changing the open UI',
+        async choice => {
+            vi.useFakeTimers();
+            const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+            let resolveDownload: (value: unknown) => void = () => {};
+            mocks.request.mockImplementation(
+                () =>
+                    new Promise(resolve => {
+                        resolveDownload = resolve;
+                    })
+            );
+            const cache = new MemoryCache();
+            const service = createService(cache);
+            const listener = vi.fn();
+            service.subscribe(listener);
+            await service.initialize();
+            if (choice === 'continue-in-English') service.continueInEnglish();
+            await vi.advanceTimersByTimeAsync(45000);
+            await service.ready;
+            expect(service.getSnapshot()).toEqual({ ready: true, downloading: false, failed: true });
+            expect(errors).toHaveBeenCalledTimes(1);
+            const notifications = listener.mock.calls.length;
+
+            resolveDownload(response(pack()));
+            await vi.advanceTimersByTimeAsync(0);
+            expect(cache.writes).toBe(1);
+            expect(strings.common.cancel).toBe('Cancel');
+            expect(service.getSnapshot()).toEqual({ ready: true, downloading: false, failed: true });
+            expect(listener).toHaveBeenCalledTimes(notifications);
+            expect(errors).toHaveBeenCalledTimes(1);
+            expect(vi.getTimerCount()).toBe(0);
+
+            mocks.request.mockClear();
+            const next = createService(cache);
+            await next.initialize();
+            await next.ready;
+            expect(mocks.request).not.toHaveBeenCalled();
+            expect(strings.common.cancel).toBe('Abbrechen');
+        }
+    );
+    it.each(['invalid-pack', 'storage-failure'])('logs a late %s after the deadline without changing the open UI', async failure => {
         vi.useFakeTimers();
-        vi.spyOn(console, 'error').mockImplementation(() => {});
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
         let resolveDownload: (value: unknown) => void = () => {};
         mocks.request.mockImplementation(
             () =>
@@ -307,15 +348,66 @@ describe('language startup and downloads', () => {
                 })
         );
         const cache = new MemoryCache();
+        if (failure === 'storage-failure') vi.spyOn(cache, 'put').mockRejectedValue(new Error('Quota exceeded'));
         const service = createService(cache);
         await service.initialize();
         await vi.advanceTimersByTimeAsync(30000);
-        await service.ready;
-        expect(service.getSnapshot().failed).toBe(true);
-        resolveDownload(response(pack()));
+        resolveDownload(response(failure === 'invalid-pack' ? { ...pack(), id: 'wrong' } : pack()));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(errors).toHaveBeenCalledTimes(2);
+        expect(errors).toHaveBeenLastCalledWith(
+            failure === 'invalid-pack' ? 'Failed to download language data:' : 'Failed to cache language data:',
+            expect.any(Error)
+        );
+        expect(cache.writes).toBe(0);
+        expect(service.getSnapshot()).toEqual({ ready: true, downloading: false, failed: true });
+        expect(strings.common.cancel).toBe('Cancel');
+    });
+    it.each(['success', 'failure'])('ignores a late %s that settles after plugin unload', async outcome => {
+        vi.useFakeTimers();
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+        let resolveDownload: (value: unknown) => void = () => {};
+        let rejectDownload: (reason: unknown) => void = () => {};
+        mocks.request.mockImplementation(
+            () =>
+                new Promise((resolve, reject) => {
+                    resolveDownload = resolve;
+                    rejectDownload = reject;
+                })
+        );
+        const cache = new MemoryCache();
+        const service = createService(cache);
+        await service.initialize();
+        await vi.advanceTimersByTimeAsync(30000);
+        service.dispose();
+        if (outcome === 'success') resolveDownload(response(pack()));
+        else rejectDownload(new Error('Offline'));
         await vi.advanceTimersByTimeAsync(0);
         expect(cache.writes).toBe(0);
+        expect(errors).toHaveBeenCalledTimes(1);
         expect(strings.common.cancel).toBe('Cancel');
+    });
+    it('applies a response that arrives just before the deadline while the cache write stalls', async () => {
+        vi.useFakeTimers();
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+        let resolveDownload: (value: unknown) => void = () => {};
+        mocks.request.mockImplementation(
+            () =>
+                new Promise(resolve => {
+                    resolveDownload = resolve;
+                })
+        );
+        const cache = new MemoryCache();
+        vi.spyOn(cache, 'put').mockImplementation(() => new Promise(() => {}));
+        const service = createService(cache);
+        await service.initialize();
+        await vi.advanceTimersByTimeAsync(29000);
+        resolveDownload(response(pack()));
+        await vi.advanceTimersByTimeAsync(2000);
+        await service.ready;
+        expect(service.getSnapshot()).toEqual({ ready: true, downloading: false, failed: false });
+        expect(strings.common.cancel).toBe('Abbrechen');
+        expect(errors).toHaveBeenCalledWith('Failed to cache language data:', expect.any(Error));
         expect(vi.getTimerCount()).toBe(0);
     });
     it('does not change language or write a cache after plugin unload', async () => {
