@@ -107,9 +107,10 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.4.3',
-        date: '2026-09-22',
+        date: '2026-09-24',
         showOnUpdate: true,
         banner: '3.4.3.jpg',
+        info: 'We just reached 1 million downloads! What a milestone! Thank you for using Notebook Navigator and for all your support and feedback!',
         new: [
             'New `{{number}}` token for the file name format of ==Create note commands==: `Note {{number:00}}` names notes `Note 01`, `Note 02` and so on, continuing from the highest number already used by notes with the same name pattern in the folder, and templates can insert the same number with `{{number}}`.'
         ],
