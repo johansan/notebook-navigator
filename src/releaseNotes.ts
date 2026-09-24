@@ -106,10 +106,10 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
-        version: '3.4.2',
+        version: '3.4.3',
         date: '2026-09-22',
         showOnUpdate: true,
-        banner: '3.4.2.jpg',
+        banner: '3.4.3.jpg',
         new: [
             'New `{{number}}` token for the file name format of ==Create note commands==: `Note {{number:00}}` names notes `Note 01`, `Note 02` and so on, continuing from the highest number already used by notes with the same name pattern in the folder, and templates can insert the same number with `{{number}}`.'
         ],
