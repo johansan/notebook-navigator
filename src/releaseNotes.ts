@@ -125,7 +125,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Templater `<% tp.file.cursor() %>` was left as text in notes created by ==Create note commands==, folder notes, and calendar notes and has been fixed [#1510](https://github.com/johansan/notebook-navigator/issues/1510).',
             'Middle-clicking shortcuts, recent notes, folder notes, and calendar notes on Linux pasted the primary selection into the note and has been fixed [#1505](https://github.com/johansan/notebook-navigator/issues/1505).',
             'Tag and property rainbow colors shifted on each selection with ==Filter tags by selection== or ==Filter properties by selection== enabled and did not match the list pane pills, which has been fixed.',
-            '`Add to shortcuts` from the command palette added a previously selected folder or tag instead of the open note and has been fixed [#1511](https://github.com/johansan/notebook-navigator/issues/1511).'
+            '`Add to shortcuts` from the command palette added a previously selected folder or tag instead of the open note and has been fixed [#1511](https://github.com/johansan/notebook-navigator/issues/1511).',
+            'Preview text left out links and formatted text containing a hashtag, such as `Issue #860`, and removed hashtags that Obsidian does not treat as tags, which has been fixed [#1514](https://github.com/johansan/notebook-navigator/issues/1514).'
         ]
     },
     {
