@@ -28,7 +28,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.1.1",
     "@eslint/js": "^9.39.5",
-    "@types/node": "^26.6.1",
+    "@types/node": "^26.6.2",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "@vitest/coverage-v8": "^5.0.1",
@@ -38,15 +38,15 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.12.0",
-    "knip": "^6.35.1",
+    "knip": "^6.37.0",
     "obsidian": "^1.13.1",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.8",
     "stylelint": "^17.15.0",
     "stylelint-no-unsupported-browser-features": "^8.1.2",
     "tslib": "^2.8.1",
-    "tsx": "^4.23.13",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0",
+    "typescript-eslint": "^8.70.1",
     "vitest": "^5.0.0"
   },
   "dependencies": {
