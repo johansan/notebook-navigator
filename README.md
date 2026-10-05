@@ -628,7 +628,13 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 - **Offline use:** English is bundled. Settings remain available during downloads. The navigator shows a loading screen with **Continue in English**; failed downloads also use English. A download completed after continuing in English is used on the next launch.
 - **Data:** Sends standard HTTP metadata; does not include vault content. Downloaded files contain text data, while language formatting functions remain bundled with the plugin.
 
-### 11.6 Privacy and data handling
+### 11.6 Settings banner
+
+- **Where:** The top of the Notebook Navigator settings page shows a static banner for [MarkdownPoint](https://markdownpoint.com), a free presentation app made by the author of Notebook Navigator.
+- **Content:** The banner's images and text are bundled with the plugin. It loads nothing from the network and sends no data. Each time settings open it shows the next of its designs and messages; which one was shown last is stored in Obsidian local storage on the device.
+- **Link:** Clicking the banner opens `https://markdownpoint.com` in your browser.
+
+### 11.7 Privacy and data handling
 
 - Notebook Navigator does not send note content, file names, tags, or debug files to a Notebook Navigator server.
 - Requests to GitHub, YouTube, and any external image host are made directly from your device and include standard HTTP metadata (IP address, user-agent, and similar).

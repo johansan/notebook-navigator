@@ -2662,10 +2662,29 @@ export const STRINGS_VI = {
                 buttonText: '❤️ Tài trợ',
                 coffeeButton: '☕️ Mua cho tôi một ly cà phê'
             },
-            otherPlugins: {
-                name: 'Xem các plugin khác của tôi',
-                betterPaste: 'Dọn dẹp văn bản, liên kết và ảnh đã dán',
-                pixelPerfectImage: 'Đổi kích thước ảnh chính xác và hơn thế nữa'
+            markdownPointBanner: {
+                credit: 'bởi Johan Sanneblad',
+                messages: [
+                    { headline: 'Slide Markdown, không cần code.', subtext: 'Ứng dụng desktop: kéo, căn, tạo hiệu ứng.' },
+                    { headline: 'Lựa chọn miễn phí thay PowerPoint.', subtext: 'Dùng miễn phí. Chia sẻ, cộng tác miễn phí.' },
+                    { headline: 'Đồ họa chuyển động ngay trên slide.', subtext: 'Keyframe, path và morph trên mọi slide.' },
+                    { headline: 'Cùng chỉnh sửa, như Google Slides.', subtext: 'Con trỏ và bình luận, với tài khoản miễn phí.' },
+                    { headline: 'Viết cả bộ slide dưới dạng dàn ý.', subtext: 'Nội dung mọi slide ở một chỗ, bằng Markdown.' },
+                    { headline: 'Bắt dính kiểu Figma, cho slide.', subtext: 'Khoảng cách đều, kích thước và góc khớp nhau.' },
+                    { headline: '==Tô sáng== cũng dùng được ở đây.', subtext: 'Cả **đậm**, *nghiêng* và ~~gạch ngang~~ nữa.' },
+                    { headline: 'Có sẵn hai mươi mẫu slide.', subtext: 'Chọn mẫu rồi viết. Miễn phí cho Mac và Windows.' },
+                    { headline: 'Thói quen Obsidian, slide đẹp mắt.', subtext: 'Viết bằng Markdown, rồi nhấn "Present".' },
+                    { headline: 'Khỏi cần mở After Effects.', subtext: 'Tạo hiệu ứng trên slide. Xuất video 4K.' },
+                    { headline: 'Ghi chú diễn giả chỉ là ghi chú.', subtext: 'Bằng Markdown, lưu chung tệp với slide.' },
+                    { headline: 'Bộ slide là một thư mục trên ổ đĩa.', subtext: 'Tệp Markdown và YAML. Không cần tài khoản.' },
+                    { headline: 'Khối code, y như trong ghi chú.', subtext: 'Có rào và tô màu cú pháp, cho 21 ngôn ngữ.' },
+                    { headline: 'Gửi liên kết thay vì tệp 200 MB.', subtext: 'Đăng bộ slide lên mạng với tài khoản miễn phí.' },
+                    { headline: 'Slide bạn có thể diff.', subtext: 'Tệp văn bản sống thoải mái trong Git.' },
+                    { headline: 'Sơ đồ Mermaid của bạn, trên slide.', subtext: 'Khối code mermaid biến thành sơ đồ.' },
+                    { headline: 'Bạn vốn đã viết bằng Markdown.', subtext: 'Giờ hãy viết cả slide bằng nó.' },
+                    { headline: 'Slide đồng bộ như ghi chú của bạn.', subtext: 'Lưu trong Dropbox, iCloud Drive hoặc OneDrive.' },
+                    { headline: 'App trình chiếu desktop. Miễn phí.', subtext: 'Không thuê bao. Không mua trong ứng dụng.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Kiểm tra phiên bản mới khi khởi động',

@@ -2662,10 +2662,29 @@ export const STRINGS_TR = {
                 buttonText: '❤️ Sponsor ol',
                 coffeeButton: '☕️ Bana bir kahve ısmarla'
             },
-            otherPlugins: {
-                name: 'Diğer eklentilerime göz at',
-                betterPaste: 'Yapıştırılan metni, bağlantıları ve görselleri temizler',
-                pixelPerfectImage: 'Tam isabetli görsel boyutlandırma ve daha fazlası'
+            markdownPointBanner: {
+                credit: "Johan Sanneblad'dan",
+                messages: [
+                    { headline: 'Markdown slaytları, kod yazmadan.', subtext: 'Masaüstü editör: sürükleme, hizalama, animasyon.' },
+                    { headline: "PowerPoint'e ücretsiz alternatif.", subtext: 'Ücretsiz kullanım, paylaşım ve iş birliği.' },
+                    { headline: 'Hareketli grafik doğrudan slaytta.', subtext: 'Her slaytta anahtar kare, yol ve dönüşüm.' },
+                    { headline: 'Google Slides gibi ortak düzenleme.', subtext: 'İşaretçiler ve yorumlar, ücretsiz hesapla.' },
+                    { headline: 'Tüm sunuyu anahat olarak yazın.', subtext: 'Her slaytın metni tek yerde, Markdown ile.' },
+                    { headline: 'Slaytlarda Figma tarzı hizalama.', subtext: 'Eşit aralıklar, eşleşen boyutlar ve açılar.' },
+                    { headline: '==Vurgular== burada da çalışır.', subtext: '**Kalın**, *italik* ve ~~üstü çizili~~ de öyle.' },
+                    { headline: 'Yirmi slayt tasarımı dahil.', subtext: "Birini seçip yazın. Mac ve Windows'ta ücretsiz." },
+                    { headline: 'Obsidian alışkanlığı, şık slaytlar.', subtext: "Markdown ile yazın, sonra Present'e basın." },
+                    { headline: 'After Effects kapalı kalsın.', subtext: 'Slaytta canlandırın. 4K video dışa aktarın.' },
+                    { headline: 'Konuşmacı notları sadece birer not.', subtext: 'Markdown olarak, slaytlarla aynı dosyada.' },
+                    { headline: 'Sunumunuz diskinizde bir klasör.', subtext: 'Markdown ve YAML dosyaları. Hesap gerekmez.' },
+                    { headline: 'Kod blokları, notlarınızdaki gibi.', subtext: 'Çitli ve renklendirilmiş, 21 dilde.' },
+                    { headline: '200 MB dosya yerine bir bağlantı.', subtext: "Sunumunuzu ücretsiz hesapla web'de yayınlayın." },
+                    { headline: 'Diff alabileceğiniz slaytlar.', subtext: "Git'te rahat yaşayan metin dosyaları." },
+                    { headline: 'Mermaid diyagramlarınız, slaytta.', subtext: 'Bir mermaid kod bloğu diyagrama dönüşür.' },
+                    { headline: "Zaten Markdown'la yazıyorsunuz.", subtext: 'Artık slaytlarınızı da onunla yazın.' },
+                    { headline: 'Notlarınız gibi eşitlenen slaytlar.', subtext: "Dropbox, iCloud Drive veya OneDrive'da tutun." },
+                    { headline: 'Masaüstü sunum uygulaması. Ücretsiz.', subtext: 'Abonelik yok. Uygulama içi satın alma yok.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Başlangıçta yeni sürüm kontrolü',

@@ -2672,10 +2672,29 @@ export const STRINGS_PT_BR = {
                 buttonText: '❤️ Patrocinar',
                 coffeeButton: '☕️ Me pague um café'
             },
-            otherPlugins: {
-                name: 'Conheça meus outros plugins',
-                betterPaste: 'Limpa texto, links e imagens colados',
-                pixelPerfectImage: 'Redimensionamento exato de imagens e mais'
+            markdownPointBanner: {
+                credit: 'por Johan Sanneblad',
+                messages: [
+                    { headline: 'Slides em Markdown, sem código.', subtext: 'Um editor desktop: arraste, encaixe e anime.' },
+                    { headline: 'Alternativa grátis ao PowerPoint.', subtext: 'Grátis para usar, compartilhar e colaborar.' },
+                    { headline: 'Motion graphics direto no slide.', subtext: 'Keyframes, caminhos e morphs em cada slide.' },
+                    { headline: 'Colabore como no Google Slides.', subtext: 'Cursores e comentários com uma conta grátis.' },
+                    { headline: 'Escreva a apresentação em tópicos.', subtext: 'Todo o texto dos slides reunido, em Markdown.' },
+                    { headline: 'Encaixe estilo Figma nos slides.', subtext: 'Espaços iguais, mesmos tamanhos e ângulos.' },
+                    { headline: '==Destaques== também funcionam.', subtext: 'E ainda **negrito**, *itálico* e ~~tachado~~.' },
+                    { headline: 'Vinte designs de slide incluídos.', subtext: 'Escolha um e escreva. Grátis no Mac e Windows.' },
+                    { headline: 'Do jeito Obsidian, slides lindos.', subtext: 'Escreva em Markdown e clique em "Present".' },
+                    { headline: 'Deixe o After Effects fechado.', subtext: 'Anime no slide. Exporte vídeo 4K.' },
+                    { headline: 'Notas do apresentador são só notas.', subtext: 'Em Markdown, no mesmo arquivo dos slides.' },
+                    { headline: 'Seus slides são uma pasta no disco.', subtext: 'Arquivos Markdown e YAML. Sem cadastro.' },
+                    { headline: 'Blocos de código, como nas notas.', subtext: 'Delimitados e realçados, em 21 linguagens.' },
+                    { headline: 'Um link, não um arquivo de 200 MB.', subtext: 'Publique seus slides com uma conta grátis.' },
+                    { headline: 'Slides prontos para diff.', subtext: 'Arquivos de texto que se dão bem com o Git.' },
+                    { headline: 'Seus diagramas Mermaid no slide.', subtext: 'Um bloco de código mermaid vira diagrama.' },
+                    { headline: 'Você já escreve em Markdown.', subtext: 'Agora escreva seus slides nele.' },
+                    { headline: 'Slides sincronizados como suas notas.', subtext: 'Guarde no Dropbox, iCloud Drive ou OneDrive.' },
+                    { headline: 'App de slides para desktop. Grátis.', subtext: 'Sem assinatura. Sem compras no app.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Verificar nova versão ao iniciar',

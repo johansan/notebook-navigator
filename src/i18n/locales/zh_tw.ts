@@ -2647,10 +2647,29 @@ export const STRINGS_ZH_TW = {
                 buttonText: '❤️ 贊助',
                 coffeeButton: '☕️ 請我喝咖啡'
             },
-            otherPlugins: {
-                name: '看看我的其他外掛程式',
-                betterPaste: '整理貼上的文字、連結和圖片',
-                pixelPerfectImage: '精確的圖片縮放等'
+            markdownPointBanner: {
+                credit: '作者：Johan Sanneblad',
+                messages: [
+                    { headline: 'Markdown 投影片，不用寫程式。', subtext: '桌面編輯器：拖曳、貼齊、加動畫。' },
+                    { headline: 'PowerPoint 的免費替代方案。', subtext: '免費使用，免費分享，免費協作。' },
+                    { headline: '動態圖像，直接在投影片上做。', subtext: '關鍵影格、路徑、變形，每張都能用。' },
+                    { headline: '像 Google Slides 一樣共同編輯。', subtext: '指標和留言，用免費帳號即可。' },
+                    { headline: '用大綱寫整份簡報。', subtext: '每張投影片的文字集中一處，都是 Markdown。' },
+                    { headline: 'Figma 式貼齊，用在投影片上。', subtext: '間距相等，尺寸與角度一致。' },
+                    { headline: '==醒目提示== 這裡也能用。', subtext: '**粗體**、*斜體*、~~刪除線~~ 也一樣。' },
+                    { headline: '內建 20 套投影片設計。', subtext: '挑一套就能寫。Mac 和 Windows 都免費。' },
+                    { headline: 'Obsidian 的習慣，漂亮的投影片。', subtext: '用 Markdown 寫好，再按「Present」。' },
+                    { headline: 'After Effects 不用開了。', subtext: '在投影片上做動畫，匯出 4K 影片。' },
+                    { headline: '演講者備忘稿，就是一般筆記。', subtext: '用 Markdown 寫，和投影片存在同一個檔案。' },
+                    { headline: '簡報就是磁碟裡的資料夾。', subtext: 'Markdown 和 YAML 檔案，不需帳號。' },
+                    { headline: '程式碼區塊，和筆記裡一樣。', subtext: '圍欄標記，語法突顯，支援 21 種語言。' },
+                    { headline: '傳連結，不傳 200 MB 的檔案。', subtext: '用免費帳號把簡報發布到網路上。' },
+                    { headline: '能 diff 的投影片。', subtext: '純文字檔，在 Git 裡如魚得水。' },
+                    { headline: '你的 Mermaid 圖表，放到投影片上。', subtext: 'mermaid 程式碼區塊直接變成圖表。' },
+                    { headline: '你早就在用 Markdown 寫作了。', subtext: '現在，投影片也用它來寫。' },
+                    { headline: '像筆記一樣同步的投影片。', subtext: '存在 Dropbox、iCloud Drive 或 OneDrive。' },
+                    { headline: '一款桌面簡報 App。免費。', subtext: '不用訂閱，沒有 App 內購買。' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: '啟動時檢查新版本',

@@ -286,6 +286,7 @@ export interface LocalStorageKeys {
     cacheRebuildNoticeKey: string;
     debugLoggingEnabledKey: string;
     lastShownVersionKey: string;
+    markdownPointBannerKey: string;
     // PDF_CRASH_DIAGNOSTICS: vault-scoped key used by the PDF crash diagnostic flow.
     pdfProcessingDiagnosticKey: string;
     localStorageVersionKey: string;
@@ -353,6 +354,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
     debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
     lastShownVersionKey: 'notebook-navigator-last-shown-version',
+    markdownPointBannerKey: 'notebook-navigator-markdownpoint-banner',
     // PDF_CRASH_DIAGNOSTICS: persists the last PDF path being processed on mobile support builds.
     pdfProcessingDiagnosticKey: 'notebook-navigator-pdf-processing-diagnostic',
     localStorageVersionKey: 'notebook-navigator-localstorage-version',

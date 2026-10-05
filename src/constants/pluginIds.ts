@@ -27,9 +27,3 @@ export const TEMPLATER_PLUGIN_ID = 'templater-obsidian';
 
 /** Templater command that removes the next `<% tp.file.cursor() %>` marker in the active editor and places the cursor there */
 export const TEMPLATER_JUMP_TO_CURSOR_COMMAND_ID = `${TEMPLATER_PLUGIN_ID}:jump-to-next-cursor-location`;
-
-/** Better Paste plugin identifier, linked from the settings start page */
-export const BETTER_PASTE_PLUGIN_ID = 'better-paste';
-
-/** Pixel Perfect Image plugin identifier, linked from the settings start page */
-export const PIXEL_PERFECT_IMAGE_PLUGIN_ID = 'pixel-perfect-image';

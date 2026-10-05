@@ -2664,10 +2664,29 @@ export const STRINGS_ID = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Traktir saya kopi'
             },
-            otherPlugins: {
-                name: 'Lihat plugin saya yang lain',
-                betterPaste: 'Membersihkan teks, tautan, dan gambar yang ditempel',
-                pixelPerfectImage: 'Pengubahan ukuran gambar yang presisi dan lainnya'
+            markdownPointBanner: {
+                credit: 'oleh Johan Sanneblad',
+                messages: [
+                    { headline: 'Slide Markdown, tanpa coding.', subtext: 'Editor desktop: seret, sejajarkan, animasikan.' },
+                    { headline: 'Alternatif PowerPoint yang gratis.', subtext: 'Pakai, bagikan, dan berkolaborasi gratis.' },
+                    { headline: 'Motion graphic, langsung di slide.', subtext: 'Keyframe, jalur, dan morph di setiap slide.' },
+                    { headline: 'Edit bersama ala Google Slides.', subtext: 'Pointer dan komentar, dengan akun gratis.' },
+                    { headline: 'Tulis semua slide sebagai kerangka.', subtext: 'Teks tiap slide di satu tempat, dalam Markdown.' },
+                    { headline: 'Snapping ala Figma, untuk slide.', subtext: 'Spasi merata, ukuran dan sudut yang sama.' },
+                    { headline: '==Sorotan== juga bisa di sini.', subtext: 'Begitu juga **tebal**, *miring*, dan ~~coret~~.' },
+                    { headline: 'Termasuk dua puluh desain slide.', subtext: 'Pilih satu dan tulis. Gratis di Mac dan Windows.' },
+                    { headline: 'Kebiasaan Obsidian, slide memukau.', subtext: 'Tulis dalam Markdown, lalu tekan "Present".' },
+                    { headline: 'Biarkan After Effects tertutup.', subtext: 'Animasikan di slide. Ekspor video 4K.' },
+                    { headline: 'Catatan pembicara hanyalah catatan.', subtext: 'Markdown, tersimpan satu file dengan slide.' },
+                    { headline: 'Presentasi Anda: folder di disk.', subtext: 'File Markdown dan YAML. Tidak perlu akun.' },
+                    { headline: 'Blok kode ala catatan Anda.', subtext: 'Berpagar dan disorot, dalam 21 bahasa.' },
+                    { headline: 'Kirim tautan, bukan file 200 MB.', subtext: 'Terbitkan presentasi online dengan akun gratis.' },
+                    { headline: 'Slide yang bisa di-diff.', subtext: 'File teks yang betah tinggal di Git.' },
+                    { headline: 'Diagram Mermaid Anda, di slide.', subtext: 'Blok kode mermaid menjadi diagram.' },
+                    { headline: 'Anda sudah menulis di Markdown.', subtext: 'Kini tulis slide Anda dengan Markdown juga.' },
+                    { headline: 'Slide Anda sinkron seperti catatan.', subtext: 'Di Dropbox, iCloud Drive, atau OneDrive.' },
+                    { headline: 'Aplikasi presentasi desktop. Gratis.', subtext: 'Tanpa langganan. Tanpa pembelian di aplikasi.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Periksa versi baru saat mulai',

@@ -2655,10 +2655,29 @@ export const STRINGS_EN = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Buy me a coffee'
             },
-            otherPlugins: {
-                name: 'Check out my other plugins',
-                betterPaste: 'Clean up pasted text, links and images',
-                pixelPerfectImage: 'Exact image resizing and more'
+            markdownPointBanner: {
+                credit: 'by Johan Sanneblad',
+                messages: [
+                    { headline: 'Markdown slides, no coding.', subtext: 'A desktop editor: drag, snap and animate.' },
+                    { headline: 'A free alternative to PowerPoint.', subtext: 'Free to use. Free sharing. Free collaboration.' },
+                    { headline: 'Motion graphics, right on the slide.', subtext: 'Keyframes, paths and morphs on every slide.' },
+                    { headline: 'Edit together, like Google Slides.', subtext: 'Pointers and comments, with a free account.' },
+                    { headline: 'Write the whole deck as an outline.', subtext: 'Every slide’s words in one place, in Markdown.' },
+                    { headline: 'Figma-style snapping, for slides.', subtext: 'Equal spacing, matching sizes and angles.' },
+                    { headline: '==Highlights== work here too.', subtext: 'So do **bold**, *italics* and ~~strikethrough~~.' },
+                    { headline: 'Twenty slide designs, included.', subtext: 'Pick one and write. Free for Mac and Windows.' },
+                    { headline: 'Obsidian habits, beautiful slides.', subtext: 'Write in Markdown, then press Present.' },
+                    { headline: 'Leave After Effects closed.', subtext: 'Animate on the slide. Export 4K video.' },
+                    { headline: 'Presenter notes are just notes.', subtext: 'Markdown, saved in the same file as the slides.' },
+                    { headline: 'Your deck is a folder on your disk.', subtext: 'Markdown and YAML files. No account needed.' },
+                    { headline: 'Code blocks, like in your notes.', subtext: 'Fenced and highlighted, in 21 languages.' },
+                    { headline: 'Send a link, not a 200 MB file.', subtext: 'Publish your deck online with a free account.' },
+                    { headline: 'Slides you can diff.', subtext: 'Text files that live happily in Git.' },
+                    { headline: 'Your Mermaid diagrams, on a slide.', subtext: 'A mermaid code block becomes a diagram.' },
+                    { headline: 'You already write in Markdown.', subtext: 'Now write your slides in it.' },
+                    { headline: 'Slides that sync like your notes.', subtext: 'Keep them in Dropbox, iCloud Drive or OneDrive.' },
+                    { headline: 'A desktop presentation app. Free.', subtext: 'No subscription. No in-app purchases.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Check for new version on start',

@@ -264,7 +264,7 @@ export const NATIVE_SETTING_DOM_STATE_REFRESH_KEYS: ReadonlySet<NativeSettingCon
 export function createGroupDefinition(
     heading: string | undefined,
     items: DefinitionItems,
-    options?: { visible?: boolean | (() => boolean) }
+    options?: { visible?: boolean | (() => boolean); cls?: string }
 ): SettingDefinitionGroup {
     const group: SettingDefinitionGroup = {
         type: 'group',
@@ -273,6 +273,9 @@ export function createGroupDefinition(
 
     if (requireApiVersion('1.13.0') && heading) {
         group.heading = heading;
+    }
+    if (requireApiVersion('1.13.0') && options?.cls) {
+        group.cls = options.cls;
     }
     if (requireApiVersion('1.13.0') && options?.visible !== undefined) {
         group.visible = options.visible;

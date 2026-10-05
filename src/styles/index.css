@@ -116,6 +116,8 @@ Keep this list ordered: later files override earlier ones.
 /* Settings */
 /* settings-page.css: settings tab layout, toolbar visibility controls, and settings helpers. */
 @import './sections/settings-page.css';
+/* settings-markdownpoint-banner.css: MarkdownPoint banner at the top of the settings start page (`.nn-markdownpoint-*`). */
+@import './sections/settings-markdownpoint-banner.css';
 /* settings-sponsor-button.css: hover styling for the settings support button. */
 @import './sections/settings-sponsor-button.css';
 /* settings-mobile.css: mobile-only settings overrides (wide inputs). */

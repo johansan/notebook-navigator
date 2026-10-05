@@ -2672,10 +2672,29 @@ export const STRINGS_DE = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Spendiere mir einen Kaffee'
             },
-            otherPlugins: {
-                name: 'Schau dir meine anderen Plugins an',
-                betterPaste: 'Räumt eingefügten Text, Links und Bilder auf',
-                pixelPerfectImage: 'Exakte Bildgrößen und mehr'
+            markdownPointBanner: {
+                credit: 'von Johan Sanneblad',
+                messages: [
+                    { headline: 'Markdown-Folien, ganz ohne Code.', subtext: 'Desktop-Editor: ziehen, einrasten, animieren.' },
+                    { headline: 'Gratis-Alternative zu PowerPoint.', subtext: 'Gratis nutzen, teilen und zusammenarbeiten.' },
+                    { headline: 'Motion Graphics direkt auf der Folie.', subtext: 'Keyframes, Pfade und Morphs auf jeder Folie.' },
+                    { headline: 'Teamarbeit wie in Google Slides.', subtext: 'Zeiger und Kommentare mit kostenlosem Konto.' },
+                    { headline: 'Schreib alle Folien als Gliederung.', subtext: 'Alle Folientexte an einem Ort, in Markdown.' },
+                    { headline: 'Einrasten wie in Figma, für Folien.', subtext: 'Gleiche Abstände, gleiche Größen und Winkel.' },
+                    { headline: '==Hervorhebungen== gehen auch.', subtext: 'Ebenso **fett**, *kursiv*, ~~durchgestrichen~~.' },
+                    { headline: 'Zwanzig Foliendesigns inklusive.', subtext: 'Wählen, schreiben. Gratis für Mac und Windows.' },
+                    { headline: 'Obsidian-Workflow, schöne Folien.', subtext: 'Schreib in Markdown, dann klick auf „Present“.' },
+                    { headline: 'After Effects bleibt geschlossen.', subtext: 'Animieren auf der Folie. Export als 4K-Video.' },
+                    { headline: 'Sprechernotizen sind nur Notizen.', subtext: 'Markdown, in derselben Datei wie die Folien.' },
+                    { headline: 'Ein lokaler Ordner pro Präsentation.', subtext: 'Markdown- und YAML-Dateien. Kein Konto nötig.' },
+                    { headline: 'Codeblöcke wie in deinen Notizen.', subtext: 'Fenced, mit Highlighting für 21 Sprachen.' },
+                    { headline: 'Schick einen Link statt 200 MB.', subtext: 'Folien online stellen, mit kostenlosem Konto.' },
+                    { headline: 'Folien, die du diffen kannst.', subtext: 'Textdateien, die sich in Git wohlfühlen.' },
+                    { headline: 'Mermaid-Diagramme auf der Folie.', subtext: 'Ein mermaid-Codeblock wird zum Diagramm.' },
+                    { headline: 'Du schreibst schon in Markdown.', subtext: 'Jetzt auch deine Folien.' },
+                    { headline: 'Folien syncen wie deine Notizen.', subtext: 'Leg sie in Dropbox, iCloud Drive oder OneDrive.' },
+                    { headline: 'Eine Desktop-App für Folien. Gratis.', subtext: 'Kein Abo. Keine In-App-Käufe.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Beim Start nach neuer Version suchen',

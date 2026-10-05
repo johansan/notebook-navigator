@@ -29,6 +29,11 @@ import type {
 } from './settings/tabs/SettingsTabContext';
 import { strings } from './i18n';
 import { createStartResourcesSettingDefinitions } from './settings/tabs/StartResourcesSection';
+import {
+    advanceMarkdownPointBanner,
+    createMarkdownPointBannerDefinitions,
+    renderMarkdownPointBannerGroup
+} from './settings/markdownPointBanner';
 import { createVaultSetupSettingDefinitions } from './settings/tabs/VaultSetupSection';
 import { createSettingGroupFactory } from './settings/settingGroups';
 import { runAsyncAction } from './utils/async';
@@ -77,6 +82,8 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
     private isFallbackSettingsDisplay = false;
     private legacySettingsLandingScrollTop = 0;
     private settingsRenderCleanupCallbacks: (() => void)[] = [];
+    // MarkdownPoint banner position for this settings open; hide() clears it so the next open moves on
+    private markdownPointBannerPosition: number | null = null;
     // Registered settings tab that Obsidian renders native setting definitions on.
     // Obsidian stores rendered definition state on that tab, so DOM-state refreshes must run on it.
     private nativeSettingsHost: PluginSettingTab | null = null;
@@ -399,6 +406,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.isFallbackSettingsDisplay = true;
         this.activeSettingsPage = null;
         this.prepareSettingsRender(this.containerEl);
+        renderMarkdownPointBannerGroup(this.containerEl, this.getMarkdownPointBannerPosition());
 
         const generalDefinition = SETTINGS_PANE_DEFINITION_MAP.get('general');
         generalDefinition?.render(this.createTabContext(this.containerEl));
@@ -496,8 +504,9 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.isFallbackSettingsDisplay = false;
         const context = this.createTabContext(this.containerEl);
 
-        // Native settings index: vault controls and page links come before informational resources.
+        // Native settings index: the MarkdownPoint banner, then vault controls and page links before informational resources.
         const items: SettingDefinitionItem[] = [
+            ...createMarkdownPointBannerDefinitions(() => this.getMarkdownPointBannerPosition()),
             ...createVaultSetupSettingDefinitions(context),
             ...SETTINGS_PAGE_GROUP_DEFINITIONS.map(group => ({
                 type: 'group' as const,
@@ -683,6 +692,12 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.resetRenderedSettingsState();
     }
 
+    /** Re-renders within one settings open keep the banner the same; it moves on once per open. */
+    private getMarkdownPointBannerPosition(): number {
+        this.markdownPointBannerPosition ??= advanceMarkdownPointBanner();
+        return this.markdownPointBannerPosition;
+    }
+
     private prepareSettingsRender(containerEl: HTMLElement): void {
         this.settingsRenderContainerEl = containerEl;
         containerEl.empty();
@@ -807,6 +822,7 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.tabSettingsUpdateListeners.clear();
         this.showTagsListeners = [];
         this.activeSettingsPage = null;
+        this.markdownPointBannerPosition = null;
         this.settingsRenderContainerEl?.removeClass('nn-settings-tab-root');
         this.settingsRenderContainerEl = null;
         this.containerEl.removeClass('nn-settings-tab-root');

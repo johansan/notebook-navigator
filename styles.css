@@ -7759,98 +7759,291 @@ button.nn-youtube-button svg {
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
+/* Source: src/styles/sections/settings-markdownpoint-banner.css */
 
-/* Cards linking to the author's other plugins on the settings start page */
-.setting-item.nn-plugin-cards {
-    display: block;
-}
+/* ========================================================================
+   MarkdownPoint banner at the top of the settings start page
+   ======================================================================== */
 
-/* One column when the settings pane is narrow, because the description needs the width */
-.nn-plugin-card-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
-    gap: var(--size-4-2);
-    margin-top: var(--size-4-2);
-}
-
-/* A button so the whole card can be reached from the keyboard. The declarations before the
-   layout undo the button styling a theme applies. */
-.nn-plugin-card {
-    height: auto;
-    padding: var(--size-4-3);
-    background-color: var(--background-secondary);
+/* Both settings pages render the banner as the only row of its own group, without the group's frame */
+.setting-group.nn-markdownpoint-group > .setting-items {
+    padding: 0;
+    border: none;
+    background: none;
     box-shadow: none;
-    text-align: start;
-    white-space: normal;
-    display: flex;
-    align-items: flex-start;
-    gap: var(--size-4-3);
-    width: 100%;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: var(--radius-m);
-    cursor: pointer;
 }
 
-.nn-plugin-card:hover {
-    border-color: var(--background-modifier-border-hover);
-    background-color: var(--background-modifier-hover);
+/* Matches Obsidian's `.setting-group .setting-item:not(.setting-item-heading)` row rule, which it must outrank */
+.setting-group.nn-markdownpoint-group .setting-item.nn-markdownpoint-setting {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
 }
 
-.nn-plugin-card-icon {
+.nn-markdownpoint-setting > .setting-item-info,
+.nn-markdownpoint-setting > .setting-item-control {
+    display: none;
+}
+
+/* The design's own colors are set inline (canvas, surface, text, muted, accent), so the banner
+   looks the same in light and dark themes. Mandarin is MarkdownPoint's brand color. */
+.nn-markdownpoint-banner {
+    --nn-markdownpoint-mandarin-500: #fa7b26;
+    --nn-markdownpoint-mandarin-600: #f2641f;
+    --nn-markdownpoint-point: var(--nn-markdownpoint-mandarin-600);
+    --nn-markdownpoint-edge: rgba(0, 0, 0, 0.08);
+    --nn-markdownpoint-drop: rgba(40, 30, 20, 0.28);
+    container-type: inline-size;
+}
+
+.nn-markdownpoint-banner-dark {
+    --nn-markdownpoint-point: var(--nn-markdownpoint-mandarin-500);
+    --nn-markdownpoint-edge: rgba(255, 255, 255, 0.1);
+    --nn-markdownpoint-drop: rgba(0, 0, 0, 0.55);
+}
+
+/* A shade off the slide's canvas, so the slide reads as an object lying on it. The corners follow
+   Obsidian's settings cards, which are rounder on mobile and drawn as a superellipse on macOS. The file,
+   the slide and the text sit together as one group, centered with equal space on both sides. */
+.nn-markdownpoint-strip {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
-    width: var(--size-4-8);
-    height: var(--size-4-8);
-    border-radius: var(--radius-m);
-    background-color: var(--background-primary);
-    color: var(--text-accent);
-}
-
-/* min-width lets a long word wrap instead of stretching the card past its column */
-.nn-plugin-card-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-2-1);
-    min-width: 0;
-}
-
-.nn-plugin-card-name {
-    color: var(--text-normal);
-    font-size: var(--font-ui-small);
-    font-weight: var(--font-semibold);
-    line-height: 1.3;
-}
-
-/* One line whatever the language, cut with an ellipsis, so every card is the same height */
-.nn-plugin-card-description {
-    color: var(--text-muted);
-    font-size: var(--font-ui-smaller);
-    line-height: 1.4;
-    white-space: nowrap;
+    gap: 28px;
+    min-height: 80px;
+    padding-inline: 16px;
     overflow: hidden;
+    border-radius: var(--setting-items-radius);
+    corner-shape: var(--corner-shape);
+    background: color-mix(in srgb, var(--nn-markdownpoint-canvas) 93%, var(--nn-markdownpoint-text));
+    box-shadow: inset 0 0 0 1px var(--nn-markdownpoint-edge);
+    color: var(--nn-markdownpoint-text);
+    font-family: var(--font-interface);
+    cursor: pointer;
+}
+
+.nn-markdownpoint-strip:focus-visible {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+}
+
+/* The Markdown file, tucked behind the slide it makes */
+.nn-markdownpoint-visual {
+    position: relative;
+    flex: none;
+    align-self: stretch;
+    width: 226px;
+}
+
+.nn-markdownpoint-file {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 9px;
+    width: 150px;
+    height: 66px;
+    padding: 6px 8px 0;
+    overflow: hidden;
+    border-radius: 5px;
+    background: var(--nn-markdownpoint-surface);
+    box-shadow:
+        0 0 0 1px var(--nn-markdownpoint-edge),
+        0 4px 12px -6px var(--nn-markdownpoint-drop);
+    color: var(--nn-markdownpoint-muted);
+    transform: rotate(-2deg);
+}
+
+.nn-markdownpoint-file-name {
+    margin-bottom: 3px;
+    font-size: 8px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.02em;
+    opacity: 0.7;
+}
+
+/* Lines wrap where the slide starts to cover the card */
+.nn-markdownpoint-file-text {
+    width: 90px;
+    font-family: var(--font-monospace);
+    font-size: 8px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Markdown marks at reduced strength, as MarkdownPoint draws them */
+.nn-markdownpoint-mark {
+    color: var(--nn-markdownpoint-mandarin-500);
+    opacity: 0.45;
+}
+
+.nn-markdownpoint-highlight {
+    color: var(--nn-markdownpoint-accent);
+    font-weight: var(--font-bold);
+}
+
+.nn-markdownpoint-slide {
+    position: absolute;
+    inset-inline-end: 0;
+    top: 50%;
+    display: block;
+    width: 128px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    box-shadow:
+        0 0 0 1px var(--nn-markdownpoint-edge),
+        0 8px 18px -6px var(--nn-markdownpoint-drop);
+    transform: translateY(-50%);
+}
+
+/* The three lines are centered on each other, and the column is only as wide as its widest line, so the
+   group centers as a whole. Their spacing is set per line rather than
+   with a gap, so the space from each line's baseline to the next line's capitals comes out equal (the
+   wordmark line is read by its text, not by the tile that hangs below it), and the padding puts as much
+   space above the wordmark as below the subtext's baseline. */
+.nn-markdownpoint-copy {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding-block: 14px 10px;
+    text-align: center;
+}
+
+/* The wordmark and the credit beside it. On the narrowest phones the credit moves under the wordmark
+   instead of being cut off. */
+.nn-markdownpoint-brand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px 7px;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 3px;
+}
+
+/* The wordmark keeps its own width instead of stretching across the column */
+.nn-markdownpoint-wordmark {
+    display: block;
+    flex: none;
+    width: auto;
+    height: 17px;
+}
+
+.nn-markdownpoint-credit {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--nn-markdownpoint-muted);
+    font-size: 12px;
+    line-height: 17px;
+    white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-/* Sits at the far edge, the way Obsidian marks a row that opens somewhere else. It keeps to
-   the middle of the card while the icon and the name line up at the top. */
-.nn-plugin-card-arrow {
-    display: flex;
-    align-items: center;
-    align-self: center;
-    flex: 0 0 auto;
-    margin-inline-start: auto;
-    color: var(--text-faint);
+.nn-markdownpoint-headline {
+    font-size: 15px;
+    font-weight: var(--font-bold);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
 }
 
-.nn-plugin-card-arrow .svg-icon {
-    width: var(--icon-s);
-    height: var(--icon-s);
+/* The point at the end of a headline is MarkdownPoint's signature mandarin */
+.nn-markdownpoint-point {
+    color: var(--nn-markdownpoint-point);
 }
 
-.nn-plugin-card:hover .nn-plugin-card-arrow {
-    color: var(--text-muted);
+.nn-markdownpoint-subtext {
+    margin-top: 5px;
+    color: var(--nn-markdownpoint-muted);
+    font-size: 12px;
+    line-height: 1.35;
+    text-wrap: balance;
+}
+
+/* Obsidian's mobile apps set larger text throughout, so the banner's text grows with it. The spacing
+   below keeps the three lines evenly spaced at these sizes. */
+.is-mobile .nn-markdownpoint-brand {
+    gap: 2px 8px;
+    margin-bottom: 4px;
+}
+
+.is-mobile .nn-markdownpoint-wordmark {
+    height: 20px;
+}
+
+.is-mobile .nn-markdownpoint-credit {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.is-mobile .nn-markdownpoint-headline {
+    font-size: 18px;
+}
+
+.is-mobile .nn-markdownpoint-subtext {
+    margin-top: 4.5px;
+    font-size: 14px;
+}
+
+/* Every line of every language fits on one line beside the file and slide from about 560px; medium
+   panes drop the file and keep the slide, so the lines still fit without wrapping */
+@container (max-width: 580px) {
+    .nn-markdownpoint-visual {
+        width: 128px;
+    }
+
+    .nn-markdownpoint-file {
+        display: none;
+    }
+}
+
+/* Mobile text is larger, so tablets drop the file sooner */
+@container (max-width: 640px) {
+    .is-mobile .nn-markdownpoint-visual {
+        width: 128px;
+    }
+
+    .is-mobile .nn-markdownpoint-file {
+        display: none;
+    }
+}
+
+/* Narrow panes, such as phones, stack the file and slide above the three lines, so the lines keep
+   the full width instead of wrapping beside the slide */
+@container (max-width: 480px) {
+    .nn-markdownpoint-strip {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 16px 16px 4px;
+    }
+
+    /* The file and the slide together span the visual's width, so the pair sits centered */
+    .nn-markdownpoint-visual,
+    .is-mobile .nn-markdownpoint-visual {
+        align-self: center;
+        width: 280px;
+        max-width: 100%;
+        height: 108px;
+    }
+
+    .nn-markdownpoint-file,
+    .is-mobile .nn-markdownpoint-file {
+        display: block;
+        top: 10px;
+        height: 88px;
+    }
+
+    .nn-markdownpoint-slide {
+        width: 176px;
+    }
 }
 /* Source: src/styles/sections/settings-sponsor-button.css */
 

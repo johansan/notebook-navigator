@@ -2647,10 +2647,29 @@ export const STRINGS_ZH_CN = {
                 buttonText: '❤️ 赞助',
                 coffeeButton: '☕️ 请我喝咖啡'
             },
-            otherPlugins: {
-                name: '看看我的其他插件',
-                betterPaste: '整理粘贴的文本、链接和图片',
-                pixelPerfectImage: '精确的图片缩放等'
+            markdownPointBanner: {
+                credit: '作者：Johan Sanneblad',
+                messages: [
+                    { headline: 'Markdown 幻灯片，不用写代码。', subtext: '桌面编辑器：拖拽、吸附、加动画。' },
+                    { headline: 'PowerPoint 的免费替代品。', subtext: '免费使用，免费分享，免费协作。' },
+                    { headline: '动态图形，直接在幻灯片上做。', subtext: '关键帧、路径、变形，每页都能用。' },
+                    { headline: '像 Google Slides 一样协同编辑。', subtext: '指针和评论，用免费账号即可。' },
+                    { headline: '用大纲写整份演示文稿。', subtext: '每页的文字集中在一处，都是 Markdown。' },
+                    { headline: 'Figma 式吸附，用在幻灯片上。', subtext: '间距相等，尺寸与角度一致。' },
+                    { headline: '==高亮== 这里也能用。', subtext: '**粗体**、*斜体*、~~删除线~~ 也一样。' },
+                    { headline: '内置 20 套幻灯片设计。', subtext: '挑一套就能写。Mac 和 Windows 都免费。' },
+                    { headline: 'Obsidian 的习惯，漂亮的幻灯片。', subtext: '用 Markdown 写好，再点“Present”。' },
+                    { headline: 'After Effects 不用开了。', subtext: '在幻灯片上做动画，导出 4K 视频。' },
+                    { headline: '演讲者备注，就是普通笔记。', subtext: '用 Markdown 写，和幻灯片存在同一个文件里。' },
+                    { headline: '演示文稿就是磁盘里的文件夹。', subtext: 'Markdown 和 YAML 文件，无需账号。' },
+                    { headline: '代码块，和笔记里一样。', subtext: '围栏标记，语法高亮，支持 21 种语言。' },
+                    { headline: '发链接，不发 200 MB 的文件。', subtext: '用免费账号把演示文稿发布到网上。' },
+                    { headline: '能 diff 的幻灯片。', subtext: '文本文件，在 Git 里如鱼得水。' },
+                    { headline: '你的 Mermaid 图表，放到幻灯片上。', subtext: 'mermaid 代码块直接变成图表。' },
+                    { headline: '你已经在用 Markdown 写作了。', subtext: '现在也用它写幻灯片吧。' },
+                    { headline: '像笔记一样同步的幻灯片。', subtext: '存在 Dropbox、iCloud Drive 或 OneDrive。' },
+                    { headline: '一款桌面演示应用。免费。', subtext: '没有订阅，没有应用内购买。' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: '启动时检查新版本',

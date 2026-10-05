@@ -30,10 +30,8 @@ export const ICON_ASSETS_REPOSITORY_URL = `https://github.com/${NOTEBOOK_NAVIGAT
 
 export const WELCOME_VIDEO_URL = 'https://www.youtube.com/watch?v=m2maDNtho7Y';
 
-/** Opens a plugin's page in Obsidian's community plugin browser. */
-export function communityPluginUrl(pluginId: string): string {
-    return `obsidian://show-plugin?id=${pluginId}`;
-}
+/** MarkdownPoint, the author's presentation app, opened from the settings banner */
+export const MARKDOWNPOINT_URL = 'https://markdownpoint.com';
 
 /** Builds a repository URL from a release banner filename, including its extension. */
 export function getReleaseBannerUrl(fileName: string): string {

@@ -2658,10 +2658,29 @@ export const STRINGS_AR = {
                 buttonText: '❤️ رعاية',
                 coffeeButton: '☕️ اشترِ لي قهوة'
             },
-            otherPlugins: {
-                name: 'اطّلع على إضافاتي الأخرى',
-                betterPaste: 'تنظيف النص والروابط والصور الملصقة',
-                pixelPerfectImage: 'تغيير حجم الصور بدقة والمزيد'
+            markdownPointBanner: {
+                credit: 'من تطوير Johan Sanneblad',
+                messages: [
+                    { headline: 'شرائح Markdown، بلا برمجة.', subtext: 'محرر لسطح المكتب: سحب ومحاذاة وتحريك.' },
+                    { headline: 'بديل مجاني لـ PowerPoint.', subtext: 'استخدام مجاني. مشاركة مجانية. تعاون مجاني.' },
+                    { headline: 'رسوم متحركة على الشريحة مباشرة.', subtext: 'إطارات مفتاحية ومسارات وتحويلات في كل شريحة.' },
+                    { headline: 'تحرير مشترك، مثل Google Slides.', subtext: 'مؤشرات وتعليقات، بحساب مجاني.' },
+                    { headline: 'اكتب عرضك كله في مخطط تفصيلي.', subtext: 'نصوص كل الشرائح في مكان واحد، بـ Markdown.' },
+                    { headline: 'محاذاة بأسلوب Figma، للشرائح.', subtext: 'مسافات متساوية، وأحجام وزوايا متطابقة.' },
+                    { headline: '==التمييز== يعمل هنا أيضًا.', subtext: 'وكذلك **الغامق** و*المائل* و~~المشطوب~~.' },
+                    { headline: 'يتضمن عشرين تصميمًا للشرائح.', subtext: 'اختر واحدًا واكتب. مجاني على Mac وWindows.' },
+                    { headline: 'عادات Obsidian، شرائح جميلة.', subtext: 'اكتب بـ Markdown، ثم اضغط Present.' },
+                    { headline: 'دع After Effects مغلقًا.', subtext: 'أضف الحركة على الشريحة. صدّر فيديو 4K.' },
+                    { headline: 'ملاحظات المتحدث مجرد ملاحظات.', subtext: 'بـ Markdown، ومحفوظة في ملف الشرائح نفسه.' },
+                    { headline: 'عرضك التقديمي مجلد على قرصك.', subtext: 'ملفات Markdown وYAML. لا حاجة إلى حساب.' },
+                    { headline: 'كتل الكود، كما في ملاحظاتك.', subtext: 'مسيّجة وملوّنة، بـ 21 لغة برمجة.' },
+                    { headline: 'أرسل رابطًا، لا ملفًا بحجم 200 MB.', subtext: 'انشر عرضك على الإنترنت بحساب مجاني.' },
+                    { headline: 'شرائح يمكنك عمل diff لها.', subtext: 'ملفات نصية تعيش بسلام في Git.' },
+                    { headline: 'مخططاتك في Mermaid، على شريحة.', subtext: 'كتلة كود mermaid تصبح مخططًا.' },
+                    { headline: 'أنت تكتب بـ Markdown أصلًا.', subtext: 'والآن اكتب به شرائحك.' },
+                    { headline: 'شرائح تتزامن مثل ملاحظاتك.', subtext: 'احفظها في Dropbox أو iCloud Drive أو OneDrive.' },
+                    { headline: 'تطبيق عروض لسطح المكتب. مجاني.', subtext: 'بلا اشتراك. بلا مشتريات داخل التطبيق.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'التحقق من إصدار جديد عند البدء',

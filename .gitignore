@@ -27,9 +27,10 @@ AGENTS.md
 CLAUDE.md
 GEMINI.md
 
-# Ignore local build script
+# Ignore local build scripts
 scripts/build-local.sh
 scripts/build-local.ps1
+scripts/build-markdownpoint-banner.mjs
 
 # Release lock file
 .release.lock

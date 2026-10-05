@@ -2663,10 +2663,29 @@ export const STRINGS_JA = {
                 buttonText: '❤️ スポンサーになる',
                 coffeeButton: '☕️ コーヒーをおごる'
             },
-            otherPlugins: {
-                name: 'ほかのプラグインも見る',
-                betterPaste: '貼り付けたテキスト、リンク、画像を整える',
-                pixelPerfectImage: '正確な画像リサイズなど'
+            markdownPointBanner: {
+                credit: '作者：Johan Sanneblad',
+                messages: [
+                    { headline: 'コード不要の Markdown スライド。', subtext: 'デスクトップアプリで、ドラッグして揃えて動かす。' },
+                    { headline: 'PowerPoint に代わる無料アプリ。', subtext: '利用も共有も共同編集も、すべて無料。' },
+                    { headline: 'スライドにモーショングラフィック。', subtext: 'キーフレーム、パス、モーフをどのスライドでも。' },
+                    { headline: 'Google Slides のように共同編集。', subtext: 'ポインターもコメントも。無料アカウントで。' },
+                    { headline: 'プレゼン全体をアウトラインで書く。', subtext: '全スライドのテキストを、Markdown で一か所に。' },
+                    { headline: 'Figma 風のスナップをスライドに。', subtext: '等間隔、サイズ、角度までぴたり揃う。' },
+                    { headline: '==ハイライト== もそのまま使える。', subtext: '**太字** も *斜体* も ~~取り消し線~~ も。' },
+                    { headline: '20種類のスライドデザインを収録。', subtext: '選んで書くだけ。Mac と Windows で無料。' },
+                    { headline: 'Obsidian の感覚で美しいスライド。', subtext: 'Markdown で書いて、「Present」を押すだけ。' },
+                    { headline: 'After Effects は閉じたままで。', subtext: 'スライド上でアニメーション。4K動画で書き出し。' },
+                    { headline: '発表者ノートは、ただのノート。', subtext: 'Markdown で、スライドと同じファイルに保存。' },
+                    { headline: 'プレゼンは、ディスク上のフォルダ。', subtext: 'Markdown と YAML のファイル。アカウント不要。' },
+                    { headline: 'コードブロックも、ノートと同じ。', subtext: 'フェンスで囲めば、21言語をハイライト。' },
+                    { headline: '200 MB のファイルよりリンク一つ。', subtext: '無料アカウントでプレゼンをウェブに公開。' },
+                    { headline: '差分が取れるスライド。', subtext: 'Git と相性のいいテキストファイル。' },
+                    { headline: 'Mermaid の図を、スライドに。', subtext: 'mermaid のコードブロックが、そのまま図に。' },
+                    { headline: 'もう Markdown で書いていますよね。', subtext: 'これからはスライドも Markdown で。' },
+                    { headline: 'ノートのように同期するスライド。', subtext: 'Dropbox、iCloud Drive、OneDrive に保存。' },
+                    { headline: 'パソコン用のプレゼンアプリ。無料。', subtext: 'サブスクなし。アプリ内課金もなし。' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: '起動時に新しいバージョンを確認',

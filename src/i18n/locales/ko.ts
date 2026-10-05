@@ -2657,10 +2657,29 @@ export const STRINGS_KO = {
                 buttonText: '❤️ 후원하기',
                 coffeeButton: '☕️ 커피 한 잔 사주기'
             },
-            otherPlugins: {
-                name: '제가 만든 다른 플러그인 보기',
-                betterPaste: '붙여넣은 텍스트, 링크, 이미지를 정리',
-                pixelPerfectImage: '정확한 이미지 크기 조정 등'
+            markdownPointBanner: {
+                credit: '제작: Johan Sanneblad',
+                messages: [
+                    { headline: 'Markdown 슬라이드, 코딩 없이.', subtext: '데스크톱 편집기에서 드래그, 스냅, 애니메이션.' },
+                    { headline: 'PowerPoint의 무료 대안.', subtext: '사용도, 공유도, 공동 작업도 무료.' },
+                    { headline: '슬라이드 위에서 바로 모션 그래픽.', subtext: '모든 슬라이드에 키프레임, 경로, 모핑.' },
+                    { headline: 'Google Slides처럼 함께 편집.', subtext: '포인터와 댓글까지, 무료 계정으로.' },
+                    { headline: '발표 자료 전체를 개요로 쓰세요.', subtext: '모든 슬라이드의 글을 한곳에, Markdown으로.' },
+                    { headline: 'Figma 같은 스냅을 슬라이드에서.', subtext: '간격은 균등하게, 크기와 각도는 똑같이.' },
+                    { headline: '==하이라이트==도 그대로 됩니다.', subtext: '**굵게**, *기울임*, ~~취소선~~도 마찬가지.' },
+                    { headline: '슬라이드 디자인 20종, 기본 제공.', subtext: '골라서 쓰기만 하세요. Mac과 Windows에서 무료.' },
+                    { headline: 'Obsidian 하던 대로, 멋진 슬라이드.', subtext: 'Markdown으로 쓰고 “Present”를 누르세요.' },
+                    { headline: 'After Effects는 닫아 두세요.', subtext: '슬라이드에서 애니메이션, 4K 영상 내보내기.' },
+                    { headline: '발표자 노트는 그냥 노트예요.', subtext: 'Markdown으로, 슬라이드와 같은 파일에 저장.' },
+                    { headline: '발표 자료는 디스크 속 폴더 하나.', subtext: 'Markdown과 YAML 파일. 계정 필요 없음.' },
+                    { headline: '코드 블록도 노트와 똑같이.', subtext: '펜스로 감싸고, 21개 언어 구문 강조.' },
+                    { headline: '200 MB 파일 말고 링크를 보내세요.', subtext: '무료 계정으로 발표 자료를 웹에 게시하세요.' },
+                    { headline: 'diff할 수 있는 슬라이드.', subtext: 'Git과 잘 어울리는 텍스트 파일.' },
+                    { headline: 'Mermaid 다이어그램을 슬라이드에.', subtext: 'mermaid 코드 블록이 다이어그램이 됩니다.' },
+                    { headline: '이미 Markdown으로 쓰고 계시죠.', subtext: '이제 슬라이드도 Markdown으로 쓰세요.' },
+                    { headline: '노트처럼 동기화되는 슬라이드.', subtext: 'Dropbox, iCloud Drive, OneDrive에 보관하세요.' },
+                    { headline: '데스크톱 프레젠테이션 앱. 무료.', subtext: '구독 없음. 인앱 결제 없음.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: '시작 시 새 버전 확인',

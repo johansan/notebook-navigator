@@ -2671,10 +2671,29 @@ export const STRINGS_NL = {
                 buttonText: '❤️ Sponsor',
                 coffeeButton: '☕️ Koop me een koffie'
             },
-            otherPlugins: {
-                name: 'Bekijk mijn andere plugins',
-                betterPaste: 'Ruimt geplakte tekst, links en afbeeldingen op',
-                pixelPerfectImage: 'Exact afbeeldingen schalen en meer'
+            markdownPointBanner: {
+                credit: 'door Johan Sanneblad',
+                messages: [
+                    { headline: 'Slides in Markdown, zonder code.', subtext: 'Desktopeditor: slepen, uitlijnen en animeren.' },
+                    { headline: 'Gratis alternatief voor PowerPoint.', subtext: 'Gratis gebruiken, delen en samenwerken.' },
+                    { headline: 'Motion graphics op de slide zelf.', subtext: 'Keyframes, paden en morphs op elke slide.' },
+                    { headline: 'Samenwerken zoals in Google Slides.', subtext: 'Cursors en reacties, met een gratis account.' },
+                    { headline: 'Schrijf alles in één overzicht.', subtext: 'De tekst van alle slides samen, in Markdown.' },
+                    { headline: 'Figma-achtig snappen, voor slides.', subtext: 'Gelijke afstanden, maten en hoeken.' },
+                    { headline: '==Markeringen== werken hier ook.', subtext: 'Net als **vet**, *cursief* en ~~doorgehaald~~.' },
+                    { headline: 'Twintig slide-ontwerpen inbegrepen.', subtext: 'Kies er een en schrijf. Gratis op Mac en Windows.' },
+                    { headline: 'Obsidian-gewoontes, mooie slides.', subtext: 'Schrijf in Markdown, klik dan op "Present".' },
+                    { headline: 'Laat After Effects lekker dicht.', subtext: 'Animeer op de slide. Exporteer 4K-video.' },
+                    { headline: 'Sprekersnotities? Gewoon notities.', subtext: 'Markdown, in hetzelfde bestand als de slides.' },
+                    { headline: 'Je slides zijn een map op je schijf.', subtext: 'Markdown en YAML. Geen account nodig.' },
+                    { headline: 'Codeblokken, zoals in je notities.', subtext: 'Afgebakend, met syntaxiskleuring in 21 talen.' },
+                    { headline: 'Een link, geen bestand van 200 MB.', subtext: 'Zet je slides online met een gratis account.' },
+                    { headline: 'Slides die je kunt diffen.', subtext: 'Tekstbestanden die zich thuis voelen in Git.' },
+                    { headline: 'Mermaid-diagrammen op je slides.', subtext: 'Een mermaid-codeblok wordt een diagram.' },
+                    { headline: 'Je schrijft al in Markdown.', subtext: 'Schrijf er nu ook je slides in.' },
+                    { headline: 'Slides die syncen als je notities.', subtext: 'Bewaar ze in Dropbox, iCloud Drive of OneDrive.' },
+                    { headline: 'Een desktopapp voor slides. Gratis.', subtext: 'Geen abonnement. Geen in-app-aankopen.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Controleren op nieuwe versie bij opstarten',

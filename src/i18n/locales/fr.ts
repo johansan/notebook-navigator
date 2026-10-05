@@ -2675,10 +2675,29 @@ export const STRINGS_FR = {
                 buttonText: '❤️ Sponsoriser',
                 coffeeButton: '☕️ Offrez-moi un café'
             },
-            otherPlugins: {
-                name: 'Découvrez mes autres plugins',
-                betterPaste: 'Nettoie le texte, les liens et les images collés',
-                pixelPerfectImage: 'Redimensionnement exact des images et plus'
+            markdownPointBanner: {
+                credit: 'par Johan Sanneblad',
+                messages: [
+                    { headline: 'Diapos en Markdown, sans coder.', subtext: 'Éditeur de bureau : glissez, alignez, animez.' },
+                    { headline: 'Alternative gratuite à PowerPoint.', subtext: 'Usage, partage et collaboration gratuits.' },
+                    { headline: 'Motion design, à même la diapo.', subtext: 'Keyframes, tracés et morphs sur chaque diapo.' },
+                    { headline: 'Coédition façon Google Slides.', subtext: 'Curseurs et commentaires, avec compte gratuit.' },
+                    { headline: 'Rédigez vos diapos en mode plan.', subtext: 'Le texte de chaque diapo, réuni en Markdown.' },
+                    { headline: 'Magnétisme Figma, version diapo.', subtext: 'Écarts égaux, mêmes tailles, mêmes angles.' },
+                    { headline: 'Le ==surlignage== marche aussi.', subtext: 'Tout comme **gras**, *italique* et ~~barré~~.' },
+                    { headline: 'Vingt designs de diapos inclus.', subtext: 'Choisissez, écrivez. Gratuit sur Mac et Windows.' },
+                    { headline: 'Réflexes Obsidian, belles diapos.', subtext: 'Écrivez en Markdown. Appuyez sur « Present ».' },
+                    { headline: 'Laissez After Effects fermé.', subtext: 'Animez sur la diapo. Exportez en vidéo 4K.' },
+                    { headline: 'Notes du présentateur ? Des notes.', subtext: 'En Markdown, dans le fichier des diapos.' },
+                    { headline: 'Un dossier local par présentation.', subtext: 'Fichiers Markdown et YAML. Sans compte.' },
+                    { headline: 'Blocs de code comme dans vos notes.', subtext: 'Délimités et colorés, en 21 langages.' },
+                    { headline: 'Un lien, pas un fichier de 200 Mo.', subtext: 'Vos diapos en ligne, avec un compte gratuit.' },
+                    { headline: 'Faites un diff de vos diapos.', subtext: 'Des fichiers texte qui se plaisent dans Git.' },
+                    { headline: 'Vos diagrammes Mermaid en diapo.', subtext: 'Un bloc de code mermaid devient un diagramme.' },
+                    { headline: 'Vous écrivez déjà en Markdown.', subtext: 'Maintenant, écrivez-y vos diapos.' },
+                    { headline: 'Diapos synchro, comme vos notes.', subtext: 'Sur Dropbox, iCloud Drive ou OneDrive.' },
+                    { headline: 'Logiciel de présentation. Gratuit.', subtext: 'Sans abonnement. Sans achats intégrés.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Vérifier les nouvelles versions au démarrage',

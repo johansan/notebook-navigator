@@ -2655,10 +2655,29 @@ export const STRINGS_TH = {
                 buttonText: '❤️ สปอนเซอร์',
                 coffeeButton: '☕️ เลี้ยงกาแฟ'
             },
-            otherPlugins: {
-                name: 'ดูปลั๊กอินอื่นของฉัน',
-                betterPaste: 'จัดระเบียบข้อความ ลิงก์ และรูปภาพที่วาง',
-                pixelPerfectImage: 'ปรับขนาดภาพได้แม่นยำและอื่น ๆ'
+            markdownPointBanner: {
+                credit: 'โดย Johan Sanneblad',
+                messages: [
+                    { headline: 'สไลด์ Markdown ไม่ต้องเขียนโค้ด', subtext: 'แอปแก้ไขบนเดสก์ท็อป ลาก สแนป และใส่แอนิเมชัน' },
+                    { headline: 'ทางเลือกฟรีแทน PowerPoint', subtext: 'ใช้ฟรี แชร์ฟรี ทำงานร่วมกันฟรี' },
+                    { headline: 'โมชันกราฟิก ทำบนสไลด์ได้เลย', subtext: 'คีย์เฟรม พาธ และมอร์ฟ ใช้ได้ทุกสไลด์' },
+                    { headline: 'แก้ไขร่วมกัน เหมือน Google Slides', subtext: 'ตัวชี้และความคิดเห็น ด้วยบัญชีฟรี' },
+                    { headline: 'เขียนงานนำเสนอทั้งชุดเป็นเค้าร่าง', subtext: 'ข้อความทุกสไลด์อยู่ในที่เดียว เป็น Markdown' },
+                    { headline: 'สแนปแบบ Figma สำหรับสไลด์', subtext: 'ระยะห่างเท่ากัน ขนาดและมุมตรงกัน' },
+                    { headline: '==ไฮไลต์== ใช้ที่นี่ได้ด้วย', subtext: '**ตัวหนา** *ตัวเอียง* และ ~~ขีดทับ~~ ก็เช่นกัน' },
+                    { headline: 'ดีไซน์สไลด์ 20 แบบ มีให้ในตัว', subtext: 'เลือกแล้วเขียนได้เลย ฟรีบน Mac และ Windows' },
+                    { headline: 'คุ้นมือแบบ Obsidian ได้สไลด์สวย', subtext: 'เขียนด้วย Markdown แล้วกด “Present”' },
+                    { headline: 'ปิด After Effects ไว้ได้เลย', subtext: 'ทำแอนิเมชันบนสไลด์ ส่งออกวิดีโอ 4K' },
+                    { headline: 'โน้ตผู้บรรยาย ก็คือโน้ตธรรมดา', subtext: 'เป็น Markdown เก็บในไฟล์เดียวกับสไลด์' },
+                    { headline: 'งานนำเสนอคือโฟลเดอร์ในดิสก์ของคุณ', subtext: 'ไฟล์ Markdown และ YAML ไม่ต้องมีบัญชี' },
+                    { headline: 'บล็อกโค้ด เหมือนในโน้ตของคุณ', subtext: 'ครอบด้วย ``` และไฮไลต์ได้ 21 ภาษา' },
+                    { headline: 'ส่งลิงก์ ไม่ใช่ไฟล์ 200 MB', subtext: 'เผยแพร่งานนำเสนอออนไลน์ด้วยบัญชีฟรี' },
+                    { headline: 'สไลด์ที่ diff ได้', subtext: 'ไฟล์ข้อความที่เข้ากับ Git ได้ดี' },
+                    { headline: 'ไดอะแกรม Mermaid ของคุณ บนสไลด์', subtext: 'บล็อกโค้ด mermaid กลายเป็นไดอะแกรม' },
+                    { headline: 'คุณเขียน Markdown อยู่แล้ว', subtext: 'ทีนี้ใช้เขียนสไลด์ได้ด้วย' },
+                    { headline: 'สไลด์ที่ซิงค์ได้เหมือนโน้ตของคุณ', subtext: 'เก็บใน Dropbox, iCloud Drive หรือ OneDrive' },
+                    { headline: 'แอปนำเสนอบนเดสก์ท็อป ฟรี', subtext: 'ไม่ต้องสมัครสมาชิก ไม่มีการซื้อในแอป' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'ตรวจสอบเวอร์ชันใหม่เมื่อเริ่ม',

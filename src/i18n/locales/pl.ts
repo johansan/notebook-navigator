@@ -2671,10 +2671,29 @@ export const STRINGS_PL = {
                 buttonText: '❤️ Wesprzyj',
                 coffeeButton: '☕️ Postaw kawę'
             },
-            otherPlugins: {
-                name: 'Zobacz moje inne wtyczki',
-                betterPaste: 'Czyści wklejany tekst, odnośniki i obrazy',
-                pixelPerfectImage: 'Dokładna zmiana rozmiaru obrazów i więcej'
+            markdownPointBanner: {
+                credit: 'od Johana Sanneblada',
+                messages: [
+                    { headline: 'Slajdy w Markdown, bez kodowania.', subtext: 'Na komputer: przeciągaj, przyciągaj, animuj.' },
+                    { headline: 'Darmowa alternatywa dla PowerPoint.', subtext: 'Używaj, udostępniaj i współpracuj za darmo.' },
+                    { headline: 'Motion graphics prosto na slajdzie.', subtext: 'Klatki kluczowe, ścieżki i morfing na slajdach.' },
+                    { headline: 'Wspólna edycja jak w Google Slides.', subtext: 'Kursory i komentarze z darmowym kontem.' },
+                    { headline: 'Pisz prezentację jako konspekt.', subtext: 'Tekst slajdów w jednym miejscu, w Markdown.' },
+                    { headline: 'Slajdy z przyciąganiem jak w Figma.', subtext: 'Równe odstępy, rozmiary i kąty.' },
+                    { headline: '==Wyróżnienia== działają i tutaj.', subtext: '**Pogrubienie**, *kursywa* i ~~skreślenie~~ też.' },
+                    { headline: 'Dwadzieścia motywów slajdów.', subtext: 'Wybierz i pisz. Za darmo na Mac i Windows.' },
+                    { headline: 'Nawyki z Obsidian, piękne slajdy.', subtext: 'Pisz w Markdown, potem kliknij „Present”.' },
+                    { headline: 'Nie musisz otwierać After Effects.', subtext: 'Animuj na slajdzie. Eksportuj wideo 4K.' },
+                    { headline: 'Notatki prelegenta? Zwykłe notatki.', subtext: 'W Markdown, w tym samym pliku co slajdy.' },
+                    { headline: 'Prezentacja to folder na dysku.', subtext: 'Pliki Markdown i YAML. Konto niepotrzebne.' },
+                    { headline: 'Bloki kodu jak w twoich notatkach.', subtext: 'Wydzielone i podświetlone, w 21 językach.' },
+                    { headline: 'Wyślij link, nie plik 200 MB.', subtext: 'Publikuj prezentację z darmowym kontem.' },
+                    { headline: 'Slajdy, które da się diffować.', subtext: 'Pliki tekstowe, które świetnie działają z Git.' },
+                    { headline: 'Twoje diagramy Mermaid na slajdzie.', subtext: 'Blok kodu mermaid staje się diagramem.' },
+                    { headline: 'Już piszesz w Markdown.', subtext: 'Teraz pisz w nim także slajdy.' },
+                    { headline: 'Slajdy synchronizują się jak notatki.', subtext: 'Trzymaj je w Dropbox, iCloud Drive lub OneDrive.' },
+                    { headline: 'Program do prezentacji. Darmowy.', subtext: 'Bez subskrypcji. Bez zakupów w aplikacji.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Sprawdź nową wersję podczas uruchamiania',

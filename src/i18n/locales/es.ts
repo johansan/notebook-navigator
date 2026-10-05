@@ -2674,10 +2674,29 @@ export const STRINGS_ES = {
                 buttonText: '❤️ Patrocinar',
                 coffeeButton: '☕️ Invítame a un café'
             },
-            otherPlugins: {
-                name: 'Descubre mis otros plugins',
-                betterPaste: 'Limpia el texto, los enlaces y las imágenes que pegas',
-                pixelPerfectImage: 'Cambio de tamaño exacto de imágenes y más'
+            markdownPointBanner: {
+                credit: 'por Johan Sanneblad',
+                messages: [
+                    { headline: 'Diapositivas Markdown, sin código.', subtext: 'Editor de escritorio: arrastra, encaja, anima.' },
+                    { headline: 'Una alternativa gratis a PowerPoint.', subtext: 'Úsalo gratis. Comparte gratis. Colabora gratis.' },
+                    { headline: 'Motion graphics en cada diapositiva.', subtext: 'Fotogramas clave, trayectorias y morphs.' },
+                    { headline: 'Coedición al estilo Google Slides.', subtext: 'Punteros y comentarios, con una cuenta gratis.' },
+                    { headline: 'Escribe tus diapos como esquema.', subtext: 'Todo el texto en un solo lugar, en Markdown.' },
+                    { headline: 'Ajuste tipo Figma, para diapositivas.', subtext: 'Espaciado igual, mismos tamaños y ángulos.' },
+                    { headline: 'El ==resaltado== también funciona.', subtext: 'Igual que **negrita**, *cursiva* y ~~tachado~~.' },
+                    { headline: 'Veinte diseños de diapos, incluidos.', subtext: 'Elige uno y escribe. Gratis para Mac y Windows.' },
+                    { headline: 'Hábitos de Obsidian, diapos bonitas.', subtext: 'Escribe en Markdown y luego pulsa «Present».' },
+                    { headline: 'Deja After Effects cerrado.', subtext: 'Anima en la diapositiva. Exporta vídeo 4K.' },
+                    { headline: '¿Notas del orador? Solo notas.', subtext: 'Markdown, en el mismo archivo que las diapos.' },
+                    { headline: 'Tu presentación: una carpeta local.', subtext: 'Archivos Markdown y YAML. Sin cuenta.' },
+                    { headline: 'Bloques de código como en tus notas.', subtext: 'Delimitados y resaltados, en 21 lenguajes.' },
+                    { headline: 'Un enlace, no un archivo de 200 MB.', subtext: 'Tu presentación online, con una cuenta gratis.' },
+                    { headline: 'Haz diff de tus diapositivas.', subtext: 'Archivos de texto que viven a gusto en Git.' },
+                    { headline: 'Tus diagramas Mermaid en la diapo.', subtext: 'Un bloque mermaid se convierte en diagrama.' },
+                    { headline: 'Ya escribes en Markdown.', subtext: 'Ahora, también tus diapositivas.' },
+                    { headline: 'Diapos sincronizadas como tus notas.', subtext: 'Guárdalas en Dropbox, iCloud Drive o OneDrive.' },
+                    { headline: 'Programa de presentaciones. Gratis.', subtext: 'Sin suscripción. Sin compras dentro de la app.' }
+                ]
             },
             checkForNewVersionOnStart: {
                 name: 'Buscar nueva versión al iniciar',
