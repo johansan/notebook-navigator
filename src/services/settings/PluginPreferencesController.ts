@@ -488,7 +488,7 @@ export class PluginPreferencesController {
             localStorageKey: this.options.keys.navItemHeightKey,
             rawValue: height,
             min: 20,
-            max: 28,
+            max: 40,
             fallback: DEFAULT_SETTINGS.navItemHeight
         });
     }
@@ -541,7 +541,7 @@ export class PluginPreferencesController {
             localStorageKey: this.options.keys.compactItemHeightKey,
             rawValue: height,
             min: 20,
-            max: 28,
+            max: 40,
             fallback: DEFAULT_SETTINGS.compactItemHeight
         });
     }

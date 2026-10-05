@@ -106,6 +106,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.4.4',
+        date: '2026-10-05',
+        showOnUpdate: false,
+        improved: [
+            'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.'
+        ]
+    },
+    {
         version: '3.4.3',
         date: '2026-09-24',
         showOnUpdate: true,

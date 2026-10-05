@@ -121,7 +121,7 @@ function parseNavItemHeight(value: unknown): number | null {
         return null;
     }
     const rounded = Math.round(parsed);
-    if (rounded < 20 || rounded > 28) {
+    if (rounded < 20 || rounded > 40) {
         return null;
     }
     return rounded;
@@ -155,7 +155,7 @@ function parseCompactItemHeight(value: unknown): number | null {
         return null;
     }
     const rounded = Math.round(parsed);
-    if (rounded < 20 || rounded > 28) {
+    if (rounded < 20 || rounded > 40) {
         return null;
     }
     return rounded;

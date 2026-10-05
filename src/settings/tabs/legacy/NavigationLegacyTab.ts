@@ -244,7 +244,7 @@ export function renderNavigationPaneTab(context: SettingsTabContext): void {
             value: plugin.settings.navItemHeight,
             defaultValue: DEFAULT_SETTINGS.navItemHeight,
             min: 20,
-            max: 28,
+            max: 40,
             step: 1,
             formatValue: formatPixelSliderValue,
             onChange: value => {

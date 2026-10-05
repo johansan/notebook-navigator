@@ -1142,7 +1142,7 @@ export class PluginSettingsController {
     }
 
     private sanitizeNavItemHeightSetting(value: unknown): number {
-        return this.sanitizeBoundedIntegerSetting(value, { min: 20, max: 28, fallback: DEFAULT_SETTINGS.navItemHeight });
+        return this.sanitizeBoundedIntegerSetting(value, { min: 20, max: 40, fallback: DEFAULT_SETTINGS.navItemHeight });
     }
 
     private sanitizeCalendarPlacementSetting(value: unknown): CalendarPlacement {
@@ -1167,7 +1167,7 @@ export class PluginSettingsController {
     }
 
     private sanitizeCompactItemHeightSetting(value: unknown): number {
-        return this.sanitizeBoundedIntegerSetting(value, { min: 20, max: 28, fallback: DEFAULT_SETTINGS.compactItemHeight });
+        return this.sanitizeBoundedIntegerSetting(value, { min: 20, max: 40, fallback: DEFAULT_SETTINGS.compactItemHeight });
     }
 
     private sanitizeFeatureImageSizeSetting(value: unknown): NotebookNavigatorSettings['featureImageSize'] {

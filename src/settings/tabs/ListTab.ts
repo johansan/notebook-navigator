@@ -722,7 +722,7 @@ function renderCompactItemHeightSetting(setting: Setting, context: SettingsTabCo
         value: plugin.settings.compactItemHeight,
         defaultValue: DEFAULT_SETTINGS.compactItemHeight,
         min: 20,
-        max: 28,
+        max: 40,
         step: 1,
         resetTooltip: strings.settings.items.compactItemHeight.resetTooltip,
         formatValue: formatPixelSliderValue,
