@@ -2671,7 +2671,7 @@ export const STRINGS_EN = {
                     { headline: 'Put code on your slides.', subtext: 'Code blocks are highlighted in 21 languages.' },
                     { headline: 'Share a deck with a link.', subtext: 'Publish it online with a free account.' },
                     { headline: 'Track your decks in Git.', subtext: 'Decks are Markdown and YAML text files.' },
-                    { headline: 'Mermaid diagrams – finally.', subtext: 'A mermaid code block is drawn as a diagram.' },
+                    { headline: 'Make flowcharts from text.', subtext: 'Write Mermaid code and get a diagram.' },
                     { headline: 'Keep your decks in a synced folder.', subtext: 'Dropbox, iCloud Drive and OneDrive all work.' },
                     { headline: 'Free for personal and commercial use.', subtext: 'Download it for Mac or Windows.' }
                 ]

@@ -2674,7 +2674,7 @@ export const STRINGS_AR = {
                     { headline: 'ضع الكود على شرائحك.', subtext: 'كتل الكود ملوّنة لـ 21 لغة برمجة.' },
                     { headline: 'شارك عرضك برابط.', subtext: 'انشره على الإنترنت بحساب مجاني.' },
                     { headline: 'تتبّع عروضك في Git.', subtext: 'العروض ملفات نصية بصيغة Markdown وYAML.' },
-                    { headline: 'مخططات Mermaid – أخيرًا.', subtext: 'كتلة كود mermaid تُرسم مخططًا.' },
+                    { headline: 'أنشئ مخططات انسيابية من النص.', subtext: 'اكتب كود Mermaid واحصل على مخطط.' },
                     { headline: 'احفظ عروضك في مجلد متزامن.', subtext: 'تعمل مع Dropbox وiCloud Drive وOneDrive.' },
                     { headline: 'مجاني للاستخدام الشخصي والتجاري.', subtext: 'نزّله لـ Mac أو Windows.' }
                 ]

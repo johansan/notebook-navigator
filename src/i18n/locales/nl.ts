@@ -2687,7 +2687,7 @@ export const STRINGS_NL = {
                     { headline: 'Zet code op je slides.', subtext: 'Code krijgt syntaxiskleuring in 21 talen.' },
                     { headline: 'Deel een presentatie met een link.', subtext: 'Zet hem online met een gratis account.' },
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en YAML-tekstbestanden.' },
-                    { headline: 'Mermaid-diagrammen – eindelijk.', subtext: 'Een mermaid-codeblok wordt een diagram.' },
+                    { headline: 'Maak stroomdiagrammen van tekst.', subtext: 'Schrijf Mermaid-code en krijg een diagram.' },
                     { headline: 'Gebruik een gesynchroniseerde map.', subtext: 'Dropbox, iCloud Drive en OneDrive werken.' },
                     { headline: 'Gratis voor privé en zakelijk gebruik.', subtext: 'Download het voor Mac of Windows.' }
                 ]

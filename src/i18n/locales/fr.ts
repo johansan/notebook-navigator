@@ -2691,7 +2691,7 @@ export const STRINGS_FR = {
                     { headline: 'Mettez du code sur vos diapos.', subtext: 'Les blocs de code sont colorés en 21 langages.' },
                     { headline: 'Partagez une présentation par lien.', subtext: 'Publiez-la en ligne avec un compte gratuit.' },
                     { headline: 'Versionnez vos présentations avec Git.', subtext: 'Ce sont des fichiers texte Markdown et YAML.' },
-                    { headline: 'Les diagrammes Mermaid – enfin.', subtext: 'Un bloc de code mermaid devient un diagramme.' },
+                    { headline: 'Créez des organigrammes en texte.', subtext: 'Écrivez du Mermaid et obtenez un diagramme.' },
                     { headline: 'Utilisez un dossier synchronisé.', subtext: 'Dropbox, iCloud Drive et OneDrive fonctionnent.' },
                     { headline: 'Gratuit pour un usage perso et pro.', subtext: 'Téléchargez-le pour Mac ou Windows.' }
                 ]

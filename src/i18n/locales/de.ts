@@ -2688,7 +2688,7 @@ export const STRINGS_DE = {
                     { headline: 'Zeig Code auf deinen Folien.', subtext: 'Code wird in 21 Sprachen hervorgehoben.' },
                     { headline: 'Teile Präsentationen per Link.', subtext: 'Stell sie mit einem Gratis-Konto online.' },
                     { headline: 'Verwalte deine Präsentationen in Git.', subtext: 'Es sind Markdown- und YAML-Textdateien.' },
-                    { headline: 'Mermaid-Diagramme – endlich.', subtext: 'Ein mermaid-Codeblock wird zum Diagramm.' },
+                    { headline: 'Erstelle Flussdiagramme aus Text.', subtext: 'Schreib Mermaid-Code und erhalte ein Diagramm.' },
                     { headline: 'Nutze einen synchronisierten Ordner.', subtext: 'Dropbox, iCloud Drive und OneDrive funktionieren.' },
                     { headline: 'Privat und beruflich gratis.', subtext: 'Lade es für Mac oder Windows herunter.' }
                 ]

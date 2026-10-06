@@ -2678,7 +2678,7 @@ export const STRINGS_TR = {
                     { headline: 'Slaytlarınıza kod ekleyin.', subtext: 'Kod blokları 21 dil için renklendirilir.' },
                     { headline: 'Sunumunuzu bir bağlantıyla paylaşın.', subtext: "Ücretsiz bir hesapla web'de yayınlayın." },
                     { headline: "Sunumlarınızı Git'te takip edin.", subtext: 'Sunumlar Markdown ve YAML metin dosyalarıdır.' },
-                    { headline: 'Mermaid diyagramları – nihayet.', subtext: 'Bir mermaid kod bloğu diyagram olarak çizilir.' },
+                    { headline: 'Metinden akış şemaları oluşturun.', subtext: 'Mermaid kodu yazın ve diyagramı alın.' },
                     { headline: 'Sunumlarınızı eşitlenen klasörde tutun.', subtext: 'Dropbox, iCloud Drive ve OneDrive ile çalışır.' },
                     { headline: 'Kişisel ve ticari kullanım için ücretsiz.', subtext: 'Mac veya Windows için indirin.' }
                 ]

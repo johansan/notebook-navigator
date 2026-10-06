@@ -2663,7 +2663,7 @@ export const STRINGS_ZH_TW = {
                     { headline: '把程式碼放上投影片。', subtext: '程式碼區塊支援 21 種語言的語法突顯。' },
                     { headline: '用連結分享簡報。', subtext: '用免費帳號發布到網路上。' },
                     { headline: '用 Git 管理你的簡報。', subtext: '簡報就是 Markdown 和 YAML 純文字檔。' },
-                    { headline: '終於可以用 Mermaid 圖表了。', subtext: 'mermaid 程式碼區塊會繪製成圖表。' },
+                    { headline: '用文字畫流程圖。', subtext: '寫下 Mermaid 程式碼就能產生圖表。' },
                     { headline: '把簡報放在同步資料夾裡。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '個人和商業用途都免費。', subtext: '下載 Mac 版或 Windows 版。' }
                 ]

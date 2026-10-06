@@ -2683,7 +2683,7 @@ export const STRINGS_IT = {
                     { headline: 'Metti del codice nelle tue slide.', subtext: 'Il codice è evidenziato in 21 linguaggi.' },
                     { headline: 'Condividi le slide con un link.', subtext: 'Pubblicale online con un account gratuito.' },
                     { headline: 'Versiona le presentazioni con Git.', subtext: 'Sono file di testo Markdown e YAML.' },
-                    { headline: 'Diagrammi Mermaid – finalmente.', subtext: 'Un blocco mermaid diventa un diagramma.' },
+                    { headline: 'Crea diagrammi di flusso dal testo.', subtext: 'Scrivi codice Mermaid e ottieni un diagramma.' },
                     { headline: 'Usa una cartella sincronizzata.', subtext: 'Dropbox, iCloud Drive e OneDrive funzionano.' },
                     { headline: 'Gratis per uso personale e commerciale.', subtext: 'Scaricala per Mac o Windows.' }
                 ]

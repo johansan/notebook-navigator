@@ -2679,7 +2679,7 @@ export const STRINGS_RU = {
                     { headline: 'Добавляйте код на слайды.', subtext: 'Блоки кода подсвечиваются для 21 языка.' },
                     { headline: 'Делитесь презентацией по ссылке.', subtext: 'Публикуйте её онлайн с бесплатным аккаунтом.' },
                     { headline: 'Храните версии слайдов в Git.', subtext: 'Это текстовые файлы Markdown и YAML.' },
-                    { headline: 'Диаграммы Mermaid – наконец-то.', subtext: 'Блок кода mermaid превращается в диаграмму.' },
+                    { headline: 'Создавайте блок-схемы из текста.', subtext: 'Напишите код Mermaid и получите диаграмму.' },
                     { headline: 'Держите слайды в облачной папке.', subtext: 'Работает с Dropbox, iCloud Drive и OneDrive.' },
                     { headline: 'Бесплатно для дома и работы.', subtext: 'Скачайте для Mac или Windows.' }
                 ]

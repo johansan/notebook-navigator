@@ -2685,7 +2685,7 @@ export const STRINGS_PT = {
                     { headline: 'Ponha código nos seus diapositivos.', subtext: 'O código é realçado em 21 linguagens.' },
                     { headline: 'Partilhe com uma ligação.', subtext: 'Publique-a online com uma conta gratuita.' },
                     { headline: 'Controle versões no Git.', subtext: 'São ficheiros de texto Markdown e YAML.' },
-                    { headline: 'Diagramas Mermaid – finalmente.', subtext: 'Um bloco mermaid torna-se um diagrama.' },
+                    { headline: 'Crie fluxogramas a partir de texto.', subtext: 'Escreva código Mermaid e obtenha um diagrama.' },
                     { headline: 'Guarde tudo numa pasta sincronizada.', subtext: 'Funciona com Dropbox, iCloud Drive e OneDrive.' },
                     { headline: 'Gratuito para uso pessoal e comercial.', subtext: 'Descarregue-o para Mac ou Windows.' }
                 ]

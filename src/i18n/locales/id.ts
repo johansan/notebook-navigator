@@ -2680,7 +2680,7 @@ export const STRINGS_ID = {
                     { headline: 'Tampilkan kode di slide Anda.', subtext: 'Blok kode disorot untuk 21 bahasa.' },
                     { headline: 'Bagikan presentasi dengan tautan.', subtext: 'Terbitkan online dengan akun gratis.' },
                     { headline: 'Lacak presentasi Anda di Git.', subtext: 'Presentasi berupa file teks Markdown dan YAML.' },
-                    { headline: 'Diagram Mermaid – akhirnya.', subtext: 'Blok kode mermaid digambar sebagai diagram.' },
+                    { headline: 'Buat diagram alir dari teks.', subtext: 'Tulis kode Mermaid dan dapatkan diagramnya.' },
                     { headline: 'Simpan presentasi di folder tersinkron.', subtext: 'Bisa dengan Dropbox, iCloud Drive, atau OneDrive.' },
                     { headline: 'Gratis untuk pribadi dan komersial.', subtext: 'Unduh untuk Mac atau Windows.' }
                 ]

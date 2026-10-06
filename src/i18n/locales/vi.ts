@@ -2678,7 +2678,7 @@ export const STRINGS_VI = {
                     { headline: 'Đưa code lên slide của bạn.', subtext: 'Khối code được tô màu cú pháp cho 21 ngôn ngữ.' },
                     { headline: 'Chia sẻ bộ slide bằng một liên kết.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
                     { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và YAML.' },
-                    { headline: 'Sơ đồ Mermaid – cuối cùng cũng có.', subtext: 'Khối code mermaid được vẽ thành sơ đồ.' },
+                    { headline: 'Tạo lưu đồ từ văn bản.', subtext: 'Viết mã Mermaid để có sơ đồ.' },
                     { headline: 'Lưu bộ slide trong thư mục đồng bộ.', subtext: 'Dùng được với Dropbox, iCloud Drive và OneDrive.' },
                     { headline: 'Miễn phí cho cá nhân và thương mại.', subtext: 'Tải về cho Mac hoặc Windows.' }
                 ]

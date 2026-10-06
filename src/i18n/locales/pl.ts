@@ -2687,7 +2687,7 @@ export const STRINGS_PL = {
                     { headline: 'Umieść kod na slajdach.', subtext: 'Bloki kodu są podświetlane w 21 językach.' },
                     { headline: 'Udostępnij prezentację linkiem.', subtext: 'Opublikuj ją online z darmowym kontem.' },
                     { headline: 'Śledź zmiany prezentacji w Git.', subtext: 'Prezentacje to pliki tekstowe Markdown i YAML.' },
-                    { headline: 'Diagramy Mermaid – wreszcie.', subtext: 'Blok kodu mermaid jest rysowany jako diagram.' },
+                    { headline: 'Twórz schematy blokowe z tekstu.', subtext: 'Napisz kod Mermaid, a dostaniesz diagram.' },
                     { headline: 'Trzymaj prezentacje w chmurze.', subtext: 'Działa z Dropbox, iCloud Drive i OneDrive.' },
                     { headline: 'Darmowy w domu i w pracy.', subtext: 'Pobierz na Mac lub Windows.' }
                 ]

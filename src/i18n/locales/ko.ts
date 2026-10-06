@@ -2673,7 +2673,7 @@ export const STRINGS_KO = {
                     { headline: '슬라이드에 코드를 넣으세요.', subtext: '코드 블록은 21개 언어의 구문 강조를 지원합니다.' },
                     { headline: '링크로 발표 자료를 공유하세요.', subtext: '무료 계정으로 웹에 게시할 수 있습니다.' },
                     { headline: '발표 자료를 Git으로 관리하세요.', subtext: '발표 자료는 Markdown과 YAML 텍스트 파일입니다.' },
-                    { headline: '드디어 Mermaid 다이어그램을 지원합니다.', subtext: 'mermaid 코드 블록이 다이어그램으로 그려집니다.' },
+                    { headline: '텍스트로 순서도를 만드세요.', subtext: 'Mermaid 코드를 쓰면 다이어그램이 됩니다.' },
                     { headline: '발표 자료를 동기화 폴더에 두세요.', subtext: 'Dropbox, iCloud Drive, OneDrive 모두 됩니다.' },
                     { headline: '개인용과 상업용 모두 무료입니다.', subtext: 'Mac 또는 Windows용으로 내려받으세요.' }
                 ]

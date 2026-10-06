@@ -2679,7 +2679,7 @@ export const STRINGS_JA = {
                     { headline: 'スライドにコードを載せられます。', subtext: 'コードは21言語でハイライトされます。' },
                     { headline: 'プレゼンをリンクで共有できます。', subtext: '無料アカウントでウェブに公開できます。' },
                     { headline: 'プレゼンを Git で管理できます。', subtext: 'Markdown と YAML のテキストファイルです。' },
-                    { headline: 'ついに Mermaid の図に対応。', subtext: 'mermaid のコードブロックが図として描かれます。' },
+                    { headline: 'テキストでフローチャートを作れます。', subtext: 'Mermaid のコードを書くと図になります。' },
                     { headline: 'プレゼンは同期フォルダに置けます。', subtext: 'Dropbox、iCloud Drive、OneDrive で使えます。' },
                     { headline: '個人でも商用でも無料です。', subtext: 'Mac 版か Windows 版をダウンロードできます。' }
                 ]

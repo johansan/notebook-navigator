@@ -2663,7 +2663,7 @@ export const STRINGS_ZH_CN = {
                     { headline: '把代码放到幻灯片上。', subtext: '代码块支持 21 种语言的语法高亮。' },
                     { headline: '用链接分享演示文稿。', subtext: '用免费账号发布到网上。' },
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 YAML 文本文件。' },
-                    { headline: '终于可以用 Mermaid 图表了。', subtext: 'mermaid 代码块会绘制成图表。' },
+                    { headline: '用文字画流程图。', subtext: '写下 Mermaid 代码即可生成图表。' },
                     { headline: '把演示文稿放在同步文件夹里。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '个人和商业用途都免费。', subtext: '下载 Mac 版或 Windows 版。' }
                 ]

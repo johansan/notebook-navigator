@@ -2671,7 +2671,7 @@ export const STRINGS_TH = {
                     { headline: 'ใส่โค้ดลงในสไลด์ของคุณ', subtext: 'บล็อกโค้ดไฮไลต์ไวยากรณ์ได้ 21 ภาษา' },
                     { headline: 'แชร์งานนำเสนอด้วยลิงก์', subtext: 'เผยแพร่ออนไลน์ด้วยบัญชีฟรี' },
                     { headline: 'ติดตามงานนำเสนอของคุณใน Git', subtext: 'งานนำเสนอเป็นไฟล์ข้อความ Markdown และ YAML' },
-                    { headline: 'ไดอะแกรม Mermaid – มาแล้วในที่สุด', subtext: 'บล็อกโค้ด mermaid จะถูกวาดเป็นไดอะแกรม' },
+                    { headline: 'สร้างผังงานจากข้อความ', subtext: 'เขียนโค้ด Mermaid แล้วจะได้ไดอะแกรม' },
                     { headline: 'เก็บงานนำเสนอไว้ในโฟลเดอร์ที่ซิงค์', subtext: 'ใช้ได้ทั้ง Dropbox, iCloud Drive และ OneDrive' },
                     { headline: 'ฟรีทั้งใช้ส่วนตัวและเชิงพาณิชย์', subtext: 'ดาวน์โหลดสำหรับ Mac หรือ Windows' }
                 ]
