@@ -64,6 +64,13 @@
     cursor: pointer;
 }
 
+/* Tinted under a mouse pointer only, so a tap on a touch screen leaves no tint behind */
+@media (hover: hover) {
+    .nn-markdownpoint-strip:hover {
+        background: color-mix(in srgb, var(--nn-markdownpoint-canvas) 89%, var(--nn-markdownpoint-text));
+    }
+}
+
 .nn-markdownpoint-strip:focus-visible {
     outline: 2px solid var(--interactive-accent);
     outline-offset: 2px;
@@ -154,14 +161,14 @@
     text-align: center;
 }
 
-/* The wordmark and the credit beside it. On the narrowest phones the credit moves under the wordmark
-   instead of being cut off. */
+/* The wordmark, the credit and the link icon, always on one line so the banner keeps its height. The
+   credit in every language fits from a banner about 330px wide on phones; below that it ends in an
+   ellipsis and the icon stays. The spacing is set per item because the icon sits closer to the credit
+   than the credit to the wordmark. */
 .nn-markdownpoint-brand {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 2px 7px;
     min-width: 0;
     max-width: 100%;
     margin-bottom: 3px;
@@ -177,12 +184,24 @@
 
 .nn-markdownpoint-credit {
     min-width: 0;
+    margin-inline-start: 7px;
     overflow: hidden;
     color: var(--nn-markdownpoint-muted);
     font-size: 12px;
     line-height: 17px;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+/* Obsidian sizes the icon's SVG from --icon-size and mirrors it in right-to-left languages. The size
+   matches the height of the credit's capitals. */
+.nn-markdownpoint-link-icon {
+    --icon-size: 11px;
+    --icon-stroke: 2px;
+    display: flex;
+    flex: none;
+    margin-inline-start: 3px;
+    color: var(--nn-markdownpoint-muted);
 }
 
 .nn-markdownpoint-headline {
@@ -209,7 +228,6 @@
 /* Obsidian's mobile apps set larger text throughout, so the banner's text grows with it. The spacing
    below keeps the three lines evenly spaced at these sizes. */
 .is-mobile .nn-markdownpoint-brand {
-    gap: 2px 8px;
     margin-bottom: 4px;
 }
 
@@ -218,8 +236,13 @@
 }
 
 .is-mobile .nn-markdownpoint-credit {
+    margin-inline-start: 8px;
     font-size: 14px;
     line-height: 20px;
+}
+
+.is-mobile .nn-markdownpoint-link-icon {
+    --icon-size: 13px;
 }
 
 .is-mobile .nn-markdownpoint-headline {
@@ -254,33 +277,39 @@
     }
 }
 
-/* Narrow panes, such as phones, stack the file and slide above the three lines, so the lines keep
-   the full width instead of wrapping beside the slide */
+/* Narrow panes, such as phones, drop the slide too and show only the three lines, each kept on one line,
+   so the banner has the same height as beside the slide at every width */
 @container (max-width: 480px) {
-    .nn-markdownpoint-strip {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        padding: 16px 16px 4px;
+    .nn-markdownpoint-visual {
+        display: none;
     }
 
-    /* The file and the slide together span the visual's width, so the pair sits centered */
-    .nn-markdownpoint-visual,
-    .is-mobile .nn-markdownpoint-visual {
-        align-self: center;
-        width: 280px;
-        max-width: 100%;
-        height: 108px;
+    /* Where the banner is too narrow for the longest headline or subtext of any language, the text
+       shrinks with the banner instead of wrapping. The divisors are the widest translation of each line
+       in em (19.6em and 23.5em) plus 5% for other interface fonts, and 32px is the strip's inline
+       padding. The line heights stay those of the full-size text, which keeps the height fixed. */
+    .nn-markdownpoint-headline,
+    .nn-markdownpoint-subtext {
+        white-space: nowrap;
     }
 
-    .nn-markdownpoint-file,
-    .is-mobile .nn-markdownpoint-file {
-        display: block;
-        top: 10px;
-        height: 88px;
+    .nn-markdownpoint-headline {
+        font-size: min(15px, (100cqi - 32px) / 20.5);
+        line-height: calc(15px * 1.2);
     }
 
-    .nn-markdownpoint-slide {
-        width: 176px;
+    .nn-markdownpoint-subtext {
+        font-size: min(12px, (100cqi - 32px) / 24.7);
+        line-height: calc(12px * 1.35);
+    }
+
+    .is-mobile .nn-markdownpoint-headline {
+        font-size: min(18px, (100cqi - 32px) / 20.5);
+        line-height: calc(18px * 1.2);
+    }
+
+    .is-mobile .nn-markdownpoint-subtext {
+        font-size: min(14px, (100cqi - 32px) / 24.7);
+        line-height: calc(14px * 1.35);
     }
 }

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { SettingDefinitionGroup } from 'obsidian';
+import { setIcon, type SettingDefinitionGroup } from 'obsidian';
 import { MARKDOWNPOINT_URL } from '../constants/urls';
 import { strings } from '../i18n';
 import { STORAGE_KEYS } from '../types';
@@ -124,13 +124,15 @@ function renderMarkdownPointBanner(containerEl: HTMLElement, position: number): 
     visualEl.createEl('img', { cls: 'nn-markdownpoint-slide', attr: { src: svgDataUrl(design.svg), alt: '' } });
 
     const copyEl = stripEl.createDiv({ cls: 'nn-markdownpoint-copy' });
-    // The wordmark and its maker read as one line: "MarkdownPoint by Johan Sanneblad"
+    // The wordmark, its maker and the link icon read as one line: "MarkdownPoint by Johan Sanneblad"
     const brandEl = copyEl.createDiv({ cls: 'nn-markdownpoint-brand' });
     brandEl.createEl('img', {
         cls: 'nn-markdownpoint-wordmark',
         attr: { src: svgDataUrl(design.dark ? MARKDOWNPOINT_WORDMARK_ON_DARK : MARKDOWNPOINT_WORDMARK_ON_LIGHT), alt: 'MarkdownPoint' }
     });
     brandEl.createSpan({ cls: 'nn-markdownpoint-credit', text: credit });
+    // The icon marks the banner as a link to the website, because touch screens show no pointer over it
+    setIcon(brandEl.createSpan({ cls: 'nn-markdownpoint-link-icon', attr: { 'aria-hidden': 'true' } }), 'lucide-external-link');
     appendHeadline(copyEl.createDiv({ cls: 'nn-markdownpoint-headline' }), message.headline);
     copyEl.createDiv({ cls: 'nn-markdownpoint-subtext', text: message.subtext });
 }
