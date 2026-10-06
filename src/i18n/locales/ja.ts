@@ -2664,6 +2664,11 @@ export const STRINGS_JA = {
                 coffeeButton: '☕️ コーヒーをおごる'
             },
             markdownPointBanner: {
+                heading: 'Canva、Keynote、PowerPoint を使っていますか？',
+                atTop: {
+                    name: 'MarkdownPoint のバナーを上部に表示',
+                    desc: 'オフにすると、バナーは設定ページの下のほうに表示されます。'
+                },
                 credit: '作者：Johan Sanneblad',
                 messages: [
                     { headline: 'スライドは Markdown で書けます。', subtext: 'テキストや画像はドラッグで動かせます。' },

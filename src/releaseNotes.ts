@@ -108,7 +108,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.4.4',
         date: '2026-10-05',
-        showOnUpdate: false,
+        showOnUpdate: true,
+        new: [
+            'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.'
+        ],
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.'
         ],

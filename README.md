@@ -631,6 +631,7 @@ Notebook Navigator runs locally, but some features make HTTP requests from Obsid
 ### 11.6 Settings banner
 
 - **Where:** The top of the Notebook Navigator settings page shows a static banner for [MarkdownPoint](https://markdownpoint.com), a free presentation app made by the author of Notebook Navigator.
+- **Setting:** "Show MarkdownPoint banner at the top" under Advanced moves the banner further down the settings page when turned off.
 - **Content:** The banner's images and text are bundled with the plugin. It loads nothing from the network and sends no data. Each time settings open it shows the next of its designs and messages; which one was shown last is stored in Obsidian local storage on the device.
 - **Link:** Clicking the banner opens `https://markdownpoint.com` in your browser.
 

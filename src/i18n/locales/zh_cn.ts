@@ -2648,6 +2648,11 @@ export const STRINGS_ZH_CN = {
                 coffeeButton: '☕️ 请我喝咖啡'
             },
             markdownPointBanner: {
+                heading: '您在用 Canva、Keynote 或 PowerPoint 吗？',
+                atTop: {
+                    name: '在顶部显示 MarkdownPoint 横幅',
+                    desc: '关闭后，横幅会显示在设置页面中较靠下的位置。'
+                },
                 credit: '作者：Johan Sanneblad',
                 messages: [
                     { headline: '用 Markdown 写幻灯片。', subtext: '把文字和图片拖到你想要的位置。' },

@@ -2656,6 +2656,11 @@ export const STRINGS_TH = {
                 coffeeButton: '☕️ เลี้ยงกาแฟ'
             },
             markdownPointBanner: {
+                heading: 'ใช้ Canva, Keynote หรือ PowerPoint อยู่หรือเปล่า',
+                atTop: {
+                    name: 'แสดงแบนเนอร์ MarkdownPoint ที่ด้านบน',
+                    desc: 'เมื่อปิด แบนเนอร์จะแสดงในตำแหน่งที่ต่ำลงในหน้าการตั้งค่า'
+                },
                 credit: 'โดย Johan Sanneblad',
                 messages: [
                     { headline: 'เขียนสไลด์ของคุณด้วย Markdown', subtext: 'ลากข้อความและรูปภาพไปวางตรงที่คุณต้องการ' },

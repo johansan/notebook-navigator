@@ -2665,6 +2665,11 @@ export const STRINGS_ID = {
                 coffeeButton: '☕️ Traktir saya kopi'
             },
             markdownPointBanner: {
+                heading: 'Apakah Anda memakai Canva, Keynote, atau PowerPoint?',
+                atTop: {
+                    name: 'Tampilkan banner MarkdownPoint di atas',
+                    desc: 'Jika dimatikan, banner muncul lebih ke bawah di halaman pengaturan.'
+                },
                 credit: 'oleh Johan Sanneblad',
                 messages: [
                     { headline: 'Tulis slide Anda dalam Markdown.', subtext: 'Seret teks dan gambar ke posisi yang Anda mau.' },

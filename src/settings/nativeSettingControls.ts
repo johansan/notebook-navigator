@@ -117,6 +117,7 @@ const BOOLEAN_SETTING_KEYS = [
     'useFrontmatterMetadata',
     'showReleaseNotes',
     'checkForUpdatesOnStart',
+    'showMarkdownPointBannerAtTop',
     'showFileTaskProgress',
     'showFileTaskProgressBar',
     'showFileTaskProgressCount',

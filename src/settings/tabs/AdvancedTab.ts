@@ -38,6 +38,10 @@ export function createAdvancedSettingDefinitions(context: SettingsTabContext): S
             name: strings.settings.items.checkForNewVersionOnStart.name,
             desc: strings.settings.items.checkForNewVersionOnStart.desc
         }),
+        createToggleDefinition('showMarkdownPointBannerAtTop', {
+            name: strings.settings.items.markdownPointBanner.atTop.name,
+            desc: strings.settings.items.markdownPointBanner.atTop.desc
+        }),
         createRenderDefinition({
             name: getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name),
             desc: strings.settings.items.startupDebugLogging.desc,

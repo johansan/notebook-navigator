@@ -2663,6 +2663,11 @@ export const STRINGS_VI = {
                 coffeeButton: '☕️ Mua cho tôi một ly cà phê'
             },
             markdownPointBanner: {
+                heading: 'Bạn đang dùng Canva, Keynote hay PowerPoint?',
+                atTop: {
+                    name: 'Hiện banner MarkdownPoint ở trên cùng',
+                    desc: 'Khi tắt, banner xuất hiện thấp hơn trên trang cài đặt.'
+                },
                 credit: 'bởi Johan Sanneblad',
                 messages: [
                     { headline: 'Viết slide của bạn bằng Markdown.', subtext: 'Kéo chữ và hình ảnh đến nơi bạn muốn.' },

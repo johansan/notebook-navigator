@@ -241,6 +241,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
 
     // Advanced tab
     checkForUpdatesOnStart: true,
+    showMarkdownPointBannerAtTop: true,
 
     // Navigation pane tab - Appearance
     pinNavigationBanner: true,

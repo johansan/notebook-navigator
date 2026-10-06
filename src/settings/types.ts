@@ -786,6 +786,7 @@ export interface NotebookNavigatorSettings {
 
     // Advanced tab
     checkForUpdatesOnStart: boolean;
+    showMarkdownPointBannerAtTop: boolean;
 
     // Navigation pane tab - Appearance
     pinNavigationBanner: boolean;

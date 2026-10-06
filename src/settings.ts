@@ -406,7 +406,10 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.isFallbackSettingsDisplay = true;
         this.activeSettingsPage = null;
         this.prepareSettingsRender(this.containerEl);
-        renderMarkdownPointBannerGroup(this.containerEl, this.getMarkdownPointBannerPosition());
+        const isBannerAtTop = this.plugin.settings.showMarkdownPointBannerAtTop;
+        if (isBannerAtTop) {
+            renderMarkdownPointBannerGroup(this.containerEl, 'top', this.getMarkdownPointBannerPosition());
+        }
 
         const generalDefinition = SETTINGS_PANE_DEFINITION_MAP.get('general');
         generalDefinition?.render(this.createTabContext(this.containerEl));
@@ -418,6 +421,10 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
                 this.addLegacySettingsPageLink(pageGroup.addSetting, tabId);
             });
         });
+
+        if (!isBannerAtTop) {
+            renderMarkdownPointBannerGroup(this.containerEl, 'below', this.getMarkdownPointBannerPosition());
+        }
     }
 
     private addLegacySettingsPageLink(addSetting: AddSettingFunction, tabId: SettingsPaneId): void {
@@ -504,15 +511,19 @@ export class NotebookNavigatorSettingTab extends PluginSettingTab {
         this.isFallbackSettingsDisplay = false;
         const context = this.createTabContext(this.containerEl);
 
-        // Native settings index: the MarkdownPoint banner, then vault controls and page links before informational resources.
+        // Native settings index: the MarkdownPoint banner at the top, vault controls, page links, the banner further
+        // down when the Advanced setting moves it there, then informational resources.
+        const isBannerAtTop = () => this.plugin.settings.showMarkdownPointBannerAtTop;
+        const getBannerPosition = () => this.getMarkdownPointBannerPosition();
         const items: SettingDefinitionItem[] = [
-            ...createMarkdownPointBannerDefinitions(() => this.getMarkdownPointBannerPosition()),
+            ...createMarkdownPointBannerDefinitions('top', isBannerAtTop, getBannerPosition),
             ...createVaultSetupSettingDefinitions(context),
             ...SETTINGS_PAGE_GROUP_DEFINITIONS.map(group => ({
                 type: 'group' as const,
                 heading: group.getHeading(),
                 items: group.items.map(tabId => this.createNativeSettingsPageDefinition(tabId))
             })),
+            ...createMarkdownPointBannerDefinitions('below', isBannerAtTop, getBannerPosition),
             ...createStartResourcesSettingDefinitions(context)
         ];
 

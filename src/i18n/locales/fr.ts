@@ -2676,6 +2676,11 @@ export const STRINGS_FR = {
                 coffeeButton: '☕️ Offrez-moi un café'
             },
             markdownPointBanner: {
+                heading: 'Vous utilisez Canva, Keynote ou PowerPoint ?',
+                atTop: {
+                    name: 'Afficher la bannière MarkdownPoint en haut',
+                    desc: 'Désactivé, la bannière apparaît plus bas dans la page des paramètres.'
+                },
                 credit: 'par Johan Sanneblad',
                 messages: [
                     { headline: 'Écrivez vos diapos en Markdown.', subtext: 'Glissez textes et images là où vous voulez.' },

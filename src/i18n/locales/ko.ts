@@ -2658,6 +2658,11 @@ export const STRINGS_KO = {
                 coffeeButton: '☕️ 커피 한 잔 사주기'
             },
             markdownPointBanner: {
+                heading: 'Canva, Keynote, PowerPoint를 쓰시나요?',
+                atTop: {
+                    name: 'MarkdownPoint 배너를 맨 위에 표시',
+                    desc: '끄면 배너가 설정 페이지 아래쪽에 표시됩니다.'
+                },
                 credit: '제작: Johan Sanneblad',
                 messages: [
                     { headline: '슬라이드를 Markdown으로 쓰세요.', subtext: '텍스트와 이미지는 원하는 곳으로 드래그하세요.' },

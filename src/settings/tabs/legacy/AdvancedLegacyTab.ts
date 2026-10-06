@@ -59,6 +59,18 @@ export function renderAdvancedTab(context: SettingsTabContext): void {
 
     advancedGroup.addSetting(setting => {
         setting
+            .setName(strings.settings.items.markdownPointBanner.atTop.name)
+            .setDesc(strings.settings.items.markdownPointBanner.atTop.desc)
+            .addToggle(toggle =>
+                toggle.setValue(plugin.settings.showMarkdownPointBannerAtTop).onChange(async value => {
+                    plugin.settings.showMarkdownPointBannerAtTop = value;
+                    await plugin.saveSettingsAndUpdate();
+                })
+            );
+    });
+
+    advancedGroup.addSetting(setting => {
+        setting
             .setName(getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name))
             .setDesc(strings.settings.items.startupDebugLogging.desc)
             .addToggle(toggle =>

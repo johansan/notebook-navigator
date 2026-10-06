@@ -2648,6 +2648,11 @@ export const STRINGS_ZH_TW = {
                 coffeeButton: '☕️ 請我喝咖啡'
             },
             markdownPointBanner: {
+                heading: '您在用 Canva、Keynote 或 PowerPoint 嗎？',
+                atTop: {
+                    name: '在頂端顯示 MarkdownPoint 橫幅',
+                    desc: '關閉後，橫幅會顯示在設定頁面中較下方的位置。'
+                },
                 credit: '作者：Johan Sanneblad',
                 messages: [
                     { headline: '用 Markdown 寫投影片。', subtext: '把文字和圖片拖曳到你要的位置。' },

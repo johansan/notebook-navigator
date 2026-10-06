@@ -2672,6 +2672,11 @@ export const STRINGS_NL = {
                 coffeeButton: '☕️ Koop me een koffie'
             },
             markdownPointBanner: {
+                heading: 'Gebruik je Canva, Keynote of PowerPoint?',
+                atTop: {
+                    name: 'MarkdownPoint-banner bovenaan tonen',
+                    desc: 'Als dit uit staat, staat de banner verderop op de instellingenpagina.'
+                },
                 credit: 'door Johan Sanneblad',
                 messages: [
                     { headline: 'Schrijf je slides in Markdown.', subtext: 'Sleep tekst en afbeeldingen waar je ze wilt.' },

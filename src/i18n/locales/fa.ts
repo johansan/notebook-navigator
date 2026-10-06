@@ -2664,6 +2664,11 @@ export const STRINGS_FA = {
                 coffeeButton: '☕️ یک قهوه مهمانم کن'
             },
             markdownPointBanner: {
+                heading: 'از Canva، Keynote یا PowerPoint استفاده می‌کنید؟',
+                atTop: {
+                    name: 'نمایش بنر MarkdownPoint در بالا',
+                    desc: 'اگر خاموش باشد، بنر پایین‌تر در صفحهٔ تنظیمات نشان داده می‌شود.'
+                },
                 credit: 'ساختهٔ Johan Sanneblad',
                 messages: [
                     { headline: 'اسلایدهایتان را با Markdown بنویسید.', subtext: 'متن و تصاویر را به هر جا که می‌خواهید بکشید.' },

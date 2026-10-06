@@ -2664,6 +2664,11 @@ export const STRINGS_RU = {
                 coffeeButton: '☕️ Купить кофе'
             },
             markdownPointBanner: {
+                heading: 'Пользуетесь Canva, Keynote или PowerPoint?',
+                atTop: {
+                    name: 'Показывать баннер MarkdownPoint вверху',
+                    desc: 'Если выключено, баннер показывается ниже на странице настроек.'
+                },
                 credit: 'от Johan Sanneblad',
                 messages: [
                     { headline: 'Пишите слайды в Markdown.', subtext: 'Перетаскивайте текст и картинки куда нужно.' },

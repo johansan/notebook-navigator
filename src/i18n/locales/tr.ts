@@ -2663,6 +2663,11 @@ export const STRINGS_TR = {
                 coffeeButton: '☕️ Bana bir kahve ısmarla'
             },
             markdownPointBanner: {
+                heading: 'Canva, Keynote veya PowerPoint mi kullanıyorsunuz?',
+                atTop: {
+                    name: 'MarkdownPoint afişini en üstte göster',
+                    desc: 'Kapalıyken afiş, ayarlar sayfasında daha aşağıda görünür.'
+                },
                 credit: "Johan Sanneblad'dan",
                 messages: [
                     { headline: 'Slaytlarınızı Markdown ile yazın.', subtext: 'Metinleri ve görselleri istediğiniz yere sürükleyin.' },

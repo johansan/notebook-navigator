@@ -142,13 +142,30 @@ function renderBannerRow(settingEl: HTMLElement, position: number): void {
 }
 
 /**
- * The banner as the first group of the native settings index, without a heading. The position is read when
- * the row renders, not when definitions are built, because Obsidian also builds them for settings search.
+ * Where the banner sits on the settings start page: 'top' above everything without a heading, or 'below' after
+ * the settings pages under a heading asking about other presentation apps. The Advanced setting
+ * showMarkdownPointBannerAtTop picks one.
  */
-export function createMarkdownPointBannerDefinitions(getPosition: () => number): SettingDefinitionGroup[] {
+export type MarkdownPointBannerPlacement = 'top' | 'below';
+
+function headingFor(placement: MarkdownPointBannerPlacement): string | undefined {
+    return placement === 'below' ? strings.settings.items.markdownPointBanner.heading : undefined;
+}
+
+/**
+ * The banner as a group of the native settings index at one placement, shown only while the Advanced setting
+ * picks that placement. The position is read when the row renders, not when definitions are built, because
+ * Obsidian also builds them for settings search; only the visible placement renders, so a settings open
+ * advances the banner once.
+ */
+export function createMarkdownPointBannerDefinitions(
+    placement: MarkdownPointBannerPlacement,
+    isAtTop: () => boolean,
+    getPosition: () => number
+): SettingDefinitionGroup[] {
     return [
         createGroupDefinition(
-            undefined,
+            headingFor(placement),
             [
                 createRenderDefinition({
                     // Product name, not translated
@@ -157,14 +174,14 @@ export function createMarkdownPointBannerDefinitions(getPosition: () => number):
                     render: setting => renderBannerRow(setting.settingEl, getPosition())
                 })
             ],
-            { cls: 'nn-markdownpoint-group' }
+            { cls: 'nn-markdownpoint-group', visible: () => isAtTop() === (placement === 'top') }
         )
     ];
 }
 
 /** The same group on the legacy settings page, which Obsidian versions before native settings pages render. */
-export function renderMarkdownPointBannerGroup(containerEl: HTMLElement, position: number): void {
-    const group = createSettingGroupFactory(containerEl)();
+export function renderMarkdownPointBannerGroup(containerEl: HTMLElement, placement: MarkdownPointBannerPlacement, position: number): void {
+    const group = createSettingGroupFactory(containerEl)(headingFor(placement));
     group.rootEl.addClass('nn-markdownpoint-group');
     group.addSetting(setting => renderBannerRow(setting.settingEl, position));
 }

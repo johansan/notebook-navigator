@@ -2659,6 +2659,11 @@ export const STRINGS_AR = {
                 coffeeButton: '☕️ اشترِ لي قهوة'
             },
             markdownPointBanner: {
+                heading: 'هل تستخدم Canva أو Keynote أو PowerPoint؟',
+                atTop: {
+                    name: 'إظهار لافتة MarkdownPoint في الأعلى',
+                    desc: 'عند الإيقاف، تظهر اللافتة في موضع أدنى من صفحة الإعدادات.'
+                },
                 credit: 'من تطوير Johan Sanneblad',
                 messages: [
                     { headline: 'اكتب شرائحك بـ Markdown.', subtext: 'اسحب النصوص والصور إلى حيث تريد.' },
