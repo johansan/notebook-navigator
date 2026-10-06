@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { App, TFile, parseYaml, type CachedMetadata, type FrontMatterCache } from 'obsidian';
+import { App, Platform, TFile, parseYaml, type CachedMetadata, type FrontMatterCache } from 'obsidian';
 import { FeatureImageContentProvider } from '../../src/services/content/FeatureImageContentProvider';
 import { MarkdownPipelineContentProvider } from '../../src/services/content/MarkdownPipelineContentProvider';
 import { findFeatureImageReference, type FeatureImageReference } from '../../src/services/content/featureImageReferenceResolver';
@@ -317,6 +317,41 @@ describe('FeatureImageContentProvider thumbnails', () => {
             Object.defineProperty(testWindow, 'OffscreenCanvas', {
                 configurable: true,
                 value: originalOffscreenCanvas
+            });
+        }
+    });
+
+    it('skips local images above the mobile decode pixel cap without decoding them', async () => {
+        const { app } = createApp();
+        const provider = new TestFeatureImageContentProvider(app);
+        const imageFile = createFile('images/huge.png');
+        const sourceBytes = createPngHeaderBytes(10352, 10352);
+        imageFile.stat.size = sourceBytes.byteLength;
+        app.vault.adapter.readBinary = async () => copyBytesToArrayBuffer(sourceBytes);
+
+        const testWindow = window as Omit<Window, 'createImageBitmap'> & {
+            createImageBitmap?: (image: Blob, options?: ImageBitmapOptions) => Promise<ImageBitmap>;
+        };
+        const originalCreateImageBitmap = testWindow.createImageBitmap;
+        const originalIsMobile = Platform.isMobile;
+        const createImageBitmapMock = vi.fn(async (): Promise<ImageBitmap> => ({ width: 400, height: 400, close: vi.fn() }));
+
+        Object.defineProperty(testWindow, 'createImageBitmap', {
+            configurable: true,
+            value: createImageBitmapMock
+        });
+        Platform.isMobile = true;
+
+        try {
+            const thumbnail = await provider.createThumbnailForTest({ kind: 'local', file: imageFile }, createSettings());
+
+            expect(thumbnail).toBeNull();
+            expect(createImageBitmapMock).not.toHaveBeenCalled();
+        } finally {
+            Platform.isMobile = originalIsMobile;
+            Object.defineProperty(testWindow, 'createImageBitmap', {
+                configurable: true,
+                value: originalCreateImageBitmap
             });
         }
     });

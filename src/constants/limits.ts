@@ -189,17 +189,36 @@ export const LIMITS = {
                     desktop: 50_000_000
                 }
             },
-            maxFallbackPixels: {
+            maxDecodePixels: {
                 /**
-                 * Stricter pixel cap for fallback decode paths that can load full-resolution images into memory.
+                 * Maximum pixel count of a raster image accepted for thumbnail generation.
                  *
                  * Used by:
-                 * - `FeatureImageContentProvider.createThumbnailBlobFromBuffer()` when bitmap resize fallbacks require full decode.
+                 * - `FeatureImageContentProvider.createThumbnailBlobFromBuffer()` before any decode is attempted.
+                 *
+                 * Rationale:
+                 * - `createImageBitmap()` decodes the full-resolution image even when `resizeWidth`/`resizeHeight` are set,
+                 *   in both WebKit and Chromium. A 10352x10352 PNG (107M px) peaked at about 1 GB in WebKit and reloads
+                 *   Obsidian on iOS.
+                 * - The mobile cap is above 48 MP and 50 MP camera photo sizes (up to 8192x6144).
+                 * - The file size cap in `maxImageBytes` does not bound this, because large images with few colors
+                 *   compress to a few MB.
+                 */
+                mobile: 60_000_000,
+                desktop: Number.MAX_SAFE_INTEGER
+            },
+            maxFallbackPixels: {
+                /**
+                 * Pixel cap for the fallback decode paths that run when the resized `createImageBitmap()` call fails.
+                 *
+                 * Used by:
+                 * - `FeatureImageContentProvider.createThumbnailBlobFromBuffer()` before the full-size bitmap and image element fallbacks.
                  * - `renderPdfCoverThumbnail()` via the pdf.js `maxImageSize` option (caps decoded image size).
                  *
                  * Rationale:
-                 * - Some decode methods are more memory efficient (e.g. resize during decode). When those aren't available,
-                 *   fallback paths can require full-resolution decode + canvas draw, which is much riskier.
+                 * - The fallbacks decode the full-resolution image as an `ImageBitmap` without resize options or through an
+                 *   image element. They run only for sources the resized call rejected, so they use a stricter cap than
+                 *   `maxDecodePixels`.
                  */
                 mobile: 15_000_000,
                 desktop: 50_000_000

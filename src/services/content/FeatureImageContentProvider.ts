@@ -725,9 +725,23 @@ export class FeatureImageContentProvider extends BaseContentProvider {
         const { display: displayDimensions, coded: codedDimensions } = dimensionsPair;
         const pixelCount = codedDimensions.width * codedDimensions.height;
 
+        const maxDecodePixels = Platform.isMobile
+            ? LIMITS.thumbnails.featureImage.maxDecodePixels.mobile
+            : LIMITS.thumbnails.featureImage.maxDecodePixels.desktop;
         const maxFallbackPixels = Platform.isMobile
             ? LIMITS.thumbnails.featureImage.maxFallbackPixels.mobile
             : LIMITS.thumbnails.featureImage.maxFallbackPixels.desktop;
+
+        // Every decode path below allocates the full-resolution image, including createImageBitmap with resize options,
+        // so oversized images are skipped before decoding and before acquiring the decode budget. Otherwise iOS reloads
+        // Obsidian during the decode, and again on the next pass over the same note.
+        if (pixelCount > maxDecodePixels) {
+            this.thumbnailRuntime.logOnce(
+                `featureImage-decode-skip:${effectiveMimeType}:${codedDimensions.width}x${codedDimensions.height}:${source}`,
+                `[${source}] Skipping ${effectiveMimeType} (${codedDimensions.width}x${codedDimensions.height}, ${pixelCount} px) - decode capped at ${maxDecodePixels} px`
+            );
+            return null;
+        }
 
         const { width: targetWidth, height: targetHeight } = this.calculateThumbnailDimensions(
             displayDimensions.width,
@@ -739,7 +753,8 @@ export class FeatureImageContentProvider extends BaseContentProvider {
         const releaseDecodeBudget = await this.thumbnailRuntime.imageDecodeLimiter.acquire(pixelCount);
 
         try {
-            // Attempt direct bitmap resize/encode, which is more memory-efficient for large images.
+            // Decode straight to thumbnail size first. The decoder still allocates the full-resolution image,
+            // which the maxDecodePixels check above bounds.
             const resizedBitmapResult = await this.tryCreateThumbnailFromResizedBitmap(sourceBlob, targetWidth, targetHeight);
             if (resizedBitmapResult) {
                 return resizedBitmapResult;
@@ -827,7 +842,7 @@ export class FeatureImageContentProvider extends BaseContentProvider {
     }
 
     // Decodes and resizes an image in a single step using createImageBitmap resize options.
-    // This approach avoids loading the full-resolution image into memory.
+    // WebKit and Chromium still decode the full-resolution image first, so callers must bound the pixel count.
     private async tryCreateThumbnailFromResizedBitmap(blob: Blob, targetWidth: number, targetHeight: number): Promise<Blob | null> {
         if (typeof createImageBitmap === 'undefined') {
             return null;
