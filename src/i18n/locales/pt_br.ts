@@ -2690,6 +2690,7 @@ export const STRINGS_PT_BR = {
                     { headline: 'Versione suas apresentações no Git.', subtext: 'São arquivos de texto Markdown e YAML.' },
                     { headline: 'Crie fluxogramas a partir de texto.', subtext: 'Escreva código Mermaid e gere um diagrama.' },
                     { headline: 'Salve em uma pasta sincronizada.', subtext: 'Funciona com Dropbox, iCloud Drive e OneDrive.' },
+                    { headline: 'Explore temas como no Obsidian.', subtext: 'São grátis e se instalam com um clique.' },
                     { headline: 'Grátis para uso pessoal e comercial.', subtext: 'Baixe para Mac ou Windows.' }
                 ]
             },

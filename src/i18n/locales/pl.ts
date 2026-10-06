@@ -2689,6 +2689,7 @@ export const STRINGS_PL = {
                     { headline: 'Śledź zmiany prezentacji w Git.', subtext: 'Prezentacje to pliki tekstowe Markdown i YAML.' },
                     { headline: 'Twórz schematy blokowe z tekstu.', subtext: 'Napisz kod Mermaid, a dostaniesz diagram.' },
                     { headline: 'Trzymaj prezentacje w chmurze.', subtext: 'Działa z Dropbox, iCloud Drive i OneDrive.' },
+                    { headline: 'Przeglądaj motywy jak w Obsidian.', subtext: 'Są darmowe i instalują się jednym kliknięciem.' },
                     { headline: 'Darmowy w domu i w pracy.', subtext: 'Pobierz na Mac lub Windows.' }
                 ]
             },

@@ -2680,6 +2680,7 @@ export const STRINGS_TR = {
                     { headline: "Sunumlarınızı Git'te takip edin.", subtext: 'Sunumlar Markdown ve YAML metin dosyalarıdır.' },
                     { headline: 'Metinden akış şemaları oluşturun.', subtext: 'Mermaid kodu yazın ve diyagramı alın.' },
                     { headline: 'Sunumlarınızı eşitlenen klasörde tutun.', subtext: 'Dropbox, iCloud Drive ve OneDrive ile çalışır.' },
+                    { headline: 'Temalara Obsidian’daki gibi göz atın.', subtext: 'Tüm temalar ücretsiz ve tek tıkla kurulur.' },
                     { headline: 'Kişisel ve ticari kullanım için ücretsiz.', subtext: 'Mac veya Windows için indirin.' }
                 ]
             },

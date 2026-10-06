@@ -2689,6 +2689,7 @@ export const STRINGS_NL = {
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en YAML-tekstbestanden.' },
                     { headline: 'Maak stroomdiagrammen van tekst.', subtext: 'Schrijf Mermaid-code en krijg een diagram.' },
                     { headline: 'Gebruik een gesynchroniseerde map.', subtext: 'Dropbox, iCloud Drive en OneDrive werken.' },
+                    { headline: 'Blader door thema’s zoals in Obsidian.', subtext: 'Ze zijn gratis en met één klik geïnstalleerd.' },
                     { headline: 'Gratis voor privé en zakelijk gebruik.', subtext: 'Download het voor Mac of Windows.' }
                 ]
             },

@@ -2687,6 +2687,7 @@ export const STRINGS_FA = {
                         headline: 'ارائه‌هایتان را در یک پوشهٔ همگام نگه دارید.',
                         subtext: 'Dropbox، iCloud Drive و OneDrive همه کار می‌کنند.'
                     },
+                    { headline: 'تم‌ها را مثل Obsidian مرور کنید.', subtext: 'همهٔ تم‌ها رایگان‌اند و با یک کلیک نصب می‌شوند.' },
                     { headline: 'رایگان برای استفادهٔ شخصی و تجاری.', subtext: 'نسخهٔ Mac یا Windows را دانلود کنید.' }
                 ]
             },

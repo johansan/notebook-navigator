@@ -2665,6 +2665,7 @@ export const STRINGS_ZH_CN = {
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 YAML 文本文件。' },
                     { headline: '用文字画流程图。', subtext: '写下 Mermaid 代码即可生成图表。' },
                     { headline: '把演示文稿放在同步文件夹里。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
+                    { headline: '像 Obsidian 一样挑选主题。', subtext: '所有主题都免费，一键安装。' },
                     { headline: '个人和商业用途都免费。', subtext: '下载 Mac 版或 Windows 版。' }
                 ]
             },

@@ -2682,6 +2682,7 @@ export const STRINGS_ID = {
                     { headline: 'Lacak presentasi Anda di Git.', subtext: 'Presentasi berupa file teks Markdown dan YAML.' },
                     { headline: 'Buat diagram alir dari teks.', subtext: 'Tulis kode Mermaid dan dapatkan diagramnya.' },
                     { headline: 'Simpan presentasi di folder tersinkron.', subtext: 'Bisa dengan Dropbox, iCloud Drive, atau OneDrive.' },
+                    { headline: 'Jelajahi tema seperti di Obsidian.', subtext: 'Semua gratis dan terpasang dengan sekali klik.' },
                     { headline: 'Gratis untuk pribadi dan komersial.', subtext: 'Unduh untuk Mac atau Windows.' }
                 ]
             },

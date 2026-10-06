@@ -2680,6 +2680,7 @@ export const STRINGS_VI = {
                     { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và YAML.' },
                     { headline: 'Tạo lưu đồ từ văn bản.', subtext: 'Viết mã Mermaid để có sơ đồ.' },
                     { headline: 'Lưu bộ slide trong thư mục đồng bộ.', subtext: 'Dùng được với Dropbox, iCloud Drive và OneDrive.' },
+                    { headline: 'Duyệt chủ đề như trong Obsidian.', subtext: 'Mọi chủ đề đều miễn phí, cài bằng một cú nhấp.' },
                     { headline: 'Miễn phí cho cá nhân và thương mại.', subtext: 'Tải về cho Mac hoặc Windows.' }
                 ]
             },

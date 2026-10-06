@@ -2675,6 +2675,7 @@ export const STRINGS_KO = {
                     { headline: '발표 자료를 Git으로 관리하세요.', subtext: '발표 자료는 Markdown과 YAML 텍스트 파일입니다.' },
                     { headline: '텍스트로 순서도를 만드세요.', subtext: 'Mermaid 코드를 쓰면 다이어그램이 됩니다.' },
                     { headline: '발표 자료를 동기화 폴더에 두세요.', subtext: 'Dropbox, iCloud Drive, OneDrive 모두 됩니다.' },
+                    { headline: 'Obsidian처럼 테마를 둘러보세요.', subtext: '모든 테마는 무료이며 클릭 한 번으로 설치됩니다.' },
                     { headline: '개인용과 상업용 모두 무료입니다.', subtext: 'Mac 또는 Windows용으로 내려받으세요.' }
                 ]
             },

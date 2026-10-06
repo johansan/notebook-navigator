@@ -2693,6 +2693,7 @@ export const STRINGS_FR = {
                     { headline: 'Versionnez vos présentations avec Git.', subtext: 'Ce sont des fichiers texte Markdown et YAML.' },
                     { headline: 'Créez des organigrammes en texte.', subtext: 'Écrivez du Mermaid et obtenez un diagramme.' },
                     { headline: 'Utilisez un dossier synchronisé.', subtext: 'Dropbox, iCloud Drive et OneDrive fonctionnent.' },
+                    { headline: 'Parcourez des thèmes à la Obsidian.', subtext: 'Ils sont gratuits et s’installent en un clic.' },
                     { headline: 'Gratuit pour un usage perso et pro.', subtext: 'Téléchargez-le pour Mac ou Windows.' }
                 ]
             },

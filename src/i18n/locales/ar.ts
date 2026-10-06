@@ -2676,6 +2676,7 @@ export const STRINGS_AR = {
                     { headline: 'تتبّع عروضك في Git.', subtext: 'العروض ملفات نصية بصيغة Markdown وYAML.' },
                     { headline: 'أنشئ مخططات انسيابية من النص.', subtext: 'اكتب كود Mermaid واحصل على مخطط.' },
                     { headline: 'احفظ عروضك في مجلد متزامن.', subtext: 'تعمل مع Dropbox وiCloud Drive وOneDrive.' },
+                    { headline: 'تصفّح السمات كما في Obsidian.', subtext: 'كل السمات مجانية وتُثبَّت بنقرة واحدة.' },
                     { headline: 'مجاني للاستخدام الشخصي والتجاري.', subtext: 'نزّله لـ Mac أو Windows.' }
                 ]
             },

@@ -2692,6 +2692,7 @@ export const STRINGS_ES = {
                     { headline: 'Versiona tus presentaciones con Git.', subtext: 'Son archivos de texto Markdown y YAML.' },
                     { headline: 'Crea diagramas de flujo con texto.', subtext: 'Escribe código Mermaid y obtén un diagrama.' },
                     { headline: 'Usa una carpeta sincronizada.', subtext: 'Funcionan Dropbox, iCloud Drive y OneDrive.' },
+                    { headline: 'Explora temas como en Obsidian.', subtext: 'Todos son gratis y se instalan con un clic.' },
                     { headline: 'Gratis para uso personal y comercial.', subtext: 'Descárgalo para Mac o Windows.' }
                 ]
             },

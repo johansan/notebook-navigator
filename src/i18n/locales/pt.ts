@@ -2687,6 +2687,7 @@ export const STRINGS_PT = {
                     { headline: 'Controle versões no Git.', subtext: 'São ficheiros de texto Markdown e YAML.' },
                     { headline: 'Crie fluxogramas a partir de texto.', subtext: 'Escreva código Mermaid e obtenha um diagrama.' },
                     { headline: 'Guarde tudo numa pasta sincronizada.', subtext: 'Funciona com Dropbox, iCloud Drive e OneDrive.' },
+                    { headline: 'Explore temas como no Obsidian.', subtext: 'São gratuitos e instalam-se com um clique.' },
                     { headline: 'Gratuito para uso pessoal e comercial.', subtext: 'Descarregue-o para Mac ou Windows.' }
                 ]
             },

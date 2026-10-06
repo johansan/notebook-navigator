@@ -2673,6 +2673,7 @@ export const STRINGS_TH = {
                     { headline: 'ติดตามงานนำเสนอของคุณใน Git', subtext: 'งานนำเสนอเป็นไฟล์ข้อความ Markdown และ YAML' },
                     { headline: 'สร้างผังงานจากข้อความ', subtext: 'เขียนโค้ด Mermaid แล้วจะได้ไดอะแกรม' },
                     { headline: 'เก็บงานนำเสนอไว้ในโฟลเดอร์ที่ซิงค์', subtext: 'ใช้ได้ทั้ง Dropbox, iCloud Drive และ OneDrive' },
+                    { headline: 'เลือกธีมได้เหมือนใน Obsidian', subtext: 'ทุกธีมฟรี ติดตั้งได้ในคลิกเดียว' },
                     { headline: 'ฟรีทั้งใช้ส่วนตัวและเชิงพาณิชย์', subtext: 'ดาวน์โหลดสำหรับ Mac หรือ Windows' }
                 ]
             },

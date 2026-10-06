@@ -2681,6 +2681,7 @@ export const STRINGS_UK = {
                     { headline: 'Відстежуйте зміни презентацій у Git.', subtext: 'Це текстові файли Markdown і YAML.' },
                     { headline: 'Створюйте блок-схеми з тексту.', subtext: 'Напишіть код Mermaid і отримайте діаграму.' },
                     { headline: 'Тримайте слайди в хмарній теці.', subtext: 'Працює з Dropbox, iCloud Drive і OneDrive.' },
+                    { headline: 'Обирайте теми як в Obsidian.', subtext: 'Усі теми безкоштовні й ставляться одним кліком.' },
                     { headline: 'Безкоштовно для дому й роботи.', subtext: 'Завантажте для Mac або Windows.' }
                 ]
             },

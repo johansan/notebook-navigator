@@ -2681,6 +2681,7 @@ export const STRINGS_JA = {
                     { headline: 'プレゼンを Git で管理できます。', subtext: 'Markdown と YAML のテキストファイルです。' },
                     { headline: 'テキストでフローチャートを作れます。', subtext: 'Mermaid のコードを書くと図になります。' },
                     { headline: 'プレゼンは同期フォルダに置けます。', subtext: 'Dropbox、iCloud Drive、OneDrive で使えます。' },
+                    { headline: 'Obsidian のようにテーマを選べます。', subtext: 'テーマはすべて無料で、ワンクリックで入ります。' },
                     { headline: '個人でも商用でも無料です。', subtext: 'Mac 版か Windows 版をダウンロードできます。' }
                 ]
             },

@@ -2665,6 +2665,7 @@ export const STRINGS_ZH_TW = {
                     { headline: '用 Git 管理你的簡報。', subtext: '簡報就是 Markdown 和 YAML 純文字檔。' },
                     { headline: '用文字畫流程圖。', subtext: '寫下 Mermaid 程式碼就能產生圖表。' },
                     { headline: '把簡報放在同步資料夾裡。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
+                    { headline: '像 Obsidian 一樣挑選主題。', subtext: '所有主題都免費，一鍵安裝。' },
                     { headline: '個人和商業用途都免費。', subtext: '下載 Mac 版或 Windows 版。' }
                 ]
             },

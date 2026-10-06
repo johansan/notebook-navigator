@@ -2681,6 +2681,7 @@ export const STRINGS_RU = {
                     { headline: 'Храните версии слайдов в Git.', subtext: 'Это текстовые файлы Markdown и YAML.' },
                     { headline: 'Создавайте блок-схемы из текста.', subtext: 'Напишите код Mermaid и получите диаграмму.' },
                     { headline: 'Держите слайды в облачной папке.', subtext: 'Работает с Dropbox, iCloud Drive и OneDrive.' },
+                    { headline: 'Выбирайте темы как в Obsidian.', subtext: 'Все темы бесплатные и ставятся в один клик.' },
                     { headline: 'Бесплатно для дома и работы.', subtext: 'Скачайте для Mac или Windows.' }
                 ]
             },

@@ -2673,6 +2673,7 @@ export const STRINGS_EN = {
                     { headline: 'Track your decks in Git.', subtext: 'Decks are Markdown and YAML text files.' },
                     { headline: 'Make flowcharts from text.', subtext: 'Write Mermaid code and get a diagram.' },
                     { headline: 'Keep your decks in a synced folder.', subtext: 'Dropbox, iCloud Drive and OneDrive all work.' },
+                    { headline: 'Browse themes like in Obsidian.', subtext: 'Every theme is free and installs in one click.' },
                     { headline: 'Free for personal and commercial use.', subtext: 'Download it for Mac or Windows.' }
                 ]
             },
