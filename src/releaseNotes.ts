@@ -111,6 +111,11 @@ const RELEASE_NOTES: ReleaseNote[] = [
         showOnUpdate: false,
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.'
+        ],
+        fixed: [
+            'Searching the Vault tab of the icon picker now lists the closest matches first, so SVG icons with short file names no longer drop out of the 50 shown results [#1526](https://github.com/johansan/notebook-navigator/issues/1526).',
+            'The icon picker now shows how many icons matched when a search on the Vault, Lucide, or Emoji tab has more than 50 results.',
+            'Tag, date, folder, and file suggestions now list the closest matches first.'
         ]
     },
     {

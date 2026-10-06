@@ -620,6 +620,9 @@ export class VaultIconProvider implements IconProvider {
             matches.push({ icon, match: result });
         }
 
+        // Obsidian fuzzy scores are negative penalties where values closer to 0 are better matches,
+        // so sort descending. Ascending order puts exact name matches last, where the icon picker's
+        // result limit cuts them off.
         matches.sort((a, b) => {
             const scoreA = a.match.score;
             const scoreB = b.match.score;
@@ -630,10 +633,10 @@ export class VaultIconProvider implements IconProvider {
                 }
                 return naturalCompare(a.icon.id, b.icon.id);
             }
-            return scoreA - scoreB;
+            return scoreB - scoreA;
         });
 
-        return matches.map(match => match.icon).slice(0, 50);
+        return matches.map(match => match.icon);
     }
 
     getAll(): IconDefinition[] {

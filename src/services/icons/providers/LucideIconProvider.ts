@@ -98,7 +98,7 @@ export class LucideIconProvider implements IconProvider {
      * at the start of the loop so the search logic and results remain canonical.
      *
      * @param query - The search query
-     * @returns Array of matching icon definitions, limited to 50 results
+     * @returns Array of all matching icon definitions, best match first
      */
     search(query: string): IconDefinition[] {
         const normalizedQuery = query.toLowerCase().trim();
@@ -154,8 +154,7 @@ export class LucideIconProvider implements IconProvider {
             return a.id.localeCompare(b.id);
         });
 
-        // Return top 50 results to avoid overwhelming the UI
-        return matches.map(match => match.icon).slice(0, 50);
+        return matches.map(match => match.icon);
     }
 
     /**

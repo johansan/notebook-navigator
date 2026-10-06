@@ -64,7 +64,8 @@ export interface IconProvider {
      * Searches for icons matching a query.
      *
      * @param query - The search query
-     * @returns Array of matching icon definitions
+     * @returns Every matching icon definition. Callers limit how many results they show, so they can
+     * report the total match count when results are cut off.
      */
     search(query: string): IconDefinition[];
     /**

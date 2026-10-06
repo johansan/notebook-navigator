@@ -105,8 +105,10 @@ export abstract class BaseSuggestModal<T> extends FuzzySuggestModal<T> {
             return baseSuggestions;
         }
 
+        // Fuzzy and simple search share Obsidian's scoring, where values closer to 0 are better
+        // matches, so sort descending like Obsidian's sortSearchResults.
         const combined = [...baseSuggestions, ...additionalMatches];
-        combined.sort((a, b) => a.match.score - b.match.score);
+        combined.sort((a, b) => b.match.score - a.match.score);
         return combined;
     }
 

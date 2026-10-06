@@ -81,7 +81,7 @@ export class EmojiIconProvider implements IconProvider {
      * Searches for emojis based on a query string.
      *
      * @param query - The search query (can be an emoji or keyword)
-     * @returns Array of matching emoji definitions, limited to 50 results
+     * @returns Array of all matching emoji definitions
      */
     search(query: string): IconDefinition[] {
         if (!query || query.trim().length === 0) {
@@ -127,8 +127,7 @@ export class EmojiIconProvider implements IconProvider {
             }
         }
 
-        // Limit results to prevent overwhelming the UI
-        return results.slice(0, 50);
+        return results;
     }
 
     /**

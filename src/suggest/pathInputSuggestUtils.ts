@@ -76,13 +76,15 @@ export function buildPathSuggestionItems<TItem>({
         });
     }
 
+    // Obsidian fuzzy scores are negative penalties where values closer to 0 are better matches,
+    // so sort descending before applying the limit. Otherwise the closest matches are cut off.
     matches.sort((a, b) => {
-        const scoreA = a.match?.score ?? Number.POSITIVE_INFINITY;
-        const scoreB = b.match?.score ?? Number.POSITIVE_INFINITY;
+        const scoreA = a.match?.score ?? Number.NEGATIVE_INFINITY;
+        const scoreB = b.match?.score ?? Number.NEGATIVE_INFINITY;
         if (scoreA === scoreB) {
             return naturalCompare(a.path, b.path);
         }
-        return scoreA - scoreB;
+        return scoreB - scoreA;
     });
 
     return matches.slice(0, limit);
