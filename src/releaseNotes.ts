@@ -107,8 +107,10 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.4.4',
-        date: '2026-10-05',
+        date: '2026-10-12',
         showOnUpdate: true,
+        banner: '3.4.4.jpg',
+        info: "Thank you to everyone who bought me a coffee! For the past year I have been building a new presentation app. I give two or three presentations every week at work, and I never really liked Keynote or PowerPoint. I tried Canva, but it locks your slides in, and I tried Slidev, but found it clumsy, cluttered and limited. So I made my own: MarkdownPoint.\n\nIt's out now, and it's free for real, for both personal and commercial use. Desktop apps for Mac and Windows, with no tracking, no in-app purchases and no subscriptions. Just free. I spent all the coffee money on it, so sharing and collaboration are free too and you never have to pay for anything. Give it a try at [markdownpoint.com](https://markdownpoint.com) and let me know if you love it as much as I do!",
         new: [
             'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.'
         ],
