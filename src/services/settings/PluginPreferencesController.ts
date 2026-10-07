@@ -29,6 +29,7 @@ import {
     type CalendarWeeksToShow,
     type FeatureImagePixelSizeSetting,
     type FeatureImageSizeSetting,
+    type ListDisplayMode,
     type NotebookNavigatorSettings,
     type NarrowSidebarLayout,
     type NarrowSidebarTriggerMode,
@@ -532,6 +533,14 @@ export class PluginPreferencesController {
             settingId: 'calendarLeftPlacement',
             localStorageKey: this.options.keys.calendarLeftPlacementKey,
             nextValue: placement
+        });
+    }
+
+    public setDefaultListMode(mode: ListDisplayMode): void {
+        this.updateSettingAndMirrorToLocalStorage({
+            settingId: 'defaultListMode',
+            localStorageKey: this.options.keys.defaultListModeKey,
+            nextValue: mode
         });
     }
 

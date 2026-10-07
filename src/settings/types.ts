@@ -109,6 +109,7 @@ export const SYNC_MODE_SETTING_IDS = [
     'calendarPlacement',
     'calendarLeftPlacement',
     'calendarWeeksToShow',
+    'defaultListMode',
     'compactItemHeight',
     'compactItemHeightScaleText',
     'featureImageSize',

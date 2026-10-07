@@ -115,7 +115,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.'
         ],
         improved: [
-            'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.'
+            'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',
+            'Added a sync toggle to ==Default list mode==, so you can use compact mode on your phone to show more notes at a time and keep standard mode on your desktop.'
         ],
         fixed: [
             'Searching the Vault tab of the icon picker now lists the closest matches first, so SVG icons with short file names no longer drop out of the 50 shown results [#1526](https://github.com/johansan/notebook-navigator/issues/1526).',

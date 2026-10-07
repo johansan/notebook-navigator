@@ -32,11 +32,13 @@ import {
     isAlphaSortOrder,
     isCalendarPlacement,
     isCalendarLeftPlacement,
+    isListDisplayMode,
     isTagSortOrder,
     type AlphaSortOrder,
     type CalendarPlacement,
     type CalendarLeftPlacement,
     type CalendarWeeksToShow,
+    type ListDisplayMode,
     type NotebookNavigatorSettings,
     type TagSortOrder
 } from '../types';
@@ -534,6 +536,34 @@ export function resolveCalendarWeeksToShow(params: {
     const fallback = defaultSettings.calendarWeeksToShow;
     localStorage.set(keys.calendarWeeksToShowKey, fallback);
     return { value: fallback, migrated: false };
+}
+
+/**
+ * Resolves the default list mode preference with local overrides.
+ */
+export function resolveDefaultListMode(params: {
+    storedData: Record<string, unknown> | null;
+    keys: LocalStorageKeys;
+    defaultSettings: NotebookNavigatorSettings;
+}): ListDisplayMode {
+    const { storedData, keys, defaultSettings } = params;
+
+    const storedLocal = localStorage.get<unknown>(keys.defaultListModeKey);
+    if (isListDisplayMode(storedLocal)) {
+        // Local storage takes precedence for per-device preferences.
+        return storedLocal;
+    }
+
+    const storedSetting = storedData?.['defaultListMode'];
+    if (isListDisplayMode(storedSetting)) {
+        // Mirror the synced value into local storage when switching to local.
+        localStorage.set(keys.defaultListModeKey, storedSetting);
+        return storedSetting;
+    }
+
+    // Seed local storage with a valid default value.
+    localStorage.set(keys.defaultListModeKey, defaultSettings.defaultListMode);
+    return defaultSettings.defaultListMode;
 }
 
 /**

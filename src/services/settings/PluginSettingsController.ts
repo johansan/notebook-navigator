@@ -58,6 +58,7 @@ import {
     isFeatureImageSizeSetting,
     isFolderNoteOpenLocation,
     isHomepageSource,
+    isListDisplayMode,
     isMouseBackForwardAction,
     isManualSortNewNotePlacement,
     isUnfinishedTaskIconMode,
@@ -1170,6 +1171,10 @@ export class PluginSettingsController {
         return this.sanitizeBoundedIntegerSetting(value, { min: 20, max: 40, fallback: DEFAULT_SETTINGS.compactItemHeight });
     }
 
+    private sanitizeDefaultListModeSetting(value: unknown): NotebookNavigatorSettings['defaultListMode'] {
+        return isListDisplayMode(value) ? value : DEFAULT_SETTINGS.defaultListMode;
+    }
+
     private sanitizeFeatureImageSizeSetting(value: unknown): NotebookNavigatorSettings['featureImageSize'] {
         return isFeatureImageSizeSetting(value) ? value : DEFAULT_SETTINGS.featureImageSize;
     }
@@ -1307,6 +1312,7 @@ export class PluginSettingsController {
             sanitizeNavIndentSetting: value => this.sanitizeNavIndentSetting(value),
             sanitizeNavItemHeightSetting: value => this.sanitizeNavItemHeightSetting(value),
             sanitizeCalendarWeeksToShowSetting: value => this.sanitizeCalendarWeeksToShowSetting(value),
+            sanitizeDefaultListModeSetting: value => this.sanitizeDefaultListModeSetting(value),
             sanitizeCalendarPlacementSetting: value => this.sanitizeCalendarPlacementSetting(value),
             sanitizeCalendarLeftPlacementSetting: value => this.sanitizeCalendarLeftPlacementSetting(value),
             sanitizeCompactItemHeightSetting: value => this.sanitizeCompactItemHeightSetting(value),

@@ -76,6 +76,7 @@ import {
     type FeatureImagePixelSizeSetting,
     type FeatureImageSizeSetting,
     isSettingSyncMode,
+    type ListDisplayMode,
     type SettingSyncMode,
     type SyncModeSettingId,
     type TagSortOrder
@@ -1163,6 +1164,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
     public setCalendarCursorDateIso(dateIso: string): void {
         this.calendarCursorDateIso = dateIso;
+    }
+
+    /**
+     * Updates the default list mode and persists to local storage.
+     */
+    public setDefaultListMode(mode: ListDisplayMode): void {
+        this.preferencesController.setDefaultListMode(mode);
     }
 
     /**

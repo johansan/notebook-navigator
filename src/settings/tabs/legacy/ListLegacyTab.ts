@@ -96,7 +96,7 @@ export function renderListPaneTab(context: SettingsTabContext): void {
             }
         );
 
-        appearanceGroup.addSetting(setting => {
+        const defaultListModeSetting = appearanceGroup.addSetting(setting => {
             setting
                 .setName(strings.settings.items.defaultListMode.name)
                 .setDesc(strings.settings.items.defaultListMode.desc)
@@ -105,15 +105,16 @@ export function renderListPaneTab(context: SettingsTabContext): void {
                         .addOption('standard', strings.settings.items.defaultListMode.options.standard)
                         .addOption('compact', strings.settings.items.defaultListMode.options.compact)
                         .setValue(plugin.settings.defaultListMode)
-                        .onChange(async value => {
+                        .onChange(value => {
                             if (!isListDisplayMode(value)) {
                                 return;
                             }
-                            plugin.settings.defaultListMode = value === 'compact' ? 'compact' : 'standard';
-                            await plugin.saveSettingsAndUpdate();
+                            plugin.setDefaultListMode(value);
                         })
                 );
         });
+
+        addSettingSyncModeToggle({ setting: defaultListModeSetting, plugin, settingId: 'defaultListMode' });
 
         const compactItemHeightSetting = appearanceGroup.addSetting(setting => {
             renderSliderSetting(setting, {

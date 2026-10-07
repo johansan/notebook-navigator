@@ -25,6 +25,7 @@ import {
     resolveCalendarWeeksToShow,
     resolveCompactItemHeight,
     resolveCompactItemHeightScaleText,
+    resolveDefaultListMode,
     resolveFolderSortOrder,
     resolveNavIndent,
     resolveNavItemHeight,
@@ -78,6 +79,7 @@ interface CreateSyncModeRegistryParams {
     sanitizeCalendarPlacementSetting: (value: unknown) => NotebookNavigatorSettings['calendarPlacement'];
     sanitizeCalendarLeftPlacementSetting: (value: unknown) => NotebookNavigatorSettings['calendarLeftPlacement'];
     sanitizeCalendarWeeksToShowSetting: (value: unknown) => NotebookNavigatorSettings['calendarWeeksToShow'];
+    sanitizeDefaultListModeSetting: (value: unknown) => NotebookNavigatorSettings['defaultListMode'];
     sanitizeCompactItemHeightSetting: (value: unknown) => number;
     sanitizeFeatureImageSizeSetting: (value: unknown) => NotebookNavigatorSettings['featureImageSize'];
     sanitizeFeatureImagePixelSizeSetting: (value: unknown) => NotebookNavigatorSettings['featureImagePixelSize'];
@@ -526,6 +528,16 @@ export function createSyncModeRegistry(params: CreateSyncModeRegistryParams): Sy
             resolveDeviceLocal: storedData =>
                 resolveCalendarWeeksToShow({ storedData, keys: params.keys, defaultSettings: params.defaultSettings }),
             sanitizeSynced: () => params.sanitizeCalendarWeeksToShowSetting(params.getSettings().calendarWeeksToShow)
+        }),
+        defaultListMode: createResolvedLocalStorageSettingEntry({
+            settingId: 'defaultListMode',
+            loadPhase: 'preProfiles',
+            localStorageKey: params.keys.defaultListModeKey,
+            resolveDeviceLocal: storedData => ({
+                value: resolveDefaultListMode({ storedData, keys: params.keys, defaultSettings: params.defaultSettings }),
+                migrated: false
+            }),
+            sanitizeSynced: () => params.sanitizeDefaultListModeSetting(params.getSettings().defaultListMode)
         }),
         compactItemHeight: createResolvedLocalStorageSettingEntry({
             settingId: 'compactItemHeight',

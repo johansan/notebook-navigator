@@ -823,6 +823,29 @@ describe('PluginSettingsController.applySettingsRecord', () => {
         expect(mockLocalStorageStore.get(STORAGE_KEYS.uiScaleKey)).toBe(1.3);
     });
 
+    it('keeps the device default list mode when the setting is local', () => {
+        const { controller } = createController();
+        const syncModes = structuredClone(DEFAULT_SETTINGS.syncModes);
+        syncModes.defaultListMode = 'local';
+        mockLocalStorageStore.set(STORAGE_KEYS.defaultListModeKey, 'compact');
+
+        controller.applySettingsRecord({ syncModes, defaultListMode: 'standard' }, { isFirstLaunch: false });
+
+        expect(controller.settings.defaultListMode).toBe('compact');
+        expect(controller.getPersistableSettings()).not.toHaveProperty('defaultListMode');
+    });
+
+    it('applies and mirrors the synced default list mode', () => {
+        const { controller } = createController();
+        mockLocalStorageStore.set(STORAGE_KEYS.defaultListModeKey, 'standard');
+
+        controller.applySettingsRecord({ defaultListMode: 'compact' }, { isFirstLaunch: false });
+
+        expect(controller.settings.defaultListMode).toBe('compact');
+        expect(mockLocalStorageStore.get(STORAGE_KEYS.defaultListModeKey)).toBe('compact');
+        expect(controller.getPersistableSettings()).toHaveProperty('defaultListMode', 'compact');
+    });
+
     it('builds persistable first-launch defaults without changing current settings or local mirrors', () => {
         const { controller } = createController();
         const currentSettings = structuredClone(DEFAULT_SETTINGS);

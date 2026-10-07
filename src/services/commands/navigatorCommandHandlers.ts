@@ -889,10 +889,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         id: 'toggle-compact-mode',
         name: strings.commands.toggleCompactMode,
         callback: () => {
-            runAsyncAction(async () => {
-                plugin.settings.defaultListMode = plugin.settings.defaultListMode === 'compact' ? 'standard' : 'compact';
-                await plugin.saveSettingsAndUpdate();
-            });
+            plugin.setDefaultListMode(plugin.settings.defaultListMode === 'compact' ? 'standard' : 'compact');
         }
     });
 

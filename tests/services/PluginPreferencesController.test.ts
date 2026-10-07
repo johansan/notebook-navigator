@@ -138,6 +138,18 @@ describe('PluginPreferencesController', () => {
         expect(notifySettingsUpdate).not.toHaveBeenCalled();
     });
 
+    it('mirrors default list mode updates to local storage', () => {
+        isLocal = true;
+
+        controller.setDefaultListMode('compact');
+
+        expect(settings.defaultListMode).toBe('compact');
+        expect(localStorageSet).toHaveBeenCalledWith(STORAGE_KEYS.defaultListModeKey, 'compact');
+        expect(persistSyncModeSettingUpdate).toHaveBeenCalledWith('defaultListMode');
+        expect(saveSettings).not.toHaveBeenCalled();
+        expect(notifySettingsUpdate).not.toHaveBeenCalled();
+    });
+
     it('mirrors feature image display size updates to local storage', () => {
         isLocal = true;
 

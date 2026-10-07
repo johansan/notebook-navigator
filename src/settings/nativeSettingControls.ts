@@ -198,7 +198,6 @@ const STRING_SETTING_KEYS = [
     'characterCountSpaces',
     'alphabeticalDateMode',
     'listPaneTitle',
-    'defaultListMode',
     'propertySortSecondary',
     'manualSortNewNotePlacement',
     'collapseBehavior'
@@ -230,7 +229,6 @@ const STRING_SETTING_OPTIONS: Partial<Record<NativeStringControlKey, readonly st
     characterCountSpaces: ['include', 'exclude'],
     alphabeticalDateMode: ['created', 'modified'],
     listPaneTitle: ['header', 'list', 'hidden'],
-    defaultListMode: ['standard', 'compact'],
     propertySortSecondary: ['title', 'filename', 'created', 'modified'],
     manualSortNewNotePlacement: ['top', 'bottom', 'below-selected-note', 'unsorted'],
     collapseBehavior: ['all', 'folders-only', 'tags-only', 'properties-only']
