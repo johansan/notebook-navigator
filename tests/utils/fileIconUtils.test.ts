@@ -33,6 +33,11 @@ describe('resolveFileNameMatchIconId', () => {
         expect(resolveFileNameMatchIconIdFromNeedles('', needles)).toBe(null);
     });
 
+    it('keeps icon values that name no known icon', () => {
+        const needles = buildFileNameIconNeedles({ meeting: 'CI-simple-icons-obsidian' });
+        expect(resolveFileNameMatchIconIdFromNeedles('Weekly meeting', needles)).toBe('CI-simple-icons-obsidian');
+    });
+
     it('matches case-insensitively and prefers longer needles', () => {
         const iconMap = {
             meet: 'ph-book',

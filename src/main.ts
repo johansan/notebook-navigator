@@ -42,6 +42,7 @@ import { CommandQueueService } from './services/CommandQueueService';
 import { OmnisearchService } from './services/OmnisearchService';
 import { FileSystemOperations } from './services/FileSystemService';
 import { getIconService } from './services/icons';
+import { refreshRegisteredIconIds } from './utils/iconizeFormat';
 import { VaultIconProvider } from './services/icons/providers/VaultIconProvider';
 import { RecentNotesService } from './services/RecentNotesService';
 import type { ExternalIconProviderController } from './services/icons/external/ExternalIconProviderController';
@@ -382,6 +383,21 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
      */
     public setRecentIcons(recentIcons: Record<string, string[]>): void {
         this.preferencesController.setRecentIcons(recentIcons);
+    }
+
+    /**
+     * Reads Obsidian's icon list again and redraws icons when it changed.
+     *
+     * Obsidian loads plugins one at a time, so the icon list read while this plugin loads its settings misses
+     * icons that plugins loading after it add with `addIcon()`. Views call this before they render: they open
+     * after all plugins have loaded, and the navigator view reads note frontmatter right away. A note read
+     * with the old list is stored without its icon until the note changes, and interface icons from those
+     * plugins show the default icon until settings change.
+     */
+    public refreshIconList(): void {
+        if (refreshRegisteredIconIds()) {
+            getIconService().notifyIconAssetsChanged();
+        }
     }
 
     /**

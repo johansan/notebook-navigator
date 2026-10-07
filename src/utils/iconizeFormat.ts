@@ -207,7 +207,52 @@ function parseShortProviderIconId(value: string): string | null {
     return parseShortProviderIconIdWithSeparator(value, '-') ?? parseShortProviderIconIdWithSeparator(value, ':');
 }
 
+/**
+ * Snapshot of Obsidian's icon list (`getIconIds()`), shared by the Lucide icon provider and frontmatter
+ * parsing. Both must read the same snapshot: when the icon picker lists an icon that frontmatter parsing
+ * does not know, the icon cannot be written to frontmatter and is stored in settings instead.
+ *
+ * Other plugins add icons with `addIcon()` during their own `onload` or later, so the snapshot can miss
+ * icons until `refreshRegisteredIconIds()` reads the list again.
+ */
+let REGISTERED_ICON_IDS: string[] | null = null;
 let SUPPORTED_LUCIDE_ICON_IDS: ReadonlySet<string> | null | undefined;
+
+/**
+ * Returns Obsidian's registered icon ids with their original prefixes (e.g. "lucide-folder").
+ * Reads the list on first use and keeps it until `refreshRegisteredIconIds()` finds a change.
+ */
+export function getRegisteredIconIds(): readonly string[] {
+    if (!REGISTERED_ICON_IDS) {
+        REGISTERED_ICON_IDS = getIconIds();
+    }
+    return REGISTERED_ICON_IDS;
+}
+
+/**
+ * Reads Obsidian's icon list again and replaces the shared snapshot when icons were added or removed.
+ *
+ * @returns true when the snapshot changed. false when the list is unchanged or has not been read yet; an
+ * unread list needs no refresh because its first read sees the current registry.
+ */
+export function refreshRegisteredIconIds(): boolean {
+    if (!REGISTERED_ICON_IDS) {
+        return false;
+    }
+
+    const previousIconIds = new Set(REGISTERED_ICON_IDS);
+    const nextIconIds = getIconIds();
+    const hasChanged = nextIconIds.length !== previousIconIds.size || nextIconIds.some(iconId => !previousIconIds.has(iconId));
+    if (!hasChanged) {
+        return false;
+    }
+
+    REGISTERED_ICON_IDS = nextIconIds;
+    // Both caches are derived from the snapshot and are rebuilt from it on next use
+    SUPPORTED_LUCIDE_ICON_IDS = undefined;
+    ICONIZE_EXCEPTION_CACHE.delete(LUCIDE_PROVIDER_ID);
+    return true;
+}
 
 function getSupportedLucideIconIds(): ReadonlySet<string> | null {
     if (SUPPORTED_LUCIDE_ICON_IDS !== undefined) {
@@ -220,7 +265,7 @@ function getSupportedLucideIconIds(): ReadonlySet<string> | null {
     }
 
     SUPPORTED_LUCIDE_ICON_IDS = new Set(
-        getIconIds()
+        getRegisteredIconIds()
             .map(iconId => normalizeCanonicalIconId(iconId))
             .filter(iconId => iconId.length > 0)
     );
@@ -607,6 +652,13 @@ function normalizeIconMapIconValue(iconId: string): string | null {
     return serialized && serialized.length > 0 ? serialized : null;
 }
 
+/**
+ * Normalizes stored icon map entries. Entries with an invalid key or an empty value are dropped.
+ *
+ * Values that name no known icon are kept as stored, because the icon can come from a plugin that adds it
+ * with `addIcon()` after settings load, or that is installed only on another device. Dropping the value would
+ * delete the rule from synced settings the next time settings are saved.
+ */
 export function normalizeIconMapRecord(record: Record<string, string>, normalizeKey: (input: string) => string): Record<string, string> {
     const normalized = sanitizeRecord<string>(undefined);
 
@@ -615,12 +667,13 @@ export function normalizeIconMapRecord(record: Record<string, string>, normalize
             return;
         }
 
-        const normalizedEntry = normalizeIconMapEntry(key, value, normalizeKey);
-        if (!normalizedEntry) {
+        const normalizedKey = normalizeKey(key);
+        const trimmedValue = value.trim();
+        if (!normalizedKey || !trimmedValue) {
             return;
         }
 
-        normalized[normalizedEntry.key] = normalizedEntry.iconId;
+        normalized[normalizedKey] = normalizeIconMapIconValue(trimmedValue) ?? trimmedValue;
     });
 
     return normalized;

@@ -122,7 +122,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Searching the Vault tab of the icon picker now lists the closest matches first, so SVG icons with short file names no longer drop out of the 50 shown results [#1526](https://github.com/johansan/notebook-navigator/issues/1526).',
             'The icon picker now shows how many icons matched when a search on the Vault, Lucide, or Emoji tab has more than 50 results.',
             'Tag, date, folder, and file suggestions now list the closest matches first.',
-            'Feature images larger than 60 megapixels are now skipped on mobile instead of reloading Obsidian while thumbnails are generated [#1527](https://github.com/johansan/notebook-navigator/issues/1527).'
+            'Feature images larger than 60 megapixels are now skipped on mobile instead of reloading Obsidian while thumbnails are generated [#1527](https://github.com/johansan/notebook-navigator/issues/1527).',
+            'Icons that other plugins add to Obsidian, such as Custom Icons, are now saved to frontmatter when picked, shown when set in frontmatter, and kept in ==File name icon map==, ==File type icon map==, and ==Interface icons== [#1531](https://github.com/johansan/notebook-navigator/issues/1531).',
+            'Icons from another plugin now show in Notebook Navigator menus and in the calendar tab header.'
         ]
     },
     {

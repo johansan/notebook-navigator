@@ -180,6 +180,8 @@ export class NotebookNavigatorView extends ItemView {
         });
         this.updatePlatformClasses();
 
+        // Must run before the first render, which reads note frontmatter and resolves interface icons
+        this.plugin.refreshIconList();
         this.root = createRoot(container);
         this.root.render(
             <React.StrictMode>

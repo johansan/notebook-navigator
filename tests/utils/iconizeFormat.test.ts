@@ -24,6 +24,7 @@ import {
     normalizeCanonicalIconId,
     normalizeFileNameIconMapKey,
     normalizeFileTypeIconMapKey,
+    normalizeIconMapRecord,
     parseIconMapText,
     serializeIconMapRecord,
     serializeIconForFrontmatter,
@@ -327,6 +328,17 @@ describe('parseIconMapText', () => {
         expect(parsed.invalidLines).toEqual([]);
         expect(Object.keys(parsed.map)).toEqual(['café']);
         expect(parsed.map.café).toBe('calendar');
+    });
+});
+
+describe('normalizeIconMapRecord', () => {
+    it('normalizes known icons and keeps values that name no known icon', () => {
+        const normalized = normalizeIconMapRecord(
+            { '.PDF': 'SiGithub', md: 'CI-simple-icons-obsidian', txt: '  ', '': 'home' },
+            normalizeFileTypeIconMapKey
+        );
+
+        expect(normalized).toEqual({ pdf: 'si-github', md: 'CI-simple-icons-obsidian' });
     });
 });
 

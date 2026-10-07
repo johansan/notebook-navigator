@@ -104,6 +104,8 @@ export class NotebookNavigatorCalendarView extends ItemView {
         });
         this.updatePlatformClasses();
 
+        // Must run before the first render and before the tab header is redrawn below, which both resolve interface icons
+        this.plugin.refreshIconList();
         this.root = createRoot(container);
         this.root.render(
             <React.StrictMode>

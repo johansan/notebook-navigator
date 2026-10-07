@@ -183,41 +183,41 @@ export function resolveNavigationFolderIcon(params: {
         : resolveUXIcon(interfaceIcons, 'nav-folder-closed');
 }
 
-function tryResolveLucideMenuIconId(iconId: string): string | null {
+/**
+ * Returns the id an Obsidian menu shows for an icon from Obsidian's icon list, or null for icons from other
+ * providers, which Obsidian menus cannot show. Ids are passed unchanged instead of adding `lucide-`, because
+ * Obsidian shows both `star` and `lucide-star`, while icons that other plugins register with `addIcon()`, such
+ * as the `CI-` icons of Custom Icons, exist only under their own id and show nothing with `lucide-` added.
+ */
+function tryResolveMenuIconId(iconId: string): string | null {
     const trimmed = iconId.trim();
     if (!trimmed) {
         return null;
     }
 
     const colonIndex = trimmed.indexOf(':');
-    if (colonIndex !== -1) {
-        const provider = trimmed.substring(0, colonIndex);
-        if (provider !== 'lucide') {
-            return null;
-        }
-
-        const identifier = trimmed.substring(colonIndex + 1).trim();
-        if (!identifier) {
-            return null;
-        }
-
-        const slug = identifier.startsWith('lucide-') ? identifier.substring('lucide-'.length) : identifier;
-        return slug ? `lucide-${slug}` : null;
+    if (colonIndex === -1) {
+        return trimmed;
     }
 
-    const slug = trimmed.startsWith('lucide-') ? trimmed.substring('lucide-'.length) : trimmed;
-    return slug ? `lucide-${slug}` : null;
+    const provider = trimmed.substring(0, colonIndex);
+    if (provider !== 'lucide') {
+        return null;
+    }
+
+    const identifier = trimmed.substring(colonIndex + 1).trim();
+    return identifier || null;
 }
 
 /**
- * Normalizes an icon id into a Lucide menu icon id.
+ * Normalizes an icon id into an id from Obsidian's icon list for menus, or null when Obsidian menus cannot show it.
  */
 export function resolveIconForMenu(iconId: string | null | undefined): string | null {
     if (typeof iconId !== 'string') {
         return null;
     }
 
-    return tryResolveLucideMenuIconId(iconId);
+    return tryResolveMenuIconId(iconId);
 }
 
 export function resolveUXIconForMenu(
@@ -231,6 +231,10 @@ export function resolveUXIconForMenu(
     );
 }
 
+/**
+ * Normalizes stored interface icon overrides. Unknown keys, empty values and values that resolve to the
+ * default icon are dropped. Values that name no known icon are kept as stored.
+ */
 export function normalizeUXIconMapRecord(uxIconMap: Record<string, string> | undefined): Record<string, string> {
     const normalized = sanitizeRecord<string>(undefined);
 
@@ -251,6 +255,10 @@ export function normalizeUXIconMapRecord(uxIconMap: Record<string, string> | und
 
         const canonical = deserializeIconFromFrontmatter(trimmed);
         if (!canonical) {
+            // Keep values that name no known icon, because the icon can come from a plugin that adds it with
+            // `addIcon()` after settings load, or that is installed only on another device. Dropping the value
+            // would delete the override from synced settings the next time settings are saved.
+            normalized[normalizedKey] = trimmed;
             return;
         }
 

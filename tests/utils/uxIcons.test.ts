@@ -16,7 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, it, expect } from 'vitest';
-import { normalizeUXIconMapRecord, resolveNavigationFolderIcon, resolveUXIcon, resolveUXIconForMenu } from '../../src/utils/uxIcons';
+import {
+    normalizeUXIconMapRecord,
+    resolveIconForMenu,
+    resolveNavigationFolderIcon,
+    resolveUXIcon,
+    resolveUXIconForMenu
+} from '../../src/utils/uxIcons';
 
 describe('resolveUXIcon', () => {
     it('returns defaults when no overrides are present', () => {
@@ -36,13 +42,28 @@ describe('resolveUXIcon', () => {
 
 describe('resolveUXIconForMenu', () => {
     it('uses the registered default icon when no explicit fallback is provided', () => {
-        expect(resolveUXIconForMenu(undefined, 'list-sort-modified')).toBe('lucide-calendar-clock');
+        expect(resolveUXIconForMenu(undefined, 'list-sort-modified')).toBe('calendar-clock');
     });
 
     it('uses the explicit fallback when the override cannot render in an Obsidian menu', () => {
         expect(resolveUXIconForMenu({ 'list-sort-modified': 'icons/custom.svg' }, 'list-sort-modified', 'lucide-calendar')).toBe(
             'lucide-calendar'
         );
+    });
+});
+
+describe('resolveIconForMenu', () => {
+    it('passes ids from the icon list unchanged', () => {
+        expect(resolveIconForMenu('star')).toBe('star');
+        expect(resolveIconForMenu('lucide-star')).toBe('lucide-star');
+        expect(resolveIconForMenu('CI-simple-icons-obsidian')).toBe('CI-simple-icons-obsidian');
+        expect(resolveIconForMenu('lucide:star')).toBe('star');
+    });
+
+    it('returns null for icons that Obsidian menus cannot show', () => {
+        expect(resolveIconForMenu('emoji:📁')).toBeNull();
+        expect(resolveIconForMenu('phosphor:house')).toBeNull();
+        expect(resolveIconForMenu(' ')).toBeNull();
     });
 });
 
@@ -112,6 +133,15 @@ describe('normalizeUXIconMapRecord', () => {
         });
 
         expect(normalized['list-search']).toBeUndefined();
+    });
+
+    it('keeps values that name no known icon', () => {
+        const normalized = normalizeUXIconMapRecord({
+            'list-search': 'CI-simple-icons-obsidian'
+        });
+
+        expect(normalized['list-search']).toBe('CI-simple-icons-obsidian');
+        expect(resolveUXIcon(normalized, 'list-search')).toBe(resolveUXIcon(undefined, 'list-search'));
     });
 
     it('preserves emoji overrides', () => {

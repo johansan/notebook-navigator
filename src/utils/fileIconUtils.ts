@@ -96,7 +96,9 @@ export function buildFileNameIconNeedles(iconMap: Record<string, string>): FileN
 
         // Preserve whitespace in the key to allow matching patterns like 'ai ' (with trailing space)
         const needle = casefoldPreservingWhitespace(key);
-        const iconId = deserializeIconFromFrontmatter(value.trim()) ?? '';
+        // Keep a value that names no known icon, like file type rules do, because the needles are built once per
+        // settings change and the icon can be added with `addIcon()` after they are built
+        const iconId = deserializeIconFromFrontmatter(value.trim()) ?? value.trim();
         // Reject keys that are empty when trimmed, but allow keys with leading/trailing whitespace
         if (needle.trim().length === 0 || !iconId) {
             return;
