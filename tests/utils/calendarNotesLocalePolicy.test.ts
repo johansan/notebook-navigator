@@ -54,7 +54,8 @@ describe('calendar note locale policy', () => {
             date: () => 1,
             set: () => stub,
             get: () => 0,
-            toDate: () => new Date(0)
+            toDate: () => new Date(0),
+            parsingFlags: () => ({ parsedDateParts: [] })
         };
 
         return stub;

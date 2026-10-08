@@ -112,7 +112,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
         banner: '3.4.4.jpg',
         info: "Thank you to everyone who bought me a coffee! For the past year I have been building a new presentation app. I give two or three presentations every week at work, and I never really liked Keynote or PowerPoint. I tried Canva, but it locks your slides in, and I tried Slidev, but found it clumsy, cluttered and limited. So I made my own: MarkdownPoint.\n\nIt's out now, and it's free for real, for both personal and commercial use. Desktop apps for Mac and Windows, with no tracking, no in-app purchases and no subscriptions. Just free. I spent all the coffee money on it, and I'll keep sharing and collaboration free for as long as I can afford it. Give it a try at [markdownpoint.com](https://markdownpoint.com) and let me know if you love it as much as I do!",
         new: [
-            'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.'
+            'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.',
+            'New commands `Open next periodic note` and `Open previous periodic note` open the note for the next or previous day, week, month, quarter or year from the active periodic note, and create the note when it is missing.',
+            'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.'
         ],
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',

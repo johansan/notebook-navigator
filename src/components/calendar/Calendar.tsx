@@ -27,7 +27,12 @@ import { useUXPreferences } from '../../context/UXPreferencesContext';
 import { getDBInstanceOrNull, isShutdownInProgress, waitForDatabaseInitialization } from '../../storage/fileOperations';
 import { runAsyncAction } from '../../utils/async';
 import { getCalendarCustomWeekAnchorUnit } from '../../utils/calendarCustomNotePatterns';
-import { getDailyNoteFile, getDailyNotePath, getDailyNoteSettings as getCoreDailyNoteSettings } from '../../utils/dailyNotes';
+import {
+    getDailyNoteFile,
+    getDailyNotePath,
+    getDailyNoteSettings as getCoreDailyNoteSettings,
+    parseDailyNoteDateFromPath
+} from '../../utils/dailyNotes';
 import {
     getMomentApi,
     resolveCalendarLocales,
@@ -40,7 +45,6 @@ import { useFileOpener } from '../../hooks/useFileOpener';
 import { useLocalDayKey } from '../../hooks/useLocalDayKey';
 import { extractFrontmatterName } from '../../utils/metadataExtractor';
 import { type CalendarNoteKind } from '../../utils/calendarNotes';
-import { escapeMomentLiteralPath } from '../../utils/calendarCustomNotePatterns';
 import { usesMobileChrome } from '../../utils/paneLayout';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { createFileVisibilityChecker } from '../../utils/fileFilters';
@@ -170,10 +174,6 @@ function isFileOpenInWorkspace(workspace: Workspace, filePath: string): boolean 
     });
 
     return isOpen;
-}
-
-function stripMarkdownExtension(path: string): string {
-    return path.replace(/\.md$/iu, '');
 }
 
 export function Calendar({
@@ -754,31 +754,17 @@ export function Calendar({
             }
 
             const normalizedFilePath = normalizePath(filePath);
-            const pathWithoutExtension = stripMarkdownExtension(normalizedFilePath);
 
             if (settings.calendarIntegrationMode === 'daily-notes') {
                 if (!dailyNoteSettings) {
                     return null;
                 }
 
-                const folderPattern = escapeMomentLiteralPath(dailyNoteSettings.folder);
-                const fullPattern = folderPattern ? `${folderPattern}/${dailyNoteSettings.format}` : dailyNoteSettings.format;
-                const parsedDate = momentApi(pathWithoutExtension, fullPattern, dailyNoteLocale, true);
-                if (!parsedDate.isValid()) {
+                const normalizedDate = parseDailyNoteDateFromPath(normalizedFilePath, dailyNoteSettings, momentApi, dailyNoteLocale);
+                if (!normalizedDate) {
                     return null;
                 }
 
-                const normalizedFolder = normalizePath(dailyNoteSettings.folder.trim()).replace(/^\/+/u, '').replace(/\/+$/u, '');
-                const expectedPathWithoutExtension = normalizePath(
-                    normalizedFolder
-                        ? `${normalizedFolder}/${parsedDate.format(dailyNoteSettings.format)}`
-                        : parsedDate.format(dailyNoteSettings.format)
-                );
-                if (`${expectedPathWithoutExtension}.md` !== normalizedFilePath) {
-                    return null;
-                }
-
-                const normalizedDate = parsedDate.startOf('day');
                 const note = getExistingDayNoteTarget(normalizedDate);
                 return note.visibleFile?.path === normalizedFilePath ? normalizedDate : null;
             }
@@ -787,12 +773,17 @@ export function Calendar({
                 return null;
             }
 
-            const rootFolderPattern = escapeMomentLiteralPath(customCalendarRootFolderSettings.calendarCustomRootFolder);
-            const fullPattern = rootFolderPattern
-                ? `${rootFolderPattern}/${dayNoteResolverContext.momentPattern}`
-                : dayNoteResolverContext.momentPattern;
-            const parsedDate = momentApi(pathWithoutExtension, fullPattern, periodicNotesLocale, true);
-            if (!parsedDate.isValid()) {
+            const parsedDate = parseCalendarNoteDateFromPath({
+                filePath: normalizedFilePath,
+                kind: 'day',
+                resolverContext: dayNoteResolverContext,
+                calendarLocale: periodicNotesLocale,
+                weekLocale: periodicNotesLocale,
+                customCalendarRootFolderSettings,
+                momentApi,
+                parseLocale: periodicNotesLocale
+            });
+            if (!parsedDate) {
                 return null;
             }
 
@@ -806,10 +797,10 @@ export function Calendar({
         },
         [
             canResolveCustomDayNotes,
-            customCalendarRootFolderSettings.calendarCustomRootFolder,
+            customCalendarRootFolderSettings,
             dailyNoteSettings,
             dailyNoteLocale,
-            dayNoteResolverContext.momentPattern,
+            dayNoteResolverContext,
             getExistingDayNoteTarget,
             momentApi,
             periodicNotesLocale,

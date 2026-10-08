@@ -953,6 +953,9 @@ export const STRINGS_IT = {
         openMonthlyNote: 'Apri nota mensile',
         openQuarterlyNote: 'Apri nota trimestrale',
         openYearlyNote: 'Apri nota annuale',
+        openNextPeriodicNote: 'Apri nota periodica successiva',
+        openPreviousPeriodicNote: 'Apri nota periodica precedente',
+        openParentPeriodicNote: 'Apri nota periodica superiore',
         revealFile: 'Mostra file', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Cerca', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Cerca in tutto il vault', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

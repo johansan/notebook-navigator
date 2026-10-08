@@ -25,9 +25,10 @@ import {
     getDailyNoteFile,
     getDailyNoteFilename,
     getDailyNotePath,
+    parseDailyNoteDateFromPath,
     type DailyNoteSettings
 } from '../../src/utils/dailyNotes';
-import { resetMomentApiCacheForTests, type MomentInstance } from '../../src/utils/moment';
+import { resetMomentApiCacheForTests, type MomentApi, type MomentInstance } from '../../src/utils/moment';
 import { createTestTFile } from './createTestTFile';
 
 vi.mock('../../src/modals/TemplatePromptModal', () => ({ promptForTemplateValues: vi.fn() }));
@@ -260,5 +261,43 @@ describe('createDailyNote', () => {
 
         expect(created).toBe(createdFile);
         expect(createNewMarkdownFile).toHaveBeenCalledWith(app.vault.getRoot(), '2026-09-16');
+    });
+});
+
+describe('parseDailyNoteDateFromPath', () => {
+    const momentApi = moment as unknown as MomentApi;
+    const settings: DailyNoteSettings = { folder: 'Journal', format: 'YYYY/MM/YYYY-MM-DD', template: '' };
+
+    it('returns the date of a daily note in a nested format', () => {
+        const date = parseDailyNoteDateFromPath('Journal/2026/10/2026-10-05.md', settings, momentApi, 'en');
+        expect(date?.format('YYYY-MM-DD')).toBe('2026-10-05');
+    });
+
+    it('returns null for paths outside the daily notes folder or with another extension', () => {
+        expect(parseDailyNoteDateFromPath('Archive/2026/10/2026-10-05.md', settings, momentApi, 'en')).toBeNull();
+        expect(parseDailyNoteDateFromPath('Journal/2026/10/2026-10-05.canvas', settings, momentApi, 'en')).toBeNull();
+    });
+
+    it('returns null when the format builds a different path for the parsed date', () => {
+        const unpaddedSettings: DailyNoteSettings = { folder: 'Journal', format: 'YYYY-M-D', template: '' };
+        expect(parseDailyNoteDateFromPath('Journal/2026-1-5.md', unpaddedSettings, momentApi, 'en')?.format('YYYY-MM-DD')).toBe(
+            '2026-01-05'
+        );
+        expect(parseDailyNoteDateFromPath('Journal/2026-01-05.md', unpaddedSettings, momentApi, 'en')).toBeNull();
+    });
+
+    it.each(['YYYY/MM/YYYY-MM-DD[.md]', 'YYYY/MM/YYYY-MM-DD.[md]', 'YYYY/MM/YYYY-MM-DD[.MD]'])(
+        'returns the date of a daily note whose format %s ends in a literal extension',
+        format => {
+            const extensionSettings: DailyNoteSettings = { folder: 'Journal', format, template: '' };
+            const date = parseDailyNoteDateFromPath('Journal/2026/10/2026-10-05.md', extensionSettings, momentApi, 'en');
+            expect(date?.format('YYYY-MM-DD')).toBe('2026-10-05');
+        }
+    );
+
+    it('returns the date of a daily note whose format renders slashes inside a token', () => {
+        const localizedSettings: DailyNoteSettings = { folder: 'Journal', format: 'L', template: '' };
+        const date = parseDailyNoteDateFromPath('Journal/10/05/2026.md', localizedSettings, momentApi, 'en');
+        expect(date?.format('YYYY-MM-DD')).toBe('2026-10-05');
     });
 });

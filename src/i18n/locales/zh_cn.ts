@@ -947,6 +947,9 @@ export const STRINGS_ZH_CN = {
         openMonthlyNote: '打开月记',
         openQuarterlyNote: '打开季度笔记',
         openYearlyNote: '打开年记',
+        openNextPeriodicNote: '打开下一个周期笔记',
+        openPreviousPeriodicNote: '打开上一个周期笔记',
+        openParentPeriodicNote: '打开上级周期笔记',
         revealFile: '定位文件', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: '搜索', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: '搜索整个仓库', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

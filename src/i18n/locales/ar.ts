@@ -952,6 +952,9 @@ export const STRINGS_AR = {
         openMonthlyNote: 'فتح الملاحظة الشهرية',
         openQuarterlyNote: 'فتح الملاحظة الفصلية',
         openYearlyNote: 'فتح الملاحظة السنوية',
+        openNextPeriodicNote: 'فتح الملاحظة الدورية التالية',
+        openPreviousPeriodicNote: 'فتح الملاحظة الدورية السابقة',
+        openParentPeriodicNote: 'فتح الملاحظة الدورية الأعلى',
         revealFile: 'الكشف عن الملف', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'بحث', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'البحث في الخزنة بالكامل', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

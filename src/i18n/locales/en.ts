@@ -950,6 +950,9 @@ export const STRINGS_EN = {
         openMonthlyNote: 'Open monthly note',
         openQuarterlyNote: 'Open quarterly note',
         openYearlyNote: 'Open yearly note',
+        openNextPeriodicNote: 'Open next periodic note',
+        openPreviousPeriodicNote: 'Open previous periodic note',
+        openParentPeriodicNote: 'Open parent periodic note',
         revealFile: 'Reveal file', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Search', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Search whole vault', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

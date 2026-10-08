@@ -953,6 +953,9 @@ export const STRINGS_KO = {
         openMonthlyNote: '월간 노트 열기',
         openQuarterlyNote: '분기 노트 열기',
         openYearlyNote: '연간 노트 열기',
+        openNextPeriodicNote: '다음 정기 노트 열기',
+        openPreviousPeriodicNote: '이전 정기 노트 열기',
+        openParentPeriodicNote: '상위 정기 노트 열기',
         revealFile: '파일 표시', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: '검색', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: '보관함 전체 검색', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

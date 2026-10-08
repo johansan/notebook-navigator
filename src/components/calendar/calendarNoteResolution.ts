@@ -68,101 +68,52 @@ function stripMarkdownExtension(path: string): string {
     return path.replace(/\.md$/iu, '');
 }
 
-function normalizeVaultRelativePath(path: string): string {
-    return normalizePath(path).replace(/^\/+/u, '').replace(/\/+$/u, '');
-}
-
-function stripMomentLiterals(pattern: string): string {
+/** Replaces week-year tokens outside `[literals]` with calendar-year tokens, so `gggg` reads as `YYYY` and `GG` as `YY`. */
+function toCalendarYearTokens(pattern: string): string {
     let result = '';
     let inLiteral = false;
 
     for (const character of pattern) {
         if (character === '[') {
             inLiteral = true;
-            continue;
-        }
-
-        if (character === ']') {
+        } else if (character === ']') {
             inLiteral = false;
-            continue;
         }
-
-        if (!inLiteral) {
-            result += character;
-        }
+        result += !inLiteral && (character === 'g' || character === 'G') ? 'Y' : character;
     }
 
     return result;
 }
 
-function hasWeekParseTokens(pattern: string): boolean {
-    const tokenSource = stripMomentLiterals(pattern);
-    return /[YgG]/u.test(tokenSource) && /[wW]/u.test(tokenSource);
-}
-
-function getCalendarNotePathRelativeToRoot(filePath: string, rootFolder: string): string | null {
-    const normalizedPath = normalizeVaultRelativePath(filePath);
-    const normalizedRootFolder = normalizeVaultRelativePath(rootFolder);
-
-    if (!normalizedRootFolder) {
-        return normalizedPath;
-    }
-
-    if (normalizedPath === normalizedRootFolder) {
-        return '';
-    }
-
-    if (!normalizedPath.startsWith(`${normalizedRootFolder}/`)) {
+/**
+ * Returns the first day of the weekly note at the path that `isNotePath` checks, or null when no week builds that path.
+ * Moment cannot parse week numbers back from paths: it ignores them once a month or day is parsed, and reads `YYYY` next
+ * to a week number as the week-year, while paths take it from the first day of the week. So only the year is read from
+ * `parseInput`, and the weeks around it are formatted and compared. Week-year tokens are read as calendar years, and the
+ * year is taken before Moment checks the parsed fields against each other, so a weekday or a second year token cannot
+ * reject the path. A note with year `Y` lies in a week starting between December of `Y - 1` and the end of `Y`. When two
+ * weeks build the same path, such as `YYYY/[W]ww` in years where week 1 starts on January 1, the earlier week is returned.
+ */
+function findWeeklyCalendarNoteDate(
+    parseInput: string,
+    fullPattern: string,
+    parseLocale: string,
+    momentApi: MomentApi,
+    resolveWeekStart: (date: MomentInstance) => MomentInstance,
+    isNotePath: (date: MomentInstance) => boolean
+): MomentInstance | null {
+    const year = momentApi(parseInput, toCalendarYearTokens(fullPattern), parseLocale, true).parsingFlags().parsedDateParts[0];
+    if (year === undefined) {
         return null;
     }
 
-    return normalizedPath.slice(normalizedRootFolder.length + 1);
-}
-
-function parseWeeklyCalendarNoteDateFromPath({
-    filePath,
-    resolverContext,
-    parseLocale,
-    calendarLocale,
-    weekLocale,
-    customCalendarRootFolderSettings,
-    momentApi
-}: Omit<ParseCalendarNoteDateFromPathOptions, 'momentApi'> & { momentApi: MomentApi }): MomentInstance | null {
-    const pathWithoutExtension = stripMarkdownExtension(filePath);
-    const relativePath = getCalendarNotePathRelativeToRoot(pathWithoutExtension, customCalendarRootFolderSettings.calendarCustomRootFolder);
-    if (!relativePath) {
-        return null;
-    }
-
-    const patternSegments = resolverContext.momentPattern.split('/').filter(Boolean);
-    const pathSegments = relativePath.split('/').filter(Boolean);
-    if (patternSegments.length !== pathSegments.length) {
-        return null;
-    }
-
-    for (let startIndex = patternSegments.length - 1; startIndex >= 0; startIndex--) {
-        const suffixPattern = patternSegments.slice(startIndex).join('/');
-        if (!hasWeekParseTokens(suffixPattern)) {
-            continue;
-        }
-
-        const suffixPath = pathSegments.slice(startIndex).join('/');
-        const parsedDate = momentApi(suffixPath, suffixPattern, parseLocale, true);
-        if (!parsedDate.isValid()) {
-            continue;
-        }
-
-        const resolved = resolveCalendarNotePath({
-            kind: 'week',
-            date: parsedDate,
-            resolverContext,
-            calendarLocale,
-            weekLocale,
-            customCalendarRootFolderSettings,
-            momentApi
-        });
-        if (resolved?.filePath === filePath) {
-            return parsedDate;
+    const searchStart = momentApi()
+        .locale(parseLocale)
+        .set({ year: year - 1, month: 11, date: 1 })
+        .startOf('day');
+    for (let weekStart = resolveWeekStart(searchStart); weekStart.year() <= year; weekStart = weekStart.clone().add(1, 'week')) {
+        if (isNotePath(weekStart)) {
+            return weekStart;
         }
     }
 
@@ -229,6 +180,10 @@ export function resolveCalendarNoteTarget({
     };
 }
 
+/**
+ * Returns the date of the calendar note of `kind` at `filePath`, or null when the path is not such a note. A path counts
+ * only when the pattern builds the same path from the parsed date.
+ */
 export function parseCalendarNoteDateFromPath({
     filePath,
     kind,
@@ -249,36 +204,29 @@ export function parseCalendarNoteDateFromPath({
         return null;
     }
 
-    if (kind === 'week') {
-        return parseWeeklyCalendarNoteDateFromPath({
-            filePath: normalizedFilePath,
-            kind,
-            resolverContext,
-            calendarLocale,
-            weekLocale,
+    const resolvePathDate = (date: MomentInstance): MomentInstance =>
+        resolveCalendarCustomNotePathDate(kind, date, momentPattern, calendarLocale, weekLocale);
+    const resolveLocation = (date: MomentInstance): CalendarNoteLocation =>
+        buildCustomCalendarFilePathForPattern(
+            resolvePathDate(date),
             customCalendarRootFolderSettings,
-            momentApi,
-            parseLocale
-        });
-    }
-
+            config.calendarCustomFilePattern,
+            config.fallbackPattern
+        );
+    const isNotePath = (date: MomentInstance): boolean => resolveLocation(date).filePath === normalizedFilePath;
+    // A pattern can end in a literal extension such as `[.md]` or `[.MD]`, which the strict parse needs in the input.
+    // The rendered file name keeps its spelling before `.md` is appended to names without one.
+    const extensionSuffix = /\.md$/iu.exec(resolveLocation(momentApi()).formattedFilePattern)?.[0] ?? '';
+    const parseInput = `${stripMarkdownExtension(normalizedFilePath)}${extensionSuffix}`;
     const rootFolderPattern = escapeMomentLiteralPath(customCalendarRootFolderSettings.calendarCustomRootFolder);
     const fullPattern = rootFolderPattern ? `${rootFolderPattern}/${momentPattern}` : momentPattern;
-    const parsedDate = momentApi(stripMarkdownExtension(normalizedFilePath), fullPattern, parseLocale, true);
-    if (!parsedDate.isValid()) {
-        return null;
+
+    if (kind === 'week') {
+        return findWeeklyCalendarNoteDate(parseInput, fullPattern, parseLocale, momentApi, resolvePathDate, isNotePath);
     }
 
-    const resolved = resolveCalendarNotePath({
-        kind,
-        date: parsedDate,
-        resolverContext,
-        calendarLocale,
-        weekLocale,
-        customCalendarRootFolderSettings,
-        momentApi
-    });
-    if (!resolved || resolved.filePath !== normalizedFilePath) {
+    const parsedDate = momentApi(parseInput, fullPattern, parseLocale, true);
+    if (!parsedDate.isValid() || !isNotePath(parsedDate)) {
         return null;
     }
 

@@ -954,6 +954,9 @@ export const STRINGS_RU = {
         openMonthlyNote: 'Открыть ежемесячную заметку',
         openQuarterlyNote: 'Открыть квартальную заметку',
         openYearlyNote: 'Открыть годовую заметку',
+        openNextPeriodicNote: 'Открыть следующую периодическую заметку',
+        openPreviousPeriodicNote: 'Открыть предыдущую периодическую заметку',
+        openParentPeriodicNote: 'Открыть родительскую периодическую заметку',
         revealFile: 'Показать файл', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Поиск', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Поиск по всему хранилищу', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

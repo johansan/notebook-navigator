@@ -957,6 +957,9 @@ export const STRINGS_JA = {
         openMonthlyNote: 'マンスリーノートを開く',
         openQuarterlyNote: '四半期ノートを開く',
         openYearlyNote: '年次ノートを開く',
+        openNextPeriodicNote: '次の定期ノートを開く',
+        openPreviousPeriodicNote: '前の定期ノートを開く',
+        openParentPeriodicNote: '上位の定期ノートを開く',
         revealFile: 'ファイルを表示', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: '検索', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: '保管庫全体を検索', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

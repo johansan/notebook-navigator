@@ -324,6 +324,9 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - `Notebook Navigator: Open monthly note` Opens the current monthly note. Creates the note if it doesn't exist
 - `Notebook Navigator: Open quarterly note` Opens the current quarterly note. Creates the note if it doesn't exist
 - `Notebook Navigator: Open yearly note` Opens the current yearly note. Creates the note if it doesn't exist
+- `Notebook Navigator: Open next periodic note` From a daily, weekly, monthly, quarterly or yearly note, opens the note for the next period. Creates the note if it doesn't exist
+- `Notebook Navigator: Open previous periodic note` Same as `Open next periodic note`, for the period before the active note
+- `Notebook Navigator: Open parent periodic note` Opens the weekly note of the active daily note, the monthly note of a weekly note, the quarterly note of a monthly note and the yearly note of a quarterly note. Skips periods that have no note pattern. A week that spans two months opens the monthly note of its first day. Creates the note if it doesn't exist
 
 **File operations**
 
@@ -389,6 +392,9 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 | `notebook-navigator:open-monthly-note`              | Notebook Navigator: Open monthly note                      |
 | `notebook-navigator:open-quarterly-note`            | Notebook Navigator: Open quarterly note                    |
 | `notebook-navigator:open-yearly-note`               | Notebook Navigator: Open yearly note                       |
+| `notebook-navigator:open-next-periodic-note`        | Notebook Navigator: Open next periodic note                |
+| `notebook-navigator:open-previous-periodic-note`    | Notebook Navigator: Open previous periodic note            |
+| `notebook-navigator:open-parent-periodic-note`      | Notebook Navigator: Open parent periodic note              |
 | `notebook-navigator:toggle-descendants`             | Notebook Navigator: Toggle descendants                     |
 | `notebook-navigator:toggle-hidden`                  | Notebook Navigator: Toggle hidden folders, tags, and notes |
 | `notebook-navigator:toggle-tag-sort`                | Notebook Navigator: Toggle tag sort order                  |

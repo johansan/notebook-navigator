@@ -954,6 +954,9 @@ export const STRINGS_TR = {
         openMonthlyNote: 'Aylık notu aç',
         openQuarterlyNote: 'Çeyreklik notu aç',
         openYearlyNote: 'Yıllık notu aç',
+        openNextPeriodicNote: 'Sonraki periyodik notu aç',
+        openPreviousPeriodicNote: 'Önceki periyodik notu aç',
+        openParentPeriodicNote: 'Üst periyodik notu aç',
         revealFile: 'Dosyayı göster', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Ara', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Tüm kasada ara', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

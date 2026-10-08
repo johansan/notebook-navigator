@@ -960,6 +960,9 @@ export const STRINGS_PL = {
         openMonthlyNote: 'Otwórz notatkę miesiąca',
         openQuarterlyNote: 'Otwórz notatkę kwartału',
         openYearlyNote: 'Otwórz notatkę roku',
+        openNextPeriodicNote: 'Otwórz następną notatkę okresową',
+        openPreviousPeriodicNote: 'Otwórz poprzednią notatkę okresową',
+        openParentPeriodicNote: 'Otwórz nadrzędną notatkę okresową',
         revealFile: 'Pokaż plik', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Szukaj', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Szukaj w całym sejfie', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)

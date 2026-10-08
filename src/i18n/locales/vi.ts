@@ -955,6 +955,9 @@ export const STRINGS_VI = {
         openMonthlyNote: 'Mở ghi chú hàng tháng',
         openQuarterlyNote: 'Mở ghi chú hàng quý',
         openYearlyNote: 'Mở ghi chú hàng năm',
+        openNextPeriodicNote: 'Mở ghi chú định kỳ tiếp theo',
+        openPreviousPeriodicNote: 'Mở ghi chú định kỳ trước đó',
+        openParentPeriodicNote: 'Mở ghi chú định kỳ cấp trên',
         revealFile: 'Hiện tệp', // Command palette: Reveals and selects the currently active file in the navigator (English: Reveal file)
         search: 'Tìm kiếm', // Command palette: Toggle search in the file list (English: Search)
         searchVaultRoot: 'Tìm kiếm toàn bộ vault', // Command palette: Selects the vault root folder and focuses search with subfolders included (English: Search whole vault)
