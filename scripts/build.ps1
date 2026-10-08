@@ -254,8 +254,8 @@ if (($BuildErrors -eq 0) -and ($BuildWarnings -eq 0)) {
     if ($build.Status -eq 0) {
         Write-Host "$SuccessMark Build completed successfully"
 
-        $localPowerShellScript = Join-Path $ScriptDir 'build-local.ps1'
-        $localBashScript = Join-Path $ScriptDir 'build-local.sh'
+        $localPowerShellScript = Join-Path $ScriptDir 'local/build-local.ps1'
+        $localBashScript = Join-Path $ScriptDir 'local/build-local.sh'
 
         if (Test-Path -LiteralPath $localPowerShellScript) {
             Write-Host 'Running local PowerShell post-build script...'

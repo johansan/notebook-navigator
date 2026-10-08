@@ -181,9 +181,9 @@ if [ $BUILD_ERRORS -eq 0 ] && [ $BUILD_WARNINGS -eq 0 ]; then
         echo "✅ Build completed successfully"
         
         # Check if local post-build script exists and run it
-        if [ -f "$SCRIPT_DIR/build-local.sh" ]; then
+        if [ -f "$SCRIPT_DIR/local/build-local.sh" ]; then
             echo "Running local post-build script..."
-            "$SCRIPT_DIR/build-local.sh"
+            "$SCRIPT_DIR/local/build-local.sh"
         fi
         
         # Summary
