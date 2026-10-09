@@ -620,7 +620,6 @@ function addManualSortGroupHeaderAction(params: AddManualSortGroupHeaderActionPa
     const effectiveGrouping = resolveEffectiveListGroupingForSort({
         groupBy: groupingInfo.effectiveGrouping,
         sortOption: sortSpec.option,
-        selectionType: selectionState.selectionType,
         isManualSortActive: isManualSortPropertyKey(settings, sortSpec.propertyKey)
     });
     if (effectiveGrouping !== 'custom') {

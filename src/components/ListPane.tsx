@@ -547,7 +547,6 @@ export const ListPane = React.memo(
         const effectiveGroupBy = resolveEffectiveListGroupingForSort({
             groupBy: appearanceSettings.groupBy,
             sortOption: effectiveSortOption,
-            selectionType,
             isManualSortActive,
             isManualSortEditActive
         });

@@ -668,8 +668,7 @@ export function useListActions({
           ? undefined
           : resolveEffectiveListGroupingForSort({
                 groupBy: selectionGroupOverride,
-                sortOption: selectionSortSpec.option,
-                selectionType: selectionState.selectionType
+                sortOption: selectionSortSpec.option
             });
     const selectionDescendantLabel = useMemo(() => getSelectionDescendantLabel(), [getSelectionDescendantLabel]);
     const [folderTreeVersion, setFolderTreeVersion] = useState(0);
@@ -1683,7 +1682,6 @@ export function useListActions({
             const effectiveCurrentGroup = resolveEffectiveListGroupingForSort({
                 groupBy: groupingInfo.effectiveGrouping,
                 sortOption: currentSort,
-                selectionType: selectionState.selectionType,
                 isManualSortActive
             });
             const isGroupOptionDisabled = (option: ListNoteGroupingOption): boolean =>
@@ -1716,8 +1714,9 @@ export function useListActions({
                 });
             };
 
-            // None keeps the sorted list flat, while Custom and Date annotate it with headers.
-            (['none', 'custom', 'date'] as const).forEach(option => {
+            // None keeps the sorted list flat, Custom and Date annotate it with headers, and Folder
+            // collects notes under their parent folders.
+            (['none', 'custom', 'date', 'folder'] as const).forEach(option => {
                 addGroupOptionItem(
                     option,
                     strings.settings.items.defaultGrouping.options[option],
@@ -1725,15 +1724,6 @@ export function useListActions({
                     isGroupOptionDisabled(option)
                 );
             });
-
-            if (hasFolderSelection) {
-                addGroupOptionItem(
-                    'folder',
-                    strings.settings.items.defaultGrouping.options.folder,
-                    getGroupingIcon('folder'),
-                    isGroupOptionDisabled('folder')
-                );
-            }
 
             // The configured grouping properties provide the grouping choices, mirroring the sort field list above.
             // Switching the grouping property keeps the current group order, matching Obsidian Bases.
@@ -1841,7 +1831,6 @@ export function useListActions({
         [
             canApplyToDescendants,
             hasAppearanceOrSortSelection,
-            hasFolderSelection,
             hasSelectionGroupOverride,
             app,
             applyManualSortMode,
@@ -1857,7 +1846,6 @@ export function useListActions({
             selectionDescendantLabel,
             selectionSortTarget,
             selectionSortOverride,
-            selectionState.selectionType,
             setSelectionGroupOverride,
             setSelectionSortOverride,
             settings,

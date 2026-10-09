@@ -114,7 +114,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         new: [
             'New banner at the top of the settings page for MarkdownPoint, my free presentation app for Mac and Windows, which you can move further down the page by turning off ==Show MarkdownPoint banner at the top== in Advanced.',
             'New commands `Open next periodic note` and `Open previous periodic note` open the note for the next or previous day, week, month, quarter or year from the active periodic note, and create the note when it is missing.',
-            'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.'
+            'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.',
+            'Tags and properties can now be grouped by `Folder` in the sort menu, which lists each note under its parent folder.'
         ],
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',

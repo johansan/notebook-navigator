@@ -124,6 +124,9 @@ function splitFolderPath(path: string): string[] {
     return path.split('/').filter(Boolean);
 }
 
+/** Folder group key of notes stored directly in the vault root when the vault root is not the selected folder. */
+const VAULT_ROOT_FOLDER_GROUP_KEY = 'folder:/';
+
 function getLastFolderPathSegment(path: string, fallback: string): string {
     const segments = splitFolderPath(path);
     return segments.length > 0 ? segments[segments.length - 1] : fallback;
@@ -451,7 +454,7 @@ function buildListItemsInternal(
     }
 
     const shouldGroupByDate = groupingMode === 'date' && isDateSortOption(sortOption);
-    const shouldGroupByFolder = groupingMode === 'folder' && selectionType === ItemType.FOLDER;
+    const shouldGroupByFolder = groupingMode === 'folder';
     const propertyGroupingKey = getPropertyGroupingKey(groupingMode);
     const shouldShowUnsortedSection = isPropertySortOption(sortOption) && isManualSortActive && propertySortKey.trim().length > 0;
 
@@ -661,7 +664,13 @@ function buildListItemsInternal(
         } => {
             const parent = file.parent;
             if (!(parent instanceof TFolder)) {
-                return { key: 'folder:/', label: vaultRootLabel, sortLabel: vaultRootLabel, isCurrentFolder: false, folderPath: null };
+                return {
+                    key: VAULT_ROOT_FOLDER_GROUP_KEY,
+                    label: vaultRootLabel,
+                    sortLabel: vaultRootLabel,
+                    isCurrentFolder: false,
+                    folderPath: null
+                };
             }
 
             if (selectionType === ItemType.FOLDER && baseFolderPath) {
@@ -673,18 +682,6 @@ function buildListItemsInternal(
                         sortLabel: label,
                         isCurrentFolder: true,
                         folderPath: baseFolderPath === '/' ? null : baseFolderPath
-                    };
-                }
-
-                if (baseFolderPath === '/' && parent.path !== '/') {
-                    const header = createFolderGroupHeader(parent.path, parent.path, parent.name);
-                    return {
-                        key: `folder:/${parent.path}`,
-                        label: header.label,
-                        sortLabel: header.sortLabel,
-                        isCurrentFolder: false,
-                        folderPath: header.folderPath,
-                        folderSegments: header.folderSegments
                     };
                 }
 
@@ -704,20 +701,29 @@ function buildListItemsInternal(
                 }
             }
 
-            const parentPath = parent.path === '/' ? '' : parent.path;
-            const [topLevel] = parentPath.split('/');
-            if (topLevel && topLevel.length > 0) {
+            // The vault root selection and tag and property views list notes from the whole vault, so
+            // each note groups under its parent folder labeled with the path from the vault root.
+            // Grouping by top-level folder instead would merge sibling folders such as Projects/A and
+            // Projects/B into one group.
+            if (parent.path === '/') {
                 return {
-                    key: `folder:/${topLevel}`,
-                    label: showFolderGroupPaths ? topLevel : getLastFolderPathSegment(topLevel, topLevel),
-                    sortLabel: topLevel,
+                    key: VAULT_ROOT_FOLDER_GROUP_KEY,
+                    label: vaultRootLabel,
+                    sortLabel: vaultRootLabel,
                     isCurrentFolder: false,
-                    folderPath: topLevel,
-                    folderSegments: showFolderGroupPaths ? buildFolderGroupHeaderSegments(topLevel, topLevel) : undefined
+                    folderPath: null
                 };
             }
 
-            return { key: 'folder:/', label: vaultRootLabel, sortLabel: vaultRootLabel, isCurrentFolder: false, folderPath: null };
+            const header = createFolderGroupHeader(parent.path, parent.path, parent.name);
+            return {
+                key: `folder:/${parent.path}`,
+                label: header.label,
+                sortLabel: header.sortLabel,
+                isCurrentFolder: false,
+                folderPath: header.folderPath,
+                folderSegments: header.folderSegments
+            };
         };
 
         unpinnedFiles.forEach(file => {
@@ -741,6 +747,12 @@ function buildListItemsInternal(
         const orderedGroups = Array.from(folderGroups.entries())
             .map(([key, group]) => ({ key, ...group }))
             .sort((left, right) => {
+                // The vault root group sorts first in either direction, matching the vault root at the
+                // top of the navigation tree, so its position does not depend on the translated label.
+                if (left.key === VAULT_ROOT_FOLDER_GROUP_KEY || right.key === VAULT_ROOT_FOLDER_GROUP_KEY) {
+                    return left.key === right.key ? 0 : left.key === VAULT_ROOT_FOLDER_GROUP_KEY ? -1 : 1;
+                }
+
                 const labelCompare = compareByAlphaSortOrder(left.sortLabel, right.sortLabel, folderGroupSortOrder);
                 if (labelCompare !== 0) {
                     return labelCompare;

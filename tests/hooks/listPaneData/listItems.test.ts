@@ -954,6 +954,110 @@ describe('buildListItems pinned display scope', () => {
         ]);
     });
 
+    it('groups tag view files by their parent folder path from the vault root', () => {
+        const app = createApp();
+        const rootFile = assignParent(createTestTFile('root.md'), '/');
+        const projectAFile = assignParent(createTestTFile('Projects/A/one.md'), 'Projects/A');
+        const projectBFile = assignParent(createTestTFile('Projects/B/two.md'), 'Projects/B');
+        const projectASecondFile = assignParent(createTestTFile('Projects/A/three.md'), 'Projects/A');
+        const db = createDb({
+            [rootFile.path]: { tags: ['example'], properties: null },
+            [projectAFile.path]: { tags: ['example'], properties: null },
+            [projectBFile.path]: { tags: ['example'], properties: null },
+            [projectASecondFile.path]: { tags: ['example'], properties: null }
+        });
+        const createTagCollapseKey = (groupId: string): string =>
+            buildListGroupCollapseKey({
+                selectionType: ItemType.TAG,
+                selectedFolderPath: null,
+                selectedTag: 'example',
+                selectedProperty: null,
+                groupingMode: 'folder',
+                groupId
+            });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [projectBFile, rootFile, projectAFile, projectASecondFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'folder' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: 'example',
+            selectionType: ItemType.TAG,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        expect(getFolderHeaderItems(items)).toEqual([
+            {
+                data: 'Vault',
+                folderPath: null,
+                collapseKey: createTagCollapseKey('folder:/'),
+                groupFilePaths: [rootFile.path]
+            },
+            {
+                data: 'Projects/A',
+                folderPath: 'Projects/A',
+                collapseKey: createTagCollapseKey('folder:/Projects/A'),
+                groupFilePaths: [projectAFile.path, projectASecondFile.path]
+            },
+            {
+                data: 'Projects/B',
+                folderPath: 'Projects/B',
+                collapseKey: createTagCollapseKey('folder:/Projects/B'),
+                groupFilePaths: [projectBFile.path]
+            }
+        ]);
+        expect(getFileItems(items)).toEqual([
+            { path: rootFile.path, isPinned: false },
+            { path: projectAFile.path, isPinned: false },
+            { path: projectASecondFile.path, isPinned: false },
+            { path: projectBFile.path, isPinned: false }
+        ]);
+    });
+
+    it('keeps the vault root group first in tag views when folder groups sort descending', () => {
+        const app = createApp();
+        const rootFile = assignParent(createTestTFile('root.md'), '/');
+        const alphaFile = assignParent(createTestTFile('Alpha/one.md'), 'Alpha');
+        const zuluFile = assignParent(createTestTFile('Zulu/two.md'), 'Zulu');
+        const db = createDb({
+            [rootFile.path]: { tags: ['example'], properties: null },
+            [alphaFile.path]: { tags: ['example'], properties: null },
+            [zuluFile.path]: { tags: ['example'], properties: null }
+        });
+
+        const items = buildListItems({
+            app,
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files: [alphaFile, zuluFile, rootFile],
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'folder', folderGroupSortOrder: 'alpha-desc' },
+            searchMetaMap: new Map(),
+            selectedFolder: null,
+            selectedTag: 'example',
+            selectionType: ItemType.TAG,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        expect(getHeaderItems(items)).toEqual([
+            { data: 'Vault', kind: 'folder' },
+            { data: 'Zulu', kind: 'folder' },
+            { data: 'Alpha', kind: 'folder' }
+        ]);
+    });
+
     it('adds an Unsorted section for manual sort files missing a valid rank', () => {
         const app = createApp();
         const rankedFile = createTestTFile('notes/ranked.md');

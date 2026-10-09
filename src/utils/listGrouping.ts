@@ -75,13 +75,11 @@ export interface ListGroupingResolution {
 export function resolveEffectiveListGroupingForSort({
     groupBy,
     sortOption,
-    selectionType,
     isManualSortActive = false,
     isManualSortEditActive = false
 }: {
     groupBy: ListNoteGroupingOption;
     sortOption: SortOption;
-    selectionType?: ItemType | null;
     isManualSortActive?: boolean;
     isManualSortEditActive?: boolean;
 }): ListNoteGroupingOption {
@@ -94,13 +92,11 @@ export function resolveEffectiveListGroupingForSort({
         return groupBy;
     }
 
-    // Sort-incompatible grouping modes fall back to None because falling back to Custom would
-    // activate frontmatter headers that the user did not select.
+    // Folder groups are ordered by folder path independent of the file order, so they survive a
+    // property sort. Sort-incompatible grouping modes fall back to None because falling back to
+    // Custom would activate frontmatter headers that the user did not select.
     if (getSortField(sortOption) === 'property') {
-        if (selectionType === ItemType.FOLDER && groupBy === 'folder') {
-            return 'folder';
-        }
-        return groupBy === 'custom' ? 'custom' : 'none';
+        return groupBy === 'folder' || groupBy === 'custom' ? groupBy : 'none';
     }
 
     if (groupBy === 'date' && !isDateSortOption(sortOption)) {
@@ -304,32 +300,12 @@ export function resolveListGroupingOverride({
 }): ListGroupingResolution {
     const globalDefault: ListNoteGroupingOption = noteGrouping ?? 'none';
 
-    if (selectionType === ItemType.FOLDER) {
+    if (selectionType === ItemType.FOLDER || selectionType === ItemType.TAG || selectionType === ItemType.PROPERTY) {
         return {
             defaultGrouping: globalDefault,
             effectiveGrouping: groupBy ?? globalDefault,
             normalizedOverride: groupBy,
             hasCustomOverride: groupBy !== undefined
-        };
-    }
-
-    if (selectionType === ItemType.TAG || selectionType === ItemType.PROPERTY) {
-        const defaultGrouping: ListNoteGroupingOption = globalDefault === 'folder' ? 'date' : globalDefault;
-
-        if (groupBy === undefined || groupBy === 'folder') {
-            return {
-                defaultGrouping,
-                effectiveGrouping: defaultGrouping,
-                normalizedOverride: undefined,
-                hasCustomOverride: false
-            };
-        }
-
-        return {
-            defaultGrouping,
-            effectiveGrouping: groupBy,
-            normalizedOverride: groupBy,
-            hasCustomOverride: true
         };
     }
 
@@ -376,16 +352,12 @@ export function hasEffectiveCustomListGroupingForSelection(
         resolveEffectiveListGroupingForSort({
             groupBy: grouping,
             sortOption: sort.option,
-            selectionType,
             isManualSortActive: isManualSortPropertyKey(settings, sort.propertyKey)
         }) === 'custom'
     );
 }
 
-/**
- * Calculates effective list grouping for the current selection.
- * Normalizes tag and property overrides that stored "folder" by falling back to the selection default.
- */
+/** Calculates effective list grouping for the current selection. */
 export function resolveListGrouping({
     settings,
     selectionType,
@@ -404,7 +376,6 @@ export function resolveListGrouping({
         });
     }
 
-    // Tag and property selections don't support "folder" grouping.
     if (selectionType === ItemType.TAG && tag) {
         return resolveListGroupingOverride({
             noteGrouping: globalDefault,
