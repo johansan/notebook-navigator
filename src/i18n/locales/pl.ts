@@ -1896,7 +1896,10 @@ export const STRINGS_PL = {
                     downloadButtonText: 'Pobierz',
                     copyNotice: 'Ustawienia skopiowane do schowka.',
                     downloadNotice: 'Ustawienia wyeksportowane.',
-                    downloadError: 'Nie udało się pobrać ustawień: {message}'
+                    downloadError: 'Nie udało się pobrać ustawień: {message}',
+                    saveButtonText: 'Zapisz w sejfie',
+                    saveNotice: 'Ustawienia zapisano w {path}.',
+                    saveError: 'Nie udało się zapisać ustawień: {message}'
                 }
             },
             resetAllSettings: {

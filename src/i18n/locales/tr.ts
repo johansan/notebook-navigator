@@ -1889,7 +1889,10 @@ export const STRINGS_TR = {
                     downloadButtonText: 'İndir',
                     copyNotice: 'Ayarlar panoya kopyalandı.',
                     downloadNotice: 'Ayarlar dışa aktarıldı.',
-                    downloadError: 'Ayarlar indirilemedi: {message}'
+                    downloadError: 'Ayarlar indirilemedi: {message}',
+                    saveButtonText: 'Kasaya kaydet',
+                    saveNotice: 'Ayarlar {path} konumuna kaydedildi.',
+                    saveError: 'Ayarlar kaydedilemedi: {message}'
                 }
             },
             resetAllSettings: {

@@ -1876,7 +1876,10 @@ export const STRINGS_ZH_TW = {
                     downloadButtonText: '下載',
                     copyNotice: '設定已複製到剪貼簿。',
                     downloadNotice: '設定已匯出。',
-                    downloadError: '下載設定失敗：{message}'
+                    downloadError: '下載設定失敗：{message}',
+                    saveButtonText: '儲存到儲存庫',
+                    saveNotice: '設定已儲存到 {path}。',
+                    saveError: '儲存設定失敗：{message}'
                 }
             },
             resetAllSettings: {

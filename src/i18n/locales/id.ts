@@ -1891,7 +1891,10 @@ export const STRINGS_ID = {
                     downloadButtonText: 'Unduh',
                     copyNotice: 'Pengaturan disalin ke papan klip.',
                     downloadNotice: 'Pengaturan diekspor.',
-                    downloadError: 'Gagal mengekspor pengaturan: {message}'
+                    downloadError: 'Gagal mengekspor pengaturan: {message}',
+                    saveButtonText: 'Simpan ke vault',
+                    saveNotice: 'Pengaturan disimpan ke {path}.',
+                    saveError: 'Gagal menyimpan pengaturan: {message}'
                 }
             },
             resetAllSettings: {

@@ -1900,7 +1900,10 @@ export const STRINGS_FR = {
                     downloadButtonText: 'Télécharger',
                     copyNotice: 'Paramètres copiés dans le presse-papiers.',
                     downloadNotice: 'Paramètres exportés.',
-                    downloadError: 'Échec du téléchargement des paramètres : {message}'
+                    downloadError: 'Échec du téléchargement des paramètres : {message}',
+                    saveButtonText: 'Enregistrer dans le coffre',
+                    saveNotice: 'Paramètres enregistrés dans {path}.',
+                    saveError: 'Échec de l’enregistrement des paramètres : {message}'
                 }
             },
             resetAllSettings: {

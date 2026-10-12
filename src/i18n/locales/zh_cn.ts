@@ -1875,7 +1875,10 @@ export const STRINGS_ZH_CN = {
                     downloadButtonText: '下载',
                     copyNotice: '设置已复制到剪贴板。',
                     downloadNotice: '设置已导出。',
-                    downloadError: '下载设置失败：{message}'
+                    downloadError: '下载设置失败：{message}',
+                    saveButtonText: '保存到仓库',
+                    saveNotice: '设置已保存到 {path}。',
+                    saveError: '保存设置失败：{message}'
                 }
             },
             resetAllSettings: {

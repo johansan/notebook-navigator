@@ -1898,7 +1898,10 @@ export const STRINGS_DE = {
                     downloadButtonText: 'Herunterladen',
                     copyNotice: 'Einstellungen in die Zwischenablage kopiert.',
                     downloadNotice: 'Einstellungen exportiert.',
-                    downloadError: 'Einstellungen konnten nicht heruntergeladen werden: {message}'
+                    downloadError: 'Einstellungen konnten nicht heruntergeladen werden: {message}',
+                    saveButtonText: 'Im Vault speichern',
+                    saveNotice: 'Einstellungen unter {path} gespeichert.',
+                    saveError: 'Einstellungen konnten nicht gespeichert werden: {message}'
                 }
             },
             resetAllSettings: {

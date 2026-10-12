@@ -1894,7 +1894,10 @@ export const STRINGS_PT = {
                     downloadButtonText: 'Transferir',
                     copyNotice: 'Definições copiadas para a área de transferência.',
                     downloadNotice: 'Definições exportadas.',
-                    downloadError: 'Falha ao transferir definições: {message}'
+                    downloadError: 'Falha ao transferir definições: {message}',
+                    saveButtonText: 'Guardar no cofre',
+                    saveNotice: 'Definições guardadas em {path}.',
+                    saveError: 'Falha ao guardar definições: {message}'
                 }
             },
             resetAllSettings: {

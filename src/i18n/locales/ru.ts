@@ -1889,7 +1889,10 @@ export const STRINGS_RU = {
                     downloadButtonText: 'Скачать',
                     copyNotice: 'Настройки скопированы в буфер обмена.',
                     downloadNotice: 'Настройки экспортированы.',
-                    downloadError: 'Не удалось скачать настройки: {message}'
+                    downloadError: 'Не удалось скачать настройки: {message}',
+                    saveButtonText: 'Сохранить в хранилище',
+                    saveNotice: 'Настройки сохранены в {path}.',
+                    saveError: 'Не удалось сохранить настройки: {message}'
                 }
             },
             resetAllSettings: {

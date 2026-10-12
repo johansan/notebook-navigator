@@ -1883,7 +1883,10 @@ export const STRINGS_TH = {
                     downloadButtonText: 'ดาวน์โหลด',
                     copyNotice: 'คัดลอกการตั้งค่าไปยังคลิปบอร์ดแล้ว',
                     downloadNotice: 'ส่งออกการตั้งค่าแล้ว',
-                    downloadError: 'ส่งออกการตั้งค่าล้มเหลว: {message}'
+                    downloadError: 'ส่งออกการตั้งค่าล้มเหลว: {message}',
+                    saveButtonText: 'บันทึกลงห้องนิรภัย',
+                    saveNotice: 'บันทึกการตั้งค่าไว้ที่ {path}',
+                    saveError: 'บันทึกการตั้งค่าล้มเหลว: {message}'
                 }
             },
             resetAllSettings: {

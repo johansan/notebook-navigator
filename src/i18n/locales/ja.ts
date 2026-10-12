@@ -1890,7 +1890,10 @@ export const STRINGS_JA = {
                     downloadButtonText: 'ダウンロード',
                     copyNotice: '設定がクリップボードにコピーされました。',
                     downloadNotice: '設定がエクスポートされました。',
-                    downloadError: '設定のダウンロードに失敗しました: {message}'
+                    downloadError: '設定のダウンロードに失敗しました: {message}',
+                    saveButtonText: '保管庫に保存',
+                    saveNotice: '設定を {path} に保存しました。',
+                    saveError: '設定の保存に失敗しました: {message}'
                 }
             },
             resetAllSettings: {

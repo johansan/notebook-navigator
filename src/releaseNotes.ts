@@ -127,7 +127,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Tag, date, folder, and file suggestions now list the closest matches first.',
             'Feature images larger than 60 megapixels are now skipped on mobile instead of reloading Obsidian while thumbnails are generated [#1527](https://github.com/johansan/notebook-navigator/issues/1527).',
             'Icons that other plugins add to Obsidian, such as Custom Icons, are now saved to frontmatter when picked, shown when set in frontmatter, and kept in ==File name icon map==, ==File type icon map==, and ==Interface icons== [#1531](https://github.com/johansan/notebook-navigator/issues/1531).',
-            'Icons from another plugin now show in Notebook Navigator menus and in the calendar tab header.'
+            'Icons from another plugin now show in Notebook Navigator menus and in the calendar tab header.',
+            'Exporting settings on Android and iOS now saves the JSON file to the vault root with `Save to vault`, where `Download` saved no file [#1537](https://github.com/johansan/notebook-navigator/issues/1537).'
         ]
     },
     {

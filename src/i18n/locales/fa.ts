@@ -1890,7 +1890,10 @@ export const STRINGS_FA = {
                     downloadButtonText: 'دانلود',
                     copyNotice: 'تنظیمات به کلیپ‌بورد کپی شد.',
                     downloadNotice: 'تنظیمات صادر شد.',
-                    downloadError: 'صادر کردن تنظیمات ناموفق بود: {message}'
+                    downloadError: 'صادر کردن تنظیمات ناموفق بود: {message}',
+                    saveButtonText: 'ذخیره در خزانه',
+                    saveNotice: 'تنظیمات در {path} ذخیره شد.',
+                    saveError: 'ذخیره تنظیمات ناموفق بود: {message}'
                 }
             },
             resetAllSettings: {

@@ -1890,7 +1890,10 @@ export const STRINGS_UK = {
                     downloadButtonText: 'Завантажити',
                     copyNotice: 'Налаштування скопійовано до буфера обміну.',
                     downloadNotice: 'Налаштування експортовано.',
-                    downloadError: 'Не вдалося завантажити налаштування: {message}'
+                    downloadError: 'Не вдалося завантажити налаштування: {message}',
+                    saveButtonText: 'Зберегти у сховище',
+                    saveNotice: 'Налаштування збережено в {path}.',
+                    saveError: 'Не вдалося зберегти налаштування: {message}'
                 }
             },
             resetAllSettings: {

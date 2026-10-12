@@ -1539,11 +1539,15 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         return JSON.stringify(createModifiedSettingsTransfer(this.settings, this.manifest.version), null, 2);
     }
 
-    public async saveSettingsTransferBackupToVaultRoot(): Promise<string> {
+    /**
+     * Writes settings JSON to a new timestamped file in the vault root and returns its path.
+     * Defaults to the current settings; the mobile export passes the edited JSON from its editor.
+     */
+    public async saveSettingsTransferToVaultRoot(content = this.createSettingsTransferJson()): Promise<string> {
         const baseName = createSettingsTransferBaseName();
         const uniqueBaseName = generateUniqueFilename('', baseName, 'json', this.app);
         const filename = buildFilePathInFolder('', uniqueBaseName, 'json');
-        const created = await this.app.vault.create(filename, this.createSettingsTransferJson());
+        const created = await this.app.vault.create(filename, content);
         return created.path;
     }
 

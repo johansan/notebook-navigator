@@ -1885,7 +1885,10 @@ export const STRINGS_KO = {
                     downloadButtonText: '다운로드',
                     copyNotice: '설정이 클립보드에 복사되었습니다.',
                     downloadNotice: '설정이 내보내졌습니다.',
-                    downloadError: '설정 다운로드에 실패했습니다: {message}'
+                    downloadError: '설정 다운로드에 실패했습니다: {message}',
+                    saveButtonText: '보관함에 저장',
+                    saveNotice: '설정을 {path}에 저장했습니다.',
+                    saveError: '설정 저장에 실패했습니다: {message}'
                 }
             },
             resetAllSettings: {

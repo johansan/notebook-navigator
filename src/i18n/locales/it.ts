@@ -1892,7 +1892,10 @@ export const STRINGS_IT = {
                     downloadButtonText: 'Scarica',
                     copyNotice: 'Impostazioni copiate negli appunti.',
                     downloadNotice: 'Impostazioni esportate.',
-                    downloadError: 'Impossibile scaricare le impostazioni: {message}'
+                    downloadError: 'Impossibile scaricare le impostazioni: {message}',
+                    saveButtonText: 'Salva nel vault',
+                    saveNotice: 'Impostazioni salvate in {path}.',
+                    saveError: 'Impossibile salvare le impostazioni: {message}'
                 }
             },
             resetAllSettings: {

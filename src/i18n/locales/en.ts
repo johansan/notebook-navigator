@@ -1883,7 +1883,10 @@ export const STRINGS_EN = {
                     downloadButtonText: 'Download',
                     copyNotice: 'Settings copied to clipboard.',
                     downloadNotice: 'Settings exported.',
-                    downloadError: 'Failed to download settings: {message}'
+                    downloadError: 'Failed to download settings: {message}',
+                    saveButtonText: 'Save to vault',
+                    saveNotice: 'Settings saved to {path}.',
+                    saveError: 'Failed to save settings: {message}'
                 }
             },
             resetAllSettings: {

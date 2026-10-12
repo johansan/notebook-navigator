@@ -1889,7 +1889,10 @@ export const STRINGS_VI = {
                     downloadButtonText: 'Tải xuống',
                     copyNotice: 'Đã sao chép cài đặt vào clipboard.',
                     downloadNotice: 'Đã xuất cài đặt.',
-                    downloadError: 'Xuất cài đặt thất bại: {message}'
+                    downloadError: 'Xuất cài đặt thất bại: {message}',
+                    saveButtonText: 'Lưu vào kho',
+                    saveNotice: 'Đã lưu cài đặt vào {path}.',
+                    saveError: 'Lưu cài đặt thất bại: {message}'
                 }
             },
             resetAllSettings: {

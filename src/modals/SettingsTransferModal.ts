@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, ButtonComponent, Modal, Setting } from 'obsidian';
+import { App, ButtonComponent, Modal, Platform, Setting } from 'obsidian';
 import type NotebookNavigatorPlugin from '../main';
 import { strings } from '../i18n';
 import { createSettingsTransferFilename } from '../settings/transfer';
@@ -175,7 +175,7 @@ export class SettingsImportModal extends Modal {
                         let backupPath: string | null = null;
                         if (shouldSaveBackup) {
                             try {
-                                backupPath = await this.plugin.saveSettingsTransferBackupToVaultRoot();
+                                backupPath = await this.plugin.saveSettingsTransferToVaultRoot();
                             } catch (error) {
                                 console.error('Failed to save settings transfer backup', error);
                                 const message = getErrorMessage(error);
@@ -278,21 +278,40 @@ export class SettingsExportModal extends Modal {
             });
         });
 
-        const downloadButton = new ButtonComponent(buttonContainer);
-        downloadButton.setButtonText(strings.settings.items.importAndExportSettings.export.downloadButtonText);
-        downloadButton.setCta();
-        downloadButton.onClick(() => {
-            try {
-                downloadTransferFile(editorEl.value);
-                showNotice(strings.settings.items.importAndExportSettings.export.downloadNotice);
-            } catch (error) {
-                console.error('Failed to download settings transfer', error);
-                const message = getErrorMessage(error);
-                showNotice(strings.settings.items.importAndExportSettings.export.downloadError.replace('{message}', message), {
-                    variant: 'warning'
+        // The Android and iOS apps ignore clicks on download links, so mobile saves the file to the vault root instead.
+        const saveButton = new ButtonComponent(buttonContainer);
+        saveButton.setCta();
+        if (Platform.isMobileApp) {
+            saveButton.setButtonText(strings.settings.items.importAndExportSettings.export.saveButtonText);
+            saveButton.onClick(() => {
+                runAsyncAction(async () => {
+                    try {
+                        const path = await this.plugin.saveSettingsTransferToVaultRoot(editorEl.value);
+                        showNotice(strings.settings.items.importAndExportSettings.export.saveNotice.replace('{path}', path));
+                    } catch (error) {
+                        console.error('Failed to save settings transfer', error);
+                        const message = getErrorMessage(error);
+                        showNotice(strings.settings.items.importAndExportSettings.export.saveError.replace('{message}', message), {
+                            variant: 'warning'
+                        });
+                    }
                 });
-            }
-        });
+            });
+        } else {
+            saveButton.setButtonText(strings.settings.items.importAndExportSettings.export.downloadButtonText);
+            saveButton.onClick(() => {
+                try {
+                    downloadTransferFile(editorEl.value);
+                    showNotice(strings.settings.items.importAndExportSettings.export.downloadNotice);
+                } catch (error) {
+                    console.error('Failed to download settings transfer', error);
+                    const message = getErrorMessage(error);
+                    showNotice(strings.settings.items.importAndExportSettings.export.downloadError.replace('{message}', message), {
+                        variant: 'warning'
+                    });
+                }
+            });
+        }
 
         editorEl.focus();
         editorEl.select();

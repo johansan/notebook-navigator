@@ -1885,7 +1885,10 @@ export const STRINGS_AR = {
                     downloadButtonText: 'تنزيل',
                     copyNotice: 'تم نسخ الإعدادات إلى الحافظة.',
                     downloadNotice: 'تم تصدير الإعدادات.',
-                    downloadError: 'فشل تنزيل الإعدادات: {message}'
+                    downloadError: 'فشل تنزيل الإعدادات: {message}',
+                    saveButtonText: 'حفظ في الخزنة',
+                    saveNotice: 'حُفظت الإعدادات في {path}.',
+                    saveError: 'فشل حفظ الإعدادات: {message}'
                 }
             },
             resetAllSettings: {

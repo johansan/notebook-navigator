@@ -1898,7 +1898,10 @@ export const STRINGS_ES = {
                     downloadButtonText: 'Descargar',
                     copyNotice: 'Ajustes copiados al portapapeles.',
                     downloadNotice: 'Ajustes exportados.',
-                    downloadError: 'Error al descargar los ajustes: {message}'
+                    downloadError: 'Error al descargar los ajustes: {message}',
+                    saveButtonText: 'Guardar en la bóveda',
+                    saveNotice: 'Ajustes guardados en {path}.',
+                    saveError: 'Error al guardar los ajustes: {message}'
                 }
             },
             resetAllSettings: {

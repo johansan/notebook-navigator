@@ -1897,7 +1897,10 @@ export const STRINGS_PT_BR = {
                     downloadButtonText: 'Baixar',
                     copyNotice: 'Configurações copiadas para a área de transferência.',
                     downloadNotice: 'Configurações exportadas.',
-                    downloadError: 'Falha ao baixar configurações: {message}'
+                    downloadError: 'Falha ao baixar configurações: {message}',
+                    saveButtonText: 'Salvar no cofre',
+                    saveNotice: 'Configurações salvas em {path}.',
+                    saveError: 'Falha ao salvar configurações: {message}'
                 }
             },
             resetAllSettings: {

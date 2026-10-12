@@ -1897,7 +1897,10 @@ export const STRINGS_NL = {
                     downloadButtonText: 'Downloaden',
                     copyNotice: 'Instellingen gekopieerd naar klembord.',
                     downloadNotice: 'Instellingen geëxporteerd.',
-                    downloadError: 'Downloaden van instellingen mislukt: {message}'
+                    downloadError: 'Downloaden van instellingen mislukt: {message}',
+                    saveButtonText: 'Opslaan in kluis',
+                    saveNotice: 'Instellingen opgeslagen in {path}.',
+                    saveError: 'Opslaan van instellingen mislukt: {message}'
                 }
             },
             resetAllSettings: {
