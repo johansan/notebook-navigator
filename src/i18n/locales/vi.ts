@@ -1058,8 +1058,6 @@ export const STRINGS_VI = {
             exportFailed: 'Không thể xuất báo cáo metadata'
         },
         index: {
-            label: 'Chung',
-            description: 'Ghi chú phát hành, hỗ trợ, hồ sơ vault, loại tệp và khóa thuộc tính.',
             groups: {
                 about: 'Giới thiệu'
             }

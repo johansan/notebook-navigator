@@ -16,8 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ExtraButtonComponent, Setting } from 'obsidian';
-import type { SettingDefinitionRender } from 'obsidian';
+import type { ExtraButtonComponent, Setting, SettingDefinitionRender } from 'obsidian';
 import { MOMENT_FORMAT_DOCS_URL } from '../../constants/urls';
 import { strings } from '../../i18n';
 import { renderTemplateEngineStatus } from '../templateEngineStatus';
@@ -64,16 +63,9 @@ interface CalendarCustomPatternRenderersOptions {
     requestVisibilityRefresh: () => void;
 }
 
-interface CalendarCustomPatternSectionOptions extends CalendarCustomPatternRenderersOptions {
-    containerEl: HTMLElement;
-}
-
-export interface CalendarCustomPatternSectionController {
+export interface CalendarCustomPatternRenderers {
     refresh: () => void;
     hideMessages: () => void;
-}
-
-export interface CalendarCustomPatternRenderers extends CalendarCustomPatternSectionController {
     renderRootFolderSetting(setting: Setting): void | (() => void);
     renderDailyPatternSetting(setting: Setting): void | (() => void);
     renderWeeklyPatternSetting(setting: Setting): void | (() => void);
@@ -714,19 +706,4 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         refresh,
         hideMessages
     };
-}
-
-export function renderCalendarCustomPatternSection(options: CalendarCustomPatternSectionOptions): CalendarCustomPatternSectionController {
-    const renderers = createCalendarCustomPatternRenderers(options);
-    const { containerEl } = options;
-
-    renderers.renderRootFolderSetting(new Setting(containerEl));
-    renderers.renderDailyPatternSetting(new Setting(containerEl));
-    renderers.renderWeeklyPatternSetting(new Setting(containerEl));
-    renderers.renderMonthlyPatternSetting(new Setting(containerEl));
-    renderers.renderQuarterlyPatternSetting(new Setting(containerEl));
-    renderers.renderYearlyPatternSetting(new Setting(containerEl));
-    renderers.renderPatternInfoSetting(new Setting(containerEl));
-
-    return renderers;
 }

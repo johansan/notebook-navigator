@@ -36,8 +36,8 @@ if (!navRainbowDefaultStart || !navRainbowDefaultEnd) {
     throw new Error('[Notebook Navigator] Invalid nav rainbow default colors.');
 }
 
-export const NAV_RAINBOW_DEFAULT_START: RGBA = navRainbowDefaultStart;
-export const NAV_RAINBOW_DEFAULT_END: RGBA = navRainbowDefaultEnd;
+const NAV_RAINBOW_DEFAULT_START: RGBA = navRainbowDefaultStart;
+const NAV_RAINBOW_DEFAULT_END: RGBA = navRainbowDefaultEnd;
 
 const FOLDER_VIRTUAL_ROOT_RAINBOW_KEY = '__nn-folder-virtual-root__';
 const SHORTCUT_VIRTUAL_ROOT_RAINBOW_KEY = '__nn-shortcuts-virtual-root__';

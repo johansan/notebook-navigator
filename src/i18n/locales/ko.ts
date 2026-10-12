@@ -1056,8 +1056,6 @@ export const STRINGS_KO = {
             exportFailed: '메타데이터 보고서 내보내기 실패'
         },
         index: {
-            label: '일반',
-            description: '릴리스 노트, 지원, 보관함 프로필, 파일 유형, 속성 키.',
             groups: {
                 about: '정보'
             }

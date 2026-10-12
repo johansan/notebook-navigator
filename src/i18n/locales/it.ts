@@ -1056,8 +1056,6 @@ export const STRINGS_IT = {
             exportFailed: 'Impossibile esportare report metadati'
         },
         index: {
-            label: 'Generale',
-            description: 'Note di rilascio, supporto, profilo vault, tipi di file e chiavi delle proprietà.',
             groups: {
                 about: 'Informazioni'
             }

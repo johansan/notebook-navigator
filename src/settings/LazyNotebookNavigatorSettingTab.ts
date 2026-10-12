@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { App, PluginSettingTab, requireApiVersion, type SettingDefinitionItem } from 'obsidian';
+import { App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import type NotebookNavigatorPlugin from '../main';
 import type { NotebookNavigatorSettingTab } from '../settings';
 import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../constants/notebookNavigatorIcon';
@@ -39,10 +39,6 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
     }
 
     getSettingDefinitions(): SettingDefinitionItem[] {
-        if (!requireApiVersion('1.13.0')) {
-            return [];
-        }
-
         this.definitionLanguage = strings;
         return this.getDelegate().getSettingDefinitions();
     }
@@ -60,15 +56,6 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
 
     async setControlValue(key: string, value: unknown): Promise<void> {
         await this.getDelegate().setControlValue(key, value);
-    }
-
-    display(): void {
-        const delegate = this.getDelegate();
-        // Obsidian versions before native settings pages call display().
-        const display = Reflect.get(delegate, 'display');
-        if (typeof display === 'function') {
-            Reflect.apply(display, delegate, []);
-        }
     }
 
     hide(): void {
@@ -89,8 +76,7 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
 
     private refreshLanguageDefinitions(): void {
         this.languageRefreshPending = false;
-        const update: unknown = Reflect.get(this, 'update');
-        if (typeof update === 'function') Reflect.apply(update, this, []);
+        this.update();
     }
 
     private getDelegate(): NotebookNavigatorSettingTab {

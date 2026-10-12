@@ -34,7 +34,6 @@ interface MockSettingTabDelegate {
     getSettingDefinitions: () => SettingDefinitionItem[];
     getControlValue: (key: string) => unknown;
     setControlValue: (key: string, value: unknown) => Promise<void>;
-    display: () => void;
     hide: () => void;
 }
 
@@ -53,7 +52,6 @@ function createDelegate(): MockSettingTabDelegate {
         getSettingDefinitions: vi.fn(() => [{ type: 'render', name: 'Mock setting' } as SettingDefinitionItem]),
         getControlValue: vi.fn((key: string) => `value:${key}`),
         setControlValue: vi.fn(async () => {}),
-        display: vi.fn(),
         hide: vi.fn()
     };
 }
@@ -158,23 +156,5 @@ describe('LazyNotebookNavigatorSettingTab', () => {
 
         expect(definitions).toEqual([{ type: 'render', name: 'Mock setting' }]);
         expect(delegate.containerEl).toBe(containerEl);
-    });
-
-    it('renders the fallback settings UI through the registered tab container', () => {
-        const plugin = createPlugin();
-        const tab = new LazyNotebookNavigatorSettingTab(plugin.app, plugin);
-        const delegate = createDelegate();
-        const containerEl = createContainer(true);
-        tab.containerEl = containerEl;
-        Reflect.set(tab, 'delegate', delegate);
-
-        const display = Reflect.get(tab, 'display');
-        if (typeof display !== 'function') {
-            throw new Error('Lazy settings tab display fallback is missing.');
-        }
-        Reflect.apply(display, tab, []);
-
-        expect(delegate.containerEl).toBe(containerEl);
-        expect(delegate.display).toHaveBeenCalledOnce();
     });
 });

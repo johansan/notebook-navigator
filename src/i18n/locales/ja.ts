@@ -1060,8 +1060,6 @@ export const STRINGS_JA = {
             exportFailed: 'メタデータレポートのエクスポートに失敗しました'
         },
         index: {
-            label: '一般設定',
-            description: 'リリースノート、サポート、保管庫プロファイル、ファイルタイプ、プロパティキー。',
             groups: {
                 about: 'このプラグインについて'
             }

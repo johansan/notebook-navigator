@@ -1062,8 +1062,6 @@ export const STRINGS_PT_BR = {
             exportFailed: 'Falha ao exportar relatório de metadados'
         },
         index: {
-            label: 'Geral',
-            description: 'Notas de versão, suporte, perfil do cofre, tipos de arquivo e chaves de propriedades.',
             groups: {
                 about: 'Sobre'
             }

@@ -195,7 +195,7 @@ function renderFolderNoteTemplateSetting(setting: Setting, context: SettingsTabC
     updateWarning();
 }
 
-export function renderFolderNoteTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
+function renderFolderNoteTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();

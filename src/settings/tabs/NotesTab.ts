@@ -95,7 +95,7 @@ export function formatTextCountDependencyScope(dependency: MarkdownTextCountDepe
 }
 
 /** Renders the explanatory footer shown when non-display settings keep word or character counting active. */
-export function renderTextCountActiveNotice(setting: Setting, context: SettingsTabContext): void {
+function renderTextCountActiveNotice(setting: Setting, context: SettingsTabContext): void {
     const dependencies = getMarkdownTextCountDependencies(context.app, context.plugin.settings);
     const copy = strings.settings.items.textCountActiveNotice;
 

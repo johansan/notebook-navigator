@@ -32,12 +32,10 @@ import {
 } from '../../utils/vaultProfiles';
 import { showNotice } from '../../utils/noticeUtils';
 import { usesMobileChrome } from '../../utils/paneLayout';
-import { setElementVisible } from '../dependentSettings';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import type { VaultProfilePropertyKey } from '../types';
 import { isVaultTitleOption } from '../types';
 import { createGroupDefinition, createRenderDefinition } from '../nativeSettingControls';
-import { createSettingGroupFactory } from '../settingGroups';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { renderTemplateEngineWarningSetting } from '../templateEngineStatus';
 
@@ -46,28 +44,6 @@ interface VaultSetupRenderers {
     renderVaultProfileSwitcherSetting(setting: Setting): void;
     renderFileVisibilitySetting(setting: Setting): void;
     renderPropertyKeysSetting(setting: Setting): void;
-}
-
-/** Renders the vault setup section inside the General settings page. */
-export function renderGeneralVaultSetupSection(context: SettingsTabContext): void {
-    renderVaultSetupSection(context);
-}
-
-function renderVaultSetupSection(context: SettingsTabContext): void {
-    const { containerEl } = context;
-    const renderers = createVaultSetupRenderers(context);
-    const createGroup = createSettingGroupFactory(containerEl);
-    const vaultSetupGroup = createGroup(undefined);
-
-    vaultSetupGroup.addSetting(setting => renderers.renderProfileSetting(setting));
-    // The switcher placement applies to the desktop chrome (desktop and tablets); phones
-    // always render the profile trigger in the mobile header instead
-    if (!usesMobileChrome()) {
-        vaultSetupGroup.addSetting(setting => renderers.renderVaultProfileSwitcherSetting(setting));
-    }
-    vaultSetupGroup.addSetting(setting => renderers.renderFileVisibilitySetting(setting));
-    vaultSetupGroup.addSetting(setting => renderers.renderPropertyKeysSetting(setting));
-    vaultSetupGroup.addSetting(setting => renderTemplateEngineWarningSetting(setting, context));
 }
 
 export function createVaultSetupSettingDefinitions(context: SettingsTabContext): SettingDefinitionGroup[] {
@@ -136,17 +112,6 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
     let profileDropdown: DropdownComponent | null = null;
     let fileVisibilityDropdown: DropdownComponent | null = null;
     let propertyKeysSummaryTextEl: HTMLSpanElement | null = null;
-    let vaultProfileSwitcherSetting: Setting | null = null;
-
-    // The switcher only renders with two or more profiles, so the setting stays hidden until then;
-    // otherwise it appears to do nothing. The definition-based tab re-evaluates its `visible`
-    // predicate on settings updates, but the legacy display() path has no such hook, so adding or
-    // deleting a profile re-applies visibility here.
-    const refreshVaultProfileSwitcherVisibility = () => {
-        if (vaultProfileSwitcherSetting) {
-            setElementVisible(vaultProfileSwitcherSetting.settingEl, plugin.settings.vaultProfiles.length > 1);
-        }
-    };
 
     const formatPropertyKeysSummary = (propertyKeys: VaultProfilePropertyKey[]): string => {
         const configuredKeys = propertyKeys.map(entry => entry.key.trim()).filter(key => key.length > 0);
@@ -168,7 +133,6 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
 
     // Updates profile-related UI controls with current settings values.
     const refreshProfileControls = () => {
-        refreshVaultProfileSwitcherVisibility();
         if (profileDropdown) {
             const selectEl = profileDropdown.selectEl;
             while (selectEl.firstChild) {
@@ -299,7 +263,6 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
     };
 
     const renderVaultProfileSwitcherSetting = (setting: Setting): void => {
-        vaultProfileSwitcherSetting = setting;
         setting
             .setName(strings.settings.items.vaultProfileSwitcher.name)
             .setDesc(strings.settings.items.vaultProfileSwitcher.desc)
@@ -316,8 +279,6 @@ function createVaultSetupRenderers(context: SettingsTabContext): VaultSetupRende
                         await plugin.saveSettingsAndUpdate();
                     })
             );
-        // This setting renders after the profile setting's own refresh ran, so apply visibility here
-        refreshVaultProfileSwitcherVisibility();
     };
 
     const renderFileVisibilitySetting = (setting: Setting): void => {

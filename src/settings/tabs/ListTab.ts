@@ -322,7 +322,7 @@ function getPropertyDropdownOptionLabel(propertyKey: string): string {
  * Entries rebuild on every settings update so edits to the configured property list are
  * reflected while the tab stays open.
  */
-export function renderDefaultFolderSortSetting(setting: Setting, context: SettingsTabContext): void {
+function renderDefaultFolderSortSetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
 
     // Field changes rebuild the sibling direction dropdown immediately; waiting for the settings
@@ -469,7 +469,7 @@ export function renderDefaultFolderSortSetting(setting: Setting, context: Settin
  * encodings used by per-view grouping overrides. Entries rebuild on every settings update so
  * edits to the configured property list are reflected while the tab stays open.
  */
-export function renderNoteGroupingSetting(setting: Setting, context: SettingsTabContext): void {
+function renderNoteGroupingSetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
 
     // Mode changes refresh the sibling group order dropdown immediately; waiting for the settings
@@ -599,7 +599,7 @@ export function renderNoteGroupingSetting(setting: Setting, context: SettingsTab
  * Renders the grouping properties input. Commits prune per-view grouping overrides and reconcile
  * the global defaults so removed properties never stay active anywhere.
  */
-export function renderPropertyGroupKeySetting(setting: Setting, context: SettingsTabContext): void {
+function renderPropertyGroupKeySetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
 
     setting
@@ -638,7 +638,7 @@ export function renderPropertyGroupKeySetting(setting: Setting, context: Setting
  * properties changed through a settings-tab edit, announcing a reset with a notice. Load and
  * sync paths reconcile silently in the settings controller instead.
  */
-export function reconcileDefaultsAfterPropertyKeysEdit(settings: NotebookNavigatorSettings): void {
+function reconcileDefaultsAfterPropertyKeysEdit(settings: NotebookNavigatorSettings): void {
     const sortResult = reconcileDefaultFolderSort(settings);
     const groupingResult = reconcileDefaultNoteGrouping(settings);
     const notices = strings.settings.items.sortingProperties.defaultsResetNotices;
@@ -668,7 +668,7 @@ function createManualSortNewNotePlacementOptions(): Record<string, string> {
 }
 
 /** Maps persisted property-sort values to their semantic localization aliases. */
-export function getPropertySecondarySortOptionLabel(option: PropertySortSecondaryOption): string {
+function getPropertySecondarySortOptionLabel(option: PropertySortSecondaryOption): string {
     switch (option) {
         case 'title':
             return strings.settings.items.propertySecondarySort.options.title;
@@ -682,7 +682,7 @@ export function getPropertySecondarySortOptionLabel(option: PropertySortSecondar
 }
 
 /** Maps persisted manual-sort placement values to their semantic localization aliases. */
-export function getManualSortNewNotePlacementOptionLabel(option: ManualSortNewNotePlacement): string {
+function getManualSortNewNotePlacementOptionLabel(option: ManualSortNewNotePlacement): string {
     switch (option) {
         case 'top':
             return strings.settings.items.manualSortNewNotePlacement.options.top;

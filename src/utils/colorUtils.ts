@@ -372,7 +372,7 @@ function lerp(left: number, right: number, t: number): number {
 }
 
 /** Formats an RGBA object into an rgba() string. */
-export function toCssRgba(color: RGBA): string {
+function toCssRgba(color: RGBA): string {
     const r = Math.round(clampChannel(color.r));
     const g = Math.round(clampChannel(color.g));
     const b = Math.round(clampChannel(color.b));
@@ -656,7 +656,7 @@ function hslaToRgba(color: HSLA): RGBA {
 /**
  * Builds a hue interpolator in OKLCH space and keeps luminance aligned with the end-point ramp.
  */
-export function createHueInterpolator(start: RGBA, end: RGBA): (t: number) => RGBA {
+function createHueInterpolator(start: RGBA, end: RGBA): (t: number) => RGBA {
     const startLch = rgbToOklch(start);
     const endLch = rgbToOklch(end);
     const startLuminance = relativeLuminanceFromRgba(start);

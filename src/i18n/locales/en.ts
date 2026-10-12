@@ -1053,8 +1053,6 @@ export const STRINGS_EN = {
             exportFailed: 'Failed to export metadata report'
         },
         index: {
-            label: 'General',
-            description: 'Release notes, support, vault profile, file types, and property keys.',
             groups: {
                 about: 'About'
             }

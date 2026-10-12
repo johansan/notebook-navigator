@@ -1055,8 +1055,6 @@ export const STRINGS_AR = {
             exportFailed: 'فشل تصدير تقرير البيانات الوصفية'
         },
         index: {
-            label: 'عام',
-            description: 'ملاحظات الإصدار والدعم وملف تعريف الخزنة وأنواع الملفات ومفاتيح الخصائص.',
             groups: {
                 about: 'حول'
             }

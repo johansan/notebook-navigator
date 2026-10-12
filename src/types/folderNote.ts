@@ -25,11 +25,3 @@ export const FOLDER_NOTE_TYPE_EXTENSIONS: Record<FolderNoteType, string> = {
     canvas: 'canvas',
     base: 'base'
 };
-
-function isFolderNoteType(value: string): value is FolderNoteType {
-    return value === 'markdown' || value === 'canvas' || value === 'base';
-}
-
-export function isFolderNoteCreationPreference(value: string): value is FolderNoteCreationPreference {
-    return value === 'ask' || isFolderNoteType(value);
-}

@@ -27,7 +27,6 @@ import {
     MARKDOWNPOINT_WORDMARK_ON_LIGHT
 } from './markdownPointBannerDesigns';
 import { createGroupDefinition, createRenderDefinition } from './nativeSettingControls';
-import { createSettingGroupFactory } from './settingGroups';
 
 /*
  * A static banner for MarkdownPoint, the author's presentation app, at the top of the settings start
@@ -148,7 +147,7 @@ function renderBannerRow(settingEl: HTMLElement, position: number): void {
  * the settings pages under a heading asking about other presentation apps. The Advanced setting
  * showMarkdownPointBannerAtTop picks one.
  */
-export type MarkdownPointBannerPlacement = 'top' | 'below';
+type MarkdownPointBannerPlacement = 'top' | 'below';
 
 function headingFor(placement: MarkdownPointBannerPlacement): string | undefined {
     return placement === 'below' ? strings.settings.items.markdownPointBanner.heading : undefined;
@@ -179,11 +178,4 @@ export function createMarkdownPointBannerDefinitions(
             { cls: 'nn-markdownpoint-group', visible: () => isAtTop() === (placement === 'top') }
         )
     ];
-}
-
-/** The same group on the legacy settings page, which Obsidian versions before native settings pages render. */
-export function renderMarkdownPointBannerGroup(containerEl: HTMLElement, placement: MarkdownPointBannerPlacement, position: number): void {
-    const group = createSettingGroupFactory(containerEl)(headingFor(placement));
-    group.rootEl.addClass('nn-markdownpoint-group');
-    group.addSetting(setting => renderBannerRow(setting.settingEl, position));
 }

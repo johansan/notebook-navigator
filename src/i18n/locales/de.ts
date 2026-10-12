@@ -1063,8 +1063,6 @@ export const STRINGS_DE = {
             exportFailed: 'Export des Metadaten-Berichts fehlgeschlagen'
         },
         index: {
-            label: 'Allgemein',
-            description: 'Versionshinweise, Support, Vault-Profil, Dateitypen und Eigenschaftsschlüssel.',
             groups: {
                 about: 'Über'
             }

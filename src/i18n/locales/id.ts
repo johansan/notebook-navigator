@@ -1059,8 +1059,6 @@ export const STRINGS_ID = {
             exportFailed: 'Gagal mengekspor laporan metadata'
         },
         index: {
-            label: 'Umum',
-            description: 'Catatan rilis, dukungan, profil vault, tipe file, dan kunci properti.',
             groups: {
                 about: 'Tentang'
             }

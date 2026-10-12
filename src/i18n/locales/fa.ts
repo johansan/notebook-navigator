@@ -1059,8 +1059,6 @@ export const STRINGS_FA = {
             exportFailed: 'صادر کردن گزارش متادیتا ناموفق بود'
         },
         index: {
-            label: 'عمومی',
-            description: 'یادداشت‌های انتشار، پشتیبانی، پروفایل خزانه، انواع فایل و کلیدهای ویژگی.',
             groups: {
                 about: 'درباره'
             }

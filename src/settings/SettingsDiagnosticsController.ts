@@ -30,7 +30,7 @@ import {
 import type NotebookNavigatorPlugin from '../main';
 import { runAsyncAction } from '../utils/async';
 import { getDBInstanceOrNull } from '../storage/fileOperations';
-import type { SettingsTabId } from './tabs/SettingsTabContext';
+import type { SettingsPaneId } from './SettingsPaneDefinitions';
 
 interface SettingsDiagnosticsControllerDeps {
     app: App;
@@ -46,9 +46,9 @@ interface MetadataInfoText {
     failurePercentage: number;
 }
 
-// Owns diagnostics UI state across native and legacy settings page lifecycles.
+// Owns diagnostics UI state across settings page lifecycles.
 export class SettingsDiagnosticsController {
-    private activeTabId: SettingsTabId | null = null;
+    private activeTabId: SettingsPaneId | null = null;
     private statsTextEl: HTMLElement | null = null;
     private metadataInfoEl: HTMLElement | null = null;
     private metadataExportButton: ButtonComponent | null = null;
@@ -94,7 +94,7 @@ export class SettingsDiagnosticsController {
         this.pendingMetadataInfoRefreshRequested = false;
     }
 
-    handleTabActivation(tabId: SettingsTabId): void {
+    handleTabActivation(tabId: SettingsPaneId): void {
         this.activeTabId = tabId;
 
         if (tabId === 'advanced') {
@@ -140,7 +140,7 @@ export class SettingsDiagnosticsController {
         this.deps.registerInterval(this.statsUpdateInterval);
     }
 
-    private isMetadataInfoTab(tabId: SettingsTabId | null): boolean {
+    private isMetadataInfoTab(tabId: SettingsPaneId | null): boolean {
         return tabId === 'frontmatter';
     }
 

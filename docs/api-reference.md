@@ -28,7 +28,7 @@ The Notebook Navigator plugin exposes a public API for other plugins and scripts
 ### Accessing the API
 
 The Notebook Navigator API is available at runtime through the Obsidian app object. The plugin manifest id is
-`notebook-navigator`; the current manifest requires Obsidian `1.11.0` or newer and sets `isDesktopOnly` to `false`.
+`notebook-navigator`; the current manifest requires Obsidian `1.13.0` or newer and sets `isDesktopOnly` to `false`.
 
 Here's a practical example using Templater:
 

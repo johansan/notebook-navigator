@@ -106,7 +106,7 @@ export function createFilesSettingDefinitions(context: SettingsTabContext, headi
 }
 
 /** Renders template help and engine availability in the native and legacy Files tabs. */
-export function renderTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
+function renderTemplateInfoSetting(setting: Setting, context: SettingsTabContext): void {
     setting.setName('').setDesc('');
     setting.settingEl.addClass('nn-setting-info-container');
     setting.descEl.empty();
@@ -123,7 +123,7 @@ export function renderTemplateInfoSetting(setting: Setting, context: SettingsTab
 }
 
 /** Lists folder templates with scope and removal controls in the native and legacy Files tabs. */
-export function renderFolderTemplatesSetting(setting: Setting, context: SettingsTabContext): void {
+function renderFolderTemplatesSetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
     setting.setName(strings.settings.items.folderTemplates.name).setDesc(strings.settings.items.folderTemplates.desc);
     const listEl = setting.descEl.createEl('ul', { cls: 'nn-setting-folder-template-list' });

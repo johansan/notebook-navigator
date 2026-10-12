@@ -7298,21 +7298,6 @@ body.nn-resizing {
     margin-top: 0;
 }
 
-.nn-settings-legacy-titlebar {
-    padding-inline: 0;
-}
-
-.nn-settings-legacy-titlebar .setting-item-name {
-    display: flex;
-    align-items: center;
-    gap: var(--size-2-2);
-}
-
-.nn-settings-legacy-page-link:focus-visible {
-    outline: 2px solid var(--background-modifier-border-focus);
-    outline-offset: -2px;
-}
-
 /* Utility class for conditionally hidden settings */
 .nn-setting-hidden {
     display: none;
@@ -7750,14 +7735,6 @@ button.nn-youtube-button svg {
 
 .nn-slider-control input[type='range'] {
     flex: 0 0 100px;
-}
-
-.nn-slider-value {
-    flex: 0 0 48px;
-    font-size: var(--font-ui-smaller);
-    color: var(--nn-theme-foreground-muted);
-    text-align: right;
-    font-variant-numeric: tabular-nums;
 }
 /* Source: src/styles/sections/settings-markdownpoint-banner.css */
 

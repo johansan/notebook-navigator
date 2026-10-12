@@ -1064,8 +1064,6 @@ export const STRINGS_FR = {
             exportFailed: "Échec de l'exportation du rapport de métadonnées"
         },
         index: {
-            label: 'Général',
-            description: 'Notes de version, support, profil du coffre, types de fichiers et clés de propriétés.',
             groups: {
                 about: 'À propos'
             }

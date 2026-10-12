@@ -1063,8 +1063,6 @@ export const STRINGS_NL = {
             exportFailed: 'Kan metadatarapport niet exporteren'
         },
         index: {
-            label: 'Algemeen',
-            description: 'Releasenotities, ondersteuning, kluisprofiel, bestandstypen en eigenschapssleutels.',
             groups: {
                 about: 'Over'
             }

@@ -140,7 +140,7 @@ function createPluginHarness(): PluginHarness {
             id: 'notebook-navigator',
             name: 'Notebook Navigator',
             version: '3.2.4',
-            minAppVersion: '1.11.0',
+            minAppVersion: '1.13.0',
             dir: 'config/plugins/notebook-navigator'
         } as PluginManifest
     ) as unknown as PluginHarness;

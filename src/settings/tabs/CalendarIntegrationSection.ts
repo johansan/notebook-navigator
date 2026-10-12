@@ -16,8 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DropdownComponent, Setting } from 'obsidian';
-import type { SettingDefinitionItem } from 'obsidian';
+import type { DropdownComponent, Setting, SettingDefinitionItem } from 'obsidian';
 import { getCurrentLanguage, strings } from '../../i18n';
 import {
     getMomentApi,
@@ -27,23 +26,14 @@ import {
     type MomentApi
 } from '../../utils/moment';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
-import type { createSettingGroupFactory } from '../settingGroups';
-import { createDependentSettingsSection, setElementVisible } from '../dependentSettings';
 import { isCalendarPeriodicNotesLocaleSource } from '../types';
 import { createGroupDefinition, createRenderDefinition } from '../nativeSettingControls';
 import {
     createCalendarCustomPatternRenderers,
     createCalendarCustomPatternSettingDefinitions,
-    renderCalendarCustomPatternSection,
     type CalendarSelectedLocales
 } from './CalendarCustomPatternSection';
 import type { SettingsTabContext } from './SettingsTabContext';
-
-type CreateSettingGroup = ReturnType<typeof createSettingGroupFactory>;
-
-interface CalendarIntegrationSectionOptions {
-    calendarLocaleWarningEl: HTMLElement;
-}
 
 interface CalendarIntegrationSettingDefinitionOptions {
     getCalendarLocaleWarningEl: () => HTMLElement | null;
@@ -235,71 +225,4 @@ export function createCalendarIntegrationSettingDefinitions(
             ...createCalendarCustomPatternSettingDefinitions(customPatternRenderers, isNotebookNavigatorIntegration)
         ])
     ];
-}
-
-export function renderCalendarIntegrationSection(
-    context: SettingsTabContext,
-    createGroup: CreateSettingGroup,
-    options: CalendarIntegrationSectionOptions
-): () => void {
-    const { calendarLocaleWarningEl } = options;
-    const { plugin } = context;
-    const getActiveProfile = () => getActiveVaultProfile(plugin.settings);
-    const resolveSelectedCalendarLocales = createSelectedCalendarLocalesResolver(context);
-
-    const calendarIntegrationGroup = createGroup(strings.settings.pages.calendar.groups.calendarIntegration);
-    let renderCalendarIntegrationVisibility = (): void => {};
-
-    const calendarIntegrationSetting = calendarIntegrationGroup.addSetting(setting => {
-        renderCalendarIntegrationModeSetting(setting, context, () => renderCalendarIntegrationVisibility());
-    });
-
-    const dailyNotesInfoSettingsEl = createDependentSettingsSection(calendarIntegrationSetting);
-    const customCalendarSettingsEl = createDependentSettingsSection(calendarIntegrationSetting);
-
-    renderDailyNotesInfoSetting(new Setting(dailyNotesInfoSettingsEl));
-
-    let calendarPeriodicNotesLocaleDropdown: DropdownComponent | null = null;
-
-    const refreshCalendarPeriodicNotesLocaleOptions = (): void => {
-        renderCalendarPeriodicNotesLocaleOptions(calendarPeriodicNotesLocaleDropdown, resolveSelectedCalendarLocales);
-    };
-
-    renderCalendarPeriodicNotesLocaleSetting(new Setting(customCalendarSettingsEl), context, {
-        setDropdown: dropdown => {
-            calendarPeriodicNotesLocaleDropdown = dropdown;
-        },
-        refresh: () => renderCalendarIntegrationVisibility()
-    });
-
-    const customPatternController = renderCalendarCustomPatternSection({
-        context,
-        containerEl: customCalendarSettingsEl,
-        getCalendarLocaleWarningEl: () => calendarLocaleWarningEl,
-        getActiveProfile,
-        resolveSelectedCalendarLocales,
-        requestVisibilityRefresh: () => renderCalendarIntegrationVisibility()
-    });
-
-    renderCalendarIntegrationVisibility = (): void => {
-        const isDailyNotes = plugin.settings.calendarIntegrationMode === 'daily-notes';
-        const isCustom = plugin.settings.calendarIntegrationMode === 'notebook-navigator';
-
-        refreshCalendarPeriodicNotesLocaleOptions();
-        setElementVisible(dailyNotesInfoSettingsEl, isDailyNotes);
-        setElementVisible(customCalendarSettingsEl, isCustom);
-
-        if (!isCustom) {
-            customPatternController.hideMessages();
-            return;
-        }
-
-        customPatternController.refresh();
-    };
-
-    context.registerSettingsUpdateListener('calendar-tab-calendar-integration', () => {
-        renderCalendarIntegrationVisibility();
-    });
-
-    return renderCalendarIntegrationVisibility;
 }

@@ -32,7 +32,7 @@ export function isSettingSyncMode(value: unknown): value is SettingSyncMode {
 
 export type DeleteAttachmentsSetting = 'ask' | 'always' | 'never';
 
-export function isDeleteAttachmentsSetting(value: unknown): value is DeleteAttachmentsSetting {
+function isDeleteAttachmentsSetting(value: unknown): value is DeleteAttachmentsSetting {
     return value === 'ask' || value === 'always' || value === 'never';
 }
 
@@ -42,7 +42,7 @@ export function resolveDeleteAttachmentsSetting(value: unknown, fallback: Delete
 
 export type MoveFileConflictsSetting = 'ask' | 'rename';
 
-export function isMoveFileConflictsSetting(value: unknown): value is MoveFileConflictsSetting {
+function isMoveFileConflictsSetting(value: unknown): value is MoveFileConflictsSetting {
     return value === 'ask' || value === 'rename';
 }
 
@@ -228,10 +228,6 @@ export function isTagSortOrder(value: string): value is TagSortOrder {
 /** Scope of items that button actions affect */
 export type ItemScope = 'all' | 'folders-only' | 'tags-only' | 'properties-only';
 
-export function isItemScope(value: unknown): value is ItemScope {
-    return value === 'all' || value === 'folders-only' || value === 'tags-only' || value === 'properties-only';
-}
-
 export type NavRainbowColorMode = 'none' | 'foreground' | 'background';
 
 export function isNavRainbowColorMode(value: unknown): value is NavRainbowColorMode {
@@ -272,10 +268,6 @@ export interface NavRainbowSettings {
 
 /** Modifier key used for multi-select operations */
 export type MultiSelectModifier = 'cmdCtrl' | 'optionAlt';
-
-export function isMultiSelectModifier(value: unknown): value is MultiSelectModifier {
-    return value === 'cmdCtrl' || value === 'optionAlt';
-}
 
 /** Workspace context used when opening a file in a new leaf. */
 export type FileOpenContext = 'tab' | 'split' | 'window';
@@ -335,16 +327,8 @@ export function isVaultTitleOption(value: unknown): value is VaultTitleOption {
 /** Display options for list pane title */
 export type ListPaneTitleOption = 'header' | 'list' | 'hidden';
 
-export function isListPaneTitleOption(value: unknown): value is ListPaneTitleOption {
-    return value === 'header' || value === 'list' || value === 'hidden';
-}
-
 /** Display options for shortcut row badges in the navigation pane */
-export type ShortcutBadgeDisplayMode = 'index' | 'count' | 'none';
-
-export function isShortcutBadgeDisplayMode(value: unknown): value is ShortcutBadgeDisplayMode {
-    return value === 'index' || value === 'count' || value === 'none';
-}
+type ShortcutBadgeDisplayMode = 'index' | 'count' | 'none';
 
 /** Leader marks shown between navigation item names and note counts */
 export type NavCountLeaderStyle = 'none' | 'dots' | 'dashes' | 'line';
@@ -412,7 +396,7 @@ export type CalendarPeriodicNotesLocaleSource = 'calendar' | 'obsidian';
  */
 export type TemplateEngineSetting = 'automatic' | 'builtin' | 'templater';
 
-export function isTemplateEngineSetting(value: unknown): value is TemplateEngineSetting {
+function isTemplateEngineSetting(value: unknown): value is TemplateEngineSetting {
     return value === 'automatic' || value === 'builtin' || value === 'templater';
 }
 

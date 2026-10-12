@@ -1057,8 +1057,6 @@ export const STRINGS_TR = {
             exportFailed: 'Meta veri raporu dışa aktarılamadı'
         },
         index: {
-            label: 'Genel',
-            description: 'Sürüm notları, destek, kasa profili, dosya türleri ve özellik anahtarları.',
             groups: {
                 about: 'Hakkında'
             }

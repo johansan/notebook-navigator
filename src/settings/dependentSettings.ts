@@ -16,34 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Setting } from 'obsidian';
-
 const SETTING_HIDDEN_CLASS = 'nn-setting-hidden';
 
 export function setElementVisible(element: HTMLElement, visible: boolean): void {
     element.classList.toggle(SETTING_HIDDEN_CLASS, !visible);
-}
-
-export function createDependentSettingsSection(parentSetting: Setting): HTMLDivElement {
-    const container = parentSetting.settingEl.win.createDiv();
-    parentSetting.settingEl.after(container);
-    return container;
-}
-
-export function wireToggleSettingWithDependentSection(
-    parentSetting: Setting,
-    getValue: () => boolean,
-    onValueChange: (value: boolean) => Promise<void> | void
-): HTMLDivElement {
-    const container = createDependentSettingsSection(parentSetting);
-    setElementVisible(container, getValue());
-
-    parentSetting.addToggle(toggle =>
-        toggle.setValue(getValue()).onChange(async value => {
-            await onValueChange(value);
-            setElementVisible(container, value);
-        })
-    );
-
-    return container;
 }

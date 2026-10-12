@@ -1063,8 +1063,6 @@ export const STRINGS_PL = {
             exportFailed: 'Nie udało się wyeksportować raportu metadanych'
         },
         index: {
-            label: 'Ogólne',
-            description: 'Informacje o wydaniu, wsparcie, profil sejfu, typy plików i klucze atrybutów.',
             groups: {
                 about: 'O wtyczce'
             }
