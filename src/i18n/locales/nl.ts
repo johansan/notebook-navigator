@@ -1660,8 +1660,6 @@ export const STRINGS_NL = {
             calendarLocale: {
                 name: 'Taal',
                 desc: 'Bepaalt datumopmaak van de kalender, weeknummering en eerste dag van de week.',
-                weekPathMismatchWarning:
-                    'De zichtbare kalender en de paden voor wekelijkse notities gebruiken verschillende weekbegindagen of weeknummering.',
                 options: {
                     systemDefault: 'Standaard'
                 }
@@ -1775,7 +1773,9 @@ export const STRINGS_NL = {
                 momentLinkText: 'Moment-datumnotatie',
                 momentDescSuffix:
                     '. Zet submapnamen tussen haakjes, bijv. [Work]/YYYY. Klik op het sjabloonpictogram om een sjabloon in te stellen. Stel de sjabloonmaplocatie in bij Bestandsbewerkingen & sjablonen > Sjablonen.',
-                example: 'Huidige syntaxis: {path}'
+                example: 'Huidige syntaxis: {path}',
+                weekYearWarning:
+                    '"gggg" en "GGGG" zijn weekjaren, dus datums rond nieuwjaar kunnen het verkeerde jaar krijgen. Gebruik "YYYY".'
             },
             templateEngine: {
                 name: 'Sjabloonengine',
@@ -1820,10 +1820,14 @@ export const STRINGS_NL = {
             calendarWeeklyNotePattern: {
                 name: 'Wekelijkse notities',
                 parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige week (weekjaar, weeknummer).',
-                weekPathMismatchWarning:
-                    'De paden voor wekelijkse notities gebruiken de taal voor periodieke notities. Gebruik overeenkomende talen, of gebruik "GGGG" met "WW" voor maandag-gebaseerde weken.',
+                isoWeeksWarning:
+                    'Wekelijkse notities gebruiken ISO-weken ("W" of "G"), dus de kalender begint weken op maandag en toont ISO-weeknummers. Gebruik "gggg" met "ww" voor weken die de taal volgen.',
+                calendarYearWarning:
+                    'Wekelijkse notities nemen het jaar uit "YYYY", dus een week 1 die in december begint krijgt het vorige jaar. Gebruik "GGGG" met "WW", of "gggg" met "ww".',
                 mixedWeekTokensWarning:
-                    'Dit patroon combineert maandag-gebaseerde weektokens ("W" of "G") met taal-gebaseerde weektokens ("w" of "g"). Gebruik consistent één set: "GGGG" met "WW" voor maandag-gebaseerde weken, of "gggg" met "ww" als wekelijkse notities de geselecteerde taal moeten volgen.'
+                    'Wekelijkse notities mengen ISO-weektokens ("W" of "G") met taal-weektokens ("w" of "g"). Gebruik "GGGG" met "WW" voor ISO-weken, of "gggg" met "ww" voor weken die de taal volgen.',
+                weekPathMismatchWarning:
+                    'De taal van de kalender en de taal voor periodieke notities beginnen of nummeren weken verschillend, dus de paden van wekelijkse notities komen niet overeen met de weken in de kalender. Stel beide in op dezelfde taal, of gebruik "GGGG" met "WW" voor ISO-weken.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Maandelijkse notities',

@@ -1653,8 +1653,6 @@ export const STRINGS_VI = {
             calendarLocale: {
                 name: 'Ngôn ngữ',
                 desc: 'Điều khiển định dạng ngày trong lịch, đánh số tuần và ngày đầu tuần.',
-                weekPathMismatchWarning:
-                    'Lịch hiển thị và đường dẫn ghi chú hàng tuần sử dụng các ngày bắt đầu tuần hoặc cách đánh số tuần khác nhau.',
                 options: {
                     systemDefault: 'Mặc định'
                 }
@@ -1768,7 +1766,8 @@ export const STRINGS_VI = {
                 momentLinkText: 'định dạng ngày Moment',
                 momentDescSuffix:
                     '. Đặt tên thư mục con trong dấu ngoặc vuông, vd: [Work]/YYYY. Nhấp vào biểu tượng mẫu để đặt mẫu. Đặt vị trí thư mục mẫu trong Thao tác tệp & mẫu > Mẫu.',
-                example: 'Cú pháp hiện tại: {path}'
+                example: 'Cú pháp hiện tại: {path}',
+                weekYearWarning: '"gggg" và "GGGG" là năm theo tuần, nên các ngày gần Năm mới có thể nhận sai năm. Dùng "YYYY".'
             },
             templateEngine: {
                 name: 'Công cụ mẫu',
@@ -1812,10 +1811,14 @@ export const STRINGS_VI = {
             calendarWeeklyNotePattern: {
                 name: 'Ghi chú hàng tuần',
                 parsingError: 'Mẫu phải có thể định dạng và phân tích lại thành một tuần đầy đủ (năm tuần, số tuần).',
-                weekPathMismatchWarning:
-                    'Đường dẫn ghi chú hàng tuần sử dụng ngôn ngữ ghi chú định kỳ. Sử dụng ngôn ngữ phù hợp, hoặc sử dụng "GGGG" với "WW" cho tuần bắt đầu từ thứ Hai.',
+                isoWeeksWarning:
+                    'Ghi chú hàng tuần dùng tuần ISO ("W" hoặc "G"), nên lịch bắt đầu tuần từ thứ Hai và hiển thị số tuần ISO. Dùng "gggg" với "ww" cho tuần theo ngôn ngữ.',
+                calendarYearWarning:
+                    'Ghi chú hàng tuần lấy năm từ "YYYY", nên tuần 1 bắt đầu vào tháng 12 sẽ nhận năm trước. Dùng "GGGG" với "WW", hoặc "gggg" với "ww".',
                 mixedWeekTokensWarning:
-                    'Mẫu này trộn lẫn token tuần bắt đầu từ thứ Hai ("W" hoặc "G") với token tuần dựa trên ngôn ngữ ("w" hoặc "g"). Sử dụng một bộ một cách nhất quán: "GGGG" với "WW" cho tuần bắt đầu từ thứ Hai, hoặc "gggg" với "ww" nếu ghi chú hàng tuần cần tuân theo ngôn ngữ đã chọn.'
+                    'Ghi chú hàng tuần trộn token tuần ISO ("W" hoặc "G") với token tuần theo ngôn ngữ ("w" hoặc "g"). Dùng "GGGG" với "WW" cho tuần ISO, hoặc "gggg" với "ww" cho tuần theo ngôn ngữ.',
+                weekPathMismatchWarning:
+                    'Ngôn ngữ lịch và ngôn ngữ ghi chú định kỳ bắt đầu hoặc đánh số tuần khác nhau, nên đường dẫn ghi chú hàng tuần không khớp với các tuần trong lịch. Đặt cả hai cùng một ngôn ngữ, hoặc dùng "GGGG" với "WW" cho tuần ISO.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Ghi chú hàng tháng',

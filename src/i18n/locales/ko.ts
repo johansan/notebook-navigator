@@ -1651,7 +1651,6 @@ export const STRINGS_KO = {
             calendarLocale: {
                 name: '지역',
                 desc: '달력 날짜 형식, 주 번호, 그리고 한 주의 첫 번째 요일을 제어합니다.',
-                weekPathMismatchWarning: '표시되는 캘린더와 주간 노트 경로가 주의 시작 요일 또는 주 번호 매김이 서로 다릅니다.',
                 options: {
                     systemDefault: '기본값'
                 }
@@ -1765,7 +1764,9 @@ export const STRINGS_KO = {
                 momentLinkText: 'Moment 날짜 형식',
                 momentDescSuffix:
                     '을 사용하여 경로 지정. 하위 폴더 이름은 대괄호로 감싸세요, 예: [Work]/YYYY. 템플릿 아이콘을 클릭하여 템플릿을 설정하세요. 템플릿 폴더 위치는 파일 작업 및 템플릿 > 템플릿에서 설정하세요.',
-                example: '현재 구문: {path}'
+                example: '현재 구문: {path}',
+                weekYearWarning:
+                    '"gggg"와 "GGGG"는 주 기준 연도이므로 새해 전후의 날짜는 잘못된 연도가 될 수 있습니다. "YYYY"를 사용하세요.'
             },
             templateEngine: {
                 name: '템플릿 엔진',
@@ -1808,10 +1809,14 @@ export const STRINGS_KO = {
             calendarWeeklyNotePattern: {
                 name: '주간 노트',
                 parsingError: '패턴은 전체 주(주 연도, 주 번호)로 포맷되고 다시 파싱될 수 있어야 합니다.',
-                weekPathMismatchWarning:
-                    '주간 노트 경로는 정기 노트 지역을 사용합니다. 일치하는 지역을 사용하거나 월요일 기준 주에는 "GGGG"와 "WW"를 사용하세요.',
+                isoWeeksWarning:
+                    '주간 노트가 ISO 주("W" 또는 "G")를 사용하므로 캘린더는 월요일에 주를 시작하고 ISO 주 번호를 표시합니다. 지역 설정을 따르는 주에는 "gggg"와 "ww"를 사용하세요.',
+                calendarYearWarning:
+                    '주간 노트가 "YYYY"에서 연도를 가져오므로 12월에 시작하는 1주차는 이전 연도가 됩니다. "GGGG"와 "WW" 또는 "gggg"와 "ww"를 사용하세요.',
                 mixedWeekTokensWarning:
-                    '이 패턴은 월요일 기준 주 토큰("W" 또는 "G")과 지역 기준 주 토큰("w" 또는 "g")을 혼합하여 사용합니다. 일관되게 한 가지 세트를 사용하세요. 월요일 기준 주에는 "GGGG"와 "WW", 주간 노트가 선택한 지역 설정을 따라야 하는 경우 "gggg"와 "ww"를 사용하세요.'
+                    '주간 노트가 ISO 주 토큰("W" 또는 "G")과 지역 주 토큰("w" 또는 "g")을 혼합합니다. ISO 주에는 "GGGG"와 "WW", 지역 설정을 따르는 주에는 "gggg"와 "ww"를 사용하세요.',
+                weekPathMismatchWarning:
+                    '캘린더 지역과 정기 노트 지역이 주의 시작일 또는 주 번호를 다르게 정하므로 주간 노트 경로가 캘린더의 주와 일치하지 않습니다. 두 설정을 같은 지역으로 지정하거나 ISO 주에는 "GGGG"와 "WW"를 사용하세요.'
             },
             calendarMonthlyNotePattern: {
                 name: '월간 노트',

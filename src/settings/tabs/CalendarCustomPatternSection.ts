@@ -29,9 +29,9 @@ import {
     DEFAULT_CALENDAR_CUSTOM_QUARTER_PATTERN,
     DEFAULT_CALENDAR_CUSTOM_WEEK_PATTERN,
     DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN,
-    doesCalendarCustomWeekPatternMixWeekTokenTypes,
-    doesCalendarCustomWeekPatternUseDifferentWeekRules,
+    doesCalendarCustomPatternUseWeekYearWithoutWeekNumber,
     ensureMarkdownFileName,
+    getCalendarCustomWeekPatternIssues,
     isCalendarCustomDatePatternValid,
     isCalendarCustomMonthPatternValid,
     isCalendarCustomQuarterPatternValid,
@@ -41,6 +41,7 @@ import {
     normalizeCalendarCustomRootFolder,
     normalizeCalendarVaultFolderPath,
     splitCalendarCustomPattern,
+    type CalendarCustomWeekPatternIssue,
     type CalendarCustomWeekRules
 } from '../../utils/calendarCustomNotePatterns';
 import { resolveCalendarCustomNotePathDate, type CalendarNoteKind } from '../../utils/calendarNotes';
@@ -123,6 +124,44 @@ function setElementVisibleIfPresent(element: HTMLElement | null, visible: boolea
 function setElementTextIfPresent(element: HTMLElement | null, text: string): void {
     if (element) {
         element.setText(text);
+    }
+}
+
+/** Shows each message on its own line, and hides the element when there are no messages. */
+function setWarningMessagesIfPresent(element: HTMLElement | null, messages: string[]): void {
+    if (!element) {
+        return;
+    }
+
+    element.empty();
+    messages.forEach(message => element.createDiv({ cls: 'nn-setting-warning-message', text: message }));
+    setElementVisible(element, messages.length > 0);
+}
+
+/**
+ * Returns the message shown under a daily, monthly, quarterly or yearly pattern: the parse error when the pattern is
+ * invalid, the week year warning when a valid pattern takes its year from `gggg` or `GGGG`, and '' otherwise.
+ */
+function getPatternMessage(pattern: string, isInvalid: boolean, parsingError: string): string {
+    if (isInvalid) {
+        return parsingError;
+    }
+    return doesCalendarCustomPatternUseWeekYearWithoutWeekNumber(pattern)
+        ? strings.settings.items.calendarPeriodicNotePatterns.weekYearWarning
+        : '';
+}
+
+function getWeekPatternIssueMessage(issue: CalendarCustomWeekPatternIssue): string {
+    const weeklyStrings = strings.settings.items.calendarWeeklyNotePattern;
+    switch (issue) {
+        case 'iso-weeks':
+            return weeklyStrings.isoWeeksWarning;
+        case 'calendar-year':
+            return weeklyStrings.calendarYearWarning;
+        case 'mixed-week-tokens':
+            return weeklyStrings.mixedWeekTokensWarning;
+        case 'different-week-rules':
+            return weeklyStrings.weekPathMismatchWarning;
     }
 }
 
@@ -568,51 +607,40 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         }
     };
 
-    const renderCalendarWeekCompatibilityWarnings = (): void => {
-        const calendarLocaleWarningEl = getCalendarLocaleWarningEl();
-        setElementTextIfPresent(calendarLocaleWarningEl, '');
-        setElementTextIfPresent(calendarCustomWeekPatternWarningEl, '');
-        setElementVisibleIfPresent(calendarLocaleWarningEl, false);
-        setElementVisibleIfPresent(calendarCustomWeekPatternWarningEl, false);
-
+    const getCalendarWeekPatternWarnings = (): string[] => {
         if (plugin.settings.calendarIntegrationMode !== 'notebook-navigator' || !isPatternTarget(calendarCustomWeekPattern)) {
-            return;
+            return [];
         }
 
         const momentApi = getMomentApi();
         if (!momentApi) {
-            return;
+            return [];
         }
 
         const weekPatternRaw = getInputValue(calendarCustomWeekPattern.inputEl, plugin.settings.calendarCustomWeekPattern);
         if (weekPatternRaw.trim() === '') {
-            return;
+            return [];
         }
 
         const weekCustomPattern = buildCustomPattern(weekPatternRaw, '');
         if (!isCalendarCustomWeekPatternValid(weekCustomPattern, momentApi)) {
-            return;
+            return [];
         }
 
         const { calendarRulesLocale, periodicNotesLocale } = resolveSelectedCalendarLocales(momentApi);
-        const showWarning = doesCalendarCustomWeekPatternUseDifferentWeekRules(
+        return getCalendarCustomWeekPatternIssues(
             weekCustomPattern,
             getLocaleWeekRules(momentApi, calendarRulesLocale),
             getLocaleWeekRules(momentApi, periodicNotesLocale)
-        );
-        if (!showWarning) {
-            return;
-        }
+        ).map(getWeekPatternIssueMessage);
+    };
 
-        setElementTextIfPresent(calendarLocaleWarningEl, strings.settings.items.calendarLocale.weekPathMismatchWarning);
-        setElementTextIfPresent(
-            calendarCustomWeekPatternWarningEl,
-            doesCalendarCustomWeekPatternMixWeekTokenTypes(weekCustomPattern)
-                ? strings.settings.items.calendarWeeklyNotePattern.mixedWeekTokensWarning
-                : strings.settings.items.calendarWeeklyNotePattern.weekPathMismatchWarning
-        );
-        setElementVisibleIfPresent(calendarLocaleWarningEl, true);
-        setElementVisibleIfPresent(calendarCustomWeekPatternWarningEl, true);
+    // The Locale setting and the Weekly notes setting are in different groups of the page, so both show the same
+    // warnings: a change to either setting updates the warnings next to it without scrolling to the other.
+    const renderCalendarWeekCompatibilityWarnings = (): void => {
+        const warnings = getCalendarWeekPatternWarnings();
+        setWarningMessagesIfPresent(getCalendarLocaleWarningEl(), warnings);
+        setWarningMessagesIfPresent(calendarCustomWeekPatternWarningEl, warnings);
     };
 
     const hideMessages = (): void => {
@@ -637,12 +665,13 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         if (isPatternTarget(calendarCustomFilePattern)) {
             const dailyPatternRaw = getInputValue(calendarCustomFilePattern.inputEl, plugin.settings.calendarCustomFilePattern);
             const dailyCustomPattern = buildCustomPattern(dailyPatternRaw, DEFAULT_CALENDAR_CUSTOM_FILE_PATTERN);
-            const showDailyError = !isCalendarCustomDatePatternValid(dailyCustomPattern, momentApi);
-            setElementTextIfPresent(
-                calendarCustomFilePatternErrorEl,
-                showDailyError ? strings.settings.items.calendarDailyNotePattern.parsingError : ''
+            const dailyMessage = getPatternMessage(
+                dailyCustomPattern,
+                !isCalendarCustomDatePatternValid(dailyCustomPattern, momentApi),
+                strings.settings.items.calendarDailyNotePattern.parsingError
             );
-            setElementVisibleIfPresent(calendarCustomFilePatternErrorEl, showDailyError);
+            setElementTextIfPresent(calendarCustomFilePatternErrorEl, dailyMessage);
+            setElementVisibleIfPresent(calendarCustomFilePatternErrorEl, dailyMessage !== '');
         }
 
         if (isPatternTarget(calendarCustomWeekPattern)) {
@@ -659,35 +688,37 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         if (isPatternTarget(calendarCustomMonthPattern)) {
             const monthPatternRaw = getInputValue(calendarCustomMonthPattern.inputEl, plugin.settings.calendarCustomMonthPattern);
             const monthCustomPattern = buildCustomPattern(monthPatternRaw, '');
-            const showMonthError = monthPatternRaw.trim() !== '' && !isCalendarCustomMonthPatternValid(monthCustomPattern, momentApi);
-            setElementTextIfPresent(
-                calendarCustomMonthPatternErrorEl,
-                showMonthError ? strings.settings.items.calendarMonthlyNotePattern.parsingError : ''
+            const monthMessage = getPatternMessage(
+                monthCustomPattern,
+                monthPatternRaw.trim() !== '' && !isCalendarCustomMonthPatternValid(monthCustomPattern, momentApi),
+                strings.settings.items.calendarMonthlyNotePattern.parsingError
             );
-            setElementVisibleIfPresent(calendarCustomMonthPatternErrorEl, showMonthError);
+            setElementTextIfPresent(calendarCustomMonthPatternErrorEl, monthMessage);
+            setElementVisibleIfPresent(calendarCustomMonthPatternErrorEl, monthMessage !== '');
         }
 
         if (isPatternTarget(calendarCustomQuarterPattern)) {
             const quarterPatternRaw = getInputValue(calendarCustomQuarterPattern.inputEl, plugin.settings.calendarCustomQuarterPattern);
             const quarterCustomPattern = buildCustomPattern(quarterPatternRaw, '');
-            const showQuarterError =
-                quarterPatternRaw.trim() !== '' && !isCalendarCustomQuarterPatternValid(quarterCustomPattern, momentApi);
-            setElementTextIfPresent(
-                calendarCustomQuarterPatternErrorEl,
-                showQuarterError ? strings.settings.items.calendarQuarterlyNotePattern.parsingError : ''
+            const quarterMessage = getPatternMessage(
+                quarterCustomPattern,
+                quarterPatternRaw.trim() !== '' && !isCalendarCustomQuarterPatternValid(quarterCustomPattern, momentApi),
+                strings.settings.items.calendarQuarterlyNotePattern.parsingError
             );
-            setElementVisibleIfPresent(calendarCustomQuarterPatternErrorEl, showQuarterError);
+            setElementTextIfPresent(calendarCustomQuarterPatternErrorEl, quarterMessage);
+            setElementVisibleIfPresent(calendarCustomQuarterPatternErrorEl, quarterMessage !== '');
         }
 
         if (isPatternTarget(calendarCustomYearPattern)) {
             const yearPatternRaw = getInputValue(calendarCustomYearPattern.inputEl, plugin.settings.calendarCustomYearPattern);
             const yearCustomPattern = buildCustomPattern(yearPatternRaw, '');
-            const showYearError = yearPatternRaw.trim() !== '' && !isCalendarCustomYearPatternValid(yearCustomPattern, momentApi);
-            setElementTextIfPresent(
-                calendarCustomYearPatternErrorEl,
-                showYearError ? strings.settings.items.calendarYearlyNotePattern.parsingError : ''
+            const yearMessage = getPatternMessage(
+                yearCustomPattern,
+                yearPatternRaw.trim() !== '' && !isCalendarCustomYearPatternValid(yearCustomPattern, momentApi),
+                strings.settings.items.calendarYearlyNotePattern.parsingError
             );
-            setElementVisibleIfPresent(calendarCustomYearPatternErrorEl, showYearError);
+            setElementTextIfPresent(calendarCustomYearPatternErrorEl, yearMessage);
+            setElementVisibleIfPresent(calendarCustomYearPatternErrorEl, yearMessage !== '');
         }
 
         renderCalendarWeekCompatibilityWarnings();

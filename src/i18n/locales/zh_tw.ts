@@ -1643,7 +1643,6 @@ export const STRINGS_ZH_TW = {
             calendarLocale: {
                 name: '日曆語言',
                 desc: '控制日曆日期格式、週編號和每週的第一天。',
-                weekPathMismatchWarning: '可見日曆和週記路徑使用了不同的每週起始日或週編號方式。',
                 options: {
                     systemDefault: '系統預設'
                 }
@@ -1757,7 +1756,8 @@ export const STRINGS_ZH_TW = {
                 momentLinkText: 'Moment 日期格式',
                 momentDescSuffix:
                     ' 設定路徑。將子資料夾名稱用方括號括起來，例如 [Work]/YYYY。點擊範本圖示設定範本。在檔案操作與範本 > 範本中設定範本資料夾位置。',
-                example: '目前語法：{path}'
+                example: '目前語法：{path}',
+                weekYearWarning: '"gggg" 和 "GGGG" 是週年份，因此新年前後的日期可能得到錯誤的年份。請使用 "YYYY"。'
             },
             templateEngine: {
                 name: '範本引擎',
@@ -1800,9 +1800,14 @@ export const STRINGS_ZH_TW = {
             calendarWeeklyNotePattern: {
                 name: '週記',
                 parsingError: '模式必須能格式化並重新解析為完整週（週年、週數）。',
-                weekPathMismatchWarning: '週記路徑使用週期筆記語言。請使用相符的語言，或使用 "GGGG" 搭配 "WW" 以星期一為基準的週。',
+                isoWeeksWarning:
+                    '週記使用 ISO 週（"W" 或 "G"），因此日曆以星期一作為每週的第一天，並顯示 ISO 週數。若要讓週遵循語言設定，請使用 "gggg" 搭配 "ww"。',
+                calendarYearWarning:
+                    '週記從 "YYYY" 取得年份，因此始於十二月的第 1 週會得到前一年。請使用 "GGGG" 搭配 "WW"，或 "gggg" 搭配 "ww"。',
                 mixedWeekTokensWarning:
-                    '此模式混用了以星期一為基準的週標記（"W" 或 "G"）和以語言為基準的週標記（"w" 或 "g"）。請始終使用同一組：以星期一為基準的週使用 "GGGG" 搭配 "WW"，若週記應遵循所選語言設定，則使用 "gggg" 搭配 "ww"。'
+                    '週記混用了 ISO 週標記（"W" 或 "G"）和語言週標記（"w" 或 "g"）。ISO 週請使用 "GGGG" 搭配 "WW"，遵循語言設定的週請使用 "gggg" 搭配 "ww"。',
+                weekPathMismatchWarning:
+                    '日曆語言與週期筆記語言的每週起始日或週編號不同，因此週記路徑與日曆中的週不一致。請將兩者設為相同的語言，或在 ISO 週中使用 "GGGG" 搭配 "WW"。'
             },
             calendarMonthlyNotePattern: {
                 name: '月記',

@@ -1655,7 +1655,6 @@ export const STRINGS_JA = {
             calendarLocale: {
                 name: 'ロケール',
                 desc: 'カレンダーの日付形式、週番号、週の開始曜日を制御します。',
-                weekPathMismatchWarning: '表示されるカレンダーとウィークリーノートのパスで、週の開始曜日または週番号が異なります。',
                 options: {
                     systemDefault: 'デフォルト'
                 }
@@ -1769,7 +1768,9 @@ export const STRINGS_JA = {
                 momentLinkText: 'Moment 日付フォーマット',
                 momentDescSuffix:
                     'を使用してパスを指定。サブフォルダ名は角括弧で囲みます（例：[Work]/YYYY）。テンプレートアイコンをクリックしてテンプレートを設定。 テンプレートフォルダの場所はファイル操作とテンプレート > テンプレートで設定してください。',
-                example: '現在の構文: {path}'
+                example: '現在の構文: {path}',
+                weekYearWarning:
+                    '"gggg" と "GGGG" は週の年であるため、年末年始の日付に誤った年が付くことがあります。"YYYY" を使用してください。'
             },
             templateEngine: {
                 name: 'テンプレートエンジン',
@@ -1813,10 +1814,14 @@ export const STRINGS_JA = {
             calendarWeeklyNotePattern: {
                 name: 'ウィークリーノート',
                 parsingError: 'パターンは完全な週（週年、週番号）としてフォーマットされ、再度パースできる必要があります。',
-                weekPathMismatchWarning:
-                    'ウィークリーノートのパスは定期ノートのロケールを使用します。一致するロケールを使用するか、月曜日から始まる週には "GGGG" と "WW" を使用してください。',
+                isoWeeksWarning:
+                    'ウィークリーノートは ISO 週（"W" または "G"）を使用するため、カレンダーは週を月曜日から始め、ISO 週番号を表示します。ロケールに従う週には "gggg" と "ww" を使用してください。',
+                calendarYearWarning:
+                    'ウィークリーノートは "YYYY" から年を取得するため、12 月に始まる第 1 週には前年が付きます。"GGGG" と "WW"、または "gggg" と "ww" を使用してください。',
                 mixedWeekTokensWarning:
-                    'このパターンは月曜日基準の週トークン（"W" または "G"）とロケール基準の週トークン（"w" または "g"）を混在させています。一貫して 1 つのセットを使用してください。月曜日から始まる週には "GGGG" と "WW"、ウィークリーノートが選択したロケールに従う場合は "gggg" と "ww" を使用してください。'
+                    'ウィークリーノートで ISO 週トークン（"W" または "G"）とロケール週トークン（"w" または "g"）が混在しています。ISO 週には "GGGG" と "WW"、ロケールに従う週には "gggg" と "ww" を使用してください。',
+                weekPathMismatchWarning:
+                    'カレンダーのロケールと定期ノートのロケールで週の開始日または週番号が異なるため、ウィークリーノートのパスがカレンダーの週と一致しません。両方を同じロケールに設定するか、ISO 週には "GGGG" と "WW" を使用してください。'
             },
             calendarMonthlyNotePattern: {
                 name: 'マンスリーノート',

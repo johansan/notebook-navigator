@@ -129,7 +129,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Feature images larger than 60 megapixels are now skipped on mobile instead of reloading Obsidian while thumbnails are generated [#1527](https://github.com/johansan/notebook-navigator/issues/1527).',
             'Icons that other plugins add to Obsidian, such as Custom Icons, are now saved to frontmatter when picked, shown when set in frontmatter, and kept in ==File name icon map==, ==File type icon map==, and ==Interface icons== [#1531](https://github.com/johansan/notebook-navigator/issues/1531).',
             'Icons from another plugin now show in Notebook Navigator menus and in the calendar tab header.',
-            'Exporting settings on Android and iOS now saves the JSON file to the vault root with `Save to vault`, where `Download` saved no file [#1537](https://github.com/johansan/notebook-navigator/issues/1537).'
+            'Exporting settings on Android and iOS now saves the JSON file to the vault root with `Save to vault`, where `Download` saved no file [#1537](https://github.com/johansan/notebook-navigator/issues/1537).',
+            'Calendar settings now show a warning under ==Locale== and ==Weekly notes== when the weekly notes pattern makes the calendar start weeks on Monday regardless of locale, or gives weekly notes paths that do not match the calendar [#1540](https://github.com/johansan/notebook-navigator/issues/1540).',
+            'Daily, monthly, quarterly and yearly note patterns now show a warning when they take the year from a week year such as `gggg` or `GGGG`, which gives dates near New Year the wrong year.'
         ]
     },
     {

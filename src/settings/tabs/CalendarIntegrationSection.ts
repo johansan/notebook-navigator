@@ -39,21 +39,22 @@ interface CalendarIntegrationSettingDefinitionOptions {
     getCalendarLocaleWarningEl: () => HTMLElement | null;
 }
 
-function formatLocaleWeekdayExample(locale: string): string {
+/** Returns the localized name of the first day of the week in `locale`, such as "Sunday" for `en` and "Montag" for `de`. */
+function formatLocaleWeekStart(locale: string): string {
     const currentMomentApi = getMomentApi();
-    const sampleDate = currentMomentApi?.('2026-01-19', 'YYYY-MM-DD', true).locale(locale);
-    if (!sampleDate?.isValid()) {
+    if (!currentMomentApi) {
         return '';
     }
 
-    const formatted = sampleDate.format('dddd').trim();
+    // `startOf('week')` follows the locale's first day of the week.
+    const formatted = currentMomentApi().locale(locale).startOf('week').format('dddd').trim();
     const [first = '', ...rest] = Array.from(formatted);
     return first ? `${first.toLocaleUpperCase()}${rest.join('')}` : '';
 }
 
 function formatPeriodicNotesLocaleOption(label: string, locale: string): string {
-    const example = formatLocaleWeekdayExample(locale);
-    return example ? `${label} - ${locale} (${example})` : `${label} - ${locale}`;
+    const weekStart = formatLocaleWeekStart(locale);
+    return weekStart ? `${label} - ${locale} (${weekStart})` : `${label} - ${locale}`;
 }
 
 function createSelectedCalendarLocalesResolver(context: SettingsTabContext): (momentApi: MomentApi | null) => CalendarSelectedLocales {
@@ -123,6 +124,10 @@ function renderCalendarPeriodicNotesLocaleOptions(
             optionEl.text = label;
         }
     });
+
+    // Obsidian sizes a dropdown to its selected label when the value is set, so a longer label would be clipped
+    // without setting the value again. `setValue` does not run the change handler.
+    dropdown.setValue(dropdown.getValue());
 }
 
 function renderCalendarPeriodicNotesLocaleSetting(

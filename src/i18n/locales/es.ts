@@ -1660,8 +1660,6 @@ export const STRINGS_ES = {
             calendarLocale: {
                 name: 'Configuración regional',
                 desc: 'Controla el formato de fechas del calendario, la numeración de semanas y el primer día de la semana.',
-                weekPathMismatchWarning:
-                    'El calendario visible y las rutas de notas semanales utilizan diferentes inicios de semana o numeración de semanas.',
                 options: {
                     systemDefault: 'Predeterminado'
                 }
@@ -1775,7 +1773,9 @@ export const STRINGS_ES = {
                 momentLinkText: 'formato de fecha Moment',
                 momentDescSuffix:
                     '. Envuelve los nombres de subcarpetas entre corchetes, ej. [Work]/YYYY. Haz clic en el icono de plantilla para establecer una plantilla. Establecer ubicación de carpeta de plantillas en Operaciones de archivos y plantillas > Plantillas.',
-                example: 'Sintaxis actual: {path}'
+                example: 'Sintaxis actual: {path}',
+                weekYearWarning:
+                    '"gggg" y "GGGG" son años de semana, por lo que las fechas cercanas al Año Nuevo pueden recibir un año incorrecto. Usa "YYYY".'
             },
             templateEngine: {
                 name: 'Motor de plantillas',
@@ -1820,10 +1820,14 @@ export const STRINGS_ES = {
             calendarWeeklyNotePattern: {
                 name: 'Notas semanales',
                 parsingError: 'El patrón debe formatear y volver a analizarse como una semana completa (año de semana, número de semana).',
-                weekPathMismatchWarning:
-                    'Las rutas de notas semanales utilizan la configuración regional de notas periódicas. Usa configuraciones regionales coincidentes, o usa "GGGG" con "WW" para semanas basadas en lunes.',
+                isoWeeksWarning:
+                    'Las notas semanales usan semanas ISO ("W" o "G"), por lo que el calendario empieza las semanas en lunes y muestra números de semana ISO. Usa "gggg" con "ww" para semanas que sigan la configuración regional.',
+                calendarYearWarning:
+                    'Las notas semanales toman el año de "YYYY", por lo que una semana 1 que empieza en diciembre recibe el año anterior. Usa "GGGG" con "WW", o "gggg" con "ww".',
                 mixedWeekTokensWarning:
-                    'Este patrón mezcla tokens de semana basados en lunes ("W" o "G") con tokens de semana basados en la configuración regional ("w" o "g"). Usa un conjunto de forma coherente: "GGGG" con "WW" para semanas basadas en lunes, o "gggg" con "ww" si las notas semanales deben seguir la configuración regional seleccionada.'
+                    'Las notas semanales mezclan tokens de semana ISO ("W" o "G") con tokens de semana de la configuración regional ("w" o "g"). Usa "GGGG" con "WW" para semanas ISO, o "gggg" con "ww" para semanas que sigan la configuración regional.',
+                weekPathMismatchWarning:
+                    'La configuración regional del calendario y la de las notas periódicas empiezan o numeran las semanas de forma distinta, por lo que las rutas de las notas semanales no coinciden con las semanas del calendario. Usa la misma configuración regional en ambas, o usa "GGGG" con "WW" para semanas ISO.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Notas mensuales',

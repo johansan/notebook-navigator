@@ -1661,8 +1661,6 @@ export const STRINGS_FR = {
             calendarLocale: {
                 name: 'Langue',
                 desc: 'Contrôle le formatage des dates du calendrier, la numérotation des semaines et le premier jour de la semaine.',
-                weekPathMismatchWarning:
-                    'Le calendrier visible et les chemins des notes hebdomadaires utilisent des débuts de semaine ou une numérotation des semaines différents.',
                 options: {
                     systemDefault: 'Par défaut'
                 }
@@ -1776,7 +1774,9 @@ export const STRINGS_FR = {
                 momentLinkText: 'format de date Moment',
                 momentDescSuffix:
                     ". Entourez les noms de sous-dossiers de crochets, par ex. [Work]/YYYY. Cliquez sur l'icône de modèle pour définir un modèle. Définir l'emplacement du dossier de modèles dans Opérations sur les fichiers et modèles > Modèles.",
-                example: 'Syntaxe actuelle : {path}'
+                example: 'Syntaxe actuelle : {path}',
+                weekYearWarning:
+                    '"gggg" et "GGGG" sont des années de semaine, donc les dates proches du Nouvel An peuvent recevoir une mauvaise année. Utilisez "YYYY".'
             },
             templateEngine: {
                 name: 'Moteur de modèles',
@@ -1822,10 +1822,14 @@ export const STRINGS_FR = {
                 name: 'Notes hebdomadaires',
                 parsingError:
                     'Le modèle doit pouvoir être formaté et ré-analysé comme une semaine complète (année de semaine, numéro de semaine).',
-                weekPathMismatchWarning:
-                    'Les chemins des notes hebdomadaires utilisent la langue des notes périodiques. Utilisez des langues correspondantes, ou utilisez "GGGG" avec "WW" pour des semaines basées sur le lundi.',
+                isoWeeksWarning:
+                    'Les notes hebdomadaires utilisent les semaines ISO ("W" ou "G"), donc le calendrier commence les semaines le lundi et affiche les numéros de semaine ISO. Utilisez "gggg" avec "ww" pour des semaines qui suivent la langue.',
+                calendarYearWarning:
+                    'Les notes hebdomadaires prennent l’année de "YYYY", donc une semaine 1 qui commence en décembre reçoit l’année précédente. Utilisez "GGGG" avec "WW", ou "gggg" avec "ww".',
                 mixedWeekTokensWarning:
-                    'Ce modèle mélange des jetons de semaine basés sur le lundi ("W" ou "G") avec des jetons de semaine basés sur la langue ("w" ou "g"). Utilisez un seul ensemble de manière cohérente : "GGGG" avec "WW" pour des semaines basées sur le lundi, ou "gggg" avec "ww" si les notes hebdomadaires doivent suivre la langue sélectionnée.'
+                    'Les notes hebdomadaires mélangent des jetons de semaine ISO ("W" ou "G") et des jetons de semaine de la langue ("w" ou "g"). Utilisez "GGGG" avec "WW" pour des semaines ISO, ou "gggg" avec "ww" pour des semaines qui suivent la langue.',
+                weekPathMismatchWarning:
+                    'La langue du calendrier et la langue des notes périodiques commencent ou numérotent les semaines différemment, donc les chemins des notes hebdomadaires ne correspondent pas aux semaines du calendrier. Utilisez la même langue pour les deux, ou utilisez "GGGG" avec "WW" pour des semaines ISO.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Notes mensuelles',

@@ -18,9 +18,9 @@
 
 import { describe, expect, test } from 'vitest';
 import {
-    doesCalendarCustomWeekPatternMixWeekTokenTypes,
-    doesCalendarCustomWeekPatternUseDifferentWeekRules,
+    doesCalendarCustomPatternUseWeekYearWithoutWeekNumber,
     escapeMomentLiteralPath,
+    getCalendarCustomWeekPatternIssues,
     isCalendarCustomWeekPatternValid
 } from '../../src/utils/calendarCustomNotePatterns';
 
@@ -69,70 +69,58 @@ describe('calendar custom note patterns', () => {
         expect(context.lastStartOfUnit).toBe('isoWeek');
     });
 
-    test('does not warn for ISO week patterns because display and paths both use ISO weeks', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'GGGG-[W]WW',
-                { firstDayOfWeek: 0, firstDayOfYear: 6 },
-                { firstDayOfWeek: 1, firstDayOfYear: 4 }
-            )
-        ).toBe(false);
+    const SUNDAY_WEEK_RULES = { firstDayOfWeek: 0, firstDayOfYear: 6 };
+    const ISO_WEEK_RULES = { firstDayOfWeek: 1, firstDayOfYear: 4 };
+
+    test('reports no issues for ISO week patterns when the calendar locale uses ISO week rules', () => {
+        expect(getCalendarCustomWeekPatternIssues('GGGG-[W]WW', ISO_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([]);
     });
 
-    test('warns for mixed ISO and locale week tokens when display and path week rules differ', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'gggg-[W]WW',
-                { firstDayOfWeek: 1, firstDayOfYear: 4 },
-                { firstDayOfWeek: 0, firstDayOfYear: 6 }
-            )
-        ).toBe(true);
+    test('reports ISO weeks when the calendar locale starts or numbers weeks differently from ISO', () => {
+        expect(getCalendarCustomWeekPatternIssues('GGGG-[W]WW', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual(['iso-weeks']);
+        expect(getCalendarCustomWeekPatternIssues('GGGG-[W]WW', { firstDayOfWeek: 1, firstDayOfYear: 7 }, ISO_WEEK_RULES)).toEqual([
+            'iso-weeks'
+        ]);
     });
 
-    test('warns for mixed ISO and locale week tokens when display and path week rules match', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'gggg-[W]WW',
-                { firstDayOfWeek: 0, firstDayOfYear: 6 },
-                { firstDayOfWeek: 0, firstDayOfYear: 6 }
-            )
-        ).toBe(true);
+    test('reports the calendar year when a week pattern has a week number without a week year', () => {
+        expect(getCalendarCustomWeekPatternIssues('[Weekly]/YYYY/YYYY-[W]W', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([
+            'iso-weeks',
+            'calendar-year'
+        ]);
+        expect(getCalendarCustomWeekPatternIssues('YYYY-[W]ww', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual(['calendar-year']);
+        expect(getCalendarCustomWeekPatternIssues('YYYY/MM/gggg-[W]ww', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([]);
     });
 
-    test('detects mixed ISO and locale week tokens', () => {
-        expect(doesCalendarCustomWeekPatternMixWeekTokenTypes('gggg-[W]WW')).toBe(true);
-        expect(doesCalendarCustomWeekPatternMixWeekTokenTypes('GGGG-[W]WW')).toBe(false);
-        expect(doesCalendarCustomWeekPatternMixWeekTokenTypes('gggg/[W]ww')).toBe(false);
+    test('reports mixed ISO and locale week tokens regardless of locale week rules', () => {
+        expect(getCalendarCustomWeekPatternIssues('gggg-[W]WW', ISO_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual(['mixed-week-tokens']);
+        expect(getCalendarCustomWeekPatternIssues('gggg-[W]WW', ISO_WEEK_RULES, ISO_WEEK_RULES)).toEqual(['mixed-week-tokens']);
+        expect(getCalendarCustomWeekPatternIssues('gggg-[W]WW', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([
+            'iso-weeks',
+            'mixed-week-tokens'
+        ]);
     });
 
-    test('warns for locale week patterns when display and path locales start weeks on different days', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'gggg/[W]ww',
-                { firstDayOfWeek: 1, firstDayOfYear: 4 },
-                { firstDayOfWeek: 0, firstDayOfYear: 6 }
-            )
-        ).toBe(true);
+    test('reports different week rules for locale week patterns when the locales start weeks on different days', () => {
+        expect(getCalendarCustomWeekPatternIssues('gggg/[W]ww', ISO_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual(['different-week-rules']);
     });
 
-    test('warns for locale week patterns when display and path locales use different first weeks of year', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'gggg/[W]ww',
-                { firstDayOfWeek: 1, firstDayOfYear: 4 },
-                { firstDayOfWeek: 1, firstDayOfYear: 6 }
-            )
-        ).toBe(true);
+    test('reports different week rules for locale week patterns when the locales use different first weeks of year', () => {
+        expect(getCalendarCustomWeekPatternIssues('gggg/[W]ww', ISO_WEEK_RULES, { firstDayOfWeek: 1, firstDayOfYear: 6 })).toEqual([
+            'different-week-rules'
+        ]);
     });
 
-    test('does not warn for locale week patterns when display and path week rules match', () => {
-        expect(
-            doesCalendarCustomWeekPatternUseDifferentWeekRules(
-                'gggg/[W]ww',
-                { firstDayOfWeek: 1, firstDayOfYear: 4 },
-                { firstDayOfWeek: 1, firstDayOfYear: 4 }
-            )
-        ).toBe(false);
+    test('reports no issues for locale week patterns when the locales use the same week rules', () => {
+        expect(getCalendarCustomWeekPatternIssues('gggg/[W]ww', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([]);
+    });
+
+    test('detects week years without week numbers in non-week patterns', () => {
+        expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('gggg-MM')).toBe(true);
+        expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('GGGG/YYYY-MM-DD')).toBe(true);
+        expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('YYYY-MM')).toBe(false);
+        expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('GGGG/[W]WW/YYYY-MM-DD')).toBe(false);
+        expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('[Weekly gg]/YYYY')).toBe(false);
     });
 
     test('rejects weekly pattern without week number token', () => {

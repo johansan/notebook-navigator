@@ -1653,8 +1653,6 @@ export const STRINGS_TR = {
             calendarLocale: {
                 name: 'Yerel ayar',
                 desc: 'Takvim tarih biçimlendirmesini, hafta numaralandırmasını ve haftanın ilk gününü kontrol eder.',
-                weekPathMismatchWarning:
-                    'Görünen takvim ve haftalık not yolları farklı hafta başlangıçları veya hafta numaralandırması kullanıyor.',
                 options: {
                     systemDefault: 'Varsayılan'
                 }
@@ -1768,7 +1766,9 @@ export const STRINGS_TR = {
                 momentLinkText: 'Moment tarih biçimi',
                 momentDescSuffix:
                     ' kullanarak yolu biçimlendir. Alt klasör adlarını köşeli parantez içine alın, örn. [Work]/YYYY. Şablon ayarlamak için şablon simgesine tıklayın. Şablon klasörü konumunu Dosya işlemleri ve şablonlar > Şablonlar bölümünden ayarlayın.',
-                example: 'Geçerli sözdizimi: {path}'
+                example: 'Geçerli sözdizimi: {path}',
+                weekYearWarning:
+                    '"gggg" ve "GGGG" hafta yıllarıdır, bu yüzden yılbaşı civarındaki tarihler yanlış yılı alabilir. "YYYY" kullanın.'
             },
             templateEngine: {
                 name: 'Şablon motoru',
@@ -1812,10 +1812,14 @@ export const STRINGS_TR = {
             calendarWeeklyNotePattern: {
                 name: 'Haftalık notlar',
                 parsingError: 'Desen, tam bir hafta (hafta yılı, hafta numarası) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.',
-                weekPathMismatchWarning:
-                    'Haftalık not yolları periyodik not yerel ayarını kullanır. Eşleşen yerel ayarlar kullanın veya Pazartesi tabanlı haftalar için "GGGG" ile "WW" kullanın.',
+                isoWeeksWarning:
+                    'Haftalık notlar ISO haftalarını ("W" veya "G") kullanır, bu yüzden takvim haftaları Pazartesi başlatır ve ISO hafta numaralarını gösterir. Yerel ayarı izleyen haftalar için "gggg" ile "ww" kullanın.',
+                calendarYearWarning:
+                    'Haftalık notlar yılı "YYYY" değerinden alır, bu yüzden Aralık ayında başlayan 1. hafta önceki yılı alır. "GGGG" ile "WW" veya "gggg" ile "ww" kullanın.',
                 mixedWeekTokensWarning:
-                    'Bu desen Pazartesi tabanlı hafta belirteçleri ("W" veya "G") ile yerel ayar tabanlı hafta belirteçlerini ("w" veya "g") karıştırıyor. Tutarlı olarak tek bir set kullanın: Pazartesi tabanlı haftalar için "GGGG" ile "WW" veya haftalık notların seçilen yerel ayarı izlemesi gerekiyorsa "gggg" ile "ww" kullanın.'
+                    'Haftalık notlar ISO hafta belirteçlerini ("W" veya "G") yerel ayar hafta belirteçleriyle ("w" veya "g") karıştırır. ISO haftaları için "GGGG" ile "WW", yerel ayarı izleyen haftalar için "gggg" ile "ww" kullanın.',
+                weekPathMismatchWarning:
+                    'Takvim yerel ayarı ile periyodik not yerel ayarı haftaları farklı başlatır veya numaralandırır, bu yüzden haftalık not yolları takvimdeki haftalarla eşleşmez. İkisini de aynı yerel ayara getirin veya ISO haftaları için "GGGG" ile "WW" kullanın.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Aylık notlar',

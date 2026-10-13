@@ -41,18 +41,46 @@ function normalizeFirstDayOfYear(value: number | null | undefined): number | nul
     return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 7 ? value : null;
 }
 
-function getCalendarCustomWeekTokenUsage(pattern: string): { usesIsoWeekTokens: boolean; usesLocaleWeekTokens: boolean } {
+/** ISO 8601 week rules: weeks start on Monday and week 1 contains January 4 (Moment `doy` 4). */
+const ISO_WEEK_RULES: CalendarCustomWeekRules = { firstDayOfWeek: 1, firstDayOfYear: 4 };
+
+/**
+ * Ways a weekly note pattern makes the calendar or the weekly note paths differ from what the selected locales show:
+ * - `iso-weeks`: the pattern uses `W` or `G`, so the calendar starts weeks on Monday and shows ISO week numbers, while
+ *   the calendar locale starts or numbers weeks differently.
+ * - `calendar-year`: the pattern has a week number but takes its year from `Y`. Paths format the first day of the
+ *   week, so a week 1 that starts in December gets the previous year and can share a path with that year's week 1.
+ * - `mixed-week-tokens`: the pattern mixes ISO tokens (`W`, `G`) with locale tokens (`w`, `g`). The calendar uses ISO
+ *   weeks while the locale tokens follow the periodic notes locale.
+ * - `different-week-rules`: the pattern uses only locale tokens, and the calendar locale and the periodic notes locale
+ *   start or number weeks differently, so weekly note paths do not match the weeks in the calendar.
+ */
+export type CalendarCustomWeekPatternIssue = 'iso-weeks' | 'calendar-year' | 'mixed-week-tokens' | 'different-week-rules';
+
+function getCalendarCustomWeekTokenUsage(pattern: string): {
+    usesIsoWeekTokens: boolean;
+    usesLocaleWeekTokens: boolean;
+    usesWeekNumberTokens: boolean;
+    usesWeekYearTokens: boolean;
+} {
     const normalized = normalizeCalendarCustomMomentPattern(pattern);
     const tokenSource = stripMomentLiterals(normalized);
     return {
         usesIsoWeekTokens: /[GW]/u.test(tokenSource),
-        usesLocaleWeekTokens: /[gw]/u.test(tokenSource)
+        usesLocaleWeekTokens: /[gw]/u.test(tokenSource),
+        usesWeekNumberTokens: /[wW]/u.test(tokenSource),
+        usesWeekYearTokens: /[gG]/u.test(tokenSource)
     };
 }
 
-export function doesCalendarCustomWeekPatternMixWeekTokenTypes(pattern: string): boolean {
-    const { usesIsoWeekTokens, usesLocaleWeekTokens } = getCalendarCustomWeekTokenUsage(pattern);
-    return usesIsoWeekTokens && usesLocaleWeekTokens;
+function doWeekRulesDiffer(left: CalendarCustomWeekRules, right: CalendarCustomWeekRules): boolean {
+    if (normalizeFirstDayOfWeek(left.firstDayOfWeek) !== normalizeFirstDayOfWeek(right.firstDayOfWeek)) {
+        return true;
+    }
+
+    const leftFirstDayOfYear = normalizeFirstDayOfYear(left.firstDayOfYear);
+    const rightFirstDayOfYear = normalizeFirstDayOfYear(right.firstDayOfYear);
+    return leftFirstDayOfYear !== null && rightFirstDayOfYear !== null && leftFirstDayOfYear !== rightFirstDayOfYear;
 }
 
 export function getCalendarCustomWeekAnchorDate(date: MomentInstance, pattern: string, locale?: string): MomentInstance {
@@ -62,30 +90,44 @@ export function getCalendarCustomWeekAnchorDate(date: MomentInstance, pattern: s
     return localized.startOf(unit);
 }
 
-export function doesCalendarCustomWeekPatternUseDifferentWeekRules(
+/**
+ * Lists the issues of a weekly note pattern in display order. `calendarWeekRules` come from the calendar locale and
+ * `pathWeekRules` from the periodic notes locale. An empty list means the calendar and the weekly note paths follow
+ * the selected locales.
+ */
+export function getCalendarCustomWeekPatternIssues(
     pattern: string,
-    displayWeekRules: CalendarCustomWeekRules,
+    calendarWeekRules: CalendarCustomWeekRules,
     pathWeekRules: CalendarCustomWeekRules
-): boolean {
-    const { usesIsoWeekTokens, usesLocaleWeekTokens } = getCalendarCustomWeekTokenUsage(pattern);
+): CalendarCustomWeekPatternIssue[] {
+    const { usesIsoWeekTokens, usesLocaleWeekTokens, usesWeekNumberTokens, usesWeekYearTokens } = getCalendarCustomWeekTokenUsage(pattern);
+    const issues: CalendarCustomWeekPatternIssue[] = [];
 
-    if (usesIsoWeekTokens && !usesLocaleWeekTokens) {
-        return false;
+    if (usesIsoWeekTokens && doWeekRulesDiffer(calendarWeekRules, ISO_WEEK_RULES)) {
+        issues.push('iso-weeks');
+    }
+
+    if (usesWeekNumberTokens && !usesWeekYearTokens) {
+        issues.push('calendar-year');
     }
 
     if (usesIsoWeekTokens && usesLocaleWeekTokens) {
-        return true;
+        issues.push('mixed-week-tokens');
+    } else if (usesLocaleWeekTokens && doWeekRulesDiffer(calendarWeekRules, pathWeekRules)) {
+        issues.push('different-week-rules');
     }
 
-    const displayFirstDayOfWeek = normalizeFirstDayOfWeek(displayWeekRules.firstDayOfWeek);
-    const pathFirstDayOfWeek = normalizeFirstDayOfWeek(pathWeekRules.firstDayOfWeek);
-    if (displayFirstDayOfWeek !== pathFirstDayOfWeek) {
-        return true;
-    }
+    return issues;
+}
 
-    const displayFirstDayOfYear = normalizeFirstDayOfYear(displayWeekRules.firstDayOfYear);
-    const pathFirstDayOfYear = normalizeFirstDayOfYear(pathWeekRules.firstDayOfYear);
-    return displayFirstDayOfYear !== null && pathFirstDayOfYear !== null && displayFirstDayOfYear !== pathFirstDayOfYear;
+/**
+ * Returns true when a daily, monthly, quarterly or yearly note pattern takes its year from a week year (`gggg`,
+ * `GGGG`) without a week number. Week years differ from the calendar year for dates near New Year, so such a pattern
+ * can give those notes the wrong year. Patterns with a week number group notes by week, where the week year is correct.
+ */
+export function doesCalendarCustomPatternUseWeekYearWithoutWeekNumber(pattern: string): boolean {
+    const { usesWeekNumberTokens, usesWeekYearTokens } = getCalendarCustomWeekTokenUsage(pattern);
+    return usesWeekYearTokens && !usesWeekNumberTokens;
 }
 
 /**

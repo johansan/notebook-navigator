@@ -1655,8 +1655,6 @@ export const STRINGS_ID = {
             calendarLocale: {
                 name: 'Bahasa',
                 desc: 'Mengontrol format tanggal kalender, penomoran minggu, dan hari pertama dalam seminggu.',
-                weekPathMismatchWarning:
-                    'Kalender yang terlihat dan jalur catatan mingguan menggunakan awal minggu atau penomoran minggu yang berbeda.',
                 options: {
                     systemDefault: 'Default'
                 }
@@ -1770,7 +1768,9 @@ export const STRINGS_ID = {
                 momentLinkText: 'format tanggal Moment',
                 momentDescSuffix:
                     '. Bungkus nama subfolder dalam tanda kurung, misal [Work]/YYYY. Klik ikon template untuk mengatur template. Atur lokasi folder template di Operasi file & template > Template.',
-                example: 'Sintaks saat ini: {path}'
+                example: 'Sintaks saat ini: {path}',
+                weekYearWarning:
+                    '"gggg" dan "GGGG" adalah tahun minggu, sehingga tanggal di sekitar Tahun Baru bisa mendapat tahun yang salah. Gunakan "YYYY".'
             },
             templateEngine: {
                 name: 'Mesin template',
@@ -1814,10 +1814,14 @@ export const STRINGS_ID = {
             calendarWeeklyNotePattern: {
                 name: 'Catatan mingguan',
                 parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai minggu lengkap (tahun minggu, nomor minggu).',
-                weekPathMismatchWarning:
-                    'Jalur catatan mingguan menggunakan bahasa catatan berkala. Gunakan bahasa yang cocok, atau gunakan "GGGG" dengan "WW" untuk minggu berbasis Senin.',
+                isoWeeksWarning:
+                    'Catatan mingguan menggunakan minggu ISO ("W" atau "G"), sehingga kalender memulai minggu pada hari Senin dan menampilkan nomor minggu ISO. Gunakan "gggg" dengan "ww" untuk minggu yang mengikuti bahasa.',
+                calendarYearWarning:
+                    'Catatan mingguan mengambil tahun dari "YYYY", sehingga minggu 1 yang dimulai pada bulan Desember mendapat tahun sebelumnya. Gunakan "GGGG" dengan "WW", atau "gggg" dengan "ww".',
                 mixedWeekTokensWarning:
-                    'Pola ini menggabungkan token minggu berbasis Senin ("W" atau "G") dengan token minggu berbasis bahasa ("w" atau "g"). Gunakan satu set secara konsisten: "GGGG" dengan "WW" untuk minggu berbasis Senin, atau "gggg" dengan "ww" jika catatan mingguan harus mengikuti bahasa yang dipilih.'
+                    'Catatan mingguan mencampur token minggu ISO ("W" atau "G") dengan token minggu bahasa ("w" atau "g"). Gunakan "GGGG" dengan "WW" untuk minggu ISO, atau "gggg" dengan "ww" untuk minggu yang mengikuti bahasa.',
+                weekPathMismatchWarning:
+                    'Bahasa kalender dan bahasa catatan berkala memulai atau menomori minggu secara berbeda, sehingga jalur catatan mingguan tidak cocok dengan minggu di kalender. Atur keduanya ke bahasa yang sama, atau gunakan "GGGG" dengan "WW" untuk minggu ISO.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Catatan bulanan',

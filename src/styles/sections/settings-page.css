@@ -40,6 +40,11 @@
     font-weight: 600;
 }
 
+/* Separates warnings when several apply to one setting */
+.nn-setting-warning-message + .nn-setting-warning-message {
+    margin-top: var(--size-4-1);
+}
+
 .nn-setting-template-tokens,
 .nn-setting-template-status:not(:first-child) {
     margin-top: 1em;

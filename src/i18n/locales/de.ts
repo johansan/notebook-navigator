@@ -1659,8 +1659,6 @@ export const STRINGS_DE = {
             calendarLocale: {
                 name: 'Gebietsschema',
                 desc: 'Steuert Kalenderdatumsformat, Wochennummerierung und ersten Wochentag.',
-                weekPathMismatchWarning:
-                    'Der sichtbare Kalender und die Pfade f\u00fcr w\u00f6chentliche Notizen verwenden unterschiedliche Wochenanf\u00e4nge oder Wochennummerierungen.',
                 options: {
                     systemDefault: 'Standard'
                 }
@@ -1774,7 +1772,9 @@ export const STRINGS_DE = {
                 momentLinkText: 'Moment-Datumsformat',
                 momentDescSuffix:
                     '. Unterordnernamen in Klammern setzen, z.B. [Work]/YYYY. Klicke auf das Vorlagensymbol, um eine Vorlage festzulegen. Vorlagenordner unter Dateioperationen & Vorlagen > Vorlagen festlegen.',
-                example: 'Aktuelle Syntax: {path}'
+                example: 'Aktuelle Syntax: {path}',
+                weekYearWarning:
+                    '"gggg" und "GGGG" sind Wochenjahre, daher können Daten um den Jahreswechsel das falsche Jahr erhalten. Verwende "YYYY".'
             },
             templateEngine: {
                 name: 'Vorlagen-Engine',
@@ -1820,10 +1820,14 @@ export const STRINGS_DE = {
                 name: 'Wöchentliche Notizen',
                 parsingError:
                     'Das Muster muss als vollständige Woche (Wochenjahr, Wochennummer) formatiert und wieder geparst werden können.',
-                weekPathMismatchWarning:
-                    'Pfade für wöchentliche Notizen verwenden das Gebietsschema für periodische Notizen. Verwende übereinstimmende Gebietsschemata oder "GGGG" mit "WW" für montagsbasierte Wochen.',
+                isoWeeksWarning:
+                    'Wöchentliche Notizen verwenden ISO-Wochen ("W" oder "G"), daher beginnt der Kalender die Wochen am Montag und zeigt ISO-Wochennummern. Verwende "gggg" mit "ww" für Wochen, die dem Gebietsschema folgen.',
+                calendarYearWarning:
+                    'Wöchentliche Notizen übernehmen das Jahr aus "YYYY", daher erhält eine Woche 1, die im Dezember beginnt, das Vorjahr. Verwende "GGGG" mit "WW" oder "gggg" mit "ww".',
                 mixedWeekTokensWarning:
-                    'Dieses Muster mischt montagsbasierte Wochen-Token ("W" oder "G") mit gebietsschemabasierten Wochen-Token ("w" oder "g"). Verwende konsequent einen Satz: "GGGG" mit "WW" für montagsbasierte Wochen oder "gggg" mit "ww", wenn wöchentliche Notizen dem gewählten Gebietsschema folgen sollen.'
+                    'Wöchentliche Notizen mischen ISO-Wochen-Token ("W" oder "G") mit Gebietsschema-Wochen-Token ("w" oder "g"). Verwende "GGGG" mit "WW" für ISO-Wochen oder "gggg" mit "ww" für Wochen, die dem Gebietsschema folgen.',
+                weekPathMismatchWarning:
+                    'Das Gebietsschema des Kalenders und das Gebietsschema für periodische Notizen beginnen oder nummerieren Wochen unterschiedlich, daher passen die Pfade wöchentlicher Notizen nicht zu den Wochen im Kalender. Stelle beide auf dasselbe Gebietsschema ein oder verwende "GGGG" mit "WW" für ISO-Wochen.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Monatliche Notizen',

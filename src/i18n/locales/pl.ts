@@ -1659,8 +1659,6 @@ export const STRINGS_PL = {
             calendarLocale: {
                 name: 'Ustawienia regionalne',
                 desc: 'Kontroluje formatowanie dat kalendarza, numerację tygodni i pierwszy dzień tygodnia.',
-                weekPathMismatchWarning:
-                    'Widoczny kalendarz i ścieżki notatek tygodniowych używają różnych początków tygodni lub numeracji tygodni.',
                 options: {
                     systemDefault: 'Domyślne'
                 }
@@ -1774,7 +1772,9 @@ export const STRINGS_PL = {
                 momentLinkText: 'formatu daty Moment',
                 momentDescSuffix:
                     '. Nazwy podfolderów umieść w nawiasach, np. [Work]/YYYY. Kliknij ikonkę szablonu, aby ustawić szablon. Ustaw lokalizację folderu szablonów w sekcji Operacje na plikach i szablony > Szablony.',
-                example: 'Aktywna składnia: {path}'
+                example: 'Aktywna składnia: {path}',
+                weekYearWarning:
+                    '"gggg" i "GGGG" to lata tygodniowe, więc daty w okolicach Nowego Roku mogą otrzymać niewłaściwy rok. Użyj "YYYY".'
             },
             templateEngine: {
                 name: 'Silnik szablonów',
@@ -1819,10 +1819,14 @@ export const STRINGS_PL = {
             calendarWeeklyNotePattern: {
                 name: 'Notatki tygodniowe',
                 parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać pełny tydzień (rok tygodnia, numer tygodnia).',
-                weekPathMismatchWarning:
-                    'Ścieżki notatek tygodniowych używają ustawień regionalnych notatek okresowych. Użyj pasujących ustawień regionalnych lub użyj "GGGG" z "WW" dla tygodni rozpoczynających się w poniedziałek.',
+                isoWeeksWarning:
+                    'Notatki tygodniowe używają tygodni ISO ("W" lub "G"), więc kalendarz zaczyna tygodnie w poniedziałek i pokazuje numery tygodni ISO. Użyj "gggg" z "ww" dla tygodni zgodnych z ustawieniami regionalnymi.',
+                calendarYearWarning:
+                    'Notatki tygodniowe biorą rok z "YYYY", więc tydzień 1 zaczynający się w grudniu otrzymuje poprzedni rok. Użyj "GGGG" z "WW" lub "gggg" z "ww".',
                 mixedWeekTokensWarning:
-                    'Ten wzór miesza tokeny tygodnia rozpoczynające się w poniedziałek ("W" lub "G") z tokenami tygodnia opartymi na ustawieniach regionalnych ("w" lub "g"). Użyj konsekwentnie jednego zestawu: "GGGG" z "WW" dla tygodni rozpoczynających się w poniedziałek lub "gggg" z "ww", jeśli notatki tygodniowe mają być zgodne z wybranymi ustawieniami regionalnymi.'
+                    'Notatki tygodniowe łączą tokeny tygodni ISO ("W" lub "G") z tokenami tygodni regionalnych ("w" lub "g"). Użyj "GGGG" z "WW" dla tygodni ISO lub "gggg" z "ww" dla tygodni zgodnych z ustawieniami regionalnymi.',
+                weekPathMismatchWarning:
+                    'Ustawienia regionalne kalendarza i ustawienia regionalne notatek okresowych inaczej zaczynają lub numerują tygodnie, więc ścieżki notatek tygodniowych nie pasują do tygodni w kalendarzu. Ustaw te same ustawienia regionalne w obu miejscach lub użyj "GGGG" z "WW" dla tygodni ISO.'
             },
             calendarMonthlyNotePattern: {
                 name: 'Notatki miesięczne',
