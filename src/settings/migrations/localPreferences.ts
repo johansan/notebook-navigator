@@ -752,6 +752,11 @@ function resolveUIScaleFromStorage(storageKey: string, storedSetting: unknown): 
 
 /**
  * Migrates desktop and mobile UI scales from synced settings to vault-local storage.
+ *
+ * @returns `migrated` is `true` when stored data contains the current platform's scale, which the following save
+ * removes from data.json; otherwise data.json needs no write. The opposite platform's scale is kept in data.json for
+ * devices of that platform and does not count as a migration. `shouldPersistDesktopScale` and
+ * `shouldPersistMobileScale` return the persistence flags with the current platform's flag cleared.
  */
 export function migrateUIScales(params: {
     settings: NotebookNavigatorSettings;
@@ -765,7 +770,11 @@ export function migrateUIScales(params: {
 
     const storedDesktopScale = storedData?.['desktopScale'];
     const storedMobileScale = storedData?.['mobileScale'];
-    const hadLegacyFields = Boolean(storedData && ('desktopScale' in storedData || 'mobileScale' in storedData));
+    // Only the current platform's scale counts because saves keep the opposite one. Counting the opposite scale
+    // would rewrite data.json on every load on devices of the same platform, and Obsidian Sync applies a device's
+    // local JSON keys over remote changes when such a startup write conflicts with a download.
+    const currentPlatformScaleKey = Platform.isMobile ? 'mobileScale' : 'desktopScale';
+    const hadCurrentPlatformScale = Boolean(storedData && currentPlatformScaleKey in storedData);
 
     // Keeps legacy scale values usable without reintroducing removed fields from other devices
     const sanitizeScale = (value: unknown, fallback: number): number => {
@@ -799,5 +808,5 @@ export function migrateUIScales(params: {
         }
     }
 
-    return { migrated: hadLegacyFields, shouldPersistDesktopScale, shouldPersistMobileScale };
+    return { migrated: hadCurrentPlatformScale, shouldPersistDesktopScale, shouldPersistMobileScale };
 }

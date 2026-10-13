@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { mockLocalStorageStore, localStorageInit, localStorageGet, localStorageSet, localStorageRemove } = vi.hoisted(() => {
     const mockLocalStorageStore = new Map<string, unknown>();
@@ -47,6 +47,7 @@ vi.mock('../../src/utils/localStorage', () => {
     };
 });
 
+import { Platform } from 'obsidian';
 import { PluginSettingsController } from '../../src/services/settings/PluginSettingsController';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { STORAGE_KEYS } from '../../src/types';
@@ -141,6 +142,69 @@ describe('PluginSettingsController.prepareImportedUiScalePersistence', () => {
         expect(storedData?.['desktopScale']).toBeUndefined();
         expect(storedData?.['mobileScale']).toBe(0.9);
     });
+});
+
+describe('PluginSettingsController.loadSettings with local UI scale', () => {
+    const platforms = [
+        { platform: 'desktop', isMobile: false, currentKey: 'desktopScale', oppositeKey: 'mobileScale' },
+        { platform: 'mobile', isMobile: true, currentKey: 'mobileScale', oppositeKey: 'desktopScale' }
+    ] as const;
+
+    const originalIsMobile = Platform.isMobile;
+
+    afterEach(() => {
+        Platform.isMobile = originalIsMobile;
+    });
+
+    // Starts from data.json as saved with a local UI scale, which contains neither scale key.
+    const createControllerWithLocalUiScale = async (storedScales: Record<string, number>) => {
+        const disk: { data: Record<string, unknown> } = { data: {} };
+        const saveData = vi.fn(async (data: unknown) => {
+            disk.data = structuredClone(data) as Record<string, unknown>;
+        });
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => structuredClone(disk.data)),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.syncModes.uiScale = 'local';
+        controller.settings = settings;
+        await controller.saveSettings();
+        disk.data = { ...disk.data, ...storedScales };
+        saveData.mockClear();
+        return { controller, disk, saveData };
+    };
+
+    it.each(platforms)(
+        'removes the $platform scale with one write and keeps the opposite scale',
+        async ({ isMobile, currentKey, oppositeKey }) => {
+            Platform.isMobile = isMobile;
+            const { controller, disk, saveData } = await createControllerWithLocalUiScale({ desktopScale: 1.3, mobileScale: 0.9 });
+
+            await controller.loadSettings();
+            await controller.loadSettings();
+
+            expect(saveData).toHaveBeenCalledTimes(1);
+            expect(disk.data).not.toHaveProperty(currentKey);
+            expect(disk.data[oppositeKey]).toBe(oppositeKey === 'desktopScale' ? 1.3 : 0.9);
+        }
+    );
+
+    it.each(platforms)(
+        'does not write data.json on $platform when only the opposite scale is stored',
+        async ({ isMobile, oppositeKey }) => {
+            Platform.isMobile = isMobile;
+            const { controller, disk, saveData } = await createControllerWithLocalUiScale({ [oppositeKey]: 1.2 });
+
+            await controller.loadSettings();
+            await controller.loadSettings();
+
+            expect(saveData).not.toHaveBeenCalled();
+            expect(disk.data[oppositeKey]).toBe(1.2);
+        }
+    );
 });
 
 describe('PluginSettingsController.loadSettings', () => {

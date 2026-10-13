@@ -131,7 +131,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Icons from another plugin now show in Notebook Navigator menus and in the calendar tab header.',
             'Exporting settings on Android and iOS now saves the JSON file to the vault root with `Save to vault`, where `Download` saved no file [#1537](https://github.com/johansan/notebook-navigator/issues/1537).',
             'Calendar settings now show a warning under ==Locale== and ==Weekly notes== when the weekly notes pattern makes the calendar start weeks on Monday regardless of locale, or gives weekly notes paths that do not match the calendar [#1540](https://github.com/johansan/notebook-navigator/issues/1540).',
-            'Daily, monthly, quarterly and yearly note patterns now show a warning when they take the year from a week year such as `gggg` or `GGGG`, which gives dates near New Year the wrong year.'
+            'Daily, monthly, quarterly and yearly note patterns now show a warning when they take the year from a week year such as `gggg` or `GGGG`, which gives dates near New Year the wrong year.',
+            'Settings you change on one computer are now kept when you start Obsidian on another computer with ==Zoom level== not synced.'
         ]
     },
     {
