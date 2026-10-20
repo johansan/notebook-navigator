@@ -32,7 +32,8 @@ import { createGroupDefinition, createRenderDefinition } from './nativeSettingCo
  * A static banner for MarkdownPoint, the author's presentation app, at the top of the settings start
  * page. Everything it shows is bundled with the plugin; nothing is loaded from the network. It never
  * moves on screen: each time settings open it shows the next message and the next design, taken from
- * the light designs in Obsidian's light theme and from the dark designs in its dark theme.
+ * the light designs in Obsidian's light theme and from the dark designs in its dark theme. A switch
+ * between light and dark while settings are open changes the design and keeps the message.
  */
 
 // Ends a headline on its punctuation mark, which the banner draws in MarkdownPoint's mandarin
@@ -84,12 +85,10 @@ function appendHeadline(parentEl: HTMLElement, headline: string): void {
     parentEl.createSpan({ cls: 'nn-markdownpoint-point', text: point });
 }
 
-/** Renders the banner for a position from advanceMarkdownPointBanner(). */
-function renderMarkdownPointBanner(containerEl: HTMLElement, position: number): void {
+/** Renders the banner for a position from advanceMarkdownPointBanner(), in the light or the dark design it picks. */
+function renderMarkdownPointBanner(containerEl: HTMLElement, position: number, isDark: boolean): void {
     const { messages, credit } = strings.settings.items.markdownPointBanner;
-    // The theme is read on every render, so a theme change shows the next time the banner renders
-    const isDarkTheme = containerEl.ownerDocument.body.classList.contains('theme-dark');
-    const designs = MARKDOWNPOINT_BANNER_DESIGNS.filter(candidate => candidate.dark === isDarkTheme);
+    const designs = MARKDOWNPOINT_BANNER_DESIGNS.filter(candidate => candidate.dark === isDark);
     const design = designs[position % designs.length];
     const message = messages[position % messages.length];
 
@@ -136,10 +135,15 @@ function renderMarkdownPointBanner(containerEl: HTMLElement, position: number): 
     copyEl.createDiv({ cls: 'nn-markdownpoint-subtext', text: message.subtext });
 }
 
-/** Marks a setting row as the banner's, so the stylesheet removes the row's padding and hides its name and control. */
+/**
+ * Marks a setting row as the banner's, so the stylesheet removes the row's padding and hides its name and control.
+ * The row holds the position's light and dark designs with the same message, and the stylesheet shows only the
+ * one for Obsidian's current theme, so a theme switch while settings are open swaps the design without a render.
+ */
 function renderBannerRow(settingEl: HTMLElement, position: number): void {
     settingEl.addClass('nn-markdownpoint-setting');
-    renderMarkdownPointBanner(settingEl, position);
+    renderMarkdownPointBanner(settingEl, position, false);
+    renderMarkdownPointBanner(settingEl, position, true);
 }
 
 /**

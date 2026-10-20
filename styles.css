@@ -7780,6 +7780,14 @@ button.nn-youtube-button svg {
     container-type: inline-size;
 }
 
+/* The row holds a light and a dark banner with the same message; only the one for Obsidian's current
+   theme shows, so switching between light and dark swaps the design while settings are open.
+   display: none also takes the other banner out of the tab order and the accessibility tree. */
+.theme-dark .nn-markdownpoint-banner:not(.nn-markdownpoint-banner-dark),
+.theme-light .nn-markdownpoint-banner-dark {
+    display: none;
+}
+
 .nn-markdownpoint-banner-dark {
     --nn-markdownpoint-point: var(--nn-markdownpoint-mandarin-500);
     --nn-markdownpoint-edge: rgba(255, 255, 255, 0.1);
@@ -7887,6 +7895,13 @@ button.nn-youtube-button svg {
         0 0 0 1px var(--nn-markdownpoint-edge),
         0 8px 18px -6px var(--nn-markdownpoint-drop);
     transform: translateY(-50%);
+}
+
+/* Dark designs dim the file and the slide, which would otherwise stand out brighter than the
+   banner's own text */
+.nn-markdownpoint-banner-dark .nn-markdownpoint-file,
+.nn-markdownpoint-banner-dark .nn-markdownpoint-slide {
+    filter: brightness(0.65);
 }
 
 /* The three lines are centered on each other, and the column is only as wide as its widest line, so the
