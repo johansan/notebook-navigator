@@ -176,18 +176,139 @@ function extractPropertySortParts(value: unknown): string[] {
     return [];
 }
 
-export function getPropertySortValueFromRecord(frontmatter: unknown, propertyKey: string): string | null {
+/**
+ * A frontmatter value converted the way Obsidian Bases converts note properties before sorting
+ * them (`fromFrontMatter` in Obsidian 1.14). Bases reads the YAML type of the value and ignores the
+ * type assigned to the property, so a quoted "-202" is text even in a Number property.
+ * - `text` is what Bases compares when two values are not both numbers or both dates: a link's
+ *   alias when it has one, otherwise the value's printed text.
+ * - `truthy` is what Bases compares when either value is a boolean. It differs from `text` being
+ *   empty: `[""]` and `[[Note|]]` are truthy with empty text.
+ */
+export type PropertySortValue =
+    | { type: 'boolean'; value: boolean }
+    | { type: 'number'; value: number }
+    | { type: 'date'; time: number; text: string }
+    | { type: 'text'; text: string; truthy: boolean };
+
+// Bases reads only these ISO forms as dates; other date formats stay text.
+const BASES_DATE_TIME_PATTERN = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(?:\.\d{1,9})?)?(Z|[+-]\d{2}(:?\d{2})?)?$/;
+const BASES_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+function padDatePart(value: number, length = 2): string {
+    return String(value).padStart(length, '0');
+}
+
+/**
+ * Parses a string Bases reads as a date. A date without a time is local midnight. The text is how
+ * Bases prints the date in local time, which is what it compares against non-date values.
+ * Invalid dates such as "2024-13-45" still parse, with a NaN time, as they do in Bases.
+ */
+function parseBasesDate(value: string): { time: number; text: string } | null {
+    const hasTime = BASES_DATE_TIME_PATTERN.test(value);
+    if (!hasTime && !BASES_DATE_PATTERN.test(value)) {
+        return null;
+    }
+
+    const date = new Date(hasTime ? value : `${value}T00:00:00`);
+    const day = `${padDatePart(date.getFullYear(), 4)}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
+    if (!hasTime) {
+        return { time: date.getTime(), text: day };
+    }
+    const time = `${padDatePart(date.getHours())}:${padDatePart(date.getMinutes())}:${padDatePart(date.getSeconds())}`;
+    return { time: date.getTime(), text: `${day}T${time}` };
+}
+
+// Bases reads the `tags` property, in any letter case, as a tag list whose entries print with "#".
+function isTagsKey(key: string | number): boolean {
+    return typeof key === 'string' && key.toLowerCase() === 'tags';
+}
+
+function formatBasesTag(tag: string): string {
+    return tag.charAt(0) === '#' ? tag : `#${tag}`;
+}
+
+/**
+ * Prints a frontmatter value the way Bases' `Value.toString()` does, used for list entries and
+ * object fields. Lists print string, number and boolean entries unchanged, so a date string inside
+ * a list keeps its original text, while dates in object fields are reformatted. Links print as
+ * their raw `[[target|alias]]` text here; only a top-level link compares by its alias.
+ */
+function getBasesValueText(key: string | number, value: unknown): string {
+    if (value === null || value === undefined) {
+        return 'null';
+    }
+    if (typeof value === 'string') {
+        if (isTagsKey(key)) {
+            return formatBasesTag(value);
+        }
+        return parseBasesDate(value)?.text ?? value;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+    if (Array.isArray(value)) {
+        if (isTagsKey(key) && value.every(entry => typeof entry === 'string')) {
+            return value.map(formatBasesTag).join(', ');
+        }
+        return value
+            .map((entry: unknown, index) =>
+                typeof entry === 'string' || typeof entry === 'number' || typeof entry === 'boolean'
+                    ? String(entry)
+                    : getBasesValueText(index, entry)
+            )
+            .join(', ');
+    }
+    if (!isRecord(value)) {
+        // YAML frontmatter only produces mappings beyond the types above; Bases reads anything else,
+        // such as a function, as null.
+        return 'null';
+    }
+    const fields: Record<string, string> = {};
+    for (const [fieldKey, fieldValue] of Object.entries(value)) {
+        fields[fieldKey] = getBasesValueText(fieldKey, fieldValue);
+    }
+    return JSON.stringify(fields);
+}
+
+/**
+ * Reads the frontmatter value of a property as Bases reads it for sorting.
+ * Returns null when the property is missing or set to null. Other values, including empty
+ * strings and empty lists, are values, as in Bases.
+ */
+export function getPropertySortValueFromRecord(frontmatter: unknown, propertyKey: string): PropertySortValue | null {
     if (!isRecord(frontmatter)) {
         return null;
     }
 
-    const parts = extractPropertySortParts(getMatchingRecordValue(frontmatter, propertyKey));
-    if (parts.length === 0) {
+    const value = getMatchingRecordValue(frontmatter, propertyKey);
+    if (value === null || value === undefined) {
         return null;
     }
+    if (typeof value === 'boolean') {
+        return { type: 'boolean', value };
+    }
+    if (typeof value === 'number') {
+        return { type: 'number', value };
+    }
+    if (typeof value === 'string' && !isTagsKey(propertyKey)) {
+        if (value.startsWith('[[') && value.endsWith(']]')) {
+            const target = value.slice(2, -2);
+            const aliasSeparator = target.lastIndexOf('|');
+            return { type: 'text', text: aliasSeparator === -1 ? value : target.slice(aliasSeparator + 1), truthy: true };
+        }
+        const date = parseBasesDate(value);
+        if (date) {
+            return { type: 'date', ...date };
+        }
+        return { type: 'text', text: value, truthy: value.length > 0 };
+    }
 
-    const joined = parts.join(' ').trim();
-    return joined.length > 0 ? joined : null;
+    // Lists, tags and objects compare by their printed text and are truthy when not empty.
+    const truthy = Array.isArray(value)
+        ? value.length > 0
+        : typeof value === 'string' || (isRecord(value) && Object.keys(value).length > 0);
+    return { type: 'text', text: getBasesValueText(propertyKey, value), truthy };
 }
 
 export interface PropertyGroupingValue {
@@ -548,6 +669,66 @@ function compareTextValues(valueA: string, valueB: string, descending: boolean):
     return 0;
 }
 
+function isPropertySortValueTruthy(value: PropertySortValue | null): boolean {
+    if (value === null) {
+        return false;
+    }
+    switch (value.type) {
+        case 'boolean':
+            return value.value;
+        case 'number':
+            // 0 and NaN are falsy, as in Bases
+            return Boolean(value.value);
+        case 'date':
+            return true;
+        case 'text':
+            return value.truthy;
+    }
+}
+
+function getPropertySortValueText(value: PropertySortValue): string {
+    return value.type === 'boolean' || value.type === 'number' ? String(value.value) : value.text;
+}
+
+/**
+ * Compares two property sort values with the rules of the Obsidian Bases row sort (Obsidian 1.14):
+ * - When either value is a boolean, the values compare by truthiness, so a missing value ties with
+ *   false and sorts before true in ascending order. This check comes before the missing-value rule.
+ * - Otherwise a missing value sorts last in both directions.
+ * - Two numbers compare numerically and two dates by time.
+ * - Any other pair, including a number against text, compares as text in natural order without a
+ *   length tie-break, so `2024` sorts between "2023-06-01" and "2024-01-15".
+ *
+ * The text rule makes this comparison inconsistent when negative or decimal numbers mix with
+ * number-like text: -10 sorts before -2 as numbers, "-2" sorts before "-5x" and "-5x" before "-10"
+ * as text. Bases has the same cycle and its order then depends on the input order; this keeps it
+ * to match Bases instead of imposing an order Bases does not have.
+ *
+ * Returns 0 when Bases would move on to its next sort key, and NaN when a NaN number or an invalid
+ * date is involved, which Array.sort treats as equal without moving on, as in Bases.
+ */
+function comparePropertySortValues(valueA: PropertySortValue | null, valueB: PropertySortValue | null, descending: boolean): number {
+    if (valueA === null && valueB === null) {
+        return 0;
+    }
+
+    let cmp: number;
+    if (valueA?.type === 'boolean' || valueB?.type === 'boolean') {
+        cmp = (isPropertySortValueTruthy(valueA) ? 1 : -1) - (isPropertySortValueTruthy(valueB) ? 1 : -1);
+    } else if (valueA === null) {
+        return 1;
+    } else if (valueB === null) {
+        return -1;
+    } else if (valueA.type === 'number' && valueB.type === 'number') {
+        cmp = valueA.value - valueB.value;
+    } else if (valueA.type === 'date' && valueB.type === 'date') {
+        cmp = valueA.time - valueB.time;
+    } else {
+        cmp = naturalCompare(getPropertySortValueText(valueA), getPropertySortValueText(valueB));
+    }
+    return descending ? -cmp : cmp;
+}
+
 function compareDisplayNames(a: TFile, b: TFile, getDisplayName: ((file: TFile) => string) | undefined, descending: boolean): number {
     const nameA = getDisplayName ? getDisplayName(a) : a.basename;
     const nameB = getDisplayName ? getDisplayName(b) : b.basename;
@@ -695,7 +876,7 @@ export function sortFiles(
     getCreatedTime: (file: TFile) => number,
     getModifiedTime: (file: TFile) => number,
     getDisplayName?: (file: TFile) => string,
-    getPropertyValue?: (file: TFile) => string | null,
+    getPropertyValue?: (file: TFile) => PropertySortValue | null,
     propertySortSecondary: PropertySortSecondaryOption = 'title'
 ): void {
     // Helper function to get timestamp for sorting
@@ -750,19 +931,16 @@ export function sortFiles(
             files.sort((a, b) => {
                 const valueA = getPropertyValue ? getPropertyValue(a) : null;
                 const valueB = getPropertyValue ? getPropertyValue(b) : null;
-                const hasValueA = Boolean(valueA);
-                const hasValueB = Boolean(valueB);
 
-                if (hasValueA !== hasValueB) {
-                    return hasValueA ? -1 : 1;
+                // Missing values are handled inside the comparison because Bases compares a missing
+                // value against a boolean by truthiness instead of sorting it last.
+                const cmp = comparePropertySortValues(valueA, valueB, descending);
+                if (cmp !== 0) {
+                    return cmp;
                 }
 
-                if (hasValueA && hasValueB && valueA && valueB) {
-                    const cmp = compareTextValues(valueA, valueB, descending);
-                    if (cmp !== 0) {
-                        return cmp;
-                    }
-                }
+                // Equal values use the configured secondary sort, which stands in for the next sort
+                // key of a Bases view.
 
                 let secondaryCmp: number;
                 if (propertySortSecondary === 'created') {

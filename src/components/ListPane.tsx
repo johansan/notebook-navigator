@@ -65,7 +65,7 @@ import { useListPaneSelectionCoordinator } from '../hooks/useListPaneSelectionCo
 import type { EnsureSelectionOptions, EnsureSelectionResult, SelectFileOptions } from '../hooks/useListPaneSelectionCoordinator';
 import { useContextMenu } from '../hooks/useContextMenu';
 import { IOS_FLOATING_TOOLBAR_HEIGHT_PX, ItemType, ListPaneItemType, type CSSPropertiesWithVars } from '../types';
-import { getEffectiveListSort, getSortField, isManualSortPropertyKey, sortFiles } from '../utils/sortUtils';
+import { getEffectiveListSort, getSortField, isManualSortPropertyKey, sortFiles, type PropertySortValue } from '../utils/sortUtils';
 import { ListPaneHeader } from './ListPaneHeader';
 import { ListToolbar } from './ListToolbar';
 import { Calendar } from './calendar';
@@ -1114,14 +1114,17 @@ export const ListPane = React.memo(
                 }
 
                 const sortedFiles = [...sourceFiles];
-                const propertyValueByPath = new Map<string, string | null>();
-                const getCachedManualSortPropertyValue = (file: TFile): string | null => {
+                const propertyValueByPath = new Map<string, PropertySortValue | null>();
+                const getCachedManualSortPropertyValue = (file: TFile): PropertySortValue | null => {
                     if (propertyValueByPath.has(file.path)) {
                         return propertyValueByPath.get(file.path) ?? null;
                     }
 
                     const pendingRank = rankByPath.get(file.path);
-                    const value = pendingRank === undefined ? getManualSortPropertyValue(app, file, propertyKey) : pendingRank.toString();
+                    const value: PropertySortValue | null =
+                        pendingRank === undefined
+                            ? getManualSortPropertyValue(app, file, propertyKey)
+                            : { type: 'number', value: pendingRank };
                     propertyValueByPath.set(file.path, value);
                     return value;
                 };

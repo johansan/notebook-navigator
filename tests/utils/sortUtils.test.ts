@@ -21,13 +21,35 @@ import {
     sortFiles,
     shouldRefreshOnFileModifyForSort,
     shouldRefreshOnMetadataChangeForSort,
-    updateDefaultFolderSortPropertyKey
+    updateDefaultFolderSortPropertyKey,
+    type PropertySortValue
 } from '../../src/utils/sortUtils';
 import type { AlphaSortOrder } from '../../src/settings';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID } from '../../src/types';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
 import { createTestTFile } from './createTestTFile';
+
+function toSortValue(value: unknown): PropertySortValue | null {
+    return getPropertySortValueFromRecord({ value }, 'value');
+}
+
+function sortByPropertyValues(
+    values: ReadonlyArray<readonly [name: string, value: unknown]>,
+    sortOption: 'property-asc' | 'property-desc'
+): string[] {
+    const valueByPath = new Map(values.map(([name, value]) => [`z/${name}.md`, value]));
+    const files = values.map(([name]) => createTestTFile(`z/${name}.md`));
+    sortFiles(
+        files,
+        sortOption,
+        () => 0,
+        () => 0,
+        file => file.basename,
+        file => toSortValue(valueByPath.get(file.path))
+    );
+    return files.map(file => file.basename);
+}
 
 function createFolderSortSettings(folderSortOrder: AlphaSortOrder, overrides: Record<string, AlphaSortOrder> = {}) {
     return {
@@ -98,7 +120,7 @@ describe('sortFiles', () => {
             () => 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null
+            file => toSortValue(propertyValueByPath.get(file.path))
         );
 
         expect(files.map(file => file.basename)).toEqual(['with-a', 'with-a2', 'with-b', 'missing-m', 'missing-z']);
@@ -119,7 +141,7 @@ describe('sortFiles', () => {
             () => 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null
+            file => toSortValue(propertyValueByPath.get(file.path))
         );
         expect(files.map(file => file.basename)).toEqual(['with-1', 'with-2', 'with-10']);
 
@@ -129,9 +151,132 @@ describe('sortFiles', () => {
             () => 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null
+            file => toSortValue(propertyValueByPath.get(file.path))
         );
         expect(files.map(file => file.basename)).toEqual(['with-10', 'with-2', 'with-1']);
+    });
+
+    it('sorts number property values numerically', () => {
+        const propertyValueByPath = new Map<string, number | null>([
+            ['z/minus-202.md', -202],
+            ['z/minus-222.md', -222],
+            ['z/also-minus-202.md', -202],
+            ['z/minus-10.md', -10],
+            ['z/zero.md', 0],
+            ['z/one-point-five.md', 1.5],
+            ['z/one-point-two-five.md', 1.25]
+        ]);
+        const files = Array.from(propertyValueByPath.keys(), path => createTestTFile(path));
+        const ascending = ['minus-222', 'also-minus-202', 'minus-202', 'minus-10', 'zero', 'one-point-two-five', 'one-point-five'];
+
+        sortFiles(
+            files,
+            'property-asc',
+            () => 0,
+            () => 0,
+            file => file.basename,
+            file => toSortValue(propertyValueByPath.get(file.path))
+        );
+        expect(files.map(file => file.basename)).toEqual(ascending);
+
+        sortFiles(
+            files,
+            'property-desc',
+            () => 0,
+            () => 0,
+            file => file.basename,
+            file => toSortValue(propertyValueByPath.get(file.path))
+        );
+        expect(files.map(file => file.basename)).toEqual([...ascending].reverse());
+    });
+
+    it('compares a number with text as text, as Obsidian Bases does', () => {
+        const values = [
+            ['ten-b', '10b'],
+            ['three', 3],
+            ['four', '4'],
+            ['two-a', '2a'],
+            ['ten', 10],
+            ['one', 1],
+            ['two', 2]
+        ] as const;
+
+        expect(sortByPropertyValues(values, 'property-asc')).toEqual(['one', 'two', 'two-a', 'three', 'four', 'ten', 'ten-b']);
+        expect(sortByPropertyValues(values, 'property-desc')).toEqual(['ten-b', 'ten', 'four', 'three', 'two-a', 'two', 'one']);
+    });
+
+    it('compares dates by time and with numbers as text, as Obsidian Bases does', () => {
+        const values = [
+            ['year-2025', 2025],
+            ['time-2024', '2024-01-15 10:30'],
+            ['date-2023', '2023-06-01'],
+            ['year-2024', 2024],
+            ['date-2024', '2024-01-15']
+        ] as const;
+
+        expect(sortByPropertyValues(values, 'property-asc')).toEqual(['date-2023', 'year-2024', 'date-2024', 'time-2024', 'year-2025']);
+    });
+
+    it('compares booleans by truthiness with missing values tied to false, as Obsidian Bases does', () => {
+        const values = [
+            ['a-true', true],
+            ['b-false', false],
+            ['c-missing', null]
+        ] as const;
+
+        expect(sortByPropertyValues(values, 'property-asc')).toEqual(['b-false', 'c-missing', 'a-true']);
+        expect(sortByPropertyValues(values, 'property-desc')).toEqual(['a-true', 'c-missing', 'b-false']);
+    });
+
+    it('sorts missing values last in both directions and empty text as a value', () => {
+        const values = [
+            ['missing', null],
+            ['empty', ''],
+            ['word', 'b']
+        ] as const;
+
+        expect(sortByPropertyValues(values, 'property-asc')).toEqual(['empty', 'word', 'missing']);
+        expect(sortByPropertyValues(values, 'property-desc')).toEqual(['word', 'empty', 'missing']);
+    });
+
+    it('compares links by their alias when they have one, as Obsidian Bases does', () => {
+        const values = [
+            ['banana', 'Banana'],
+            ['aliased', '[[Zebra|Apple]]'],
+            ['link', '[[Mango]]']
+        ] as const;
+
+        expect(sortByPropertyValues(values, 'property-asc')).toEqual(['link', 'aliased', 'banana']);
+    });
+
+    it('keeps the Obsidian Bases comparison cycle between negative numbers and number-like text', () => {
+        expect(
+            sortByPropertyValues(
+                [
+                    ['minus-two', -2],
+                    ['minus-ten', -10]
+                ],
+                'property-asc'
+            )
+        ).toEqual(['minus-ten', 'minus-two']);
+        expect(
+            sortByPropertyValues(
+                [
+                    ['text', '-5x'],
+                    ['minus-two', -2]
+                ],
+                'property-asc'
+            )
+        ).toEqual(['minus-two', 'text']);
+        expect(
+            sortByPropertyValues(
+                [
+                    ['minus-ten', -10],
+                    ['text', '-5x']
+                ],
+                'property-asc'
+            )
+        ).toEqual(['text', 'minus-ten']);
     });
 
     it('sorts by property then title (Z on top)', () => {
@@ -155,7 +300,7 @@ describe('sortFiles', () => {
             () => 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null
+            file => toSortValue(propertyValueByPath.get(file.path))
         );
 
         expect(files.map(file => file.basename)).toEqual(['with-b', 'with-a', 'missing-z', 'missing-a']);
@@ -181,7 +326,7 @@ describe('sortFiles', () => {
             file => createdTimeByPath.get(file.path) ?? 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null,
+            file => toSortValue(propertyValueByPath.get(file.path)),
             'created'
         );
 
@@ -193,7 +338,7 @@ describe('sortFiles', () => {
             file => createdTimeByPath.get(file.path) ?? 0,
             () => 0,
             file => file.basename,
-            file => propertyValueByPath.get(file.path) ?? null,
+            file => toSortValue(propertyValueByPath.get(file.path)),
             'created'
         );
 
@@ -218,7 +363,7 @@ describe('sortFiles', () => {
             () => 0,
             () => 0,
             file => displayNameByPath.get(file.path) ?? file.basename,
-            file => propertyValueByPath.get(file.path) ?? null,
+            file => toSortValue(propertyValueByPath.get(file.path)),
             'filename'
         );
 
@@ -549,9 +694,38 @@ describe('property sort keys', () => {
         expect(getMatchingPropertySortKey('published, downloaded', 'index')).toBe('');
     });
 
-    it('extracts property sort values from nested scalar arrays', () => {
-        expect(getPropertySortValueFromRecord({ order: ['one', [2, true], null] }, 'order')).toBe('one 2 true');
-        expect(getPropertySortValueFromRecord({ order: [] }, 'order')).toBe(null);
+    it('reads property sort values the way Obsidian Bases reads frontmatter', () => {
+        const read = (value: unknown, key = 'value') => getPropertySortValueFromRecord({ [key]: value }, key);
+
+        expect(read(-202)).toEqual({ type: 'number', value: -202 });
+        expect(read(true)).toEqual({ type: 'boolean', value: true });
+        expect(read('-202')).toEqual({ type: 'text', text: '-202', truthy: true });
+        expect(read('')).toEqual({ type: 'text', text: '', truthy: false });
+        expect(read(null)).toBe(null);
+        expect(getPropertySortValueFromRecord({}, 'value')).toBe(null);
+        expect(read('2024-01-15')).toEqual({ type: 'date', time: new Date('2024-01-15T00:00:00').getTime(), text: '2024-01-15' });
+        expect(read('2024-01-15 10:30')).toEqual({
+            type: 'date',
+            time: new Date('2024-01-15 10:30').getTime(),
+            text: '2024-01-15T10:30:00'
+        });
+        expect(read('15/01/2024')).toEqual({ type: 'text', text: '15/01/2024', truthy: true });
+        expect(read('[[Note|Alias]]')).toEqual({ type: 'text', text: 'Alias', truthy: true });
+        expect(read('[[Note|]]')).toEqual({ type: 'text', text: '', truthy: true });
+        expect(read('[[Note]]')).toEqual({ type: 'text', text: '[[Note]]', truthy: true });
+        expect(read(['one', [2, true], null, '2024-01-15 10:30'])).toEqual({
+            type: 'text',
+            text: 'one, 2, true, null, 2024-01-15 10:30',
+            truthy: true
+        });
+        expect(read([])).toEqual({ type: 'text', text: '', truthy: false });
+        expect(read([''])).toEqual({ type: 'text', text: '', truthy: true });
+        expect(read(['a', '#b'], 'Tags')).toEqual({ type: 'text', text: '#a, #b', truthy: true });
+        expect(read({ due: '2024-01-15 10:30', link: '[[Note|Alias]]' })).toEqual({
+            type: 'text',
+            text: '{"due":"2024-01-15T10:30:00","link":"[[Note|Alias]]"}',
+            truthy: true
+        });
     });
 
     it('ignores invalid property sort key values', () => {

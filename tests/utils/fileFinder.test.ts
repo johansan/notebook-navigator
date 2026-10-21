@@ -223,6 +223,50 @@ describe('fileFinder getFilesForFolder', () => {
         expect(files.map(file => file.path)).toEqual([second.path, first.path]);
         expect(getFileCache).not.toHaveBeenCalled();
     });
+
+    it('sorts negative number property values numerically', () => {
+        const later = createTestTFile('Events/event-a.md');
+        const earlier = createTestTFile('Events/event-b.md');
+        const folder = createFolder('Events', [later, earlier]);
+        const app = createAppWithFiles([later, earlier]);
+        const startYearByPath = new Map<string, number>([
+            [later.path, -202],
+            [earlier.path, -222]
+        ]);
+        app.metadataCache.getFileCache = (file: TFile) => ({ frontmatter: { startYear: startYearByPath.get(file.path) } });
+        const settings = {
+            ...createSettings(),
+            propertySortKey: 'startYear',
+            defaultFolderSort: 'property-asc' as const,
+            defaultFolderSortPropertyKey: 'startYear'
+        };
+
+        const files = getFilesForFolder(folder, settings, { includeDescendantNotes: false, showHiddenItems: false }, app);
+
+        expect(files.map(file => file.path)).toEqual([earlier.path, later.path]);
+    });
+
+    it('sorts manual sort ranks stored as numbers and digit strings by rank', () => {
+        const first = createTestTFile('Notes/first.md');
+        const second = createTestTFile('Notes/second.md');
+        const third = createTestTFile('Notes/third.md');
+        const folder = createFolder('Notes', [third, second, first]);
+        const app = createAppWithFiles([first, second, third]);
+        const rankByPath = new Map<string, unknown>([
+            [first.path, '1000'],
+            [second.path, 2000],
+            [third.path, ' 3000 ']
+        ]);
+        app.metadataCache.getFileCache = (file: TFile) => ({ frontmatter: { sort_index: rankByPath.get(file.path) } });
+        const settings = {
+            ...createSettings(),
+            folderSortOverrides: { Notes: { option: 'property-asc' as const, propertyKey: 'sort_index' } }
+        };
+
+        const files = getFilesForFolder(folder, settings, { includeDescendantNotes: false, showHiddenItems: false }, app);
+
+        expect(files.map(file => file.path)).toEqual([first.path, second.path, third.path]);
+    });
 });
 
 describe('fileFinder getFilesForTag', () => {

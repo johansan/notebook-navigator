@@ -121,7 +121,10 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',
             'Added a sync toggle to ==Default list mode==, so you can use compact mode on your phone to show more notes at a time and keep standard mode on your desktop.'
         ],
-        changed: ['Raised the minimum Obsidian version to 1.13.'],
+        changed: [
+            'Raised the minimum Obsidian version to 1.13.',
+            'Changed property sorting to match Obsidian Bases: links with an alias sort by the alias, and notes missing a checkbox property sort together with unchecked notes.'
+        ],
         fixed: [
             'Searching the Vault tab of the icon picker now lists the closest matches first, so SVG icons with short file names no longer drop out of the 50 shown results [#1526](https://github.com/johansan/notebook-navigator/issues/1526).',
             'The icon picker now shows how many icons matched when a search on the Vault, Lucide, or Emoji tab has more than 50 results.',
@@ -132,7 +135,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Exporting settings on Android and iOS now saves the JSON file to the vault root with `Save to vault`, where `Download` saved no file [#1537](https://github.com/johansan/notebook-navigator/issues/1537).',
             'Calendar settings now show a warning under ==Locale== and ==Weekly notes== when the weekly notes pattern makes the calendar start weeks on Monday regardless of locale, or gives weekly notes paths that do not match the calendar [#1540](https://github.com/johansan/notebook-navigator/issues/1540).',
             'Daily, monthly, quarterly and yearly note patterns now show a warning when they take the year from a week year such as `gggg` or `GGGG`, which gives dates near New Year the wrong year.',
-            'Settings you change on one computer are now kept when you start Obsidian on another computer with ==Zoom level== not synced.'
+            'Settings you change on one computer are now kept when you start Obsidian on another computer with ==Zoom level== not synced.',
+            'Sorting notes by a property now orders negative and decimal numbers by value, with `-222` before `-202` and `1.25` before `1.5` [#1552](https://github.com/johansan/notebook-navigator/issues/1552).'
         ]
     },
     {

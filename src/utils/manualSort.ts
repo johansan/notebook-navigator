@@ -22,6 +22,7 @@ import type { ManualSortNewNotePlacement, NotebookNavigatorSettings } from '../s
 import { getErrorMessage } from './errorUtils';
 import { deserializeIconFromFrontmatterCompat, normalizeCanonicalIconId, serializeIconForFrontmatter } from './iconizeFormat';
 import { casefold, findMatchingRecordKey } from './recordUtils';
+import type { PropertySortValue } from './sortUtils';
 import { isRecord } from './typeGuards';
 import { formatTextCount } from './wordCountUtils';
 
@@ -545,13 +546,13 @@ export function isManualSortValueEqual(value: unknown, order: number): boolean {
     return parseManualSortRank(value) === order;
 }
 
-export function getManualSortPropertyValue(app: App, file: TFile, propertyKey: string): string | null {
+export function getManualSortPropertyValue(app: App, file: TFile, propertyKey: string): PropertySortValue | null {
     if (file.extension !== 'md') {
         return null;
     }
 
     const rank = getCachedManualSortRank(app, file, propertyKey);
-    return rank === null ? null : rank.toString();
+    return rank === null ? null : { type: 'number', value: rank };
 }
 
 export function getCachedManualSortPropertyState(app: App, file: TFile, propertyKey: string): CachedManualSortPropertyState {
