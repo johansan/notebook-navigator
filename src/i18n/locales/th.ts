@@ -1186,7 +1186,8 @@ export const STRINGS_TH = {
                 description: 'การวินิจฉัย การล้างข้อมูลเมตา การนำเข้า/ส่งออก และการรีเซ็ต',
                 groups: {
                     maintenance: 'การบำรุงรักษา',
-                    resetSettings: 'รีเซ็ตการตั้งค่า'
+                    resetSettings: 'รีเซ็ตการตั้งค่า',
+                    thirdPartyLicenses: 'สัญญาอนุญาตของบุคคลที่สาม'
                 }
             }
         },

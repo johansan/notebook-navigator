@@ -1193,7 +1193,8 @@ export const STRINGS_UK = {
                 description: 'Діагностика, очищення метаданих, імпорт/експорт і скидання.',
                 groups: {
                     maintenance: 'Обслуговування',
-                    resetSettings: 'Скидання налаштувань'
+                    resetSettings: 'Скидання налаштувань',
+                    thirdPartyLicenses: 'Ліцензії сторонніх компонентів'
                 }
             }
         },

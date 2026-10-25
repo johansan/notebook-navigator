@@ -1189,7 +1189,8 @@ export const STRINGS_AR = {
                 description: 'التشخيص وتنظيف البيانات الوصفية والاستيراد/التصدير وإعادة التعيين.',
                 groups: {
                     maintenance: 'الصيانة',
-                    resetSettings: 'إعادة ضبط الإعدادات'
+                    resetSettings: 'إعادة ضبط الإعدادات',
+                    thirdPartyLicenses: 'تراخيص الجهات الخارجية'
                 }
             }
         },

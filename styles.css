@@ -8228,6 +8228,30 @@ button.nn-youtube-button svg {
     padding: 0;
     margin-top: 0;
 }
+/* Source: src/styles/sections/settings-third-party-licenses.css */
+
+/* ========================================================================
+   Third-Party Licenses Section
+   ======================================================================== */
+
+/* The license text replaces the setting row, so the row drops its own chrome */
+.nn-third-party-licenses.setting-item {
+    border: none;
+    padding: 0;
+}
+
+/* License notices keep their line breaks and wrap on narrow screens; the settings page scrolls them */
+.nn-third-party-licenses-text {
+    padding: var(--size-4-3);
+    border-radius: var(--radius-s);
+    background-color: var(--background-secondary);
+    color: var(--text-muted);
+    font-size: var(--font-ui-smaller);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: text;
+}
 /* Source: src/styles/sections/modal-color-picker.css */
 
 /* ========================================================================

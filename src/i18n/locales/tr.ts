@@ -1192,7 +1192,8 @@ export const STRINGS_TR = {
                 description: 'Tanılama, meta veri temizliği, içe/dışa aktarma ve sıfırlama.',
                 groups: {
                     maintenance: 'Bakım',
-                    resetSettings: 'Ayarları sıfırla'
+                    resetSettings: 'Ayarları sıfırla',
+                    thirdPartyLicenses: 'Üçüncü taraf lisansları'
                 }
             }
         },

@@ -1187,7 +1187,8 @@ export const STRINGS_EN = {
                 description: 'Diagnostics, metadata cleanup, import/export, and reset.',
                 groups: {
                     maintenance: 'Maintenance',
-                    resetSettings: 'Reset settings'
+                    resetSettings: 'Reset settings',
+                    thirdPartyLicenses: 'Third-party licenses'
                 }
             }
         },

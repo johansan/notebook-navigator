@@ -1190,7 +1190,8 @@ export const STRINGS_KO = {
                 description: '진단, 메타데이터 정리, 가져오기/내보내기 및 초기화.',
                 groups: {
                     maintenance: '유지 관리',
-                    resetSettings: '설정 초기화'
+                    resetSettings: '설정 초기화',
+                    thirdPartyLicenses: '타사 라이선스'
                 }
             }
         },

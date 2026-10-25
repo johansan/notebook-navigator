@@ -1194,7 +1194,8 @@ export const STRINGS_JA = {
                 description: '診断、メタデータのクリーンアップ、インポート/エクスポート、リセット。',
                 groups: {
                     maintenance: 'メンテナンス',
-                    resetSettings: '設定をリセット'
+                    resetSettings: '設定をリセット',
+                    thirdPartyLicenses: 'サードパーティライセンス'
                 }
             }
         },

@@ -1199,7 +1199,8 @@ export const STRINGS_NL = {
                 description: 'Diagnostiek, opschonen van metadata, import/export en herstellen.',
                 groups: {
                     maintenance: 'Onderhoud',
-                    resetSettings: 'Instellingen resetten'
+                    resetSettings: 'Instellingen resetten',
+                    thirdPartyLicenses: 'Licenties van derden'
                 }
             }
         },

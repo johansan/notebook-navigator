@@ -126,6 +126,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/settings-mobile.css';
 /* settings-database-statistics.css: database statistics section layout, tables, and export controls. */
 @import './sections/settings-database-statistics.css';
+/* settings-third-party-licenses.css: license notices text box at the bottom of Advanced settings. */
+@import './sections/settings-third-party-licenses.css';
 
 /* Additional modals */
 /* modal-color-picker.css: color picker modal layout, palette grid, recent colors, and input rows. */

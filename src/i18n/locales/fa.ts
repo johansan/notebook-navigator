@@ -1193,7 +1193,8 @@ export const STRINGS_FA = {
                 description: 'تشخیص، پاکسازی متادیتا، واردکردن/صادرکردن و بازنشانی.',
                 groups: {
                     maintenance: 'نگهداری',
-                    resetSettings: 'بازنشانی تنظیمات'
+                    resetSettings: 'بازنشانی تنظیمات',
+                    thirdPartyLicenses: 'مجوزهای شخص ثالث'
                 }
             }
         },

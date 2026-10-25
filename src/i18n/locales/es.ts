@@ -1199,7 +1199,8 @@ export const STRINGS_ES = {
                 description: 'Diagnósticos, limpieza de metadatos, importación/exportación y restablecimiento.',
                 groups: {
                     maintenance: 'Mantenimiento',
-                    resetSettings: 'Restablecer ajustes'
+                    resetSettings: 'Restablecer ajustes',
+                    thirdPartyLicenses: 'Licencias de terceros'
                 }
             }
         },

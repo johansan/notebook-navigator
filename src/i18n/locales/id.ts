@@ -1194,7 +1194,8 @@ export const STRINGS_ID = {
                 description: 'Diagnostik, pembersihan metadata, impor/ekspor, dan pengaturan ulang.',
                 groups: {
                     maintenance: 'Pemeliharaan',
-                    resetSettings: 'Atur ulang pengaturan'
+                    resetSettings: 'Atur ulang pengaturan',
+                    thirdPartyLicenses: 'Lisensi pihak ketiga'
                 }
             }
         },

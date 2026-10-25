@@ -18,6 +18,7 @@
 
 import { ButtonComponent } from 'obsidian';
 import type { Setting, SettingDefinitionGroup, SettingDefinitionItem } from 'obsidian';
+import { THIRD_PARTY_LICENSES_TEXT } from '../../constants/thirdPartyLicenses';
 import { strings } from '../../i18n';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { SettingsExportModal, SettingsImportModal } from '../../modals/SettingsTransferModal';
@@ -129,11 +130,25 @@ export function createAdvancedSettingDefinitions(context: SettingsTabContext): S
         })
     ];
 
+    const licenseItems: NonNullable<SettingDefinitionGroup['items']> = [
+        createRenderDefinition({
+            name: strings.settings.pages.advanced.groups.thirdPartyLicenses,
+            render: renderThirdPartyLicensesSetting
+        })
+    ];
+
     return [
         createGroupDefinition(undefined, generalItems),
         createGroupDefinition(strings.settings.pages.advanced.groups.maintenance, maintenanceItems),
-        createGroupDefinition(strings.settings.pages.advanced.groups.resetSettings, resetItems)
+        createGroupDefinition(strings.settings.pages.advanced.groups.resetSettings, resetItems),
+        createGroupDefinition(strings.settings.pages.advanced.groups.thirdPartyLicenses, licenseItems)
     ];
+}
+
+function renderThirdPartyLicensesSetting(setting: Setting): void {
+    setting.setName('').setDesc('');
+    setting.settingEl.addClass('nn-third-party-licenses');
+    setting.descEl.createDiv({ cls: 'nn-third-party-licenses-text', text: THIRD_PARTY_LICENSES_TEXT });
 }
 
 function renderDebugLoggingSetting(setting: Setting, context: SettingsTabContext): void {

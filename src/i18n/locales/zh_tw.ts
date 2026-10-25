@@ -1185,7 +1185,8 @@ export const STRINGS_ZH_TW = {
                 description: '診斷、中繼資料清理、匯入/匯出與重設。',
                 groups: {
                     maintenance: '維護',
-                    resetSettings: '重設設定'
+                    resetSettings: '重設設定',
+                    thirdPartyLicenses: '第三方授權'
                 }
             }
         },
