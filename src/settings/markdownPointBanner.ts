@@ -61,7 +61,7 @@ function svgDataUrl(svg: string): string {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-/** Writes a slide's text as presentation.md has it, with ==marks== dimmed and the marked words in the slide's accent. */
+/** Writes a slide's text as slides.md has it, with ==marks== dimmed and the marked words in the slide's accent. */
 function appendMarkdownSource(parentEl: HTMLElement, eyebrow: string, statement: string): void {
     parentEl.appendText(`${eyebrow}\n`);
     let isHighlighted = false;
@@ -85,8 +85,8 @@ function appendHeadline(parentEl: HTMLElement, headline: string): void {
     parentEl.createSpan({ cls: 'nn-markdownpoint-point', text: point });
 }
 
-/** Renders the banner for a position from advanceMarkdownPointBanner(), in the light or the dark design it picks. */
-function renderMarkdownPointBanner(containerEl: HTMLElement, position: number, isDark: boolean): void {
+/** Renders the banner for a position from advanceMarkdownPointBanner(), in the light or the dark design it picks, and returns it. */
+function renderMarkdownPointBanner(containerEl: HTMLElement, position: number, isDark: boolean): HTMLElement {
     const { messages, credit } = strings.settings.items.markdownPointBanner;
     const designs = MARKDOWNPOINT_BANNER_DESIGNS.filter(candidate => candidate.dark === isDark);
     const design = designs[position % designs.length];
@@ -117,7 +117,7 @@ function renderMarkdownPointBanner(containerEl: HTMLElement, position: number, i
     // The slide's Markdown file lies behind the slide it makes
     const visualEl = stripEl.createDiv({ cls: 'nn-markdownpoint-visual', attr: { 'aria-hidden': 'true' } });
     const fileEl = visualEl.createDiv({ cls: 'nn-markdownpoint-file' });
-    fileEl.createDiv({ cls: 'nn-markdownpoint-file-name', text: 'presentation.md' });
+    fileEl.createDiv({ cls: 'nn-markdownpoint-file-name', text: 'slides.md' });
     appendMarkdownSource(fileEl.createDiv({ cls: 'nn-markdownpoint-file-text', attr: { dir: 'ltr' } }), design.eyebrow, design.statement);
     visualEl.createEl('img', { cls: 'nn-markdownpoint-slide', attr: { src: svgDataUrl(design.svg), alt: '' } });
 
@@ -133,17 +133,26 @@ function renderMarkdownPointBanner(containerEl: HTMLElement, position: number, i
     setIcon(brandEl.createSpan({ cls: 'nn-markdownpoint-link-icon', attr: { 'aria-hidden': 'true' } }), 'lucide-external-link');
     appendHeadline(copyEl.createDiv({ cls: 'nn-markdownpoint-headline' }), message.headline);
     copyEl.createDiv({ cls: 'nn-markdownpoint-subtext', text: message.subtext });
+    return bannerEl;
 }
 
 /**
  * Marks a setting row as the banner's, so the stylesheet removes the row's padding and hides its name and control.
  * The row holds the position's light and dark designs with the same message, and the stylesheet shows only the
  * one for Obsidian's current theme, so a theme switch while settings are open swaps the design without a render.
+ *
+ * Returns the row's cleanup, which removes both banners. A settings update renders into the same row again
+ * after Setting.clear(), which empties only the control element, so without the cleanup every update would
+ * add another pair of banners.
  */
-function renderBannerRow(settingEl: HTMLElement, position: number): void {
+function renderBannerRow(settingEl: HTMLElement, position: number): () => void {
     settingEl.addClass('nn-markdownpoint-setting');
-    renderMarkdownPointBanner(settingEl, position, false);
-    renderMarkdownPointBanner(settingEl, position, true);
+    const lightBannerEl = renderMarkdownPointBanner(settingEl, position, false);
+    const darkBannerEl = renderMarkdownPointBanner(settingEl, position, true);
+    return () => {
+        lightBannerEl.remove();
+        darkBannerEl.remove();
+    };
 }
 
 /**
@@ -160,8 +169,9 @@ function headingFor(placement: MarkdownPointBannerPlacement): string | undefined
 /**
  * The banner as a group of the native settings index at one placement, shown only while the Advanced setting
  * picks that placement. The position is read when the row renders, not when definitions are built, because
- * Obsidian also builds them for settings search; only the visible placement renders, so a settings open
- * advances the banner once.
+ * Obsidian also builds them for settings search. Obsidian renders the rows of both placements and hides the
+ * one not picked, and renders them again on each settings update, so getPosition must return the same
+ * position for the whole settings open; otherwise the banner would advance more than once per open.
  */
 export function createMarkdownPointBannerDefinitions(
     placement: MarkdownPointBannerPlacement,

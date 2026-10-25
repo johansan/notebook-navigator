@@ -29,9 +29,13 @@ import type { SettingsTabContext } from './SettingsTabContext';
 
 /**
  * Renders the list of template commands with add, edit and remove controls. Editing happens in a modal because each
- * command has four fields. Used by the native and the legacy Files tab.
+ * command has four fields.
+ *
+ * Returns the row's cleanup, which removes the list. A settings update renders into the same row again after
+ * Setting.clear(), which empties only the control element, so without the cleanup every update would add another
+ * list beside the old one, whose buttons would still edit and remove commands.
  */
-export function renderTemplateCommandsSetting(setting: Setting, context: SettingsTabContext): void {
+export function renderTemplateCommandsSetting(setting: Setting, context: SettingsTabContext): () => void {
     const { plugin } = context;
     const labels = strings.settings.items.templateCommands;
     setting.setName(labels.name).setDesc(labels.desc);
@@ -109,4 +113,5 @@ export function renderTemplateCommandsSetting(setting: Setting, context: Setting
 
     setting.addButton(button => button.setButtonText(labels.add).onClick(() => openEditor(createTemplateCommand(), true)));
     renderList();
+    return () => listEl.remove();
 }
