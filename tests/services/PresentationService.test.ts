@@ -96,6 +96,51 @@ describe('countPresentationSlides', () => {
         expect(countPresentationSlides(markdown)).toBe(2);
     });
 
+    it('reads fences as Markdown does inside lists, HTML comments and indented code', () => {
+        const slides = (content: string[]) =>
+            [
+                '---',
+                'markdownpoint: 1',
+                '---',
+                '<!-- slide: first -->',
+                '<!-- text: body -->',
+                ...content,
+                '',
+                '<!-- slide: second -->',
+                '<!-- text: body -->',
+                '```',
+                'code',
+                '```',
+                '',
+                '<!-- slide: third -->',
+                ''
+            ].join('\n');
+
+        expect(countPresentationSlides(slides(['- ```js', '  code()', '  ```']))).toBe(3);
+        expect(countPresentationSlides(slides(['<!--', '```', '-->']))).toBe(3);
+        expect(countPresentationSlides(slides(['    ```']))).toBe(3);
+        expect(countPresentationSlides(slides(['```', '<!-- slide: example -->']))).toBe(1);
+        expect(countPresentationSlides(slides(['<br>', '```', '<!-- slide: example -->', '```']))).toBe(3);
+    });
+
+    it('counts only slide markers MarkdownPoint accepts', () => {
+        const markdown = [
+            '---',
+            'example: |',
+            '  ```',
+            '---',
+            '<!-- slide: intro -->  ',
+            '<!--slide:next-->',
+            '<!-- slide: Upper -->',
+            '<!-- slide: double--dash -->',
+            '<!-- slide: trailing- -->',
+            '<!-- slide: last -->'
+        ].join('\n');
+
+        expect(countPresentationSlides(markdown)).toBe(2);
+        expect(countPresentationSlides(`${markdown}\n`)).toBe(3);
+    });
+
     it('returns zero for markdown without slides', () => {
         expect(countPresentationSlides('# An ordinary note\n\nKeep this ordinary.\n')).toBe(0);
     });

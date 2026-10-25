@@ -16,9 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getDefaults, Lexer, Tokenizer } from 'marked';
+import type { Tokens } from 'marked';
 import { TFile, TFolder } from 'obsidian';
 import type { App, EventRef, TAbstractFile } from 'obsidian';
-import { findFencedCodeBlockRanges, isIndexInRanges } from '../utils/codeRangeUtils';
 
 /**
  * A MarkdownPoint presentation is a folder holding `slides.md` (the writing) and `presentation.mdpoint`
@@ -65,7 +66,13 @@ const COMPANION_FILE_NAME = 'presentation.mdpoint';
 const DOCUMENT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const STABLE_ID_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const RESERVED_THEME_KEY_PATTERN = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
-const SLIDE_MARKER_PATTERN = /^<!--\s*slide:\s*[^\s]+\s*-->[ \t]*$/gm;
+const FRONTMATTER_PATTERN = /^---[ \t]*\n(?:[^\n]*\n)*?---[ \t]*(?:\n|$)/;
+const SLIDE_MARKER_PATTERN = /^<!--\s*slide:\s*([a-z][a-z0-9-]*)\s*-->$/;
+// Any line MarkdownPoint reads as a marker, misspelled ones included; each one outside code starts a new Markdown block
+const STRUCTURAL_MARKER_PATTERN =
+    /^<!--\s*\/?(?:mp:)?(?:section|slide|composition|text|control|notes)(?=[:\s]|-->|$):?\s*(?:\S+?\s*)?(?:-->.*)?$/i;
+const LINE_BREAK_TAG_PATTERN = /^<br[ \t]*\/?>(?:[ \t]*\n)?/i;
+const OPEN_FENCE_PROBE = 'mp-open-fence-probe';
 const HEX_COLOR_PATTERN = /^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i;
 const BRAND_COLOR_REFERENCE_PATTERN = /^\{brand\.([^}]+)\}$/;
 // Matches `<presentation folder>/themes/<theme key>/<file>.json`; group 1 is the presentation folder (absent at the vault root)
@@ -139,20 +146,71 @@ export function getPresentationIdentity(frontmatter: unknown, companion: unknown
 }
 
 /**
- * Counts slides: one per `<!-- slide: id -->` marker line. Marker-shaped lines inside fenced code blocks are
- * slide content, not slides. Fences are found by the line-based scanner in codeRangeUtils, not by a Markdown
- * lexer like MarkdownPoint's, so a fence opened on a list marker line (`- ```) or a fence-like line inside a
- * multi-line HTML comment can hide the markers after it and undercount. Those cases are rare and only affect
- * the displayed count, so Notebook Navigator does not bundle a Markdown parser to handle them.
+ * MarkdownPoint's grammar reads a `<br>` line as a line break in a paragraph. Marked's default reads it as an HTML
+ * block that runs to the next blank line and takes in any fence opened before that line, which would change
+ * whether a later marker is inside code.
+ */
+class PresentationTokenizer extends Tokenizer {
+    html(src: string): Tokens.HTML | undefined {
+        return LINE_BREAK_TAG_PATTERN.test(src) ? undefined : super.html(src);
+    }
+}
+
+/**
+ * Returns true when the Markdown ends inside a fenced code block, as Marked reads it: an appended probe line joins
+ * the last code block only while that block is still open. A fence opened in a list item or a quote closes with it,
+ * so only a top-level fence counts.
+ */
+function endsInOpenFence(markdown: string): boolean {
+    if (!markdown.includes('```') && !markdown.includes('~~~')) {
+        return false;
+    }
+    const lexer = new Lexer({ ...getDefaults(), tokenizer: new PresentationTokenizer() });
+    const tokens = lexer.blockTokens(`${markdown}\n${OPEN_FENCE_PROBE}`).filter(token => token.type !== 'space');
+    const last = tokens[tokens.length - 1];
+    return last?.type === 'code' && last.codeBlockStyle !== 'indented' && last.raw.replace(/\n+$/, '').endsWith(OPEN_FENCE_PROBE);
+}
+
+/**
+ * Counts slides the way the MarkdownPoint app reads `slides.md` (`markerTokens` in MarkdownPoint core): one per
+ * `<!-- slide: id -->` line after the frontmatter whose id is a stable id and that a line break ends. The app
+ * rejects any other slide marker, so it is not counted.
+ *
+ * Every marker-shaped line outside code starts a new Markdown block, so a fence or HTML in one block cannot hide
+ * the markers of the next. A marker-shaped line inside a fenced code block is slide content. Marked decides that
+ * from the block's text before the line, and is asked only after a fence-like line or while a fence is open,
+ * because a later line can close it. Keep Marked on the release MarkdownPoint uses, because releases differ in
+ * which lines start an HTML block, and an HTML block decides whether a fence-like line opens code.
  */
 export function countPresentationSlides(markdown: string): number {
-    const normalized = markdown.replace(/\r\n?/g, '\n');
-    const fencedRanges = findFencedCodeBlockRanges(normalized);
+    const text = (markdown.charCodeAt(0) === 0xfeff ? markdown.slice(1) : markdown).replace(/\r\n?/g, '\n');
+    let offset = FRONTMATTER_PATTERN.exec(text)?.[0].length ?? 0;
+    let blockStart = offset;
+    let fenceLineSeen = false;
+    let fenceOpen = false;
     let count = 0;
-    for (const match of normalized.matchAll(SLIDE_MARKER_PATTERN)) {
-        if (!isIndexInRanges(match.index, fencedRanges)) {
-            count += 1;
+    while (offset < text.length) {
+        const newline = text.indexOf('\n', offset);
+        const end = newline < 0 ? text.length : newline + 1;
+        // Markers are read without the trailing spaces an editor may leave
+        const line = text.slice(offset, newline < 0 ? text.length : newline).replace(/[ \t]+$/, '');
+        if (line.includes('```') || line.includes('~~~')) {
+            fenceLineSeen = true;
         }
+        if (STRUCTURAL_MARKER_PATTERN.test(line)) {
+            if (fenceLineSeen || fenceOpen) {
+                fenceOpen = endsInOpenFence(text.slice(blockStart, offset));
+                fenceLineSeen = false;
+            }
+            if (!fenceOpen) {
+                blockStart = end;
+                const match = SLIDE_MARKER_PATTERN.exec(line);
+                if (match && newline >= 0 && STABLE_ID_PATTERN.test(match[1])) {
+                    count += 1;
+                }
+            }
+        }
+        offset = end;
     }
     return count;
 }
