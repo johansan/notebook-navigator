@@ -26,7 +26,7 @@ import {
 } from '../../src/services/PresentationService';
 import { getListPaneMeasurements, getPresentationRowHeight } from '../../src/utils/listPaneMeasurements';
 
-const DOCUMENT_ID = '656fb827-4f76-4106-91c1-de84af82e131';
+const PRESENTATION_ID = '656fb827-4f76-4106-91c1-de84af82e131';
 
 describe('getPresentationPairNames', () => {
     it('recognizes slides.md beside presentation.mdpoint and keeps the stored spelling', () => {
@@ -56,18 +56,41 @@ describe('getPresentationPairNames', () => {
 });
 
 describe('getPresentationIdentity', () => {
-    const frontmatter = { markdownpoint: 1, document: DOCUMENT_ID };
+    const frontmatter = { markdownpoint: '1.0', id: PRESENTATION_ID };
+    const companion = { markdownpoint: '1.0', kind: 'presentation', id: PRESENTATION_ID };
 
-    it('returns the document id when both files belong to the same presentation', () => {
-        expect(getPresentationIdentity(frontmatter, { markdownpoint: 1, kind: 'presentation', document: DOCUMENT_ID })).toBe(DOCUMENT_ID);
+    it('returns the presentation id when both files belong to the same presentation', () => {
+        expect(getPresentationIdentity(frontmatter, companion)).toBe(PRESENTATION_ID);
+    });
+
+    it('opens any minor of format major 1 in either file', () => {
+        expect(getPresentationIdentity({ ...frontmatter, markdownpoint: '1.10' }, { ...companion, markdownpoint: '1.2' })).toBe(
+            PRESENTATION_ID
+        );
+    });
+
+    it('rejects numeric, malformed and newer major format versions', () => {
+        for (const version of [1, 1.1, '1', '1.09', '01.0', '2.0', '0.9']) {
+            expect(getPresentationIdentity({ ...frontmatter, markdownpoint: version }, companion)).toBeNull();
+            expect(getPresentationIdentity(frontmatter, { ...companion, markdownpoint: version })).toBeNull();
+        }
     });
 
     it('rejects a companion from another presentation or of another kind', () => {
         const otherId = 'e39a0a69-91a3-4004-9f08-77e0759de936';
-        expect(getPresentationIdentity(frontmatter, { markdownpoint: 1, kind: 'presentation', document: otherId })).toBeNull();
-        expect(getPresentationIdentity(frontmatter, { markdownpoint: 1, kind: 'master', document: DOCUMENT_ID })).toBeNull();
-        expect(getPresentationIdentity({ markdownpoint: 1, document: 'not-an-id' }, { markdownpoint: 1, kind: 'presentation' })).toBeNull();
-        expect(getPresentationIdentity(undefined, { markdownpoint: 1, kind: 'presentation', document: DOCUMENT_ID })).toBeNull();
+        expect(getPresentationIdentity(frontmatter, { ...companion, id: otherId })).toBeNull();
+        expect(getPresentationIdentity(frontmatter, { ...companion, kind: 'master' })).toBeNull();
+        expect(getPresentationIdentity({ ...frontmatter, id: PRESENTATION_ID.toUpperCase() }, companion)).toBeNull();
+        expect(getPresentationIdentity(undefined, companion)).toBeNull();
+    });
+
+    it('does not read the pre-1.0 document key', () => {
+        expect(
+            getPresentationIdentity(
+                { markdownpoint: '1.0', document: PRESENTATION_ID },
+                { ...companion, id: undefined, document: PRESENTATION_ID }
+            )
+        ).toBeNull();
     });
 });
 
@@ -75,7 +98,7 @@ describe('countPresentationSlides', () => {
     it('counts slide markers and skips marker-shaped lines inside fenced code', () => {
         const markdown = [
             '---',
-            'markdownpoint: 1',
+            'markdownpoint: "1.0"',
             '---',
             '',
             '<!-- section: intro -->',
@@ -100,7 +123,7 @@ describe('countPresentationSlides', () => {
         const slides = (content: string[]) =>
             [
                 '---',
-                'markdownpoint: 1',
+                'markdownpoint: "1.0"',
                 '---',
                 '<!-- slide: first -->',
                 '<!-- text: body -->',

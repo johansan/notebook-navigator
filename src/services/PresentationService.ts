@@ -63,7 +63,9 @@ export interface PresentationSummary {
 
 const SLIDES_FILE_NAME = 'slides.md';
 const COMPANION_FILE_NAME = 'presentation.mdpoint';
-const DOCUMENT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// Format major 1 with any minor, written without leading zeros: "1.0", "1.10"
+const FORMAT_VERSION_PATTERN = /^1\.(?:0|[1-9]\d{0,8})$/;
+const PRESENTATION_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const STABLE_ID_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const RESERVED_THEME_KEY_PATTERN = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
 const FRONTMATTER_PATTERN = /^---[ \t]*\n(?:[^\n]*\n)*?---[ \t]*(?:\n|$)/;
@@ -128,21 +130,34 @@ export function getPresentationPairNames(names: readonly string[]): { markdown: 
 }
 
 /**
- * Returns the shared document id when `slides.md` frontmatter and the parsed `.mdpoint` data belong to the
+ * MarkdownPoint states its format version as a `"major.minor"` string, because as numbers 1.10 and 1.1 are equal.
+ * A file of format major 1 opens whatever its minor, since a later minor only adds what a reader may ignore.
+ * The type check comes first because a regular expression test would turn an unquoted `1.1` into a match.
+ */
+function isReadableFormatVersion(value: unknown): boolean {
+    return typeof value === 'string' && FORMAT_VERSION_PATTERN.test(value);
+}
+
+/**
+ * Returns the shared presentation id when `slides.md` frontmatter and the parsed `.mdpoint` data belong to the
  * same presentation. A copied or replaced companion keeps its own id, so a mismatch is not a presentation.
  */
 export function getPresentationIdentity(frontmatter: unknown, companion: unknown): string | null {
     if (!isRecord(frontmatter) || !isRecord(companion)) {
         return null;
     }
-    if (frontmatter.markdownpoint !== 1 || companion.markdownpoint !== 1 || companion.kind !== 'presentation') {
+    if (
+        !isReadableFormatVersion(frontmatter.markdownpoint) ||
+        !isReadableFormatVersion(companion.markdownpoint) ||
+        companion.kind !== 'presentation'
+    ) {
         return null;
     }
-    const documentId = frontmatter.document;
-    if (typeof documentId !== 'string' || !DOCUMENT_ID_PATTERN.test(documentId)) {
+    const presentationId = frontmatter.id;
+    if (typeof presentationId !== 'string' || !PRESENTATION_ID_PATTERN.test(presentationId)) {
         return null;
     }
-    return companion.document === documentId ? documentId : null;
+    return companion.id === presentationId ? presentationId : null;
 }
 
 /**
@@ -361,7 +376,7 @@ function isSameSummary(previous: PresentationSummary | null, next: PresentationS
  * Keeps an in-memory index of the vault's MarkdownPoint presentations.
  *
  * Roles (which paths are `slides.md` and `presentation.mdpoint` of a verified pair) are published only after
- * the companion's document id matches the frontmatter, together with the presentation data. Row rendering,
+ * the companion's presentation id matches the frontmatter, together with the presentation data. Row rendering,
  * row height estimates and file visibility all read the same role map synchronously, so they always agree:
  * a pair that is not verified yet renders, measures and filters as ordinary files.
  */
