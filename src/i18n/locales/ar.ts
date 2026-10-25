@@ -63,6 +63,14 @@ export const STRINGS_AR = {
         manualSortHint: 'اسحب لإعادة الترتيب. يتم حفظ الترتيب كقيم رقمية للفهرس في الخاصية "{property}".',
         manualSortNonMarkdownHint: 'الملفات غير Markdown تظهر في الأسفل ولا يمكن إعادة ترتيبها.',
         unsortedSection: 'غير مرتبة',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: 'الشرائح: {count}',
+            slideCountOne: 'شريحة واحدة',
+            theme: 'السمة',
+            slides: 'الشرائح',
+            size: 'الحجم'
+        },
         propertyGroupNoValue: 'بدون',
         manualSortDone: 'تم',
         manualSortMultipleWriteFailure: 'فشل {count} من الملفات؛ الأول: {path}: {message}'

@@ -63,6 +63,14 @@ export const STRINGS_EN = {
         manualSortHint: 'Drag to reorder. The order is saved as numeric index values in the property "{property}".',
         manualSortNonMarkdownHint: 'Non-markdown files are shown at the bottom and cannot be reordered.',
         unsortedSection: 'Unsorted',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} slides',
+            slideCountOne: '1 slide',
+            theme: 'Theme',
+            slides: 'Slides',
+            size: 'Size'
+        },
         propertyGroupNoValue: 'None', // Header for the trailing group holding files without the grouping property (English: None)
         manualSortDone: 'Done',
         manualSortMultipleWriteFailure: '{count} files failed; first: {path}: {message}'

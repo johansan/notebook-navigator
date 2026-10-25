@@ -83,6 +83,8 @@ import {
     type TagSortOrder
 } from './settings/types';
 import { NOTEBOOK_NAVIGATOR_ICON_ID, NOTEBOOK_NAVIGATOR_ICON_SVG } from './constants/notebookNavigatorIcon';
+import { MARKDOWNPOINT_ICON_ID, MARKDOWNPOINT_ICON_SVG } from './constants/markdownPointIcon';
+import { PresentationService, setPresentationService } from './services/PresentationService';
 import { PluginSettingsController, type SettingsLoadResult } from './services/settings/PluginSettingsController';
 import { PluginPreferencesController } from './services/settings/PluginPreferencesController';
 import { clearPendingPdfProcessingDiagnostic, consumePendingPdfProcessingDiagnostic } from './services/content/pdf/pdfCrashDiagnostics';
@@ -177,6 +179,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
     // Handles homepage file opening and startup behavior
     private homepageController: HomepageController | null = null;
     private folderNoteSidebarService: FolderNoteSidebarService | null = null;
+    private presentationService: PresentationService | null = null;
     private settingTab: LazyNotebookNavigatorSettingTab | null = null;
     private pendingUpdateNotice: ReleaseUpdateNotice | null = null;
     private hasWorkspaceLayoutReady = false;
@@ -440,6 +443,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         if (typeof addIcon === 'function') {
             addIcon(NOTEBOOK_NAVIGATOR_ICON_ID, NOTEBOOK_NAVIGATOR_ICON_SVG);
+            addIcon(MARKDOWNPOINT_ICON_ID, MARKDOWNPOINT_ICON_SVG);
         }
 
         // Initialize database early for StorageContext consumers
@@ -785,6 +789,10 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             this
         );
         this.omnisearchService = new OmnisearchService(this.app);
+        // Registered before views mount so file visibility and row estimates read one role map from the start;
+        // it begins indexing presentations when the workspace layout is ready
+        this.presentationService = new PresentationService(this.app);
+        setPresentationService(this.presentationService);
         this.api = new NotebookNavigatorAPI(this, this.app);
         this.metadataService.setFolderStyleChangeListener(folderPath => {
             if (this.isUnloading || !this.api) {
@@ -860,6 +868,8 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.app.workspace.onLayoutReady(() => {
             this.hasWorkspaceLayoutReady = true;
             recordStartupDiagnostic('layout.ready');
+            // Started after layout ready because the vault emits a create event per file while it loads
+            this.presentationService?.start();
             // Execute startup tasks asynchronously to avoid blocking the layout
             runAsyncAction(async () => {
                 recordStartupDiagnostic('layout.readyTasks.start');
@@ -1475,6 +1485,9 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         this.folderNoteSidebarService?.dispose();
         this.folderNoteSidebarService = null;
+        this.presentationService?.dispose();
+        setPresentationService(null);
+        this.presentationService = null;
         disposeTemplateCommandButtons(this);
 
         // Clear all listeners first to prevent any callbacks during cleanup

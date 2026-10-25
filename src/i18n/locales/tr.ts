@@ -63,6 +63,14 @@ export const STRINGS_TR = {
         manualSortHint: 'Yeniden sıralamak için sürükleyin. Sıra, "{property}" özelliğinde sayısal indeks değerleri olarak kaydedilir.',
         manualSortNonMarkdownHint: 'Markdown olmayan dosyalar altta gösterilir ve yeniden sıralanamaz.',
         unsortedSection: 'Sıralanmamış',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} slayt',
+            slideCountOne: '1 slayt',
+            theme: 'Tema',
+            slides: 'Slaytlar',
+            size: 'Boyut'
+        },
         propertyGroupNoValue: 'Yok',
         manualSortDone: 'Tamam',
         manualSortMultipleWriteFailure: '{count} dosya başarısız oldu; ilki: {path}: {message}'

@@ -65,6 +65,7 @@ import {
     hasVisibleTagPills,
     getListPaneHeaderHeight,
     getListPaneMeasurements,
+    getPresentationRowHeight,
     getPropertyRowCount,
     shouldShowExtensionBadgeThumbnail,
     shouldShowFeatureImageArea,
@@ -75,6 +76,7 @@ import type { PropertySelectionNodeId } from '../utils/propertyTree';
 import { getCachedFileTags } from '../utils/tagUtils';
 import type { HiddenTagVisibility } from '../utils/tagPrefixMatcher';
 import { getDrawingFeatureImageSource, resolveDrawingFeatureImageFileForProvider } from '../utils/drawingFeatureImages';
+import { getPresentationFileRole, getPresentationService } from '../services/PresentationService';
 import { useThemeMode } from './useThemeMode';
 import type { ThemeMode } from '../utils/themeMode';
 import { getListSortOverrideForSelection, resolveListSort } from '../utils/sortUtils';
@@ -847,6 +849,11 @@ export function useListPaneScroll({
             }
 
             if (item.type === ListPaneItemType.FILE && item.data instanceof TFile) {
+                // Compact mode renders presentation files as ordinary compact rows
+                const presentationRole = rowSizingConfig.isCompactMode ? null : getPresentationFileRole(item.data);
+                if (presentationRole) {
+                    return getPresentationRowHeight(presentationRole, heights);
+                }
                 return estimateFileRowHeight(
                     resolveListFileRowHeightInputs({
                         app,
@@ -1303,6 +1310,20 @@ export function useListPaneScroll({
             remeasureScheduler?.cancel();
         };
     }, [enabled, filePathToIndex, getDB, rowSizingConfig, rowVirtualizer]);
+
+    /**
+     * Refresh size estimates when files become or stop being presentation files, because presentation rows
+     * use fixed heights that differ from the ordinary row estimate for the same file.
+     */
+    useEffect(() => {
+        const presentationService = getPresentationService();
+        if (!enabled || !rowVirtualizer || !presentationService) return;
+
+        const remeasureScheduler = remeasureSchedulerRef.current;
+        return presentationService.subscribeToRoles(() => {
+            remeasureScheduler?.schedule();
+        });
+    }, [enabled, rowVirtualizer]);
 
     /**
      * Listen for mobile drawer visibility events.

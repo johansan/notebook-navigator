@@ -85,6 +85,9 @@ import { ServiceIcon } from './ServiceIcon';
 import { getDrawingFeatureImageSource } from '../utils/drawingFeatureImages';
 import { useDrawingFeatureImage } from '../hooks/useDrawingFeatureImage';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { usePresentationFileRole, usePresentationSummary } from '../hooks/usePresentation';
+import { MARKDOWNPOINT_ICON_ID } from '../constants/markdownPointIcon';
+import { PresentationCoverContent, PresentationDetailsContent } from './fileItem/PresentationRowContent';
 import { useMarkdownWordCountConsumerChanges } from '../hooks/useMarkdownWordCountConsumerChanges';
 import { resolveFileRowBackgroundColor } from '../utils/colorUtils';
 import { formatTextCount, getWordCountDisplayText } from '../utils/wordCountUtils';
@@ -484,6 +487,11 @@ export const FileItem = React.memo(function FileItem({
     const metadataService = useMetadataService();
     const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
     const isCompactMode = appearanceSettings.mode === 'compact';
+    const presentationRole = usePresentationFileRole(file);
+    const presentationSummary = usePresentationSummary(presentationRole ? (file.parent?.path ?? null) : null);
+    // Presentation files render as a cover or detail row in the normal list mode only; compact mode keeps them
+    // as ordinary compact rows. getPresentationRowHeight and the estimator in useListPaneScroll follow the same rule.
+    const presentationRowRole = !isCompactMode && presentationSummary ? presentationRole : null;
     const shouldShowWordCount = showsWordCount(appearanceSettings.textCountDisplay);
     const shouldShowCharacterCount = showsCharacterCount(appearanceSettings.textCountDisplay);
     const isMarkdownFile = file.extension === 'md';
@@ -555,9 +563,10 @@ export const FileItem = React.memo(function FileItem({
         getDB,
         regenerateFeatureImageForFile,
         loadOptions: {
-            loadPreviewText: appearanceSettings.showPreview && isMarkdownFile && !searchMeta?.excerpt,
+            // Presentation rows show neither a preview nor a feature image
+            loadPreviewText: appearanceSettings.showPreview && isMarkdownFile && !searchMeta?.excerpt && presentationRowRole === null,
             loadTags: shouldLoadTags,
-            loadFeatureImage: appearanceSettings.showImage && !isDrawingFeatureImageRow,
+            loadFeatureImage: appearanceSettings.showImage && !isDrawingFeatureImageRow && presentationRowRole === null,
             loadProperties: shouldLoadProperties,
             loadWordCount: shouldLoadWordCount,
             loadCharacterCount: shouldLoadCharacterCount,
@@ -606,10 +615,10 @@ export const FileItem = React.memo(function FileItem({
         shouldShowOpenInNewTab || shouldShowPinNote || shouldShowRevealIcon || shouldShowAddTagAction || shouldShowShortcutAction;
     const hasShortcut = typeof shortcutKey === 'string';
     const iconServiceVersion = useIconServiceVersion();
-    // The theme mode only selects the unfinished-task background color, so theme-change
-    // subscriptions are skipped while that setting is off; enabling it re-runs the hook effect,
+    // The theme mode selects the unfinished-task background color and the presentation cover colors, so
+    // theme-change subscriptions are skipped while neither applies; enabling one re-runs the hook effect,
     // which re-syncs the mode before the value is consumed.
-    const themeMode = useThemeMode(app, settings.showFileBackgroundUnfinishedTask);
+    const themeMode = useThemeMode(app, settings.showFileBackgroundUnfinishedTask || presentationRowRole === 'slides');
     const showFileIcons = settings.showFileIcons;
     const hasUnfinishedTasks = typeof taskUnfinished === 'number' && taskUnfinished > 0;
     const showFileIconUnfinishedTask = showFileIcons && unfinishedTaskIconAppliesToMode && hasUnfinishedTasks;
@@ -626,8 +635,11 @@ export const FileItem = React.memo(function FileItem({
         [displayName, searchHighlightTerms, searchMeta]
     );
 
-    // Decide whether to render an inline extension suffix after the name
-    const extensionSuffix = getExtensionSuffix(file);
+    // Decide whether to render an inline extension suffix after the name. The presentation cover row shows
+    // `slides.md` in full so it reads as the file beside `presentation.mdpoint`.
+    const extensionSuffix = presentationRowRole === 'slides' ? `.${file.extension}` : getExtensionSuffix(file);
+    // Presentation rows have one title line, because their fixed height does not follow the title rows setting
+    const fileTitleRows = presentationRowRole ? 1 : appearanceSettings.titleRows;
     const fileIconId = metadataService.getFileIcon(file.path);
     const fileColor = metadataService.getFileColor(file.path);
     const parentFolderSource = file.parent;
@@ -712,7 +724,8 @@ export const FileItem = React.memo(function FileItem({
                 externalIconProviders: settings.externalIconProviders
             },
             {
-                customIconId: fileIconId ?? folderIconId,
+                // A file's own icon wins; presentation files then show the MarkdownPoint icon ahead of a folder icon
+                customIconId: fileIconId ?? (presentationRole ? MARKDOWNPOINT_ICON_ID : folderIconId),
                 metadataCache: app.metadataCache,
                 isExternalFile,
                 allowCategoryIcons,
@@ -731,6 +744,7 @@ export const FileItem = React.memo(function FileItem({
         file,
         isExternalFile,
         metadataVersion,
+        presentationRole,
         settings.fileNameIconMap,
         settings.externalIconProviders,
         settings.fileTypeIconPreset,
@@ -820,10 +834,10 @@ export const FileItem = React.memo(function FileItem({
                 <div
                     className="nn-file-name nn-file-name--inline-renaming"
                     data-has-color={applyColorToName ? 'true' : 'false'}
-                    data-title-rows={appearanceSettings.titleRows}
+                    data-title-rows={fileTitleRows}
                     style={
                         {
-                            '--filename-rows': appearanceSettings.titleRows,
+                            '--filename-rows': fileTitleRows,
                             ...(applyColorToName ? { '--nn-file-name-custom-color': fileTitleColor } : {})
                         } as React.CSSProperties
                     }
@@ -847,10 +861,10 @@ export const FileItem = React.memo(function FileItem({
             <div
                 className="nn-file-name"
                 data-has-color={applyColorToName ? 'true' : 'false'}
-                data-title-rows={appearanceSettings.titleRows}
+                data-title-rows={fileTitleRows}
                 style={
                     {
-                        '--filename-rows': appearanceSettings.titleRows,
+                        '--filename-rows': fileTitleRows,
                         ...(applyColorToName ? { '--nn-file-name-custom-color': fileTitleColor } : {})
                     } as React.CSSProperties
                 }
@@ -1507,6 +1521,27 @@ export const FileItem = React.memo(function FileItem({
         [file, fileIndex, onFileClick]
     );
 
+    let presentationContent: React.ReactNode = null;
+    if (presentationSummary && presentationRowRole === 'slides') {
+        // The cover title is the presentation folder, shown with its navigation display name
+        const presentationFolder = file.parent;
+        const presentationFolderName = presentationFolder
+            ? metadataService.getFolderDisplayData(presentationFolder.path, { includeDisplayName: true }).displayName ||
+              (presentationFolder.isRoot() ? app.vault.getName() : presentationFolder.name)
+            : '';
+        presentationContent = (
+            <PresentationCoverContent
+                titleElement={fileTitleElement}
+                folderName={presentationFolderName}
+                summary={presentationSummary}
+                displayDate={shouldShowDateForItem ? displayDate : ''}
+                themeMode={themeMode}
+            />
+        );
+    } else if (presentationSummary && presentationRowRole === 'companion') {
+        presentationContent = <PresentationDetailsContent titleElement={fileTitleElement} summary={presentationSummary} />;
+    }
+
     return (
         <div
             ref={fileRef}
@@ -1584,6 +1619,10 @@ export const FileItem = React.memo(function FileItem({
                             </div>
                             {renderedPillRows}
                         </div>
+                    ) : presentationContent ? (
+                        // ========== PRESENTATION ROW ==========
+                        // Fixed-height cover or detail layout for a MarkdownPoint presentation file
+                        presentationContent
                     ) : (
                         // ========== NORMAL MODE ==========
                         // Full layout with all enabled elements

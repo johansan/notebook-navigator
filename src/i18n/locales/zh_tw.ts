@@ -63,6 +63,14 @@ export const STRINGS_ZH_TW = {
         manualSortHint: '拖曳以重新排序。順序會以數字索引值儲存在屬性「{property}」中。',
         manualSortNonMarkdownHint: '非 Markdown 檔案顯示於底部，無法重新排序。',
         unsortedSection: '未排序',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} 張投影片',
+            slideCountOne: '1 張投影片',
+            theme: '主題',
+            slides: '投影片',
+            size: '尺寸'
+        },
         propertyGroupNoValue: '無',
         manualSortDone: '完成',
         manualSortMultipleWriteFailure: '{count} 個檔案失敗；第一個：{path}: {message}'

@@ -64,6 +64,14 @@ export const STRINGS_NL = {
             'Sleep om opnieuw te ordenen. De volgorde wordt opgeslagen als numerieke indexwaarden in de eigenschap "{property}".',
         manualSortNonMarkdownHint: 'Niet-Markdown-bestanden worden onderaan getoond en kunnen niet opnieuw worden geordend.',
         unsortedSection: 'Niet gesorteerd',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: "{count} dia's",
+            slideCountOne: '1 dia',
+            theme: 'Thema',
+            slides: "Dia's",
+            size: 'Grootte'
+        },
         propertyGroupNoValue: 'Geen',
         manualSortDone: 'Klaar',
         manualSortMultipleWriteFailure: '{count} bestanden mislukt; eerste: {path}: {message}'

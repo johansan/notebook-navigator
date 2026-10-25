@@ -63,6 +63,14 @@ export const STRINGS_FA = {
         manualSortHint: 'برای تغییر ترتیب بکشید. ترتیب به صورت مقادیر شاخص عددی در ویژگی «{property}» ذخیره می‌شود.',
         manualSortNonMarkdownHint: 'فایل‌های غیر مارک‌داون در پایین نمایش داده می‌شوند و قابل مرتب‌سازی مجدد نیستند.',
         unsortedSection: 'مرتب‌نشده',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} اسلاید',
+            slideCountOne: '1 اسلاید',
+            theme: 'پوسته',
+            slides: 'اسلایدها',
+            size: 'اندازه'
+        },
         propertyGroupNoValue: 'هیچ‌کدام',
         manualSortDone: 'انجام شد',
         manualSortMultipleWriteFailure: '{count} فایل ناموفق بود؛ اولین: {path}: {message}'

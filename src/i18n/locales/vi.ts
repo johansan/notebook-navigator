@@ -63,6 +63,14 @@ export const STRINGS_VI = {
         manualSortHint: 'Kéo để sắp xếp lại. Thứ tự được lưu dưới dạng giá trị chỉ số trong thuộc tính "{property}".',
         manualSortNonMarkdownHint: 'Các tệp không phải Markdown được hiển thị ở dưới cùng và không thể sắp xếp lại.',
         unsortedSection: 'Chưa sắp xếp',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} trang chiếu',
+            slideCountOne: '1 trang chiếu',
+            theme: 'Chủ đề',
+            slides: 'Trang chiếu',
+            size: 'Kích thước'
+        },
         propertyGroupNoValue: 'Không có',
         manualSortDone: 'Xong',
         manualSortMultipleWriteFailure: '{count} tệp thất bại; đầu tiên: {path}: {message}'

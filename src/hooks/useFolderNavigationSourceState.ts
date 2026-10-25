@@ -22,6 +22,7 @@ import { TFolder, type App, debounce } from 'obsidian';
 import type { ActiveProfileState } from '../context/SettingsContext';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import type { MetadataService } from '../services/MetadataService';
+import { getPresentationService } from '../services/PresentationService';
 import { getDBInstance, getDBInstanceOrNull } from '../storage/fileOperations';
 import { FOLDER_NOTE_TYPE_EXTENSIONS } from '../types/folderNote';
 import { TIMEOUTS } from '../types/obsidian-extended';
@@ -167,6 +168,9 @@ export function useFolderNavigationSourceState({
         }
     }, [flushFileChangeVersion]);
     useEffect(() => clearScheduledFileChangeVersionBump, [clearScheduledFileChangeVersionBump]);
+    // Folder counts include a verified presentation's .mdpoint companion, and verification finishes after the
+    // vault event that completed the pair, so role changes refresh the counts separately.
+    useEffect(() => getPresentationService()?.subscribeToRoles(scheduleFileChangeVersionBump), [scheduleFileChangeVersionBump]);
     const handleRootFolderChange = useCallback(() => {
         setFolderChangeVersion(value => value + 1);
     }, []);

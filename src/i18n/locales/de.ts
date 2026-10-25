@@ -63,6 +63,14 @@ export const STRINGS_DE = {
         manualSortHint: 'Zum Neuordnen ziehen. Die Reihenfolge wird als numerische Indexwerte in der Eigenschaft „{property}“ gespeichert.',
         manualSortNonMarkdownHint: 'Nicht-Markdown-Dateien werden unten angezeigt und können nicht neu geordnet werden.',
         unsortedSection: 'Unsortiert',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} Folien',
+            slideCountOne: '1 Folie',
+            theme: 'Thema',
+            slides: 'Folien',
+            size: 'Größe'
+        },
         propertyGroupNoValue: 'Keine',
         manualSortDone: 'Fertig',
         manualSortMultipleWriteFailure: '{count} Dateien fehlgeschlagen; erste: {path}: {message}'

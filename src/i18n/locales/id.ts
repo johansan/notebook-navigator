@@ -63,6 +63,14 @@ export const STRINGS_ID = {
         manualSortHint: 'Seret untuk mengatur ulang. Urutan disimpan sebagai nilai indeks numerik di properti "{property}".',
         manualSortNonMarkdownHint: 'File non-Markdown ditampilkan di bawah dan tidak dapat diatur ulang.',
         unsortedSection: 'Belum diurutkan',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} slide',
+            slideCountOne: '1 slide',
+            theme: 'Tema',
+            slides: 'Slide',
+            size: 'Ukuran'
+        },
         propertyGroupNoValue: 'Tidak ada',
         manualSortDone: 'Selesai',
         manualSortMultipleWriteFailure: '{count} file gagal; pertama: {path}: {message}'

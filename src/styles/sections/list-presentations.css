@@ -1,0 +1,110 @@
+/* Source: src/styles/sections/list-presentations.css */
+/* ========================================================================
+   Presentation Rows
+   ======================================================================== */
+
+/* MarkdownPoint presentations in the list pane: the slides.md row shows a cover slide below its file name and
+   the presentation.mdpoint row shows the theme, slide count and slide size. Both rows have fixed heights that
+   getPresentationRowHeight in src/utils/listPaneMeasurements.ts mirrors, so a change here must change it too. */
+
+/* The cover background, text and muted colors come from the presentation's theme as inline custom properties;
+   Obsidian's colors apply until the theme files are readable. */
+.nn-presentation-cover {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: 144px;
+    margin-top: 6px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: var(--nn-presentation-cover-bg, var(--background-secondary));
+    color: var(--nn-presentation-cover-text, var(--text-normal));
+    /* A hairline in the cover's own text color separates light covers from a light list background */
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nn-presentation-cover-text, var(--text-normal)) 10%, transparent);
+}
+
+.nn-presentation-cover-eyebrow,
+.nn-presentation-cover-date {
+    flex-shrink: 0;
+    overflow: hidden;
+    font-size: var(--nn-file-small-size-mobile, var(--nn-file-small-size));
+    line-height: var(--nn-file-single-text-line-height);
+    color: var(--nn-presentation-cover-muted, var(--text-muted));
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* The eyebrow takes the free space below it, so the title and date sit at the bottom and long titles grow upward */
+.nn-presentation-cover-eyebrow {
+    margin-bottom: auto;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Three title lines fill the cover between the eyebrow and the date at the desktop font size */
+.nn-presentation-cover-title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: calc(var(--nn-file-name-size-mobile, var(--nn-file-name-size)) * 1.5);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+/* The larger mobile title fits two lines, otherwise the date is cut off at the bottom of the cover */
+.nn-mobile .nn-presentation-cover-title {
+    -webkit-line-clamp: 2;
+}
+
+/* Centered Title layouts stack the eyebrow, title and date above the lower part of the cover */
+.nn-presentation-cover[data-align='center'] {
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 24px;
+    text-align: center;
+}
+
+.nn-presentation-cover[data-align='center'] .nn-presentation-cover-eyebrow {
+    margin-bottom: 0;
+}
+
+.nn-presentation-cover[data-align='center'] .nn-presentation-cover-title {
+    -webkit-line-clamp: 2;
+}
+
+/* Three single-line rows of label and value, matching the list's metadata lines */
+.nn-presentation-details {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0 12px;
+    margin: 0;
+    font-size: var(--nn-file-small-size-mobile, var(--nn-file-small-size));
+    line-height: var(--nn-file-single-text-line-height);
+}
+
+.nn-presentation-details dt {
+    color: var(--nn-theme-file-date-color);
+}
+
+.nn-presentation-details dd {
+    overflow: hidden;
+    margin: 0;
+    color: var(--nn-theme-file-preview-color);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nn-file.nn-selected .nn-presentation-details dt {
+    color: var(--nn-selected-file-date-color);
+}
+
+.nn-file.nn-selected .nn-presentation-details dd {
+    color: var(--nn-selected-file-preview-color);
+}

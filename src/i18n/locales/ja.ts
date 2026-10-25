@@ -63,6 +63,14 @@ export const STRINGS_JA = {
         manualSortHint: 'ドラッグして並べ替えます。並び順は数値インデックス値としてプロパティ「{property}」に保存されます。',
         manualSortNonMarkdownHint: 'Markdown 以外のファイルは下部に表示され、並べ替えできません。',
         unsortedSection: '未ソート',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} 枚のスライド',
+            slideCountOne: '1 枚のスライド',
+            theme: 'テーマ',
+            slides: 'スライド',
+            size: 'サイズ'
+        },
         propertyGroupNoValue: 'なし',
         manualSortDone: '完了',
         manualSortMultipleWriteFailure: '{count} 件のファイルが失敗しました。最初: {path}: {message}'

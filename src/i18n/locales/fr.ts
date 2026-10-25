@@ -64,6 +64,14 @@ export const STRINGS_FR = {
             "Glissez pour réorganiser. L'ordre est enregistré sous forme de valeurs numériques dans la propriété « {property} ».",
         manualSortNonMarkdownHint: 'Les fichiers non Markdown sont affichés en bas et ne peuvent pas être réorganisés.',
         unsortedSection: 'Non trié',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} diapositives',
+            slideCountOne: '1 diapositive',
+            theme: 'Thème',
+            slides: 'Diapositives',
+            size: 'Taille'
+        },
         propertyGroupNoValue: 'Aucun',
         manualSortDone: 'Terminé',
         manualSortMultipleWriteFailure: '{count} fichiers ont échoué ; premier : {path} : {message}'

@@ -63,6 +63,14 @@ export const STRINGS_PT = {
         manualSortHint: 'Arraste para reordenar. A ordem é guardada como valores de índice numéricos na propriedade "{property}".',
         manualSortNonMarkdownHint: 'Os ficheiros não Markdown são mostrados no fundo e não podem ser reordenados.',
         unsortedSection: 'Sem ordenação',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} diapositivos',
+            slideCountOne: '1 diapositivo',
+            theme: 'Tema',
+            slides: 'Diapositivos',
+            size: 'Tamanho'
+        },
         propertyGroupNoValue: 'Nenhum',
         manualSortDone: 'Concluído',
         manualSortMultipleWriteFailure: '{count} ficheiros falharam; primeiro: {path}: {message}'

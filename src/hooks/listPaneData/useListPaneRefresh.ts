@@ -34,6 +34,7 @@ import type { PropertySelectionNodeId } from '../../utils/propertyTree';
 import { createFrontmatterPropertyExclusionMatcher } from '../../utils/fileFilters';
 import { getCachedManualSortGroupHeader } from '../../utils/manualSort';
 import { DateUtils } from '../../utils/dateUtils';
+import { getPresentationService } from '../../services/PresentationService';
 
 interface UseListPaneRefreshArgs {
     app: App;
@@ -323,6 +324,12 @@ export function useListPaneRefresh({
                 queueRefresh();
             });
         }
+        // A verified presentation shows its .mdpoint companion under every file visibility option, so the
+        // list membership changes when a pair is verified or broken, after the vault event that caused it.
+        const unsubscribePresentations =
+            getPresentationService()?.subscribeToRoles(() => {
+                queueRefresh();
+            }) ?? null;
         let unsubscribeTagTree: (() => void) | null = null;
         if (
             selectionType === ItemType.TAG &&
@@ -562,6 +569,7 @@ export function useListPaneRefresh({
             unsubscribeOperationQueue?.();
             unsubscribePropertyTree?.();
             unsubscribeTagTree?.();
+            unsubscribePresentations?.();
             scheduleRefresh.cancel();
         };
     }, [

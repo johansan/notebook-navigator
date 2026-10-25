@@ -63,6 +63,14 @@ export const STRINGS_KO = {
         manualSortHint: '드래그하여 순서를 변경하세요. 순서는 숫자 인덱스 값으로 속성 "{property}"에 저장됩니다.',
         manualSortNonMarkdownHint: '마크다운이 아닌 파일은 하단에 표시되며 순서를 변경할 수 없습니다.',
         unsortedSection: '정렬되지 않음',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '슬라이드 {count}개',
+            slideCountOne: '슬라이드 1개',
+            theme: '테마',
+            slides: '슬라이드',
+            size: '크기'
+        },
         propertyGroupNoValue: '없음',
         manualSortDone: '완료',
         manualSortMultipleWriteFailure: '{count}개 파일 실패; 첫 번째: {path}: {message}'

@@ -17,6 +17,7 @@
  */
 
 import { App, TFile } from 'obsidian';
+import { getPresentationFileRole } from '../services/PresentationService';
 import { ExtendedApp } from '../types/obsidian-extended';
 
 /**
@@ -144,6 +145,12 @@ export function shouldDisplayFile(file: TFile, visibility: FileVisibility, app: 
     // Validate inputs
     if (!file?.extension) {
         return false;
+    }
+
+    // A verified presentation's .mdpoint companion shows beside its slides.md under every visibility option,
+    // although Obsidian has no view for the extension
+    if (visibility !== FILE_VISIBILITY.ALL && getPresentationFileRole(file) === 'companion') {
+        return true;
     }
 
     switch (visibility) {

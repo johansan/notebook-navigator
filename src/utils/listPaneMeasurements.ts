@@ -21,6 +21,7 @@ import { ItemType, ListPaneItemType, type NavigationItemType } from '../types';
 import type { FeatureImageStatus, FileData } from '../storage/IndexedDBStorage';
 import { type FeatureImageSizeSetting } from '../settings/types';
 import type { ListPaneItem } from '../types/virtualization';
+import type { PresentationFileRole } from '../services/PresentationService';
 import { isRasterImageFile } from './fileTypeUtils';
 import {
     buildPropertyKeyNodeId,
@@ -103,6 +104,24 @@ export function getFeatureImageDisplayMeasurements(featureImageSize: FeatureImag
 
 export function getListPaneMeasurements(isMobile: boolean): ListPaneMeasurements {
     return isMobile ? MOBILE_MEASUREMENTS : DESKTOP_MEASUREMENTS;
+}
+
+// Mirror --nn-presentation-cover-height and --nn-presentation-cover-gap in list-presentations.css
+const PRESENTATION_COVER_HEIGHT = 144;
+const PRESENTATION_COVER_GAP = 6;
+// Theme, slides and size lines in the presentation.mdpoint row
+const PRESENTATION_DETAIL_LINE_COUNT = 3;
+
+/**
+ * Fixed heights for presentation rows in the normal list mode. Both rows ignore the title rows, preview,
+ * image and pill settings, so FileItem and the virtualizer estimate agree without reading row content:
+ * the slides.md row is one title line above the cover, the companion row one title line above three detail lines.
+ */
+export function getPresentationRowHeight(role: PresentationFileRole, measurements: ListPaneMeasurements): number {
+    if (role === 'slides') {
+        return measurements.basePadding + measurements.titleLineHeight + PRESENTATION_COVER_GAP + PRESENTATION_COVER_HEIGHT;
+    }
+    return measurements.basePadding + measurements.titleLineHeight + measurements.singleTextLineHeight * PRESENTATION_DETAIL_LINE_COUNT;
 }
 
 export function getListPaneHeaderHeight(item: ListPaneItem | undefined, measurements: ListPaneMeasurements): number {

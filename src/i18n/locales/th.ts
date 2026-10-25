@@ -63,6 +63,14 @@ export const STRINGS_TH = {
         manualSortHint: 'ลากเพื่อจัดเรียงใหม่ ลำดับจะถูกบันทึกเป็นค่าดัชนีตัวเลขในคุณสมบัติ "{property}"',
         manualSortNonMarkdownHint: 'ไฟล์ที่ไม่ใช่ Markdown จะแสดงด้านล่างและไม่สามารถจัดเรียงใหม่ได้',
         unsortedSection: 'ยังไม่จัดเรียง',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: '{count} สไลด์',
+            slideCountOne: '1 สไลด์',
+            theme: 'ธีม',
+            slides: 'สไลด์',
+            size: 'ขนาด'
+        },
         propertyGroupNoValue: 'ไม่มี',
         manualSortDone: 'เสร็จ',
         manualSortMultipleWriteFailure: '{count} ไฟล์ล้มเหลว ไฟล์แรก: {path}: {message}'

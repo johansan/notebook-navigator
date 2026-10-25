@@ -64,6 +64,14 @@ export const STRINGS_PL = {
             'Przeciągnij, aby zmienić kolejność. Kolejność jest zapisywana jako wartości indeksu liczbowego w atrybucie „{property}”.',
         manualSortNonMarkdownHint: 'Pliki inne niż Markdown są wyświetlane na dole i nie można zmieniać ich kolejności.',
         unsortedSection: 'Nieposortowane',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: 'Slajdy: {count}',
+            slideCountOne: '1 slajd',
+            theme: 'Motyw',
+            slides: 'Slajdy',
+            size: 'Rozmiar'
+        },
         propertyGroupNoValue: 'Brak',
         manualSortDone: 'Gotowe',
         manualSortMultipleWriteFailure: 'Nie udało się przetworzyć plików: {count}; pierwszy: {path}: {message}'

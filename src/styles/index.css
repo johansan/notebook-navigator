@@ -62,6 +62,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/list-compact-mode.css';
 /* list-file-thumbnails.css: file thumbnails (`.nn-file-thumbnail*`) and extension badge rendering for non-markdown files. */
 @import './sections/list-file-thumbnails.css';
+/* list-presentations.css: MarkdownPoint presentation rows, the slides.md cover (`.nn-presentation-cover*`) and presentation.mdpoint details (`.nn-presentation-details`). */
+@import './sections/list-presentations.css';
 /* list-group-headers.css: list group headers (`.nn-list-group-header*`) plus skeleton view layout during load. */
 @import './sections/list-group-headers.css';
 /* inline-rename.css: inline rename input sizing in navigation and list rows. */

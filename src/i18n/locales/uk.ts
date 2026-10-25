@@ -64,6 +64,14 @@ export const STRINGS_UK = {
             'Перетягуйте для зміни порядку. Порядок зберігається у вигляді числових значень індексу у властивості «{property}».',
         manualSortNonMarkdownHint: 'Файли, відмінні від Markdown, показуються внизу, і їхній порядок не можна змінити.',
         unsortedSection: 'Без сортування',
+        // MarkdownPoint presentation rows: the cover slide count and the presentation.mdpoint detail labels
+        presentation: {
+            slideCount: 'Слайдів: {count}',
+            slideCountOne: '1 слайд',
+            theme: 'Тема',
+            slides: 'Слайди',
+            size: 'Розмір'
+        },
         propertyGroupNoValue: 'Немає',
         manualSortDone: 'Готово',
         manualSortMultipleWriteFailure: 'Не вдалося обробити файлів ({count}); перший: {path}: {message}'
