@@ -29,6 +29,7 @@ import { isDualPaneSupported } from '../../utils/paneLayout';
 import { localStorage } from '../../utils/localStorage';
 import { runAsyncAction } from '../../utils/async';
 import { showNotice } from '../../utils/noticeUtils';
+import { SHOW_MARKDOWNPOINT_BANNER } from '../markdownPointBanner';
 import { createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import { getNotSyncedSettingName } from '../syncModeToggle';
 
@@ -41,7 +42,8 @@ export function createAdvancedSettingDefinitions(context: SettingsTabContext): S
         }),
         createToggleDefinition('showMarkdownPointBannerAtTop', {
             name: strings.settings.items.markdownPointBanner.atTop.name,
-            desc: strings.settings.items.markdownPointBanner.atTop.desc
+            desc: strings.settings.items.markdownPointBanner.atTop.desc,
+            visible: SHOW_MARKDOWNPOINT_BANNER
         }),
         createRenderDefinition({
             name: getNotSyncedSettingName(strings.settings.items.startupDebugLogging.name),
