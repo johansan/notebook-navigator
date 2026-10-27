@@ -107,25 +107,25 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.5.0',
-        date: '2026-10-13',
+        date: '2026-10-27',
         showOnUpdate: true,
         banner: '3.5.0.jpg',
         info: "Thank you to everyone who bought me a coffee! For the past year I have worked on a new presentation app. I give two or three presentations every week at work, and I never really liked **Keynote** or **PowerPoint**. I tried **Canva**, but it locks your slides in, and I tried **Slidev**, but found it clumsy, cluttered and limited. So I made my own: [MarkdownPoint](https://markdownpoint.com).\n\nIt's out now, and it's free for real, for both personal and commercial use. It's like a mix of **After Effects**, **Motion**, **Figma**, **Illustrator**, **Canva**, **Keynote** and **PowerPoint**, bringing the strongest features of each app into one. It ships as a desktop app for Mac and Windows, with no tracking, no in-app purchases and no subscriptions. Just free. The optional online collaboration and sharing features are paid with my coffee money, and I'll keep these free for as long as I can afford it. \n\nGive it a try at [markdownpoint.com](https://markdownpoint.com) and let me know if you love using it as much as I do!",
         new: [
+            'Folders, tags and properties can now be reordered at every level by dragging in `Reorder navigation`, where right-clicking an item offers `Manual sort`, `A to Z`, `Z to A` and `Default`.',
+            'Tags and properties can now be grouped by `Folder` in the sort menu, which lists each note under its parent folder.',
             "Added a small banner at the top of settings for MarkdownPoint. If you don't want it, disable the new setting Advanced > ==Show MarkdownPoint banner at the top== that moves it below settings. You can even hide it completely with a [CSS snippet](https://github.com/johansan/notebook-navigator/wiki/Custom-CSS#hide-the-markdownpoint-banner-in-settings).",
             'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
             'New commands `Open next periodic note` and `Open previous periodic note` open the note for the next or previous day, week, month, quarter or year from the active periodic note, and create the note when it is missing.',
-            'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.',
-            'Tags and properties can now be grouped by `Folder` in the sort menu, which lists each note under its parent folder.',
-            'Folders, tags and properties can now be reordered at every level by dragging in `Reorder navigation`, where right-clicking an item offers `Manual sort`, `A to Z`, `Z to A` and `Default`.'
+            'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.'
         ],
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',
             'Added a sync toggle to ==Default list mode==, so you can use compact mode on your phone to show more notes at a time and keep standard mode on your desktop.'
         ],
         changed: [
-            'Raised the minimum Obsidian version to 1.13.',
-            'Changed property sorting to match Obsidian Bases: links with an alias sort by the alias, and notes missing a checkbox property sort together with unchecked notes.'
+            'Changed property sorting to match Obsidian Bases: links with an alias sort by the alias, and notes missing a checkbox property sort together with unchecked notes.',
+            'Raised the minimum Obsidian version to 1.13.'
         ],
         fixed: [
             'Searching the Vault tab of the icon picker now lists the closest matches first, so SVG icons with short file names no longer drop out of the 50 shown results [#1526](https://github.com/johansan/notebook-navigator/issues/1526).',
