@@ -106,6 +106,16 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.5.1',
+        date: '2026-10-27',
+        showOnUpdate: true,
+        info: "Thank you to everyone who bought me a coffee! For the past year I have worked on a new presentation app. I give two or three presentations every week at work, and I never really liked **Keynote** or **PowerPoint**. I tried **Canva**, but it locks your slides in, and I tried **Slidev**, but found it clumsy, cluttered and limited. So I made my own: [MarkdownPoint](https://markdownpoint.com).\n\nIt's out now, and it's free for real, for both personal and commercial use. It's like a mix of **After Effects**, **Motion**, **Figma**, **Illustrator**, **Canva**, **Keynote** and **PowerPoint**, bringing the strongest features of each app into one. It ships as a desktop app for Mac and Windows, with no tracking, no in-app purchases and no subscriptions. Just free. The optional online collaboration and sharing features are paid with my coffee money, and I'll keep these free for as long as I can afford it. \n\nGive it a try at [markdownpoint.com](https://markdownpoint.com) and let me know if you love using it as much as I do!",
+        new: [
+            "Added a small banner at the top of settings for MarkdownPoint. If you don't want it, disable the new setting Advanced > ==Show MarkdownPoint banner at the top== that moves it below settings. You can even hide it completely with a [CSS snippet](https://github.com/johansan/notebook-navigator/wiki/Custom-CSS#hide-the-markdownpoint-banner-in-settings).",
+            'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.'
+        ]
+    },
+    {
         version: '3.5.0',
         date: '2026-10-27',
         showOnUpdate: true,
