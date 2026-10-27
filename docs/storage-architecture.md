@@ -326,6 +326,7 @@ export interface NotebookNavigatorSettings {
   folderBackgroundColors: Record<string, string>;
   folderSortOverrides: Record<string, ListSortOverrideValue>;
   folderTreeSortOverrides: Record<string, AlphaSortOrder>;
+  folderChildOrder: Record<string, string[]>; // Manual subfolder names per parent path, '/' for the vault root
   folderAppearances: Record<string, FolderAppearance>;
 
   tagIcons: Record<string, string>;
@@ -333,12 +334,14 @@ export interface NotebookNavigatorSettings {
   tagBackgroundColors: Record<string, string>;
   tagSortOverrides: Record<string, ListSortOverrideValue>;
   tagTreeSortOverrides: Record<string, AlphaSortOrder>;
+  tagChildOrder: Record<string, string[]>; // Manual nested tag order per lowercase parent tag path
   tagAppearances: Record<string, TagAppearance>;
   propertyIcons: Record<string, string>;
   propertyColors: Record<string, string>;
   propertyBackgroundColors: Record<string, string>;
   propertySortOverrides: Record<string, ListSortOverrideValue>;
   propertyTreeSortOverrides: Record<string, AlphaSortOrder>;
+  propertyChildOrder: Record<string, string[]>; // Manual value order per property key node id
   propertyAppearances: Record<string, FolderAppearance>;
   virtualFolderColors: Record<string, string>;
   virtualFolderBackgroundColors: Record<string, string>;
@@ -346,7 +349,6 @@ export interface NotebookNavigatorSettings {
   navigationSeparators: Record<string, boolean>;
   userColors: string[];
   lastShownVersion: string;
-  rootFolderOrder: string[];
   rootTagOrder: string[];
   rootPropertyOrder: string[];
 }

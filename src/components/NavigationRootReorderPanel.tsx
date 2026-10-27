@@ -22,7 +22,10 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { RootFolderReorderItem } from './RootFolderReorderItem';
 import { strings } from '../i18n';
-import type { SectionReorderRenderItem, RootReorderRenderItem } from '../hooks/useNavigationRootReorder';
+import type { ReorderTreeNode, ReorderTreeSource, ReorderTreeType, SectionReorderRenderItem } from '../hooks/useNavigationRootReorder';
+import { useSettingsState } from '../context/SettingsContext';
+import { isRecord } from '../utils/typeGuards';
+import { resolveUXIcon } from '../utils/uxIcons';
 import { NavigationSectionId } from '../types';
 import { runAsyncAction } from '../utils/async';
 import { ObsidianIcon } from './ObsidianIcon';
@@ -35,9 +38,9 @@ import {
 
 interface NavigationRootReorderPanelProps {
     sectionItems: SectionReorderRenderItem[];
-    folderItems: RootReorderRenderItem[];
-    tagItems: RootReorderRenderItem[];
-    propertyItems: RootReorderRenderItem[];
+    folderTree: ReorderTreeSource;
+    tagTree: ReorderTreeSource;
+    propertyTree: ReorderTreeSource;
     isMobile: boolean;
     showRootFolderSection: boolean;
     showRootTagSection: boolean;
@@ -45,81 +48,111 @@ interface NavigationRootReorderPanelProps {
     foldersSectionExpanded: boolean;
     tagsSectionExpanded: boolean;
     propertiesSectionExpanded: boolean;
-    showRootFolderReset: boolean;
-    showRootTagReset: boolean;
-    showRootPropertyReset: boolean;
-    resetRootTagOrderLabel: string;
-    resetRootPropertyOrderLabel: string;
-    onResetRootFolderOrder: () => Promise<void> | void;
-    onResetRootTagOrder: () => Promise<void> | void;
-    onResetRootPropertyOrder: () => Promise<void> | void;
+    showFolderReset: boolean;
+    showTagReset: boolean;
+    showPropertyReset: boolean;
+    onResetFolders: () => Promise<void> | void;
+    onResetTags: () => Promise<void> | void;
+    onResetProperties: () => Promise<void> | void;
     onReorderSections: (orderedKeys: NavigationSectionId[]) => Promise<void> | void;
-    onReorderFolders: (orderedKeys: string[]) => Promise<void> | void;
-    onReorderTags: (orderedKeys: string[]) => Promise<void> | void;
-    onReorderProperties: (orderedKeys: string[]) => Promise<void> | void;
+    onReorderChildren: (type: ReorderTreeType, parentPath: string, orderedNames: string[]) => Promise<void> | void;
     canReorderSections: boolean;
-    canReorderFolders: boolean;
-    canReorderTags: boolean;
-    canReorderProperties: boolean;
 }
 
-interface RootSortableEntry {
-    sortableId: string;
-    item: RootReorderRenderItem;
+interface TreeSortableData {
+    type: ReorderTreeType;
+    parentPath: string;
+    name: string;
 }
 
-interface SortableItemProps {
-    entry: RootSortableEntry;
-    canReorder: boolean;
+function isReorderTreeType(value: unknown): value is ReorderTreeType {
+    return value === 'folder' || value === 'tag' || value === 'property';
+}
+
+function readTreeSortableData(data: unknown): TreeSortableData | null {
+    if (!isRecord(data) || !isReorderTreeType(data.type) || typeof data.parentPath !== 'string' || typeof data.name !== 'string') {
+        return null;
+    }
+    return { type: data.type, parentPath: data.parentPath, name: data.name };
+}
+
+interface ReorderTreeContext extends ReorderTreeSource {
+    expandIcon: string;
+    collapseIcon: string;
     isMobile: boolean;
 }
 
-function SortableRootItem({ entry, canReorder, isMobile }: SortableItemProps) {
-    const { item, sortableId } = entry;
-    const { attributes, listeners, setNodeRef, transform, transition, isSorting } = useSortable({
-        id: sortableId,
-        disabled: !canReorder,
-        data: { type: item.props.itemType }
+interface SortableTreeNodeProps {
+    node: ReorderTreeNode;
+    tree: ReorderTreeContext;
+}
+
+/**
+ * One sortable row whose element wraps the row and its expanded children, so the drag transform moves the whole
+ * branch. Drag listeners stay on the row (or its grip on mobile), so dragging a nested row moves only that branch.
+ */
+function SortableTreeNode({ node, tree }: SortableTreeNodeProps) {
+    const sortableData: TreeSortableData = { type: tree.type, parentPath: node.parentPath, name: node.name };
+    const { attributes, listeners, setNodeRef, transform, transition, isSorting, isDragging } = useSortable({
+        id: `${tree.type}:${node.key}`,
+        disabled: !tree.canReorder,
+        data: sortableData
     });
 
-    const dragStyle = transform ? { transform: CSS.Transform.toString(transform), transition } : undefined;
+    const isExpanded = node.hasChildren && tree.expanded.has(node.key);
+    // Translate only: dnd-kit scales the dragged item to the hovered item's size, and a hovered
+    // row's size includes its expanded children
+    const dragStyle = transform ? { transform: CSS.Translate.toString(transform), transition } : undefined;
     const dragHandleConfig = useMemo(
         () => ({
-            visible: isMobile && canReorder,
+            visible: tree.isMobile && tree.canReorder,
             icon: 'lucide-grip-horizontal',
-            interactive: isMobile && canReorder,
-            only: isMobile
+            interactive: tree.isMobile && tree.canReorder,
+            only: tree.isMobile
         }),
-        [canReorder, isMobile]
+        [tree.canReorder, tree.isMobile]
     );
+    const { onToggle } = tree;
+    const handleToggle = useCallback(() => {
+        onToggle(node.key);
+    }, [node.key, onToggle]);
 
     return (
-        <RootFolderReorderItem
-            {...item.props}
-            dragRef={setNodeRef}
-            dragAttributes={attributes}
-            dragListeners={listeners}
-            dragStyle={dragStyle}
-            isSorting={isSorting}
-            dragHandleConfig={dragHandleConfig}
-        />
+        <div
+            ref={setNodeRef}
+            style={dragStyle}
+            className={isDragging ? 'nn-root-reorder-branch nn-root-reorder-branch--dragging' : 'nn-root-reorder-branch'}
+        >
+            <RootFolderReorderItem
+                {...node.props}
+                chevronIcon={node.hasChildren ? (isExpanded ? tree.collapseIcon : tree.expandIcon) : undefined}
+                onClick={node.hasChildren ? handleToggle : undefined}
+                dragAttributes={attributes}
+                dragListeners={listeners}
+                isSorting={isSorting}
+                dragHandleConfig={dragHandleConfig}
+            />
+            {/* The dragged row moves alone, so its drop slot opens at the pointer; its children return on drop */}
+            {isExpanded && !isDragging ? <ReorderTreeList parentPath={node.key} tree={tree} /> : null}
+        </div>
     );
 }
 
-interface SortableListProps {
-    entries: RootSortableEntry[];
-    canReorder: boolean;
+interface ReorderTreeListProps {
+    parentPath: string;
+    tree: ReorderTreeContext;
     children?: React.ReactNode;
-    isMobile: boolean;
 }
 
-function SortableList({ entries, canReorder, children, isMobile }: SortableListProps) {
-    const itemIds = useMemo(() => entries.map(entry => entry.sortableId), [entries]);
+/** The children of one parent; each parent is its own sortable list, so drops stay among siblings. */
+function ReorderTreeList({ parentPath, tree, children }: ReorderTreeListProps) {
+    const nodes = tree.getChildren(parentPath);
+    const itemIds = nodes.map(node => `${tree.type}:${node.key}`);
     return (
         <>
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                {entries.map(entry => (
-                    <SortableRootItem key={entry.sortableId} entry={entry} canReorder={canReorder} isMobile={isMobile} />
+                {nodes.map(node => (
+                    <SortableTreeNode key={node.key} node={node} tree={tree} />
                 ))}
             </SortableContext>
             {children}
@@ -134,13 +167,20 @@ interface SectionEntry {
 
 interface ResetActionProps {
     label: string;
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onReset: () => Promise<void> | void;
 }
 
-function ResetAction({ label, onClick }: ResetActionProps) {
+function ResetAction({ label, onReset }: ResetActionProps) {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        runAsyncAction(async () => {
+            await onReset();
+        });
+    };
     return (
         <div className="nn-root-reorder-actions">
-            <button type="button" className="nn-root-reorder-reset nn-support-button" onClick={onClick}>
+            <button type="button" className="nn-root-reorder-reset nn-support-button" onClick={handleClick}>
                 <span className="nn-root-reorder-reset-icon" aria-hidden="true">
                     Aa
                 </span>
@@ -152,9 +192,9 @@ function ResetAction({ label, onClick }: ResetActionProps) {
 
 export function NavigationRootReorderPanel({
     sectionItems,
-    folderItems,
-    tagItems,
-    propertyItems,
+    folderTree: folderSource,
+    tagTree: tagSource,
+    propertyTree: propertySource,
     isMobile,
     showRootFolderSection,
     showRootTagSection,
@@ -162,55 +202,17 @@ export function NavigationRootReorderPanel({
     foldersSectionExpanded,
     tagsSectionExpanded,
     propertiesSectionExpanded,
-    showRootFolderReset,
-    showRootTagReset,
-    showRootPropertyReset,
-    resetRootTagOrderLabel,
-    resetRootPropertyOrderLabel,
-    onResetRootFolderOrder,
-    onResetRootTagOrder,
-    onResetRootPropertyOrder,
+    showFolderReset,
+    showTagReset,
+    showPropertyReset,
+    onResetFolders,
+    onResetTags,
+    onResetProperties,
     onReorderSections,
-    onReorderFolders,
-    onReorderTags,
-    onReorderProperties,
-    canReorderSections,
-    canReorderFolders,
-    canReorderTags,
-    canReorderProperties
+    onReorderChildren,
+    canReorderSections
 }: NavigationRootReorderPanelProps) {
-    const handleResetFolders = useCallback(
-        (event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            event.stopPropagation();
-            runAsyncAction(async () => {
-                await onResetRootFolderOrder();
-            });
-        },
-        [onResetRootFolderOrder]
-    );
-
-    const handleResetTags = useCallback(
-        (event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            event.stopPropagation();
-            runAsyncAction(async () => {
-                await onResetRootTagOrder();
-            });
-        },
-        [onResetRootTagOrder]
-    );
-
-    const handleResetProperties = useCallback(
-        (event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            event.stopPropagation();
-            runAsyncAction(async () => {
-                await onResetRootPropertyOrder();
-            });
-        },
-        [onResetRootPropertyOrder]
-    );
+    const settings = useSettingsState();
 
     const sectionEntries = useMemo<SectionEntry[]>(() => {
         return sectionItems.map(item => ({
@@ -219,45 +221,25 @@ export function NavigationRootReorderPanel({
         }));
     }, [sectionItems]);
 
-    const folderEntries = useMemo<RootSortableEntry[]>(() => {
-        return folderItems.map(item => ({
-            sortableId: `folder:${item.key}`,
-            item
-        }));
-    }, [folderItems]);
-
-    const tagEntries = useMemo<RootSortableEntry[]>(() => {
-        return tagItems.map(item => ({
-            sortableId: `tag:${item.key}`,
-            item
-        }));
-    }, [tagItems]);
-
-    const propertyEntries = useMemo<RootSortableEntry[]>(() => {
-        return propertyItems.map(item => ({
-            sortableId: `property:${item.key}`,
-            item
-        }));
-    }, [propertyItems]);
-
-    const sortableRegistry = useMemo(() => {
-        const map = new Map<string, { type: 'folder' | 'tag' | 'property'; key: string }>();
-        folderEntries.forEach(entry => {
-            map.set(entry.sortableId, { type: 'folder', key: entry.item.key });
-        });
-        tagEntries.forEach(entry => {
-            map.set(entry.sortableId, { type: 'tag', key: entry.item.key });
-        });
-        propertyEntries.forEach(entry => {
-            map.set(entry.sortableId, { type: 'property', key: entry.item.key });
-        });
-        return map;
-    }, [folderEntries, propertyEntries, tagEntries]);
+    const expandIcon = resolveUXIcon(settings.interfaceIcons, 'nav-tree-expand');
+    const collapseIcon = resolveUXIcon(settings.interfaceIcons, 'nav-tree-collapse');
+    const folderTree = useMemo<ReorderTreeContext>(
+        () => ({ ...folderSource, expandIcon, collapseIcon, isMobile }),
+        [collapseIcon, expandIcon, folderSource, isMobile]
+    );
+    const tagTree = useMemo<ReorderTreeContext>(
+        () => ({ ...tagSource, expandIcon, collapseIcon, isMobile }),
+        [collapseIcon, expandIcon, isMobile, tagSource]
+    );
+    const propertyTree = useMemo<ReorderTreeContext>(
+        () => ({ ...propertySource, expandIcon, collapseIcon, isMobile }),
+        [collapseIcon, expandIcon, isMobile, propertySource]
+    );
+    const hasRootFolderRows = folderSource.getChildren('/').length > 0;
+    const hasRootTagRows = tagSource.getChildren('/').length > 0;
+    const hasRootPropertyRows = propertySource.getChildren('/').length > 0;
 
     const sectionIds = useMemo(() => sectionEntries.map(entry => entry.id), [sectionEntries]);
-    const folderIds = useMemo(() => folderEntries.map(entry => entry.item.key), [folderEntries]);
-    const tagIds = useMemo(() => tagEntries.map(entry => entry.item.key), [tagEntries]);
-    const propertyIds = useMemo(() => propertyEntries.map(entry => entry.item.key), [propertyEntries]);
     const sectionIndexMap = useMemo(() => {
         return new Map<NavigationSectionId, number>(sectionIds.map((id, index) => [id, index]));
     }, [sectionIds]);
@@ -296,82 +278,51 @@ export function NavigationRootReorderPanel({
         [moveSection]
     );
 
-    const handlePropertyDragEnd = useCallback(
-        (activeKey: string, overKey: string) => {
-            if (!canReorderProperties) {
-                return;
-            }
-            const oldIndex = propertyIds.indexOf(activeKey);
-            const newIndex = propertyIds.indexOf(overKey);
-            if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
-                return;
-            }
-            const next = arrayMove(propertyIds, oldIndex, newIndex);
-            runAsyncAction(async () => {
-                await onReorderProperties(next);
-            });
-        },
-        [canReorderProperties, onReorderProperties, propertyIds]
-    );
-
     const hasSortableContent =
         sectionEntries.length > 0 ||
-        (showRootFolderSection && folderEntries.length > 0) ||
-        (showRootTagSection && tagEntries.length > 0) ||
-        (showRootPropertySection && propertyEntries.length > 0);
+        (showRootFolderSection && hasRootFolderRows) ||
+        (showRootTagSection && hasRootTagRows) ||
+        (showRootPropertySection && hasRootPropertyRows);
 
     const handleDragEnd = useCallback(
         (event: DragEndEvent) => {
-            const activeId = event.active.id as string;
-            const overId = event.over?.id as string | undefined;
-            if (!overId) {
+            const active = readTreeSortableData(event.active.data.current);
+            const over = readTreeSortableData(event.over?.data.current);
+            if (!active || !over || over.type !== active.type || over.parentPath !== active.parentPath) {
                 return;
             }
-
-            const active = sortableRegistry.get(activeId);
-            const over = sortableRegistry.get(overId);
-            if (!active || !over) {
+            const source = active.type === 'folder' ? folderSource : active.type === 'tag' ? tagSource : propertySource;
+            if (!source.canReorder) {
                 return;
             }
-            if (active.type !== over.type) {
+            const siblingNames = source.getChildren(active.parentPath).map(node => node.name);
+            const oldIndex = siblingNames.indexOf(active.name);
+            const newIndex = siblingNames.indexOf(over.name);
+            if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
                 return;
             }
-
-            if (active.type === 'folder') {
-                if (!canReorderFolders) {
-                    return;
-                }
-                const oldIndex = folderIds.indexOf(active.key);
-                const newIndex = folderIds.indexOf(over.key);
-                if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
-                    return;
-                }
-                const next = arrayMove(folderIds, oldIndex, newIndex);
-                runAsyncAction(async () => {
-                    await onReorderFolders(next);
-                });
-                return;
-            }
-
-            if (active.type === 'tag') {
-                if (!canReorderTags) {
-                    return;
-                }
-                const oldIndex = tagIds.indexOf(active.key);
-                const newIndex = tagIds.indexOf(over.key);
-                if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
-                    return;
-                }
-                const next = arrayMove(tagIds, oldIndex, newIndex);
-                runAsyncAction(async () => {
-                    await onReorderTags(next);
-                });
-                return;
-            }
-
-            handlePropertyDragEnd(active.key, over.key);
+            const next = arrayMove(siblingNames, oldIndex, newIndex);
+            runAsyncAction(async () => {
+                await onReorderChildren(active.type, active.parentPath, next);
+            });
         },
-        [canReorderFolders, canReorderTags, folderIds, handlePropertyDragEnd, onReorderFolders, onReorderTags, sortableRegistry, tagIds]
+        [folderSource, onReorderChildren, propertySource, tagSource]
+    );
+
+    const folderList = (
+        <ReorderTreeList parentPath="/" tree={folderTree}>
+            {showFolderReset ? <ResetAction label={strings.navigationPane.resetAllFolders} onReset={onResetFolders} /> : null}
+        </ReorderTreeList>
+    );
+    const tagList = (
+        <ReorderTreeList parentPath="/" tree={tagTree}>
+            {showTagReset ? <ResetAction label={strings.navigationPane.resetAllTags} onReset={onResetTags} /> : null}
+        </ReorderTreeList>
+    );
+    const propertyList = (
+        <ReorderTreeList parentPath="/" tree={propertyTree}>
+            {showPropertyReset ? <ResetAction label={strings.navigationPane.resetAllProperties} onReset={onResetProperties} /> : null}
+        </ReorderTreeList>
     );
 
     return (
@@ -421,77 +372,38 @@ export function NavigationRootReorderPanel({
                                 ) : undefined;
 
                                 const shouldRenderFolders =
-                                    item.sectionId === NavigationSectionId.FOLDERS && foldersSectionExpanded && showRootFolderSection;
+                                    item.sectionId === NavigationSectionId.FOLDERS &&
+                                    foldersSectionExpanded &&
+                                    showRootFolderSection &&
+                                    hasRootFolderRows;
                                 const shouldRenderTags =
-                                    item.sectionId === NavigationSectionId.TAGS && tagsSectionExpanded && showRootTagSection;
+                                    item.sectionId === NavigationSectionId.TAGS &&
+                                    tagsSectionExpanded &&
+                                    showRootTagSection &&
+                                    hasRootTagRows;
                                 const shouldRenderProperties =
                                     item.sectionId === NavigationSectionId.PROPERTIES &&
                                     propertiesSectionExpanded &&
-                                    showRootPropertySection;
+                                    showRootPropertySection &&
+                                    hasRootPropertyRows;
 
                                 return (
                                     <div key={`section:${item.key}`} className="nn-root-reorder-section">
                                         <RootFolderReorderItem {...item.props} trailingAccessory={trailingAccessory} />
-
-                                        {shouldRenderFolders && folderEntries.length > 0 ? (
-                                            <SortableList entries={folderEntries} canReorder={canReorderFolders} isMobile={isMobile}>
-                                                {showRootFolderReset ? (
-                                                    <ResetAction
-                                                        label={strings.navigationPane.resetRootToAlpha}
-                                                        onClick={handleResetFolders}
-                                                    />
-                                                ) : null}
-                                            </SortableList>
-                                        ) : null}
-
-                                        {shouldRenderTags && tagEntries.length > 0 ? (
-                                            <SortableList entries={tagEntries} canReorder={canReorderTags} isMobile={isMobile}>
-                                                {showRootTagReset ? (
-                                                    <ResetAction label={resetRootTagOrderLabel} onClick={handleResetTags} />
-                                                ) : null}
-                                            </SortableList>
-                                        ) : null}
-
-                                        {shouldRenderProperties && propertyEntries.length > 0 ? (
-                                            <SortableList entries={propertyEntries} canReorder={canReorderProperties} isMobile={isMobile}>
-                                                {showRootPropertyReset ? (
-                                                    <ResetAction label={resetRootPropertyOrderLabel} onClick={handleResetProperties} />
-                                                ) : null}
-                                            </SortableList>
-                                        ) : null}
+                                        {shouldRenderFolders ? folderList : null}
+                                        {shouldRenderTags ? tagList : null}
+                                        {shouldRenderProperties ? propertyList : null}
                                     </div>
                                 );
                             })
                         ) : (
                             <>
-                                {showRootFolderSection && folderEntries.length > 0 ? (
-                                    <div className="nn-root-reorder-section">
-                                        <SortableList entries={folderEntries} canReorder={canReorderFolders} isMobile={isMobile}>
-                                            {showRootFolderReset ? (
-                                                <ResetAction label={strings.navigationPane.resetRootToAlpha} onClick={handleResetFolders} />
-                                            ) : null}
-                                        </SortableList>
-                                    </div>
+                                {showRootFolderSection && hasRootFolderRows ? (
+                                    <div className="nn-root-reorder-section">{folderList}</div>
                                 ) : null}
-
-                                {showRootTagSection && tagEntries.length > 0 ? (
-                                    <div className="nn-root-reorder-section">
-                                        <SortableList entries={tagEntries} canReorder={canReorderTags} isMobile={isMobile}>
-                                            {showRootTagReset ? (
-                                                <ResetAction label={resetRootTagOrderLabel} onClick={handleResetTags} />
-                                            ) : null}
-                                        </SortableList>
-                                    </div>
-                                ) : null}
-
-                                {showRootPropertySection && propertyEntries.length > 0 ? (
-                                    <div className="nn-root-reorder-section">
-                                        <SortableList entries={propertyEntries} canReorder={canReorderProperties} isMobile={isMobile}>
-                                            {showRootPropertyReset ? (
-                                                <ResetAction label={resetRootPropertyOrderLabel} onClick={handleResetProperties} />
-                                            ) : null}
-                                        </SortableList>
-                                    </div>
+                                {showRootTagSection && hasRootTagRows ? <div className="nn-root-reorder-section">{tagList}</div> : null}
+                                {showRootPropertySection && hasRootPropertyRows ? (
+                                    <div className="nn-root-reorder-section">{propertyList}</div>
                                 ) : null}
                             </>
                         )}

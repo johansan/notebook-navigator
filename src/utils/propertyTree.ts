@@ -631,6 +631,11 @@ export function buildPropertyValueNodeId(normalizedKey: string, normalizedValueP
     return `${PROPERTY_NODE_ID_PREFIX}${encodePropertyNodeSegment(normalizedKey)}${PROPERTY_NODE_ID_VALUE_DELIMITER}${encodePropertyNodeSegment(normalizedValuePath)}`;
 }
 
+/** Builds a value node id from its key node id and canonical value path, encoding the value as buildPropertyValueNodeId does. */
+export function buildPropertyValueNodeIdFromKeyNodeId(keyNodeId: string, normalizedValuePath: string): string {
+    return `${keyNodeId}${PROPERTY_NODE_ID_VALUE_DELIMITER}${encodePropertyNodeSegment(normalizedValuePath)}`;
+}
+
 export function normalizePropertyNodeId(nodeId: string): PropertyTreeNodeId | null {
     const parsed = parsePropertyNodeId(nodeId);
     if (!parsed) {

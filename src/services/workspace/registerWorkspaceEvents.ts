@@ -222,6 +222,14 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                     return;
                 }
 
+                if (file instanceof TFolder) {
+                    // Vault load also fires create for every existing folder; only folders created after it join manual orders
+                    if (plugin.app.workspace.layoutReady) {
+                        await plugin.metadataService?.handleFolderCreate(file.path);
+                    }
+                    return;
+                }
+
                 if (!(file instanceof TFile) || !isVaultIconFile(file)) {
                     return;
                 }

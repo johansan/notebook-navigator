@@ -72,8 +72,16 @@ Expensive data shaping lives outside component bodies. Examples:
   `useFileItemPillDecorationState` assemble the shared folder/tag/property source trees, root ordering, visibility
   filters, and rainbow/metadata decoration models consumed by both panes. Tag and property rainbow colors are assigned
   from the unfiltered trees, so filter by selection does not change them.
-- `useNavigationRootReorder` exposes drag-and-drop reorder state and render helpers for root folders, tags, properties, and section
-  headers.
+- `useNavigationRootReorder` exposes drag-and-drop reorder state and row builders for folders, tags, and properties at
+  every level, and for section headers.
+- Folder order is one manual subfolder list per parent (`folderChildOrder`, `'/'` for the vault root). The tree walker
+  (`sortFolderSiblings` in `src/utils/treeFlattener.ts`) lists stored names first and the remaining subfolders
+  alphabetically; `FolderMetadataService` keeps the lists in step with folder creates, renames, moves, and deletes,
+  appending new and moved-in subfolders to a parent that has a manual order.
+- Nested tags (`tagChildOrder`, keyed by parent tag path) and property values (`propertyChildOrder`, keyed by property key
+  node id) work the same way; root tags and property keys keep `rootTagOrder` and `rootPropertyOrder`. Tags and
+  properties have no create event, so `useChildOrderAppend` appends new children of a manually ordered parent once tag
+  or property indexing has finished. Tag pills and rainbow colors follow the same orders.
 - `useListPaneData` assembles list pane items (pinned files, spacers, group headers, search metadata, hidden item
   flags) and keeps lookup maps for virtualized scrolling and multi-selection.
 - `useListPaneAppearance`, `useListPaneTitle`, `useListActions`, `useNavigationPaneKeyboard`, `useListPaneKeyboard`,
@@ -321,7 +329,14 @@ graph TD
 
 **Location**: `src/components/NavigationRootReorderPanel.tsx`
 
-- Displays reorderable sections, folder lists, tag lists, and property lists when root reorder mode is active.
+- Displays reorderable sections and the folder, tag, and property trees when root reorder mode is active.
+- Each row is one sortable element wrapping the row and its expanded children, and each parent's children form their
+  own sortable list, so rows only move among their siblings. Expansion is the navigation tree's own, so the
+  expand/collapse all button applies here too and expansion carries over between reorder mode and the tree. The
+  section headers share the expansion of the vault root and the Tags and Properties folders when the tree shows them.
+- Right-clicking a folder, tag, or property key row opens its child sort menu: the default order, A to Z, Z to A, and
+  `Manual sort`, which only shows whether a manual order is active; dragging is what sets one. Each category has one
+  reset button that clears every level.
 - Provides drop indicators, drag handle labels, and reset buttons that reset root ordering to alphabetical defaults.
 - Updates scroll container data attributes to reflect drop targets for visual feedback.
 

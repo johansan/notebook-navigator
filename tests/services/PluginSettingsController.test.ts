@@ -254,6 +254,60 @@ describe('PluginSettingsController.loadSettings', () => {
         expect(savedSettings.openFolderNotesInNewTab).toBeUndefined();
     });
 
+    it('moves the legacy root folder order into the folder order record under the vault root', async () => {
+        const saveData = vi.fn().mockResolvedValue(undefined);
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                rootFolderOrder: ['Projects', 'Inbox', 'Missing']
+            })),
+            saveData,
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.folderChildOrder).toEqual({ '/': ['Projects', 'Inbox', 'Missing'] });
+        expect(saveData).toHaveBeenCalledTimes(1);
+        const savedSettings = saveData.mock.calls[0][0] as Record<string, unknown>;
+        expect(savedSettings.folderChildOrder).toEqual({ '/': ['Projects', 'Inbox', 'Missing'] });
+        expect(savedSettings.rootFolderOrder).toBeUndefined();
+    });
+
+    it('keeps a reset root order instead of restoring it from a leftover legacy root folder order', async () => {
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                rootFolderOrder: ['Projects', 'Inbox'],
+                folderChildOrder: { Projects: ['B', 'A', 'B', 7] }
+            })),
+            saveData: vi.fn().mockResolvedValue(undefined),
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.folderChildOrder).toEqual({ Projects: ['B', 'A'] });
+        expect((controller.settings as unknown as Record<string, unknown>).rootFolderOrder).toBeUndefined();
+    });
+
+    it('normalizes nested tag orders to the lowercase paths the tag tree uses and drops duplicates', async () => {
+        const controller = new PluginSettingsController({
+            keys: STORAGE_KEYS,
+            loadData: vi.fn(async () => ({
+                tagChildOrder: { '#Projects': ['Beta', '#Alpha', 'beta'] },
+                propertyChildOrder: { 'key:status': ['done', 'todo', 'done', 3] }
+            })),
+            saveData: vi.fn().mockResolvedValue(undefined),
+            mirrorUXPreferences: vi.fn()
+        });
+
+        await controller.loadSettings();
+
+        expect(controller.settings.tagChildOrder).toEqual({ projects: ['beta', 'alpha'] });
+        expect(controller.settings.propertyChildOrder).toEqual({ 'key:status': ['done', 'todo'] });
+    });
+
     it('migrates the legacy unfinished task icon toggle to both list modes', async () => {
         const saveData = vi.fn().mockResolvedValue(undefined);
         const controller = new PluginSettingsController({

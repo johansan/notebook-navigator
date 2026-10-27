@@ -21,7 +21,7 @@ import type { TagTreeNode } from '../types/storage';
 import { casefold } from './recordUtils';
 import { compareByAlphaSortOrder, naturalCompare } from './sortUtils';
 import { normalizeTagPathValue } from './tagPrefixMatcher';
-import { compareTagOrderWithFallback } from './treeFlattener';
+import { compareByManualList, compareTagOrderWithFallback, getChildOrder, getTagChildName } from './treeFlattener';
 
 export type FileItemTagNodeComparator = (a: TagTreeNode, b: TagTreeNode) => number;
 
@@ -111,14 +111,28 @@ function compareTagNodesByNavigationOrder({
     rightNode,
     parentPath,
     orderModel,
-    childSortOrderOverrides
+    childSortOrderOverrides,
+    childOrder
 }: {
     leftNode: TagTreeNode;
     rightNode: TagTreeNode;
     parentPath: string | null;
     orderModel: FileItemPillOrderModel;
     childSortOrderOverrides?: Readonly<Record<string, AlphaSortOrder>>;
+    childOrder?: Readonly<Record<string, readonly string[]>>;
 }): number {
+    // Nested tags follow their parent's manual order first, as in the navigation tree
+    if (parentPath) {
+        const manualCompare = compareByManualList(
+            getChildOrder(childOrder, parentPath),
+            getTagChildName(leftNode.path),
+            getTagChildName(rightNode.path)
+        );
+        if (manualCompare !== 0) {
+            return manualCompare;
+        }
+    }
+
     const childSortOrder = parentPath ? childSortOrderOverrides?.[parentPath] : undefined;
     if (childSortOrder) {
         const childNameCompare = compareByAlphaSortOrder(leftNode.name, rightNode.name, childSortOrder);
@@ -141,12 +155,14 @@ export function compareFileItemTagsByNavigationOrder({
     leftTag,
     rightTag,
     orderModel,
-    childSortOrderOverrides
+    childSortOrderOverrides,
+    childOrder
 }: {
     leftTag: string;
     rightTag: string;
     orderModel: FileItemPillOrderModel;
     childSortOrderOverrides?: Readonly<Record<string, AlphaSortOrder>>;
+    childOrder?: Readonly<Record<string, readonly string[]>>;
 }): number {
     const leftPath = normalizeTagPathValue(leftTag);
     const rightPath = normalizeTagPathValue(rightTag);
@@ -176,7 +192,8 @@ export function compareFileItemTagsByNavigationOrder({
                 rightNode,
                 parentPath,
                 orderModel,
-                childSortOrderOverrides
+                childSortOrderOverrides,
+                childOrder
             });
             if (nodeCompare !== 0) {
                 return nodeCompare;

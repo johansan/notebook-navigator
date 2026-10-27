@@ -564,6 +564,8 @@ button.nn-icon-button.nn-navitem-hover-action-button {
 .nn-root-reorder-list {
     display: flex;
     flex-direction: column;
+    /* Same space as the list spacer between sections in the navigation tree */
+    gap: 8px;
     margin: 0;
     padding: 0;
 }
@@ -572,6 +574,14 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     display: flex;
     flex-direction: column;
     position: relative;
+}
+
+/* A dragged folder carries its expanded subfolders; it stays opaque and on top so siblings
+   sliding into place pass beneath it */
+.nn-root-reorder-branch--dragging {
+    position: relative;
+    z-index: 1;
+    background-color: var(--nn-theme-nav-bg);
 }
 
 .nn-root-reorder-item {
@@ -586,13 +596,29 @@ button.nn-icon-button.nn-navitem-hover-action-button {
     font-weight: var(--nn-theme-navitem-custom-color-name-font-weight);
 }
 
+/* A sort indicator box as wide as a section arrow button, so it centers under the down arrow */
+.nn-root-reorder-item .nn-navitem-count {
+    min-width: 28px;
+    margin-inline-end: 0;
+}
+
+/* The manual order icon sits in the count badge at the badge's text size */
+.nn-root-reorder-manual-badge > span {
+    display: flex;
+}
+
+.nn-root-reorder-manual-badge svg {
+    width: var(--nn-navitem-count-font-size);
+    height: var(--nn-navitem-count-font-size);
+}
+
 .nn-root-reorder-item--missing .nn-shortcut-label {
     text-decoration: line-through;
     color: var(--nn-theme-foreground-muted);
 }
 
 .nn-root-reorder-actions {
-    margin-top: 0.75rem;
+    margin-block: 0.75rem;
     display: flex;
     justify-content: center;
 }
@@ -633,7 +659,6 @@ button.nn-icon-button.nn-navitem-hover-action-button {
 
 .nn-root-reorder-section-controls {
     display: flex;
-    gap: 0.25rem;
 }
 
 .nn-root-reorder-section-button {

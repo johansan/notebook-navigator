@@ -58,6 +58,13 @@ export function getParentFolderPath(path: string): string {
 }
 
 /**
+ * Returns the path of a direct subfolder. Root-level folder paths are their names.
+ */
+export function getChildFolderPath(parentPath: string, name: string): string {
+    return parentPath === '/' ? name : `${parentPath}/${name}`;
+}
+
+/**
  * Checks whether the candidate path is the folder itself or within the folder hierarchy.
  */
 export function doesFolderContainPath(folderPath: string, candidatePath: string): boolean {

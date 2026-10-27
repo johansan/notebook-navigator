@@ -116,7 +116,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
             'New commands `Open next periodic note` and `Open previous periodic note` open the note for the next or previous day, week, month, quarter or year from the active periodic note, and create the note when it is missing.',
             'New command `Open parent periodic note` opens the weekly note of the active daily note, the monthly note of a weekly note, and so on up to the yearly note.',
-            'Tags and properties can now be grouped by `Folder` in the sort menu, which lists each note under its parent folder.'
+            'Tags and properties can now be grouped by `Folder` in the sort menu, which lists each note under its parent folder.',
+            'Folders, tags and properties can now be reordered at every level by dragging in `Reorder navigation`, where right-clicking an item offers `Manual sort`, `A to Z`, `Z to A` and `Default`.'
         ],
         improved: [
             'Increased the maximum of ==Item height== in the navigation pane and ==Compact item height== in the list pane from 28 to 40 pixels.',

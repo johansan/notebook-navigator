@@ -25,16 +25,20 @@ import { isFolderInExcludedFolder } from './fileFilters';
 import { matchesHiddenTagPattern, HiddenTagMatcher } from './tagPrefixMatcher';
 import type { AlphaSortOrder } from '../settings/types';
 
-/** Options for flattenFolderTree function */
-interface FlattenFolderTreeOptions {
-    /** Map of folder paths to their custom display order */
-    rootOrderMap?: Map<string, number>;
+/** Settings that decide the order of a parent folder's subfolders */
+export interface FolderSiblingOrderOptions {
+    /** Manual subfolder names per parent folder path ('/' for the vault root) */
+    childOrder?: Readonly<Record<string, readonly string[]>>;
     /** Default alphabetical order for child folders */
     defaultSortOrder?: AlphaSortOrder;
     /** Per-folder child sort order overrides */
     childSortOrderOverrides?: Record<string, AlphaSortOrder>;
     /** Resolves the string used when alphabetically sorting folders */
     getFolderSortName?: (folder: TFolder) => string;
+}
+
+/** Options for flattenFolderTree function */
+interface FlattenFolderTreeOptions extends FolderSiblingOrderOptions {
     /** Additional exclusion check applied per folder */
     isFolderExcluded?: (folder: TFolder) => boolean;
 }
@@ -70,37 +74,116 @@ interface FlattenTagTreeOptions {
     comparator?: (a: TagTreeNode, b: TagTreeNode) => number;
     /** Per-tag child sort order overrides */
     childSortOrderOverrides?: Record<string, AlphaSortOrder>;
+    /** Manual child order per parent tag path (settings.tagChildOrder); root tags use the comparator */
+    childOrder?: Readonly<Record<string, readonly string[]>>;
+}
+
+const NO_CHILD_ORDER: readonly string[] = [];
+
+/**
+ * Reads a parent's manual child order (folders, nested tags or property values). Only own keys count, so a
+ * parent named like an Object.prototype member (for example "constructor") reads as having no manual order.
+ */
+export function getChildOrder(childOrder: Readonly<Record<string, readonly string[]>> | undefined, parentKey: string): readonly string[] {
+    if (!childOrder || !Object.prototype.hasOwnProperty.call(childOrder, parentKey)) {
+        return NO_CHILD_ORDER;
+    }
+    return childOrder[parentKey];
 }
 
 /**
- * Compares folders using custom order map with fallback to natural sorting.
- * Returns negative if a comes before b, positive if b comes before a, 0 if equal.
+ * Orders children by a parent's manual order: listed names first, in list order, then the rest by `compare`.
  */
-export function compareFolderOrderWithFallback(
-    a: TFolder,
-    b: TFolder,
-    orderMap?: Map<string, number>,
-    fallback?: (first: TFolder, second: TFolder) => number
-): number {
-    const fallbackCompare = fallback ?? ((first: TFolder, second: TFolder) => naturalCompare(first.name, second.name));
-
-    if (!orderMap || orderMap.size === 0) {
-        return fallbackCompare(a, b);
+export function orderByManualList<T>(
+    items: readonly T[],
+    manualOrder: readonly string[],
+    getName: (item: T) => string,
+    compare: (a: T, b: T) => number
+): T[] {
+    if (manualOrder.length === 0) {
+        return items.slice().sort(compare);
     }
 
-    const orderA = orderMap.get(a.path);
-    const orderB = orderMap.get(b.path);
+    const unlistedByName = new Map(items.map(item => [getName(item), item]));
+    const listed: T[] = [];
+    manualOrder.forEach(name => {
+        const item = unlistedByName.get(name);
+        if (item !== undefined) {
+            listed.push(item);
+            unlistedByName.delete(name);
+        }
+    });
 
-    if (orderA !== undefined && orderB !== undefined) {
-        return orderA - orderB;
+    return listed.concat(Array.from(unlistedByName.values()).sort(compare));
+}
+
+/**
+ * Compares two child names by a manual order: listed names first in list order. Returns 0 when neither is listed,
+ * so callers fall back to their regular comparison.
+ */
+export function compareByManualList(manualOrder: readonly string[], left: string, right: string): number {
+    const leftIndex = manualOrder.indexOf(left);
+    const rightIndex = manualOrder.indexOf(right);
+    if (leftIndex === -1 && rightIndex === -1) {
+        return 0;
     }
-    if (orderA !== undefined) {
-        return -1;
-    }
-    if (orderB !== undefined) {
+    if (leftIndex === -1) {
         return 1;
     }
-    return fallbackCompare(a, b);
+    if (rightIndex === -1) {
+        return -1;
+    }
+    return leftIndex - rightIndex;
+}
+
+/** Returns the name a nested tag is stored under in its parent's manual order: the last segment of its lowercase path. */
+export function getTagChildName(tagPath: string): string {
+    return tagPath.slice(tagPath.lastIndexOf('/') + 1);
+}
+
+/**
+ * Orders the subfolders of one parent: names in the parent's manual order come first, in list order,
+ * then the remaining folders by the parent's alphabetical order.
+ */
+export function sortFolderSiblings(folders: readonly TFolder[], parentPath: string, options: FolderSiblingOrderOptions): TFolder[] {
+    const alphaOrder = resolveFolderChildSortOrder(
+        { folderSortOrder: options.defaultSortOrder ?? 'alpha-asc', folderTreeSortOverrides: options.childSortOrderOverrides },
+        parentPath
+    );
+    const getFolderSortName = options.getFolderSortName;
+    const compareByName = (a: TFolder, b: TFolder): number => {
+        const leftName = getFolderSortName ? getFolderSortName(a) : a.name;
+        const rightName = getFolderSortName ? getFolderSortName(b) : b.name;
+        const cmp = compareByAlphaSortOrder(leftName, rightName, alphaOrder);
+        if (cmp !== 0) {
+            return cmp;
+        }
+        return a.path.localeCompare(b.path);
+    };
+
+    return orderByManualList(folders, getChildOrder(options.childOrder, parentPath), folder => folder.name, compareByName);
+}
+
+/**
+ * Applies a new order of the displayed subfolder names to a parent's stored manual order.
+ * Displayed names fill the slots that displayed names held, so names that are not displayed keep their
+ * positions: folders hidden in this vault profile but shown in another, and folders that do not exist.
+ * Displayed names that were not stored yet are appended.
+ */
+export function mergeDisplayedOrder(storedOrder: readonly string[], displayedOrder: readonly string[]): string[] {
+    const displayedNames = new Set(displayedOrder);
+    const merged: string[] = [];
+    let nextDisplayedIndex = 0;
+    storedOrder.forEach(name => {
+        if (!displayedNames.has(name)) {
+            merged.push(name);
+            return;
+        }
+        merged.push(displayedOrder[nextDisplayedIndex]);
+        nextDisplayedIndex += 1;
+    });
+
+    return merged.concat(displayedOrder.slice(nextDisplayedIndex));
 }
 
 /**
@@ -164,7 +247,7 @@ export function comparePropertyOrderWithFallback(
 function walkOrderedFolderTree({
     rootFolders,
     excludePatterns,
-    rootOrderMap,
+    childOrder,
     defaultSortOrder,
     childSortOrderOverrides,
     getFolderSortName,
@@ -175,25 +258,7 @@ function walkOrderedFolderTree({
     onSiblingGroup,
     shouldVisitChildren
 }: WalkOrderedFolderTreeParams): void {
-    const resolvedDefaultSortOrder = defaultSortOrder ?? 'alpha-asc';
-    const childSortOrderSettings = {
-        folderSortOrder: resolvedDefaultSortOrder,
-        folderTreeSortOverrides: childSortOrderOverrides
-    };
-
-    const getEffectiveChildSortOrder = (folderPath: string): AlphaSortOrder => {
-        return resolveFolderChildSortOrder(childSortOrderSettings, folderPath);
-    };
-
-    const compareFolderNames = (order: AlphaSortOrder) => (a: TFolder, b: TFolder) => {
-        const leftName = getFolderSortName ? getFolderSortName(a) : a.name;
-        const rightName = getFolderSortName ? getFolderSortName(b) : b.name;
-        const cmp = compareByAlphaSortOrder(leftName, rightName, order);
-        if (cmp !== 0) {
-            return cmp;
-        }
-        return a.path.localeCompare(b.path);
-    };
+    const siblingOrderOptions: FolderSiblingOrderOptions = { childOrder, defaultSortOrder, childSortOrderOverrides, getFolderSortName };
 
     const isExcluded = (folder: TFolder): boolean => {
         const isExcludedByPattern = excludePatterns.length > 0 && isFolderInExcludedFolder(folder, excludePatterns);
@@ -205,14 +270,7 @@ function walkOrderedFolderTree({
         if (folders.length <= 1) {
             return folders;
         }
-
-        const order = getEffectiveChildSortOrder(parentPath);
-        const compareByName = compareFolderNames(order);
-        const sortedFolders = folders.slice();
-        if (parentPath === '/') {
-            return sortedFolders.sort((left, right) => compareFolderOrderWithFallback(left, right, rootOrderMap, compareByName));
-        }
-        return sortedFolders.sort(compareByName);
+        return sortFolderSiblings(folders, parentPath, siblingOrderOptions);
     };
 
     const walkChildren = (parentPath: string, folders: TFolder[], currentLevel: number) => {
@@ -300,7 +358,7 @@ export function flattenFolderTree(
     walkOrderedFolderTree({
         rootFolders: folders,
         excludePatterns,
-        rootOrderMap: options.rootOrderMap,
+        childOrder: options.childOrder,
         defaultSortOrder: options.defaultSortOrder,
         childSortOrderOverrides: options.childSortOrderOverrides,
         getFolderSortName: options.getFolderSortName,
@@ -335,7 +393,7 @@ export interface VisibleFolderTraversalState {
 export function buildVisibleFolderTraversalState({
     rootFolders,
     excludePatterns,
-    rootOrderMap,
+    childOrder,
     defaultSortOrder,
     childSortOrderOverrides,
     getFolderSortName,
@@ -346,7 +404,7 @@ export function buildVisibleFolderTraversalState({
     walkOrderedFolderTree({
         rootFolders,
         excludePatterns,
-        rootOrderMap,
+        childOrder,
         defaultSortOrder,
         childSortOrderOverrides,
         getFolderSortName,
@@ -386,7 +444,7 @@ export function flattenTagTree(
     options: FlattenTagTreeOptions = {}
 ): TagTreeItem[] {
     const items: TagTreeItem[] = [];
-    const { hiddenMatcher, comparator, childSortOrderOverrides } = options;
+    const { hiddenMatcher, comparator, childSortOrderOverrides, childOrder } = options;
     /** Use custom comparator or default to alphabetical sorting */
     const sortFn = comparator ?? ((a: TagTreeNode, b: TagTreeNode) => naturalCompare(a.name, b.name));
 
@@ -433,8 +491,12 @@ export function flattenTagTree(
 
         // Add children if expanded and has children
         if (expandedTags.has(node.path) && node.children && node.children.size > 0) {
-            const childComparator = getEffectiveChildComparator(node.path);
-            const sortedChildren = Array.from(node.children.values()).sort(childComparator);
+            const sortedChildren = orderByManualList(
+                Array.from(node.children.values()),
+                getChildOrder(childOrder, node.path),
+                child => getTagChildName(child.path),
+                getEffectiveChildComparator(node.path)
+            );
 
             sortedChildren.forEach(child => addNode(child, currentLevel + 1, isHidden));
         }

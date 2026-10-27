@@ -150,6 +150,29 @@ describe('applyModifiedSettingsTransfer', () => {
         expect(nextSettings).not.toHaveProperty('folderNoteName');
     });
 
+    it('migrates the root folder order from exports created before every folder level had an order', () => {
+        const enveloped = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), {
+            plugin: 'notebook-navigator',
+            pluginVersion: '3.4.3',
+            settings: { rootFolderOrder: ['Projects', 'Inbox'] }
+        });
+        expect(enveloped.folderChildOrder).toEqual({ '/': ['Projects', 'Inbox'] });
+        expect(enveloped).not.toHaveProperty('rootFolderOrder');
+
+        const bare = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), { rootFolderOrder: ['Inbox'] });
+        expect(bare.folderChildOrder).toEqual({ '/': ['Inbox'] });
+    });
+
+    it('round-trips nested folder orders through export and import', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        settings.folderChildOrder = { '/': ['Projects', 'Inbox'], Projects: ['B', 'A'] };
+
+        const transferData = createModifiedSettingsTransfer(settings, '3.5.0');
+        const nextSettings = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), transferData);
+
+        expect(nextSettings.folderChildOrder).toEqual({ '/': ['Projects', 'Inbox'], Projects: ['B', 'A'] });
+    });
+
     it('seeds the grouping property list from the sorting list for pre-split exports', () => {
         // Pre-split exports never contain propertyGroupKey; the enveloped and bare forms both seed.
         const enveloped = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), {

@@ -38,7 +38,8 @@ import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstance } from '../storage/fileOperations';
 import { NavigatorContext, type CollapsedPinnedContexts } from '../types';
 import type { NavigationSeparatorTarget } from '../utils/navigationSeparators';
-import { buildPropertyKeyNodeId } from '../utils/propertyTree';
+import { getChildFolderPath } from '../utils/pathUtils';
+import { buildPropertyKeyNodeId, buildPropertyValueNodeIdFromKeyNodeId } from '../utils/propertyTree';
 import { casefold, getCollapsedPinnedContextTarget } from '../utils/recordUtils';
 import { buildTagTreeFromDatabase } from '../utils/tagTree';
 
@@ -228,6 +229,10 @@ export class MetadataService {
         await this.folderService.handleFolderRename(oldPath, newPath, settings =>
             this.navigationSeparatorService.applyFolderRename(settings, oldPath, newPath)
         );
+    }
+
+    async handleFolderCreate(folderPath: string): Promise<void> {
+        await this.folderService.handleFolderCreate(folderPath);
     }
 
     async handleFolderDelete(folderPath: string): Promise<void> {
@@ -607,12 +612,26 @@ export class MetadataService {
     }
 
     private static computeMetadataCounts(settings: NotebookNavigatorSettings, collapsedPinnedContexts: CollapsedPinnedContexts) {
+        // Each stored child name counts as that child's path or node id, so pruning the name of a missing
+        // folder, tag or property value from a parent that still exists shows up in the cleanup summary
+        const collectChildOrderKeys = (record: Record<string, string[]>, getChildKey: (parentKey: string, name: string) => string) => {
+            const keys: Record<string, true> = {};
+            Object.entries(record).forEach(([parentKey, names]) => {
+                keys[parentKey] = true;
+                names.forEach(name => {
+                    keys[getChildKey(parentKey, name)] = true;
+                });
+            });
+            return keys;
+        };
+        const folderChildOrderPaths = collectChildOrderKeys(settings.folderChildOrder, getChildFolderPath);
         const folderKeys = MetadataService.collectUniqueKeys([
             settings.folderColors,
             settings.folderBackgroundColors,
             settings.folderIcons,
             settings.folderSortOverrides,
-            settings.folderAppearances
+            settings.folderAppearances,
+            folderChildOrderPaths
         ]);
 
         const tagKeys = MetadataService.collectUniqueKeys([
@@ -620,7 +639,8 @@ export class MetadataService {
             settings.tagBackgroundColors,
             settings.tagIcons,
             settings.tagSortOverrides,
-            settings.tagAppearances
+            settings.tagAppearances,
+            collectChildOrderKeys(settings.tagChildOrder, (parentPath, name) => `${parentPath}/${name}`)
         ]);
 
         const fileKeys = MetadataService.collectUniqueKeys([settings.fileIcons, settings.fileColors, settings.fileBackgroundColors]);
@@ -630,7 +650,8 @@ export class MetadataService {
             settings.propertyIcons,
             settings.propertySortOverrides,
             settings.propertyAppearances,
-            settings.propertyTreeSortOverrides
+            settings.propertyTreeSortOverrides,
+            collectChildOrderKeys(settings.propertyChildOrder, buildPropertyValueNodeIdFromKeyNodeId)
         ]);
         settings.vaultProfiles.forEach(profile => {
             if (!Array.isArray(profile.propertyKeys) || profile.propertyKeys.length === 0) {

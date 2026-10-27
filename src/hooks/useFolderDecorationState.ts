@@ -57,7 +57,7 @@ function useFolderDecorationModel({ settings, navRainbowState, source }: UseFold
         return buildVisibleFolderTraversalState({
             rootFolders: source.rootFolders,
             excludePatterns: source.hiddenFolders,
-            rootOrderMap: source.rootFolderOrderMap,
+            childOrder: settings.folderChildOrder,
             defaultSortOrder: settings.folderSortOrder,
             childSortOrderOverrides: settings.folderTreeSortOverrides,
             getFolderSortName: source.getFolderSortName,
@@ -65,12 +65,12 @@ function useFolderDecorationModel({ settings, navRainbowState, source }: UseFold
             includeDescendantSiblingGroups: shouldIncludeDescendantSiblingGroups
         });
     }, [
+        settings.folderChildOrder,
         settings.folderSortOrder,
         settings.folderTreeSortOverrides,
         source.folderExclusionByFolderNote,
         source.getFolderSortName,
         source.hiddenFolders,
-        source.rootFolderOrderMap,
         source.rootFolders,
         shouldBuildFolderTraversalState,
         shouldIncludeDescendantSiblingGroups

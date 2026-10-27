@@ -70,13 +70,15 @@ export function useFileItemPillDecorationState({
             scope: navRainbow.tags.scope,
             showAllTagsFolder: settings.showAllTagsFolder,
             inheritColors: settings.inheritTagColors,
-            childSortOrderOverrides: settings.tagTreeSortOverrides
+            childSortOrderOverrides: settings.tagTreeSortOverrides,
+            childOrder: settings.tagChildOrder
         });
     }, [
         navRainbow.tags.scope,
         navRainbowPalettes.tag,
         settings.inheritTagColors,
         settings.showAllTagsFolder,
+        settings.tagChildOrder,
         settings.tagTreeSortOverrides,
         treeSections.unscopedRootTagKeys,
         sourceState.rootTagOrderMap,
@@ -100,12 +102,14 @@ export function useFileItemPillDecorationState({
             showAllPropertiesFolder: settings.showAllPropertiesFolder,
             propertySortOrder: settings.propertySortOrder,
             propertyTreeSortOverrides: settings.propertyTreeSortOverrides,
+            propertyChildOrder: settings.propertyChildOrder,
             includeDescendantNotes
         });
     }, [
         includeDescendantNotes,
         navRainbow.properties.scope,
         navRainbowPalettes.property,
+        settings.propertyChildOrder,
         settings.propertySortOrder,
         settings.propertyTreeSortOverrides,
         settings.showAllPropertiesFolder,

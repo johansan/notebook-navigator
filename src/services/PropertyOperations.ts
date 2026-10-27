@@ -94,6 +94,13 @@ const PROPERTY_KEY_METADATA_ACCESSORS: readonly PropertyMetadataAccessor[] = [
         write: (settings, next) => {
             settings.propertyTreeSortOverrides = next as NotebookNavigatorSettings['propertyTreeSortOverrides'];
         }
+    },
+    {
+        // Manual value orders are keyed by the key node id and hold value paths, which a key rename does not change
+        read: settings => settings.propertyChildOrder,
+        write: (settings, next) => {
+            settings.propertyChildOrder = next as NotebookNavigatorSettings['propertyChildOrder'];
+        }
     }
 ];
 function updatePropertySortKeySetting(

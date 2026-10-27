@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { EventRef, TFile, type TFolder } from 'obsidian';
+import { EventRef, TFile, TFolder } from 'obsidian';
 import type { AlphaSortOrder, ListSortOverrideValue, NotebookNavigatorSettings } from '../../settings/types';
 import { getDBInstanceOrNull } from '../../storage/fileOperations';
 import { ItemType, type CollapsedPinnedContexts } from '../../types';
@@ -24,12 +24,14 @@ import { isFolderShortcut } from '../../types/shortcuts';
 import type { FileContentChange } from '../../storage/IndexedDBStorage';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';
 import { renameTemplateReferences } from '../../utils/fileCreationUtils';
-import { getParentFolderPath } from '../../utils/pathUtils';
+import { getChildFolderPath, getParentFolderPath, getPathBaseName } from '../../utils/pathUtils';
 import { createShortcutTargetPathEventMatcher } from '../../utils/shortcutPathResolver';
+import { getChildOrder, sortFolderSiblings } from '../../utils/treeFlattener';
 import {
     deleteCollapsedPinnedContextKeys,
     ensureRecord,
     isStringRecordValue,
+    sanitizeRecord,
     updateCollapsedPinnedContextKeys
 } from '../../utils/recordUtils';
 import type { CleanupValidators } from '../MetadataService';
@@ -703,19 +705,112 @@ export class FolderMetadataService extends BaseMetadataService {
         return this.getEntitySortOverride(ItemType.FOLDER, folderPath);
     }
 
+    /** Sets an alphabetical subfolder order, replacing the folder's manual subfolder order. */
     async setFolderChildSortOrderOverride(folderPath: string, sortOrder: AlphaSortOrder): Promise<void> {
         if (!this.validateFolder(folderPath)) {
             return;
         }
+        await this.removeChildOrder('folderChildOrder', folderPath);
         return this.setEntityChildSortOrderOverride(ItemType.FOLDER, folderPath, sortOrder);
     }
 
+    /** Returns the subfolders to the default alphabetical order, removing any manual subfolder order. */
     async removeFolderChildSortOrderOverride(folderPath: string): Promise<void> {
+        await this.removeChildOrder('folderChildOrder', folderPath);
         return this.removeEntityChildSortOrderOverride(ItemType.FOLDER, folderPath);
     }
 
     getFolderChildSortOrderOverride(folderPath: string): AlphaSortOrder | undefined {
         return this.getEntityChildSortOrderOverride(ItemType.FOLDER, folderPath);
+    }
+
+    /**
+     * Keeps a renamed folder at its position in its parent's manual order. A move to another parent
+     * removes the name instead, and the folder joins the new parent's unlisted folders.
+     */
+    private renameInParentFolderOrder(settings: NotebookNavigatorSettings, oldPath: string, newPath: string): boolean {
+        const parentPath = getParentFolderPath(oldPath);
+        if (getParentFolderPath(newPath) !== parentPath) {
+            const removed = this.removeFromParentFolderOrder(settings, oldPath);
+            const appended = this.appendToParentFolderOrder(settings, newPath);
+            return removed || appended;
+        }
+
+        const storedOrder = getChildOrder(settings.folderChildOrder, parentPath);
+        const oldName = getPathBaseName(oldPath);
+        const newName = getPathBaseName(newPath);
+        if (oldName === newName || !storedOrder.includes(oldName)) {
+            return false;
+        }
+
+        // A stored name of a missing folder can equal the new name; dropping it keeps names unique
+        const nextOrder = storedOrder.filter(name => name !== newName).map(name => (name === oldName ? newName : name));
+        settings.folderChildOrder[parentPath] = nextOrder;
+        return true;
+    }
+
+    /**
+     * Adds a new or moved-in folder to the end of its parent's manual order, so a manually ordered folder lists
+     * every subfolder and new ones land at the bottom. Subfolders the list does not hold yet (hidden while
+     * reordering, or created before the order existed) are added first in their current order; otherwise they
+     * would sort below the new folder. A parent without a manual order stays alphabetical, and a listed name
+     * of a missing folder keeps its position.
+     */
+    private appendToParentFolderOrder(settings: NotebookNavigatorSettings, folderPath: string): boolean {
+        const parentPath = getParentFolderPath(folderPath);
+        const storedOrder = getChildOrder(settings.folderChildOrder, parentPath);
+        const name = getPathBaseName(folderPath);
+        if (storedOrder.length === 0 || storedOrder.includes(name)) {
+            return false;
+        }
+
+        const parent = this.getFolderByPath(parentPath);
+        const unlistedSiblings = parent
+            ? sortFolderSiblings(
+                  parent.children.filter(
+                      (child): child is TFolder => child instanceof TFolder && child.name !== name && !storedOrder.includes(child.name)
+                  ),
+                  parentPath,
+                  {
+                      defaultSortOrder: settings.folderSortOrder,
+                      childSortOrderOverrides: settings.folderTreeSortOverrides,
+                      // Same names the navigation tree sorts by, so appending keeps the order shown
+                      getFolderSortName: folder =>
+                          settings.useFrontmatterMetadata ? this.getFolderDisplayData(folder.path).displayName || folder.name : folder.name
+                  }
+              ).map(folder => folder.name)
+            : [];
+        // Replace the record: tree sorting is memoized on it
+        const nextRecord = sanitizeRecord(settings.folderChildOrder);
+        nextRecord[parentPath] = [...storedOrder, ...unlistedSiblings, name];
+        settings.folderChildOrder = nextRecord;
+        return true;
+    }
+
+    /** Adds a folder created after startup to the end of its parent's manual order. */
+    async handleFolderCreate(folderPath: string): Promise<void> {
+        if (getChildOrder(this.settingsProvider.settings.folderChildOrder, getParentFolderPath(folderPath)).length === 0) {
+            return;
+        }
+        await this.saveAndUpdate(settings => this.appendToParentFolderOrder(settings, folderPath));
+    }
+
+    /** Removes a deleted or moved folder's name from its parent's manual order. */
+    private removeFromParentFolderOrder(settings: NotebookNavigatorSettings, folderPath: string): boolean {
+        const parentPath = getParentFolderPath(folderPath);
+        const name = getPathBaseName(folderPath);
+        const storedOrder = getChildOrder(settings.folderChildOrder, parentPath);
+        if (!storedOrder.includes(name)) {
+            return false;
+        }
+
+        const nextOrder = storedOrder.filter(entry => entry !== name);
+        if (nextOrder.length > 0) {
+            settings.folderChildOrder[parentPath] = nextOrder;
+        } else {
+            delete settings.folderChildOrder[parentPath];
+        }
+        return true;
     }
 
     async handleFolderRename(oldPath: string, newPath: string, extraMutation?: SettingsMutation): Promise<void> {
@@ -733,6 +828,8 @@ export class FolderMetadataService extends BaseMetadataService {
             changed = this.updateNestedPaths(settings.folderIcons, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderSortOverrides, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderTreeSortOverrides, oldPath, newPath) || changed;
+            changed = this.updateNestedPaths(settings.folderChildOrder, oldPath, newPath) || changed;
+            changed = this.renameInParentFolderOrder(settings, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderAppearances, oldPath, newPath) || changed;
             changed = this.updateNestedPaths(settings.folderTemplates, oldPath, newPath) || changed;
             changed = renameTemplateReferences(settings, oldPath, newPath) || changed;
@@ -772,6 +869,8 @@ export class FolderMetadataService extends BaseMetadataService {
             changed = this.deleteNestedPaths(settings.folderIcons, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderSortOverrides, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderTreeSortOverrides, folderPath) || changed;
+            changed = this.deleteNestedPaths(settings.folderChildOrder, folderPath) || changed;
+            changed = this.removeFromParentFolderOrder(settings, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderAppearances, folderPath) || changed;
             changed = this.deleteNestedPaths(settings.folderTemplates, folderPath) || changed;
 
@@ -812,8 +911,9 @@ export class FolderMetadataService extends BaseMetadataService {
             this.cleanupMetadata(targetSettings, 'folderAppearances', validator),
             this.cleanupMetadata(targetSettings, 'folderTemplates', validator)
         ]);
+        const folderChildOrderChanged = this.cleanupChildOrder(targetSettings, 'folderChildOrder', validator, getChildFolderPath);
 
-        return collapsedPinnedContextChanges || results.some(changed => changed);
+        return collapsedPinnedContextChanges || folderChildOrderChanged || results.some(changed => changed);
     }
 
     async cleanupWithValidators(
@@ -838,9 +938,10 @@ export class FolderMetadataService extends BaseMetadataService {
             this.cleanupMetadata(targetSettings, 'folderAppearances', validator),
             this.cleanupMetadata(targetSettings, 'folderTemplates', validator)
         ]);
+        const folderChildOrderChanged = this.cleanupChildOrder(targetSettings, 'folderChildOrder', validator, getChildFolderPath);
 
         return {
-            settingsChanged: results.some(changed => changed),
+            settingsChanged: folderChildOrderChanged || results.some(changed => changed),
             localChanged: collapsedPinnedContextChanges
         };
     }

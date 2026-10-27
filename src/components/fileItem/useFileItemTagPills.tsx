@@ -61,14 +61,16 @@ export interface FileItemTagPillsState {
 function sortTagsByNavigationOrder(
     tags: string[],
     orderModel: FileItemPillOrderModel,
-    childSortOrderOverrides: NotebookNavigatorSettings['tagTreeSortOverrides']
+    childSortOrderOverrides: NotebookNavigatorSettings['tagTreeSortOverrides'],
+    childOrder: NotebookNavigatorSettings['tagChildOrder']
 ): void {
     tags.sort((firstTag, secondTag) =>
         compareFileItemTagsByNavigationOrder({
             leftTag: firstTag,
             rightTag: secondTag,
             orderModel,
-            childSortOrderOverrides
+            childSortOrderOverrides,
+            childOrder
         })
     );
 }
@@ -158,7 +160,7 @@ export function useFileItemTagPills({
 
         if (!settings.prioritizeColoredFileTags || !settings.colorFileTags) {
             const sortedTags = [...visibleTags];
-            sortTagsByNavigationOrder(sortedTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
+            sortTagsByNavigationOrder(sortedTags, fileItemPillOrderModel, settings.tagTreeSortOverrides, settings.tagChildOrder);
             return sortedTags;
         }
 
@@ -176,14 +178,15 @@ export function useFileItemTagPills({
             regularTags.push(tag);
         });
 
-        sortTagsByNavigationOrder(coloredTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
-        sortTagsByNavigationOrder(regularTags, fileItemPillOrderModel, settings.tagTreeSortOverrides);
+        sortTagsByNavigationOrder(coloredTags, fileItemPillOrderModel, settings.tagTreeSortOverrides, settings.tagChildOrder);
+        sortTagsByNavigationOrder(regularTags, fileItemPillOrderModel, settings.tagTreeSortOverrides, settings.tagChildOrder);
 
         return [...coloredTags, ...regularTags];
     }, [
         fileItemPillOrderModel,
         settings.colorFileTags,
         settings.prioritizeColoredFileTags,
+        settings.tagChildOrder,
         settings.tagTreeSortOverrides,
         tagColorData,
         visibleTags

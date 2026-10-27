@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TFolder, type App } from 'obsidian';
 import type { ShortcutsContextValue } from '../../../context/ShortcutsContext';
 import type { ActiveProfileState } from '../../../context/SettingsContext';
@@ -31,15 +31,19 @@ import {
     createHiddenFileNameMatcherForVisibility,
     type HiddenFileNameMatcher
 } from '../../../utils/fileFilters';
-import { getDirectPropertyKeyNoteCount } from '../../../utils/propertyTree';
+import { getDirectPropertyKeyNoteCount, getTotalPropertyNoteCount } from '../../../utils/propertyTree';
 import { createHiddenTagVisibility } from '../../../utils/tagPrefixMatcher';
-import { excludeFromTagTree } from '../../../utils/tagTree';
+import { excludeFromTagTree, findTagNode } from '../../../utils/tagTree';
+import { compareByAlphaSortOrder } from '../../../utils/sortUtils';
+import { getTagChildName } from '../../../utils/treeFlattener';
+import { useChildOrderAppend } from '../../useChildOrderAppend';
 import { getPropertyKeySet } from '../../../utils/vaultProfiles';
 import type { FolderNavigationSourceState } from '../../useFolderNavigationSourceState';
 import { useRootPropertyOrder } from '../../useRootPropertyOrder';
 import { useRootTagOrder } from '../../useRootTagOrder';
 import {
     comparePropertyKeyNodesAlphabetically,
+    comparePropertyValueNodesAlphabetically,
     compareTagAlphabetically,
     createPropertyComparator,
     createTagComparator,
@@ -71,9 +75,6 @@ export interface NavigationPaneSourceState {
     folderCountFileNameMatcher: HiddenFileNameMatcher | null;
     hiddenFilePropertyMatcher: ReturnType<typeof createFrontmatterPropertyExclusionMatcher>;
     rootFolders: TFolder[];
-    rootLevelFolders: TFolder[];
-    rootFolderOrderMap: Map<string, number>;
-    missingRootFolderPaths: string[];
     tagTree: Map<string, TagTreeNode>;
     propertyTree: Map<string, PropertyTreeNode>;
     untaggedCount: number;
@@ -136,9 +137,6 @@ export function useNavigationPaneSourceState({
     const {
         hiddenFolders,
         rootFolders,
-        rootLevelFolders,
-        rootFolderOrderMap,
-        missingRootFolderPaths,
         fileChangeVersion,
         folderChangeVersion,
         metadataDecorationVersion,
@@ -221,6 +219,61 @@ export function useNavigationPaneSourceState({
         comparator: propertyKeyComparator
     });
 
+    // New nested tags and property values join the end of a manually ordered parent, in the order the tree shows them
+    const getNewTagChildNames = useCallback(
+        (parentPath: string, storedOrder: readonly string[]): string[] => {
+            const parent = findTagNode(tagTreeForOrdering, parentPath);
+            if (!parent) {
+                return [];
+            }
+            const override = Object.prototype.hasOwnProperty.call(settings.tagTreeSortOverrides, parentPath)
+                ? settings.tagTreeSortOverrides[parentPath]
+                : undefined;
+            const compare: TagComparator = override
+                ? (a, b) => compareByAlphaSortOrder(a.name, b.name, override)
+                : (tagComparator ?? compareTagAlphabetically);
+            return Array.from(parent.children.values())
+                .filter(child => !storedOrder.includes(getTagChildName(child.path)))
+                .sort(compare)
+                .map(child => getTagChildName(child.path));
+        },
+        [settings.tagTreeSortOverrides, tagComparator, tagTreeForOrdering]
+    );
+    useChildOrderAppend({
+        settingsKey: 'tagChildOrder',
+        contentType: 'tags',
+        getNewChildNames: getNewTagChildNames,
+        contentVersion: tagDataVersion
+    });
+
+    const getNewPropertyValueNames = useCallback(
+        (keyNodeId: string, storedOrder: readonly string[]): string[] => {
+            const keyNode = Array.from(propertyTree.values()).find(node => node.id === keyNodeId);
+            if (!keyNode) {
+                return [];
+            }
+            const compare = createPropertyComparator({
+                order: Object.prototype.hasOwnProperty.call(settings.propertyTreeSortOverrides, keyNodeId)
+                    ? settings.propertyTreeSortOverrides[keyNodeId]
+                    : settings.propertySortOrder,
+                compareAlphabetically: comparePropertyValueNodesAlphabetically,
+                getFrequency: node =>
+                    includeDescendantNotes && node.valuePath ? getTotalPropertyNoteCount(keyNode, node.valuePath) : node.notesWithValue.size
+            });
+            return Array.from(keyNode.children.values())
+                .filter(child => child.valuePath !== null && !storedOrder.includes(child.valuePath))
+                .sort(compare)
+                .map(child => child.valuePath ?? '');
+        },
+        [includeDescendantNotes, propertyTree, settings.propertySortOrder, settings.propertyTreeSortOverrides]
+    );
+    useChildOrderAppend({
+        settingsKey: 'propertyChildOrder',
+        contentType: 'properties',
+        getNewChildNames: getNewPropertyValueNames,
+        contentVersion: propertyDataVersion
+    });
+
     const visiblePropertyNavigationKeySet = useMemo(
         () => getPropertyKeySet(activeProfile.propertyKeys, 'navigation'),
         [activeProfile.propertyKeys]
@@ -262,9 +315,6 @@ export function useNavigationPaneSourceState({
             folderCountFileNameMatcher,
             hiddenFilePropertyMatcher,
             rootFolders,
-            rootLevelFolders,
-            rootFolderOrderMap,
-            missingRootFolderPaths,
             tagTree,
             propertyTree,
             untaggedCount,
@@ -305,9 +355,6 @@ export function useNavigationPaneSourceState({
             folderCountFileNameMatcher,
             hiddenFilePropertyMatcher,
             rootFolders,
-            rootLevelFolders,
-            rootFolderOrderMap,
-            missingRootFolderPaths,
             tagTree,
             propertyTree,
             untaggedCount,

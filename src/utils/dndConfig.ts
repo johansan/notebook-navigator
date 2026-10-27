@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { closestCenter, type CollisionDetection, type Modifier } from '@dnd-kit/core';
+import { closestCenter, type Collision, type CollisionDetection, type Modifier } from '@dnd-kit/core';
 
 export const verticalAxisOnly: Modifier = ({ transform }) => {
     return {
@@ -26,9 +26,32 @@ export const verticalAxisOnly: Modifier = ({ transform }) => {
 };
 
 /**
+ * Picks the sibling whose element holds the dragged row's top edge, otherwise the sibling with the
+ * closest top edge. A row in reorder mode is one sortable element holding the row and its expanded
+ * children, so the whole branch belongs to that row: a row dragged anywhere over it targets it.
+ * Comparing centers or tops alone would hand the lower part of a tall branch to the next sibling.
+ */
+const closestTopEdge: CollisionDetection = ({ collisionRect, droppableRects, droppableContainers }) => {
+    const collisions: Collision[] = [];
+    droppableContainers.forEach(container => {
+        const rect = droppableRects.get(container.id);
+        if (rect) {
+            const holdsTopEdge = rect.top <= collisionRect.top && collisionRect.top < rect.bottom;
+            const value = holdsTopEdge ? 0 : Math.abs(rect.top - collisionRect.top);
+            collisions.push({ id: container.id, data: { droppableContainer: container, value } });
+        }
+    });
+    return collisions.sort((left, right) => Number(left.data?.value) - Number(right.data?.value));
+};
+
+/**
  * Collision detection that filters droppable containers by type.
  * Containers must have `data: { type: string }` set via useSortable.
- * Only containers matching the active item's type are considered.
+ * Only containers matching the active item's type are considered. Containers that also set
+ * `parentPath` (folder, tag and property rows in reorder mode) only match siblings, because every
+ * level is its own sortable list and a drop on another level would not be applied; they are compared
+ * by row (closestTopEdge) instead of by center. Containers without it (list pane manual sort) keep
+ * center-based targeting.
  */
 export const typeFilteredCollisionDetection: CollisionDetection = args => {
     const activeType = args.active?.data?.current?.type as string | undefined;
@@ -37,9 +60,13 @@ export const typeFilteredCollisionDetection: CollisionDetection = args => {
         return closestCenter(args);
     }
 
-    const filteredContainers = args.droppableContainers.filter(container => container.data.current?.type === activeType);
+    const activeParentPath: unknown = args.active?.data?.current?.parentPath;
+    const filteredContainers = args.droppableContainers.filter(
+        container => container.data.current?.type === activeType && container.data.current?.parentPath === activeParentPath
+    );
+    const detectCollisions = typeof activeParentPath === 'string' ? closestTopEdge : closestCenter;
 
-    return closestCenter({
+    return detectCollisions({
         ...args,
         droppableContainers: filteredContainers
     });

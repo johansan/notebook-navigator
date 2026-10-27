@@ -32,6 +32,7 @@ interface RootFolderReorderItemProps {
     dragHandlers?: ListReorderHandlers;
     isDragSource?: boolean;
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void;
     chevronIcon?: string;
     isMissing?: boolean;
     color?: string;
@@ -39,6 +40,8 @@ interface RootFolderReorderItemProps {
     className?: string; // Additional CSS classes to apply to the item
     dragHandleConfig?: DragHandleConfig;
     trailingAccessory?: ReactNode;
+    /** Badge in the count position, such as a folder's subfolder sort indicator */
+    countSlot?: ReactNode;
     dragRef?: (node: HTMLDivElement | null) => void;
     dragHandleRef?: (node: HTMLSpanElement | null) => void;
     dragAttributes?: React.HTMLAttributes<HTMLElement>;
@@ -58,6 +61,7 @@ export function RootFolderReorderItem({
     dragHandlers,
     isDragSource,
     onClick,
+    onContextMenu,
     chevronIcon,
     isMissing,
     color,
@@ -65,6 +69,7 @@ export function RootFolderReorderItem({
     className,
     dragHandleConfig,
     trailingAccessory,
+    countSlot,
     dragRef,
     dragHandleRef,
     dragAttributes,
@@ -140,9 +145,11 @@ export function RootFolderReorderItem({
             itemType={itemType}
             role="listitem"
             onClick={handleClick}
+            onContextMenu={onContextMenu}
             dragHandlers={dragHandlers}
             isDragSource={isDragSource}
-            showCount={false}
+            showCount={Boolean(countSlot)}
+            countSlot={countSlot}
             className={rowClassName}
             tabIndex={-1}
             dragHandleConfig={handleConfig}

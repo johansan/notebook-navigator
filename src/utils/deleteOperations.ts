@@ -25,6 +25,7 @@ import type { PropertyTreeService } from '../services/PropertyTreeService';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import type { VisibilityPreferences } from '../types';
 import { getFilesForNavigationSelection } from './selectionUtils';
+import { sortFolderSiblings } from './treeFlattener';
 
 interface BaseDeleteOperationsContext {
     app: App;
@@ -137,9 +138,16 @@ export async function deleteSelectedFolder({
     // Try to find next sibling folder
     const parentFolder = folderToDelete.parent;
     if (parentFolder) {
-        const siblings = parentFolder.children
-            .filter((child): child is TFolder => child instanceof TFolder)
-            .sort((a, b) => naturalCompare(a.name, b.name));
+        // Manual subfolder order first, then alphabetical by folder name (the tree may sort by display name)
+        const siblings = sortFolderSiblings(
+            parentFolder.children.filter((child): child is TFolder => child instanceof TFolder),
+            parentFolder.path,
+            {
+                childOrder: settings.folderChildOrder,
+                defaultSortOrder: settings.folderSortOrder,
+                childSortOrderOverrides: settings.folderTreeSortOverrides
+            }
+        );
 
         const currentIndex = siblings.findIndex(f => f.path === folderToDelete.path);
 

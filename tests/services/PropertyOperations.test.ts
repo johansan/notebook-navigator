@@ -178,6 +178,9 @@ describe('PropertyOperations settings updates', () => {
         settings.propertyTreeSortOverrides = {
             [oldKeyNodeId]: 'alpha-desc'
         };
+        settings.propertyChildOrder = {
+            [oldKeyNodeId]: ['done', 'todo']
+        };
 
         await operations.renameSettings('status', 'State');
 
@@ -199,6 +202,10 @@ describe('PropertyOperations settings updates', () => {
         });
         expect(settings.propertyTreeSortOverrides).toEqual({
             [newKeyNodeId]: 'alpha-desc'
+        });
+        // Value orders hold value paths, which a key rename keeps
+        expect(settings.propertyChildOrder).toEqual({
+            [newKeyNodeId]: ['done', 'todo']
         });
     });
 

@@ -39,7 +39,7 @@ import { EXCALIDRAW_BASENAME_SUFFIX } from '../utils/fileNameUtils';
 import { getParentFolderPath, getPathBaseName } from '../utils/pathUtils';
 import { getCachedFileTags } from '../utils/tagUtils';
 import { createHiddenTagVisibility } from '../utils/tagPrefixMatcher';
-import { type RootFileChangeEvent, useRootFolderOrder } from './useRootFolderOrder';
+import { type RootFileChangeEvent, useRootFolders } from './useRootFolders';
 
 const FOLDER_SORT_NAME_CACHE_MAX_ENTRIES = 2000;
 const FOLDER_NOTE_EXTENSIONS = new Set<string>(Object.values(FOLDER_NOTE_TYPE_EXTENSIONS));
@@ -47,9 +47,6 @@ const FOLDER_NOTE_EXTENSIONS = new Set<string>(Object.values(FOLDER_NOTE_TYPE_EX
 export interface FolderNavigationSourceState {
     hiddenFolders: string[];
     rootFolders: TFolder[];
-    rootLevelFolders: TFolder[];
-    rootFolderOrderMap: Map<string, number>;
-    missingRootFolderPaths: string[];
     fileChangeVersion: number;
     folderChangeVersion: number;
     folderDisplayVersion: number;
@@ -185,8 +182,8 @@ export function useFolderNavigationSourceState({
         [isFolderNoteRelatedPath, onFileChange, scheduleFileChangeVersionBump]
     );
 
-    const { rootFolders, rootLevelFolders, rootFolderOrderMap, missingRootFolderPaths } = useRootFolderOrder({
-        settings,
+    const rootFolders = useRootFolders({
+        showRootFolder: settings.showRootFolder,
         showHiddenItems,
         onFileChange: handleRootFileChange,
         onFolderChange: handleRootFolderChange
@@ -458,9 +455,6 @@ export function useFolderNavigationSourceState({
         () => ({
             hiddenFolders,
             rootFolders,
-            rootLevelFolders,
-            rootFolderOrderMap,
-            missingRootFolderPaths,
             fileChangeVersion,
             folderChangeVersion,
             folderDisplayVersion,
@@ -482,11 +476,8 @@ export function useFolderNavigationSourceState({
             isFolderExcluded,
             metadataDecorationVersion,
             metadataVisibilityVersion,
-            missingRootFolderPaths,
             propertyDataVersion,
             rootFolders,
-            rootFolderOrderMap,
-            rootLevelFolders,
             tagDataVersion
         ]
     );

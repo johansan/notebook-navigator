@@ -43,7 +43,9 @@ import {
     flattenFolderTree,
     flattenTagTree,
     comparePropertyOrderWithFallback,
-    compareTagOrderWithFallback
+    compareTagOrderWithFallback,
+    getChildOrder,
+    orderByManualList
 } from '../../../utils/treeFlattener';
 import { resolveUXIcon } from '../../../utils/uxIcons';
 import { getVirtualTagCollection, VIRTUAL_TAG_COLLECTION_IDS } from '../../../utils/virtualTagCollections';
@@ -233,7 +235,7 @@ export function useNavigationPaneTreeSections({
             ? (folder: TFolder) => (folder.path === '/' ? true : (baseFolderExclusion?.(folder) ?? false))
             : baseFolderExclusion;
         return flattenFolderTree(sourceState.rootFolders, expandedFolders, sourceState.hiddenFolders, 0, new Set(), {
-            rootOrderMap: sourceState.rootFolderOrderMap,
+            childOrder: settings.folderChildOrder,
             defaultSortOrder: settings.folderSortOrder,
             childSortOrderOverrides: settings.folderTreeSortOverrides,
             getFolderSortName: sourceState.getFolderSortName,
@@ -241,13 +243,13 @@ export function useNavigationPaneTreeSections({
         });
     }, [
         expansionState.expandedFolders,
+        settings.folderChildOrder,
         settings.folderSortOrder,
         settings.folderTreeSortOverrides,
         settings.showRootFolder,
         sourceState.folderExclusionByFolderNote,
         sourceState.getFolderSortName,
         sourceState.hiddenFolders,
-        sourceState.rootFolderOrderMap,
         sourceState.rootFolders
     ]);
 
@@ -554,7 +556,8 @@ export function useNavigationPaneTreeSections({
             const tagEntries = flattenTagTree([node], expansionState.expandedTags, level, {
                 hiddenMatcher: matcherForMarking,
                 comparator: effectiveRootTagComparator,
-                childSortOrderOverrides: settings.tagTreeSortOverrides
+                childSortOrderOverrides: settings.tagTreeSortOverrides,
+                childOrder: settings.tagChildOrder
             });
             items.push(...tagEntries);
         };
@@ -617,6 +620,7 @@ export function useNavigationPaneTreeSections({
         settings.showNoteCount,
         settings.showTags,
         settings.showUntagged,
+        settings.tagChildOrder,
         settings.tagTreeSortOverrides,
         showHiddenItems,
         sourceState.hiddenMatcherHasRules,
@@ -879,7 +883,12 @@ export function useNavigationPaneTreeSections({
                     includeDescendantNotes && node.valuePath ? getTotalPropertyNoteCount(keyNode, node.valuePath) : node.notesWithValue.size
             });
 
-            return nodes.sort(comparator);
+            return orderByManualList(
+                nodes,
+                getChildOrder(settings.propertyChildOrder, keyNode.id),
+                node => node.valuePath ?? '',
+                comparator
+            );
         };
 
         keyNodes.forEach(keyNode => {
@@ -911,6 +920,7 @@ export function useNavigationPaneTreeSections({
         propertySectionBase.keyNodes,
         propertySectionBase.propertiesSectionActive,
         settings.interfaceIcons,
+        settings.propertyChildOrder,
         settings.propertySortOrder,
         settings.propertyTreeSortOverrides,
         settings.showAllPropertiesFolder,

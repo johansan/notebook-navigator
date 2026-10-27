@@ -352,3 +352,95 @@ describe('TagMetadataService.cleanupWithValidators', () => {
         });
     });
 });
+
+describe('TagMetadataService nested tag order', () => {
+    const app = new App();
+
+    it('keeps a renamed nested tag at its position and rekeys its own and descendant orders', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'alpha'], 'projects/beta': ['y', 'x'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagRename('projects/beta', 'projects/gamma');
+
+        expect(settings.tagChildOrder).toEqual({ projects: ['gamma', 'alpha'], 'projects/gamma': ['y', 'x'] });
+    });
+
+    it('moves a renamed tag from its old parent order to the end of a manually ordered new parent', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'alpha'], areas: ['home'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagRename('projects/beta', 'areas/beta');
+
+        expect(settings.tagChildOrder).toEqual({ projects: ['alpha'], areas: ['home', 'beta'] });
+    });
+
+    it('keeps the existing position when a rename merges into a listed tag', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'alpha', 'gamma'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagRename('projects/beta', 'projects/gamma', true);
+
+        expect(settings.tagChildOrder).toEqual({ projects: ['alpha', 'gamma'] });
+    });
+
+    it('removes a deleted tag from its parent order and drops its own order', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'alpha'], 'projects/beta': ['x'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagDelete('projects/beta');
+
+        expect(settings.tagChildOrder).toEqual({ projects: ['alpha'] });
+    });
+
+    it('clears the manual child order when an alphabetical child order is chosen', async () => {
+        const settings = createSettings();
+        const storedRecord = { projects: ['beta', 'alpha'] };
+        settings.tagChildOrder = storedRecord;
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.setTagChildSortOrderOverride('projects', 'alpha-desc');
+
+        expect(settings.tagChildOrder).toEqual({});
+        expect(settings.tagChildOrder).not.toBe(storedRecord);
+        expect(settings.tagTreeSortOverrides).toEqual({ projects: 'alpha-desc' });
+    });
+
+    it('removes orders of missing parent tags and names of missing child tags during cleanup', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'gone'], removed: ['x'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+        const validators = createValidators([createMarkdownFile('note.md', ['#projects/beta'])]);
+        validators.tagTree = new Map([
+            [
+                'projects',
+                {
+                    name: 'projects',
+                    path: 'projects',
+                    displayPath: 'projects',
+                    notesWithTag: new Set<string>(),
+                    children: new Map([
+                        [
+                            'projects/beta',
+                            {
+                                name: 'beta',
+                                path: 'projects/beta',
+                                displayPath: 'projects/beta',
+                                notesWithTag: new Set(['note.md']),
+                                children: new Map()
+                            }
+                        ]
+                    ])
+                }
+            ]
+        ]);
+
+        const result = await service.cleanupWithValidators(validators, settings);
+
+        expect(result.settingsChanged).toBe(true);
+        expect(settings.tagChildOrder).toEqual({ projects: ['beta'] });
+    });
+});

@@ -31,7 +31,13 @@ import { getPropertyKeyNodeIdFromNodeId, getTotalPropertyNoteCount, parsePropert
 import { naturalCompare, compareByAlphaSortOrder } from './sortUtils';
 import { normalizeTagPathValue } from './tagPrefixMatcher';
 import { collectAllTagPaths } from './tagTree';
-import { comparePropertyOrderWithFallback, compareTagOrderWithFallback, flattenTagTree } from './treeFlattener';
+import {
+    comparePropertyOrderWithFallback,
+    compareTagOrderWithFallback,
+    flattenTagTree,
+    getChildOrder,
+    orderByManualList
+} from './treeFlattener';
 
 export interface FileItemPillDecorationColors {
     color: string | undefined;
@@ -147,6 +153,7 @@ export function buildFileItemTagRainbowColors(params: {
     showAllTagsFolder: boolean;
     inheritColors: boolean;
     childSortOrderOverrides?: Record<string, AlphaSortOrder>;
+    childOrder?: Readonly<Record<string, readonly string[]>>;
 }): TagRainbowColors {
     const {
         visibleTagTree,
@@ -157,7 +164,8 @@ export function buildFileItemTagRainbowColors(params: {
         scope,
         showAllTagsFolder,
         inheritColors,
-        childSortOrderOverrides
+        childSortOrderOverrides,
+        childOrder
     } = params;
 
     if (palette.length === 0) {
@@ -210,7 +218,8 @@ export function buildFileItemTagRainbowColors(params: {
             items.push(
                 ...flattenTagTree([node], expandedTags, rootLevel, {
                     comparator: baseComparator,
-                    childSortOrderOverrides
+                    childSortOrderOverrides,
+                    childOrder
                 })
             );
         });
@@ -222,14 +231,16 @@ export function buildFileItemTagRainbowColors(params: {
                 items.push(
                     ...flattenTagTree([node], expandedTags, rootLevel, {
                         comparator: baseComparator,
-                        childSortOrderOverrides
+                        childSortOrderOverrides,
+                        childOrder
                     })
                 );
             });
     } else {
         items = flattenTagTree(rootNodes, expandedTags, rootLevel, {
             comparator: effectiveComparator,
-            childSortOrderOverrides
+            childSortOrderOverrides,
+            childOrder
         });
     }
 
@@ -253,6 +264,7 @@ export function buildFileItemPropertyRainbowColors(params: {
     showAllPropertiesFolder: boolean;
     propertySortOrder: TagSortOrder;
     propertyTreeSortOverrides?: Record<string, AlphaSortOrder>;
+    propertyChildOrder?: Readonly<Record<string, readonly string[]>>;
     includeDescendantNotes: boolean;
 }): PropertyRainbowColors {
     const {
@@ -265,6 +277,7 @@ export function buildFileItemPropertyRainbowColors(params: {
         showAllPropertiesFolder,
         propertySortOrder,
         propertyTreeSortOverrides,
+        propertyChildOrder,
         includeDescendantNotes
     } = params;
 
@@ -310,14 +323,16 @@ export function buildFileItemPropertyRainbowColors(params: {
                   keyNode,
                   includeDescendantNotes
               });
-        childNodes.sort(childComparator).forEach(childNode => {
-            items.push({
-                type: NavigationPaneItemType.PROPERTY_VALUE,
-                data: childNode,
-                level: childLevel,
-                key: childNode.id
-            });
-        });
+        orderByManualList(childNodes, getChildOrder(propertyChildOrder, keyNode.id), node => node.valuePath ?? '', childComparator).forEach(
+            childNode => {
+                items.push({
+                    type: NavigationPaneItemType.PROPERTY_VALUE,
+                    data: childNode,
+                    level: childLevel,
+                    key: childNode.id
+                });
+            }
+        );
     });
 
     return buildPropertyRainbowColors({

@@ -29,6 +29,7 @@ import { ISettingsProvider } from '../../interfaces/ISettingsProvider';
 import type { ListPaneAppearance } from '../../settings/listPaneAppearance';
 import type { ShortcutEntry } from '../../types/shortcuts';
 import { mutateVaultProfileShortcuts } from '../../utils/vaultProfiles';
+import { getChildOrder } from '../../utils/treeFlattener';
 import { normalizeCanonicalIconId } from '../../utils/iconizeFormat';
 import { cleanupCollapsedPinnedContextKeys, ensureRecord, isStringRecordValue, sanitizeRecord } from '../../utils/recordUtils';
 
@@ -36,6 +37,9 @@ import { cleanupCollapsedPinnedContextKeys, ensureRecord, isStringRecordValue, s
  * Type helper for metadata fields in settings
  * All metadata fields are Record<string, T> objects
  */
+/** Settings records holding manual child orders (folders, nested tags, property values) */
+type ChildOrderSettingsKey = 'folderChildOrder' | 'tagChildOrder' | 'propertyChildOrder';
+
 type MetadataFields = {
     folderIcons: Record<string, string>;
     folderColors: Record<string, string>;
@@ -108,6 +112,56 @@ export abstract class BaseMetadataService {
      * Saves settings and triggers UI update
      * Uses a queue to serialize updates and prevent race conditions
      */
+    /**
+     * Removes a parent's manual child order. The record is replaced instead of edited in place because tree sorting
+     * is memoized on it, and choosing Default without an alphabetical override changes nothing else that re-sorts.
+     */
+    protected async removeChildOrder(settingsKey: ChildOrderSettingsKey, parentKey: string): Promise<void> {
+        if (getChildOrder(this.settingsProvider.settings[settingsKey], parentKey).length === 0) {
+            return;
+        }
+        await this.saveAndUpdate(settings => {
+            const nextRecord = sanitizeRecord(settings[settingsKey]);
+            delete nextRecord[parentKey];
+            settings[settingsKey] = nextRecord;
+        });
+    }
+
+    /**
+     * Drops the manual orders of parents that no longer exist and the names of children that no longer exist.
+     * Only the explicit metadata cleanup removes missing names; loading and rendering keep them because settings
+     * can sync before the folders, tags or property values arrive.
+     */
+    protected cleanupChildOrder(
+        settings: NotebookNavigatorSettings,
+        settingsKey: ChildOrderSettingsKey,
+        isValid: (key: string) => boolean,
+        getChildKey: (parentKey: string, name: string) => string
+    ): boolean {
+        const record = settings[settingsKey];
+        let changed = false;
+        Object.keys(record).forEach(parentKey => {
+            if (!isValid(parentKey)) {
+                delete record[parentKey];
+                changed = true;
+                return;
+            }
+
+            const storedOrder = record[parentKey];
+            const existingNames = storedOrder.filter(name => isValid(getChildKey(parentKey, name)));
+            if (existingNames.length === storedOrder.length) {
+                return;
+            }
+            changed = true;
+            if (existingNames.length > 0) {
+                record[parentKey] = existingNames;
+            } else {
+                delete record[parentKey];
+            }
+        });
+        return changed;
+    }
+
     protected async saveAndUpdate(updater: (settings: NotebookNavigatorSettings) => void | boolean): Promise<void> {
         // Queue this update to run after any pending updates
         this.updateQueue = this.updateQueue

@@ -17,6 +17,7 @@
  */
 
 import { DEFAULT_SETTINGS } from './defaultSettings';
+import { extractLegacyRootFolderOrder } from './migrations/syncedSettings';
 import type { NotebookNavigatorSettings } from './types';
 import { isRecord } from '../utils/typeGuards';
 
@@ -143,7 +144,7 @@ function validateSettingsTransferDiff(transferSettings: Record<string, unknown>)
     throw new Error('Settings import must contain Notebook Navigator settings.');
 }
 
-function migrateLegacyFolderNoteNameTransfer(transferSettings: Record<string, unknown>): Record<string, unknown> {
+function migrateLegacySettingsTransfer(transferSettings: Record<string, unknown>): Record<string, unknown> {
     const migratedSettings = structuredClone(transferSettings);
     const legacyFixedName = migratedSettings['folderNoteName'];
     const pattern = migratedSettings['folderNoteNamePattern'];
@@ -154,6 +155,14 @@ function migrateLegacyFolderNoteNameTransfer(transferSettings: Record<string, un
         migratedSettings['folderNoteNamePattern'] = legacyFixedName;
     }
     delete migratedSettings['folderNoteName'];
+
+    // Older exports carry the root folder order as `rootFolderOrder`. Import rebuilds settings from
+    // the current default keys only, so convert it here or the root order is dropped.
+    const legacyRootFolderOrder = extractLegacyRootFolderOrder(migratedSettings);
+    if (legacyRootFolderOrder) {
+        migratedSettings['folderChildOrder'] = legacyRootFolderOrder;
+    }
+    delete migratedSettings['rootFolderOrder'];
 
     return migratedSettings;
 }
@@ -293,7 +302,7 @@ export function createModifiedSettingsTransfer(settings: NotebookNavigatorSettin
 // treated as bare diffs from exports created before the envelope format.
 function unwrapSettingsTransfer(transferData: Record<string, unknown>): Record<string, unknown> {
     if (!hasOwnKey(transferData, 'plugin')) {
-        const migratedSettings = migrateLegacyFolderNoteNameTransfer(transferData);
+        const migratedSettings = migrateLegacySettingsTransfer(transferData);
         validateSettingsTransferDiff(migratedSettings);
         return migratedSettings;
     }
@@ -307,7 +316,7 @@ function unwrapSettingsTransfer(transferData: Record<string, unknown>): Record<s
         throw new Error('Settings import must contain a settings object.');
     }
 
-    const migratedSettings = migrateLegacyFolderNoteNameTransfer(transferSettings);
+    const migratedSettings = migrateLegacySettingsTransfer(transferSettings);
     validateSettingsTransferDiff(migratedSettings);
 
     return migratedSettings;

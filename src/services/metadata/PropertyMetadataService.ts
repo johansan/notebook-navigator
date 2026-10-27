@@ -23,6 +23,7 @@ import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, type CollapsedPinnedContex
 import type { CleanupValidators } from '../MetadataService';
 import { getDBInstance } from '../../storage/fileOperations';
 import {
+    buildPropertyValueNodeIdFromKeyNodeId,
     createConfiguredPropertyNodeValidator,
     getPropertyKeyNodeIdFromNodeId,
     normalizePropertyKeyNodeId,
@@ -193,6 +194,8 @@ export class PropertyMetadataService extends BaseMetadataService {
             return Promise.resolve();
         }
 
+        // An alphabetical choice replaces the key's manual value order
+        await this.removeChildOrder('propertyChildOrder', keyNodeId);
         return this.setEntityChildSortOrderOverride(ItemType.PROPERTY, keyNodeId, sortOrder);
     }
 
@@ -202,6 +205,7 @@ export class PropertyMetadataService extends BaseMetadataService {
             return Promise.resolve();
         }
 
+        await this.removeChildOrder('propertyChildOrder', keyNodeId);
         return this.removeEntityChildSortOrderOverride(ItemType.PROPERTY, keyNodeId);
     }
 
@@ -309,10 +313,16 @@ export class PropertyMetadataService extends BaseMetadataService {
             this.cleanupMetadata(targetSettings, 'propertyTreeSortOverrides', validator),
             this.cleanupMetadata(targetSettings, 'propertyAppearances', validator)
         ]);
+        const propertyChildOrderChanged = this.cleanupChildOrder(
+            targetSettings,
+            'propertyChildOrder',
+            validator,
+            buildPropertyValueNodeIdFromKeyNodeId
+        );
         const propertyKeyChanges = this.pruneConfiguredPropertyKeys(targetSettings, existingPropertyKeys);
 
         return {
-            settingsChanged: propertyKeyChanges || results.some(changed => changed),
+            settingsChanged: propertyKeyChanges || propertyChildOrderChanged || results.some(changed => changed),
             localChanged: collapsedPinnedContextChanges
         };
     }

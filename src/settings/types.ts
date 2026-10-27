@@ -1002,25 +1002,43 @@ export interface NotebookNavigatorSettings {
     folderBackgroundColors: Record<string, string>;
     folderSortOverrides: Record<string, ListSortOverrideValue>;
     folderTreeSortOverrides: Record<string, AlphaSortOrder>;
+    /**
+     * Manual subfolder order keyed by parent folder path ('/' for the vault root). Values are child
+     * folder names, so renaming an ancestor only rekeys entries. New and moved-in subfolders are
+     * appended; children the list does not hold sort after the listed ones alphabetically. Names of
+     * folders that do not exist (yet) keep their positions because settings can sync before the
+     * folders arrive.
+     */
+    folderChildOrder: Record<string, string[]>;
     folderAppearances: Record<string, ListPaneAppearance>;
     tagIcons: Record<string, string>;
     tagColors: Record<string, string>;
     tagBackgroundColors: Record<string, string>;
     tagSortOverrides: Record<string, ListSortOverrideValue>;
     tagTreeSortOverrides: Record<string, AlphaSortOrder>;
+    /**
+     * Manual child order of nested tags, keyed by lowercase parent tag path; values are lowercase child segments.
+     * Root tags use rootTagOrder. Works like folderChildOrder: new children of a listed parent are appended once
+     * tag indexing is complete, and names of tags that are missing keep their positions.
+     */
+    tagChildOrder: Record<string, string[]>;
     tagAppearances: Record<string, ListPaneAppearance>;
     propertyIcons: Record<string, string>;
     propertyColors: Record<string, string>;
     propertyBackgroundColors: Record<string, string>;
     propertySortOverrides: Record<string, ListSortOverrideValue>;
     propertyTreeSortOverrides: Record<string, AlphaSortOrder>;
+    /**
+     * Manual order of property values, keyed by property key node id ("key:status"); values are canonical value paths.
+     * Property keys use rootPropertyOrder. Works like tagChildOrder.
+     */
+    propertyChildOrder: Record<string, string[]>;
     propertyAppearances: Record<string, ListPaneAppearance>;
     virtualFolderColors: Record<string, string>;
     virtualFolderBackgroundColors: Record<string, string>;
     navigationSeparators: Record<string, boolean>;
     userColors: string[];
     lastShownVersion: string;
-    rootFolderOrder: string[];
     rootTagOrder: string[];
     rootPropertyOrder: string[];
 }
