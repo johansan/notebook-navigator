@@ -32,6 +32,7 @@ import {
     type VisibleFrontmatterPropertyEntry
 } from '../../utils/listPaneMeasurements';
 import { naturalCompare } from '../../utils/sortUtils';
+import { compareByManualList, getChildOrder } from '../../utils/treeFlattener';
 import { getTagSearchModifierOperator } from '../../utils/tagUtils';
 import {
     buildPropertySearchEvidence,
@@ -120,8 +121,18 @@ function buildPropertySearchValueIdentity(fieldKey: string, valueKind: PropertyI
     return `${casefold(fieldKey.trim())}\u0000${valueKind ?? ''}\u0000${rawValue}`;
 }
 
-function sortPropertyPillsAlphabetically(pills: PropertyPill[]): void {
+/** Sorts pills of one property by its manual value order (as in the navigation pane), then alphabetically */
+function sortPropertyPillsByValueOrder(pills: PropertyPill[], manualValueOrder: readonly string[]): void {
     pills.sort((firstPill, secondPill) => {
+        const manualCompare = compareByManualList(
+            manualValueOrder,
+            firstPill.propertySearchValuePath ?? '',
+            secondPill.propertySearchValuePath ?? ''
+        );
+        if (manualCompare !== 0) {
+            return manualCompare;
+        }
+
         const labelCompare = naturalCompare(firstPill.label, secondPill.label);
         if (labelCompare !== 0) {
             return labelCompare;
@@ -136,14 +147,18 @@ function sortPropertyPillsAlphabetically(pills: PropertyPill[]): void {
     });
 }
 
-function sortPropertyPillGroup(pills: readonly PropertyPill[], prioritizeCustomColoredPills: boolean): PropertyPill[] {
+function sortPropertyPillGroup(
+    pills: readonly PropertyPill[],
+    prioritizeCustomColoredPills: boolean,
+    manualValueOrder: readonly string[]
+): PropertyPill[] {
     if (pills.length <= 1) {
         return [...pills];
     }
 
     if (!prioritizeCustomColoredPills) {
         const sortedPills = [...pills];
-        sortPropertyPillsAlphabetically(sortedPills);
+        sortPropertyPillsByValueOrder(sortedPills, manualValueOrder);
         return sortedPills;
     }
 
@@ -159,8 +174,8 @@ function sortPropertyPillGroup(pills: readonly PropertyPill[], prioritizeCustomC
         regularPills.push(pill);
     });
 
-    sortPropertyPillsAlphabetically(customColoredPills);
-    sortPropertyPillsAlphabetically(regularPills);
+    sortPropertyPillsByValueOrder(customColoredPills, manualValueOrder);
+    sortPropertyPillsByValueOrder(regularPills, manualValueOrder);
 
     return [...customColoredPills, ...regularPills];
 }
@@ -670,7 +685,8 @@ export function useFileItemPills({
                 return;
             }
 
-            pills.push(...sortPropertyPillGroup(group, prioritizeColoredPills));
+            const manualValueOrder = getChildOrder(settings.propertyChildOrder, group[0].propertyKeyNodeId ?? '');
+            pills.push(...sortPropertyPillGroup(group, prioritizeColoredPills, manualValueOrder));
         });
 
         return pills;
@@ -683,6 +699,7 @@ export function useFileItemPills({
         propertySearchTermsByValue,
         settings.colorFileProperties,
         settings.prioritizeColoredFileProperties,
+        settings.propertyChildOrder,
         showProperties,
         visibleNavigationPropertyKeys,
         visibleFrontmatterProperties

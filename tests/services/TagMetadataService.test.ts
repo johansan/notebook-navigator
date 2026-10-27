@@ -386,6 +386,17 @@ describe('TagMetadataService nested tag order', () => {
         expect(settings.tagChildOrder).toEqual({ projects: ['alpha', 'gamma'] });
     });
 
+    it('puts a renamed tag in its old slot when the new name was listed during the rename', async () => {
+        // The append watcher can list the new name while the rename edits files, before metadata is updated
+        const settings = createSettings();
+        settings.tagChildOrder = { projects: ['beta', 'alpha', 'gamma'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagRename('projects/beta', 'projects/gamma', false);
+
+        expect(settings.tagChildOrder).toEqual({ projects: ['gamma', 'alpha'] });
+    });
+
     it('removes a deleted tag from its parent order and drops its own order', async () => {
         const settings = createSettings();
         settings.tagChildOrder = { projects: ['beta', 'alpha'], 'projects/beta': ['x'] };

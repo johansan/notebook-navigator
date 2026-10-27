@@ -242,8 +242,7 @@ export function useNavigationPaneSourceState({
     useChildOrderAppend({
         settingsKey: 'tagChildOrder',
         contentType: 'tags',
-        getNewChildNames: getNewTagChildNames,
-        contentVersion: tagDataVersion
+        getNewChildNames: getNewTagChildNames
     });
 
     const getNewPropertyValueNames = useCallback(
@@ -270,8 +269,7 @@ export function useNavigationPaneSourceState({
     useChildOrderAppend({
         settingsKey: 'propertyChildOrder',
         contentType: 'properties',
-        getNewChildNames: getNewPropertyValueNames,
-        contentVersion: propertyDataVersion
+        getNewChildNames: getNewPropertyValueNames
     });
 
     const visiblePropertyNavigationKeySet = useMemo(

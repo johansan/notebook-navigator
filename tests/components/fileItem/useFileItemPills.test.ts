@@ -621,6 +621,42 @@ describe('useFileItemPills', () => {
         expect(markup).toContain('>Best project<');
     });
 
+    it('orders values of one property by its manual value order, then alphabetically', () => {
+        const render = (propertyChildOrder: Record<string, string[]>) =>
+            renderPillRows({
+                file: createTestTFile('Notes/OrderedValues.md'),
+                isCompactMode: false,
+                tags: [],
+                properties: [
+                    { fieldKey: 'status', value: 'done', valueKind: 'string' },
+                    { fieldKey: 'status', value: 'todo', valueKind: 'string' },
+                    { fieldKey: 'status', value: 'blocked', valueKind: 'string' }
+                ],
+                wordCount: null,
+                settings: {
+                    ...DEFAULT_SETTINGS,
+                    showFileProperties: true,
+                    propertyChildOrder
+                },
+                visiblePropertyKeys: new Set<string>(['status']),
+                visibleNavigationPropertyKeys: new Set<string>(['status']),
+                fileItemPillOrderModel: {
+                    tagTree: new Map(),
+                    rootTagOrderMap: new Map(),
+                    tagComparator: undefined,
+                    rootPropertyNavigationOrderMap: new Map()
+                }
+            });
+
+        const manual = render({ 'key:status': ['todo', 'done'] });
+        expect(manual.indexOf('>todo<')).toBeLessThan(manual.indexOf('>done<'));
+        expect(manual.indexOf('>done<')).toBeLessThan(manual.indexOf('>blocked<'));
+
+        const alphabetical = render({});
+        expect(alphabetical.indexOf('>blocked<')).toBeLessThan(alphabetical.indexOf('>done<'));
+        expect(alphabetical.indexOf('>done<')).toBeLessThan(alphabetical.indexOf('>todo<'));
+    });
+
     it('orders property groups by the navigation properties section order', () => {
         const markup = renderPillRows({
             file: createTestTFile('Notes/OrderedProperties.md'),

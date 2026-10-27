@@ -416,9 +416,11 @@ export class TagMetadataService extends BaseMetadataService {
     /**
      * Keeps a renamed nested tag at its position in its parent's manual child order. A rename that puts the tag under
      * another parent removes it from the old order and appends it to the new parent's manual order, as for folders.
-     * A name that is already listed (a merge, or a missing tag of that name) keeps its existing position.
+     * Only a merge into an existing tag keeps the destination's position. Without a merge the new name takes the old
+     * slot even when it is already listed: the append watcher can list it while the rename edits files, before this
+     * runs, and a missing tag of that name has no position worth keeping over the renamed one.
      */
-    private renameInParentTagOrder(settings: NotebookNavigatorSettings, oldPath: string, newPath: string): boolean {
+    private renameInParentTagOrder(settings: NotebookNavigatorSettings, oldPath: string, newPath: string, isMerge: boolean): boolean {
         const oldParent = getParentTagPath(oldPath);
         const newParent = getParentTagPath(newPath);
         const oldName = getTagChildName(oldPath);
@@ -429,9 +431,10 @@ export class TagMetadataService extends BaseMetadataService {
             if (oldName === newName || !storedOrder.includes(oldName)) {
                 return false;
             }
-            const renamedOrder = storedOrder.includes(newName)
-                ? storedOrder.filter(name => name !== oldName)
-                : storedOrder.map(name => (name === oldName ? newName : name));
+            const renamedOrder =
+                isMerge && storedOrder.includes(newName)
+                    ? storedOrder.filter(name => name !== oldName)
+                    : storedOrder.filter(name => name !== newName).map(name => (name === oldName ? newName : name));
             settings.tagChildOrder[oldParent] = renamedOrder;
             return true;
         }
@@ -499,7 +502,7 @@ export class TagMetadataService extends BaseMetadataService {
                 changed = this.updateNestedPaths(settings.tagAppearances, normalizedOld, normalizedNew, preserveExisting) || changed;
             }
             if (requiresParentOrderUpdate) {
-                changed = this.renameInParentTagOrder(settings, normalizedOld, normalizedNew) || changed;
+                changed = this.renameInParentTagOrder(settings, normalizedOld, normalizedNew, preserveExisting) || changed;
             }
 
             changed = updateHiddenTagPrefixMatches(settings, normalizedOld, normalizedNew) || changed;

@@ -647,6 +647,7 @@ export const NavigationPane = React.memo(
             getFolderSortName,
             folderDecorationModel: props.folderDecorationModel,
             tagComparator: props.navigationSourceState.tagComparator,
+            tagTreeForOrdering: props.navigationSourceState.tagTreeForOrdering,
             resolvedRootTagKeys,
             rootOrderingTagTree,
             missingRootTagPaths,

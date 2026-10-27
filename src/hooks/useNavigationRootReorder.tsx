@@ -113,6 +113,11 @@ export interface UseNavigationRootReorderOptions {
     getFolderSortName: (folder: TFolder) => string;
     folderDecorationModel: FolderDecorationModel;
     tagComparator: TagComparator | undefined;
+    /**
+     * Complete tag tree (all tags plus hidden roots). Nested rows read children from it, because the visible tree
+     * drops hidden tags and a hidden child would otherwise look missing and be offered for removal.
+     */
+    tagTreeForOrdering: Map<string, TagTreeNode>;
     resolvedRootTagKeys: string[];
     rootOrderingTagTree: Map<string, TagTreeNode>;
     missingRootTagPaths: string[];
@@ -215,6 +220,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         getFolderSortName,
         folderDecorationModel,
         tagComparator,
+        tagTreeForOrdering,
         resolvedRootTagKeys,
         rootOrderingTagTree,
         missingRootTagPaths,
@@ -963,7 +969,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             if (parentPath === '/') {
                 // Root rows follow the root tag order, which also holds Untagged and missing roots
                 return reorderableRootTags.map((entry, index) => {
-                    const node = entry.tag;
+                    const node = entry.tag ? (findTagNode(tagTreeForOrdering, entry.key) ?? entry.tag) : null;
                     const hasChildren = node ? tagHasChildren(node) : false;
                     const hasManualOrder = getChildOrder(tagChildOrder, entry.key).length > 0;
                     return {
@@ -980,7 +986,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                 });
             }
 
-            const parent = findTagNode(rootOrderingTagTree, parentPath);
+            const parent = findTagNode(tagTreeForOrdering, parentPath);
             const children = parent ? Array.from(parent.children.values()) : [];
             const override = getOwnOverride(tagTreeSortOverrides, parentPath);
             const compare: TagComparator = override
@@ -1046,13 +1052,13 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             removeMissingChildName,
             renderSortBadge,
             reorderableRootTags,
-            rootOrderingTagTree,
             settings.interfaceIcons,
             showHiddenItems,
             tagChildOrder,
             tagComparator,
             tagHasChildren,
             tagReorderItems,
+            tagTreeForOrdering,
             tagTreeSortOverrides
         ]
     );
@@ -1172,8 +1178,8 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         const hasReorderableChildren = (node: TagTreeNode): boolean =>
             Array.from(node.children.values()).filter(isTagDisplayed).length > 1 ||
             Array.from(node.children.values()).some(child => isTagDisplayed(child) && hasReorderableChildren(child));
-        return Array.from(rootOrderingTagTree.values()).some(node => isTagDisplayed(node) && hasReorderableChildren(node));
-    }, [isTagDisplayed, reorderableRootTags.length, rootOrderingTagTree]);
+        return Array.from(tagTreeForOrdering.values()).some(node => isTagDisplayed(node) && hasReorderableChildren(node));
+    }, [isTagDisplayed, reorderableRootTags.length, tagTreeForOrdering]);
     const canReorderProperties =
         reorderableRootProperties.length > 1 || Array.from(rootOrderingPropertyTree.values()).some(node => node.children.size > 1);
     const canReorderRootItems = canReorderSections || canReorderFolders || canReorderTags || canReorderProperties;
