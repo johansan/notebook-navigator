@@ -36,9 +36,6 @@ import { createGroupDefinition, createRenderDefinition } from './nativeSettingCo
  * between light and dark while settings are open changes the design and keeps the message.
  */
 
-// Keeps the banner off the settings start page and hides its Advanced setting until MarkdownPoint is released
-export const SHOW_MARKDOWNPOINT_BANNER = false;
-
 // Ends a headline on its punctuation mark, which the banner draws in MarkdownPoint's mandarin
 const HEADLINE_POINT_REGEX = /[.?!。？！]$/u;
 
@@ -181,11 +178,6 @@ export function createMarkdownPointBannerDefinitions(
     isAtTop: () => boolean,
     getPosition: () => number
 ): SettingDefinitionGroup[] {
-    // Returns no group instead of a hidden one, because Obsidian still renders the rows of hidden groups
-    if (!SHOW_MARKDOWNPOINT_BANNER) {
-        return [];
-    }
-
     return [
         createGroupDefinition(
             headingFor(placement),
