@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { App } from 'obsidian';
+import { getAllTags, type App } from 'obsidian';
 import { LIMITS } from '../../constants/limits';
 import { strings } from '../../i18n';
 import type { ITagTreeProvider } from '../../interfaces/ITagTreeProvider';
@@ -34,6 +34,7 @@ import { buildUsageSummary, confirmInlineTagParsingRisk, yieldToEventLoop } from
 import type { TagRenameEventPayload } from './types';
 import { TagFileMutations } from './TagFileMutations';
 import { showNotice } from '../../utils/noticeUtils';
+import { normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 
 const RENAME_BATCH_SIZE = LIMITS.operations.metadataMutationYieldBatchSize;
 
@@ -43,6 +44,12 @@ export interface TagRenameAnalysis {
     replacement: TagReplacement;
     targets: RenameFile[];
     mergeConflict: [TagDescriptor, TagDescriptor] | null;
+    /**
+     * Whether the old tag still exists after the rename. Renaming a tag into one of its ancestors maps a descendant
+     * that repeats the path below that ancestor back onto the old tag (#a/b/b becomes #a/b when #a/b is renamed to
+     * #a), so the old tag keeps its place in its parent's manual order.
+     */
+    keepsOldTag: boolean;
 }
 
 export interface TagRenameResult {
@@ -54,7 +61,12 @@ export interface TagRenameResult {
 
 export interface TagRenameHooks {
     executeRename: (analysis: TagRenameAnalysis) => Promise<TagRenameResult>;
-    updateTagMetadataAfterRename: (oldTagPath: string, newTagPath: string, preserveDestination: boolean) => Promise<void>;
+    updateTagMetadataAfterRename: (
+        oldTagPath: string,
+        newTagPath: string,
+        preserveDestination: boolean,
+        keepsOldTag: boolean
+    ) => Promise<void>;
     updateTagShortcutsAfterRename: (oldTagPath: string, newTagPath: string) => Promise<void>;
     notifyTagRenamed: (payload: TagRenameEventPayload) => void;
 }
@@ -167,7 +179,29 @@ export class TagRenameWorkflow {
         const targets = presetTargets ?? collectRenameFiles(this.app, oldTag);
         const existingTags = tagTree ? tagTree.getAllTagPaths().map(path => `#${path}`) : [];
         const mergeConflict = existingTags.length > 0 ? replacement.willMergeTags(existingTags) : null;
-        return { oldTag, newTag, replacement, targets, mergeConflict };
+        return { oldTag, newTag, replacement, targets, mergeConflict, keepsOldTag: this.keepsOldTag(oldTag, newTag, targets) };
+    }
+
+    /**
+     * Whether the old tag still exists after the rename: renaming a tag into one of its ancestors maps a descendant
+     * that repeats the path below that ancestor back onto it (#a/b/b becomes #a/b when #a/b is renamed to #a). Read
+     * from the notes the rename edits, before any is edited, because the tag tree leaves out excluded folders and can
+     * be rebuilt while the rename runs.
+     */
+    private keepsOldTag(oldTag: TagDescriptor, newTag: TagDescriptor, targets: readonly RenameFile[]): boolean {
+        const oldPath = oldTag.canonicalName;
+        const newPath = newTag.canonicalName;
+        if (!oldPath.startsWith(`${newPath}/`)) {
+            return false;
+        }
+        const recreatingPath = `${oldPath}${oldPath.slice(newPath.length)}`;
+        return targets.some(target => {
+            const cache = this.app.metadataCache.getCache(target.filePath);
+            return (cache ? (getAllTags(cache) ?? []) : []).some(tag => {
+                const tagPath = normalizeTagPathValue(tag);
+                return tagPath === recreatingPath || tagPath.startsWith(`${recreatingPath}/`);
+            });
+        });
     }
 
     /**
@@ -241,7 +275,12 @@ export class TagRenameWorkflow {
      * Updates tag metadata (colors, icons) after rename
      * Preserves destination metadata when merging tags
      */
-    async updateTagMetadataAfterRename(oldTagPath: string, newTagPath: string, preserveDestination: boolean): Promise<void> {
+    async updateTagMetadataAfterRename(
+        oldTagPath: string,
+        newTagPath: string,
+        preserveDestination: boolean,
+        keepsOldTag: boolean
+    ): Promise<void> {
         const metadataService = this.getMetadataService();
         if (!metadataService) {
             return;
@@ -254,7 +293,7 @@ export class TagRenameWorkflow {
         }
 
         try {
-            await metadataService.handleTagRename(trimmedOld, trimmedNew, preserveDestination);
+            await metadataService.handleTagRename(trimmedOld, trimmedNew, preserveDestination, keepsOldTag);
         } catch (error) {
             console.error('[Notebook Navigator] Failed to update tag metadata after rename', error);
         }
@@ -334,7 +373,12 @@ export class TagRenameWorkflow {
             return true;
         }
 
-        await hooks.updateTagMetadataAfterRename(analysis.oldTag.name, analysis.newTag.name, Boolean(analysis.mergeConflict));
+        await hooks.updateTagMetadataAfterRename(
+            analysis.oldTag.name,
+            analysis.newTag.name,
+            Boolean(analysis.mergeConflict),
+            analysis.keepsOldTag
+        );
         await hooks.updateTagShortcutsAfterRename(analysis.oldTag.name, analysis.newTag.name);
 
         hooks.notifyTagRenamed({

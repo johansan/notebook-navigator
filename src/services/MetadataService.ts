@@ -287,9 +287,13 @@ export class MetadataService {
     /**
      * Updates tag metadata when a tag is renamed, optionally preserving existing overrides at the new path
      */
-    async handleTagRename(oldPath: string, newPath: string, preserveExisting = false): Promise<void> {
-        await this.tagService.handleTagRename(oldPath, newPath, preserveExisting, settings =>
-            this.navigationSeparatorService.applyTagRename(settings, oldPath, newPath, preserveExisting)
+    async handleTagRename(oldPath: string, newPath: string, preserveExisting = false, keepsOldTag = false): Promise<void> {
+        await this.tagService.handleTagRename(
+            oldPath,
+            newPath,
+            preserveExisting,
+            settings => this.navigationSeparatorService.applyTagRename(settings, oldPath, newPath, preserveExisting),
+            keepsOldTag
         );
     }
 

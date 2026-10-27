@@ -173,6 +173,20 @@ describe('applyModifiedSettingsTransfer', () => {
         expect(nextSettings.folderChildOrder).toEqual({ '/': ['Projects', 'Inbox'], Projects: ['B', 'A'] });
     });
 
+    it('round-trips the order of a folder named __proto__ through a JSON export and import', () => {
+        const settings = structuredClone(DEFAULT_SETTINGS);
+        // An own "__proto__" key, as a settings load from JSON produces it
+        settings.folderChildOrder = JSON.parse('{"__proto__": ["B", "A"], "/": ["__proto__"]}') as Record<string, string[]>;
+
+        const exported = JSON.parse(JSON.stringify(createModifiedSettingsTransfer(settings, '3.5.0'))) as unknown;
+        const nextSettings = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), exported);
+        const folderChildOrder = nextSettings.folderChildOrder as Record<string, string[]>;
+
+        expect(Object.prototype.hasOwnProperty.call(folderChildOrder, '__proto__')).toBe(true);
+        expect(folderChildOrder['__proto__']).toEqual(['B', 'A']);
+        expect(folderChildOrder['/']).toEqual(['__proto__']);
+    });
+
     it('seeds the grouping property list from the sorting list for pre-split exports', () => {
         // Pre-split exports never contain propertyGroupKey; the enveloped and bare forms both seed.
         const enveloped = applyModifiedSettingsTransfer(structuredClone(DEFAULT_SETTINGS), {

@@ -170,8 +170,13 @@ export class TagOperations {
         return this.renameWorkflow.executeRename(analysis);
     }
 
-    protected async updateTagMetadataAfterRename(oldTagPath: string, newTagPath: string, preserveDestination: boolean): Promise<void> {
-        await this.renameWorkflow.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserveDestination);
+    protected async updateTagMetadataAfterRename(
+        oldTagPath: string,
+        newTagPath: string,
+        preserveDestination: boolean,
+        keepsOldTag: boolean
+    ): Promise<void> {
+        await this.renameWorkflow.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserveDestination, keepsOldTag);
     }
 
     protected async updateTagShortcutsAfterRename(oldTagPath: string, newTagPath: string): Promise<void> {
@@ -205,8 +210,8 @@ export class TagOperations {
     private createRenameHooks(): TagRenameHooks {
         return {
             executeRename: analysis => this.executeRename(analysis),
-            updateTagMetadataAfterRename: (oldTagPath, newTagPath, preserve) =>
-                this.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserve),
+            updateTagMetadataAfterRename: (oldTagPath, newTagPath, preserve, keepsOldTag) =>
+                this.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserve, keepsOldTag),
             updateTagShortcutsAfterRename: (oldTagPath, newTagPath) => this.updateTagShortcutsAfterRename(oldTagPath, newTagPath),
             notifyTagRenamed: payload => this.notifyTagRenamed(payload)
         };

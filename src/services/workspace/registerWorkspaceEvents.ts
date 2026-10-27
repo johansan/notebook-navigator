@@ -169,9 +169,12 @@ export default function registerWorkspaceEvents(plugin: NotebookNavigatorPlugin)
                 }
 
                 if (file instanceof TFolder) {
+                    // Update folder metadata (colors, icons, etc.) to use new path. It is queued before the hidden folder
+                    // save is awaited, so creates and moves into the renamed folder queue after it and find its manual
+                    // order under the new path.
+                    const metadataUpdate = plugin.metadataService?.handleFolderRename(oldPath, file.path);
                     await syncHiddenFolderRename(oldPath, file.path);
-                    // Update folder metadata (colors, icons, etc.) to use new path
-                    await plugin.metadataService?.handleFolderRename(oldPath, file.path);
+                    await metadataUpdate;
                     return;
                 }
 

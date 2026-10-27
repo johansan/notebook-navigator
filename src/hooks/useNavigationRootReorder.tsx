@@ -38,7 +38,7 @@ import { resolveFolderDisplayName } from '../utils/folderDisplayName';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeIdFromKeyNodeId, getTotalPropertyNoteCount } from '../utils/propertyTree';
 import { useUXPreferences } from '../context/UXPreferencesContext';
 import { getChildOrder, getTagChildName, mergeDisplayedOrder, sortFolderSiblings } from '../utils/treeFlattener';
-import { findTagNode } from '../utils/tagTree';
+import { getTagNodeByPath } from '../utils/tagTree';
 import { compareByAlphaSortOrder } from '../utils/sortUtils';
 import {
     comparePropertyValueNodesAlphabetically,
@@ -49,6 +49,11 @@ import {
 import { sanitizeRecord } from '../utils/recordUtils';
 import { getChildFolderPath } from '../utils/pathUtils';
 import { resolveFolderDecorationColors, type FolderDecorationModel } from '../utils/folderDecoration';
+import {
+    resolveFileItemPropertyDecorationColors,
+    resolveFileItemTagDecorationColors,
+    type FileItemPillDecorationModel
+} from '../utils/fileItemPillDecoration';
 import { ObsidianIcon } from '../components/ObsidianIcon';
 
 export type ReorderTreeType = 'folder' | 'tag' | 'property';
@@ -105,19 +110,35 @@ const TAGS_VIRTUAL_REORDER_KEY = '__nn-tags-root__';
 export interface UseNavigationRootReorderOptions {
     app: App;
     items: CombinedNavigationItem[];
+    /** Changes with every folder create, delete and rename at any depth */
+    folderChangeVersion: number;
     settings: NotebookNavigatorSettings;
     showHiddenItems: boolean;
     updateSettings: (updater: (settings: NotebookNavigatorSettings) => void) => Promise<void>;
     sectionOrder: NavigationSectionId[];
     setSectionOrder: React.Dispatch<React.SetStateAction<NavigationSectionId[]>>;
     getFolderSortName: (folder: TFolder) => string;
+    /** Hides a folder through its folder note (hidden file names, tags or properties), as the navigation tree does */
+    folderExclusionByFolderNote: ((folder: TFolder) => boolean) | undefined;
     folderDecorationModel: FolderDecorationModel;
+    /** Global tag and property rainbow colors, for rows the navigation tree does not render */
+    fileItemPillDecorationModel: FileItemPillDecorationModel;
     tagComparator: TagComparator | undefined;
     /**
-     * Complete tag tree (all tags plus hidden roots). Nested rows read children from it, because the visible tree
-     * drops hidden tags and a hidden child would otherwise look missing and be offered for removal.
+     * Complete tag tree (all tags plus hidden roots). Decides whether a stored name is missing, because the visible
+     * tree drops hidden tags and a hidden child would otherwise look missing and be offered for removal.
      */
     tagTreeForOrdering: Map<string, TagTreeNode>;
+    /**
+     * Tag tree the navigation pane shows, without hidden tags and the ancestors they leave empty. Nested rows,
+     * expansion and sorting follow it, because its node counts leave out hidden descendants.
+     */
+    visibleTagTree: Map<string, TagTreeNode>;
+    /**
+     * Tag paths carried by files in excluded folders. The complete tag tree leaves them out, so a stored name found
+     * here is a hidden child, skipped like a hidden folder, rather than a missing one offered for removal.
+     */
+    excludedTagPaths: ReadonlySet<string>;
     resolvedRootTagKeys: string[];
     rootOrderingTagTree: Map<string, TagTreeNode>;
     missingRootTagPaths: string[];
@@ -212,15 +233,20 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
     const {
         app,
         items,
+        folderChangeVersion,
         settings,
         showHiddenItems,
         updateSettings,
         sectionOrder,
         setSectionOrder,
         getFolderSortName,
+        folderExclusionByFolderNote,
         folderDecorationModel,
+        fileItemPillDecorationModel,
         tagComparator,
         tagTreeForOrdering,
+        visibleTagTree,
+        excludedTagPaths,
         resolvedRootTagKeys,
         rootOrderingTagTree,
         missingRootTagPaths,
@@ -368,22 +394,25 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         return descriptors;
     }, [missingRootPropertyKeys, resolvedRootPropertyKeys, rootOrderingPropertyTree, rootPropertyOrder]);
 
+    // Hidden by a folder name or path rule, or through its folder note, the same folders the navigation tree hides
+    const isFolderHidden = useCallback(
+        (folder: TFolder): boolean =>
+            (hiddenFolders.length > 0 && shouldExcludeFolder(folder.name, hiddenFolders, folder.path)) ||
+            (folderExclusionByFolderNote?.(folder) ?? false),
+        [folderExclusionByFolderNote, hiddenFolders]
+    );
     const isFolderDisplayed = useCallback(
-        (folder: TFolder): boolean => {
-            return showHiddenItems || hiddenFolders.length === 0 || !shouldExcludeFolder(folder.name, hiddenFolders, folder.path);
-        },
-        [hiddenFolders, showHiddenItems]
+        (folder: TFolder): boolean => showHiddenItems || !isFolderHidden(folder),
+        [isFolderHidden, showHiddenItems]
     );
 
-    // Folder availability is read from the vault, not from expanded reorder rows, so collapsing the
-    // branch that holds the only reorderable siblings does not close reorder mode
     const vaultRoot = app.vault.getRoot();
-    const hasRootFolders = vaultRoot.children.some(child => child instanceof TFolder) || getChildOrder(folderChildOrder, '/').length > 0;
-    const canReorderFolders = useMemo(() => {
-        // The navigation items change with every folder create, delete and rename, so availability is
-        // recomputed from the vault when the folder structure changes
-        void items;
-        return app.vault.getAllFolders(true).some(folder => {
+    // Folder availability is read from the vault, not from expanded reorder rows, so collapsing the
+    // branch that holds the only reorderable siblings does not close reorder mode. folderChangeVersion
+    // changes with every folder create, delete and rename at any depth, which is when it is recomputed.
+    const { hasRootFolders, canReorderFolders } = useMemo(() => {
+        void folderChangeVersion;
+        const hasDisplayedSiblings = (folder: TFolder): boolean => {
             let displayedChildCount = 0;
             return folder.children.some(child => {
                 if (child instanceof TFolder && isFolderDisplayed(child)) {
@@ -391,8 +420,13 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                 }
                 return displayedChildCount > 1;
             });
-        });
-    }, [app.vault, isFolderDisplayed, items]);
+        };
+        return {
+            hasRootFolders: vaultRoot.children.some(child => child instanceof TFolder) || getChildOrder(folderChildOrder, '/').length > 0,
+            // Most vaults qualify at the root, which skips listing every folder
+            canReorderFolders: hasDisplayedSiblings(vaultRoot) || app.vault.getAllFolders(false).some(hasDisplayedSiblings)
+        };
+    }, [app.vault, folderChangeVersion, folderChildOrder, isFolderDisplayed, vaultRoot]);
 
     const reorderableRootTags = useMemo<RootTagDescriptor[]>(() => {
         return rootTagDescriptors.filter(entry => {
@@ -474,7 +508,11 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         const tagColorMap = new Map<string, string | undefined>();
         const propertyIconMap = new Map<string, string | undefined>();
         const propertyColorMap = new Map<string, string | undefined>();
+        const propertyValueIconMap = new Map<string, string | undefined>();
+        const propertyValueColorMap = new Map<string, string | undefined>();
 
+        // Rows take the icons and colors of the decorated tree items, which include rainbow colors. Reorder mode
+        // shares expansion with the tree, so every expanded row has an item.
         items.forEach(item => {
             if (item.type === NavigationPaneItemType.FOLDER) {
                 const path = item.data.path;
@@ -492,21 +530,63 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                 const key = item.data.key;
                 propertyIconMap.set(key, item.icon);
                 propertyColorMap.set(key, item.color);
+                return;
+            }
+            if (item.type === NavigationPaneItemType.PROPERTY_VALUE) {
+                propertyValueIconMap.set(item.data.id, item.icon);
+                propertyValueColorMap.set(item.data.id, item.color);
             }
         });
 
         return {
             rootFolderIconMap: folderIconMap,
             rootFolderColorMap: folderColorMap,
-            rootTagIconMap: tagIconMap,
-            rootTagColorMap: tagColorMap,
+            treeTagIconMap: tagIconMap,
+            treeTagColorMap: tagColorMap,
             rootPropertyIconMap: propertyIconMap,
-            rootPropertyColorMap: propertyColorMap
+            rootPropertyColorMap: propertyColorMap,
+            propertyValueIconMap,
+            propertyValueColorMap
         };
     }, [items]);
 
-    const { rootFolderIconMap, rootFolderColorMap, rootTagIconMap, rootTagColorMap, rootPropertyIconMap, rootPropertyColorMap } =
-        rootItemMaps;
+    const {
+        rootFolderIconMap,
+        rootFolderColorMap,
+        treeTagIconMap,
+        treeTagColorMap,
+        rootPropertyIconMap,
+        rootPropertyColorMap,
+        propertyValueIconMap,
+        propertyValueColorMap
+    } = rootItemMaps;
+
+    // A tag or property the tree renders keeps its item color. Rows the tree leaves out ("filter by selection" scopes
+    // it to the selection) resolve rainbow colors from the global model, as file pills do.
+    const getTagRowColor = useCallback(
+        (tagPath: string): string | undefined =>
+            treeTagColorMap.has(tagPath)
+                ? treeTagColorMap.get(tagPath)
+                : resolveFileItemTagDecorationColors({
+                      model: fileItemPillDecorationModel,
+                      tagPath,
+                      color: metadataService.getTagColor(tagPath),
+                      backgroundColor: undefined
+                  }).color,
+        [fileItemPillDecorationModel, metadataService, treeTagColorMap]
+    );
+    const getPropertyRowColor = useCallback(
+        (nodeId: string, treeColors: ReadonlyMap<string, string | undefined>, treeKey: string): string | undefined =>
+            treeColors.has(treeKey)
+                ? treeColors.get(treeKey)
+                : resolveFileItemPropertyDecorationColors({
+                      model: fileItemPillDecorationModel,
+                      nodeId,
+                      color: metadataService.getPropertyColor(nodeId),
+                      backgroundColor: undefined
+                  }).color,
+        [fileItemPillDecorationModel, metadataService]
+    );
     const reorderChildOrder = useCallback(
         async (settingsKey: ChildOrderSettingsKey, parentKey: string, orderedNames: string[]) => {
             const storedOrder = getChildOrder(settings[settingsKey], parentKey);
@@ -761,7 +841,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                 // A stored name without a folder still renders as a missing row, so its parent must expand
                 const hasManualOrder = getChildOrder(folderChildOrder, folder.path).length > 0;
                 hasChildren = hasChildren || getChildOrder(folderChildOrder, folder.path).some(name => !grandchildNames.has(name));
-                const isHidden = hiddenFolders.length > 0 && shouldExcludeFolder(folder.name, hiddenFolders, folder.path);
+                const isHidden = isFolderHidden(folder);
 
                 return {
                     key: folder.path,
@@ -833,8 +913,8 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             folderSortOrder,
             folderTreeSortOverrides,
             getFolderSortName,
-            hiddenFolders,
             isFolderDisplayed,
+            isFolderHidden,
             metadataService,
             removeMissingChildName,
             renderSortBadge,
@@ -856,15 +936,14 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                 displayIcon = metadataService.getTagIcon(entry.key) ?? resolveUXIcon(settings.interfaceIcons, 'nav-tag');
                 label = strings.tagList.untaggedLabel;
             } else {
-                const iconFromTree = rootTagIconMap.get(entry.key);
+                const iconFromTree = treeTagIconMap.get(entry.key);
                 const metadataIcon = metadataService.getTagIcon(entry.key);
                 displayIcon =
                     iconFromTree ?? metadataIcon ?? (isMissing ? 'lucide-tag-off' : resolveUXIcon(settings.interfaceIcons, 'nav-tag'));
                 label = entry.tag ? `#${entry.tag.displayPath}` : `#${entry.key}`;
             }
 
-            const metadataColor = isUntagged ? undefined : metadataService.getTagColor(entry.key);
-            const iconColor = rootTagColorMap.get(entry.key) ?? metadataColor;
+            const iconColor = isUntagged ? undefined : getTagRowColor(entry.key);
             const removeAction = isMissing ? buildRemoveMissingAction(entry.key, handleRemoveMissingRootTag) : undefined;
 
             return {
@@ -885,8 +964,8 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         });
     }, [
         reorderableRootTags,
-        rootTagIconMap,
-        rootTagColorMap,
+        treeTagIconMap,
+        getTagRowColor,
         metadataService,
         settings.interfaceIcons,
         buildRemoveMissingAction,
@@ -901,11 +980,9 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             const isMissing = entry.isMissing === true;
             const nodeId = entry.node?.id ?? buildPropertyKeyNodeId(entry.key);
             const iconFromTree = rootPropertyIconMap.get(entry.key);
-            const colorFromTree = rootPropertyColorMap.get(entry.key);
             const iconFromMetadata = metadataService.getPropertyIcon(nodeId);
-            const colorFromMetadata = metadataService.getPropertyColor(nodeId);
             const displayIcon = iconFromTree ?? iconFromMetadata ?? resolveUXIcon(settings.interfaceIcons, 'nav-property');
-            const iconColor = colorFromTree ?? colorFromMetadata;
+            const iconColor = getPropertyRowColor(nodeId, rootPropertyColorMap, entry.key);
             const label = entry.node ? entry.node.name : entry.key;
             const removeAction = isMissing ? buildRemoveMissingAction(entry.key, handleRemoveMissingRootProperty) : undefined;
 
@@ -928,28 +1005,34 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
         reorderableRootProperties,
         rootPropertyIconMap,
         rootPropertyColorMap,
+        getPropertyRowColor,
         metadataService,
         settings.interfaceIcons,
         buildRemoveMissingAction,
         handleRemoveMissingRootProperty
     ]);
 
-    const isTagDisplayed = useCallback(
-        (node: TagTreeNode): boolean =>
-            showHiddenItems || !hasHiddenTagRules || !matchesHiddenTagPattern(node.path, node.name, hiddenTagMatcher),
-        [hasHiddenTagRules, hiddenTagMatcher, showHiddenItems]
+    // A stored name is missing only when no tag of that path exists: hidden tags and tags in excluded folders exist
+    const getMissingTagChildNames = useCallback(
+        (parentPath: string, storedOrder: readonly string[]): string[] => {
+            if (storedOrder.length === 0) {
+                return [];
+            }
+            const parent = getTagNodeByPath(tagTreeForOrdering, parentPath);
+            // Compared by name, because a child of #tag//child is keyed with both slashes
+            const childNames = new Set(Array.from(parent?.children.values() ?? [], child => getTagChildName(child.path)));
+            return storedOrder.filter(name => !childNames.has(name) && !excludedTagPaths.has(`${parentPath}/${name}`));
+        },
+        [excludedTagPaths, tagTreeForOrdering]
     );
 
-    // A stored name without a child still renders as a missing row, so its parent must expand
+    // Takes the visible node being rendered (null when the tree does not show the tag), so rows need no lookup
     const tagHasChildren = useCallback(
-        (node: TagTreeNode): boolean => {
-            const childNames = new Set(Array.from(node.children.values()).map(child => getTagChildName(child.path)));
-            return (
-                Array.from(node.children.values()).some(isTagDisplayed) ||
-                getChildOrder(tagChildOrder, node.path).some(name => !childNames.has(name))
-            );
-        },
-        [isTagDisplayed, tagChildOrder]
+        (tagPath: string, visibleNode: TagTreeNode | null): boolean =>
+            (visibleNode?.children.size ?? 0) > 0 ||
+            // A stored name without a tag still renders as a missing row, so its parent must expand
+            getMissingTagChildNames(tagPath, getChildOrder(tagChildOrder, tagPath)).length > 0,
+        [getMissingTagChildNames, tagChildOrder]
     );
 
     const createTagSortMenu = useCallback(
@@ -969,8 +1052,7 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             if (parentPath === '/') {
                 // Root rows follow the root tag order, which also holds Untagged and missing roots
                 return reorderableRootTags.map((entry, index) => {
-                    const node = entry.tag ? (findTagNode(tagTreeForOrdering, entry.key) ?? entry.tag) : null;
-                    const hasChildren = node ? tagHasChildren(node) : false;
+                    const hasChildren = entry.tag ? tagHasChildren(entry.key, visibleTagTree.get(entry.key) ?? null) : false;
                     const hasManualOrder = getChildOrder(tagChildOrder, entry.key).length > 0;
                     return {
                         key: entry.key,
@@ -979,28 +1061,29 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                         hasChildren,
                         props: {
                             ...tagReorderItems[index].props,
-                            countSlot: node ? renderSortBadge(tagChildOrder, tagTreeSortOverrides, entry.key) : undefined,
-                            onContextMenu: node && (hasChildren || hasManualOrder) ? createTagSortMenu(entry.key) : undefined
+                            countSlot: entry.tag ? renderSortBadge(tagChildOrder, tagTreeSortOverrides, entry.key) : undefined,
+                            onContextMenu: entry.tag && (hasChildren || hasManualOrder) ? createTagSortMenu(entry.key) : undefined
                         }
                     };
                 });
             }
 
-            const parent = findTagNode(tagTreeForOrdering, parentPath);
-            const children = parent ? Array.from(parent.children.values()) : [];
+            const visibleParent = getTagNodeByPath(visibleTagTree, parentPath);
             const override = getOwnOverride(tagTreeSortOverrides, parentPath);
             const compare: TagComparator = override
                 ? (a, b) => compareByAlphaSortOrder(a.name, b.name, override)
                 : (tagComparator ?? compareTagAlphabetically);
             const level = parentPath.split('/').length + 1;
+            const storedOrder = getChildOrder(tagChildOrder, parentPath);
+            const missingNames = new Set(getMissingTagChildNames(parentPath, storedOrder));
 
             return orderChildRows({
-                storedOrder: getChildOrder(tagChildOrder, parentPath),
-                displayed: children.filter(isTagDisplayed).sort(compare),
-                allChildNames: new Set(children.map(child => getTagChildName(child.path))),
+                storedOrder,
+                displayed: visibleParent ? Array.from(visibleParent.children.values()).sort(compare) : [],
+                allChildNames: new Set(storedOrder.filter(name => !missingNames.has(name))),
                 getName: child => getTagChildName(child.path),
                 buildRow: node => {
-                    const hasChildren = tagHasChildren(node);
+                    const hasChildren = tagHasChildren(node.path, node);
                     const hasManualOrder = getChildOrder(tagChildOrder, node.path).length > 0;
                     const isHidden = hasHiddenTagRules && matchesHiddenTagPattern(node.path, node.name, hiddenTagMatcher);
                     return {
@@ -1009,8 +1092,11 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                         parentPath,
                         hasChildren,
                         props: {
-                            icon: metadataService.getTagIcon(node.path) ?? resolveUXIcon(settings.interfaceIcons, 'nav-tag'),
-                            color: metadataService.getTagColor(node.path),
+                            icon:
+                                treeTagIconMap.get(node.path) ??
+                                metadataService.getTagIcon(node.path) ??
+                                resolveUXIcon(settings.interfaceIcons, 'nav-tag'),
+                            color: getTagRowColor(node.path),
                             label: node.name,
                             level,
                             isMissing: false,
@@ -1047,19 +1133,21 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             createTagSortMenu,
             hasHiddenTagRules,
             hiddenTagMatcher,
-            isTagDisplayed,
             metadataService,
             removeMissingChildName,
             renderSortBadge,
             reorderableRootTags,
             settings.interfaceIcons,
             showHiddenItems,
+            getMissingTagChildNames,
             tagChildOrder,
             tagComparator,
             tagHasChildren,
             tagReorderItems,
-            tagTreeForOrdering,
-            tagTreeSortOverrides
+            tagTreeSortOverrides,
+            getTagRowColor,
+            treeTagIconMap,
+            visibleTagTree
         ]
     );
 
@@ -1124,8 +1212,11 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
                     parentPath: parentKey,
                     hasChildren: false,
                     props: {
-                        icon: metadataService.getPropertyIcon(value.id) ?? resolveUXIcon(settings.interfaceIcons, 'nav-property-value'),
-                        color: metadataService.getPropertyColor(value.id),
+                        icon:
+                            propertyValueIconMap.get(value.id) ??
+                            metadataService.getPropertyIcon(value.id) ??
+                            resolveUXIcon(settings.interfaceIcons, 'nav-property-value'),
+                        color: getPropertyRowColor(value.id, propertyValueColorMap, value.id),
                         label: value.name,
                         level: 2,
                         isMissing: false,
@@ -1160,6 +1251,9 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             propertyChildOrder,
             propertyReorderItems,
             propertySortOrder,
+            getPropertyRowColor,
+            propertyValueColorMap,
+            propertyValueIconMap,
             propertyTreeSortOverrides,
             removeMissingChildName,
             renderSortBadge,
@@ -1176,10 +1270,9 @@ export function useNavigationRootReorder(options: UseNavigationRootReorderOption
             return true;
         }
         const hasReorderableChildren = (node: TagTreeNode): boolean =>
-            Array.from(node.children.values()).filter(isTagDisplayed).length > 1 ||
-            Array.from(node.children.values()).some(child => isTagDisplayed(child) && hasReorderableChildren(child));
-        return Array.from(tagTreeForOrdering.values()).some(node => isTagDisplayed(node) && hasReorderableChildren(node));
-    }, [isTagDisplayed, reorderableRootTags.length, tagTreeForOrdering]);
+            node.children.size > 1 || Array.from(node.children.values()).some(hasReorderableChildren);
+        return Array.from(visibleTagTree.values()).some(hasReorderableChildren);
+    }, [reorderableRootTags.length, visibleTagTree]);
     const canReorderProperties =
         reorderableRootProperties.length > 1 || Array.from(rootOrderingPropertyTree.values()).some(node => node.children.size > 1);
     const canReorderRootItems = canReorderSections || canReorderFolders || canReorderTags || canReorderProperties;

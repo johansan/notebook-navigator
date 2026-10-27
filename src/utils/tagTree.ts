@@ -162,7 +162,13 @@ export function buildTagTreeFromDatabase(
     hiddenTagPatterns: string[] = [],
     showHiddenItems = false,
     resetNoteCountCache = true
-): { tagTree: Map<string, TagTreeNode>; tagged: number; untagged: number; hiddenRootTags: Map<string, TagTreeNode> } {
+): {
+    tagTree: Map<string, TagTreeNode>;
+    tagged: number;
+    untagged: number;
+    hiddenRootTags: Map<string, TagTreeNode>;
+    excludedTagPaths: Set<string>;
+} {
     // Track all unique tags that exist in the vault
     const allTagsSet = new Set<string>();
     let untaggedCount = 0;
@@ -176,6 +182,9 @@ export function buildTagTreeFromDatabase(
     // Map to store file associations for each tag
     const tagFiles = new Map<string, Set<string>>();
     const hiddenRootTags = new Map<string, TagTreeNode>();
+    // Every tag path, with its ancestors, that files in excluded folders carry, including paths whose root is also
+    // visible. Manual child orders keep these names as hidden children instead of offering them for removal.
+    const excludedTagPaths = new Set<string>();
     const hasExcludedFolders = Array.isArray(excludedFolderPatterns) && excludedFolderPatterns.length > 0;
     const excludedPatterns: string[] | null = hasExcludedFolders && excludedFolderPatterns ? excludedFolderPatterns : null;
 
@@ -222,6 +231,13 @@ export function buildTagTreeFromDatabase(
             // Record root tags from excluded files for reordering
             for (const tag of tags) {
                 recordHiddenRootTag(tag, path);
+                // The same keys the builder gives these tags and their ancestors, so #tag//child stays distinct
+                const segments = getTagPathForms(tag).normalizedPath.split('/');
+                for (let depth = 1; depth <= segments.length; depth++) {
+                    if (segments[depth - 1].length > 0) {
+                        excludedTagPaths.add(segments.slice(0, depth).join('/'));
+                    }
+                }
             }
             return;
         }
@@ -304,7 +320,7 @@ export function buildTagTreeFromDatabase(
         clearNoteCountCache();
     }
 
-    return { tagTree, tagged: taggedCount, untagged: untaggedCount, hiddenRootTags };
+    return { tagTree, tagged: taggedCount, untagged: untaggedCount, hiddenRootTags, excludedTagPaths };
 }
 
 /**
@@ -480,6 +496,22 @@ export function collectTagFilePaths(node: TagTreeNode, files: Set<string> = new 
 /**
  * Find a tag node by its path
  */
+/**
+ * Looks a tag up by walking its path through the path-keyed child maps, so a lookup costs the tag's depth instead of
+ * a search of the whole tree. For callers that look up a tag per row or per stored name.
+ */
+export function getTagNodeByPath(tree: ReadonlyMap<string, TagTreeNode>, tagPath: string): TagTreeNode | null {
+    const segments = normalizeTagPathValue(tagPath).split('/');
+    let node = tree.get(segments[0]) ?? null;
+    for (let index = 1; node && index < segments.length; index++) {
+        // An empty segment (#tag//child) has no node; the builder keys the next tag by its full path, slashes included
+        if (segments[index].length > 0) {
+            node = node.children.get(segments.slice(0, index + 1).join('/')) ?? null;
+        }
+    }
+    return node;
+}
+
 export function findTagNode(tree: Map<string, TagTreeNode>, tagPath: string): TagTreeNode | null {
     const lowerPath = normalizeTagPathValue(tagPath);
 

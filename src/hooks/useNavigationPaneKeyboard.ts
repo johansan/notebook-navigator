@@ -99,6 +99,8 @@ interface UseNavigationPaneKeyboardProps {
     pathToIndex: Map<string, number>;
     /** Starts inline rename for the current item when available */
     onStartRename?: () => boolean;
+    /** Name the navigation tree sorts a folder by, so the folder selected after a delete is the next one shown */
+    getFolderSortName: (folder: TFolder) => string;
 }
 
 /**
@@ -110,7 +112,8 @@ export function useNavigationPaneKeyboard({
     virtualizer,
     containerRef,
     pathToIndex,
-    onStartRename
+    onStartRename,
+    getFolderSortName
 }: UseNavigationPaneKeyboardProps) {
     const { app, commandQueue, plugin } = useServices();
     const fileSystemOps = useFileSystemOps();
@@ -537,7 +540,8 @@ export function useNavigationPaneKeyboard({
                             settings,
                             visibility: { includeDescendantNotes, showHiddenItems },
                             selectionState,
-                            selectionDispatch
+                            selectionDispatch,
+                            getFolderSortName
                         })
                     );
                 }
@@ -590,7 +594,8 @@ export function useNavigationPaneKeyboard({
             virtualizer,
             includeDescendantNotes,
             showHiddenItems,
-            onStartRename
+            onStartRename,
+            getFolderSortName
         ]
     );
 

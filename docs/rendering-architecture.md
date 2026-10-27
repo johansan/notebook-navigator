@@ -80,8 +80,10 @@ Expensive data shaping lives outside component bodies. Examples:
   appending new and moved-in subfolders to a parent that has a manual order.
 - Nested tags (`tagChildOrder`, keyed by parent tag path) and property values (`propertyChildOrder`, keyed by property key
   node id) work the same way; root tags and property keys keep `rootTagOrder` and `rootPropertyOrder`. Tags and
-  properties have no create event, so `useChildOrderAppend` appends new children of a manually ordered parent once tag
-  or property indexing has finished. Tag pills and rainbow colors follow the same orders.
+  properties have no create event, so `useChildOrderAppend` compares each rebuild of the visible tag tree or the
+  property tree with the previous one and appends the children a manually ordered parent did not show before, in the
+  order the tree shows them. An order it has not seen yet (dragged here or synced from another device) gets every
+  shown child it does not list. Tag pills and rainbow colors follow the same orders.
 - `useListPaneData` assembles list pane items (pinned files, spacers, group headers, search metadata, hidden item
   flags) and keeps lookup maps for virtualized scrolling and multi-selection.
 - `useListPaneAppearance`, `useListPaneTitle`, `useListActions`, `useNavigationPaneKeyboard`, `useListPaneKeyboard`,

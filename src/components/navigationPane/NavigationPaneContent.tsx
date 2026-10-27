@@ -639,15 +639,20 @@ export const NavigationPane = React.memo(
         } = useNavigationRootReorder({
             app,
             items,
+            folderChangeVersion: props.navigationSourceState.folderChangeVersion,
             settings,
             showHiddenItems,
             updateSettings,
             sectionOrder,
             setSectionOrder,
             getFolderSortName,
+            folderExclusionByFolderNote: props.navigationSourceState.folderExclusionByFolderNote,
             folderDecorationModel: props.folderDecorationModel,
+            fileItemPillDecorationModel,
             tagComparator: props.navigationSourceState.tagComparator,
             tagTreeForOrdering: props.navigationSourceState.tagTreeForOrdering,
+            visibleTagTree: props.navigationSourceState.visibleTagTree,
+            excludedTagPaths: props.navigationSourceState.excludedTagPaths,
             resolvedRootTagKeys,
             rootOrderingTagTree,
             missingRootTagPaths,
@@ -1006,7 +1011,8 @@ export const NavigationPane = React.memo(
             virtualizer: rowVirtualizer,
             containerRef: props.rootContainerRef,
             pathToIndex: keyboardPathToIndex,
-            onStartRename: handleStartInlineRename
+            onStartRename: handleStartInlineRename,
+            getFolderSortName
         });
 
         const navigationPaneStyle = useMemo<CSSPropertiesWithVars>(() => {

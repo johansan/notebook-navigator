@@ -24,7 +24,8 @@ import {
     collectTagFilePaths,
     collectAllTagPaths,
     getTotalNoteCount,
-    excludeFromTagTree
+    excludeFromTagTree,
+    getTagNodeByPath
 } from '../../src/utils/tagTree';
 import { createHiddenTagMatcher, normalizeTagPathValue } from '../../src/utils/tagPrefixMatcher';
 import type { IndexedDBStorage, FileData } from '../../src/storage/IndexedDBStorage';
@@ -342,6 +343,19 @@ describe('included paths iteration', () => {
         // Hidden roots that also exist in the visible tree are dropped ('shared'), others remain.
         expect(Array.from(result.hiddenRootTags.keys())).toEqual(['legacy']);
     });
+
+    it('records excluded-folder tag paths with their ancestors, also under visible roots', () => {
+        const db = createPathLookupDb([
+            { path: 'notes/visible.md', tags: ['#projects/alpha'] },
+            { path: 'archive/old.md', tags: ['#Projects/Old/Deep', '#legacy'] }
+        ]);
+
+        const includedPaths = new Set(['notes/visible.md', 'archive/old.md']);
+        const result = buildTagTreeFromDatabase(db, ['archive'], includedPaths);
+
+        expect(Array.from(result.excludedTagPaths).sort()).toEqual(['legacy', 'projects', 'projects/old', 'projects/old/deep']);
+        expect(result.tagTree.get('projects')?.children.has('projects/old')).toBe(false);
+    });
 });
 
 describe('excludeFromTagTree', () => {
@@ -368,5 +382,25 @@ describe('excludeFromTagTree', () => {
         expect(filtered.has(root.path)).toBe(true);
         const filteredRoot = filtered.get(root.path);
         expect(filteredRoot?.children.size).toBe(0);
+    });
+});
+
+describe('getTagNodeByPath', () => {
+    it('finds nested tags by path and returns null for paths that do not exist', () => {
+        const db = createPathLookupDb([{ path: 'notes/a.md', tags: ['#Projects/Alpha/Deep', '#other'] }]);
+        const { tagTree } = buildTagTreeFromDatabase(db, undefined, new Set(['notes/a.md']));
+
+        expect(getTagNodeByPath(tagTree, 'projects')?.path).toBe('projects');
+        expect(getTagNodeByPath(tagTree, 'Projects/Alpha/Deep')?.path).toBe('projects/alpha/deep');
+        expect(getTagNodeByPath(tagTree, 'projects/missing')).toBeNull();
+        expect(getTagNodeByPath(tagTree, 'missing')).toBeNull();
+    });
+
+    it('finds tags below an empty path segment', () => {
+        const db = createPathLookupDb([{ path: 'notes/a.md', tags: ['#projects//alpha/deep'] }]);
+        const { tagTree } = buildTagTreeFromDatabase(db, undefined, new Set(['notes/a.md']));
+
+        expect(getTagNodeByPath(tagTree, 'projects//alpha')?.path).toBe('projects//alpha');
+        expect(getTagNodeByPath(tagTree, 'projects//alpha/deep')?.path).toBe('projects//alpha/deep');
     });
 });

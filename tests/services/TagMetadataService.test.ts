@@ -358,22 +358,27 @@ describe('TagMetadataService nested tag order', () => {
 
     it('keeps a renamed nested tag at its position and rekeys its own and descendant orders', async () => {
         const settings = createSettings();
-        settings.tagChildOrder = { projects: ['beta', 'alpha'], 'projects/beta': ['y', 'x'] };
+        const storedRecord = { projects: ['beta', 'alpha'], 'projects/beta': ['y', 'x'] };
+        settings.tagChildOrder = storedRecord;
         const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
 
         await service.handleTagRename('projects/beta', 'projects/gamma');
 
         expect(settings.tagChildOrder).toEqual({ projects: ['gamma', 'alpha'], 'projects/gamma': ['y', 'x'] });
+        // A new record, so tree sorting memoized on the old one recomputes
+        expect(settings.tagChildOrder).not.toBe(storedRecord);
     });
 
-    it('moves a renamed tag from its old parent order to the end of a manually ordered new parent', async () => {
+    it('removes a tag renamed to another parent from its old parent order and leaves the new parent to the tree append', async () => {
+        // The tree append adds it to the new parent when the tree first shows it there, so a hidden destination
+        // joins when it is shown
         const settings = createSettings();
         settings.tagChildOrder = { projects: ['beta', 'alpha'], areas: ['home'] };
         const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
 
         await service.handleTagRename('projects/beta', 'areas/beta');
 
-        expect(settings.tagChildOrder).toEqual({ projects: ['alpha'], areas: ['home', 'beta'] });
+        expect(settings.tagChildOrder).toEqual({ projects: ['alpha'], areas: ['home'] });
     });
 
     it('keeps the existing position when a rename merges into a listed tag', async () => {
@@ -397,14 +402,30 @@ describe('TagMetadataService nested tag order', () => {
         expect(settings.tagChildOrder).toEqual({ projects: ['gamma', 'alpha'] });
     });
 
+    it('keeps the slot of a tag renamed into its parent when the rename recreates it', async () => {
+        const settings = createSettings();
+        settings.tagChildOrder = { a: ['b', 'z'] };
+        const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
+
+        await service.handleTagRename('a/b', 'a', true, undefined, true);
+
+        expect(settings.tagChildOrder).toEqual({ a: ['b', 'z'] });
+
+        await service.handleTagRename('a/b', 'a', true);
+
+        expect(settings.tagChildOrder).toEqual({ a: ['z'] });
+    });
+
     it('removes a deleted tag from its parent order and drops its own order', async () => {
         const settings = createSettings();
-        settings.tagChildOrder = { projects: ['beta', 'alpha'], 'projects/beta': ['x'] };
+        const storedRecord = { projects: ['beta', 'alpha'], 'projects/beta': ['x'] };
+        settings.tagChildOrder = storedRecord;
         const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
 
         await service.handleTagDelete('projects/beta');
 
         expect(settings.tagChildOrder).toEqual({ projects: ['alpha'] });
+        expect(settings.tagChildOrder).not.toBe(storedRecord);
     });
 
     it('clears the manual child order when an alphabetical child order is chosen', async () => {
@@ -422,7 +443,8 @@ describe('TagMetadataService nested tag order', () => {
 
     it('removes orders of missing parent tags and names of missing child tags during cleanup', async () => {
         const settings = createSettings();
-        settings.tagChildOrder = { projects: ['beta', 'gone'], removed: ['x'] };
+        const storedRecord = { projects: ['beta', 'gone'], removed: ['x'] };
+        settings.tagChildOrder = storedRecord;
         const service = new TagMetadataService(app, new TestSettingsProvider(settings), () => null);
         const validators = createValidators([createMarkdownFile('note.md', ['#projects/beta'])]);
         validators.tagTree = new Map([
@@ -453,5 +475,6 @@ describe('TagMetadataService nested tag order', () => {
 
         expect(result.settingsChanged).toBe(true);
         expect(settings.tagChildOrder).toEqual({ projects: ['beta'] });
+        expect(settings.tagChildOrder).not.toBe(storedRecord);
     });
 });

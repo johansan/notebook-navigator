@@ -115,7 +115,7 @@ export function useTagTreeSync(params: {
             // files that would be visible in the current navigation scope.
             const visibleFiles = getVisibleFiles ? getVisibleFiles() : getVisibleMarkdownFiles();
             const includedPaths = new Set(visibleFiles.map(f => f.path));
-            const { tagTree, tagged, untagged, hiddenRootTags } = buildTagTreeFromDatabase(
+            const { tagTree, tagged, untagged, hiddenRootTags, excludedTagPaths } = buildTagTreeFromDatabase(
                 db,
                 excludedFolderPatterns,
                 includedPaths,
@@ -123,7 +123,7 @@ export function useTagTreeSync(params: {
                 showHiddenItems
             );
 
-            setFileData(previous => ({ ...previous, tagTree, tagged, untagged, hiddenRootTags }));
+            setFileData(previous => ({ ...previous, tagTree, tagged, untagged, hiddenRootTags, excludedTagPaths }));
 
             // Propagate updated tag trees to the global TagTreeService for cross-component access
             if (tagTreeService) {

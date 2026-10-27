@@ -137,7 +137,14 @@ export function useStorageCacheRebuild(params: {
         // Reset tag tree state immediately so the UI doesn't show stale counts while the rebuild is running.
         const emptyTagTree = new Map<string, TagTreeNode>();
         const emptyPropertyTree = new Map<string, PropertyTreeNode>();
-        setFileData({ tagTree: emptyTagTree, propertyTree: emptyPropertyTree, tagged: 0, untagged: 0, hiddenRootTags: new Map() });
+        setFileData({
+            tagTree: emptyTagTree,
+            propertyTree: emptyPropertyTree,
+            tagged: 0,
+            untagged: 0,
+            hiddenRootTags: new Map(),
+            excludedTagPaths: new Set()
+        });
         if (tagTreeService) {
             tagTreeService.updateTagTree(emptyTagTree, 0, 0);
         }

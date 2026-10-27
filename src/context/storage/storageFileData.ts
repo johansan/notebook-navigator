@@ -27,4 +27,6 @@ export interface StorageFileData {
     tagged: number;
     untagged: number;
     hiddenRootTags: Map<string, TagTreeNode>;
+    /** Tag paths, with their ancestors, carried by files in excluded folders (`buildTagTreeFromDatabase`) */
+    excludedTagPaths: Set<string>;
 }

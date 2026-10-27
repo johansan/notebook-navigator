@@ -138,7 +138,8 @@ export abstract class BaseMetadataService {
         isValid: (key: string) => boolean,
         getChildKey: (parentKey: string, name: string) => string
     ): boolean {
-        const record = settings[settingsKey];
+        // Edits a copy that replaces the record, because tree sorting is memoized on it
+        const record = sanitizeRecord(settings[settingsKey]);
         let changed = false;
         Object.keys(record).forEach(parentKey => {
             if (!isValid(parentKey)) {
@@ -159,6 +160,9 @@ export abstract class BaseMetadataService {
                 delete record[parentKey];
             }
         });
+        if (changed) {
+            settings[settingsKey] = record;
+        }
         return changed;
     }
 

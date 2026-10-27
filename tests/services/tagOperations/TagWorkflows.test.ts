@@ -72,7 +72,7 @@ describe('TagRenameWorkflow', () => {
 
         expect(result).toBe(true);
         expect(hooks.executeRename).toHaveBeenCalled();
-        expect(hooks.updateTagMetadataAfterRename).toHaveBeenCalledWith('Projects/Client', 'Projects/Clients', false);
+        expect(hooks.updateTagMetadataAfterRename).toHaveBeenCalledWith('Projects/Client', 'Projects/Clients', false, false);
         expect(hooks.updateTagShortcutsAfterRename).toHaveBeenCalledWith('Projects/Client', 'Projects/Clients');
         expect(hooks.notifyTagRenamed).toHaveBeenCalledWith({
             oldPath: 'Projects/Client',
@@ -81,6 +81,20 @@ describe('TagRenameWorkflow', () => {
             newCanonicalPath: 'projects/clients',
             mergedIntoExisting: false
         });
+    });
+
+    it('reports whether a rename into an ancestor keeps the old tag', async () => {
+        const tagsByPath: Record<string, string[]> = { 'Notes/One.md': ['#a/b', '#a/z'], 'Archive/Two.md': ['#a/b/b'] };
+        Reflect.set(app.metadataCache, 'getCache', (path: string) => ({ tags: (tagsByPath[path] ?? []).map(tag => ({ tag })) }));
+        const targets = [new RenameFile(app, 'Notes/One.md', [], false), new RenameFile(app, 'Archive/Two.md', [], false)];
+
+        // #a/b/b becomes #a/b, so #a/b still exists after the rename; read from the notes, which include excluded folders
+        await workflow.runTagRename('a/b', 'a', targets);
+        expect(hooks.updateTagMetadataAfterRename).toHaveBeenLastCalledWith('a/b', 'a', false, true);
+
+        tagsByPath['Archive/Two.md'] = ['#a/b/x'];
+        await workflow.runTagRename('a/b', 'a', targets);
+        expect(hooks.updateTagMetadataAfterRename).toHaveBeenLastCalledWith('a/b', 'a', false, false);
     });
 
     it('does not finalize metadata or events when rename batch has failures', async () => {
@@ -129,7 +143,8 @@ describe('TagRenameWorkflow', () => {
             newTag,
             replacement: new TagReplacement(oldTag, newTag),
             targets: [new ControlledRenameFile(app, 'Notes/One.md', true), new ControlledRenameFile(app, 'Notes/Two.md', false)],
-            mergeConflict: null
+            mergeConflict: null,
+            keepsOldTag: false
         });
 
         expect(result).toEqual({ renamed: 1, total: 2, skipped: 1, failed: 0 });

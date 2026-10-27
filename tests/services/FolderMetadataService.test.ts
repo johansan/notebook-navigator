@@ -334,7 +334,8 @@ describe('FolderMetadataService folder note frontmatter integration', () => {
     });
 
     it('keeps a renamed folder at its position in the parent manual order and rekeys its own order', async () => {
-        settingsProvider.settings.folderChildOrder = { '/': ['Projects', 'Inbox'], Projects: ['B', 'A'], 'Projects/B': ['Y', 'X'] };
+        const storedRecord = { '/': ['Projects', 'Inbox'], Projects: ['B', 'A'], 'Projects/B': ['Y', 'X'] };
+        settingsProvider.settings.folderChildOrder = storedRecord;
         app.vault.getAllLoadedFiles = vi.fn(() => []);
 
         await service.handleFolderRename('Projects/B', 'Projects/Beta');
@@ -344,6 +345,8 @@ describe('FolderMetadataService folder note frontmatter integration', () => {
             Projects: ['Beta', 'A'],
             'Projects/Beta': ['Y', 'X']
         });
+        // A new record, so tree sorting memoized on the old one recomputes
+        expect(settingsProvider.settings.folderChildOrder).not.toBe(storedRecord);
     });
 
     it('keeps the position on case-only renames and rekeys descendant orders on ancestor renames', async () => {
@@ -386,13 +389,92 @@ describe('FolderMetadataService folder note frontmatter integration', () => {
 
     it('adds a created folder to the end of a manual order, after subfolders the order does not list yet', async () => {
         settingsProvider.settings.folderChildOrder = { Projects: ['B', 'A', 'Missing'] };
-        getFolderByPath.mockImplementation((path: string) =>
-            path === 'Projects' ? createNamedFolder('Projects', ['A', 'B', 'D', 'C']) : null
-        );
+        const projects = createNamedFolder('Projects', ['A', 'B', 'D', 'C']);
+        getFolderByPath.mockImplementation((path: string) => (path === 'Projects' ? projects : null));
 
         await service.handleFolderCreate('Projects/D');
 
         expect(settingsProvider.settings.folderChildOrder).toEqual({ Projects: ['B', 'A', 'Missing', 'C', 'D'] });
+    });
+
+    it('keeps creation order when a later folder exists before the earlier create is saved', async () => {
+        settingsProvider.settings.folderChildOrder = { Projects: ['A'] };
+        const projects = createNamedFolder('Projects', ['A', 'B']);
+        getFolderByPath.mockImplementation((path: string) => (path === 'Projects' ? projects : null));
+        const createB = service.handleFolderCreate('Projects/B');
+        // C arrives before B's queued update runs, so that update finds C in the vault
+        projects.children.push(createNamedFolder('Projects/C'));
+        const createC = service.handleFolderCreate('Projects/C');
+
+        await Promise.all([createB, createC]);
+
+        expect(settingsProvider.settings.folderChildOrder).toEqual({ Projects: ['A', 'B', 'C'] });
+    });
+
+    it('leaves out an unlisted sibling deleted before a moved-in folder is saved', async () => {
+        settingsProvider.settings.folderChildOrder = { Projects: ['A'] };
+        app.vault.getAllLoadedFiles = vi.fn(() => []);
+        const projects = createNamedFolder('Projects', ['A', 'B', 'X']);
+        getFolderByPath.mockImplementation((path: string) => (path === 'Projects' ? projects : null));
+        const move = service.handleFolderRename('Inbox/X', 'Projects/X');
+        // B is deleted before the queued update runs
+        projects.children = projects.children.filter(child => child.name !== 'B');
+
+        await move;
+
+        expect(settingsProvider.settings.folderChildOrder).toEqual({ Projects: ['A', 'X'] });
+    });
+
+    it('keeps an unlisted sibling renamed before a created folder is saved ahead of it', async () => {
+        settingsProvider.settings.folderChildOrder = { Projects: ['A'] };
+        app.vault.getAllLoadedFiles = vi.fn(() => []);
+        const projects = createNamedFolder('Projects', ['A', 'B', 'X']);
+        getFolderByPath.mockImplementation((path: string) => (path === 'Projects' ? projects : null));
+        const create = service.handleFolderCreate('Projects/X');
+        // B is renamed to C before the queued update runs; Obsidian renames the same folder object
+        const sibling = projects.children.find(child => child.name === 'B');
+        Reflect.set(sibling ?? {}, 'name', 'C');
+        Reflect.set(sibling ?? {}, 'path', 'Projects/C');
+        const rename = service.handleFolderRename('Projects/B', 'Projects/C');
+
+        await Promise.all([create, rename]);
+
+        expect(settingsProvider.settings.folderChildOrder).toEqual({ Projects: ['A', 'C', 'X'] });
+    });
+
+    it('keeps unlisted siblings ahead of a created folder when the parent is renamed before the save', async () => {
+        settingsProvider.settings.folderChildOrder = { Projects: ['A'] };
+        app.vault.getAllLoadedFiles = vi.fn(() => []);
+        const projects = createNamedFolder('Projects', ['A', 'B', 'X']);
+        const folders = new Map([['Projects', projects]]);
+        getFolderByPath.mockImplementation((path: string) => folders.get(path) ?? null);
+        const create = service.handleFolderCreate('Projects/X');
+        // Projects is renamed to Work before the queued update runs; Obsidian renames the same folder object
+        Reflect.set(projects, 'name', 'Work');
+        Reflect.set(projects, 'path', 'Work');
+        folders.delete('Projects');
+        folders.set('Work', projects);
+        const rename = service.handleFolderRename('Projects', 'Work');
+
+        await Promise.all([create, rename]);
+
+        expect(settingsProvider.settings.folderChildOrder).toEqual({ Work: ['A', 'B', 'X'] });
+    });
+
+    it('appends folders created in a parent whose rename is still queued', async () => {
+        settingsProvider.settings.folderChildOrder = { Projects: ['Existing'] };
+        app.vault.getAllLoadedFiles = vi.fn(() => []);
+        const work = createNamedFolder('Work', ['Existing', 'Zebra']);
+        getFolderByPath.mockImplementation((path: string) => (path === 'Work' ? work : null));
+        // Projects was renamed to Work; its queued update has not moved the order to Work when the creates arrive
+        const rename = service.handleFolderRename('Projects', 'Work');
+        const createZebra = service.handleFolderCreate('Work/Zebra');
+        work.children.push(createNamedFolder('Work/Alpha'));
+        const createAlpha = service.handleFolderCreate('Work/Alpha');
+
+        await Promise.all([rename, createZebra, createAlpha]);
+
+        expect(settingsProvider.settings.folderChildOrder).toEqual({ Work: ['Existing', 'Zebra', 'Alpha'] });
     });
 
     it('leaves alphabetical parents and listed names unchanged when a folder is created', async () => {

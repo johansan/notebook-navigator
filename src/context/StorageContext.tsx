@@ -177,7 +177,8 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         propertyTree: new Map(),
         tagged: 0,
         untagged: 0,
-        hiddenRootTags: new Map()
+        hiddenRootTags: new Map(),
+        excludedTagPaths: new Set()
     });
 
     // Registry managing content providers for generated file content

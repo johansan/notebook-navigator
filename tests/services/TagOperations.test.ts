@@ -54,8 +54,13 @@ class TestTagOperations extends TagOperations {
         return super.executeRename(analysis);
     }
 
-    public override updateTagMetadataAfterRename(oldTagPath: string, newTagPath: string, preserveDestination: boolean): Promise<void> {
-        return super.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserveDestination);
+    public override updateTagMetadataAfterRename(
+        oldTagPath: string,
+        newTagPath: string,
+        preserveDestination: boolean,
+        keepsOldTag: boolean
+    ): Promise<void> {
+        return super.updateTagMetadataAfterRename(oldTagPath, newTagPath, preserveDestination, keepsOldTag);
     }
 
     public override updateTagShortcutsAfterRename(oldTagPath: string, newTagPath: string): Promise<void> {
@@ -813,7 +818,7 @@ describe('TagOperations tag rename workflow', () => {
         const result = await tagOperations.runTagRename('projects', 'areas', createRenameTargets(3));
 
         expect(result).toBe(true);
-        expect(metadataSpy).toHaveBeenCalledWith('projects', 'areas', false);
+        expect(metadataSpy).toHaveBeenCalledWith('projects', 'areas', false, false);
         expect(shortcutsSpy).toHaveBeenCalledWith('projects', 'areas');
     });
 

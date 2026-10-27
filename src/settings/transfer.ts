@@ -19,6 +19,7 @@
 import { DEFAULT_SETTINGS } from './defaultSettings';
 import { extractLegacyRootFolderOrder } from './migrations/syncedSettings';
 import type { NotebookNavigatorSettings } from './types';
+import { sanitizeRecord } from '../utils/recordUtils';
 import { isRecord } from '../utils/typeGuards';
 
 // These keys are stored locally or regenerated from local state and are intentionally excluded
@@ -215,7 +216,8 @@ function createSettingsDiff(base: unknown, current: unknown): unknown {
             return structuredClone(current);
         }
 
-        const diff: Record<string, unknown> = {};
+        // Null prototype, so a key named "__proto__" (a folder or tag of that name) is stored instead of setting the prototype
+        const diff = sanitizeRecord<unknown>(undefined);
         const keys = new Set([...baseKeys, ...currentKeys]);
 
         keys.forEach(key => {
