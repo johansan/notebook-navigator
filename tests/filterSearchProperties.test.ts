@@ -23,19 +23,19 @@ import { foldSearchText } from '../src/utils/recordUtils';
 describe('filterSearch property tokenization', () => {
     it('keeps quoted property values in one token', () => {
         const tokens = parseFilterSearchTokens('.status="In Progress"');
-        expect(tokens.propertyTokens).toEqual([{ key: 'status', value: 'in progress' }]);
+        expect(tokens.propertyTokens).toEqual([{ key: 'status', match: 'value', value: 'in progress' }]);
         expect(tokens.nameTokens).toEqual([]);
     });
 
     it('parses quoted property keys with whitespace', () => {
         const tokens = parseFilterSearchTokens('."Reading Status"="In Progress"');
-        expect(tokens.propertyTokens).toEqual([{ key: 'reading status', value: 'in progress' }]);
+        expect(tokens.propertyTokens).toEqual([{ key: 'reading status', match: 'value', value: 'in progress' }]);
         expect(tokens.nameTokens).toEqual([]);
     });
 
     it('supports escaped quotes and round-trips query mutation', () => {
         const parsed = parseFilterSearchTokens('.status="He said \\"ok\\""');
-        expect(parsed.propertyTokens).toEqual([{ key: 'status', value: 'he said "ok"' }]);
+        expect(parsed.propertyTokens).toEqual([{ key: 'status', match: 'value', value: 'he said "ok"' }]);
 
         const added = updateFilterQueryWithProperty('', 'status', 'He said "ok"', 'AND');
         expect(added.query).toBe('.status="he said \\"ok\\""');
@@ -50,7 +50,7 @@ describe('filterSearch property tokenization', () => {
 
     it('parses escaped "=" in property keys and values', () => {
         const tokens = parseFilterSearchTokens('."Status\\=Phase"="In\\=Progress"');
-        expect(tokens.propertyTokens).toEqual([{ key: 'status=phase', value: 'in=progress' }]);
+        expect(tokens.propertyTokens).toEqual([{ key: 'status=phase', match: 'value', value: 'in=progress' }]);
         expect(tokens.nameTokens).toEqual([]);
     });
 });
@@ -59,11 +59,11 @@ describe('filterSearch property parsing', () => {
     it('parses include and exclude property tokens in filter mode', () => {
         const includeTokens = parseFilterSearchTokens('.status');
         expect(includeTokens.mode).toBe('tag');
-        expect(includeTokens.propertyTokens).toEqual([{ key: 'status', value: null }]);
+        expect(includeTokens.propertyTokens).toEqual([{ key: 'status', match: 'key' }]);
 
         const excludeTokens = parseFilterSearchTokens('-.flag=internal');
         expect(excludeTokens.mode).toBe('tag');
-        expect(excludeTokens.excludePropertyTokens).toEqual([{ key: 'flag', value: 'internal' }]);
+        expect(excludeTokens.excludePropertyTokens).toEqual([{ key: 'flag', match: 'value', value: 'internal' }]);
     });
 
     it('supports expression mode with tag and property operands', () => {
@@ -75,10 +75,74 @@ describe('filterSearch property parsing', () => {
 
     it('treats empty property values as key-only tokens', () => {
         const includeTokens = parseFilterSearchTokens('.hidefeature=');
-        expect(includeTokens.propertyTokens).toEqual([{ key: 'hidefeature', value: null }]);
+        expect(includeTokens.propertyTokens).toEqual([{ key: 'hidefeature', match: 'key' }]);
 
         const excludeTokens = parseFilterSearchTokens('-.hidefeature=');
-        expect(excludeTokens.excludePropertyTokens).toEqual([{ key: 'hidefeature', value: null }]);
+        expect(excludeTokens.excludePropertyTokens).toEqual([{ key: 'hidefeature', match: 'key' }]);
+    });
+});
+
+describe('filterSearch empty property values', () => {
+    const matches = (query: string, propertyValuesByKey: Map<string, string[]>) =>
+        fileMatchesFilterTokens('note', [], parseFilterSearchTokens(query), { hasUnfinishedTasks: false, propertyValuesByKey });
+    const emptyLens = new Map<string, string[]>([['lens', []]]);
+    const valuedLens = new Map<string, string[]>([['lens', ['wide']]]);
+    const missingLens = new Map<string, string[]>();
+    const emptyLensPrefix = new Map<string, string[]>([['lens-type', []]]);
+
+    it('parses unquoted null as an empty-value token in any case', () => {
+        expect(parseFilterSearchTokens('.lens=null').propertyTokens).toEqual([{ key: 'lens', match: 'empty' }]);
+        expect(parseFilterSearchTokens('.Lens=NULL').propertyTokens).toEqual([{ key: 'lens', match: 'empty' }]);
+        expect(parseFilterSearchTokens('-.lens=null').excludePropertyTokens).toEqual([{ key: 'lens', match: 'empty' }]);
+        expect(parseFilterSearchTokens('."Camera Lens"=null').propertyTokens).toEqual([{ key: 'camera lens', match: 'empty' }]);
+    });
+
+    it('keeps quoted null and longer values as literal value tokens', () => {
+        expect(parseFilterSearchTokens('.lens="null"').propertyTokens).toEqual([{ key: 'lens', match: 'value', value: 'null' }]);
+        expect(parseFilterSearchTokens('-.lens="null"').excludePropertyTokens).toEqual([{ key: 'lens', match: 'value', value: 'null' }]);
+        expect(parseFilterSearchTokens('.lens=nullable').propertyTokens).toEqual([{ key: 'lens', match: 'value', value: 'nullable' }]);
+    });
+
+    it('keeps key-only and empty-value clauses on the same key apart', () => {
+        const tokens = parseFilterSearchTokens('.lens AND .lens=null');
+        expect(tokens.mode).toBe('tag');
+        expect(tokens.propertyTokens).toEqual([
+            { key: 'lens', match: 'key' },
+            { key: 'lens', match: 'empty' }
+        ]);
+    });
+
+    it('matches only an exact key that is present with no value', () => {
+        expect(matches('.lens=null', emptyLens)).toBe(true);
+        expect(matches('.lens=null', valuedLens)).toBe(false);
+        expect(matches('.lens=null', missingLens)).toBe(false);
+        expect(matches('.lens=null', emptyLensPrefix)).toBe(false);
+    });
+
+    it('excludes only notes where the key is present with no value', () => {
+        expect(matches('-.lens=null', emptyLens)).toBe(false);
+        expect(matches('-.lens=null', valuedLens)).toBe(true);
+        expect(matches('-.lens=null', missingLens)).toBe(true);
+    });
+
+    it('combines empty-value clauses with AND and OR', () => {
+        expect(matches('.lens=null OR .lens=wide', emptyLens)).toBe(true);
+        expect(matches('.lens=null OR .lens=wide', valuedLens)).toBe(true);
+        expect(matches('.lens=null OR .lens=wide', missingLens)).toBe(false);
+        expect(matches('#photo AND .lens=null', emptyLens)).toBe(false);
+        expect(
+            fileMatchesFilterTokens('note', ['photo'], parseFilterSearchTokens('#photo AND .lens=null'), {
+                hasUnfinishedTasks: false,
+                propertyValuesByKey: emptyLens
+            })
+        ).toBe(true);
+    });
+
+    it('matches a literal null value only through the quoted form', () => {
+        const literalNull = new Map<string, string[]>([['lens', ['null']]]);
+        expect(matches('.lens="null"', literalNull)).toBe(true);
+        expect(matches('.lens="null"', emptyLens)).toBe(false);
+        expect(matches('.lens=null', literalNull)).toBe(false);
     });
 });
 
@@ -258,7 +322,7 @@ describe('updateFilterQueryWithProperty', () => {
         expect(added.changed).toBe(true);
 
         const parsed = parseFilterSearchTokens(added.query);
-        expect(parsed.propertyTokens).toEqual([{ key: 'status=phase', value: null }]);
+        expect(parsed.propertyTokens).toEqual([{ key: 'status=phase', match: 'key' }]);
 
         const removed = updateFilterQueryWithProperty(added.query, 'Status=Phase', null, 'AND');
         expect(removed.query).toBe('');
@@ -273,7 +337,7 @@ describe('updateFilterQueryWithProperty', () => {
         expect(added.changed).toBe(true);
 
         const parsed = parseFilterSearchTokens(added.query);
-        expect(parsed.propertyTokens).toEqual([{ key: 'status', value: 'in=progress' }]);
+        expect(parsed.propertyTokens).toEqual([{ key: 'status', match: 'value', value: 'in=progress' }]);
     });
 
     it('round-trips values containing backslashes', () => {
@@ -283,7 +347,7 @@ describe('updateFilterQueryWithProperty', () => {
         expect(added.changed).toBe(true);
 
         const parsed = parseFilterSearchTokens(added.query);
-        expect(parsed.propertyTokens).toEqual([{ key: 'path', value: 'c:\\notes\\daily' }]);
+        expect(parsed.propertyTokens).toEqual([{ key: 'path', match: 'value', value: 'c:\\notes\\daily' }]);
     });
 
     it('round-trips Markdown-link values through their displayed label', () => {
@@ -291,8 +355,10 @@ describe('updateFilterQueryWithProperty', () => {
         const added = updateFilterQueryWithProperty('', 'reference', rawValue, 'AND');
 
         expect(added.query).toBe('.reference="project alpha"');
-        expect(parseFilterSearchTokens(added.query).propertyTokens).toEqual([{ key: 'reference', value: 'project alpha' }]);
-        expect(parseFilterSearchTokens(`.reference="${rawValue}"`).propertyTokens).toEqual([{ key: 'reference', value: 'project alpha' }]);
+        expect(parseFilterSearchTokens(added.query).propertyTokens).toEqual([{ key: 'reference', match: 'value', value: 'project alpha' }]);
+        expect(parseFilterSearchTokens(`.reference="${rawValue}"`).propertyTokens).toEqual([
+            { key: 'reference', match: 'value', value: 'project alpha' }
+        ]);
         expect(
             fileMatchesFilterTokens('note', [], parseFilterSearchTokens(added.query), {
                 hasUnfinishedTasks: false,
@@ -303,6 +369,42 @@ describe('updateFilterQueryWithProperty', () => {
         const removed = updateFilterQueryWithProperty(added.query, 'reference', rawValue, 'AND');
         expect(removed.query).toBe('');
         expect(removed.action).toBe('removed');
+    });
+
+    it('quotes a literal null value so it does not become the empty-value filter', () => {
+        const added = updateFilterQueryWithProperty('', 'lens', 'null', 'AND');
+        expect(added.query).toBe('.lens="null"');
+        expect(parseFilterSearchTokens(added.query).propertyTokens).toEqual([{ key: 'lens', match: 'value', value: 'null' }]);
+
+        const removed = updateFilterQueryWithProperty(added.query, 'lens', 'null', 'AND');
+        expect(removed.query).toBe('');
+        expect(removed.action).toBe('removed');
+    });
+
+    it('toggles a literal null value without touching an empty-value clause', () => {
+        const added = updateFilterQueryWithProperty('.lens=null', 'lens', 'null', 'OR');
+        expect(added.query).toBe('.lens=null OR .lens="null"');
+        expect(added.action).toBe('added');
+
+        const removed = updateFilterQueryWithProperty(added.query, 'lens', 'null', 'OR');
+        expect(removed.query).toBe('.lens=null');
+        expect(removed.action).toBe('removed');
+    });
+
+    it('adds a key-only clause instead of removing an empty-value clause on the same key', () => {
+        const result = updateFilterQueryWithProperty('.lens=null', 'lens', null, 'AND');
+        expect(result.query).toBe('.lens=null AND .lens');
+        expect(result.action).toBe('added');
+    });
+
+    it('keeps empty-value and quoted null clauses intact when other clauses change', () => {
+        const result = updateFilterQueryWithProperty('-.lens=null .camera="null"', 'status', null, 'AND');
+        expect(result.query).toBe('-.lens=null .camera="null" AND .status');
+        expect(parseFilterSearchTokens(result.query).excludePropertyTokens).toEqual([{ key: 'lens', match: 'empty' }]);
+        expect(parseFilterSearchTokens(result.query).propertyTokens).toEqual([
+            { key: 'camera', match: 'value', value: 'null' },
+            { key: 'status', match: 'key' }
+        ]);
     });
 
     it('appends tokens without connectors in mixed queries', () => {

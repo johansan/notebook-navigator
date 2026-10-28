@@ -253,10 +253,12 @@ export const STRINGS_PL = {
                     items: [
                         '`.key` Uwzględnij notatki z kluczem atrybutu zaczynającym się od `key`.',
                         '`.key=value` Uwzględnij notatki, których wartość atrybutu zawiera `value`.',
+                        '`.key=null` Uwzględnij notatki, w których atrybut `key` istnieje, ale nie ma wartości. `.key="null"` wyszukuje tekst `null`.',
                         '`."Reading Status"` Uwzględnij notatki z atrybutem zawierającym spacje.',
                         '`."Reading Status"="In Progress"` Atrybuty i ich wartości ze spacjami muszą być w podwójnych cudzysłowach.',
                         '`-.key` Wyklucz notatki z kluczem atrybutu zaczynającym się od `key`.',
                         '`-.key=value` Wyklucz notatki, których wartość atrybutu zawiera `value`.',
+                        '`-.key=null` Wyklucz notatki, w których atrybut `key` istnieje, ale nie ma wartości.',
                         'Kliknij atrybut z Cmd/Ctrl, aby dodać go operatorem AND. Kliknij atrybut z Cmd/Ctrl+Shift, aby dodać go operatorem OR.'
                     ]
                 },

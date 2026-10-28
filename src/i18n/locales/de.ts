@@ -253,10 +253,12 @@ export const STRINGS_DE = {
                     items: [
                         '`.key` Notizen mit einem Eigenschaftsschlüssel einschließen, der mit `key` beginnt.',
                         '`.key=value` Notizen einschließen, deren Eigenschaftswert `value` enthält.',
+                        '`.key=null` Notizen einschließen, bei denen die Eigenschaft `key` vorhanden ist und keinen Wert hat. `.key="null"` sucht nach dem Text `null`.',
                         '`."Reading Status"` Notizen mit einem Eigenschaftsschlüssel einschließen, der Leerzeichen enthält.',
                         '`."Reading Status"="In Progress"` Schlüssel und Werte mit Leerzeichen müssen in Anführungszeichen stehen.',
                         '`-.key` Notizen mit einem Eigenschaftsschlüssel ausschließen, der mit `key` beginnt.',
                         '`-.key=value` Notizen ausschließen, deren Eigenschaftswert `value` enthält.',
+                        '`-.key=null` Notizen ausschließen, bei denen die Eigenschaft `key` vorhanden ist und keinen Wert hat.',
                         'Cmd/Ctrl+Klick auf eine Eigenschaft zum Hinzufügen mit AND. Cmd/Ctrl+Shift+Klick zum Hinzufügen mit OR.'
                     ]
                 },

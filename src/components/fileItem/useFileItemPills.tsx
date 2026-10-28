@@ -460,20 +460,20 @@ export function useFileItemPills({
             let foldedDisplayValue: string | null = null;
             matchedProperties.forEach(match => {
                 const { clause } = match;
-                const keyMatches = clause.value === null ? normalizedKey.startsWith(clause.key) : normalizedKey === clause.key;
+                const keyMatches = clause.match === 'key' ? normalizedKey.startsWith(clause.key) : normalizedKey === clause.key;
                 if (!keyMatches) {
                     return;
                 }
 
                 displayValue ??= resolvePropertyDisplayText(entry.value);
-                if (clause.value !== null) {
+                if (clause.match === 'value') {
                     foldedDisplayValue ??= foldSearchText(displayValue);
                     if (!foldedDisplayValue.includes(clause.value)) {
                         return;
                     }
                 }
 
-                const identity = `${clause.key}\u0000${clause.value ?? ''}\u0000${normalizedKey}\u0000${entry.valueKind ?? ''}\u0000${entry.value}`;
+                const identity = `${clause.match}\u0000${clause.key}\u0000${clause.match === 'value' ? clause.value : ''}\u0000${normalizedKey}\u0000${entry.valueKind ?? ''}\u0000${entry.value}`;
                 if (seen.has(identity)) {
                     return;
                 }
@@ -504,7 +504,7 @@ export function useFileItemPills({
 
         const evidenceMatches = propertySearchValueMatches.filter(
             match =>
-                match.clause.value === null ||
+                match.clause.match !== 'value' ||
                 !renderedPropertyValues.has(buildPropertySearchValueIdentity(match.propertyKey, match.valueKind, match.rawValue))
         );
         return buildPropertySearchEvidence(evidenceMatches);
@@ -571,7 +571,7 @@ export function useFileItemPills({
     const propertySearchTermsByValue = useMemo(() => {
         const termsByValue = new Map<string, Set<string>>();
         propertySearchValueMatches.forEach(match => {
-            if (!match.clause.value) {
+            if (match.clause.match !== 'value') {
                 return;
             }
 

@@ -251,10 +251,12 @@ export const STRINGS_ZH_TW = {
                     items: [
                         '`.key` 包含屬性鍵以 `key` 開頭的筆記。',
                         '`.key=value` 包含屬性值含有 `value` 的筆記。',
+                        '`.key=null` 包含具有屬性 `key` 但其值為空的筆記。`.key="null"` 搜尋文字 `null`。',
                         '`."Reading Status"` 包含屬性鍵包含空格的筆記。',
                         '`."Reading Status"="In Progress"` 包含空格的鍵和值必須用雙引號括起來。',
                         '`-.key` 排除屬性鍵以 `key` 開頭的筆記。',
                         '`-.key=value` 排除屬性值含有 `value` 的筆記。',
+                        '`-.key=null` 排除具有屬性 `key` 但其值為空的筆記。',
                         'Cmd/Ctrl+點擊屬性以 AND 方式新增。Cmd/Ctrl+Shift+點擊以 OR 方式新增。'
                     ]
                 },

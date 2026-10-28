@@ -75,9 +75,13 @@ export const tagMatchesToken = (tagPath: string, token: string): boolean => {
     return tagPath === token || tagPath.startsWith(`${token}/`);
 };
 
+/**
+ * Matches a property clause against one file's property projection. The projection lists non-empty
+ * folded values per key, so a key that maps to an empty list is present in frontmatter with no value.
+ */
 export const propertyTokenMatches = (propertiesByKey: Map<string, string[]>, token: PropertySearchToken): boolean => {
-    if (token.value === null) {
-        // Key-only filters act as type-ahead searches, while value filters keep exact keys so
+    if (token.match === 'key') {
+        // Key-only filters act as type-ahead searches, while empty and value filters keep exact keys so
         // `.status=done` cannot silently match another property such as `status-old`.
         for (const key of propertiesByKey.keys()) {
             if (key.startsWith(token.key)) {
@@ -91,6 +95,9 @@ export const propertyTokenMatches = (propertiesByKey: Map<string, string[]>, tok
     if (!values) {
         return false;
     }
+    if (token.match === 'empty') {
+        return values.length === 0;
+    }
     const propertyValue = token.value;
     return values.some(value => value.includes(propertyValue));
 };
@@ -102,11 +109,14 @@ const isPropertySearchToken = (value: unknown): value is PropertySearchToken => 
     if (!('key' in value) || typeof value.key !== 'string') {
         return false;
     }
-    if (!('value' in value)) {
+    if (!('match' in value)) {
         return false;
     }
 
-    return typeof value.value === 'string' || value.value === null;
+    if (value.match === 'key' || value.match === 'empty') {
+        return true;
+    }
+    return value.match === 'value' && 'value' in value && typeof value.value === 'string';
 };
 
 const isOperatorToken = (token: TagModeCandidateToken): token is Extract<TagModeToken, { kind: 'operator' }> => {
@@ -220,7 +230,12 @@ const buildTagExpression = (classifiedTokens: readonly TagModeToken[]): TagExpre
             if (!pushOperand({ kind: 'property', value: token.value })) {
                 return null;
             }
-            const propertyKey = token.value.value ? `${token.value.key}=${token.value.value}` : token.value.key;
+            // The identity includes the match form because `.lens` and `.lens=null` are different
+            // clauses; collapsing them would drop the empty clause from property lookup criteria.
+            const propertyKey =
+                token.value.match === 'value'
+                    ? `value\u0000${token.value.key}\u0000${token.value.value}`
+                    : `${token.value.match}\u0000${token.value.key}`;
             if (!positiveProperties.has(propertyKey)) {
                 positiveProperties.set(propertyKey, token.value);
             }

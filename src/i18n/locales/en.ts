@@ -252,10 +252,12 @@ export const STRINGS_EN = {
                     items: [
                         '`.key` Include notes with a property key that starts with `key`.',
                         '`.key=value` Include notes where the property value contains `value`.',
+                        '`.key=null` Include notes where the property `key` exists with no value. `.key="null"` searches for the text `null`.',
                         '`."Reading Status"` Include notes with a property key that contains whitespace.',
                         '`."Reading Status"="In Progress"` Keys and values with whitespace must be double-quoted.',
                         '`-.key` Exclude notes with a property key that starts with `key`.',
                         '`-.key=value` Exclude notes where the property value contains `value`.',
+                        '`-.key=null` Exclude notes where the property `key` exists with no value.',
                         'Cmd/Ctrl+Click a property to add with AND. Cmd/Ctrl+Shift+Click to add with OR.'
                     ]
                 },

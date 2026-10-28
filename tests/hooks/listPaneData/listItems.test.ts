@@ -302,7 +302,7 @@ describe('buildListItems pinned display scope', () => {
                     file.path,
                     [
                         {
-                            clause: { key: 'workflow', value: 'waiting' }
+                            clause: { key: 'workflow', match: 'value', value: 'waiting' }
                         }
                     ]
                 ]
@@ -324,7 +324,7 @@ describe('buildListItems pinned display scope', () => {
         ]);
         expect(fileItem?.matchedProperties).toEqual([
             {
-                clause: { key: 'workflow', value: 'waiting' }
+                clause: { key: 'workflow', match: 'value', value: 'waiting' }
             }
         ]);
     });

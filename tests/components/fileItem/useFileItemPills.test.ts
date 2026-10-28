@@ -559,7 +559,7 @@ describe('useFileItemPills', () => {
             visibleNavigationPropertyKeys: new Set<string>(),
             matchedProperties: [
                 {
-                    clause: { key: 'workflow', value: 'waiting' }
+                    clause: { key: 'workflow', match: 'value', value: 'waiting' }
                 }
             ]
         });
@@ -586,7 +586,7 @@ describe('useFileItemPills', () => {
             visibleNavigationPropertyKeys: new Set<string>(['status']),
             matchedProperties: [
                 {
-                    clause: { key: 'status', value: 'done' }
+                    clause: { key: 'status', match: 'value', value: 'done' }
                 }
             ]
         });
@@ -611,7 +611,7 @@ describe('useFileItemPills', () => {
             visibleNavigationPropertyKeys: new Set<string>(['aliases']),
             matchedProperties: [
                 {
-                    clause: { key: 'alias', value: null }
+                    clause: { key: 'alias', match: 'key' }
                 }
             ]
         });
@@ -619,6 +619,35 @@ describe('useFileItemPills', () => {
         expect(markup).toContain('&quot;propertyKey&quot;:&quot;Aliases&quot;');
         expect(markup).toContain('&quot;foldedKeyTerms&quot;:[&quot;alias&quot;]');
         expect(markup).toContain('>Best project<');
+    });
+
+    it('returns key evidence without values for an exact key matched by an empty-value clause', () => {
+        const markup = renderPillRows({
+            file: createTestTFile('Notes/EmptyLens.md'),
+            isCompactMode: false,
+            tags: [],
+            properties: [
+                { fieldKey: 'Lens', value: '' },
+                { fieldKey: 'Lens-Type', value: '' }
+            ],
+            wordCount: null,
+            settings: {
+                ...DEFAULT_SETTINGS,
+                showFileProperties: true
+            },
+            visiblePropertyKeys: new Set<string>(),
+            visibleNavigationPropertyKeys: new Set<string>(),
+            matchedProperties: [
+                {
+                    clause: { key: 'lens', match: 'empty' }
+                }
+            ]
+        });
+
+        expect(markup).toContain(
+            '&quot;propertyKey&quot;:&quot;Lens&quot;,&quot;foldedKeyTerms&quot;:[&quot;lens&quot;],&quot;values&quot;:[]'
+        );
+        expect(markup).not.toContain('Lens-Type');
     });
 
     it('orders values of one property by its manual value order, then alphabetically', () => {

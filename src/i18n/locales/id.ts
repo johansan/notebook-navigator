@@ -253,10 +253,12 @@ export const STRINGS_ID = {
                     items: [
                         '`.key` Sertakan catatan dengan kunci properti yang dimulai dengan `key`.',
                         '`.key=value` Sertakan catatan yang nilai propertinya mengandung `value`.',
+                        '`.key=null` Sertakan catatan yang memiliki properti `key` tanpa nilai. `.key="null"` mencari teks `null`.',
                         '`."Reading Status"` Sertakan catatan dengan kunci properti yang mengandung spasi.',
                         '`."Reading Status"="In Progress"` Kunci dan nilai yang mengandung spasi harus diapit tanda kutip ganda.',
                         '`-.key` Kecualikan catatan dengan kunci properti yang dimulai dengan `key`.',
                         '`-.key=value` Kecualikan catatan yang nilai propertinya mengandung `value`.',
+                        '`-.key=null` Kecualikan catatan yang memiliki properti `key` tanpa nilai.',
                         'Cmd/Ctrl+Klik properti untuk menambahkan dengan AND. Cmd/Ctrl+Shift+Klik untuk menambahkan dengan OR.'
                     ]
                 },

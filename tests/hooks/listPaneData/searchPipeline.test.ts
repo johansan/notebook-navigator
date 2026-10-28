@@ -224,7 +224,7 @@ describe('filterListPaneFiles property metadata', () => {
         expect(result.files).toEqual([file]);
         expect(result.matchedProperties.get(file.path)).toEqual([
             {
-                clause: { key: 'alias', value: null }
+                clause: { key: 'alias', match: 'key' }
             }
         ]);
     });
@@ -256,7 +256,7 @@ describe('filterListPaneFiles property metadata', () => {
         expect(result.files).toEqual([file]);
         expect(result.matchedProperties.get(file.path)).toEqual([
             {
-                clause: { key: 'workflow', value: 'waiting' }
+                clause: { key: 'workflow', match: 'value', value: 'waiting' }
             }
         ]);
     });
@@ -293,7 +293,7 @@ describe('filterListPaneFiles property metadata', () => {
 
         const labelResult = runSearch('.reference=alpha');
         expect(labelResult.files).toEqual([file]);
-        expect(labelResult.matchedProperties.get(file.path)?.[0]?.clause).toEqual({ key: 'reference', value: 'alpha' });
+        expect(labelResult.matchedProperties.get(file.path)?.[0]?.clause).toEqual({ key: 'reference', match: 'value', value: 'alpha' });
         expect(runSearch('.reference=example.com').files).toEqual([]);
     });
 
@@ -327,6 +327,59 @@ describe('filterListPaneFiles property metadata', () => {
 
         expect(result.files).toEqual([file]);
         expect(result.matchedProperties.get(file.path)?.map(match => match.clause.key)).toEqual(['status']);
+    });
+
+    it('matches empty-value clauses against the indexed empty value of an exact key', () => {
+        const app = new App();
+        const empty = createTestTFile('Notes/Empty.md');
+        const valued = createTestTFile('Notes/Valued.md');
+        const mixed = createTestTFile('Notes/Mixed.md');
+        const literalNull = createTestTFile('Notes/LiteralNull.md');
+        const missing = createTestTFile('Notes/Missing.md');
+        const prefixOnly = createTestTFile('Notes/PrefixOnly.md');
+        // Values as the property index stores them: YAML null is an empty string, `"null"` is text.
+        const propertiesByPath = new Map<string, { fieldKey: string; value: string; valueKind?: string }[]>([
+            [empty.path, [{ fieldKey: 'Lens', value: '' }]],
+            [valued.path, [{ fieldKey: 'Lens', value: 'Wide', valueKind: 'string' }]],
+            [
+                mixed.path,
+                [
+                    { fieldKey: 'Lens', value: '' },
+                    { fieldKey: 'Lens', value: 'Macro', valueKind: 'string' }
+                ]
+            ],
+            [literalNull.path, [{ fieldKey: 'Lens', value: 'null', valueKind: 'string' }]],
+            [missing.path, []],
+            [prefixOnly.path, [{ fieldKey: 'Lens-Type', value: '' }]]
+        ]);
+        const db = {
+            getFile: (path: string) => ({ properties: propertiesByPath.get(path) ?? [] })
+        } as unknown as IndexedDBStorage;
+        const baseFiles = [empty, valued, mixed, literalNull, missing, prefixOnly];
+        const runSearch = (query: string) =>
+            filterListPaneFiles({
+                app,
+                baseFiles,
+                getDB: () => db,
+                getFileTimestamps: () => ({ created: 0, modified: 0 }),
+                omnisearchResult: null,
+                searchTokens: parseFilterSearchTokens(query),
+                searchableNames: new Map(),
+                settings: { alphabeticalDateMode: 'modified' },
+                sortOption: 'alphabetical-asc',
+                trimmedQuery: query,
+                useOmnisearch: false
+            });
+
+        const emptyResult = runSearch('.lens=null');
+        expect(emptyResult.files).toEqual([empty]);
+        expect(emptyResult.matchedProperties.get(empty.path)).toEqual([{ clause: { key: 'lens', match: 'empty' } }]);
+        expect(runSearch('-.lens=null').files).toEqual([valued, mixed, literalNull, missing, prefixOnly]);
+        expect(runSearch('.lens="null"').files).toEqual([literalNull]);
+        // The key-only clause must not replace the exact-key lookup of the empty-value clause,
+        // otherwise every note with the key would look empty.
+        expect(runSearch('.lens AND .lens=null').files).toEqual([empty]);
+        expect(runSearch('.lens=null OR .lens=wide').files).toEqual([empty, valued]);
     });
 
     it('applies negative key and value clauses through the reduced property projection', () => {

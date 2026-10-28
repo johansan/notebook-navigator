@@ -366,7 +366,8 @@ export function buildPropertySearchEvidence(
             group = { propertyKey: match.propertyKey.trim(), foldedKeyTerms: new Set(), values: new Map() };
             groups.set(normalizedKey, group);
         }
-        if (match.clause.value === null) {
+        // Key-only and empty-value clauses match on the key, so the key carries their highlight.
+        if (match.clause.match !== 'value') {
             group.foldedKeyTerms.add(match.clause.key);
         }
 
@@ -380,7 +381,7 @@ export function buildPropertySearchEvidence(
             value = { displayValue, foldedTerms: new Set() };
             group.values.set(displayValue, value);
         }
-        if (match.clause.value) {
+        if (match.clause.match === 'value') {
             value.foldedTerms.add(match.clause.value);
         }
     });

@@ -38,10 +38,14 @@ export interface FolderFilterToken {
     value: string;
 }
 
-export interface PropertySearchToken {
-    key: string;
-    value: string | null;
-}
+/**
+ * Property clause from a filter search query.
+ * - `key` (`.key`): any property key that starts with `key`, with or without a value.
+ * - `empty` (`.key=null`): exactly `key`, present in frontmatter with no value.
+ * - `value` (`.key=value`): exactly `key`, with a value that contains `value`.
+ */
+export type PropertySearchToken =
+    { key: string; match: 'key' } | { key: string; match: 'empty' } | { key: string; match: 'value'; value: string };
 
 // Operands in a tag/property filter expression tree
 export type TagExpressionOperand =

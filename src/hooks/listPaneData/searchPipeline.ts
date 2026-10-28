@@ -136,9 +136,11 @@ function buildFilterSearchPropertyCriteria(tokens: FilterSearchTokens): FilterSe
         return EMPTY_FILTER_SEARCH_PROPERTY_CRITERIA;
     }
 
+    // Empty-value clauses need exact keys so the projection includes their values; a prefix-only key
+    // projects an empty list, which the empty-value clause would read as a key with no value.
     return {
-        keyPrefixes: allClauses.filter(clause => clause.value === null).map(clause => clause.key),
-        exactKeys: new Set(allClauses.filter(clause => clause.value !== null).map(clause => clause.key))
+        keyPrefixes: allClauses.filter(clause => clause.match === 'key').map(clause => clause.key),
+        exactKeys: new Set(allClauses.filter(clause => clause.match !== 'key').map(clause => clause.key))
     };
 }
 

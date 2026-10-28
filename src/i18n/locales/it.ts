@@ -252,10 +252,12 @@ export const STRINGS_IT = {
                     items: [
                         '`.key` Includi le note con una chiave di proprietà che inizia con `key`.',
                         '`.key=value` Includi note in cui il valore della proprietà contiene `value`.',
+                        '`.key=null` Includi note in cui la proprietà `key` esiste ma non ha un valore. `.key="null"` cerca il testo `null`.',
                         '`."Reading Status"` Includi note con una chiave di proprietà che contiene spazi.',
                         '`."Reading Status"="In Progress"` Chiavi e valori con spazi devono essere racchiusi tra virgolette doppie.',
                         '`-.key` Escludi le note con una chiave di proprietà che inizia con `key`.',
                         '`-.key=value` Escludi note in cui il valore della proprietà contiene `value`.',
+                        '`-.key=null` Escludi note in cui la proprietà `key` esiste ma non ha un valore.',
                         'Cmd/Ctrl+Clic su una proprietà per aggiungere con AND. Cmd/Ctrl+Shift+Clic per aggiungere con OR.'
                     ]
                 },

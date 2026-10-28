@@ -255,10 +255,12 @@ export const STRINGS_PT_BR = {
                     items: [
                         '`.key` Incluir notas com uma chave de propriedade que começa com `key`.',
                         '`.key=value` Incluir notas cujo valor de propriedade contenha `value`.',
+                        '`.key=null` Incluir notas em que a propriedade `key` existe sem valor. `.key="null"` busca o texto `null`.',
                         '`."Reading Status"` Incluir notas com uma chave de propriedade que contém espaços.',
                         '`."Reading Status"="In Progress"` Chaves e valores com espaços devem estar entre aspas duplas.',
                         '`-.key` Excluir notas com uma chave de propriedade que começa com `key`.',
                         '`-.key=value` Excluir notas cujo valor de propriedade contenha `value`.',
+                        '`-.key=null` Excluir notas em que a propriedade `key` existe sem valor.',
                         'Cmd/Ctrl+Clique em uma propriedade para adicionar com AND. Cmd/Ctrl+Shift+Clique para adicionar com OR.'
                     ]
                 },

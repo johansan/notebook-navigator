@@ -253,10 +253,12 @@ export const STRINGS_JA = {
                     items: [
                         '`.key` `key` で始まるプロパティキーを持つノートを含める。',
                         '`.key=value` プロパティ値に `value` を含むノートを含める。',
+                        '`.key=null` プロパティ `key` があり値が空のノートを含める。`.key="null"` はテキスト `null` を検索する。',
                         '`."Reading Status"` 空白を含むプロパティキーを持つノートを含める。',
                         '`."Reading Status"="In Progress"` 空白を含むキーと値はダブルクォートで囲む必要があります。',
                         '`-.key` `key` で始まるプロパティキーを持つノートを除外する。',
                         '`-.key=value` プロパティ値に `value` を含むノートを除外する。',
+                        '`-.key=null` プロパティ `key` があり値が空のノートを除外する。',
                         'Cmd/Ctrl+クリックでプロパティをANDで追加。Cmd/Ctrl+Shift+クリックでORで追加。'
                     ]
                 },

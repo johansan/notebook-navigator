@@ -61,6 +61,8 @@ const CONNECTOR_TOKEN_SET = new Set(['and', 'or']);
 const UNFINISHED_TASK_FILTER_TOKEN_SET = new Set(['has:task', 'has:tasks']);
 
 const PROPERTY_FILTER_PREFIX = '.';
+// Unquoted `.key=null` matches a key with no value, following Obsidian's `[key:null]` search syntax.
+const PROPERTY_FILTER_EMPTY_VALUE = 'null';
 
 const normalizePropertyFilterKey = (value: string): string => {
     return casefold(value.trim());
@@ -151,7 +153,11 @@ const unescapePropertyFilterPart = (value: string): string => {
     return result;
 };
 
-const parsePropertyFilterToken = (token: string): PropertySearchToken | null => {
+/**
+ * Parses a property filter term. `valueQuoted` reports a value quote the tokenizer already stripped;
+ * quotes still present in `token` are detected here. Either keeps a quoted `"null"` as literal text.
+ */
+const parsePropertyFilterToken = (token: string, valueQuoted: boolean): PropertySearchToken | null => {
     if (!isPropertyFilterCandidate(token)) {
         return null;
     }
@@ -164,33 +170,40 @@ const parsePropertyFilterToken = (token: string): PropertySearchToken | null => 
     const separatorIndex = findPropertyFilterValueSeparator(content);
     if (separatorIndex === -1) {
         const normalizedKey = normalizePropertyFilterKey(unescapePropertyFilterPart(tryUnquotePropertyFilterPart(content)));
-        return normalizedKey ? { key: normalizedKey, value: null } : null;
+        return normalizedKey ? { key: normalizedKey, match: 'key' } : null;
     }
 
     const rawKey = unescapePropertyFilterPart(tryUnquotePropertyFilterPart(content.slice(0, separatorIndex)));
-    const rawValue = unescapePropertyFilterPart(tryUnquotePropertyFilterPart(content.slice(separatorIndex + 1)));
+    const rawValuePart = content.slice(separatorIndex + 1);
+    const unquotedValuePart = tryUnquotePropertyFilterPart(rawValuePart);
+    const rawValue = unescapePropertyFilterPart(unquotedValuePart);
     const normalizedKey = normalizePropertyFilterKey(rawKey);
     if (!normalizedKey) {
         return null;
     }
 
+    if (!valueQuoted && unquotedValuePart === rawValuePart && casefold(rawValue.trim()) === PROPERTY_FILTER_EMPTY_VALUE) {
+        return { key: normalizedKey, match: 'empty' };
+    }
+
     const normalizedValue = normalizePropertyFilterValue(rawValue);
     if (!normalizedValue) {
-        return { key: normalizedKey, value: null };
+        return { key: normalizedKey, match: 'key' };
     }
 
     return {
         key: normalizedKey,
+        match: 'value',
         value: normalizedValue
     };
 };
 
 const foldPropertySearchToken = (token: PropertySearchToken): PropertySearchToken => {
     // Property tokens are folded once during parsing so matching can stay on pre-normalized values.
-    return {
-        key: foldSearchText(token.key),
-        value: token.value === null ? null : foldSearchText(token.value)
-    };
+    if (token.match === 'value') {
+        return { key: foldSearchText(token.key), match: 'value', value: foldSearchText(token.value) };
+    }
+    return { key: foldSearchText(token.key), match: token.match };
 };
 
 /**
@@ -202,14 +215,17 @@ const foldPropertySearchToken = (token: PropertySearchToken): PropertySearchToke
  * `negated` is only set for literal terms because the minus of `-"..."` sits outside the quoted
  * payload; unquoted negation stays inside `text` and is resolved during classification. This keeps
  * `-".F"` (exclude names containing `.F`) distinct from `"-.F"` (include names containing `-.F`).
+ * `quotedValue` marks a quote that opened right after `=`, so `.key="null"` keeps `null` as a
+ * literal property value after its quotes are stripped instead of becoming the empty-value filter.
  */
 interface RawSearchToken {
     text: string;
     literal: boolean;
     negated: boolean;
+    quotedValue: boolean;
 }
 
-const createMutationToken = (text: string): RawSearchToken => ({ text, literal: false, negated: false });
+const createMutationToken = (text: string): RawSearchToken => ({ text, literal: false, negated: false, quotedValue: false });
 
 function tokenizeFilterSearchQuery(query: string): RawSearchToken[] {
     const tokens: RawSearchToken[] = [];
@@ -221,16 +237,18 @@ function tokenizeFilterSearchQuery(query: string): RawSearchToken[] {
     let current = '';
     let literal = false;
     let negated = false;
+    let quotedValue = false;
     let inQuotes = false;
     let index = 0;
 
     const pushCurrent = () => {
         if (current.length > 0) {
-            tokens.push({ text: current, literal, negated });
+            tokens.push({ text: current, literal, negated, quotedValue });
         }
         current = '';
         literal = false;
         negated = false;
+        quotedValue = false;
     };
 
     while (index < input.length) {
@@ -257,6 +275,8 @@ function tokenizeFilterSearchQuery(query: string): RawSearchToken[] {
                     literal = true;
                     negated = true;
                     current = '';
+                } else if (current.endsWith('=')) {
+                    quotedValue = true;
                 }
             }
             inQuotes = !inQuotes;
@@ -622,7 +642,7 @@ const classifyRawTokens = (rawTokens: RawSearchToken[]): TokenClassificationResu
             }
 
             if (isPropertyFilterCandidate(negatedToken)) {
-                const propertyValue = parsePropertyFilterToken(negatedToken);
+                const propertyValue = parsePropertyFilterToken(negatedToken, token.quotedValue);
                 if (propertyValue) {
                     tokens.push({ kind: 'propertyNegation', value: foldPropertySearchToken(propertyValue) });
                     hasTagOperand = true;
@@ -690,7 +710,7 @@ const classifyRawTokens = (rawTokens: RawSearchToken[]): TokenClassificationResu
         }
 
         if (isPropertyFilterCandidate(lowercaseToken)) {
-            const propertyValue = parsePropertyFilterToken(lowercaseToken);
+            const propertyValue = parsePropertyFilterToken(lowercaseToken, token.quotedValue);
             if (propertyValue) {
                 tokens.push({ kind: 'property', value: foldPropertySearchToken(propertyValue) });
                 hasTagOperand = true;
@@ -848,6 +868,7 @@ const parseFilterModeTokens = (
  * - # - Include only notes that have at least one tag
  * - .key - Include notes with property key
  * - .key=value - Include notes where the property value contains "value"
+ * - .key=null - Include notes where the property key exists with no value ("null" in quotes is a literal value)
  * - @today - Include notes matching the default date field on the current day
  * - @YYYY-MM-DD / @YYYYMMDD - Include notes matching the default date field on a specific day
  * - @YYYY - Include notes matching the default date field inside a calendar year
@@ -869,6 +890,7 @@ const parseFilterModeTokens = (
  * - -# - Exclude all tagged notes (show only untagged)
  * - -.key - Exclude notes with property key
  * - -.key=value - Exclude notes where the property value contains "value"
+ * - -.key=null - Exclude notes where the property key exists with no value
  * - -@... - Exclude notes matching a date token or range
  * - -has:task - Exclude notes with unfinished tasks
  * - -folder:archive - Exclude notes where any folder segment contains "archive"
@@ -945,8 +967,9 @@ const isSearchNavOperandToken = (
     return token.kind === 'tag' || token.kind === 'tagNegation' || token.kind === 'property' || token.kind === 'propertyNegation';
 };
 
+// Empty values have no value node in the property tree, so `.key=null` highlights the key node.
 const buildSearchNavPropertyNodeId = (token: PropertySearchToken): string => {
-    return token.value === null ? buildPropertyKeyNodeId(token.key) : buildPropertyValueNodeId(token.key, token.value);
+    return token.match === 'value' ? buildPropertyValueNodeId(token.key, token.value) : buildPropertyKeyNodeId(token.key);
 };
 
 /**
@@ -1078,7 +1101,7 @@ const isTagOnlyMutationQuery = (query: string): boolean => {
             continue;
         }
 
-        if (parsePropertyFilterToken(candidate)) {
+        if (parsePropertyFilterToken(candidate, token.quotedValue)) {
             hasTagOperand = true;
             continue;
         }
@@ -1110,8 +1133,8 @@ const escapePropertyFilterPartForQuery = (value: string, includeQuotes = false):
     return escaped;
 };
 
-const formatPropertyFilterPartForQuery = (value: string): string => {
-    const shouldQuote = shouldQuoteQueryTokenPart(value);
+const formatPropertyFilterPartForQuery = (value: string, forceQuotes = false): string => {
+    const shouldQuote = forceQuotes || shouldQuoteQueryTokenPart(value);
     const escaped = escapePropertyFilterPartForQuery(value, shouldQuote);
     if (!shouldQuote) {
         return escaped;
@@ -1123,11 +1146,17 @@ const formatPropertyFilterPartForQuery = (value: string): string => {
 const formatPropertyTokenForQuery = (propertyToken: PropertySearchToken, negated = false): string => {
     const prefix = negated ? '-.' : '.';
     const serializedKey = formatPropertyFilterPartForQuery(propertyToken.key);
-    if (propertyToken.value === null) {
+    if (propertyToken.match === 'key') {
         return `${prefix}${serializedKey}`;
     }
 
-    const serializedValue = formatPropertyFilterPartForQuery(propertyToken.value);
+    if (propertyToken.match === 'empty') {
+        return `${prefix}${serializedKey}=${PROPERTY_FILTER_EMPTY_VALUE}`;
+    }
+
+    // A literal `null` value is quoted, otherwise it would re-parse as the empty-value filter.
+    const isEmptyValueKeyword = casefold(propertyToken.value) === PROPERTY_FILTER_EMPTY_VALUE;
+    const serializedValue = formatPropertyFilterPartForQuery(propertyToken.value, isEmptyValueKeyword);
     return `${prefix}${serializedKey}=${serializedValue}`;
 };
 
@@ -1149,7 +1178,7 @@ const serializeMutationToken = (token: RawSearchToken): string => {
     if (normalized.startsWith('-.') || normalized.startsWith('.')) {
         const negated = normalized.startsWith('-.');
         const candidate = negated ? normalized.slice(1) : normalized;
-        const parsedProperty = parsePropertyFilterToken(candidate);
+        const parsedProperty = parsePropertyFilterToken(candidate, token.quotedValue);
         if (parsedProperty) {
             return formatPropertyTokenForQuery(parsedProperty, negated);
         }
@@ -1329,12 +1358,13 @@ export function updateFilterQueryWithProperty(
         normalizedValue = normalizedCandidate;
     }
 
-    const propertyToken: PropertySearchToken = { key: normalizedKey, value: normalizedValue };
+    const propertyToken: PropertySearchToken =
+        normalizedValue === null ? { key: normalizedKey, match: 'key' } : { key: normalizedKey, match: 'value', value: normalizedValue };
     const formattedToken = formatPropertyTokenForQuery(propertyToken);
     const tokens = trimmed.length > 0 ? tokenizeFilterSearchQuery(trimmed) : [];
     const tagOnlyQuery = isTagOnlyMutationQuery(trimmed);
     const foldedTargetKey = foldSearchText(propertyToken.key);
-    const foldedTargetValue = foldSearchText(propertyToken.value ?? '');
+    const foldedTargetValue = propertyToken.match === 'value' ? foldSearchText(propertyToken.value) : '';
 
     const removalIndex = tokens.findIndex(token => {
         // Literal terms never match: a quoted `".status"` is name text, so toggling the `status`
@@ -1342,12 +1372,13 @@ export function updateFilterQueryWithProperty(
         if (token.literal || token.text.startsWith('-')) {
             return false;
         }
-        const parsed = parsePropertyFilterToken(token.text);
-        if (!parsed) {
+        // The match form must agree so toggling the `lens` key node never removes `.lens=null`.
+        const parsed = parsePropertyFilterToken(token.text, token.quotedValue);
+        if (!parsed || parsed.match !== propertyToken.match) {
             return false;
         }
         const parsedKey = foldSearchText(parsed.key);
-        const parsedValue = foldSearchText(parsed.value ?? '');
+        const parsedValue = parsed.match === 'value' ? foldSearchText(parsed.value) : '';
         return parsedKey === foldedTargetKey && parsedValue === foldedTargetValue;
     });
 

@@ -250,10 +250,12 @@ export const STRINGS_ZH_CN = {
                     items: [
                         '`.key` 包含属性键以 `key` 开头的笔记。',
                         '`.key=value` 包含属性值含有 `value` 的笔记。',
+                        '`.key=null` 包含具有属性 `key` 但其值为空的笔记。`.key="null"` 搜索文本 `null`。',
                         '`."Reading Status"` 包含属性键包含空格的笔记。',
                         '`."Reading Status"="In Progress"` 包含空格的键和值必须用双引号括起来。',
                         '`-.key` 排除属性键以 `key` 开头的笔记。',
                         '`-.key=value` 排除属性值含有 `value` 的笔记。',
+                        '`-.key=null` 排除具有属性 `key` 但其值为空的笔记。',
                         'Cmd/Ctrl+点击属性以 AND 方式添加。Cmd/Ctrl+Shift+点击以 OR 方式添加。'
                     ]
                 },

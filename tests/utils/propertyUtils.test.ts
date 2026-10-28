@@ -34,7 +34,7 @@ describe('propertyUtils', () => {
 
     it('groups property search evidence and caps displayed values', () => {
         const matches = ['Alpha', 'Beta', 'Gamma', 'Delta'].map(displayValue => ({
-            clause: { key: 'status', value: displayValue.toLowerCase() },
+            clause: { key: 'status', match: 'value', value: displayValue.toLowerCase() },
             propertyKey: 'Status',
             rawValue: displayValue,
             valueKind: 'string' as const,
@@ -62,7 +62,7 @@ describe('propertyUtils', () => {
         expect(
             buildPropertySearchEvidence([
                 {
-                    clause: { key: 'archived', value: null },
+                    clause: { key: 'archived', match: 'key' },
                     propertyKey: 'Archived',
                     rawValue: '',
                     displayValue: ''
@@ -76,7 +76,7 @@ describe('propertyUtils', () => {
 
     it('caps property groups retained for file-row evidence', () => {
         const matches = ['Alpha', 'Beta', 'Gamma', 'Delta'].map(propertyKey => ({
-            clause: { key: propertyKey.toLowerCase(), value: null },
+            clause: { key: propertyKey.toLowerCase(), match: 'key' },
             propertyKey,
             rawValue: 'value',
             displayValue: 'value'

@@ -26,7 +26,7 @@ import {
     updateFilterQueryWithTag,
     updateFilterQueryWithProperty
 } from '../../src/utils/filterSearch';
-import { buildPropertyValueNodeId } from '../../src/utils/propertyTree';
+import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from '../../src/utils/propertyTree';
 import { foldSearchText } from '../../src/utils/recordUtils';
 
 const sortTokens = (values: string[]) => [...values].sort();
@@ -84,7 +84,7 @@ describe('parseFilterSearchTokens', () => {
         expect(tokens.tagTokens).toEqual(['musica']);
         expect(tokens.folderTokens).toEqual([{ mode: 'exact', value: 'notas/rapidas' }]);
         expect(tokens.extensionTokens).toEqual(['md']);
-        expect(tokens.propertyTokens).toEqual([{ key: 'estado', value: 'accion' }]);
+        expect(tokens.propertyTokens).toEqual([{ key: 'estado', match: 'value', value: 'accion' }]);
     });
 
     it('treats diacritic-folded connector words as literal tokens', () => {
@@ -617,6 +617,14 @@ describe('buildSearchNavFilterState', () => {
             [buildPropertyValueNodeId('status', 'finished')]: 'OR'
         });
     });
+
+    it('highlights the key node for empty-value property filters', () => {
+        const state = buildSearchNavFilterState('#alpha OR .lens=null -.camera=null');
+
+        expect(state.properties.include).toEqual([buildPropertyKeyNodeId('lens')]);
+        expect(state.properties.exclude).toEqual([buildPropertyKeyNodeId('camera')]);
+        expect(state.properties.includeOperators).toEqual({ [buildPropertyKeyNodeId('lens')]: 'OR' });
+    });
 });
 
 describe('updateFilterQueryWithTag', () => {
@@ -1107,7 +1115,7 @@ describe('quoted literal search terms', () => {
 
     it('keeps property filters with quoted keys when the quote is not at the start of the term', () => {
         const tokens = parseFilterSearchTokens('."Reading Status"');
-        expect(tokens.propertyTokens).toEqual([{ key: 'reading status', value: null }]);
+        expect(tokens.propertyTokens).toEqual([{ key: 'reading status', match: 'key' }]);
         expect(tokens.nameTokens).toEqual([]);
     });
 

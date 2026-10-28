@@ -252,10 +252,12 @@ export const STRINGS_VI = {
                     items: [
                         '`.key` Bao gồm ghi chú có khóa thuộc tính bắt đầu bằng `key`.',
                         '`.key=value` Bao gồm ghi chú có giá trị thuộc tính chứa `value`.',
+                        '`.key=null` Bao gồm ghi chú có thuộc tính `key` nhưng không có giá trị. `.key="null"` tìm văn bản `null`.',
                         '`."Reading Status"` Bao gồm ghi chú có khóa thuộc tính chứa khoảng trắng.',
                         '`."Reading Status"="In Progress"` Khóa và giá trị có khoảng trắng phải được đặt trong dấu ngoặc kép.',
                         '`-.key` Loại trừ ghi chú có khóa thuộc tính bắt đầu bằng `key`.',
                         '`-.key=value` Loại trừ ghi chú có giá trị thuộc tính chứa `value`.',
+                        '`-.key=null` Loại trừ ghi chú có thuộc tính `key` nhưng không có giá trị.',
                         'Cmd/Ctrl+Nhấp vào thuộc tính để thêm với AND. Cmd/Ctrl+Shift+Nhấp để thêm với OR.'
                     ]
                 },

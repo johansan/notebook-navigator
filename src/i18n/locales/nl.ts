@@ -257,10 +257,12 @@ export const STRINGS_NL = {
                     items: [
                         '`.key` Notities opnemen met een eigenschapssleutel die begint met `key`.',
                         '`.key=value` Notities opnemen waarvan de eigenschapswaarde `value` bevat.',
+                        '`.key=null` Notities opnemen waarin de eigenschap `key` bestaat zonder waarde. `.key="null"` zoekt naar de tekst `null`.',
                         '`."Reading Status"` Notities opnemen met een eigenschapssleutel die spaties bevat.',
                         '`."Reading Status"="In Progress"` Sleutels en waarden met spaties moeten tussen dubbele aanhalingstekens staan.',
                         '`-.key` Notities uitsluiten met een eigenschapssleutel die begint met `key`.',
                         '`-.key=value` Notities uitsluiten waarvan de eigenschapswaarde `value` bevat.',
+                        '`-.key=null` Notities uitsluiten waarin de eigenschap `key` bestaat zonder waarde.',
                         'Cmd/Ctrl+Klik op een eigenschap om toe te voegen met AND. Cmd/Ctrl+Shift+Klik om toe te voegen met OR.'
                     ]
                 },
