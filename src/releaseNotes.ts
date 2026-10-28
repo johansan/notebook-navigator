@@ -115,6 +115,9 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
             'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
             'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.'
+        ],
+        fixed: [
+            "Dragging a folder from the navigation pane into Lean Terminal now pastes the folder's absolute path [#1561](https://github.com/johansan/notebook-navigator/issues/1561)."
         ]
     },
     {
