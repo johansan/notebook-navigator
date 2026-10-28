@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { App, Plugin, View, WorkspaceLeaf, TFile } from 'obsidian';
+import type { App, Plugin, View, WorkspaceLeaf, TFile, TFolder } from 'obsidian';
 
 declare module 'obsidian' {
     interface MenuItem {
@@ -79,11 +79,22 @@ export interface ExtendedApp extends App {
  * Defines all possible value types that can be stored in the drag payload.
  */
 type DragManagerPayloadValue =
-    string | number | boolean | null | undefined | TFile | TFile[] | DragManagerPayload | DragManagerPayload[] | HTMLElement | (() => void);
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | TFile
+    | TFolder
+    | TFile[]
+    | DragManagerPayload
+    | DragManagerPayload[]
+    | HTMLElement
+    | (() => void);
 
 export interface DragManagerPayload {
-    type?: 'file' | 'files' | 'link' | 'tag'; // Type of drag operation
-    file?: TFile; // Single file being dragged
+    type?: 'file' | 'files' | 'folder' | 'link' | 'tag'; // Type of drag operation
+    file?: TFile | TFolder; // Single file or folder being dragged
     files?: TFile[]; // Multiple files being dragged
     title?: string; // Display title for the drag operation
     [key: string]: DragManagerPayloadValue; // Additional arbitrary payload data

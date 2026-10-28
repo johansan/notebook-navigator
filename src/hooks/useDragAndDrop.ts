@@ -571,6 +571,13 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 const folder = app.vault.getFolderByPath(path);
                 if (folder) {
                     internalDragSession.setSession({ type: ItemType.FOLDER, folderPath: folder.path });
+                    // Same payload as a folder dragged from the file explorer. Other drop targets read the folder
+                    // from it: the file explorer moves it, Bookmarks bookmarks it and terminal plugins paste its path.
+                    setDragManagerPayload({
+                        type: 'folder',
+                        file: folder,
+                        title: folder.name
+                    });
                 }
                 e.dataTransfer.setData(OBSIDIAN_FILE_MIME, path);
             }

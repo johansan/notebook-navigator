@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Platform } from 'obsidian';
+import { Platform, TFolder } from 'obsidian';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
     extractFilePathsFromDataTransfer,
@@ -242,6 +242,19 @@ describe('dragData', () => {
 
             expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, null)).toBe('move');
             expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, { type: 'link' })).toBe('move');
+        });
+
+        it('moves folder drags even with the copy modifier held', () => {
+            const folder = new TFolder();
+            folder.path = 'Projects/Archive';
+            folder.name = 'Archive';
+            const folderPayload = { type: 'folder' as const, file: folder, title: folder.name };
+
+            testPlatform.isMacOS = true;
+            expect(getVaultItemFolderDropEffect({ altKey: true, ctrlKey: false }, folderPayload)).toBe('move');
+
+            testPlatform.isMacOS = false;
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, folderPayload)).toBe('move');
         });
     });
 
