@@ -932,6 +932,7 @@ export const STRINGS_ID = {
             cannotMoveIntoSelf: 'Tidak dapat memindahkan folder ke dirinya sendiri atau subfolder.',
             itemAlreadyExists: 'Item bernama "{name}" sudah ada di lokasi ini.',
             failedToMove: 'Gagal memindahkan: {error}',
+            failedToCopy: 'Gagal menyalin "{name}": {error}',
             failedToAddTag: 'Gagal menambahkan tag "{tag}"',
             failedToSetProperty: 'Gagal memperbarui properti: {error}',
             failedToClearTags: 'Gagal menghapus tag',
@@ -944,7 +945,9 @@ export const STRINGS_ID = {
             filesAlreadyHaveProperty: '{count} file sudah memiliki properti ini',
             noTagsToClear: 'Tidak ada tag untuk dihapus',
             fileImported: 'Mengimpor 1 file',
-            filesImported: 'Mengimpor {count} file'
+            filesImported: 'Mengimpor {count} file',
+            fileCopied: '1 file disalin',
+            filesCopied: '{count} file disalin'
         }
     },
 

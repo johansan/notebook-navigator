@@ -483,7 +483,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 
 - **Search** - Filter by file name, aliases, tags, properties, dates, folders, extensions, and tasks with AND/OR/exclusions
 - **Omnisearch integration** - Full-text search via [Omnisearch](https://github.com/scambier/obsidian-omnisearch)
-- **Drag and drop** - File moves, tagging, shortcut assignment, tag tree reparenting, spring-loaded folders
+- **Drag and drop** - File moves, file copies (hold Option on macOS or Ctrl on Windows and Linux), tagging, shortcut assignment, tag tree reparenting, spring-loaded folders
 - **Context menus** - Create notes/folders/canvases/bases/drawings and run file/tag actions
 - **Drawings** - Create Excalidraw and Tldraw drawings from navigation and list pane menus
 - **Templates** - Built-in template engine with `{{title}}`, `{{date}}`, `{{cursor}}` and other tokens for calendar notes, folder notes and new notes from template, plus optional Templater support (see [10.6 Templates](#106-templates))

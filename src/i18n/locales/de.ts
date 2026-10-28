@@ -935,6 +935,7 @@ export const STRINGS_DE = {
             cannotMoveIntoSelf: 'Ein Ordner kann nicht in sich selbst oder einen Unterordner verschoben werden.',
             itemAlreadyExists: 'Ein Element mit dem Namen "{name}" existiert bereits an diesem Ort.',
             failedToMove: 'Verschieben fehlgeschlagen: {error}',
+            failedToCopy: 'Kopieren von "{name}" fehlgeschlagen: {error}',
             failedToAddTag: 'Hinzufügen des Tags "{tag}" fehlgeschlagen',
             failedToSetProperty: 'Eigenschaft konnte nicht aktualisiert werden: {error}',
             failedToClearTags: 'Entfernen der Tags fehlgeschlagen',
@@ -947,7 +948,9 @@ export const STRINGS_DE = {
             filesAlreadyHaveProperty: '{count} Dateien haben diese Eigenschaft bereits',
             noTagsToClear: 'Keine Tags zum Entfernen',
             fileImported: '1 Datei importiert',
-            filesImported: '{count} Dateien importiert'
+            filesImported: '{count} Dateien importiert',
+            fileCopied: '1 Datei kopiert',
+            filesCopied: '{count} Dateien kopiert'
         }
     },
 

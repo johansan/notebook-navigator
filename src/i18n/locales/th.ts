@@ -925,6 +925,7 @@ export const STRINGS_TH = {
             cannotMoveIntoSelf: 'ไม่สามารถย้ายโฟลเดอร์ไปยังตัวเองหรือโฟลเดอร์ย่อยได้',
             itemAlreadyExists: 'รายการชื่อ "{name}" มีอยู่ในตำแหน่งนี้แล้ว',
             failedToMove: 'ย้ายล้มเหลว: {error}',
+            failedToCopy: 'คัดลอก "{name}" ล้มเหลว: {error}',
             failedToAddTag: 'เพิ่มแท็ก "{tag}" ล้มเหลว',
             failedToSetProperty: 'ไม่สามารถอัปเดตคุณสมบัติได้: {error}',
             failedToClearTags: 'ล้างแท็กล้มเหลว',
@@ -937,7 +938,9 @@ export const STRINGS_TH = {
             filesAlreadyHaveProperty: '{count} ไฟล์มีคุณสมบัตินี้อยู่แล้ว',
             noTagsToClear: 'ไม่มีแท็กให้ล้าง',
             fileImported: 'นำเข้า 1 ไฟล์แล้ว',
-            filesImported: 'นำเข้า {count} ไฟล์แล้ว'
+            filesImported: 'นำเข้า {count} ไฟล์แล้ว',
+            fileCopied: 'คัดลอก 1 ไฟล์แล้ว',
+            filesCopied: 'คัดลอก {count} ไฟล์แล้ว'
         }
     },
 

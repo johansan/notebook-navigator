@@ -929,6 +929,7 @@ export const STRINGS_KO = {
             cannotMoveIntoSelf: '폴더를 자기 자신이나 하위 폴더로 이동할 수 없습니다.',
             itemAlreadyExists: '이 위치에 "{name}"이(가) 이미 존재합니다.',
             failedToMove: '이동 실패: {error}',
+            failedToCopy: '"{name}" 복사 실패: {error}',
             failedToAddTag: '태그 "{tag}" 추가 실패',
             failedToSetProperty: '속성 업데이트 실패: {error}',
             failedToClearTags: '태그 지우기 실패',
@@ -941,7 +942,9 @@ export const STRINGS_KO = {
             filesAlreadyHaveProperty: '{count}개 파일에 이미 이 속성이 있습니다',
             noTagsToClear: '지울 태그 없음',
             fileImported: '1개의 파일 가져옴',
-            filesImported: '{count}개의 파일 가져옴'
+            filesImported: '{count}개의 파일 가져옴',
+            fileCopied: '1개의 파일 복사됨',
+            filesCopied: '{count}개의 파일 복사됨'
         }
     },
 

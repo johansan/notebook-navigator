@@ -935,6 +935,7 @@ export const STRINGS_ES = {
             cannotMoveIntoSelf: 'No se puede mover una carpeta dentro de sí misma o una subcarpeta.',
             itemAlreadyExists: 'Ya existe un elemento llamado "{name}" en esta ubicación.',
             failedToMove: 'Error al mover: {error}',
+            failedToCopy: 'Error al copiar "{name}": {error}',
             failedToAddTag: 'Error al agregar la etiqueta "{tag}"',
             failedToSetProperty: 'Error al actualizar la propiedad: {error}',
             failedToClearTags: 'Error al eliminar las etiquetas',
@@ -947,7 +948,9 @@ export const STRINGS_ES = {
             filesAlreadyHaveProperty: '{count} archivos ya tienen esta propiedad',
             noTagsToClear: 'No hay etiquetas para eliminar',
             fileImported: '1 archivo importado',
-            filesImported: '{count} archivos importados'
+            filesImported: '{count} archivos importados',
+            fileCopied: '1 archivo copiado',
+            filesCopied: '{count} archivos copiados'
         }
     },
 

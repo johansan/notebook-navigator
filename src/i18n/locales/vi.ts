@@ -931,6 +931,7 @@ export const STRINGS_VI = {
             cannotMoveIntoSelf: 'Không thể di chuyển thư mục vào chính nó hoặc thư mục con.',
             itemAlreadyExists: 'Mục có tên "{name}" đã tồn tại ở vị trí này.',
             failedToMove: 'Không thể di chuyển: {error}',
+            failedToCopy: 'Không thể sao chép "{name}": {error}',
             failedToAddTag: 'Không thể thêm thẻ "{tag}"',
             failedToSetProperty: 'Không thể cập nhật thuộc tính: {error}',
             failedToClearTags: 'Không thể xóa thẻ',
@@ -943,7 +944,9 @@ export const STRINGS_VI = {
             filesAlreadyHaveProperty: '{count} tệp đã có thuộc tính này',
             noTagsToClear: 'Không có thẻ để xóa',
             fileImported: 'Đã nhập 1 tệp',
-            filesImported: 'Đã nhập {count} tệp'
+            filesImported: 'Đã nhập {count} tệp',
+            fileCopied: 'Đã sao chép 1 tệp',
+            filesCopied: 'Đã sao chép {count} tệp'
         }
     },
 

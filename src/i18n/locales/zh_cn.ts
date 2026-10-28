@@ -923,6 +923,7 @@ export const STRINGS_ZH_CN = {
             cannotMoveIntoSelf: '无法将文件夹移动到自身或其子文件夹中。',
             itemAlreadyExists: '此位置已存在名为“{name}”的项目。',
             failedToMove: '移动失败：{error}',
+            failedToCopy: '复制“{name}”失败：{error}',
             failedToAddTag: '添加标签“{tag}”失败',
             failedToSetProperty: '更新属性失败：{error}',
             failedToClearTags: '清除标签失败',
@@ -935,7 +936,9 @@ export const STRINGS_ZH_CN = {
             filesAlreadyHaveProperty: '{count} 个文件已拥有此属性',
             noTagsToClear: '没有要清除的标签',
             fileImported: '已导入 1 个文件',
-            filesImported: '已导入 {count} 个文件'
+            filesImported: '已导入 {count} 个文件',
+            fileCopied: '已复制 1 个文件',
+            filesCopied: '已复制 {count} 个文件'
         }
     },
 

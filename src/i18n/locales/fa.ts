@@ -932,6 +932,7 @@ export const STRINGS_FA = {
             cannotMoveIntoSelf: 'نمی‌توان پوشه را به خود یا زیرپوشه آن منتقل کرد.',
             itemAlreadyExists: 'آیتمی با نام "{name}" در این مکان وجود دارد.',
             failedToMove: 'انتقال ناموفق بود: {error}',
+            failedToCopy: 'کپی "{name}" ناموفق بود: {error}',
             failedToAddTag: 'افزودن برچسب "{tag}" ناموفق بود',
             failedToSetProperty: 'خطا در به‌روزرسانی ویژگی: {error}',
             failedToClearTags: 'پاک کردن برچسب‌ها ناموفق بود',
@@ -944,7 +945,9 @@ export const STRINGS_FA = {
             filesAlreadyHaveProperty: '{count} فایل از قبل این ویژگی را دارد',
             noTagsToClear: 'برچسبی برای پاک کردن نیست',
             fileImported: '۱ فایل وارد شد',
-            filesImported: '{count} فایل وارد شد'
+            filesImported: '{count} فایل وارد شد',
+            fileCopied: '۱ فایل کپی شد',
+            filesCopied: '{count} فایل کپی شد'
         }
     },
 

@@ -937,6 +937,7 @@ export const STRINGS_FR = {
             cannotMoveIntoSelf: 'Impossible de déplacer un dossier dans lui-même ou un sous-dossier.',
             itemAlreadyExists: 'Un élément nommé « {name} » existe déjà à cet emplacement.',
             failedToMove: 'Échec du déplacement : {error}',
+            failedToCopy: 'Échec de la copie de « {name} » : {error}',
             failedToAddTag: "Échec de l'ajout du mot-clé « {tag} »",
             failedToSetProperty: 'Échec de la mise à jour de la propriété : {error}',
             failedToClearTags: 'Échec de la suppression des mots-clés',
@@ -949,7 +950,9 @@ export const STRINGS_FR = {
             filesAlreadyHaveProperty: '{count} fichiers possèdent déjà cette propriété',
             noTagsToClear: 'Aucun mot-clé à supprimer',
             fileImported: '1 fichier importé',
-            filesImported: '{count} fichiers importés'
+            filesImported: '{count} fichiers importés',
+            fileCopied: '1 fichier copié',
+            filesCopied: '{count} fichiers copiés'
         }
     },
 

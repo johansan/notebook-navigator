@@ -930,6 +930,7 @@ export const STRINGS_UK = {
             cannotMoveIntoSelf: 'Неможливо перемістити теку в себе або підтеку.',
             itemAlreadyExists: 'Елемент з назвою «{name}» вже існує в цьому місці.',
             failedToMove: 'Не вдалося перемістити: {error}',
+            failedToCopy: 'Не вдалося скопіювати «{name}»: {error}',
             failedToAddTag: 'Не вдалося додати мітку «{tag}»',
             failedToSetProperty: 'Не вдалося оновити властивість: {error}',
             failedToClearTags: 'Не вдалося очистити мітки',
@@ -942,7 +943,9 @@ export const STRINGS_UK = {
             filesAlreadyHaveProperty: 'Файли вже мають цю властивість: {count}',
             noTagsToClear: 'Немає міток для очищення',
             fileImported: 'Імпортовано 1 файл',
-            filesImported: 'Імпортовано файлів: {count}'
+            filesImported: 'Імпортовано файлів: {count}',
+            fileCopied: 'Скопійовано 1 файл',
+            filesCopied: 'Скопійовано файлів: {count}'
         }
     },
 

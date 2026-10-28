@@ -928,6 +928,7 @@ export const STRINGS_AR = {
             cannotMoveIntoSelf: 'لا يمكن نقل مجلد إلى نفسه أو إلى مجلد فرعي.',
             itemAlreadyExists: 'عنصر باسم "{name}" موجود بالفعل في هذا الموقع.',
             failedToMove: 'فشل النقل: {error}',
+            failedToCopy: 'فشل نسخ "{name}": {error}',
             failedToAddTag: 'فشل إضافة الوسم "{tag}"',
             failedToSetProperty: 'فشل في تحديث الخاصية: {error}',
             failedToClearTags: 'فشل مسح الوسوم',
@@ -940,7 +941,9 @@ export const STRINGS_AR = {
             filesAlreadyHaveProperty: '{count} من الملفات تحتوي بالفعل على هذه الخاصية',
             noTagsToClear: 'لا توجد وسوم لمسحها',
             fileImported: 'تم استيراد ملف واحد',
-            filesImported: 'تم استيراد {count} من الملفات'
+            filesImported: 'تم استيراد {count} من الملفات',
+            fileCopied: 'تم نسخ ملف واحد',
+            filesCopied: 'تم نسخ {count} من الملفات'
         }
     },
 

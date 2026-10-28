@@ -929,6 +929,7 @@ export const STRINGS_IT = {
             cannotMoveIntoSelf: 'Impossibile spostare una cartella in sé stessa o in una sottocartella.',
             itemAlreadyExists: 'Un elemento chiamato "{name}" esiste già in questa posizione.',
             failedToMove: 'Impossibile spostare: {error}',
+            failedToCopy: 'Impossibile copiare "{name}": {error}',
             failedToAddTag: 'Impossibile aggiungere l\'etichetta "{tag}"',
             failedToSetProperty: 'Impossibile aggiornare la proprietà: {error}',
             failedToClearTags: 'Impossibile rimuovere le etichette',
@@ -941,7 +942,9 @@ export const STRINGS_IT = {
             filesAlreadyHaveProperty: '{count} file hanno già questa proprietà',
             noTagsToClear: 'Nessuna etichetta da rimuovere',
             fileImported: 'Importato 1 file',
-            filesImported: 'Importati {count} file'
+            filesImported: 'Importati {count} file',
+            fileCopied: 'Copiato 1 file',
+            filesCopied: 'Copiati {count} file'
         }
     },
 

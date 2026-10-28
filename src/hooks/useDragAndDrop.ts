@@ -37,6 +37,7 @@ import { normalizeTagPathValue } from '../utils/tagPrefixMatcher';
 import { runAsyncAction } from '../utils/async';
 import {
     extractFilePathsFromDataTransfer,
+    getVaultItemFolderDropEffect,
     hasExternalFileDragType,
     hasObsidianFileDragType,
     hasPotentialObsidianFileDragType
@@ -232,6 +233,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const expandedFoldersRef = useRef(expansionState.expandedFolders);
     const expandedTagsRef = useRef(expansionState.expandedTags);
     const dragTypeRef = useRef<DragItemType | null>(null);
+    // Effect the last dragover announced on dragOverElement; the drop performs it so the result matches the cursor
     const dragOverDropEffectRef = useRef<DataTransfer['dropEffect'] | null>(null);
     // Stores display path of dragged tag for rename operations
     const dragTagDisplayRef = useRef<string | null>(null);
@@ -832,12 +834,6 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 return;
             }
 
-            if (dragOverElement.current === dropZone && dragOverDropEffectRef.current && e.dataTransfer) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = dragOverDropEffectRef.current;
-                return;
-            }
-
             if (isShortcutDrag) {
                 dropZone.classList.remove('nn-drag-over');
                 dragOverElement.current = null;
@@ -933,7 +929,10 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                         e.dataTransfer.dropEffect = 'none';
                         return;
                     }
-                    e.dataTransfer.dropEffect = isExternal ? 'copy' : 'move';
+                    // Re-evaluated on every dragover so pressing or releasing the copy modifier while hovering switches the effect
+                    e.dataTransfer.dropEffect = isExternal
+                        ? 'copy'
+                        : getVaultItemFolderDropEffect(e, hasDragManager(app) ? app.dragManager.draggable : null);
                     if (targetPath) {
                         maybeScheduleAutoExpand('folder', targetPath);
                     }
@@ -991,7 +990,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             dragOverElement.current = dropZone;
             dragOverDropEffectRef.current = e.dataTransfer?.dropEffect ?? null;
         },
-        [clearAutoExpandTimer, internalDragSession, maybeScheduleAutoExpand]
+        [app, clearAutoExpandTimer, internalDragSession, maybeScheduleAutoExpand]
     );
 
     /**
@@ -1146,6 +1145,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             suppressClickUntilRef.current = Date.now() + SUPPRESS_CLICK_AFTER_DROP_MS;
             try {
                 let dropZone = dragOverElement.current;
+                const copyDraggedFiles = dragOverDropEffectRef.current === 'copy';
                 if (dropZone) {
                     dropZone.classList.remove('nn-drag-over');
                 }
@@ -1290,11 +1290,15 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     return;
                 }
 
-                // Extract file paths from drag event data for folder move
+                // Extract file paths from drag event data for folder move or copy
                 if (selectedPaths && selectedPaths.length > 0) {
-                    const filesToMove = getFilesFromPaths(selectedPaths);
-                    if (filesToMove.length > 0) {
-                        await moveFilesWithContext(filesToMove, targetFolder);
+                    const draggedFiles = getFilesFromPaths(selectedPaths);
+                    if (draggedFiles.length > 0) {
+                        if (copyDraggedFiles) {
+                            await fileSystemOps.copyFilesToFolder(draggedFiles, targetFolder);
+                        } else {
+                            await moveFilesWithContext(draggedFiles, targetFolder);
+                        }
                         return;
                     }
                 }
@@ -1309,7 +1313,11 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                 }
 
                 if (sourceItem instanceof TFile) {
-                    await moveFilesWithContext([sourceItem], targetFolder);
+                    if (copyDraggedFiles) {
+                        await fileSystemOps.copyFilesToFolder([sourceItem], targetFolder);
+                    } else {
+                        await moveFilesWithContext([sourceItem], targetFolder);
+                    }
                 } else if (sourceItem instanceof TFolder) {
                     if (targetFolder.path === sourceItem.path || targetFolder.path.startsWith(`${sourceItem.path}/`)) {
                         showNotice(strings.dragDrop.errors.cannotMoveIntoSelf, { variant: 'warning' });

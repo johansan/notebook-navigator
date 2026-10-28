@@ -933,6 +933,7 @@ export const STRINGS_JA = {
             cannotMoveIntoSelf: 'フォルダを自分自身またはそのサブフォルダに移動することはできません。',
             itemAlreadyExists: 'この場所に「{name}」という名前の項目がすでに存在します。',
             failedToMove: '移動に失敗しました：{error}',
+            failedToCopy: '「{name}」のコピーに失敗しました：{error}',
             failedToAddTag: 'タグ「{tag}」の追加に失敗しました',
             failedToSetProperty: 'プロパティの更新に失敗しました: {error}',
             failedToClearTags: 'タグのクリアに失敗しました',
@@ -945,7 +946,9 @@ export const STRINGS_JA = {
             filesAlreadyHaveProperty: '{count}個のファイルにはすでにこのプロパティがあります',
             noTagsToClear: 'クリアするタグがありません',
             fileImported: '1個のファイルをインポートしました',
-            filesImported: '{count}個のファイルをインポートしました'
+            filesImported: '{count}個のファイルをインポートしました',
+            fileCopied: '1個のファイルをコピーしました',
+            filesCopied: '{count}個のファイルをコピーしました'
         }
     },
 

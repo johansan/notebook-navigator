@@ -1610,6 +1610,46 @@ export class FileSystemOperations {
     }
 
     /**
+     * Copies files into a folder without opening the copies. Each copy keeps its name unless the folder already
+     * has an item by that name, then it gets the next free numbered name; an existing file is never overwritten.
+     * Copies keep their content unchanged, so links are not rewritten for the new location.
+     * Shows a notice with the number of copies and one for the first failure.
+     */
+    async copyFilesToFolder(files: readonly TFile[], targetFolder: TFolder): Promise<void> {
+        let copiedCount = 0;
+        let firstFailure: { file: TFile; error: unknown } | null = null;
+
+        // Copies run one at a time so each name is chosen after the previous copy exists in the vault,
+        // otherwise two sources with the same name would both pick the same free path.
+        for (const file of files) {
+            try {
+                const excalidraw = isExcalidrawFile(file);
+                const baseName = excalidraw ? stripExcalidrawSuffix(file.basename) : file.basename;
+                const fileName = generateUniqueFilename(targetFolder.path, baseName, file.extension, this.app, {
+                    baseNameSuffix: excalidraw ? EXCALIDRAW_BASENAME_SUFFIX : ''
+                });
+                await this.app.vault.copy(file, buildFilePathInFolder(targetFolder.path, fileName, file.extension));
+                copiedCount += 1;
+            } catch (error) {
+                console.error('Error copying file:', file.path, error);
+                firstFailure ??= { file, error };
+            }
+        }
+
+        if (copiedCount > 0) {
+            const message =
+                copiedCount === 1
+                    ? strings.dragDrop.notifications.fileCopied
+                    : strings.dragDrop.notifications.filesCopied.replace('{count}', copiedCount.toString());
+            showNotice(message, { variant: 'success' });
+        }
+
+        if (firstFailure) {
+            this.notifyError(strings.dragDrop.errors.failedToCopy.replace('{name}', firstFailure.file.name), firstFailure.error);
+        }
+    }
+
+    /**
      * Creates a new canvas file in the specified folder
      * @param parent - The parent folder
      */

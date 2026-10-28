@@ -936,6 +936,7 @@ export const STRINGS_PL = {
             cannotMoveIntoSelf: 'Nie można przenieść do tego samego lub podrzędnego folderu.',
             itemAlreadyExists: 'Element o nazwie "{name}" już istnieje w tej lokalizacji.',
             failedToMove: 'Nie udało się przenieść: {error}',
+            failedToCopy: 'Nie udało się skopiować "{name}": {error}',
             failedToAddTag: 'Nie udało się dodać tagu "{tag}"',
             failedToSetProperty: 'Nie udało się zaktualizować atrybutu: {error}',
             failedToClearTags: 'Nie udało się wyczyścić tagów',
@@ -948,7 +949,9 @@ export const STRINGS_PL = {
             filesAlreadyHaveProperty: 'Wiele plików ({count}) ma już ten atrybut',
             noTagsToClear: 'Brak tagów do wyczyszczenia',
             fileImported: 'Zaimportowano 1 plik',
-            filesImported: 'Zaimportowano wiele plików ({count})'
+            filesImported: 'Zaimportowano wiele plików ({count})',
+            fileCopied: 'Skopiowano 1 plik',
+            filesCopied: 'Skopiowano wiele plików ({count})'
         }
     },
 

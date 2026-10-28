@@ -16,13 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, expect, it } from 'vitest';
+import { Platform } from 'obsidian';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
     extractFilePathsFromDataTransfer,
+    getVaultItemFolderDropEffect,
     hasExternalFileDragType,
     hasObsidianFileDragType,
     hasPotentialObsidianFileDragType
 } from '../../src/utils/dragData';
+import { createTestTFile } from './createTestTFile';
 
 class TestDataTransfer {
     readonly types: string[];
@@ -204,6 +207,41 @@ describe('dragData', () => {
 
         it('does not classify URI drags with extra non-native types as Obsidian file drags', () => {
             expect(hasPotentialObsidianFileDragType(['text/plain', 'text/uri-list', 'DownloadURL'])).toBe(false);
+        });
+    });
+
+    describe('getVaultItemFolderDropEffect', () => {
+        const testPlatform = Platform as typeof Platform & { isMacOS?: boolean };
+        const originalIsMacOS = testPlatform.isMacOS;
+        const filePayload = { type: 'file' as const, file: createTestTFile('Notes/Plan.md') };
+        const filesPayload = { type: 'files' as const, files: [createTestTFile('Notes/A.md'), createTestTFile('Notes/B.md')] };
+
+        afterEach(() => {
+            testPlatform.isMacOS = originalIsMacOS;
+        });
+
+        it('copies files while Option is held on macOS', () => {
+            testPlatform.isMacOS = true;
+
+            expect(getVaultItemFolderDropEffect({ altKey: true, ctrlKey: false }, filePayload)).toBe('copy');
+            expect(getVaultItemFolderDropEffect({ altKey: true, ctrlKey: false }, filesPayload)).toBe('copy');
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, filePayload)).toBe('move');
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: false }, filePayload)).toBe('move');
+        });
+
+        it('copies files while Ctrl is held on Windows and Linux', () => {
+            testPlatform.isMacOS = false;
+
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, filePayload)).toBe('copy');
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, filesPayload)).toBe('copy');
+            expect(getVaultItemFolderDropEffect({ altKey: true, ctrlKey: false }, filePayload)).toBe('move');
+        });
+
+        it('moves drags without a file payload, such as folder drags, even with the copy modifier held', () => {
+            testPlatform.isMacOS = false;
+
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, null)).toBe('move');
+            expect(getVaultItemFolderDropEffect({ altKey: false, ctrlKey: true }, { type: 'link' })).toBe('move');
         });
     });
 

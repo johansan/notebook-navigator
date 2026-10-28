@@ -930,6 +930,7 @@ export const STRINGS_RU = {
             cannotMoveIntoSelf: 'Нельзя переместить папку в себя или в подпапку.',
             itemAlreadyExists: 'Элемент с именем «{name}» уже существует в этом месте.',
             failedToMove: 'Не удалось переместить: {error}',
+            failedToCopy: 'Не удалось скопировать «{name}»: {error}',
             failedToAddTag: 'Не удалось добавить тег «{tag}»',
             failedToSetProperty: 'Не удалось обновить свойство: {error}',
             failedToClearTags: 'Не удалось очистить теги',
@@ -942,7 +943,9 @@ export const STRINGS_RU = {
             filesAlreadyHaveProperty: 'Это свойство уже есть у файлов: {count}',
             noTagsToClear: 'Нет тегов для очистки',
             fileImported: 'Импортирован 1 файл',
-            filesImported: 'Импортировано файлов: {count}'
+            filesImported: 'Импортировано файлов: {count}',
+            fileCopied: 'Скопирован 1 файл',
+            filesCopied: 'Скопировано файлов: {count}'
         }
     },
 

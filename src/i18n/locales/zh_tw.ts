@@ -924,6 +924,7 @@ export const STRINGS_ZH_TW = {
             cannotMoveIntoSelf: '無法將資料夾移動到自身或其子資料夾中。',
             itemAlreadyExists: '此位置已存在名為「{name}」的項目。',
             failedToMove: '移動失敗：{error}',
+            failedToCopy: '複製「{name}」失敗：{error}',
             failedToAddTag: '新增標籤「{tag}」失敗',
             failedToSetProperty: '更新屬性失敗：{error}',
             failedToClearTags: '清除標籤失敗',
@@ -936,7 +937,9 @@ export const STRINGS_ZH_TW = {
             filesAlreadyHaveProperty: '{count} 個檔案已擁有此屬性',
             noTagsToClear: '沒有要清除的標籤',
             fileImported: '已匯入 1 個檔案',
-            filesImported: '已匯入 {count} 個檔案'
+            filesImported: '已匯入 {count} 個檔案',
+            fileCopied: '已複製 1 個檔案',
+            filesCopied: '已複製 {count} 個檔案'
         }
     },
 

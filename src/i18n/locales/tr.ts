@@ -930,6 +930,7 @@ export const STRINGS_TR = {
             cannotMoveIntoSelf: 'Klasör kendisine veya alt klasörüne taşınamaz.',
             itemAlreadyExists: 'Bu konumda "{name}" adlı bir öğe zaten var.',
             failedToMove: 'Taşınamadı: {error}',
+            failedToCopy: '"{name}" kopyalanamadı: {error}',
             failedToAddTag: '"{tag}" etiketi eklenemedi',
             failedToSetProperty: 'Özellik güncellenemedi: {error}',
             failedToClearTags: 'Etiketler temizlenemedi',
@@ -942,7 +943,9 @@ export const STRINGS_TR = {
             filesAlreadyHaveProperty: '{count} dosya zaten bu özelliğe sahip',
             noTagsToClear: 'Temizlenecek etiket yok',
             fileImported: '1 dosya içe aktarıldı',
-            filesImported: '{count} dosya içe aktarıldı'
+            filesImported: '{count} dosya içe aktarıldı',
+            fileCopied: '1 dosya kopyalandı',
+            filesCopied: '{count} dosya kopyalandı'
         }
     },
 

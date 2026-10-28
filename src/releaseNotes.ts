@@ -113,7 +113,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         new: [
             "Added a small banner at the top of settings for MarkdownPoint. If you don't want it, disable the new setting Advanced > ==Show MarkdownPoint banner at the top== that moves it below settings. You can even hide it completely with a [CSS snippet](https://github.com/johansan/notebook-navigator/wiki/Custom-CSS#hide-the-markdownpoint-banner-in-settings).",
             'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
-            'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.'
+            'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
+            'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.'
         ]
     },
     {

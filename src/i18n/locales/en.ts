@@ -926,6 +926,7 @@ export const STRINGS_EN = {
             cannotMoveIntoSelf: 'Cannot move a folder into itself or a subfolder.',
             itemAlreadyExists: 'An item named "{name}" already exists in this location.',
             failedToMove: 'Failed to move: {error}',
+            failedToCopy: 'Failed to copy "{name}": {error}',
             failedToAddTag: 'Failed to add tag "{tag}"',
             failedToSetProperty: 'Failed to update property: {error}',
             failedToClearTags: 'Failed to clear tags',
@@ -938,7 +939,9 @@ export const STRINGS_EN = {
             filesAlreadyHaveProperty: '{count} files already have this property',
             noTagsToClear: 'No tags to clear',
             fileImported: 'Imported 1 file',
-            filesImported: 'Imported {count} files'
+            filesImported: 'Imported {count} files',
+            fileCopied: 'Copied 1 file',
+            filesCopied: 'Copied {count} files'
         }
     },
 

@@ -936,6 +936,7 @@ export const STRINGS_NL = {
             cannotMoveIntoSelf: 'Kan een map niet in zichzelf of een submap verplaatsen.',
             itemAlreadyExists: 'Een item met de naam "{name}" bestaat al op deze locatie.',
             failedToMove: 'Verplaatsen mislukt: {error}',
+            failedToCopy: 'Kopiëren van "{name}" mislukt: {error}',
             failedToAddTag: 'Kan tag "{tag}" niet toevoegen',
             failedToSetProperty: 'Kan eigenschap niet bijwerken: {error}',
             failedToClearTags: 'Kan tags niet wissen',
@@ -948,7 +949,9 @@ export const STRINGS_NL = {
             filesAlreadyHaveProperty: '{count} bestanden hebben deze eigenschap al',
             noTagsToClear: 'Geen tags om te wissen',
             fileImported: '1 bestand geïmporteerd',
-            filesImported: '{count} bestanden geïmporteerd'
+            filesImported: '{count} bestanden geïmporteerd',
+            fileCopied: '1 bestand gekopieerd',
+            filesCopied: '{count} bestanden gekopieerd'
         }
     },
 

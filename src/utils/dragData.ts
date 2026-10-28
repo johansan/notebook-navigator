@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Platform } from 'obsidian';
+import type { DragManagerPayload } from '../types/obsidian-extended';
+
 interface TagDragPayload {
     canonicalPath?: unknown;
     displayPath?: unknown;
@@ -135,6 +138,24 @@ export function hasPotentialObsidianFileDragType(types: DOMStringList | readonly
 export function hasExternalFileDragType(types: DOMStringList | readonly string[] | null | undefined): boolean {
     const typeList = Array.from(types ?? []);
     return typeList.includes(EXTERNAL_FILES_MIME);
+}
+
+/**
+ * Returns the drop effect for vault items dragged onto a folder: `copy` when the drag carries files and the
+ * platform's copy modifier is held (Option on macOS as in Finder, Ctrl on Windows and Linux as in their file
+ * managers), otherwise `move`.
+ *
+ * Files are recognized from Obsidian's drag manager payload because it is shared by every window, and
+ * Notebook Navigator and the file explorer both set it to `file` or `files` for file drags. Folder drags
+ * never get `copy`, so a folder is never moved after the cursor promised a copy.
+ */
+export function getVaultItemFolderDropEffect(
+    event: Pick<DragEvent, 'altKey' | 'ctrlKey'>,
+    dragManagerPayload: DragManagerPayload | null
+): 'copy' | 'move' {
+    const isFileDrag = dragManagerPayload?.type === 'file' || dragManagerPayload?.type === 'files';
+    const copyModifierHeld = Platform.isMacOS ? event.altKey : event.ctrlKey;
+    return isFileDrag && copyModifierHeld ? 'copy' : 'move';
 }
 
 /**
