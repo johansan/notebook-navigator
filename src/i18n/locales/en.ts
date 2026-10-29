@@ -2528,7 +2528,7 @@ export const STRINGS_EN = {
             },
             folderNoteType: {
                 name: 'Default folder note type',
-                desc: 'Folder note type created from the context menu.',
+                desc: 'Folder note type created from the context menu and preferred when a folder has folder notes of several types.',
                 options: {
                     ask: 'Ask when creating',
                     markdown: 'Markdown',

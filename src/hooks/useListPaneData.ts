@@ -271,6 +271,7 @@ export function useListPaneData({
         settings.hideFolderNoteInList,
         settings.hideDrawingPreviewImages,
         settings.folderNoteNamePattern,
+        settings.folderNoteType,
         settings.useFrontmatterMetadata,
         settings.frontmatterNameField,
         settings.frontmatterCreatedField,

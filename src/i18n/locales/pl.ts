@@ -2544,7 +2544,7 @@ export const STRINGS_PL = {
             },
             folderNoteType: {
                 name: 'Domyślny rodzaj notatki folderu',
-                desc: 'Rodzaj notatki folderu tworzony za pomocą menu kontekstowego.',
+                desc: 'Rodzaj notatki folderu tworzony za pomocą menu kontekstowego i preferowany, gdy folder zawiera notatki folderu kilku rodzajów.',
                 options: {
                     ask: 'Pytaj przy tworzeniu',
                     markdown: 'Markdown',

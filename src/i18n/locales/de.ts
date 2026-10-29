@@ -2545,7 +2545,7 @@ export const STRINGS_DE = {
             },
             folderNoteType: {
                 name: 'Standardtyp für Ordnernotizen',
-                desc: 'Ordnernotiztyp, der über das Kontextmenü erstellt wird.',
+                desc: 'Ordnernotiztyp, der über das Kontextmenü erstellt und bevorzugt wird, wenn ein Ordner Ordnernotizen mehrerer Typen enthält.',
                 options: {
                     ask: 'Beim Erstellen fragen',
                     markdown: 'Markdown',

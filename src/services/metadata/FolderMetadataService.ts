@@ -107,6 +107,7 @@ export class FolderMetadataService extends BaseMetadataService {
             enableFolderNotes: settings.enableFolderNotes,
             inheritFolderColors: settings.inheritFolderColors,
             folderNoteNamePattern: settings.folderNoteNamePattern.trim(),
+            folderNoteType: settings.folderNoteType,
             frontmatterNameField: settings.frontmatterNameField.trim(),
             frontmatterIconField: settings.frontmatterIconField.trim(),
             frontmatterColorField: settings.frontmatterColorField.trim(),

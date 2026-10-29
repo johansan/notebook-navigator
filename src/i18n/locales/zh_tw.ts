@@ -2522,7 +2522,7 @@ export const STRINGS_ZH_TW = {
             },
             folderNoteType: {
                 name: '預設資料夾筆記類型',
-                desc: '從右鍵選單建立的資料夾筆記類型。',
+                desc: '從右鍵選單建立的資料夾筆記類型；當資料夾有多種類型的資料夾筆記時優先使用此類型。',
                 options: {
                     ask: '建立時詢問',
                     markdown: 'Markdown',

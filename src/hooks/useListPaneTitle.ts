@@ -228,6 +228,7 @@ export function useListPaneTitle({ folderDecorationModel, fileItemPillDecoration
             virtualFolderColors: settings.virtualFolderColors || {},
             enableFolderNotes: settings.enableFolderNotes,
             folderNoteNamePattern: settings.folderNoteNamePattern,
+            folderNoteType: settings.folderNoteType,
             useFrontmatterMetadata: settings.useFrontmatterMetadata,
             frontmatterNameField: settings.frontmatterNameField
         });

@@ -2535,7 +2535,7 @@ export const STRINGS_TR = {
             },
             folderNoteType: {
                 name: 'Varsayılan klasör notu türü',
-                desc: 'Bağlam menüsünden oluşturulan klasör notu türü.',
+                desc: 'Bağlam menüsünden oluşturulan klasör notu türü; bir klasörde birden fazla türde klasör notu olduğunda bu tür tercih edilir.',
                 options: {
                     ask: 'Oluştururken sor',
                     markdown: 'Markdown',

@@ -2537,7 +2537,7 @@ export const STRINGS_JA = {
             },
             folderNoteType: {
                 name: 'デフォルトのフォルダノート形式',
-                desc: 'コンテキストメニューで作成されるフォルダノートの形式です。',
+                desc: 'コンテキストメニューで作成されるフォルダノートの形式です。フォルダに複数の形式のフォルダノートがある場合はこの形式が優先されます。',
                 options: {
                     ask: '作成時に確認',
                     markdown: 'Markdown',

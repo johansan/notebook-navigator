@@ -2540,7 +2540,7 @@ export const STRINGS_IT = {
             },
             folderNoteType: {
                 name: 'Tipo nota cartella predefinito',
-                desc: 'Tipo nota cartella creata dal menu contestuale.',
+                desc: 'Tipo nota cartella creata dal menu contestuale e preferita quando una cartella ha note cartella di più tipi.',
                 options: {
                     ask: 'Chiedi quando crei',
                     markdown: 'Markdown',

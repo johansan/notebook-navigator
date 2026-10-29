@@ -56,13 +56,15 @@ export const ListPaneTitleArea = React.memo(function ListPaneTitleArea({ desktop
 
         return getFolderNote(selectedFolder, {
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteNamePattern: settings.folderNoteNamePattern
+            folderNoteNamePattern: settings.folderNoteNamePattern,
+            folderNoteType: settings.folderNoteType
         });
     }, [
         selectedFolder,
         settings.enableFolderNotes,
         settings.enableFolderNoteLinks,
         settings.folderNoteNamePattern,
+        settings.folderNoteType,
         selectedFolderFileVersion
     ]);
 

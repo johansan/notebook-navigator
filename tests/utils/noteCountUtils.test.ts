@@ -63,7 +63,8 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown' as const
             }
         };
 
@@ -92,7 +93,8 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown' as const
             },
             cache
         };
@@ -123,7 +125,8 @@ describe('calculateFolderNoteCounts', () => {
             hideFolderNoteInList: false,
             folderNoteSettings: {
                 enableFolderNotes: false,
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown' as const
             },
             cache
         };
@@ -135,5 +138,36 @@ describe('calculateFolderNoteCounts', () => {
         expect(cachedSub).toEqual({ current: 1, descendants: 0, total: 1 });
         // A later pass over the same cache returns the stored info without recomputing
         expect(calculateFolderNoteCounts(subFolder, options)).toBe(cachedSub);
+    });
+
+    it('leaves out only the selected folder note when same-named notes of several types exist', () => {
+        const app = new App();
+        app.metadataCache.getFileCache = () => null;
+        const files = ['Example/Example.base', 'Example/Example.md', 'Example/other.md'].map(path => createTestTFile(path));
+        const folder = createFolder('Example', files);
+        Reflect.set(folder, 'vault', app.vault);
+        files.forEach(file => {
+            (app.vault as App['vault'] & { registerFile(file: TFile): void }).registerFile(file);
+        });
+        const options = {
+            app,
+            fileVisibility: FILE_VISIBILITY.ALL,
+            excludedFiles: [],
+            excludedFolders: [],
+            descendantExcludedFolders: [],
+            fileNameMatcher: null,
+            hiddenFileTagVisibility: null,
+            includeDescendants: true,
+            showHiddenFolders: false,
+            hideFolderNoteInList: true,
+            folderNoteSettings: {
+                enableFolderNotes: true,
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown' as const
+            }
+        };
+
+        // Example.md is hidden as the folder note; Example.base and other.md are counted
+        expect(calculateFolderNoteCounts(folder, options)).toEqual({ current: 2, descendants: 0, total: 2 });
     });
 });

@@ -17,7 +17,7 @@
  */
 
 import { TFile, type TFolder, normalizePath } from 'obsidian';
-import { FOLDER_NOTE_TYPE_EXTENSIONS } from '../types/folderNote';
+import { FOLDER_NOTE_TYPE_EXTENSIONS, type FolderNoteCreationPreference, type FolderNoteType } from '../types/folderNote';
 import { EXCALIDRAW_BASENAME_SUFFIX, isExcalidrawFile, stripExcalidrawSuffix } from './fileNameUtils';
 import { type FolderNoteNameSettings, resolveFolderNoteName } from './folderNoteName';
 
@@ -28,6 +28,8 @@ import { type FolderNoteNameSettings, resolveFolderNoteName } from './folderNote
  */
 export interface FolderNoteDetectionSettings extends FolderNoteNameSettings {
     enableFolderNotes: boolean;
+    /** Type that wins when a folder has same-named folder notes of several types. 'ask' keeps the default order. */
+    folderNoteType: FolderNoteCreationPreference;
 }
 
 /**
@@ -36,12 +38,27 @@ export interface FolderNoteDetectionSettings extends FolderNoteNameSettings {
 export function getFolderNoteDetectionSettings(settings: FolderNoteDetectionSettings): FolderNoteDetectionSettings {
     return {
         enableFolderNotes: settings.enableFolderNotes,
-        folderNoteNamePattern: settings.folderNoteNamePattern
+        folderNoteNamePattern: settings.folderNoteNamePattern,
+        folderNoteType: settings.folderNoteType
     };
 }
 
 /** Set of file extensions that are valid for folder notes */
 const SUPPORTED_FOLDER_NOTE_EXTENSIONS = new Set<string>(Object.values(FOLDER_NOTE_TYPE_EXTENSIONS));
+
+/** Order in which same-named folder notes of different types win when no preferred type is set */
+const DEFAULT_FOLDER_NOTE_TYPE_ORDER: readonly FolderNoteType[] = ['markdown', 'canvas', 'base'];
+
+/**
+ * Returns the extensions to try for a folder note, the preferred type first and then the default order.
+ */
+function getFolderNoteExtensionOrder(folderNoteType: FolderNoteCreationPreference): string[] {
+    const order =
+        folderNoteType === 'ask'
+            ? DEFAULT_FOLDER_NOTE_TYPE_ORDER
+            : [folderNoteType, ...DEFAULT_FOLDER_NOTE_TYPE_ORDER.filter(type => type !== folderNoteType)];
+    return order.map(type => FOLDER_NOTE_TYPE_EXTENSIONS[type]);
+}
 
 interface RootFolderNoteVault {
     getName?: () => string;
@@ -76,7 +93,9 @@ export function isSupportedFolderNoteExtension(extension: string): boolean {
 }
 
 /**
- * Gets the folder note for a folder if it exists
+ * Gets the folder note for a folder if it exists.
+ * When the folder has same-named folder notes of several types, the configured folder note type wins, then
+ * Markdown, Canvas and Base in that order. An Excalidraw drawing is used only when no exact name matches.
  * @param folder - The folder to check for a folder note
  * @param settings - Settings for folder note detection
  * @returns The folder note file or null if not found
@@ -88,60 +107,28 @@ export function getFolderNote(folder: TFolder, settings: FolderNoteDetectionSett
 
     const expectedName = resolveFolderNoteNameForFolder(folder, settings);
     const prefix = folder.path === '/' ? '' : `${folder.path}/`;
-    const exactCandidates: TFile[] = [];
 
-    for (const extension of Object.values(FOLDER_NOTE_TYPE_EXTENSIONS)) {
+    for (const extension of getFolderNoteExtensionOrder(settings.folderNoteType)) {
         const candidatePath = normalizePath(`${prefix}${expectedName}.${extension}`);
         const candidate = folder.vault.getAbstractFileByPath(candidatePath);
 
-        if (!(candidate instanceof TFile) || candidate.parent?.path !== folder.path) {
-            continue;
-        }
-
-        if (!SUPPORTED_FOLDER_NOTE_EXTENSIONS.has(candidate.extension)) {
-            continue;
-        }
-
-        if (candidate.basename === expectedName) {
-            exactCandidates.push(candidate);
+        if (candidate instanceof TFile && candidate.parent?.path === folder.path && candidate.basename === expectedName) {
+            return candidate;
         }
     }
 
-    let excalidrawCandidate: TFile | null = null;
     const excalidrawPath = normalizePath(`${prefix}${expectedName}${EXCALIDRAW_BASENAME_SUFFIX}.md`);
-    const abstractExcalidrawCandidate = folder.vault.getAbstractFileByPath(excalidrawPath);
-    if (abstractExcalidrawCandidate instanceof TFile && abstractExcalidrawCandidate.parent?.path === folder.path) {
-        if (isExcalidrawFile(abstractExcalidrawCandidate) && stripExcalidrawSuffix(abstractExcalidrawCandidate.basename) === expectedName) {
-            excalidrawCandidate = abstractExcalidrawCandidate;
-        }
+    const excalidrawCandidate = folder.vault.getAbstractFileByPath(excalidrawPath);
+    if (
+        excalidrawCandidate instanceof TFile &&
+        excalidrawCandidate.parent?.path === folder.path &&
+        isExcalidrawFile(excalidrawCandidate) &&
+        stripExcalidrawSuffix(excalidrawCandidate.basename) === expectedName
+    ) {
+        return excalidrawCandidate;
     }
 
-    if (exactCandidates.length === 1) {
-        return exactCandidates[0];
-    }
-
-    if (exactCandidates.length > 1) {
-        const candidatePaths = new Set<string>(exactCandidates.map(candidate => candidate.path));
-        for (const child of folder.children) {
-            if (!(child instanceof TFile)) {
-                continue;
-            }
-
-            if (child.parent?.path !== folder.path) {
-                continue;
-            }
-
-            if (!candidatePaths.has(child.path)) {
-                continue;
-            }
-
-            return child;
-        }
-
-        return exactCandidates[0] ?? null;
-    }
-
-    return excalidrawCandidate;
+    return null;
 }
 
 /**
@@ -165,15 +152,11 @@ export function isFolderNote(file: TFile, folder: TFolder, settings: FolderNoteD
     }
 
     const expectedName = resolveFolderNoteNameForFolder(folder, settings);
-    if (file.basename === expectedName) {
-        return true;
-    }
-
-    if (!isExcalidrawFile(file) || stripExcalidrawSuffix(file.basename) !== expectedName) {
+    if (file.basename !== expectedName && (!isExcalidrawFile(file) || stripExcalidrawSuffix(file.basename) !== expectedName)) {
         return false;
     }
 
-    // Use preferred folder note selection so plain notes win over Excalidraw variants.
-    const preferred = getFolderNote(folder, settings);
-    return preferred?.path === file.path;
+    // Only the file getFolderNote selects is the folder note, so a same-named file of another type or an
+    // Excalidraw variant beside an exact match stays a regular file in counts, menus and the list pane.
+    return getFolderNote(folder, settings)?.path === file.path;
 }

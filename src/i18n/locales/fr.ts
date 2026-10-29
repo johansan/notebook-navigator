@@ -2548,7 +2548,7 @@ export const STRINGS_FR = {
             },
             folderNoteType: {
                 name: 'Type de note de dossier par défaut',
-                desc: 'Type de note de dossier créé depuis le menu contextuel.',
+                desc: "Type de note de dossier créé depuis le menu contextuel et privilégié lorsqu'un dossier contient des notes de dossier de plusieurs types.",
                 options: {
                     ask: 'Demander lors de la création',
                     markdown: 'Markdown',

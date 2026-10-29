@@ -2537,7 +2537,7 @@ export const STRINGS_ID = {
             },
             folderNoteType: {
                 name: 'Jenis catatan folder default',
-                desc: 'Jenis catatan folder yang dibuat dari menu konteks.',
+                desc: 'Jenis catatan folder yang dibuat dari menu konteks dan diutamakan saat folder memiliki catatan folder dari beberapa jenis.',
                 options: {
                     ask: 'Tanyakan saat membuat',
                     markdown: 'Markdown',

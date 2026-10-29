@@ -2521,7 +2521,7 @@ export const STRINGS_ZH_CN = {
             },
             folderNoteType: {
                 name: '默认文件夹笔记类型',
-                desc: '从上下文菜单创建的文件夹笔记类型。',
+                desc: '从上下文菜单创建的文件夹笔记类型；当文件夹有多种类型的文件夹笔记时优先使用此类型。',
                 options: {
                     ask: '创建时询问',
                     markdown: 'Markdown',

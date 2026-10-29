@@ -256,6 +256,7 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         void includeDescendantNotes;
         void settings.enableFolderNotes;
         void settings.folderNoteNamePattern;
+        void settings.folderNoteType;
         void settings.hideFolderNoteInList;
         void showHiddenItems;
         void vaultChangeVersion;
@@ -273,6 +274,7 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         includeDescendantNotes,
         settings.enableFolderNotes,
         settings.folderNoteNamePattern,
+        settings.folderNoteType,
         settings.hideFolderNoteInList,
         showHiddenItems,
         vaultChangeVersion
@@ -297,7 +299,8 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         const db = hiddenFileTagVisibility && hiddenFileTagVisibility.hasHiddenRules ? getDBInstanceOrNull() : null;
         const folderNoteSettings = getFolderNoteDetectionSettings({
             enableFolderNotes: settings.enableFolderNotes,
-            folderNoteNamePattern: settings.folderNoteNamePattern
+            folderNoteNamePattern: settings.folderNoteNamePattern,
+            folderNoteType: settings.folderNoteType
         });
         const includeDescendants = includeDescendantNotes;
         const showHiddenFolders = showHiddenItems;
@@ -340,6 +343,7 @@ export function useNavigationNoteCounts(params: UseNavigationNoteCountsParams): 
         itemsWithMetadata,
         settings.enableFolderNotes,
         settings.folderNoteNamePattern,
+        settings.folderNoteType,
         settings.hideFolderNoteInList,
         settings.showNoteCount,
         showHiddenItems

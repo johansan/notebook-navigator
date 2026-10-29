@@ -2534,7 +2534,7 @@ export const STRINGS_VI = {
             },
             folderNoteType: {
                 name: 'Loại ghi chú thư mục mặc định',
-                desc: 'Loại ghi chú thư mục tạo từ menu ngữ cảnh.',
+                desc: 'Loại ghi chú thư mục tạo từ menu ngữ cảnh và được ưu tiên khi thư mục có ghi chú thư mục thuộc nhiều loại.',
                 options: {
                     ask: 'Hỏi khi tạo',
                     markdown: 'Markdown',

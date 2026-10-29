@@ -55,7 +55,8 @@ const {
     getDBInstanceOrNullMock: vi.fn(),
     getFolderNoteDetectionSettingsMock: vi.fn((settings: NotebookNavigatorSettings) => ({
         enableFolderNotes: settings.enableFolderNotes,
-        folderNoteNamePattern: settings.folderNoteNamePattern
+        folderNoteNamePattern: settings.folderNoteNamePattern,
+        folderNoteType: settings.folderNoteType
     })),
     resolveFolderNoteNameForFolderMock: vi.fn((folder: TFolder, settings: NotebookNavigatorSettings) =>
         settings.folderNoteNamePattern.length === 0
@@ -964,6 +965,33 @@ describe('FolderMetadataService folder note frontmatter integration', () => {
 
         expect(third.color).toBeUndefined();
         expect(getFileMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('invalidates folder display cache and notifies display-name listeners when the folder note type changes', () => {
+        const displayOptions = {
+            includeDisplayName: true,
+            includeColor: true,
+            includeBackgroundColor: false,
+            includeIcon: false
+        };
+        getFileMock.mockReturnValue({ metadata: { name: 'Markdown name' } });
+
+        expect(service.getFolderDisplayData('Projects', displayOptions).displayName).toBe('Markdown name');
+        const callCountAfterFill = getFileMock.mock.calls.length;
+        expect(service.getFolderDisplayData('Projects', displayOptions).displayName).toBe('Markdown name');
+        expect(getFileMock).toHaveBeenCalledTimes(callCountAfterFill);
+
+        const displayNameListener = vi.fn();
+        service.subscribeToFolderDisplayNameChanges(displayNameListener);
+
+        // A same-named Base file now wins, and it has no frontmatter.
+        settingsProvider.settings.folderNoteType = 'base';
+        getFileMock.mockReturnValue({ metadata: {} });
+        settingsProvider.notifySettingsUpdate();
+
+        expect(displayNameListener).toHaveBeenCalledTimes(1);
+        expect(service.getFolderDisplayData('Projects', displayOptions).displayName).toBeUndefined();
+        expect(getFileMock.mock.calls.length).toBeGreaterThan(callCountAfterFill);
     });
 
     it('invalidates folder display cache when synced folder style settings change', () => {

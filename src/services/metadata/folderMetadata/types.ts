@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import type { FolderNoteCreationPreference } from '../../../types/folderNote';
+
 export interface FolderDisplayData {
     displayName?: string;
     color?: string;
@@ -58,6 +60,7 @@ export interface FolderDisplayCacheSettingsSnapshot {
     enableFolderNotes: boolean;
     inheritFolderColors: boolean;
     folderNoteNamePattern: string;
+    folderNoteType: FolderNoteCreationPreference;
     frontmatterNameField: string;
     frontmatterIconField: string;
     frontmatterColorField: string;

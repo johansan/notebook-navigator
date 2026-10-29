@@ -67,7 +67,8 @@ export class RecentNotesService {
 
         return isFolderNote(file, parent, {
             enableFolderNotes: true,
-            folderNoteNamePattern: this.settingsProvider.settings.folderNoteNamePattern
+            folderNoteNamePattern: this.settingsProvider.settings.folderNoteNamePattern,
+            folderNoteType: this.settingsProvider.settings.folderNoteType
         });
     }
 

@@ -2532,7 +2532,7 @@ export const STRINGS_KO = {
             },
             folderNoteType: {
                 name: '기본 폴더 노트 형식',
-                desc: '컨텍스트 메뉴에서 생성되는 폴더 노트 형식입니다.',
+                desc: '컨텍스트 메뉴에서 생성되는 폴더 노트 형식입니다. 폴더에 여러 형식의 폴더 노트가 있으면 이 형식이 우선됩니다.',
                 options: {
                     ask: '생성 시 선택',
                     markdown: 'Markdown',

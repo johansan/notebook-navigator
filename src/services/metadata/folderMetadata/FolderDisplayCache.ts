@@ -72,6 +72,7 @@ export class FolderDisplayCache {
             this.settingsSnapshot.enableFolderNotes !== snapshot.enableFolderNotes ||
             this.settingsSnapshot.inheritFolderColors !== snapshot.inheritFolderColors ||
             this.settingsSnapshot.folderNoteNamePattern !== snapshot.folderNoteNamePattern ||
+            this.settingsSnapshot.folderNoteType !== snapshot.folderNoteType ||
             this.settingsSnapshot.frontmatterNameField !== snapshot.frontmatterNameField ||
             this.settingsSnapshot.frontmatterIconField !== snapshot.frontmatterIconField ||
             this.settingsSnapshot.frontmatterColorField !== snapshot.frontmatterColorField ||
@@ -88,6 +89,7 @@ export class FolderDisplayCache {
             this.settingsSnapshot.useFrontmatterMetadata !== snapshot.useFrontmatterMetadata ||
             this.settingsSnapshot.enableFolderNotes !== snapshot.enableFolderNotes ||
             this.settingsSnapshot.folderNoteNamePattern !== snapshot.folderNoteNamePattern ||
+            this.settingsSnapshot.folderNoteType !== snapshot.folderNoteType ||
             this.settingsSnapshot.frontmatterNameField !== snapshot.frontmatterNameField
         );
     }

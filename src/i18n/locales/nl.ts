@@ -2544,7 +2544,7 @@ export const STRINGS_NL = {
             },
             folderNoteType: {
                 name: 'Standaard mapnotitietype',
-                desc: 'Mapnotitietype aangemaakt vanuit het contextmenu.',
+                desc: 'Mapnotitietype dat vanuit het contextmenu wordt aangemaakt en de voorkeur krijgt wanneer een map mapnotities van meerdere typen heeft.',
                 options: {
                     ask: 'Vragen bij aanmaken',
                     markdown: 'Markdown',

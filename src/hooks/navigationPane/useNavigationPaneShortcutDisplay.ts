@@ -123,7 +123,8 @@ export function useNavigationPaneShortcutDisplay({
 
             const folderNoteSettings = getFolderNoteDetectionSettings({
                 enableFolderNotes: settings.enableFolderNotes,
-                folderNoteNamePattern: settings.folderNoteNamePattern
+                folderNoteNamePattern: settings.folderNoteNamePattern,
+                folderNoteType: settings.folderNoteType
             });
 
             return calculateFolderNoteCounts(folder, {

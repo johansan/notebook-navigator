@@ -2546,7 +2546,7 @@ export const STRINGS_ES = {
             },
             folderNoteType: {
                 name: 'Tipo predeterminado de nota de carpeta',
-                desc: 'Tipo de nota de carpeta creado desde el menú contextual.',
+                desc: 'Tipo de nota de carpeta creado desde el menú contextual y preferido cuando una carpeta tiene notas de carpeta de varios tipos.',
                 options: {
                     ask: 'Preguntar al crear',
                     markdown: 'Markdown',

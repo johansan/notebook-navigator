@@ -20,12 +20,14 @@ import { App, Plugin, TFile, TFolder } from 'obsidian';
 import { describe, expect, it, vi } from 'vitest';
 import { TEMPLATER_PLUGIN_ID } from '../../src/constants/pluginIds';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
+import type { FolderNoteCreationPreference } from '../../src/types/folderNote';
 import {
     createFolderNote,
     getFolderNote,
     isFolderNote,
     isFolderNoteTemplateCompatible,
-    resolveFolderNoteNameForFolder
+    resolveFolderNoteNameForFolder,
+    type FolderNoteDetectionSettings
 } from '../../src/utils/folderNotes';
 import { createTestTFile } from './createTestTFile';
 
@@ -132,7 +134,8 @@ describe('root folder notes', () => {
         expect(
             getFolderNote(root, {
                 enableFolderNotes: true,
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown'
             })
         ).toBe(folderNote);
     });
@@ -145,7 +148,8 @@ describe('root folder notes', () => {
         expect(
             isFolderNote(folderNote, root, {
                 enableFolderNotes: true,
-                folderNoteNamePattern: ''
+                folderNoteNamePattern: '',
+                folderNoteType: 'markdown'
             })
         ).toBe(true);
     });
@@ -158,7 +162,8 @@ describe('root folder notes', () => {
         expect(
             getFolderNote(root, {
                 enableFolderNotes: true,
-                folderNoteNamePattern: 'index'
+                folderNoteNamePattern: 'index',
+                folderNoteType: 'markdown'
             })
         ).toBe(folderNote);
     });
@@ -463,6 +468,113 @@ describe('root folder notes', () => {
         expect(created).toBe(createdFile);
         expect(read).not.toHaveBeenCalled();
         expect(create).toHaveBeenCalledWith('Shared Scratch.canvas', '{}');
+    });
+});
+
+function createTestFolder(app: App, path: string): TFolder {
+    const folder = new TFolder() as TFolder & { children: TFile[]; name: string; vault: App['vault'] };
+    folder.path = path;
+    folder.name = path.split('/').pop() ?? path;
+    folder.children = [];
+    folder.vault = app.vault;
+
+    return folder;
+}
+
+function addFolderFile(app: App, folder: TFolder, name: string): TFile {
+    const file = createTestTFile(`${folder.path}/${name}`);
+    file.parent = folder;
+    file.vault = app.vault;
+    folder.children.push(file);
+    getTestVault(app).registerFile(file);
+
+    return file;
+}
+
+function removeFolderFile(app: App, folder: TFolder, file: TFile): void {
+    folder.children.splice(folder.children.indexOf(file), 1);
+    (app.vault as App['vault'] & { unregisterFile(path: string): void }).unregisterFile(file.path);
+}
+
+function detectionSettings(folderNoteType: FolderNoteCreationPreference): FolderNoteDetectionSettings {
+    return {
+        enableFolderNotes: true,
+        folderNoteNamePattern: '',
+        folderNoteType
+    };
+}
+
+describe('folder note selection across types', () => {
+    it('selects the configured folder note type when the folder has same-named notes of several types', () => {
+        const app = new App();
+        const folder = createTestFolder(app, 'Example');
+        // Base is listed first, as Obsidian lists the folder on Windows
+        const base = addFolderFile(app, folder, 'Example.base');
+        const markdown = addFolderFile(app, folder, 'Example.md');
+
+        expect(getFolderNote(folder, detectionSettings('markdown'))).toBe(markdown);
+        expect(getFolderNote(folder, detectionSettings('base'))).toBe(base);
+    });
+
+    it('falls back to Markdown, then Canvas, then Base when the configured type is missing or chosen at creation', () => {
+        const app = new App();
+        const folder = createTestFolder(app, 'Example');
+        addFolderFile(app, folder, 'Example.base');
+        const canvas = addFolderFile(app, folder, 'Example.canvas');
+
+        expect(getFolderNote(folder, detectionSettings('ask'))).toBe(canvas);
+        expect(getFolderNote(folder, detectionSettings('markdown'))).toBe(canvas);
+
+        const markdown = addFolderFile(app, folder, 'Example.md');
+
+        expect(getFolderNote(folder, detectionSettings('ask'))).toBe(markdown);
+        expect(getFolderNote(folder, detectionSettings('canvas'))).toBe(canvas);
+    });
+
+    it('treats only the selected file as the folder note', () => {
+        const app = new App();
+        const folder = createTestFolder(app, 'Example');
+        const base = addFolderFile(app, folder, 'Example.base');
+        const markdown = addFolderFile(app, folder, 'Example.md');
+
+        expect(isFolderNote(markdown, folder, detectionSettings('markdown'))).toBe(true);
+        expect(isFolderNote(base, folder, detectionSettings('markdown'))).toBe(false);
+        expect(isFolderNote(markdown, folder, detectionSettings('base'))).toBe(false);
+        expect(isFolderNote(base, folder, detectionSettings('base'))).toBe(true);
+    });
+
+    it('moves the folder note between types as same-named files are added and removed', () => {
+        const app = new App();
+        const folder = createTestFolder(app, 'Example');
+        const settings = detectionSettings('markdown');
+        const base = addFolderFile(app, folder, 'Example.base');
+
+        expect(getFolderNote(folder, settings)).toBe(base);
+        expect(isFolderNote(base, folder, settings)).toBe(true);
+
+        const markdown = addFolderFile(app, folder, 'Example.md');
+
+        expect(getFolderNote(folder, settings)).toBe(markdown);
+        expect(isFolderNote(base, folder, settings)).toBe(false);
+
+        removeFolderFile(app, folder, markdown);
+
+        expect(getFolderNote(folder, settings)).toBe(base);
+        expect(isFolderNote(base, folder, settings)).toBe(true);
+    });
+
+    it('selects an Excalidraw drawing only when no exact name matches', () => {
+        const app = new App();
+        const folder = createTestFolder(app, 'Example');
+        const drawing = addFolderFile(app, folder, 'Example.excalidraw.md');
+
+        expect(getFolderNote(folder, detectionSettings('markdown'))).toBe(drawing);
+        expect(isFolderNote(drawing, folder, detectionSettings('markdown'))).toBe(true);
+
+        const base = addFolderFile(app, folder, 'Example.base');
+
+        expect(getFolderNote(folder, detectionSettings('markdown'))).toBe(base);
+        expect(isFolderNote(drawing, folder, detectionSettings('markdown'))).toBe(false);
     });
 });
 

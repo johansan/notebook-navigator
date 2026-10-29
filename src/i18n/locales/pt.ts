@@ -2542,7 +2542,7 @@ export const STRINGS_PT = {
             },
             folderNoteType: {
                 name: 'Tipo de nota de pasta predefinido',
-                desc: 'Tipo de nota de pasta criada a partir do menu de contexto.',
+                desc: 'Tipo de nota de pasta criada a partir do menu de contexto e preferida quando uma pasta tem notas de pasta de vários tipos.',
                 options: {
                     ask: 'Perguntar ao criar',
                     markdown: 'Markdown',
