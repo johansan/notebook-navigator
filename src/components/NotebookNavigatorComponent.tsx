@@ -1591,6 +1591,7 @@ export const NotebookNavigatorComponent = React.memo(
                         ref={listPaneRef}
                         rootContainerRef={containerRef}
                         folderDecorationModel={folderDecorationModel}
+                        getFolderSortName={folderNavigationSource.getFolderSortName}
                         fileItemPillDecorationModel={fileItemPillDecorationModel}
                         fileItemPillOrderModel={fileItemPillOrderModel}
                         onSearchTokensChange={handleSearchTokensChange}

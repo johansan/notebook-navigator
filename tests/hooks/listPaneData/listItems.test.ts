@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { App, TFile, TFolder } from 'obsidian';
 import { DEFAULT_SETTINGS } from '../../../src/settings/defaultSettings';
 import type { PropertyItem } from '../../../src/storage/IndexedDBStorage';
@@ -58,7 +58,7 @@ function createDb(records: Record<string, FileMetadataRecord>): IndexedDBStorage
 function createListConfig(pinnedNotes: ListPaneConfig['pinnedNotes']): ListPaneConfig {
     return {
         filterPinnedByFolder: true,
-        folderGroupSortOrder: DEFAULT_SETTINGS.folderSortOrder,
+        folderSiblingOrder: { defaultSortOrder: DEFAULT_SETTINGS.folderSortOrder },
         groupBy: DEFAULT_SETTINGS.noteGrouping,
         pinnedGroupExpanded: true,
         pinnedNotes,
@@ -68,10 +68,29 @@ function createListConfig(pinnedNotes: ListPaneConfig['pinnedNotes']): ListPaneC
     };
 }
 
+// Folders of the running test by path, so files and subfolders share one linked tree like the vault.
+let foldersByPath = new Map<string, TFolder>();
+
+beforeEach(() => {
+    foldersByPath = new Map();
+});
+
 function createFolder(path: string): TFolder {
+    const existing = foldersByPath.get(path);
+    if (existing) {
+        return existing;
+    }
+
     const folder = new TFolder();
     folder.path = path;
     folder.name = path === '/' ? '' : (path.split('/').pop() ?? path);
+    foldersByPath.set(path, folder);
+    if (path !== '/') {
+        const separatorIndex = path.lastIndexOf('/');
+        const parent = createFolder(separatorIndex === -1 ? '/' : path.slice(0, separatorIndex));
+        folder.parent = parent;
+        parent.children.push(folder);
+    }
     return folder;
 }
 
@@ -912,7 +931,7 @@ describe('buildListItems pinned display scope', () => {
         ]);
     });
 
-    it('keeps folder group ordering based on paths when folder group paths are disabled', () => {
+    it('orders folder groups by the folder tree when folder group paths are disabled', () => {
         const app = createApp();
         const zetaFile = assignParent(createTestTFile('A/Zeta/one.md'), 'A/Zeta');
         const alphaFile = assignParent(createTestTFile('B/Alpha/two.md'), 'B/Alpha');
@@ -1042,7 +1061,7 @@ describe('buildListItems pinned display scope', () => {
             getFileTimestamps: () => ({ created: 0, modified: 0 }),
             hiddenFileState: new Map(),
             hiddenTags: [],
-            listConfig: { ...createListConfig({}), groupBy: 'folder', folderGroupSortOrder: 'alpha-desc' },
+            listConfig: { ...createListConfig({}), groupBy: 'folder', folderSiblingOrder: { defaultSortOrder: 'alpha-desc' } },
             searchMetaMap: new Map(),
             selectedFolder: null,
             selectedTag: 'example',
@@ -2053,6 +2072,83 @@ describe('buildListItems pinned display scope', () => {
         expect(getFileItems(items)).toEqual([{ path: regularFile.path, isPinned: false }]);
         expect(findCollapsedListGroupRevealTarget(items, pinnedFile.path, false)).toEqual({ type: 'pinned' });
         expect(findCollapsedListGroupRevealTarget(items, regularFile.path, false)).toBeNull();
+    });
+});
+
+describe('buildListItems folder group order', () => {
+    function getFolderGroupLabels({
+        filePaths,
+        folderSiblingOrder,
+        selectedTag
+    }: {
+        filePaths: string[];
+        folderSiblingOrder: ListPaneConfig['folderSiblingOrder'];
+        selectedTag?: string;
+    }): string[] {
+        const files = filePaths.map(path => assignParent(createTestTFile(path), path.slice(0, path.lastIndexOf('/'))));
+        const db = createDb(
+            Object.fromEntries(files.map(file => [file.path, { tags: selectedTag ? [selectedTag] : null, properties: null }]))
+        );
+
+        const items = buildListItems({
+            app: createApp(),
+            dayKey: '2026-03-07',
+            fileVisibility: FILE_VISIBILITY.DOCUMENTS,
+            files,
+            getDB: () => db,
+            getFileTimestamps: () => ({ created: 0, modified: 0 }),
+            hiddenFileState: new Map(),
+            hiddenTags: [],
+            listConfig: { ...createListConfig({}), groupBy: 'folder', folderSiblingOrder },
+            searchMetaMap: new Map(),
+            selectedFolder: selectedTag ? null : createFolder('Projects'),
+            selectedTag: selectedTag ?? null,
+            selectionType: selectedTag ? ItemType.TAG : ItemType.FOLDER,
+            showHiddenItems: false,
+            sortOption: 'title-asc'
+        });
+
+        return getHeaderItems(items).map(header => header.data);
+    }
+
+    it('follows the manual subfolder order with each folder group before its subfolders', () => {
+        expect(
+            getFolderGroupLabels({
+                filePaths: ['Projects/Alpha/Sub/c.md', 'Projects/Alpha/a.md', 'Projects/Beta/b.md'],
+                folderSiblingOrder: { defaultSortOrder: 'alpha-asc', childOrder: { Projects: ['Beta', 'Alpha'] } }
+            })
+        ).toEqual(['Beta', 'Alpha', 'Alpha/Sub']);
+    });
+
+    it('applies the alphabetical order override of each parent folder', () => {
+        expect(
+            getFolderGroupLabels({
+                filePaths: ['Projects/Alpha/One/a.md', 'Projects/Alpha/Two/b.md', 'Projects/Beta/c.md'],
+                folderSiblingOrder: { defaultSortOrder: 'alpha-asc', childSortOrderOverrides: { 'Projects/Alpha': 'alpha-desc' } }
+            })
+        ).toEqual(['Alpha/Two', 'Alpha/One', 'Beta']);
+    });
+
+    it('sorts folders by the name the navigation pane sorts them by', () => {
+        expect(
+            getFolderGroupLabels({
+                filePaths: ['Projects/Alpha/a.md', 'Projects/Beta/b.md'],
+                folderSiblingOrder: {
+                    defaultSortOrder: 'alpha-asc',
+                    getFolderSortName: folder => (folder.name === 'Alpha' ? 'Zeta' : folder.name)
+                }
+            })
+        ).toEqual(['Beta', 'Alpha']);
+    });
+
+    it('orders tag view groups by the manual order of ancestors without matching notes', () => {
+        expect(
+            getFolderGroupLabels({
+                filePaths: ['Home/Notes/a.md', 'Work/Notes/b.md'],
+                folderSiblingOrder: { defaultSortOrder: 'alpha-asc', childOrder: { '/': ['Work', 'Home'] } },
+                selectedTag: 'example'
+            })
+        ).toEqual(['Work/Notes', 'Home/Notes']);
     });
 });
 

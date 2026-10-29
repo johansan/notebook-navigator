@@ -116,6 +116,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
             'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.'
         ],
+        improved: ['Folder groups in the list pane now follow the folder order in the navigation pane, including manual folder order.'],
         fixed: [
             "Dragging a folder from the navigation pane into Lean Terminal now pastes the folder's absolute path [#1561](https://github.com/johansan/notebook-navigator/issues/1561)."
         ]

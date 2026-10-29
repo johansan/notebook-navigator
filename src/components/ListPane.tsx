@@ -170,6 +170,8 @@ interface ListPaneProps {
      */
     onSearchTokensChange?: (state: SearchNavFilterState) => void;
     folderDecorationModel: FolderDecorationModel;
+    /** Resolves the name the navigation pane sorts a folder by, so folder groups follow its order */
+    getFolderSortName: (folder: TFolder) => string;
     fileItemPillDecorationModel: FileItemPillDecorationModel;
     fileItemPillOrderModel: FileItemPillOrderModel;
     onNavigateToFolder: (folderPath: string, options?: NavigateToFolderOptions) => void;
@@ -312,6 +314,7 @@ export const ListPane = React.memo(
             onRevealTag,
             onRevealProperty,
             folderDecorationModel,
+            getFolderSortName,
             fileItemPillDecorationModel,
             fileItemPillOrderModel
         } = props;
@@ -705,6 +708,7 @@ export const ListPane = React.memo(
             settings,
             activeProfile,
             groupBy: effectiveAppearanceSettings.groupBy,
+            getFolderSortName,
             showFileTags: effectiveAppearanceSettings.showTags,
             showFileDate: effectiveAppearanceSettings.showDate,
             pinnedGroupExpanded,
