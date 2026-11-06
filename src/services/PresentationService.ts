@@ -149,7 +149,7 @@ export function getPresentationIdentity(frontmatter: unknown, companion: unknown
     if (
         !isReadableFormatVersion(frontmatter.markdownpoint) ||
         !isReadableFormatVersion(companion.markdownpoint) ||
-        companion.kind !== 'presentation'
+        companion.type !== 'presentation'
     ) {
         return null;
     }

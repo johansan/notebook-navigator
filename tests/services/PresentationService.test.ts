@@ -57,7 +57,7 @@ describe('getPresentationPairNames', () => {
 
 describe('getPresentationIdentity', () => {
     const frontmatter = { markdownpoint: '1.0', id: PRESENTATION_ID };
-    const companion = { markdownpoint: '1.0', kind: 'presentation', id: PRESENTATION_ID };
+    const companion = { markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID };
 
     it('returns the presentation id when both files belong to the same presentation', () => {
         expect(getPresentationIdentity(frontmatter, companion)).toBe(PRESENTATION_ID);
@@ -79,7 +79,7 @@ describe('getPresentationIdentity', () => {
     it('rejects a companion from another presentation or of another kind', () => {
         const otherId = 'e39a0a69-91a3-4004-9f08-77e0759de936';
         expect(getPresentationIdentity(frontmatter, { ...companion, id: otherId })).toBeNull();
-        expect(getPresentationIdentity(frontmatter, { ...companion, kind: 'master' })).toBeNull();
+        expect(getPresentationIdentity(frontmatter, { ...companion, type: 'master' })).toBeNull();
         expect(getPresentationIdentity({ ...frontmatter, id: PRESENTATION_ID.toUpperCase() }, companion)).toBeNull();
         expect(getPresentationIdentity(undefined, companion)).toBeNull();
     });
