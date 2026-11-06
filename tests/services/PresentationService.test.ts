@@ -188,9 +188,9 @@ describe('presentation themes', () => {
         const master = {
             brand: { colors: { orange: '#F2641F' } },
             schemes: {
-                light: { background: '#FFFFFF', text: '#17120F', muted: '#6B605A', accent: '{brand.orange}' },
-                dark: { background: '#17120F', text: '#FFF6EA', muted: '#BDB2A9' },
-                apricot: { background: '#FECAA3', text: '{brand.orange}', muted: '#524843' }
+                light: { colors: { background: '#FFFFFF', text: '#17120F', muted: '#6B605A', accent: '{brand.orange}' } },
+                dark: { colors: { background: '#17120F', text: '#FFF6EA', muted: '#BDB2A9' } },
+                apricot: { appearance: 'light', colors: { background: '#FECAA3', text: '{brand.orange}', muted: '#524843' } }
             }
         };
         const titleLayout = { scheme: 'apricot', objects: [{ id: 'title', type: 'text' }] };
@@ -205,8 +205,8 @@ describe('presentation themes', () => {
     it('follows the light and dark schemes and a centered title when the Title layout names no scheme', () => {
         const master = {
             schemes: {
-                light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' },
-                dark: { background: '#000000', text: '#F5F5F7' }
+                light: { colors: { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' } },
+                dark: { colors: { background: '#000000', text: '#F5F5F7' } }
             }
         };
         const titleLayout = {
@@ -225,7 +225,8 @@ describe('presentation themes', () => {
 
     it('returns no cover without readable scheme colors', () => {
         expect(resolvePresentationCover(null, null)).toBeNull();
-        expect(resolvePresentationCover({ schemes: { light: { background: 'white', text: '#000000' } } }, null)).toBeNull();
+        expect(resolvePresentationCover({ schemes: { light: { colors: { background: 'white', text: '#000000' } } } }, null)).toBeNull();
+        expect(resolvePresentationCover({ schemes: { light: { background: '#FFFFFF', text: '#000000' } } }, null)).toBeNull();
     });
 });
 

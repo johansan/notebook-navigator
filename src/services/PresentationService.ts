@@ -258,15 +258,16 @@ function resolveThemeColor(value: unknown, brandColors: Record<string, unknown>)
 }
 
 function resolveCoverColors(scheme: unknown, brandColors: Record<string, unknown>): PresentationCoverColors | null {
-    if (!isRecord(scheme)) {
+    if (!isRecord(scheme) || !isRecord(scheme.colors)) {
         return null;
     }
-    const background = resolveThemeColor(scheme.background, brandColors);
-    const text = resolveThemeColor(scheme.text, brandColors);
+    const colors = scheme.colors;
+    const background = resolveThemeColor(colors.background, brandColors);
+    const text = resolveThemeColor(colors.text, brandColors);
     if (!background || !text) {
         return null;
     }
-    return { background, text, muted: resolveThemeColor(scheme.muted, brandColors) ?? text };
+    return { background, text, muted: resolveThemeColor(colors.muted, brandColors) ?? text };
 }
 
 /**
