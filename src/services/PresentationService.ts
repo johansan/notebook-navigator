@@ -55,7 +55,7 @@ export interface PresentationSummary {
     slideCount: number;
     /** Theme display name, or null when the presentation names no theme */
     themeName: string | null;
-    /** Slide size in canvas units from the theme's master.json, or null when the theme is missing */
+    /** Slide size in canvas units from the theme's master.json, 1920 × 1080 where it declares none, or null when the theme is missing */
     size: { width: number; height: number } | null;
     /** Null when the theme files are missing or unreadable; the cover then uses Obsidian colors */
     cover: PresentationCover | null;
@@ -272,7 +272,8 @@ function resolveCoverColors(scheme: unknown, brandColors: Record<string, unknown
 
 /**
  * Resolves the cover from the theme's master and Title layout. The Title layout's `scheme` applies in both
- * light and dark mode; without one the cover follows the theme's `light` and `dark` schemes. The title text
+ * light and dark mode; without one, or with one the master lacks, which MarkdownPoint shows in light, the cover
+ * follows the theme's `light` and `dark` schemes. The title text
  * object's `align` decides between a centered and a start-aligned cover.
  */
 export function resolvePresentationCover(
@@ -284,7 +285,10 @@ export function resolvePresentationCover(
     }
     const schemes = master.schemes;
     const brand = isRecord(master.brand) && isRecord(master.brand.colors) ? master.brand.colors : {};
-    const layoutScheme = typeof titleLayout?.scheme === 'string' ? titleLayout.scheme : null;
+    const layoutScheme =
+        typeof titleLayout?.scheme === 'string' && Object.prototype.hasOwnProperty.call(schemes, titleLayout.scheme)
+            ? titleLayout.scheme
+            : null;
     const light = resolveCoverColors(schemes[layoutScheme ?? 'light'], brand);
     if (!light) {
         return null;
@@ -296,8 +300,15 @@ export function resolvePresentationCover(
     return { align, light, dark };
 }
 
-function resolveSlideSize(master: Record<string, unknown> | null): { width: number; height: number } | null {
-    const size = master?.size;
+/** The slide size the theme's master gives, 1920 × 1080 where it declares none, as MarkdownPoint reads it; null without a master. */
+export function resolveSlideSize(master: Record<string, unknown> | null): { width: number; height: number } | null {
+    if (!master) {
+        return null;
+    }
+    if (master.size === undefined) {
+        return { width: 1920, height: 1080 };
+    }
+    const size = master.size;
     if (!isRecord(size) || typeof size.width !== 'number' || typeof size.height !== 'number') {
         return null;
     }

@@ -22,7 +22,8 @@ import {
     getPresentationPairNames,
     getPresentationThemeName,
     isPresentationThemeKey,
-    resolvePresentationCover
+    resolvePresentationCover,
+    resolveSlideSize
 } from '../../src/services/PresentationService';
 import { getListPaneMeasurements, getPresentationRowHeight } from '../../src/utils/listPaneMeasurements';
 
@@ -221,6 +222,30 @@ describe('presentation themes', () => {
             light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' },
             dark: { background: '#000000', text: '#F5F5F7', muted: '#F5F5F7' }
         });
+    });
+
+    it('follows the light and dark schemes when the Title layout names a scheme the master lacks, as MarkdownPoint shows it in light', () => {
+        const master = {
+            schemes: {
+                light: { colors: { background: '#FFFFFF', text: '#1D1D1F' } },
+                dark: { colors: { background: '#000000', text: '#F5F5F7' } }
+            }
+        };
+
+        for (const scheme of ['retired', 'toString']) {
+            expect(resolvePresentationCover(master, { scheme, objects: [] })).toEqual({
+                align: 'start',
+                light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#1D1D1F' },
+                dark: { background: '#000000', text: '#F5F5F7', muted: '#F5F5F7' }
+            });
+        }
+    });
+
+    it('reads a master that declares no size as 1920 × 1080, as MarkdownPoint does', () => {
+        expect(resolveSlideSize({ name: 'Basic' })).toEqual({ width: 1920, height: 1080 });
+        expect(resolveSlideSize({ size: { width: 1080, height: 1920 } })).toEqual({ width: 1080, height: 1920 });
+        expect(resolveSlideSize({ size: { width: '1080' } })).toBeNull();
+        expect(resolveSlideSize(null)).toBeNull();
     });
 
     it('returns no cover without readable scheme colors', () => {
