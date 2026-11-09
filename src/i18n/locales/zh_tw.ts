@@ -2623,6 +2623,11 @@ export const STRINGS_ZH_TW = {
                 desc: '逗號分隔的前置欄位列表。使用第一個非空值。回退到檔名。',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: '筆記名稱格式',
+                desc: '為具有前置欄位名稱的筆記顯示的名稱。{{name}} 是前置欄位名稱，{{filename}} 是檔名，{{date}} 或 {{date:FORMAT}} 是每日筆記的日期。格式包含 {{date}} 時，非每日筆記只顯示前置欄位名稱。',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: '圖示欄位',
                 desc: '檔案圖示的前置欄位。留空使用儲存在設定中的圖示。',

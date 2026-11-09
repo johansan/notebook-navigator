@@ -2662,6 +2662,11 @@ export const STRINGS_TR = {
                 desc: 'Virgülle ayrılmış frontmatter alanları listesi. İlk boş olmayan değer kullanılır. Dosya adına geri döner.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Not adı biçimi',
+                desc: 'Frontmatter adı olan notlar için gösterilen ad. {{name}} frontmatter adı, {{filename}} dosya adı, {{date}} veya {{date:FORMAT}} günlük notun tarihidir. Biçim {{date}} içerdiğinde, günlük not olmayan notlar yalnızca frontmatter adını gösterir.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Oluşturma zaman damgası alanı',
                 desc: 'Oluşturma zaman damgası için frontmatter alan adı. Yalnızca dosya sistemi tarihini kullanmak için boş bırakın.',

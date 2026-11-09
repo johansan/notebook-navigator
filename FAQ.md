@@ -61,6 +61,10 @@ title: Trip to Milan
 ---
 ```
 
+Set **Note name format** to `{{date:D MMM}} {{name}}` to show the date before the name. The daily note `2026-08-05.md`
+is then displayed as `5 Aug Trip to Milan`. `{{date}}` reads the date from the daily note path with the calendar
+settings, and notes that are not daily notes show only the frontmatter name. `{{filename}}` inserts the file name.
+
 Do not use `aliases` as a name field. Obsidian uses aliases as alternative link targets, so an alias such as
 `Projects/Europe/Trip to Milan` would also become the displayed name. Leave **Name fields** empty to always display the
 filename.

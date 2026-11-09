@@ -2667,6 +2667,11 @@ export const STRINGS_IT = {
                 desc: 'Elenco di campi frontmatter separati da virgola. Viene usato il primo valore non vuoto. Usa il nome file come alternativa.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Formato del nome della nota',
+                desc: 'Nome mostrato per le note che hanno un nome nel frontmatter. {{name}} è il nome del frontmatter, {{filename}} il nome del file e {{date}} o {{date:FORMAT}} la data di una nota giornaliera. Se il formato contiene {{date}}, le note che non sono note giornaliere mostrano solo il nome del frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Campo timestamp creazione',
                 desc: 'Nome campo frontmatter per timestamp creazione. Lascia vuoto per usare solo data file system.',

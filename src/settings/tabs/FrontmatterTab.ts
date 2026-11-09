@@ -227,6 +227,17 @@ export function createFrontmatterSettingDefinitions(context: SettingsTabContext)
             }),
             createFrontmatterTextRenderDefinition({
                 context,
+                name: strings.settings.items.frontmatterNameFormat.name,
+                desc: strings.settings.items.frontmatterNameFormat.desc,
+                placeholder: strings.settings.items.frontmatterNameFormat.placeholder,
+                visible: () => plugin.settings.useFrontmatterMetadata,
+                getValue: () => plugin.settings.frontmatterNameFormat,
+                setValue: value => {
+                    plugin.settings.frontmatterNameFormat = value;
+                }
+            }),
+            createFrontmatterTextRenderDefinition({
+                context,
                 name: strings.settings.items.frontmatterCreatedField.name,
                 desc: strings.settings.items.frontmatterCreatedField.desc,
                 placeholder: strings.settings.items.frontmatterCreatedField.placeholder,
@@ -312,7 +323,7 @@ function createFrontmatterTextRenderDefinition(options: {
     visible: () => boolean;
     getValue: () => string;
     setValue: (value: string) => void;
-    onAfterUpdate: () => void;
+    onAfterUpdate?: () => void;
 }): ReturnType<typeof createRenderDefinition> {
     return createRenderDefinition({
         name: options.name,

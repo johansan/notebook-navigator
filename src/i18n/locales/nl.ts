@@ -2671,6 +2671,11 @@ export const STRINGS_NL = {
                 desc: 'Kommagescheiden lijst van frontmatter-velden. Eerste niet-lege waarde wordt gebruikt. Valt terug op bestandsnaam.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Notitienaamopmaak',
+                desc: 'Naam die wordt getoond voor notities met een frontmatter-naam. {{name}} is de frontmatter-naam, {{filename}} de bestandsnaam en {{date}} of {{date:FORMAT}} de datum van een dagelijkse notitie. Bevat de opmaak {{date}}, dan tonen notities die geen dagelijkse notitie zijn alleen de frontmatter-naam.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Aangemaakt tijdstempelveld',
                 desc: 'Frontmatter-veldnaam voor de aanmaaktijdstempel. Laat leeg om alleen bestandssysteemdatum te gebruiken.',

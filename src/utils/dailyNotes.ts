@@ -100,6 +100,43 @@ export function getDailyNotePath(date: MomentInstance, settings: DailyNoteSettin
     return `${normalized.replace(/\.md$/i, '')}.md`;
 }
 
+/** Returns the start of the day of the daily note at `filePath`, or null when the path is not a daily note. */
+export type DailyNoteDatePathParser = (filePath: string) => MomentInstance | null;
+
+/**
+ * Builds the parser behind `parseDailyNoteDateFromPath`. The parse pattern is built once here, so a caller that parses
+ * many paths, such as one per note in a list, keeps this parser instead of calling `parseDailyNoteDateFromPath` for each
+ * path.
+ */
+export function createDailyNoteDatePathParser(settings: DailyNoteSettings, momentApi: MomentApi, locale: string): DailyNoteDatePathParser {
+    const folder = normalizePath(settings.folder).replace(/^\/+/u, '').replace(/\/+$/u, '');
+    const folderPattern = escapeMomentLiteralPath(settings.folder);
+    const fullPattern = folderPattern ? `${folderPattern}/${settings.format}` : settings.format;
+    // A format can end in a literal extension such as `[.md]` or `[.MD]`. The strict parse fails without it in the input,
+    // and `getDailyNotePath` lowercases it, so its spelling comes from the format.
+    const extensionSuffix = /\.md$/iu.exec(momentApi().locale(locale).format(settings.format))?.[0] ?? '';
+
+    return filePath => {
+        const normalizedFilePath = normalizePath(filePath);
+        if (!normalizedFilePath.toLowerCase().endsWith('.md')) {
+            return null;
+        }
+
+        // Daily note paths always start with the folder, so other paths are rejected before the Moment parse, which is
+        // the costly step when a list parses every note it shows.
+        if (folder && !normalizedFilePath.startsWith(`${folder}/`)) {
+            return null;
+        }
+
+        const parsedDate = momentApi(`${normalizedFilePath.replace(/\.md$/iu, '')}${extensionSuffix}`, fullPattern, locale, true);
+        if (!parsedDate.isValid() || getDailyNotePath(parsedDate, settings) !== normalizedFilePath) {
+            return null;
+        }
+
+        return parsedDate.startOf('day');
+    };
+}
+
 /**
  * Returns the start of the day of the daily note at `filePath`, or null when the path is not a daily note. A path
  * counts only when `getDailyNotePath` builds the same path from the parsed date, because a strict parse alone still
@@ -111,22 +148,7 @@ export function parseDailyNoteDateFromPath(
     momentApi: MomentApi,
     locale: string
 ): MomentInstance | null {
-    const normalizedFilePath = normalizePath(filePath);
-    if (!normalizedFilePath.toLowerCase().endsWith('.md')) {
-        return null;
-    }
-
-    const folderPattern = escapeMomentLiteralPath(settings.folder);
-    const fullPattern = folderPattern ? `${folderPattern}/${settings.format}` : settings.format;
-    // A format can end in a literal extension such as `[.md]` or `[.MD]`. The strict parse fails without it in the input,
-    // and `getDailyNotePath` lowercases it, so its spelling comes from the format.
-    const extensionSuffix = /\.md$/iu.exec(momentApi().locale(locale).format(settings.format))?.[0] ?? '';
-    const parsedDate = momentApi(`${normalizedFilePath.replace(/\.md$/iu, '')}${extensionSuffix}`, fullPattern, locale, true);
-    if (!parsedDate.isValid() || getDailyNotePath(parsedDate, settings) !== normalizedFilePath) {
-        return null;
-    }
-
-    return parsedDate.startOf('day');
+    return createDailyNoteDatePathParser(settings, momentApi, locale)(filePath);
 }
 
 export function getDailyNoteFile(app: App, date: MomentInstance, settings: DailyNoteSettings): TFile | null {

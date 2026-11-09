@@ -61,7 +61,8 @@ import { METADATA_SENTINEL, type FileData as DBFileData, type IndexedDBStorage }
 import { getDBInstance, getDBInstanceOrNull } from '../storage/fileOperations';
 import type { StorageFileData } from './storage/storageFileData';
 import type { PropertyTreeNode, TagTreeNode } from '../types/storage';
-import { getFileDisplayName as getDisplayName } from '../utils/fileNameUtils';
+import { getFileNameWithoutExtension } from '../utils/fileNameUtils';
+import { getNoteDisplayName } from '../utils/noteNameFormat';
 import { findTagNode, collectAllTagPaths } from '../utils/tagTree';
 import { useServices } from './ServicesContext';
 import { useSettingsState, useActiveProfile } from './SettingsContext';
@@ -83,7 +84,10 @@ import { runAsyncAction } from '../utils/async';
 interface StorageContextValue {
     fileData: StorageFileData;
     // Methods to get file metadata with frontmatter extraction
+    /** Name shown for the file, with the Note name format applied to frontmatter names. */
     getFileDisplayName: (file: TFile) => string;
+    /** Frontmatter name or file name without the Note name format, so formatting a name does not change its file name match icon. */
+    getFileNameForIconMatch: (file: TFile) => string;
     getFileCreatedTime: (file: TFile) => number;
     getFileModifiedTime: (file: TFile) => number;
     getFileTimestamps: (file: TFile) => { created: number; modified: number };
@@ -408,14 +412,13 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
     );
 
     const getFileDisplayName = useCallback(
-        (file: TFile): string => {
-            const metadata = getFrontmatterMetadata(file);
-            if (metadata?.fn) {
-                return metadata.fn;
-            }
-            return getDisplayName(file, undefined, settings);
-        },
-        [getFrontmatterMetadata, settings]
+        (file: TFile): string => getNoteDisplayName(app, settings, file, getFrontmatterMetadata(file)?.fn),
+        [app, getFrontmatterMetadata, settings]
+    );
+
+    const getFileNameForIconMatch = useCallback(
+        (file: TFile): string => getFrontmatterMetadata(file)?.fn || getFileNameWithoutExtension(file),
+        [getFrontmatterMetadata]
     );
 
     const getFileTimestamps = useCallback(
@@ -435,12 +438,12 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
             const timestamps = computeFileTimestamps(file, extractedMetadata);
 
             return {
-                name: extractedMetadata?.fn || getDisplayName(file, undefined, settings),
+                name: getFileDisplayName(file),
                 created: timestamps.created,
                 modified: timestamps.modified
             };
         },
-        [getFrontmatterMetadata, settings]
+        [getFileDisplayName, getFrontmatterMetadata]
     );
 
     const hasPreview = useCallback((path: string): boolean => getDBInstance().hasPreview(path), []);
@@ -527,6 +530,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
         return {
             fileData,
             getFileDisplayName,
+            getFileNameForIconMatch,
             getFileCreatedTime,
             getFileModifiedTime,
             getFileTimestamps,
@@ -547,6 +551,7 @@ export function StorageProvider({ app, api, children }: StorageProviderProps) {
     }, [
         fileData,
         getFileDisplayName,
+        getFileNameForIconMatch,
         getFileCreatedTime,
         getFileModifiedTime,
         getFileTimestamps,

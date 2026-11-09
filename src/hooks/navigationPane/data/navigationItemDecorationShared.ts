@@ -102,7 +102,7 @@ export function createNavigationItemDecorationContext(params: {
     settings: NotebookNavigatorSettings;
     navRainbow: NavRainbowSettings;
     fileNameIconNeedles: readonly FileNameIconNeedle[];
-    getFileDisplayName: (file: TFile) => string;
+    getFileNameForIconMatch: (file: TFile) => string;
     metadataService: MetadataService;
     parsedExcludedFolders: string[];
     folderDecorationModel: NavigationItemDecorationContext['folderDecorationModel'];
@@ -114,7 +114,7 @@ export function createNavigationItemDecorationContext(params: {
         settings,
         navRainbow,
         fileNameIconNeedles,
-        getFileDisplayName,
+        getFileNameForIconMatch,
         metadataService,
         parsedExcludedFolders,
         folderDecorationModel,
@@ -147,7 +147,7 @@ export function createNavigationItemDecorationContext(params: {
         if (!settings.showFilenameMatchIcons) {
             return undefined;
         }
-        return getFileDisplayName(file);
+        return getFileNameForIconMatch(file);
     };
 
     const rainbowMode = navRainbow.mode;

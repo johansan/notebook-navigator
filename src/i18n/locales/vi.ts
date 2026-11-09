@@ -2661,6 +2661,11 @@ export const STRINGS_VI = {
                 desc: 'Danh sách trường frontmatter phân cách bằng dấu phẩy. Sử dụng giá trị không trống đầu tiên. Nếu không có, dùng tên tệp.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Định dạng tên ghi chú',
+                desc: 'Tên hiển thị cho các ghi chú có tên trong frontmatter. {{name}} là tên frontmatter, {{filename}} là tên tệp, và {{date}} hoặc {{date:FORMAT}} là ngày của ghi chú hàng ngày. Khi định dạng có {{date}}, các ghi chú không phải ghi chú hàng ngày chỉ hiển thị tên frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Trường dấu thời gian tạo',
                 desc: 'Tên trường frontmatter cho dấu thời gian tạo. Để trống để chỉ dùng ngày hệ thống tệp.',

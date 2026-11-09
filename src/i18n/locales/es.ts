@@ -2649,6 +2649,11 @@ export const STRINGS_ES = {
                 desc: 'Lista de campos frontmatter separados por comas. Se usa el primer valor no vacío. Usa el nombre de archivo como alternativa.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Formato del nombre de la nota',
+                desc: 'Nombre mostrado para las notas que tienen un nombre en el frontmatter. {{name}} es el nombre del frontmatter, {{filename}} el nombre del archivo y {{date}} o {{date:FORMAT}} la fecha de una nota diaria. Si el formato contiene {{date}}, las notas que no son notas diarias muestran solo el nombre del frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: 'Campo de icono',
                 desc: 'Campo del frontmatter para iconos de archivo. Dejar vacío para usar iconos guardados en los ajustes.',

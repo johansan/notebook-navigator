@@ -346,6 +346,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     frontmatterColorField: 'color',
     frontmatterBackgroundField: 'background',
     frontmatterNameField: '',
+    frontmatterNameFormat: '{{name}}',
     frontmatterCreatedField: '',
     frontmatterModifiedField: '',
     frontmatterDateFormat: '',

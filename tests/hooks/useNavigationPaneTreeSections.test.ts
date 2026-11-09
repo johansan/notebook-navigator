@@ -308,7 +308,7 @@ describe('useNavigationPaneTreeSections', () => {
                         settings,
                         metadataService,
                         fileNameIconNeedles: [],
-                        getFileDisplayName: file => file.basename,
+                        getFileNameForIconMatch: file => file.basename,
                         folderDecorationModel: {
                             isExcludedPath: () => false,
                             folderRainbowColors: { colorsByPath: new Map(), rootColor: undefined, getInheritedColor: () => undefined },

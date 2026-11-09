@@ -16,18 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { normalizePath, type TFile } from 'obsidian';
+import { normalizePath, type App, type TFile } from 'obsidian';
+import { getCurrentLanguage } from '../../i18n';
 import type { NotebookNavigatorSettings } from '../../settings/types';
-import { escapeMomentLiteralPath } from '../../utils/calendarCustomNotePatterns';
+import { escapeMomentLiteralPath, normalizeCalendarCustomRootFolder } from '../../utils/calendarCustomNotePatterns';
+import { createDailyNoteDatePathParser, getDailyNoteSettings as getCoreDailyNoteSettings } from '../../utils/dailyNotes';
 import { isPathInExcludedFolder } from '../../utils/fileFilters';
 import {
     buildCustomCalendarFilePathForPattern,
     buildCustomCalendarMomentPattern,
     getCalendarNoteConfig,
     resolveCalendarCustomNotePathDate,
+    type CalendarNoteKind,
     type CalendarNoteLocation
 } from '../../utils/calendarNotes';
-import type { MomentApi, MomentInstance } from '../../utils/moment';
+import {
+    getMomentApi,
+    resolveCalendarLocales,
+    resolveCalendarPeriodicNotesLocale,
+    resolveDailyNoteLocale,
+    type MomentApi,
+    type MomentInstance
+} from '../../utils/moment';
+import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import type { CalendarNoteTarget, CustomCalendarNoteConfig, CustomCalendarNoteKind } from './types';
 
 export interface CalendarNotePathResolverContext {
@@ -180,12 +191,15 @@ export function resolveCalendarNoteTarget({
     };
 }
 
+/** Returns the date of the calendar note at `filePath`, or null when the path is not such a note. */
+export type CalendarNoteDatePathParser = (filePath: string) => MomentInstance | null;
+
 /**
- * Returns the date of the calendar note of `kind` at `filePath`, or null when the path is not such a note. A path counts
- * only when the pattern builds the same path from the parsed date.
+ * Builds the parser behind `parseCalendarNoteDateFromPath`, or returns null when the pattern is invalid. The pattern is
+ * validated and the parse pattern built once here, so a caller that parses many paths, such as one per note in a list,
+ * keeps this parser instead of calling `parseCalendarNoteDateFromPath` for each path.
  */
-export function parseCalendarNoteDateFromPath({
-    filePath,
+export function createCalendarNoteDatePathParser({
     kind,
     resolverContext,
     calendarLocale,
@@ -193,14 +207,9 @@ export function parseCalendarNoteDateFromPath({
     customCalendarRootFolderSettings,
     momentApi,
     parseLocale
-}: ParseCalendarNoteDateFromPathOptions): MomentInstance | null {
-    if (!momentApi || !filePath.toLowerCase().endsWith('.md')) {
-        return null;
-    }
-
-    const normalizedFilePath = normalizePath(filePath);
+}: Omit<ParseCalendarNoteDateFromPathOptions, 'filePath'>): CalendarNoteDatePathParser | null {
     const { config, momentPattern } = resolverContext;
-    if (!config.isPatternValid(momentPattern, momentApi)) {
+    if (!momentApi || !config.isPatternValid(momentPattern, momentApi)) {
         return null;
     }
 
@@ -213,22 +222,125 @@ export function parseCalendarNoteDateFromPath({
             config.calendarCustomFilePattern,
             config.fallbackPattern
         );
-    const isNotePath = (date: MomentInstance): boolean => resolveLocation(date).filePath === normalizedFilePath;
     // A pattern can end in a literal extension such as `[.md]` or `[.MD]`, which the strict parse needs in the input.
     // The rendered file name keeps its spelling before `.md` is appended to names without one.
     const extensionSuffix = /\.md$/iu.exec(resolveLocation(momentApi()).formattedFilePattern)?.[0] ?? '';
-    const parseInput = `${stripMarkdownExtension(normalizedFilePath)}${extensionSuffix}`;
+    const rootFolder = normalizeCalendarCustomRootFolder(customCalendarRootFolderSettings.calendarCustomRootFolder);
     const rootFolderPattern = escapeMomentLiteralPath(customCalendarRootFolderSettings.calendarCustomRootFolder);
     const fullPattern = rootFolderPattern ? `${rootFolderPattern}/${momentPattern}` : momentPattern;
 
-    if (kind === 'week') {
-        return findWeeklyCalendarNoteDate(parseInput, fullPattern, parseLocale, momentApi, resolvePathDate, isNotePath);
-    }
+    return filePath => {
+        if (!filePath.toLowerCase().endsWith('.md')) {
+            return null;
+        }
 
-    const parsedDate = momentApi(parseInput, fullPattern, parseLocale, true);
-    if (!parsedDate.isValid() || !isNotePath(parsedDate)) {
+        const normalizedFilePath = normalizePath(filePath);
+        // Note paths always start with the root folder, so other paths are rejected before the Moment parse, which is
+        // the costly step when a list parses every note it shows.
+        if (rootFolder && !normalizedFilePath.startsWith(`${rootFolder}/`)) {
+            return null;
+        }
+
+        const isNotePath = (date: MomentInstance): boolean => resolveLocation(date).filePath === normalizedFilePath;
+        const parseInput = `${stripMarkdownExtension(normalizedFilePath)}${extensionSuffix}`;
+
+        if (kind === 'week') {
+            return findWeeklyCalendarNoteDate(parseInput, fullPattern, parseLocale, momentApi, resolvePathDate, isNotePath);
+        }
+
+        const parsedDate = momentApi(parseInput, fullPattern, parseLocale, true);
+        if (!parsedDate.isValid() || !isNotePath(parsedDate)) {
+            return null;
+        }
+
+        return parsedDate;
+    };
+}
+
+/**
+ * Returns the date of the calendar note of `kind` at `filePath`, or null when the path is not such a note. A path counts
+ * only when the pattern builds the same path from the parsed date.
+ */
+export function parseCalendarNoteDateFromPath(options: ParseCalendarNoteDateFromPathOptions): MomentInstance | null {
+    return createCalendarNoteDatePathParser(options)?.(options.filePath) ?? null;
+}
+
+/** Moment API plus the locale that Notebook Navigator periodic note paths are formatted and parsed with. */
+export interface PeriodicNoteLocaleContext {
+    momentApi: MomentApi;
+    periodicNotesLocale: string;
+}
+
+export function getPeriodicNoteLocaleContext(settings: NotebookNavigatorSettings): PeriodicNoteLocaleContext | null {
+    const momentApi = getMomentApi();
+    if (!momentApi) {
         return null;
     }
 
-    return parsedDate;
+    const { calendarRulesLocale } = resolveCalendarLocales(settings.calendarLocale, momentApi, getCurrentLanguage());
+    const periodicNotesLocale = resolveCalendarPeriodicNotesLocale(
+        settings.calendarPeriodicNotesLocaleSource,
+        calendarRulesLocale,
+        momentApi
+    );
+    return { momentApi, periodicNotesLocale };
+}
+
+/** Returns the start of the period covered by the note at `filePath`, or null when the path is not a note of the parser's kind. */
+export type PeriodicNotePathParser = (filePath: string) => MomentInstance | null;
+
+/**
+ * Builds the path parser for notes of `kind`, or returns null when the calendar has no notes of that kind: the Daily Notes
+ * integration only has daily notes, and Notebook Navigator periodic notes need a valid pattern, which weekly and longer
+ * notes leave empty when they are turned off. The parser reads the settings as they are when it is built, so a caller
+ * that keeps it must build a new one after the calendar settings or the Daily Notes settings change.
+ */
+export function createPeriodicNotePathParser(
+    app: App,
+    settings: NotebookNavigatorSettings,
+    kind: CalendarNoteKind,
+    localeContext: PeriodicNoteLocaleContext
+): PeriodicNotePathParser | null {
+    const { momentApi, periodicNotesLocale } = localeContext;
+
+    if (settings.calendarIntegrationMode === 'daily-notes') {
+        const dailyNoteSettings = kind === 'day' ? getCoreDailyNoteSettings(app) : null;
+        if (!dailyNoteSettings) {
+            return null;
+        }
+
+        return createDailyNoteDatePathParser(dailyNoteSettings, momentApi, resolveDailyNoteLocale(momentApi));
+    }
+
+    const resolverContext = createCalendarNotePathResolverContext(kind, settings);
+    const parseDate = createCalendarNoteDatePathParser({
+        kind,
+        resolverContext,
+        calendarLocale: periodicNotesLocale,
+        weekLocale: periodicNotesLocale,
+        customCalendarRootFolderSettings: { calendarCustomRootFolder: getActiveVaultProfile(settings).periodicNotesFolder },
+        momentApi,
+        parseLocale: periodicNotesLocale
+    });
+    if (!parseDate) {
+        return null;
+    }
+
+    return filePath => {
+        const parsedDate = parseDate(filePath);
+        if (!parsedDate) {
+            return null;
+        }
+
+        // Weekly dates move to the week start the pattern's week tokens use, so stepping by a week lands on the next
+        // note and the parent month is the month of the first day of the week.
+        const periodStart = resolveCalendarCustomNotePathDate(
+            kind,
+            parsedDate,
+            resolverContext.momentPattern,
+            periodicNotesLocale,
+            periodicNotesLocale
+        );
+        return kind === 'week' ? periodStart : periodStart.startOf(kind);
+    };
 }

@@ -236,6 +236,7 @@ interface FileItemProps {
 
 export interface FileItemStorageHelpers {
     getFileDisplayName: (file: TFile) => string;
+    getFileNameForIconMatch: (file: TFile) => string;
     getDB: () => FileItemContentDb;
     getFileTimestamps: (file: TFile) => { created: number; modified: number };
     hasPreview: (path: string) => boolean;
@@ -485,7 +486,8 @@ export const FileItem = React.memo(function FileItem({
     const settings = useSettingsState();
     useMarkdownWordCountConsumerChanges(app);
     const metadataService = useMetadataService();
-    const { getFileDisplayName, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } = fileItemStorage;
+    const { getFileDisplayName, getFileNameForIconMatch, getDB, getFileTimestamps, hasPreview, regenerateFeatureImageForFile } =
+        fileItemStorage;
     const isCompactMode = appearanceSettings.mode === 'compact';
     const presentationRole = usePresentationFileRole(file);
     const presentationSummary = usePresentationSummary(presentationRole ? (file.parent?.path ?? null) : null);
@@ -628,6 +630,7 @@ export const FileItem = React.memo(function FileItem({
 
     // Get display name from RAM cache (handles frontmatter title)
     const displayName = getFileDisplayName(file);
+    const fileNameForIconMatch = getFileNameForIconMatch(file);
 
     // Highlight matches in display name when search is active
     const highlightedName = useMemo(
@@ -731,13 +734,13 @@ export const FileItem = React.memo(function FileItem({
                 allowCategoryIcons,
                 fallbackMode: allowCategoryIcons ? 'file' : 'none',
                 fileNameNeedles: fileNameIconNeedles,
-                fileNameForMatch: displayName
+                fileNameForMatch: fileNameForIconMatch
             }
         );
     }, [
         allowCategoryIcons,
         app.metadataCache,
-        displayName,
+        fileNameForIconMatch,
         fileNameIconNeedles,
         fileIconId,
         folderIconId,

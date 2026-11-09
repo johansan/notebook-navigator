@@ -2623,6 +2623,11 @@ export const STRINGS_ZH_CN = {
                 desc: '逗号分隔的前置元数据字段列表。使用第一个非空值。回退到文件名。',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: '笔记名称格式',
+                desc: '为具有前置元数据名称的笔记显示的名称。{{name}} 是前置元数据名称，{{filename}} 是文件名，{{date}} 或 {{date:FORMAT}} 是日记的日期。格式包含 {{date}} 时，非日记笔记只显示前置元数据名称。',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: '图标字段',
                 desc: '文件图标的前置元数据字段。留空使用存储在设置中的图标。',

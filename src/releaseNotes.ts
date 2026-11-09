@@ -114,13 +114,15 @@ const RELEASE_NOTES: ReleaseNote[] = [
             "Added a small banner at the top of settings for MarkdownPoint. If you don't want it, disable the new setting Advanced > ==Show MarkdownPoint banner at the top== that moves it below settings. You can even hide it completely with a [CSS snippet](https://github.com/johansan/notebook-navigator/wiki/Custom-CSS#hide-the-markdownpoint-banner-in-settings).",
             'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
             'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
-            'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.'
+            'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.',
+            'New setting Frontmatter > ==Note name format== adds the file name or the daily note date to the frontmatter name, such as `{{date:D MMM}} {{name}}` showing a daily note titled `Ski trip` as `10 Jan Ski trip`.'
         ],
         improved: ['Folder groups in the list pane now follow the folder order in the navigation pane, including manual folder order.'],
         fixed: [
             "Dragging a folder from the navigation pane into Lean Terminal now pastes the folder's absolute path [#1561](https://github.com/johansan/notebook-navigator/issues/1561).",
             'When a folder has same-named folder notes of several types, such as `Example.md` and `Example.base`, the one matching ==Default folder note type== is now used [#1564](https://github.com/johansan/notebook-navigator/issues/1564).',
-            'Deleting a subfolder or nested tag now keeps its parent folder or tag in ==Hide folders==, ==Exclude folders from descendants==, ==Hide tags== and ==Hide notes with tags== [#1576](https://github.com/johansan/notebook-navigator/issues/1576).'
+            'Deleting a subfolder or nested tag now keeps its parent folder or tag in ==Hide folders==, ==Exclude folders from descendants==, ==Hide tags== and ==Hide notes with tags== [#1576](https://github.com/johansan/notebook-navigator/issues/1576).',
+            '`Rename shortcut` on a note now starts from the name the shortcut shows, such as its frontmatter name, instead of the file name.'
         ]
     },
     {

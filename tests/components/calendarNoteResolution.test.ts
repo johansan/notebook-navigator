@@ -18,6 +18,7 @@
 
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import {
+    createCalendarNoteDatePathParser,
     createCalendarNotePathResolverContext,
     parseCalendarNoteDateFromPath,
     resolveCalendarNotePath,
@@ -228,6 +229,20 @@ describe('calendar note path parsing with Moment', () => {
 
     test.each(['YYYY/YYYYMMDD[.md]', 'YYYY/YYYYMMDD.[md]'])('parses a daily note whose pattern %s ends in a literal extension', pattern => {
         expect(parse('day', pattern, 'Periodic/2026/20261005.md')?.format('YYYY-MM-DD')).toBe('2026-10-05');
+    });
+
+    test('a prepared parser validates the pattern once and parses only paths inside the root folder', () => {
+        const options = createPathOptions('day', 'YYYY/YYYYMMDD', 'en');
+        const isPatternValid = vi.spyOn(options.resolverContext.config, 'isPatternValid');
+        const momentApi = vi.fn(realMoment);
+        const parseDate = createCalendarNoteDatePathParser({ ...options, momentApi: momentApi as unknown as MomentApi, parseLocale: 'en' });
+        momentApi.mockClear();
+
+        expect(parseDate?.('Projects/2026/20261005.md')).toBeNull();
+        expect(momentApi).not.toHaveBeenCalled();
+        expect(parseDate?.('Periodic/2026/20261005.md')?.format('YYYY-MM-DD')).toBe('2026-10-05');
+        expect(parseDate?.('Periodic/2026/20261006.md')?.format('YYYY-MM-DD')).toBe('2026-10-06');
+        expect(isPatternValid).toHaveBeenCalledTimes(1);
     });
 
     test('parses a weekly note whose pattern ends in a literal extension', () => {

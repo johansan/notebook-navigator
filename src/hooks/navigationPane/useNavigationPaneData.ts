@@ -160,7 +160,7 @@ export function useNavigationPaneData({
     const { fileNameIconNeedles } = useSettingsDerived();
     const { recentNotes } = useRecentData();
     const metadataService = useMetadataService();
-    const { getFileDisplayName } = useFileCache();
+    const { getFileNameForIconMatch } = useFileCache();
     const { hydratedShortcuts } = useShortcuts();
     const uxPreferences = useUXPreferences();
     const includeDescendantNotes = uxPreferences.includeDescendantNotes;
@@ -231,7 +231,7 @@ export function useNavigationPaneData({
         settings,
         metadataService,
         fileNameIconNeedles,
-        getFileDisplayName,
+        getFileNameForIconMatch,
         folderDecorationModel,
         navRainbowState,
         tagRainbowColors,

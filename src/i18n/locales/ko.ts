@@ -2633,6 +2633,11 @@ export const STRINGS_KO = {
                 desc: '쉼표로 구분된 frontmatter 필드 목록. 첫 번째 비어 있지 않은 값을 사용. 파일 이름으로 대체.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: '노트 이름 형식',
+                desc: 'frontmatter 이름이 있는 노트에 표시되는 이름. {{name}}은 frontmatter 이름, {{filename}}은 파일 이름, {{date}} 또는 {{date:FORMAT}}은 일일 노트의 날짜입니다. 형식에 {{date}}가 있으면 일일 노트가 아닌 노트는 frontmatter 이름만 표시합니다.',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: '아이콘 필드',
                 desc: '파일 아이콘용 frontmatter 필드입니다. 설정에 저장된 아이콘을 사용하려면 비워 두세요.',

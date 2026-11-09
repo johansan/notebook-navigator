@@ -2663,6 +2663,11 @@ export const STRINGS_RU = {
                 desc: 'Список полей frontmatter через запятую. Используется первое непустое значение. Возвращается к имени файла.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Формат названия заметки',
+                desc: 'Название, показываемое для заметок с названием во frontmatter. {{name}} — название из frontmatter, {{filename}} — имя файла, {{date}} или {{date:FORMAT}} — дата ежедневной заметки. Если формат содержит {{date}}, заметки, не являющиеся ежедневными, показывают только название из frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Поле даты создания',
                 desc: 'Имя поля frontmatter для временной метки создания. Оставьте пустым для использования только даты файловой системы.',

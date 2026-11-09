@@ -2655,6 +2655,11 @@ export const STRINGS_EN = {
                 desc: 'Comma-separated list of frontmatter fields. First non-empty value is used. Falls back to file name.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Note name format',
+                desc: 'Name shown for notes that have a frontmatter name. {{name}} is the frontmatter name, {{filename}} the file name, and {{date}} or {{date:FORMAT}} the date of a daily note. With {{date}} in the format, notes that are not daily notes show only the frontmatter name.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Created timestamp field',
                 desc: 'Frontmatter field name for the created timestamp. Leave empty to only use file system date.',

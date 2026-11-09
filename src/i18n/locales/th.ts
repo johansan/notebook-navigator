@@ -2654,6 +2654,11 @@ export const STRINGS_TH = {
                 desc: 'รายการฟิลด์ frontmatter คั่นด้วยเครื่องหมายจุลภาค ใช้ค่าแรกที่ไม่ว่าง กลับไปใช้ชื่อไฟล์',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'รูปแบบชื่อโน้ต',
+                desc: 'ชื่อที่แสดงสำหรับโน้ตที่มีชื่อใน frontmatter {{name}} คือชื่อจาก frontmatter, {{filename}} คือชื่อไฟล์ และ {{date}} หรือ {{date:FORMAT}} คือวันที่ของโน้ตรายวัน เมื่อรูปแบบมี {{date}} โน้ตที่ไม่ใช่โน้ตรายวันจะแสดงเฉพาะชื่อจาก frontmatter',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'ฟิลด์การประทับเวลาที่สร้าง',
                 desc: 'ชื่อฟิลด์ frontmatter สำหรับการประทับเวลาที่สร้าง เว้นว่างเพื่อใช้เฉพาะวันที่ระบบไฟล์',

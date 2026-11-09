@@ -23,6 +23,7 @@ import { promptForTemplateValues } from '../../src/modals/TemplatePromptModal';
 import {
     createDailyNote,
     getDailyNoteFile,
+    createDailyNoteDatePathParser,
     getDailyNoteFilename,
     getDailyNotePath,
     parseDailyNoteDateFromPath,
@@ -276,6 +277,16 @@ describe('parseDailyNoteDateFromPath', () => {
     it('returns null for paths outside the daily notes folder or with another extension', () => {
         expect(parseDailyNoteDateFromPath('Archive/2026/10/2026-10-05.md', settings, momentApi, 'en')).toBeNull();
         expect(parseDailyNoteDateFromPath('Journal/2026/10/2026-10-05.canvas', settings, momentApi, 'en')).toBeNull();
+    });
+
+    it('parses only paths inside the daily notes folder with a prepared parser', () => {
+        const countingMomentApi = vi.fn(momentApi);
+        const parseDate = createDailyNoteDatePathParser(settings, countingMomentApi as unknown as MomentApi, 'en');
+        countingMomentApi.mockClear();
+
+        expect(parseDate('Archive/2026/10/2026-10-05.md')).toBeNull();
+        expect(countingMomentApi).not.toHaveBeenCalled();
+        expect(parseDate('Journal/2026/10/2026-10-05.md')?.format('YYYY-MM-DD')).toBe('2026-10-05');
     });
 
     it('returns null when the format builds a different path for the parsed date', () => {

@@ -2639,6 +2639,11 @@ export const STRINGS_JA = {
                 desc: 'フロントマターフィールドのカンマ区切りリスト。最初の空でない値を使用。ファイル名にフォールバック。',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'ノート名の形式',
+                desc: 'フロントマターの名前を持つノートに表示される名前。{{name}} はフロントマターの名前、{{filename}} はファイル名、{{date}} または {{date:FORMAT}} はデイリーノートの日付です。形式に {{date}} が含まれる場合、デイリーノート以外のノートにはフロントマターの名前だけが表示されます。',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: 'アイコンフィールド',
                 desc: 'ファイルアイコン用のフロントマターフィールド。空のままにすると設定に保存されたアイコンを使用。',

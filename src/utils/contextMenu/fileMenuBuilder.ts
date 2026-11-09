@@ -20,7 +20,9 @@ import { Menu, MenuItem, TFile, TFolder, App, Platform, FileSystemAdapter } from
 import { FileMenuBuilderParams } from './menuTypes';
 import { strings } from '../../i18n';
 import { getInternalPlugin } from '../../utils/typeGuards';
-import { getFileDisplayName } from '../../utils/fileNameUtils';
+import { getFileNameWithoutExtension } from '../../utils/fileNameUtils';
+import { extractMetadata } from '../../utils/metadataExtractor';
+import { getNoteDisplayName } from '../../utils/noteNameFormat';
 import { FILE_VISIBILITY, getExtensionSuffix, shouldDisplayFile, shouldShowExtensionSuffix } from '../../utils/fileTypeUtils';
 import { NavigatorContext } from '../../types';
 import { ShortcutType } from '../../types/shortcuts';
@@ -136,11 +138,12 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
         services;
     const { selectionState } = state;
     const { selectionDispatch } = dispatchers;
+    const displayName = getNoteDisplayName(app, settings, file, extractMetadata(app, file, settings).fn);
 
-    // Show file name on mobile
+    // Show the name of the row on mobile
     if (isMobile) {
         menu.addItem((item: MenuItem) => {
-            item.setTitle(file.basename).setIsLabel(true);
+            item.setTitle(displayName).setIsLabel(true);
         });
     }
 
@@ -323,9 +326,8 @@ export function buildFileMenu(params: FileMenuBuilderParams): void {
 
             if (existingShortcutKey) {
                 const existingShortcut = shortcutMap.get(existingShortcutKey);
-                const defaultLabel = shouldShowExtensionSuffix(file)
-                    ? `${getFileDisplayName(file)}${getExtensionSuffix(file)}`
-                    : getFileDisplayName(file);
+                // Matches the default label of the shortcut row, because renaming to the default label clears the alias.
+                const defaultLabel = shouldShowExtensionSuffix(file) ? `${displayName}${getExtensionSuffix(file)}` : displayName;
 
                 addShortcutRenameMenuItem({
                     app,
@@ -710,14 +712,14 @@ function addFileStyleActionsForFileContext(params: FileStyleActionsParams): void
             isExternalFile,
             allowCategoryIcons: true,
             fallbackMode: 'file',
-            fileNameForMatch: getFileDisplayName(file)
+            fileNameForMatch: getFileNameWithoutExtension(file)
         }) ?? 'file';
     const removableStyleAvailability = resolveFileStyleRemovalAvailability(targetFiles, metadataService);
     const { hasRemovableIcon, hasRemovableColor, hasRemovableBackground } = removableStyleAvailability;
     const openAppearanceModal = async (initialTab: 'icon' | 'color' | 'background'): Promise<void> => {
         const { AppearanceModal } = await import('../../modals/AppearanceModal');
         const modal = new AppearanceModal(app, {
-            title: file.basename,
+            title: getNoteDisplayName(app, settings, file, extractMetadata(app, file, settings).fn),
             metadataService,
             initialTab,
             colorIconPlaceholder: settings.showFileIcons ? colorIconPlaceholder : null,

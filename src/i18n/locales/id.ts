@@ -2664,6 +2664,11 @@ export const STRINGS_ID = {
                 desc: 'Daftar field frontmatter dipisahkan koma. Nilai tidak kosong pertama digunakan. Jika kosong, nama file digunakan.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Format nama catatan',
+                desc: 'Nama yang ditampilkan untuk catatan yang memiliki nama frontmatter. {{name}} adalah nama frontmatter, {{filename}} nama file, dan {{date}} atau {{date:FORMAT}} tanggal catatan harian. Jika format berisi {{date}}, catatan yang bukan catatan harian hanya menampilkan nama frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Field timestamp dibuat',
                 desc: 'Nama field frontmatter untuk timestamp dibuat. Biarkan kosong untuk hanya menggunakan tanggal sistem file.',

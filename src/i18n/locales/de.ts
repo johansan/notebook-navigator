@@ -2647,6 +2647,11 @@ export const STRINGS_DE = {
                 desc: 'Kommagetrennte Liste von Frontmatter-Feldern. Erster nicht-leerer Wert wird verwendet. Fällt auf Dateinamen zurück.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Format des Notiznamens',
+                desc: 'Name, der für Notizen mit einem Frontmatter-Namen angezeigt wird. {{name}} ist der Frontmatter-Name, {{filename}} der Dateiname und {{date}} oder {{date:FORMAT}} das Datum einer täglichen Notiz. Enthält das Format {{date}}, zeigen Notizen, die keine täglichen Notizen sind, nur den Frontmatter-Namen.',
+                placeholder: '{{name}}'
+            },
             frontmatterIconField: {
                 name: 'Symbolfeld',
                 desc: 'Frontmatter-Feld für Dateisymbole. Leer lassen, um Symbole aus den Einstellungen zu verwenden.',

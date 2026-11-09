@@ -224,6 +224,32 @@ describe('fileFinder getFilesForFolder', () => {
         expect(getFileCache).not.toHaveBeenCalled();
     });
 
+    it('sorts by title using the formatted note name', () => {
+        const apple = createTestTFile('Notes/B.md');
+        const zebra = createTestTFile('Notes/A.md');
+        const folder = createFolder('Notes', [apple, zebra]);
+        const app = createAppWithFiles([apple, zebra]);
+        const titleByPath = new Map<string, string>([
+            [apple.path, 'Apple'],
+            [zebra.path, 'Zebra']
+        ]);
+        app.metadataCache.getFileCache = (file: TFile) => ({ frontmatter: { title: titleByPath.get(file.path) } });
+        const settings = {
+            ...createSettings(),
+            useFrontmatterMetadata: true,
+            frontmatterNameField: 'title',
+            defaultFolderSort: 'title-asc' as const
+        };
+        const visibility: VisibilityPreferences = { includeDescendantNotes: false, showHiddenItems: false };
+
+        expect(getFilesForFolder(folder, settings, visibility, app).map(file => file.path)).toEqual([apple.path, zebra.path]);
+        expect(
+            getFilesForFolder(folder, { ...settings, frontmatterNameFormat: '{{filename}} {{name}}' }, visibility, app).map(
+                file => file.path
+            )
+        ).toEqual([zebra.path, apple.path]);
+    });
+
     it('sorts negative number property values numerically', () => {
         const later = createTestTFile('Events/event-a.md');
         const earlier = createTestTFile('Events/event-b.md');

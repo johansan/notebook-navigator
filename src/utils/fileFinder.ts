@@ -46,7 +46,7 @@ import { getDBInstanceOrNull } from '../storage/fileOperations';
 import { extractMetadata, type ProcessedMetadata } from '../utils/metadataExtractor';
 import { extractCurrentFrontmatterMetadataFromFileData } from './frontmatterMetadataCache';
 import { METADATA_SENTINEL } from '../storage/IndexedDBStorage';
-import { getFileDisplayName as getDisplayName } from './fileNameUtils';
+import { getNoteDisplayName } from './noteNameFormat';
 import { getFolderNote, getFolderNoteDetectionSettings } from './folderNoteLookup';
 import { createHiddenTagVisibility, normalizeTagPathValue } from './tagPrefixMatcher';
 import {
@@ -303,9 +303,16 @@ function sortNavigationFiles(files: TFile[], settings: NotebookNavigatorSettings
             return metadata.fm;
         };
 
+        // Sorting compares each file many times and a formatted name can parse the path as a daily note, so each
+        // file's name is resolved once per sort.
+        const titleCache = new Map<string, string>();
         const getTitle = (file: TFile) => {
-            const metadata = getCached(file);
-            return getDisplayName(file, { fn: metadata.fn }, settings);
+            let title = titleCache.get(file.path);
+            if (title === undefined) {
+                title = getNoteDisplayName(app, settings, file, getCached(file).fn);
+                titleCache.set(file.path, title);
+            }
+            return title;
         };
 
         sortFiles(files, sortOption, getCreatedTime, getModifiedTime, getTitle, getPropertySortValue, sortSpec.propertySortSecondary);

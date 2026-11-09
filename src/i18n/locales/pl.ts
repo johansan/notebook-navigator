@@ -2671,6 +2671,11 @@ export const STRINGS_PL = {
                 desc: 'Lista pól metadanych rozdzielonych przecinkami. Używana jest pierwsza poprawna wartość. W przypadku braku wartości używana jest nazwa pliku.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Format nazwy notatki',
+                desc: 'Nazwa wyświetlana dla notatek, które mają nazwę w metadanych. {{name}} to nazwa z metadanych, {{filename}} nazwa pliku, a {{date}} lub {{date:FORMAT}} data notatki dziennika. Gdy format zawiera {{date}}, notatki, które nie są notatkami dziennika, pokazują tylko nazwę z metadanych.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Pole znacznika czasu utworzenia',
                 desc: 'Nazwa pola metadanych dla znacznika czasu utworzenia. Pozostaw puste, aby używać tylko daty systemu plików.',

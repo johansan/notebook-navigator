@@ -891,6 +891,8 @@ export interface NotebookNavigatorSettings {
     frontmatterColorField: string;
     frontmatterBackgroundField: string;
     frontmatterNameField: string;
+    /** Name shown for notes that have a frontmatter name; see `getNoteDisplayName` for the tokens. */
+    frontmatterNameFormat: string;
     frontmatterCreatedField: string;
     frontmatterModifiedField: string;
     frontmatterDateFormat: string;

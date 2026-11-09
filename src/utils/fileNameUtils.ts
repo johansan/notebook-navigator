@@ -17,7 +17,6 @@
  */
 
 import { TFile } from 'obsidian';
-import type { NotebookNavigatorSettings } from '../settings/types';
 
 export const EXCALIDRAW_BASENAME_SUFFIX = '.excalidraw';
 const EXCALIDRAW_FRONTMATTER_KEY = 'excalidraw-plugin';
@@ -185,23 +184,13 @@ export function containsForbiddenNameCharactersWindows(value: string): boolean {
 }
 
 /**
- * Get the display name for a file
- * @param file - The file to get the name for
- * @param cachedData - Optional cached file data containing frontmatter name
- * @param settings - Plugin settings to check if frontmatter is enabled
- * @returns The display name for the file
+ * Returns the file name without its extension, treating `.excalidraw.md` as one extension. Notes with a frontmatter name
+ * show `getNoteDisplayName` instead.
  */
-export function getFileDisplayName(file: TFile, cachedData?: { fn?: string }, settings?: NotebookNavigatorSettings): string {
-    // If we have cached frontmatter name and feature is enabled, use it
-    if (cachedData?.fn && settings?.useFrontmatterMetadata) {
-        return cachedData.fn;
-    }
-
-    // Strip .excalidraw suffix from Excalidraw files for cleaner display
+export function getFileNameWithoutExtension(file: TFile): string {
     if (isExcalidrawFile(file)) {
         return stripExcalidrawSuffix(file.basename);
     }
 
-    // Fall back to file basename
     return file.basename;
 }

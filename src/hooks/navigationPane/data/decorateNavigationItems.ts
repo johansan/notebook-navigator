@@ -260,7 +260,7 @@ export interface DecorateNavigationItemsParams {
     settings: NotebookNavigatorSettings;
     navRainbow: NavRainbowSettings;
     fileNameIconNeedles: readonly FileNameIconNeedle[];
-    getFileDisplayName: (file: TFile) => string;
+    getFileNameForIconMatch: (file: TFile) => string;
     metadataService: MetadataService;
     parsedExcludedFolders: string[];
     folderDecorationModel: NavigationItemDecorationContext['folderDecorationModel'];
@@ -276,7 +276,7 @@ export function createNavigationItemDecorator(
         settings,
         navRainbow,
         fileNameIconNeedles,
-        getFileDisplayName,
+        getFileNameForIconMatch,
         metadataService,
         parsedExcludedFolders,
         folderDecorationModel,
@@ -289,7 +289,7 @@ export function createNavigationItemDecorator(
         settings,
         navRainbow,
         fileNameIconNeedles,
-        getFileDisplayName,
+        getFileNameForIconMatch,
         metadataService,
         parsedExcludedFolders,
         folderDecorationModel,

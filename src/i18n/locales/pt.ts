@@ -2669,6 +2669,11 @@ export const STRINGS_PT = {
                 desc: 'Lista de campos frontmatter separados por vírgula. O primeiro valor não vazio é usado. Usa o nome do ficheiro como alternativa.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Formato do nome da nota',
+                desc: 'Nome apresentado para notas que têm um nome no frontmatter. {{name}} é o nome do frontmatter, {{filename}} o nome do ficheiro e {{date}} ou {{date:FORMAT}} a data de uma nota diária. Se o formato contiver {{date}}, as notas que não são notas diárias apresentam apenas o nome do frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Campo de timestamp de criação',
                 desc: 'Nome do campo frontmatter para o timestamp de criação. Deixe vazio para usar apenas a data do sistema de ficheiros.',

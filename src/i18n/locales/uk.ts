@@ -2663,6 +2663,11 @@ export const STRINGS_UK = {
                 desc: 'Список полів frontmatter через кому. Використовується перше непорожнє значення. Якщо їх немає, використовується назва файлу.',
                 placeholder: 'title, name'
             },
+            frontmatterNameFormat: {
+                name: 'Формат назви нотатки',
+                desc: 'Назва, що показується для нотаток із назвою у frontmatter. {{name}} — назва з frontmatter, {{filename}} — назва файлу, {{date}} або {{date:FORMAT}} — дата щоденної нотатки. Якщо формат містить {{date}}, нотатки, які не є щоденними, показують лише назву з frontmatter.',
+                placeholder: '{{name}}'
+            },
             frontmatterCreatedField: {
                 name: 'Поле часової позначки створення',
                 desc: 'Назва поля frontmatter для часової позначки створення. Залиште порожнім для використання лише дати файлової системи.',

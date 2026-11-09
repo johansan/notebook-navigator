@@ -20,7 +20,7 @@ import {
     containsForbiddenNameCharactersAllPlatforms,
     containsForbiddenNameCharactersWindows,
     containsInvalidLinkCharacters,
-    getFileDisplayName,
+    getFileNameWithoutExtension,
     stripForbiddenNameCharactersAllPlatforms,
     stripForbiddenNameCharactersWindows,
     stripInvalidLinkCharacters,
@@ -28,15 +28,15 @@ import {
 } from '../../src/utils/fileNameUtils';
 import { createTestTFile } from './createTestTFile';
 
-describe('getFileDisplayName', () => {
+describe('getFileNameWithoutExtension', () => {
     it('strips composite Excalidraw suffix from markdown files', () => {
         const file = createTestTFile('Drawing 2025-10-24T10-03-10.excalidraw.md');
-        expect(getFileDisplayName(file)).toBe('Drawing 2025-10-24T10-03-10');
+        expect(getFileNameWithoutExtension(file)).toBe('Drawing 2025-10-24T10-03-10');
     });
 
     it('returns basename for standard markdown files', () => {
         const file = createTestTFile('Example Note.md');
-        expect(getFileDisplayName(file)).toBe('Example Note');
+        expect(getFileNameWithoutExtension(file)).toBe('Example Note');
     });
 });
 
