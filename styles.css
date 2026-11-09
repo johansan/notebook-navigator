@@ -3070,6 +3070,9 @@ button.nn-navigation-calendar-year-label {
     aspect-ratio: 16 / 9;
 }
 
+/* No overflow clip, because the active outline and the feature-image overlay extend 0.5px past the cell; clipping them
+   cuts each side by a different amount as the cell's subpixel position changes, so the outline's thickness changes on resize.
+   Labels without feature images clip and truncate themselves. */
 button.nn-navigation-calendar-year-month {
     position: relative;
     background-color: transparent;
@@ -3081,8 +3084,6 @@ button.nn-navigation-calendar-year-month {
     padding: 6px;
     text-align: center;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     font-variant-numeric: tabular-nums;
     display: flex;
     align-items: center;
