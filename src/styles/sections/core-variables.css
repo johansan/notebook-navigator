@@ -314,7 +314,7 @@ body {
     --nn-theme-calendar-day-today-color: var(--nn-theme-calendar-day-in-month-color);
     --nn-theme-calendar-day-today-bg: var(--text-selection);
     --nn-theme-calendar-day-active-border-color: var(--interactive-accent);
-    --nn-theme-calendar-day-active-border-width: 3px;
+    --nn-theme-calendar-day-active-border-width: 2px;
 
     /* Indicators and feature images */
     --nn-theme-calendar-note-indicator-color: var(--nn-theme-foreground-faded);

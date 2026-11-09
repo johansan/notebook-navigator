@@ -368,7 +368,7 @@ These variables are shared by the navigation and list panes.
 | `--nn-theme-calendar-day-today-color` | `var(--nn-theme-calendar-day-in-month-color)` | Today text color |
 | `--nn-theme-calendar-day-today-bg` | `var(--text-selection)` | Today highlight background |
 | `--nn-theme-calendar-day-active-border-color` | `var(--interactive-accent)` | Selection outline color |
-| `--nn-theme-calendar-day-active-border-width` | `3px` | Selection outline thickness |
+| `--nn-theme-calendar-day-active-border-width` | `2px` | Selection outline thickness |
 
 #### Indicators and feature images
 

@@ -1245,7 +1245,7 @@ settings:
         title: Selection outline thickness
         description: Border width for active calendar outlines.
         type: variable-number-slider
-        default: 3
+        default: 2
         format: px
         min: 1
         max: 4
