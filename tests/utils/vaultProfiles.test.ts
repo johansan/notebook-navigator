@@ -446,6 +446,32 @@ describe('removeHiddenFolderExactMatches', () => {
         expect(didRemove).toBe(false);
         expect(settings.vaultProfiles[0]?.hiddenFolders).toEqual(['/Projects/*/Archive']);
     });
+
+    it('keeps ancestor folder patterns when a descendant folder is deleted', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenFolders: ['/Archive', '/Projects/Old'],
+                descendantExcludedFolders: ['/Archive']
+            },
+            {
+                ...baseProfile,
+                id: 'profile-b',
+                hiddenFolders: ['/Archive/2024'],
+                descendantExcludedFolders: ['/Projects']
+            }
+        ];
+
+        expect(removeHiddenFolderExactMatches(settings, 'Archive/2024/Notes')).toBe(false);
+        expect(removeHiddenFolderExactMatches(settings, 'Projects/Old/Drafts')).toBe(false);
+        expect(settings.vaultProfiles.find(profile => profile.id === 'default')?.hiddenFolders).toEqual(['/Archive', '/Projects/Old']);
+        expect(settings.vaultProfiles.find(profile => profile.id === 'default')?.descendantExcludedFolders).toEqual(['/Archive']);
+        expect(settings.vaultProfiles.find(profile => profile.id === 'profile-b')?.hiddenFolders).toEqual(['/Archive/2024']);
+        expect(settings.vaultProfiles.find(profile => profile.id === 'profile-b')?.descendantExcludedFolders).toEqual(['/Projects']);
+    });
 });
 
 describe('vault profile name validation', () => {
@@ -698,6 +724,25 @@ describe('hidden tag pattern updates', () => {
 
         expect(didRemove).toBe(true);
         expect(settings.vaultProfiles[0]?.hiddenFileTags).toEqual(['draft*']);
+    });
+
+    it('keeps ancestor tag patterns when a descendant tag is deleted', () => {
+        const settings = createSettings();
+        const [baseProfile] = settings.vaultProfiles;
+        settings.vaultProfiles = [
+            {
+                ...baseProfile,
+                id: 'default',
+                hiddenTags: ['archive', 'projects/old'],
+                hiddenFileTags: ['archive']
+            }
+        ];
+
+        expect(removeHiddenTagPrefixMatches(settings, 'archive/2024')).toBe(false);
+        expect(removeHiddenTagPrefixMatches(settings, 'projects/old/drafts')).toBe(false);
+        expect(removeHiddenFileTagPrefixMatches(settings, 'archive/2024')).toBe(false);
+        expect(settings.vaultProfiles[0]?.hiddenTags).toEqual(['archive', 'projects/old']);
+        expect(settings.vaultProfiles[0]?.hiddenFileTags).toEqual(['archive']);
     });
 });
 

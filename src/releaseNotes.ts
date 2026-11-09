@@ -119,7 +119,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         improved: ['Folder groups in the list pane now follow the folder order in the navigation pane, including manual folder order.'],
         fixed: [
             "Dragging a folder from the navigation pane into Lean Terminal now pastes the folder's absolute path [#1561](https://github.com/johansan/notebook-navigator/issues/1561).",
-            'When a folder has same-named folder notes of several types, such as `Example.md` and `Example.base`, the one matching ==Default folder note type== is now used [#1564](https://github.com/johansan/notebook-navigator/issues/1564).'
+            'When a folder has same-named folder notes of several types, such as `Example.md` and `Example.base`, the one matching ==Default folder note type== is now used [#1564](https://github.com/johansan/notebook-navigator/issues/1564).',
+            'Deleting a subfolder or nested tag now keeps its parent folder or tag in ==Hide folders==, ==Exclude folders from descendants==, ==Hide tags== and ==Hide notes with tags== [#1576](https://github.com/johansan/notebook-navigator/issues/1576).'
         ]
     },
     {

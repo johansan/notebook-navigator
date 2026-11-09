@@ -1124,7 +1124,7 @@ export function updateHiddenFileTagPrefixMatches(settings: NotebookNavigatorSett
     return didUpdate;
 }
 
-// Removes hidden tag rules whose literal prefix matches the deleted path, returning true when any rule is removed.
+// Removes hidden tag rules for the deleted tag and its descendants, returning true when any rule is removed.
 export function removeHiddenTagPrefixMatches(settings: NotebookNavigatorSettings, targetPath: string): boolean {
     ensureVaultProfiles(settings);
     const normalizedTarget = normalizeTagPath(targetPath);
@@ -1153,10 +1153,9 @@ export function removeHiddenTagPrefixMatches(settings: NotebookNavigatorSettings
                 return true;
             }
 
-            if (
-                parsedPattern.literalPrefixLength < targetSegments.length &&
-                parsedPattern.literalPrefixLength < parsedPattern.segments.length
-            ) {
+            // A rule whose literal prefix ends above the deleted tag still applies: it hides an ancestor
+            // ("archive" when deleting "archive/2024") or matches other tags through its wildcard tail.
+            if (parsedPattern.literalPrefixLength < targetSegments.length) {
                 return true;
             }
 
@@ -1173,7 +1172,7 @@ export function removeHiddenTagPrefixMatches(settings: NotebookNavigatorSettings
     return didUpdate;
 }
 
-// Removes hidden file tag rules whose literal prefix matches the deleted path, returning true when any rule is removed.
+// Removes hidden file tag rules for the deleted tag and its descendants, returning true when any rule is removed.
 export function removeHiddenFileTagPrefixMatches(settings: NotebookNavigatorSettings, targetPath: string): boolean {
     ensureVaultProfiles(settings);
     const normalizedTarget = normalizeTagPath(targetPath);
@@ -1202,10 +1201,9 @@ export function removeHiddenFileTagPrefixMatches(settings: NotebookNavigatorSett
                 return true;
             }
 
-            if (
-                parsedPattern.literalPrefixLength < targetSegments.length &&
-                parsedPattern.literalPrefixLength < parsedPattern.segments.length
-            ) {
+            // A rule whose literal prefix ends above the deleted tag still applies: it hides an ancestor
+            // ("archive" when deleting "archive/2024") or matches other tags through its wildcard tail.
+            if (parsedPattern.literalPrefixLength < targetSegments.length) {
                 return true;
             }
 
@@ -1283,6 +1281,8 @@ export function updateHiddenFolderExactMatches(settings: NotebookNavigatorSettin
     return didUpdate;
 }
 
+// Removes path rules for the deleted folder and its descendants from hiddenFolders and descendantExcludedFolders
+// in every vault profile, returning true when any rule is removed.
 export function removeHiddenFolderExactMatches(settings: NotebookNavigatorSettings, targetPath: string): boolean {
     ensureVaultProfiles(settings);
     const normalizedTarget = normalizeHiddenFolderPath(targetPath);
@@ -1318,7 +1318,9 @@ export function removeHiddenFolderExactMatches(settings: NotebookNavigatorSettin
                     return true;
                 }
 
-                if (parsed.literalPrefixLength < targetSegments.length && parsed.literalPrefixLength < parsed.segments.length) {
+                // A rule whose literal prefix ends above the deleted folder still applies: it hides an ancestor
+                // ("/Archive" when deleting "Archive/2024") or matches other folders through its wildcard tail.
+                if (parsed.literalPrefixLength < targetSegments.length) {
                     return true;
                 }
 
