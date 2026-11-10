@@ -1089,11 +1089,12 @@ export const STRINGS_VI = {
             },
             appearanceAndBehavior: {
                 label: 'Giao diện và hành vi',
-                description: 'Hành vi, điều hướng bằng bàn phím, nút chuột, giao diện và định dạng.',
+                description: 'Hành vi, điều hướng bằng bàn phím, nút chuột, hai ngăn, giao diện và định dạng.',
                 groups: {
                     startup: 'Khởi động',
                     keyboardNavigation: 'Điều hướng bằng bàn phím',
                     mouseButtons: 'Nút chuột',
+                    dualPane: 'Hai ngăn',
                     desktopAppearance: 'Giao diện máy tính',
                     mobileAppearance: 'Giao diện di động',
                     appearance: 'Giao diện',

@@ -1094,11 +1094,12 @@ export const STRINGS_DE = {
             },
             appearanceAndBehavior: {
                 label: 'Darstellung & Verhalten',
-                description: 'Verhalten, Tastaturnavigation, Maustasten, Darstellung und Formatierung.',
+                description: 'Verhalten, Tastaturnavigation, Maustasten, Doppelbereich, Darstellung und Formatierung.',
                 groups: {
                     startup: 'Start',
                     keyboardNavigation: 'Tastaturnavigation',
                     mouseButtons: 'Maustasten',
+                    dualPane: 'Doppelbereich',
                     desktopAppearance: 'Desktop-Darstellung',
                     mobileAppearance: 'Mobile Darstellung',
                     appearance: 'Darstellung',

@@ -1093,11 +1093,12 @@ export const STRINGS_PT_BR = {
             },
             appearanceAndBehavior: {
                 label: 'Aparência e comportamento',
-                description: 'Comportamento, navegação por teclado, botões do mouse, aparência e formatação.',
+                description: 'Comportamento, navegação por teclado, botões do mouse, painel duplo, aparência e formatação.',
                 groups: {
                     startup: 'Inicialização',
                     keyboardNavigation: 'Navegação por teclado',
                     mouseButtons: 'Botões do mouse',
+                    dualPane: 'Painel duplo',
                     desktopAppearance: 'Aparência do desktop',
                     mobileAppearance: 'Aparência móvel',
                     appearance: 'Aparência',

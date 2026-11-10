@@ -1088,11 +1088,12 @@ export const STRINGS_TR = {
             },
             appearanceAndBehavior: {
                 label: 'Görünüm ve davranış',
-                description: 'Davranış, klavye ile gezinme, fare düğmeleri, görünüm ve biçimlendirme.',
+                description: 'Davranış, klavye ile gezinme, fare düğmeleri, çift bölme, görünüm ve biçimlendirme.',
                 groups: {
                     startup: 'Başlangıç',
                     keyboardNavigation: 'Klavye ile gezinme',
                     mouseButtons: 'Fare düğmeleri',
+                    dualPane: 'Çift bölme',
                     desktopAppearance: 'Masaüstü görünümü',
                     mobileAppearance: 'Mobil görünüm',
                     appearance: 'Görünüm',

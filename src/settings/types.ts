@@ -722,12 +722,14 @@ export interface NotebookNavigatorSettings {
     // General tab - Homepage
     homepage: HomepageSetting;
 
-    // General tab - Desktop appearance
+    // General tab - Dual pane
     dualPane: boolean;
     dualPaneOrientation: DualPaneOrientation;
     narrowSidebarLayout: NarrowSidebarLayout;
     narrowSidebarTriggerMode: NarrowSidebarTriggerMode;
     narrowSidebarCustomWidth: number;
+
+    // General tab - Desktop appearance
     showTooltips: boolean;
     showTooltipPath: boolean;
     showTooltipTags: boolean;

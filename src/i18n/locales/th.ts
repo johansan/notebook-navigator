@@ -1083,11 +1083,12 @@ export const STRINGS_TH = {
             },
             appearanceAndBehavior: {
                 label: 'ลักษณะและพฤติกรรม',
-                description: 'พฤติกรรม การนำทางด้วยแป้นพิมพ์ ปุ่มเมาส์ ลักษณะ และการจัดรูปแบบ',
+                description: 'พฤติกรรม การนำทางด้วยแป้นพิมพ์ ปุ่มเมาส์ แผงคู่ ลักษณะ และการจัดรูปแบบ',
                 groups: {
                     startup: 'การเริ่มต้น',
                     keyboardNavigation: 'การนำทางด้วยแป้นพิมพ์',
                     mouseButtons: 'ปุ่มเมาส์',
+                    dualPane: 'แผงคู่',
                     desktopAppearance: 'ลักษณะเดสก์ท็อป',
                     mobileAppearance: 'ลักษณะบนมือถือ',
                     appearance: 'ลักษณะ',

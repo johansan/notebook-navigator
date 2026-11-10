@@ -1081,11 +1081,12 @@ export const STRINGS_ZH_CN = {
             },
             appearanceAndBehavior: {
                 label: '外观和行为',
-                description: '行为、键盘导航、鼠标按钮、外观和格式。',
+                description: '行为、键盘导航、鼠标按钮、双窗格、外观和格式。',
                 groups: {
                     startup: '启动',
                     keyboardNavigation: '键盘导航',
                     mouseButtons: '鼠标按钮',
+                    dualPane: '双窗格',
                     desktopAppearance: '桌面外观',
                     mobileAppearance: '移动端外观',
                     appearance: '外观',

@@ -1094,11 +1094,12 @@ export const STRINGS_NL = {
             },
             appearanceAndBehavior: {
                 label: 'Uiterlijk & gedrag',
-                description: 'Gedrag, toetsenbordnavigatie, muisknoppen, uiterlijk en opmaak.',
+                description: 'Gedrag, toetsenbordnavigatie, muisknoppen, dubbel paneel, uiterlijk en opmaak.',
                 groups: {
                     startup: 'Opstarten',
                     keyboardNavigation: 'Toetsenbordnavigatie',
                     mouseButtons: 'Muisknoppen',
+                    dualPane: 'Dubbel paneel',
                     desktopAppearance: 'Desktop-uiterlijk',
                     mobileAppearance: 'Mobiel uiterlijk',
                     appearance: 'Uiterlijk',

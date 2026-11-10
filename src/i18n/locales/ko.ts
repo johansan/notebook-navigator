@@ -1087,11 +1087,12 @@ export const STRINGS_KO = {
             },
             appearanceAndBehavior: {
                 label: '모양 및 동작',
-                description: '동작, 키보드 탐색, 마우스 버튼, 모양 및 서식.',
+                description: '동작, 키보드 탐색, 마우스 버튼, 이중 창, 모양 및 서식.',
                 groups: {
                     startup: '시작',
                     keyboardNavigation: '키보드 탐색',
                     mouseButtons: '마우스 버튼',
+                    dualPane: '이중 창',
                     desktopAppearance: '데스크톱 모양',
                     mobileAppearance: '모바일 모양',
                     appearance: '모양',

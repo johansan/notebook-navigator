@@ -1088,11 +1088,12 @@ export const STRINGS_RU = {
             },
             appearanceAndBehavior: {
                 label: 'Оформление и поведение',
-                description: 'Поведение, навигация с клавиатуры, кнопки мыши, оформление и форматирование.',
+                description: 'Поведение, навигация с клавиатуры, кнопки мыши, двухпанельный режим, оформление и форматирование.',
                 groups: {
                     startup: 'Запуск',
                     keyboardNavigation: 'Навигация с клавиатуры',
                     mouseButtons: 'Кнопки мыши',
+                    dualPane: 'Двухпанельный режим',
                     desktopAppearance: 'Оформление на компьютере',
                     mobileAppearance: 'Оформление на мобильных устройствах',
                     appearance: 'Оформление',

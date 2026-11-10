@@ -1094,11 +1094,12 @@ export const STRINGS_PL = {
             },
             appearanceAndBehavior: {
                 label: 'Wygląd i zachowanie',
-                description: 'Zachowanie, nawigacja klawiaturą, przyciski myszy, wygląd i formatowanie.',
+                description: 'Zachowanie, nawigacja klawiaturą, przyciski myszy, podwójny panel, wygląd i formatowanie.',
                 groups: {
                     startup: 'Uruchamianie',
                     keyboardNavigation: 'Nawigacja klawiaturą',
                     mouseButtons: 'Przyciski myszy',
+                    dualPane: 'Podwójny panel',
                     desktopAppearance: 'Wygląd na komputerze',
                     mobileAppearance: 'Wygląd mobilny',
                     appearance: 'Wygląd',

@@ -1090,11 +1090,12 @@ export const STRINGS_FA = {
             },
             appearanceAndBehavior: {
                 label: 'ظاهر و رفتار',
-                description: 'رفتار، پیمایش با صفحه‌کلید، دکمه‌های ماوس، ظاهر و قالب‌بندی.',
+                description: 'رفتار، پیمایش با صفحه‌کلید، دکمه‌های ماوس، پنل دوگانه، ظاهر و قالب‌بندی.',
                 groups: {
                     startup: 'راه‌اندازی',
                     keyboardNavigation: 'پیمایش با صفحه‌کلید',
                     mouseButtons: 'دکمه‌های ماوس',
+                    dualPane: 'پنل دوگانه',
                     desktopAppearance: 'ظاهر دسکتاپ',
                     mobileAppearance: 'ظاهر موبایل',
                     appearance: 'ظاهر',

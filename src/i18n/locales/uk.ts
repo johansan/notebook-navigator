@@ -1088,11 +1088,12 @@ export const STRINGS_UK = {
             },
             appearanceAndBehavior: {
                 label: 'Вигляд і поведінка',
-                description: 'Поведінка, навігація з клавіатури, кнопки миші, вигляд і форматування.',
+                description: 'Поведінка, навігація з клавіатури, кнопки миші, подвійна панель, вигляд і форматування.',
                 groups: {
                     startup: 'Запуск',
                     keyboardNavigation: 'Навігація з клавіатури',
                     mouseButtons: 'Кнопки миші',
+                    dualPane: 'Подвійна панель',
                     desktopAppearance: "Вигляд на комп'ютері",
                     mobileAppearance: 'Мобільний вигляд',
                     appearance: 'Вигляд',

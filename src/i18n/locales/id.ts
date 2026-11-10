@@ -1090,11 +1090,12 @@ export const STRINGS_ID = {
             },
             appearanceAndBehavior: {
                 label: 'Tampilan & perilaku',
-                description: 'Perilaku, navigasi keyboard, tombol mouse, tampilan, dan pemformatan.',
+                description: 'Perilaku, navigasi keyboard, tombol mouse, panel ganda, tampilan, dan pemformatan.',
                 groups: {
                     startup: 'Startup',
                     keyboardNavigation: 'Navigasi keyboard',
                     mouseButtons: 'Tombol mouse',
+                    dualPane: 'Panel ganda',
                     desktopAppearance: 'Tampilan desktop',
                     mobileAppearance: 'Tampilan seluler',
                     appearance: 'Tampilan',

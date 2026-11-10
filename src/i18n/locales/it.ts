@@ -1087,11 +1087,12 @@ export const STRINGS_IT = {
             },
             appearanceAndBehavior: {
                 label: 'Aspetto e comportamento',
-                description: 'Comportamento, navigazione da tastiera, pulsanti del mouse, aspetto e formattazione.',
+                description: 'Comportamento, navigazione da tastiera, pulsanti del mouse, doppio pannello, aspetto e formattazione.',
                 groups: {
                     startup: 'Avvio',
                     keyboardNavigation: 'Navigazione da tastiera',
                     mouseButtons: 'Pulsanti del mouse',
+                    dualPane: 'Doppio pannello',
                     desktopAppearance: 'Aspetto desktop',
                     mobileAppearance: 'Aspetto mobile',
                     appearance: 'Aspetto',

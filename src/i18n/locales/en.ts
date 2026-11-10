@@ -1084,11 +1084,12 @@ export const STRINGS_EN = {
             },
             appearanceAndBehavior: {
                 label: 'Appearance & behavior',
-                description: 'Behavior, keyboard navigation, mouse buttons, appearance, and formatting.',
+                description: 'Behavior, keyboard navigation, mouse buttons, dual pane, appearance, and formatting.',
                 groups: {
                     startup: 'Startup',
                     keyboardNavigation: 'Keyboard navigation',
                     mouseButtons: 'Mouse buttons',
+                    dualPane: 'Dual pane',
                     desktopAppearance: 'Desktop appearance',
                     mobileAppearance: 'Mobile appearance',
                     appearance: 'Appearance',

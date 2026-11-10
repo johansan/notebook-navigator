@@ -1091,11 +1091,12 @@ export const STRINGS_JA = {
             },
             appearanceAndBehavior: {
                 label: '外観と動作',
-                description: '動作、キーボード操作、マウスボタン、外観、書式。',
+                description: '動作、キーボード操作、マウスボタン、デュアルペイン、外観、書式。',
                 groups: {
                     startup: '起動',
                     keyboardNavigation: 'キーボード操作',
                     mouseButtons: 'マウスボタン',
+                    dualPane: 'デュアルペイン',
                     desktopAppearance: 'デスクトップの外観',
                     mobileAppearance: 'モバイルの外観',
                     appearance: '外観',

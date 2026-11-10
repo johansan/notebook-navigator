@@ -1082,11 +1082,12 @@ export const STRINGS_ZH_TW = {
             },
             appearanceAndBehavior: {
                 label: '外觀與行為',
-                description: '行為、鍵盤導覽、滑鼠按鈕、外觀與格式。',
+                description: '行為、鍵盤導覽、滑鼠按鈕、雙窗格、外觀與格式。',
                 groups: {
                     startup: '啟動',
                     keyboardNavigation: '鍵盤導覽',
                     mouseButtons: '滑鼠按鈕',
+                    dualPane: '雙窗格',
                     desktopAppearance: '桌面外觀',
                     mobileAppearance: '行動裝置外觀',
                     appearance: '外觀',

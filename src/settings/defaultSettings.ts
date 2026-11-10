@@ -175,12 +175,14 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
         createMissingPeriodicNote: true
     },
 
-    // General tab - Desktop appearance
+    // General tab - Dual pane
     dualPane: true,
     dualPaneOrientation: 'horizontal',
     narrowSidebarLayout: 'singlePane',
     narrowSidebarTriggerMode: 'fitPanes',
     narrowSidebarCustomWidth: NARROW_SIDEBAR_CUSTOM_WIDTH_DEFAULT,
+
+    // General tab - Desktop appearance
     showTooltips: false,
     showTooltipPath: true,
     showTooltipTags: false,

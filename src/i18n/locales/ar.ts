@@ -1086,11 +1086,12 @@ export const STRINGS_AR = {
             },
             appearanceAndBehavior: {
                 label: 'المظهر والسلوك',
-                description: 'السلوك والتنقل بلوحة المفاتيح وأزرار الفأرة والمظهر والتنسيق.',
+                description: 'السلوك والتنقل بلوحة المفاتيح وأزرار الفأرة واللوحتان والمظهر والتنسيق.',
                 groups: {
                     startup: 'بدء التشغيل',
                     keyboardNavigation: 'التنقل بلوحة المفاتيح',
                     mouseButtons: 'أزرار الفأرة',
+                    dualPane: 'اللوحتان',
                     desktopAppearance: 'مظهر سطح المكتب',
                     mobileAppearance: 'مظهر الهاتف المحمول',
                     appearance: 'المظهر',
