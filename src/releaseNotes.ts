@@ -107,22 +107,19 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.5.1',
-        date: '2026-11-04',
+        date: '2026-11-10',
         showOnUpdate: true,
-        info: "Thank you to everyone who bought me a coffee! For the past year I have worked on a new presentation app. I give two or three presentations every week at work, and I never really liked **Keynote** or **PowerPoint**. I tried **Canva**, but it locks your slides in, and I tried **Slidev**, but found it clumsy, cluttered and limited. So I made my own: [MarkdownPoint](https://markdownpoint.com).\n\nIt's out now, and it's free for real, for both personal and commercial use. It's like a mix of **After Effects**, **Motion**, **Figma**, **Illustrator**, **Canva**, **Keynote** and **PowerPoint**, bringing the strongest features of each app into one. It ships as a desktop app for Mac and Windows, with no tracking, no in-app purchases and no subscriptions. Just free. The optional online collaboration and sharing features are paid with my coffee money, and I'll keep these free for as long as I can afford it. \n\nGive it a try at [markdownpoint.com](https://markdownpoint.com) and let me know if you love using it as much as I do!",
         new: [
-            "Added a small banner at the top of settings for MarkdownPoint. If you don't want it, disable the new setting Advanced > ==Show MarkdownPoint banner at the top== that moves it below settings. You can even hide it completely with a [CSS snippet](https://github.com/johansan/notebook-navigator/wiki/Custom-CSS#hide-the-markdownpoint-banner-in-settings).",
-            'MarkdownPoint presentations in the list pane show `slides.md` as a cover slide with the presentation name in its theme colors, and `presentation.mdpoint` with its theme, number of slides and slide size.',
-            'New search filter `.key=null` lists notes where the property `key` exists with no value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
-            'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux, copies them instead of moving them.',
-            'New setting Frontmatter > ==Note name format== adds the file name or the daily note date to the frontmatter name, such as `{{date:D MMM}} {{name}}` showing a daily note titled `Ski trip` as `10 Jan Ski trip`.'
+            'New setting Frontmatter > ==Note name format== adds the file name or the daily note date to the frontmatter name, such as `{{date:D MMM}} {{name}}` showing a daily note titled `Ski trip` as `10 Jan Ski trip`.',
+            'New search filter `.key=null` lists notes where the property `key` exists without a value, like `[key:null]` in Obsidian search, and `-.key=null` hides them.',
+            'Dragging notes onto a folder with Option held on macOS, or Ctrl on Windows and Linux now creates a copy instead of moving them.'
         ],
-        improved: ['Folder groups in the list pane now follow the folder order in the navigation pane, including manual folder order.'],
         fixed: [
+            'Folder groups in the list pane now follow the folder order in the navigation pane, including manual folder order.',
             "Dragging a folder from the navigation pane into Lean Terminal now pastes the folder's absolute path [#1561](https://github.com/johansan/notebook-navigator/issues/1561).",
             'When a folder has same-named folder notes of several types, such as `Example.md` and `Example.base`, the one matching ==Default folder note type== is now used [#1564](https://github.com/johansan/notebook-navigator/issues/1564).',
             'Deleting a subfolder or nested tag now keeps its parent folder or tag in ==Hide folders==, ==Exclude folders from descendants==, ==Hide tags== and ==Hide notes with tags== [#1576](https://github.com/johansan/notebook-navigator/issues/1576).',
-            '`Rename shortcut` on a note now starts from the name the shortcut shows, such as its frontmatter name, instead of the file name.'
+            '`Rename shortcut` on a note shortcut now starts from the shortcut name instead of the file name.'
         ]
     },
     {
