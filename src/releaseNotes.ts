@@ -106,6 +106,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.5.2',
+        date: '2026-11-11',
+        showOnUpdate: true,
+        fixed: [
+            'Dragging a note from elsewhere in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).'
+        ]
+    },
+    {
         version: '3.5.1',
         date: '2026-11-10',
         showOnUpdate: true,

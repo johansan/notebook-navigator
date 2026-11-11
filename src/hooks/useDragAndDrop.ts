@@ -241,6 +241,9 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     const dragTagCanonicalRef = useRef<string | null>(null);
     const suppressClickUntilRef = useRef(0);
     const draggingElementsRef = useRef<Set<HTMLElement>>(new Set());
+    // The object this hook last assigned to app.dragManager.draggable, so cleanup can tell it apart from the
+    // payload of a drag that started elsewhere
+    const ownedDragManagerPayloadRef = useRef<DragManagerPayload | null>(null);
     const springLoadedInitialDelayMs = useMemo(() => {
         const delaySeconds = settings.springLoadedFoldersInitialDelay;
         if (!Number.isFinite(delaySeconds)) {
@@ -257,8 +260,9 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
     }, [settings.springLoadedFoldersSubsequentDelay]);
 
     /**
-     * Sets or clears the drag payload in Obsidian's internal drag manager.
-     * This allows other plugins (like Excalidraw) to access drag metadata.
+     * Sets or clears the drag payload in Obsidian's internal drag manager and records it as the navigator's.
+     * Drop targets such as Canvas, Bookmarks and plugins like Excalidraw read the payload at drop.
+     * Call it only from a drag the navigator started; cleanup uses clearOwnedDragManagerPayload.
      *
      * @param payload - Drag metadata to set, or null to clear
      */
@@ -271,18 +275,34 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             try {
                 if (!payload) {
                     app.dragManager.draggable = null;
+                    ownedDragManagerPayloadRef.current = null;
                     return;
                 }
 
                 const existingPayload = app.dragManager.draggable;
                 const mergedPayload: DragManagerPayload = existingPayload ? { ...existingPayload, ...payload } : { ...payload };
                 app.dragManager.draggable = mergedPayload;
+                ownedDragManagerPayloadRef.current = mergedPayload;
             } catch (error) {
                 console.error('[Notebook Navigator] Failed to set drag payload', error);
             }
         },
         [app]
     );
+
+    /**
+     * Clears the drag manager payload only while it is still the one the navigator set.
+     * Every drag in the app shares app.dragManager.draggable: a drag that started elsewhere, such as a Bases card
+     * or a file explorer item, owns its payload until Obsidian clears it on dragend, and drop targets read it at drop.
+     * Clearing it unconditionally makes Canvas create a text node with the obsidian:// URL instead of a file node.
+     */
+    const clearOwnedDragManagerPayload = useCallback(() => {
+        const ownedPayload = ownedDragManagerPayloadRef.current;
+        ownedDragManagerPayloadRef.current = null;
+        if (ownedPayload && hasDragManager(app) && app.dragManager.draggable === ownedPayload) {
+            app.dragManager.draggable = null;
+        }
+    }, [app]);
 
     /**
      * Type guard to check if an element is an HTMLElement
@@ -1356,9 +1376,9 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
                     }
                 }
             } finally {
-                // Clean up drag state and payload after drop completes
+                // Clean up drag state and the navigator's payload after drop completes
                 clearDraggingElements();
-                setDragManagerPayload(null);
+                clearOwnedDragManagerPayload();
                 dragTypeRef.current = null;
                 internalDragSession.clearSession();
                 dragTagDisplayRef.current = null;
@@ -1378,7 +1398,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             internalDragSession,
             clearAutoExpandTimer,
             clearDraggingElements,
-            setDragManagerPayload,
+            clearOwnedDragManagerPayload,
             tagOperations,
             fileSystemOps
         ]
@@ -1412,7 +1432,8 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
     /**
      * Cleans up drag state and visual feedback when drag ends
-     * Removes CSS classes and clears drag payload
+     * Removes CSS classes and clears the navigator's drag payload. Runs for every dragend and drop in the
+     * document, including drags that started elsewhere.
      */
     const handleDragEnd = useCallback(() => {
         springLoadedExpandCountRef.current = 0;
@@ -1424,14 +1445,14 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
         }
         dragOverDropEffectRef.current = null;
 
-        // Clean up drag state and payload when drag ends
-        setDragManagerPayload(null);
+        // Clean up drag state and the navigator's payload when drag ends
+        clearOwnedDragManagerPayload();
         clearAutoExpandTimer();
         dragTypeRef.current = null;
         internalDragSession.clearSession();
         dragTagDisplayRef.current = null;
         dragTagCanonicalRef.current = null;
-    }, [clearDraggingElements, clearAutoExpandTimer, internalDragSession, setDragManagerPayload]);
+    }, [clearDraggingElements, clearAutoExpandTimer, clearOwnedDragManagerPayload, internalDragSession]);
 
     /**
      * Attaches drag and drop event listeners to container element
@@ -1471,26 +1492,21 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             ownerDocument.removeEventListener('dragend', handleDragEnd);
             ownerDocument.removeEventListener('drop', handleDragEnd);
             container.removeEventListener('click', handleClickCapture, true);
+        };
+    }, [containerRef, handleDragStart, handleDragOver, handleDragLeave, handleDrop, handleDragEnd, isMobile]);
 
-            // Clean up any lingering drag state on unmount
+    // Clears lingering drag state on unmount. It stays out of the listener effect above because that effect
+    // re-subscribes whenever a handler changes, for example on a selection change or a file rename, and
+    // tearing the drag down there would cancel a drag in progress. These dependencies stay stable for the
+    // hook's lifetime.
+    useEffect(() => {
+        return () => {
             clearDraggingElements();
-            setDragManagerPayload(null);
+            clearOwnedDragManagerPayload();
             clearAutoExpandTimer();
             dragTypeRef.current = null;
             internalDragSession.clearSession();
             dragOverDropEffectRef.current = null;
         };
-    }, [
-        containerRef,
-        handleDragStart,
-        handleDragOver,
-        handleDragLeave,
-        handleDrop,
-        handleDragEnd,
-        isMobile,
-        clearDraggingElements,
-        clearAutoExpandTimer,
-        internalDragSession,
-        setDragManagerPayload
-    ]);
+    }, [clearDraggingElements, clearOwnedDragManagerPayload, clearAutoExpandTimer, internalDragSession]);
 }
