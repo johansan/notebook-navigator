@@ -16,12 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { describe, expect, it } from 'vitest';
+import { TFile, TFolder } from 'obsidian';
+import type { App } from 'obsidian';
 import {
     countPresentationSlides,
     getPresentationIdentity,
     getPresentationPairNames,
     getPresentationThemeName,
+    isInSavedVersions,
     isPresentationThemeKey,
+    PresentationService,
     resolvePresentationCover,
     resolveSlideSize
 } from '../../src/services/PresentationService';
@@ -53,6 +57,105 @@ describe('getPresentationPairNames', () => {
             markdown: 'slides.md',
             companion: 'presentation.mdpoint'
         });
+    });
+});
+
+describe('isInSavedVersions', () => {
+    const holds = (folders: string[]) => (folderPath: string) => folders.includes(folderPath);
+
+    it('places a pair in a folder named by a save time under versions/ in its presentation, whatever is around it', () => {
+        expect(isInSavedVersions('Talk/versions/2026-11-13T09.30.00Z-ab12', holds([]), false)).toBe(true);
+        expect(isInSavedVersions('versions/2026-02-29T23.59.59Z-z9z9', holds([]), false)).toBe(false);
+        expect(isInSavedVersions('versions/2028-02-29T23.59.59Z-z9z9', holds([]), false)).toBe(true);
+    });
+
+    it('places any folder under versions/ in its presentation when the folder around versions/ holds a presentation file', () => {
+        expect(isInSavedVersions('Talk/versions/copy', holds(['Talk']), false)).toBe(true);
+        expect(isInSavedVersions('Talk/versions', holds(['Talk']), false)).toBe(true);
+        expect(isInSavedVersions('versions/copy/inner', holds(['/']), false)).toBe(true);
+        expect(isInSavedVersions('Talk/versions/copy', holds([]), false)).toBe(false);
+        expect(isInSavedVersions('Talk/notes', holds(['Talk']), false)).toBe(false);
+    });
+
+    it('reads Versions/ as versions/ only where the vault ignores case', () => {
+        expect(isInSavedVersions('Talk/Versions/copy', holds(['Talk']), true)).toBe(true);
+        expect(isInSavedVersions('Talk/Versions/copy', holds(['Talk']), false)).toBe(false);
+    });
+});
+
+describe('PresentationService', () => {
+    /** A vault of files by path, with the reads the service makes and the events it listens to, each file a presentation's. */
+    function fakeVault(paths: string[]) {
+        const folders = new Map<string, TFolder>([['/', new TFolder('/')]]);
+        const files = new Map<string, TFile>();
+        const listeners = new Map<string, (file: TFile | TFolder) => void>();
+        const folderAt = (path: string): TFolder => {
+            let folder = folders.get(path);
+            if (!folder) {
+                folder = Object.assign(new TFolder(path), { name: path.slice(path.lastIndexOf('/') + 1) });
+                folders.set(path, folder);
+                folderAt(path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/').children.push(folder);
+            }
+            return folder;
+        };
+        const parentOf = (path: string) => folderAt(path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/');
+        const add = (path: string) => {
+            const file = new TFile(path);
+            files.set(path, file);
+            parentOf(path).children.push(file);
+            return file;
+        };
+        paths.forEach(add);
+        const app = {
+            vault: {
+                configDir: 'config',
+                adapter: { exists: async () => false },
+                on: (name: string, listener: (file: TFile | TFolder) => void) => listeners.set(name, listener),
+                offref: () => {},
+                getFiles: () => [...files.values()],
+                getAbstractFileByPath: (path: string) => files.get(path) ?? folders.get(path) ?? null,
+                cachedRead: async (file: TFile) =>
+                    file.extension === 'mdpoint' ? JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID }) : ''
+            },
+            metadataCache: {
+                on: () => ({}),
+                offref: () => {},
+                getFileCache: () => ({ frontmatter: { markdownpoint: '1.0', id: PRESENTATION_ID } })
+            }
+        } as unknown as App;
+        return {
+            app,
+            create: (path: string) => listeners.get('create')?.(add(path)),
+            delete: (path: string) => {
+                const file = files.get(path)!;
+                files.delete(path);
+                const siblings = parentOf(path).children;
+                siblings.splice(siblings.indexOf(file), 1);
+                listeners.get('delete')?.(file);
+            }
+        };
+    }
+    // The service reads a folder 100 ms after its last event
+    const settle = () => new Promise(resolve => window.setTimeout(resolve, 250));
+
+    it('reads a copy of a saved version as a presentation of its own only while no presentation file stands around its versions/', async () => {
+        const vault = fakeVault(['Talk/versions/copy/slides.md', 'Talk/versions/copy/presentation.mdpoint']);
+        const service = new PresentationService(vault.app);
+        service.start();
+        await settle();
+        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
+
+        vault.create('Talk/slides.md');
+        vault.create('Talk/presentation.mdpoint');
+        await settle();
+        expect(service.getSummary('Talk')).not.toBeNull();
+        expect(service.getSummary('Talk/versions/copy')).toBeNull();
+
+        vault.delete('Talk/presentation.mdpoint');
+        await settle();
+        expect(service.getSummary('Talk')).toBeNull();
+        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
+        service.dispose();
     });
 });
 
@@ -147,6 +250,27 @@ describe('countPresentationSlides', () => {
         expect(countPresentationSlides(slides(['<br>', '```', '<!-- slide: example -->', '```']))).toBe(3);
     });
 
+    it('reads a marker without the spaces or tabs before it, outside fenced code', () => {
+        const slides = (content: string[]) =>
+            [
+                '---',
+                'markdownpoint: "1.0"',
+                '---',
+                '<!-- slide: first -->',
+                '<!-- text: body -->',
+                ...content,
+                '',
+                '  <!-- slide: second -->',
+                '\t<!-- slide: third -->',
+                ''
+            ].join('\n');
+
+        expect(countPresentationSlides(slides(['Words']))).toBe(3);
+        // A marker-shaped line a fence holds is the code's words, in a list item's fence too
+        expect(countPresentationSlides(slides(['```', '  <!-- slide: example -->', '```']))).toBe(3);
+        expect(countPresentationSlides(slides(['- ```', '  <!-- slide: example -->', '  ```']))).toBe(3);
+    });
+
     it('counts only slide markers MarkdownPoint accepts', () => {
         const markdown = [
             '---',
@@ -189,9 +313,9 @@ describe('presentation themes', () => {
         const master = {
             brand: { colors: { orange: '#F2641F' } },
             schemes: {
-                light: { colors: { background: '#FFFFFF', text: '#17120F', muted: '#6B605A', accent: '{brand.orange}' } },
+                light: { colors: { background: '#FFFFFF', text: '#17120F', muted: '#6B605A', accent: '{brand.colors.orange}' } },
                 dark: { colors: { background: '#17120F', text: '#FFF6EA', muted: '#BDB2A9' } },
-                apricot: { appearance: 'light', colors: { background: '#FECAA3', text: '{brand.orange}', muted: '#524843' } }
+                apricot: { appearance: 'light', colors: { background: '#FECAA3', text: '{brand.colors.orange}', muted: '#524843' } }
             }
         };
         const titleLayout = { scheme: 'apricot', objects: [{ id: 'title', type: 'text' }] };
@@ -201,6 +325,25 @@ describe('presentation themes', () => {
             light: { background: '#FECAA3', text: '#F2641F', muted: '#524843' },
             dark: null
         });
+    });
+
+    it('reads every hex form the format writes, and no brand color by a reference outside brand.colors', () => {
+        const master = {
+            brand: { colors: { orange: '#F2641F', sky: '#08F' } },
+            schemes: {
+                light: { colors: { background: '#FFF', text: '{brand.colors.sky}', muted: '#6B605A80' } },
+                dark: { colors: { background: '#17120FCC', text: '#FEA8', muted: '{brand.orange}' } },
+                retired: { appearance: 'light', colors: { background: '#FFFFFF', text: '{brand.orange}' } }
+            }
+        };
+
+        expect(resolvePresentationCover(master, null)).toEqual({
+            align: 'start',
+            light: { background: '#FFF', text: '#08F', muted: '#6B605A80' },
+            dark: { background: '#17120FCC', text: '#FEA8', muted: '#FEA8' }
+        });
+        // A cover in a scheme whose text names no brand color has none
+        expect(resolvePresentationCover(master, { scheme: 'retired' })).toBeNull();
     });
 
     it('follows the light and dark schemes and a centered title when the Title layout names no scheme', () => {
