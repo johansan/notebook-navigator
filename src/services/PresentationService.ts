@@ -55,9 +55,9 @@ export interface PresentationSummary {
     slideCount: number;
     /** Theme display name, or null when the presentation names no theme */
     themeName: string | null;
-    /** Slide size in canvas units from the theme's master.json, 1920 × 1080 where it declares none, or null when the theme is missing */
+    /** Slide size in canvas units from the theme's master.json, 1920 × 1080 where it declares none, or null when the theme is missing or MarkdownPoint refuses its master or size */
     size: { width: number; height: number } | null;
-    /** Null when the theme files are missing or unreadable; the cover then uses Obsidian colors */
+    /** Null when the theme files are missing or unreadable, or MarkdownPoint refuses the master; the cover then uses Obsidian colors */
     cover: PresentationCover | null;
 }
 
@@ -65,7 +65,13 @@ const SLIDES_FILE_NAME = 'slides.md';
 const COMPANION_FILE_NAME = 'presentation.mdpoint';
 // Format major 1 with any minor, written without leading zeros: "1.0", "1.10"
 const FORMAT_VERSION_PATTERN = /^1\.(?:0|[1-9]\d{0,8})$/;
-const PRESENTATION_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// A lowercase canonical UUID, as the format writes a presentation's id and a theme's
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// The keys a master states; MarkdownPoint refuses a master that leaves one out before reading any of its settings
+const MASTER_REQUIRED_KEYS = ['markdownpoint', 'type', 'id', 'fonts', 'schemes'];
+const DEFAULT_SLIDE_SIZE = { width: 1920, height: 1080 };
+// The longest side a slide has, in canvas units
+const MAX_SLIDE_SIDE = 8192;
 const STABLE_ID_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const RESERVED_THEME_KEY_PATTERN = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
 const FRONTMATTER_PATTERN = /^---[ \t]*\n(?:[^\n]*\n)*?---[ \t]*(?:\n|$)/;
@@ -186,7 +192,7 @@ export function getPresentationIdentity(frontmatter: unknown, companion: unknown
         return null;
     }
     const presentationId = frontmatter.id;
-    if (typeof presentationId !== 'string' || !PRESENTATION_ID_PATTERN.test(presentationId)) {
+    if (typeof presentationId !== 'string' || !UUID_PATTERN.test(presentationId)) {
         return null;
     }
     return companion.id === presentationId ? presentationId : null;
@@ -357,19 +363,55 @@ export function resolvePresentationCover(
     return { align, light, dark };
 }
 
-/** The slide size the theme's master gives, 1920 × 1080 where it declares none, as MarkdownPoint reads it; null without a master. */
+/**
+ * The theme's master as MarkdownPoint reads it, or null where MarkdownPoint refuses it before reading any of its
+ * settings, as MarkdownPoint core's theme file envelope does: it states format major 1 with any minor, its type is
+ * "master", its id is a lowercase UUID, and it has every key a master states.
+ */
+export function readableMaster(master: Record<string, unknown> | null): Record<string, unknown> | null {
+    if (!master || !MASTER_REQUIRED_KEYS.every(key => Object.prototype.hasOwnProperty.call(master, key))) {
+        return null;
+    }
+    const readable = isReadableFormatVersion(master.markdownpoint) && master.type === 'master';
+    return readable && typeof master.id === 'string' && UUID_PATTERN.test(master.id) ? master : null;
+}
+
+/**
+ * The slide size a readable master gives, as MarkdownPoint core's `masterJsonSize` reads it, or null where MarkdownPoint
+ * refuses it. A master that declares no size gives 1920 × 1080. Each side is read to the millionth and must then be a
+ * whole number from 1 to 8192, width first. Format 1.0 refuses any other side and any key beside width and height. A
+ * newer minor gives 1920 × 1080 for the whole size from the first side outside that range, and passes other keys
+ * over. Every minor refuses a size that isn't a record and a side that is left out or isn't a finite number.
+ */
 export function resolveSlideSize(master: Record<string, unknown> | null): { width: number; height: number } | null {
     if (!master) {
         return null;
     }
-    if (master.size === undefined) {
-        return { width: 1920, height: 1080 };
-    }
     const size = master.size;
-    if (!isRecord(size) || typeof size.width !== 'number' || typeof size.height !== 'number') {
+    if (size === undefined) {
+        return { ...DEFAULT_SLIDE_SIZE };
+    }
+    if (!isRecord(size) || !('width' in size) || !('height' in size)) {
         return null;
     }
-    return { width: size.width, height: size.height };
+    // MarkdownPoint reads format 1.0; a newer minor reads as far as 1.0 knows it
+    const newerMinor = master.markdownpoint !== '1.0';
+    if (!newerMinor && Object.keys(size).some(key => key !== 'width' && key !== 'height')) {
+        return null;
+    }
+    const sides: number[] = [];
+    for (const side of [size.width, size.height]) {
+        if (typeof side !== 'number' || !Number.isFinite(side)) {
+            return null;
+        }
+        // To the millionth, as MarkdownPoint keeps every number a file holds
+        const value = Number(side.toFixed(6));
+        if (!Number.isInteger(value) || value < 1 || value > MAX_SLIDE_SIDE) {
+            return newerMinor ? { ...DEFAULT_SLIDE_SIZE } : null;
+        }
+        sides.push(value);
+    }
+    return { width: sides[0], height: sides[1] };
 }
 
 function findChildFile(folder: TFolder, name: string): TFile | null {
@@ -425,7 +467,7 @@ async function readPresentation(app: App, folderPath: string, ignoresCase: boole
     const slideCount = countPresentationSlides(await app.vault.cachedRead(slidesFile));
     const themeKey = isPresentationThemeKey(companion.theme) ? companion.theme : null;
     const themeFolderPath = themeKey ? joinPath(folderPath, `themes/${themeKey}`) : null;
-    const master = themeFolderPath ? await readJsonRecord(app, `${themeFolderPath}/master.json`) : null;
+    const master = readableMaster(themeFolderPath ? await readJsonRecord(app, `${themeFolderPath}/master.json`) : null);
     const titleLayout = themeFolderPath ? await readJsonRecord(app, `${themeFolderPath}/title.json`) : null;
 
     return {

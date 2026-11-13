@@ -26,12 +26,19 @@ import {
     isInSavedVersions,
     isPresentationThemeKey,
     PresentationService,
+    readableMaster,
     resolvePresentationCover,
     resolveSlideSize
 } from '../../src/services/PresentationService';
 import { getListPaneMeasurements, getPresentationRowHeight } from '../../src/utils/listPaneMeasurements';
 
 const PRESENTATION_ID = '656fb827-4f76-4106-91c1-de84af82e131';
+const THEME_ID = '41c1a2a4-5d2e-4f0a-9b8e-2a7c6c1d9e30';
+
+/** A copy of a record without one key, as a file that leaves the key out */
+function withoutKey(record: Record<string, unknown>, key: string): Record<string, unknown> {
+    return Object.fromEntries(Object.entries(record).filter(([name]) => name !== key));
+}
 
 describe('getPresentationPairNames', () => {
     it('recognizes slides.md beside presentation.mdpoint and keeps the stored spelling', () => {
@@ -85,7 +92,7 @@ describe('isInSavedVersions', () => {
 
 describe('PresentationService', () => {
     /** A vault of files by path, with the reads the service makes and the events it listens to, each file a presentation's. */
-    function fakeVault(paths: string[]) {
+    function fakeVault(paths: string[], contents: Record<string, string> = {}) {
         const folders = new Map<string, TFolder>([['/', new TFolder('/')]]);
         const files = new Map<string, TFile>();
         const listeners = new Map<string, (file: TFile | TFolder) => void>();
@@ -115,7 +122,10 @@ describe('PresentationService', () => {
                 getFiles: () => [...files.values()],
                 getAbstractFileByPath: (path: string) => files.get(path) ?? folders.get(path) ?? null,
                 cachedRead: async (file: TFile) =>
-                    file.extension === 'mdpoint' ? JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID }) : ''
+                    contents[file.path] ??
+                    (file.extension === 'mdpoint'
+                        ? JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID })
+                        : '')
             },
             metadataCache: {
                 on: () => ({}),
@@ -156,6 +166,41 @@ describe('PresentationService', () => {
         expect(service.getSummary('Talk')).toBeNull();
         expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
         service.dispose();
+    });
+
+    it('names the theme by its key and shows no size or cover where MarkdownPoint refuses the master', async () => {
+        const companion = JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID, theme: 'studio-dark' });
+        const master = {
+            markdownpoint: '1.0',
+            type: 'master',
+            id: THEME_ID,
+            name: 'Studio',
+            fonts: {},
+            schemes: { light: { colors: { background: '#FFFFFF', text: '#1D1D1F' } } },
+            size: { width: 1280, height: 720 }
+        };
+        const summaryOf = async (stated: Record<string, unknown>) => {
+            const paths = ['Talk/slides.md', 'Talk/presentation.mdpoint', 'Talk/themes/studio-dark/master.json'];
+            const vault = fakeVault(paths, {
+                'Talk/presentation.mdpoint': companion,
+                'Talk/themes/studio-dark/master.json': JSON.stringify(stated)
+            });
+            const service = new PresentationService(vault.app);
+            service.start();
+            await settle();
+            const summary = service.getSummary('Talk');
+            service.dispose();
+            return { themeName: summary?.themeName, size: summary?.size, cover: summary?.cover ?? null };
+        };
+
+        expect(await summaryOf(master)).toEqual({
+            themeName: 'Studio',
+            size: { width: 1280, height: 720 },
+            cover: { align: 'start', light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#1D1D1F' }, dark: null }
+        });
+        for (const refused of [{ ...master, markdownpoint: '2.0' }, { ...master, type: 'layout' }, withoutKey(master, 'markdownpoint')]) {
+            expect(await summaryOf(refused)).toEqual({ themeName: 'Studio dark', size: null, cover: null });
+        }
     });
 });
 
@@ -384,10 +429,65 @@ describe('presentation themes', () => {
         }
     });
 
-    it('reads a master that declares no size as 1920 × 1080, as MarkdownPoint does', () => {
-        expect(resolveSlideSize({ name: 'Basic' })).toEqual({ width: 1920, height: 1080 });
-        expect(resolveSlideSize({ size: { width: 1080, height: 1920 } })).toEqual({ width: 1080, height: 1920 });
-        expect(resolveSlideSize({ size: { width: '1080' } })).toBeNull();
+    it('reads a master only where MarkdownPoint reads it: format major 1, the type master, a lowercase UUID, and every key a master states', () => {
+        const master = { markdownpoint: '1.0', type: 'master', id: THEME_ID, fonts: {}, schemes: {} };
+        expect(readableMaster(master)).toBe(master);
+        expect(readableMaster({ ...master, markdownpoint: '1.12' })).not.toBeNull();
+        const refused = [
+            ...Object.keys(master).map(key => withoutKey(master, key)),
+            ...['2.0', '1.01', '1', 'one', 1].map(markdownpoint => ({ ...master, markdownpoint })),
+            { ...master, type: 'layout' },
+            { ...master, id: THEME_ID.toUpperCase() },
+            { ...master, id: 'studio' }
+        ];
+        for (const value of refused) {
+            expect(readableMaster(value), JSON.stringify(value)).toBeNull();
+        }
+        expect(readableMaster(null)).toBeNull();
+    });
+
+    it('reads a master’s size as MarkdownPoint does, and gives none where MarkdownPoint refuses it', () => {
+        // [the master's version, its size, MarkdownPoint core's reading (`masterJsonSize`)]
+        const readings: [string, unknown, { width: number; height: number } | null][] = [
+            ['1.0', undefined, { width: 1920, height: 1080 }],
+            ['1.0', { width: 1280, height: 720 }, { width: 1280, height: 720 }],
+            ['1.0', { width: 1920.0000004, height: 1080 }, { width: 1920, height: 1080 }],
+            ['1.0', { width: 1919.9999996, height: 1080 }, { width: 1920, height: 1080 }],
+            ['1.0', { width: 8192.0000004, height: 1080 }, { width: 8192, height: 1080 }],
+            ['1.0', { width: 1920.4, height: 1080 }, null],
+            ['1.0', { width: 8193, height: 1080 }, null],
+            ['1.0', { width: 0, height: 1080 }, null],
+            ['1.0', { width: 0.0000004, height: 1080 }, null],
+            ['1.0', { width: 1280, height: 720, depth: 1 }, null],
+            ['1.0', { width: '1280', height: 720 }, null],
+            ['1.0', { width: 1280 }, null],
+            ['1.0', 'wide', null],
+            ['1.0', null, null],
+            // JSON.parse reads 1e999 as Infinity, which MarkdownPoint refuses
+            ['1.0', { width: Infinity, height: 1080 }, null],
+            ['1.1', { width: 8193, height: 1080 }, { width: 1920, height: 1080 }],
+            ['1.1', { width: 1280, height: 720.5 }, { width: 1920, height: 1080 }],
+            ['1.1', { width: -5, height: 1080 }, { width: 1920, height: 1080 }],
+            ['1.1', { width: 1920.0000004, height: 1080 }, { width: 1920, height: 1080 }],
+            ['1.1', { width: 1280.0000004, height: 720 }, { width: 1280, height: 720 }],
+            ['1.1', { width: 1280, height: 720, depth: 1 }, { width: 1280, height: 720 }],
+            ['1.10', { width: 1280, height: 720 }, { width: 1280, height: 720 }],
+            // The width is read first, and a side outside the range decides before the next is read
+            ['1.1', { width: 720.5, height: null }, { width: 1920, height: 1080 }],
+            ['1.1', { width: 1280.5, height: '720' }, { width: 1920, height: 1080 }],
+            ['1.1', { height: 720.5, width: 'x' }, null],
+            ['1.1', { width: Infinity, height: 720.5 }, null],
+            ['1.1', { width: null, height: 720 }, null],
+            ['1.1', { width: '1280', height: 720 }, null],
+            ['1.1', { width: 1280 }, null],
+            ['1.1', { height: 720.5 }, null],
+            ['1.1', [], null],
+            ['1.1', 'wide', null]
+        ];
+        for (const [markdownpoint, size, reading] of readings) {
+            const master = size === undefined ? { markdownpoint } : { markdownpoint, size };
+            expect(resolveSlideSize(master), `${markdownpoint} ${String(JSON.stringify(size))}`).toEqual(reading);
+        }
         expect(resolveSlideSize(null)).toBeNull();
     });
 
