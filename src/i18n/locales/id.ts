@@ -1581,10 +1581,6 @@ export const STRINGS_ID = {
                 name: 'Auto-pilih catatan pertama',
                 desc: 'Secara otomatis membuka catatan pertama saat beralih folder, tag, atau properti.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Nonaktifkan auto-gulir untuk pintasan',
-                desc: 'Jangan gulir panel navigasi saat mengklik item di pintasan.'
-            },
             expandOnSelection: {
                 name: 'Luaskan saat dipilih',
                 desc: 'Luaskan folder, tag, dan properti saat dipilih. Dalam mode panel tunggal, pilihan pertama meluaskan, pilihan kedua menampilkan file.'

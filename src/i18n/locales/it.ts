@@ -1579,10 +1579,6 @@ export const STRINGS_IT = {
                 name: 'Auto-seleziona prima nota',
                 desc: 'Apri automaticamente la prima nota quando cambi cartella, etichetta o proprietà.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Disabilita auto-scroll per scorciatoie',
-                desc: 'Non scorrere il pannello navigazione quando clicchi elementi nelle scorciatoie.'
-            },
             expandOnSelection: {
                 name: 'Espandi alla selezione',
                 desc: 'Espandi cartelle, etichette e proprietà quando selezionate. In modalità pannello singolo, la prima selezione espande, la seconda mostra i file.'

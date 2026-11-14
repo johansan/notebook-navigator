@@ -801,7 +801,6 @@ export interface NotebookNavigatorSettings {
     showSectionIcons: boolean;
     showShortcuts: boolean;
     shortcutBadgeDisplay: ShortcutBadgeDisplayMode;
-    skipAutoScroll: boolean;
     showRecentNotes: boolean;
     hideRecentNotes: RecentNotesHideMode;
     pinRecentNotesWithShortcuts: boolean;

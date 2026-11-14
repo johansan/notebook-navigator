@@ -40,6 +40,7 @@ interface ShortcutItemProps {
     level: number;
     isDisabled?: boolean;
     isMissing?: boolean;
+    isSelected?: boolean;
     type: 'folder' | 'note' | 'search' | 'tag' | 'property';
     countInfo?: NoteCountInfo;
     badge?: string;
@@ -81,6 +82,7 @@ export const ShortcutItem = React.memo(function ShortcutItem({
     level,
     isDisabled,
     isMissing,
+    isSelected,
     type,
     countInfo,
     badge,
@@ -141,11 +143,14 @@ export const ShortcutItem = React.memo(function ShortcutItem({
         if (hasRemove) {
             classes.push('nn-shortcut-item--removable');
         }
+        if (isSelected) {
+            classes.push('nn-selected');
+        }
         if (adjacentFilledClassName) {
             classes.push(adjacentFilledClassName);
         }
         return classes.join(' ');
-    }, [adjacentFilledClassName, hasRemove, isMissing]);
+    }, [adjacentFilledClassName, hasRemove, isMissing, isSelected]);
 
     // Conditionally enables label click handler based on row state
     const labelClickHandler = useMemo(() => {

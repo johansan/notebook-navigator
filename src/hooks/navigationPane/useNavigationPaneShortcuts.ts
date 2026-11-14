@@ -17,7 +17,6 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import type { TFile } from 'obsidian';
 import {
     useCommandQueue,
     useFileSystemOps,
@@ -64,8 +63,6 @@ interface UseNavigationPaneShortcutsProps {
     onNavigateToFolder: (folderPath: string, options?: NavigateToFolderOptions) => void;
     onRevealTag: (tagPath: string, options?: RevealTagOptions) => void;
     onRevealProperty: (propertyNodeId: string, options?: RevealPropertyOptions) => boolean;
-    onRevealFile: (file: TFile) => void;
-    onRevealShortcutFile?: (file: TFile) => void;
     getFolderCounts: () => Map<string, NoteCountInfo>;
     getTagCounts: () => Map<string, NoteCountInfo>;
     getPropertyCounts: () => Map<string, NoteCountInfo>;
@@ -79,8 +76,6 @@ export function useNavigationPaneShortcuts({
     onNavigateToFolder,
     onRevealTag,
     onRevealProperty,
-    onRevealFile,
-    onRevealShortcutFile,
     getFolderCounts,
     getTagCounts,
     getPropertyCounts,
@@ -222,12 +217,11 @@ export function useNavigationPaneShortcuts({
         selectedFolder: selectionState.selectedFolder,
         selectionDispatch,
         setActiveShortcut: shortcutState.setActiveShortcut,
+        setSelectedShortcut: shortcutState.setSelectedShortcut,
         onExecuteSearchShortcut,
         onNavigateToFolder,
         onRevealTag,
         onRevealProperty,
-        onRevealFile,
-        onRevealShortcutFile,
         openFolderNoteInRightSidebar: folderNote => plugin.openFolderNoteInRightSidebar(folderNote),
         tagTree: fileData.tagTree,
         hydratedShortcuts
@@ -301,6 +295,8 @@ export function useNavigationPaneShortcuts({
             propertiesHeaderTrailingAction: shortcutDisplay.propertiesHeaderTrailingAction,
             shortcutNumberBadgesByKey: shortcutState.shortcutNumberBadgesByKey,
             shouldShowShortcutCounts: shortcutState.shouldShowShortcutCounts,
+            selectedShortcutKey: shortcutState.selectedShortcutKey,
+            selectNoteShortcut: shortcutActions.selectNoteShortcut,
             removeShortcut,
             handleShortcutFolderActivate: shortcutActions.handleShortcutFolderActivate,
             handleShortcutFolderNoteClick: shortcutActions.handleShortcutFolderNoteClick,
@@ -338,6 +334,7 @@ export function useNavigationPaneShortcuts({
             shortcutActions.handleShortcutSearchActivate,
             shortcutActions.handleShortcutTagActivate,
             shortcutActions.openShortcutByNumber,
+            shortcutActions.selectNoteShortcut,
             shortcutDisplay.getFolderShortcutCount,
             shortcutDisplay.getMissingNoteLabel,
             shortcutDisplay.getPropertyShortcutCount,
@@ -363,6 +360,7 @@ export function useNavigationPaneShortcuts({
             shortcutState.activeShortcutKey,
             shortcutState.clearActiveShortcut,
             shortcutState.recentNotesExpanded,
+            shortcutState.selectedShortcutKey,
             shortcutState.setRecentNotesExpanded,
             shortcutState.setShortcutsExpanded,
             shortcutState.shortcutNumberBadgesByKey,

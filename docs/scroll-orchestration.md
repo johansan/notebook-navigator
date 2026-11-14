@@ -170,7 +170,7 @@ spacers).
 - **Safe viewport adjustment**: `scrollToIndexSafely` runs `scrollToIndex`, then `ensureIndexNotCovered` applies a
   bottom-overlap correction when `scrollPaddingEnd` is non-zero. Top alignment is handled by `scrollMargin`.
 - **Selection handling**: The hook watches folder/tag/property selection, pane focus, and visibility. It suppresses auto-scroll
-  when a shortcut is active or when `skipAutoScroll` is enabled for shortcut reveals.
+  when a shortcut is active or when the selection comes from a shortcut.
 - **Hidden item toggles**: When `showHiddenItems` changes while a tag or property is selected, the selection is queued
   with intent `visibilityToggle` and `minIndexVersion = current + 1`.
 - **Tag/property selection**: Tag and property rows can load after folders, so selection scrolling for these types is handled in a dedicated effect.

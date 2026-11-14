@@ -1585,10 +1585,6 @@ export const STRINGS_PT_BR = {
                 name: 'Selecionar automaticamente a primeira nota',
                 desc: 'Abrir automaticamente a primeira nota ao alternar pastas, etiquetas ou propriedades.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Desativar rolagem automática para atalhos',
-                desc: 'Não rolar o painel de navegação ao clicar em itens nos atalhos.'
-            },
             expandOnSelection: {
                 name: 'Expandir ao selecionar',
                 desc: 'Expandir pastas, etiquetas e propriedades ao selecionar. No modo de painel único, a primeira seleção expande, a segunda mostra arquivos.'

@@ -1585,10 +1585,6 @@ export const STRINGS_PL = {
                 name: 'Automatycznie wybierz pierwszą notatkę',
                 desc: 'Automatycznie otwiera pierwszą notatkę po zmianie folderu, tagu lub atrybutu.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Wyłącz automatyczne przewijanie skrótów',
-                desc: 'Nie przewijaj panelu nawigacji podczas klikania elementów w skrótach.'
-            },
             expandOnSelection: {
                 name: 'Rozwiń podczas zaznaczania',
                 desc: 'Rozwija foldery, tagi i atrybuty po zaznaczeniu. W trybie pojedynczego panelu pierwsze zaznaczenie powoduje rozwinięcie, drugie zaznaczenie powoduje wyświetlenie plików.'

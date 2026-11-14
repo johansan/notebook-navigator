@@ -50,11 +50,6 @@ export function createShortcutsSettingDefinitions(context: SettingsTabContext): 
                     count: strings.settings.items.shortcutBadgeDisplay.options.count,
                     none: strings.settings.items.shortcutBadgeDisplay.options.none
                 }
-            }),
-            createToggleDefinition('skipAutoScroll', {
-                name: strings.settings.items.disableShortcutAutoScroll.name,
-                desc: strings.settings.items.disableShortcutAutoScroll.desc,
-                visible: () => plugin.settings.showShortcuts
             })
         ]),
         createGroupDefinition(strings.settings.pages.shortcutsAndRecentFiles.groups.recentFiles, [

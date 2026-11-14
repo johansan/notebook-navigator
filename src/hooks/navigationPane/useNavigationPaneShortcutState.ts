@@ -21,11 +21,12 @@ import type { MutableRefObject } from 'react';
 import { TFile, type App } from 'obsidian';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import type { NavigationSelectionState, SelectionState } from '../../context/SelectionContext';
-import { STORAGE_KEYS } from '../../types';
+import { ItemType, STORAGE_KEYS } from '../../types';
 import { localStorage } from '../../utils/localStorage';
 import type { ShortcutEntry } from '../../types/shortcuts';
 import { ShortcutType } from '../../types/shortcuts';
 import { resolvePropertyShortcutNodeId } from '../../utils/propertyTree';
+import type { SelectedShortcut } from './navigationPaneShortcutTypes';
 
 interface HydratedShortcutStateItem {
     key: string;
@@ -193,6 +194,55 @@ export function useNavigationPaneShortcutState({
         });
     }, [activeShortcutKey, shortcutMap, subscribeSelectionState]);
 
+    // The shortcut activated last. Its row shows as selected until its target is no longer the selection, so only one
+    // shortcut shows as selected at a time, and selecting a target from the tree or the list never highlights its
+    // shortcut. Kept apart from activeShortcutKey, which suppresses scrolling for two frames after a shortcut click.
+    const [selectedShortcut, setSelectedShortcut] = useState<SelectedShortcut | null>(null);
+
+    // Clears the marker when its shortcut is removed, or when the navigation selection moves off its folder, tag or
+    // property.
+    useEffect(() => {
+        if (!selectedShortcut) {
+            return;
+        }
+
+        if (!shortcutMap.has(selectedShortcut.key)) {
+            setSelectedShortcut(null);
+            return;
+        }
+
+        const { target } = selectedShortcut;
+        const isTargetSelected =
+            target.type === 'folder'
+                ? selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder?.path === target.folder.path
+                : target.type === 'tag'
+                  ? selectionState.selectionType === ItemType.TAG && selectionState.selectedTag === target.tagPath
+                  : target.type === 'property'
+                    ? selectionState.selectionType === ItemType.PROPERTY && selectionState.selectedProperty === target.nodeId
+                    : true;
+        if (!isTargetSelected) {
+            setSelectedShortcut(null);
+        }
+    }, [selectedShortcut, selectionState, shortcutMap]);
+
+    // Clears a note shortcut's marker when another file is selected. Reads the file selection through the subscription
+    // rather than the file selection context, so list selection changes do not re-render the navigation pane.
+    useEffect(() => {
+        const target = selectedShortcut?.target;
+        if (target?.type !== 'note') {
+            return;
+        }
+
+        const clearIfNoteDeselected = (state: SelectionState) => {
+            if (state.selectedFile?.path !== target.note.path) {
+                setSelectedShortcut(null);
+            }
+        };
+
+        clearIfNoteDeselected(selectionStateRef.current);
+        return subscribeSelectionState(clearIfNoteDeselected);
+    }, [selectedShortcut, selectionStateRef, subscribeSelectionState]);
+
     return {
         activeShortcutKey,
         setActiveShortcut,
@@ -204,6 +254,8 @@ export function useNavigationPaneShortcutState({
         recentNotesExpanded,
         setRecentNotesExpanded,
         shortcutNumberBadgesByKey,
-        shouldShowShortcutCounts
+        shouldShowShortcutCounts,
+        selectedShortcutKey: selectedShortcut?.key ?? null,
+        setSelectedShortcut
     };
 }

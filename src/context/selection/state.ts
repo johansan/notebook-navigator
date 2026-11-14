@@ -701,23 +701,6 @@ export function selectionReducer(state: SelectionState, action: SelectionAction,
                 selectedFile: action.file
             };
 
-        case 'TOGGLE_WITH_CURSOR': {
-            const selectedFiles = new Set(state.selectedFiles);
-            if (selectedFiles.has(action.file.path)) {
-                selectedFiles.delete(action.file.path);
-            } else {
-                selectedFiles.add(action.file.path);
-            }
-
-            return {
-                ...state,
-                selectedFiles,
-                selectedFile: action.file,
-                anchorIndex: action.anchorIndex !== undefined ? action.anchorIndex : state.anchorIndex,
-                lastMovementDirection: null
-            };
-        }
-
         case 'SET_KEYBOARD_NAVIGATION':
             return {
                 ...state,

@@ -1586,10 +1586,6 @@ export const STRINGS_NL = {
                 name: 'Eerste notitie automatisch selecteren',
                 desc: 'Automatisch de eerste notitie openen bij het wisselen van mappen, tags of eigenschappen.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Automatisch scrollen voor snelkoppelingen uitschakelen',
-                desc: 'Het navigatiepaneel niet scrollen bij klikken op items in snelkoppelingen.'
-            },
             expandOnSelection: {
                 name: 'Uitvouwen bij selectie',
                 desc: 'Mappen, tags en eigenschappen uitvouwen bij selectie. In enkelvoudige paneelmodus: eerste selectie vouwt uit, tweede selectie toont bestanden.'

@@ -100,7 +100,6 @@ const BOOLEAN_SETTING_KEYS = [
     'scopePropertiesToCurrentContext',
     'showSectionIcons',
     'showShortcuts',
-    'skipAutoScroll',
     'showRecentNotes',
     'pinRecentNotesWithShortcuts',
     'calendarEnabled',

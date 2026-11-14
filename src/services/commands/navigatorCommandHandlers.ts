@@ -1668,7 +1668,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
                     }
 
                     runAsyncAction(async () => {
-                        const didOpenDirectly = await openNoteShortcutWithoutNavigatorView(plugin, shortcut);
+                        const didOpenDirectly = await openNoteShortcut(plugin, shortcut);
                         if (didOpenDirectly) {
                             return;
                         }
@@ -1689,23 +1689,26 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         });
     });
 
-    async function openNoteShortcutWithoutNavigatorView(plugin: NotebookNavigatorPlugin, shortcut: ShortcutEntry): Promise<boolean> {
+    /**
+     * Opens a note shortcut in the editor without opening or showing the navigator. Returns false for other shortcut
+     * types and for a missing note, so the caller runs the shortcut through the navigator instead.
+     */
+    async function openNoteShortcut(plugin: NotebookNavigatorPlugin, shortcut: ShortcutEntry): Promise<boolean> {
         if (!isNoteShortcut(shortcut)) {
             return false;
         }
 
-        const { app } = plugin;
-        const target = resolveNoteShortcutTarget(app, shortcut.path);
+        const target = resolveNoteShortcutTarget(plugin.app, shortcut.path);
         if (!target) {
             return false;
         }
 
-        const leaf = app.workspace.getLeaf(false);
-        if (!leaf) {
-            return false;
-        }
-
-        await leaf.openFile(target, { active: true });
+        // Selects the note and its shortcut in a mounted navigator before opening it, as a shortcut click does, so
+        // auto-reveal finds the note already selected and leaves the navigation pane as it is. The open goes through
+        // the command queue, which skips an open that a newer one replaces, so commands run in quick succession end
+        // with the editor on the selected note.
+        getNavigatorViewIfMounted(plugin)?.selectNoteShortcut(target);
+        await openFileInActiveLeaf(plugin, target);
         return true;
     }
 

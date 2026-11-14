@@ -271,7 +271,6 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
     showSectionIcons: true,
     showShortcuts: true,
     shortcutBadgeDisplay: 'index',
-    skipAutoScroll: false,
     showRecentNotes: true,
     hideRecentNotes: 'none',
     pinRecentNotesWithShortcuts: false,

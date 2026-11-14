@@ -17,8 +17,14 @@
     color: var(--nn-selected-navitem-name-color);
 }
 
-.nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-name {
+/* A selected note shortcut follows the file selection while the list pane has focus (see state-selection.css) */
+.nn-split-container[data-focus-pane='files'] .nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-name {
     color: var(--nn-selected-file-name-color);
+}
+
+/* Matches the icon of a selected file in the list, which keeps one color in both pane focus states */
+.nn-split-container[data-focus-pane='files'] .nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-icon {
+    color: var(--nn-theme-navitem-selected-icon-color);
 }
 
 .nn-navitem.nn-selected .nn-navitem-count {

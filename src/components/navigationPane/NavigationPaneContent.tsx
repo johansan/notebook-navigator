@@ -111,6 +111,8 @@ export interface NavigationPaneHandle {
     requestScroll: (path: string, options: { align?: 'auto' | 'center' | 'start' | 'end'; itemType: ItemType }) => void;
     triggerSelectedItemCollapse: () => boolean;
     openShortcutByNumber: (shortcutNumber: number) => Promise<boolean>;
+    // Selects a note shortcut's note without revealing it and shows the shortcut as selected
+    selectNoteShortcut: (note: TFile) => void;
 }
 
 interface NavigationPaneProps {
@@ -128,8 +130,6 @@ interface NavigationPaneProps {
     onNavigateToFolder: (folderPath: string, options?: NavigateToFolderOptions) => void;
     onRevealTag: (tagPath: string, options?: RevealTagOptions) => void;
     onRevealProperty: (propertyNodeId: string, options?: RevealPropertyOptions) => boolean;
-    onRevealFile: (file: TFile) => void;
-    onRevealShortcutFile?: (file: TFile) => void;
     onModifySearchWithTag: (tag: string, operator: InclusionOperator) => void;
     onModifySearchWithProperty: (key: string, value: string | null, operator: InclusionOperator) => void;
     onModifySearchWithDateFilter: (dateToken: string) => void;
@@ -174,8 +174,6 @@ export const NavigationPane = React.memo(
             onNavigateToFolder,
             onRevealTag,
             onRevealProperty,
-            onRevealFile,
-            onRevealShortcutFile,
             onModifySearchWithTag,
             onModifySearchWithProperty,
             onModifySearchWithDateFilter,
@@ -401,8 +399,6 @@ export const NavigationPane = React.memo(
             onNavigateToFolder,
             onRevealTag,
             onRevealProperty,
-            onRevealFile,
-            onRevealShortcutFile,
             getFolderCounts: () => folderCountsRef.current,
             getTagCounts: () => tagCountsRef.current,
             getPropertyCounts: () => propertyCountsRef.current,
@@ -999,9 +995,18 @@ export const NavigationPane = React.memo(
                 scrollContainerRef: scrollContainerRef.current,
                 requestScroll,
                 triggerSelectedItemCollapse,
-                openShortcutByNumber: shortcuts.openShortcutByNumber
+                openShortcutByNumber: shortcuts.openShortcutByNumber,
+                selectNoteShortcut: shortcuts.selectNoteShortcut
             }),
-            [pathToIndex, requestScroll, rowVirtualizer, scrollContainerRef, shortcuts.openShortcutByNumber, triggerSelectedItemCollapse]
+            [
+                pathToIndex,
+                requestScroll,
+                rowVirtualizer,
+                scrollContainerRef,
+                shortcuts.openShortcutByNumber,
+                shortcuts.selectNoteShortcut,
+                triggerSelectedItemCollapse
+            ]
         );
 
         const keyboardItems = isRootReorderMode ? [] : items;
@@ -1178,7 +1183,7 @@ export const NavigationPane = React.memo(
                 const renameTarget = inlineRenameTarget ? matchNavigationInlineRenameTarget(item, inlineRenameTarget) : null;
 
                 return {
-                    isSelected: isNavigationItemSelected(item, selectionState),
+                    isSelected: isNavigationItemSelected(item, selectionState, shortcuts.selectedShortcutKey),
                     isExpanded,
                     renameTarget,
                     isDragSource
@@ -1189,6 +1194,7 @@ export const NavigationPane = React.memo(
                 inlineRenameTarget,
                 selectionState,
                 settings.showRootFolder,
+                shortcuts.selectedShortcutKey,
                 shortcuts.shortcutsExpanded,
                 shortcuts.recentNotesExpanded,
                 shortcuts.shouldUseShortcutDnd,
@@ -1201,10 +1207,11 @@ export const NavigationPane = React.memo(
                 isNavigationItemFilled({
                     item,
                     selectionState,
+                    selectedShortcutKey: shortcuts.selectedShortcutKey,
                     searchHighlights,
                     getSolidBackground
                 }),
-            [getSolidBackground, searchHighlights, selectionState]
+            [getSolidBackground, searchHighlights, selectionState, shortcuts.selectedShortcutKey]
         );
 
         const renderNavigationItem = useCallback(

@@ -1577,10 +1577,6 @@ export const STRINGS_KO = {
                 name: '첫 번째 노트 자동 선택',
                 desc: '폴더, 태그 또는 속성을 전환할 때 첫 번째 노트를 자동으로 엽니다.'
             },
-            disableShortcutAutoScroll: {
-                name: '바로가기 자동 스크롤 비활성화',
-                desc: '바로가기 내 항목을 클릭할 때 탐색 창을 스크롤하지 않습니다.'
-            },
             expandOnSelection: {
                 name: '선택 시 확장',
                 desc: '선택 시 폴더, 태그, 속성을 확장합니다. 단일 창 모드에서는 첫 번째 선택이 확장하고 두 번째 선택이 파일을 표시합니다.'

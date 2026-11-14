@@ -1574,10 +1574,6 @@ export const STRINGS_EN = {
                 name: 'Auto-select first note',
                 desc: 'Automatically open the first note when switching folders, tags, or properties.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Disable auto-scroll for shortcuts',
-                desc: "Don't scroll the navigation pane when clicking items in shortcuts."
-            },
             expandOnSelection: {
                 name: 'Expand on selection',
                 desc: 'Expand folders, tags, and properties when selected. In single pane mode, first selection expands, second selection shows files.'

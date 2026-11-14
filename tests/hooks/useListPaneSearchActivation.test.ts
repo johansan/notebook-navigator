@@ -49,8 +49,7 @@ vi.mock('../../src/context/ServicesContext', () => ({
 vi.mock('../../src/context/SettingsContext', () => ({
     useSettingsState: () => ({
         paneTransitionDuration: 0,
-        searchProvider: 'internal',
-        skipAutoScroll: false
+        searchProvider: 'internal'
     })
 }));
 

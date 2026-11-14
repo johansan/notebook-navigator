@@ -58,7 +58,7 @@ function SortableShortcutItem({ sortableId, canReorder, ...rest }: SortableShort
     );
 }
 
-export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassName, isDragSource }: NavigationPaneRowProps) {
+export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassName, isSelected, isDragSource }: NavigationPaneRowProps) {
     const { app, settings, showHiddenItems, getFileDisplayName, getSolidBackground, shortcuts, shortcutUiState } = context;
     const shouldShowTooltip = !context.isMobile && settings.showTooltips;
 
@@ -120,6 +120,7 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 color: isMissing ? undefined : item.color,
                 backgroundColor: shortcutBackground,
                 adjacentFilledClassName,
+                isSelected,
                 label: folderLabel,
                 description: undefined,
                 level: item.level,
@@ -218,6 +219,7 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 color: isMissing ? undefined : item.color,
                 backgroundColor: shortcutBackground,
                 adjacentFilledClassName,
+                isSelected,
                 label,
                 description: undefined,
                 level: item.level,
@@ -318,6 +320,7 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 color: isMissing ? undefined : item.color,
                 backgroundColor: shortcutBackground,
                 adjacentFilledClassName,
+                isSelected,
                 label: tagLabel,
                 description: undefined,
                 level: item.level,
@@ -371,6 +374,7 @@ export function NavigationPaneShortcutRow({ item, context, adjacentFilledClassNa
                 color: isMissing ? undefined : item.color,
                 backgroundColor: isMissing ? undefined : getSolidBackground(item.backgroundColor),
                 adjacentFilledClassName,
+                isSelected,
                 label: propertyLabel,
                 description: undefined,
                 level: item.level,

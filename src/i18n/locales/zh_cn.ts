@@ -1568,10 +1568,6 @@ export const STRINGS_ZH_CN = {
                 name: '自动选择第一个笔记',
                 desc: '切换文件夹、标签或属性时自动打开第一个笔记。'
             },
-            disableShortcutAutoScroll: {
-                name: '禁用快捷方式自动滚动',
-                desc: '点击快捷方式中的项目时不滚动导航窗格。'
-            },
             expandOnSelection: {
                 name: '选中时展开',
                 desc: '选中时展开文件夹、标签和属性。在单窗格模式下，首次选中展开，再次选中显示文件。'

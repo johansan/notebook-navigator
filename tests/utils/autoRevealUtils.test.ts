@@ -27,24 +27,39 @@ function createMockLeaf(win: Window): WorkspaceLeaf {
 }
 
 describe('shouldSkipNavigatorAutoReveal', () => {
-    it('skips auto-reveal when the navigator opens the selected file', () => {
+    it('skips auto-reveal when the active file is the selected file', () => {
         expect(
             shouldSkipNavigatorAutoReveal({
-                hasNavigatorFocus: true,
                 isOpeningVersionHistory: false,
                 isOpeningInNewContext: false,
-                isNavigatorOpeningSelectedFile: true
+                isActiveFileSelected: true
             })
         ).toBe(true);
     });
 
-    it('does not skip auto-reveal when the navigator is not focused', () => {
+    it('reveals a file that is not the selected file', () => {
         expect(
             shouldSkipNavigatorAutoReveal({
-                hasNavigatorFocus: false,
                 isOpeningVersionHistory: false,
                 isOpeningInNewContext: false,
-                isNavigatorOpeningSelectedFile: true
+                isActiveFileSelected: false
+            })
+        ).toBe(false);
+    });
+
+    it('reveals the selected file when it opens as version history or in a new context', () => {
+        expect(
+            shouldSkipNavigatorAutoReveal({
+                isOpeningVersionHistory: true,
+                isOpeningInNewContext: false,
+                isActiveFileSelected: true
+            })
+        ).toBe(false);
+        expect(
+            shouldSkipNavigatorAutoReveal({
+                isOpeningVersionHistory: false,
+                isOpeningInNewContext: true,
+                isActiveFileSelected: true
             })
         ).toBe(false);
     });

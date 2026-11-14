@@ -186,6 +186,8 @@ decoration also applies to list pane titles, breadcrumbs, and folder group heade
 
 #### Navigation selection
 
+A selected note shortcut uses these colors while the navigation pane has focus, and the background, border and name colors under [File selection](#file-selection) while the list pane has focus.
+
 | Variable | Default | Description |
 | --- | --- | --- |
 | `--nn-theme-navitem-selected-bg` | `var(--text-selection)` | Selected item background |
@@ -257,6 +259,8 @@ Search icon and supporting text use the shared variables under [Pane headers and
 | `--nn-theme-file-border-radius` | `8px` | File item corner radius (0-16px) |
 
 #### File selection
+
+The background, border and name colors also apply to a selected note shortcut in the navigation pane while the list pane has focus.
 
 | Variable | Default | Description |
 | --- | --- | --- |

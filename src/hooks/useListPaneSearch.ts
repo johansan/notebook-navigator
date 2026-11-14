@@ -538,13 +538,13 @@ export function useListPaneSearch({
                         onNavigateToFolder(startFolderPath, {
                             source: 'shortcut',
                             suppressAutoSelect: true,
-                            skipScroll: settings.skipAutoScroll
+                            skipScroll: true
                         });
                     }
                 } else if (isShortcutStartTag(startTarget)) {
-                    onRevealTag(startTarget.tagPath, { source: 'shortcut', skipScroll: settings.skipAutoScroll });
+                    onRevealTag(startTarget.tagPath, { source: 'shortcut', skipScroll: true });
                 } else if (isShortcutStartProperty(startTarget)) {
-                    onRevealProperty(startTarget.nodeId, { source: 'shortcut', skipScroll: settings.skipAutoScroll });
+                    onRevealProperty(startTarget.nodeId, { source: 'shortcut', skipScroll: true });
                 }
             }
 
@@ -586,7 +586,6 @@ export function useListPaneSearch({
             plugin,
             rootContainerRef,
             setSearchActive,
-            settings.skipAutoScroll,
             uiDispatch,
             waitForSinglePaneTransition,
             waitForNextFrame

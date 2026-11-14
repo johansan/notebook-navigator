@@ -76,6 +76,8 @@ export interface RevealFileOptions {
 export interface NavigateToFolderOptions {
     // Skip navigation pane scroll request when navigating to a folder
     skipScroll?: boolean;
+    // Leaves collapsed ancestors collapsed, so the selected folder can be without a visible tree row
+    skipExpandAncestors?: boolean;
     // Marks how this navigation was triggered
     source?: SelectionRevealSource;
     // When true, keep the navigation pane focused in single pane mode
@@ -145,11 +147,12 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
     // Obsidian mutates a TFile on rename, so instance identity still distinguishes a new file that later reuses the old path.
     const activeFileRef = useRef<TFile | null>(null);
     const hasInitializedRef = useRef<boolean>(false);
-    const selectedFilePathRef = useRef<string | null>(null);
+    // Holds the TFile rather than its path, because Obsidian renames a TFile in place and a stored path goes stale.
+    const selectedFileRef = useRef<TFile | null>(null);
 
     useEffect(() => {
-        // Track the latest selected file path for workspace event handlers without re-registering listeners.
-        selectedFilePathRef.current = selectionState.selectedFile?.path ?? null;
+        // Track the latest selected file for workspace event handlers without re-registering listeners.
+        selectedFileRef.current = selectionState.selectedFile;
     }, [selectionState.selectedFile]);
 
     const shouldIgnoreOtherWindowAutoReveal = useCallback(
@@ -715,19 +718,16 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             // Keep the current single-pane view (no navigation → files switch) during external file opens.
             // If implicit reveals should switch panes in the future, activate the files pane here.
 
-            const shouldSkipShortcutScroll = Boolean(settings.skipAutoScroll && revealSource === 'shortcut');
-            if (!shouldSkipShortcutScroll) {
-                if (targetTag && navigationPaneRef.current) {
-                    navigationPaneRef.current.requestScroll(targetTag, { align: navigationAlign, itemType: ItemType.TAG });
-                } else if (!targetTag && targetProperty && navigationPaneRef.current) {
-                    navigationPaneRef.current.requestScroll(targetProperty, { align: navigationAlign, itemType: ItemType.PROPERTY });
-                } else if (!targetTag && !targetProperty && navigationPaneRef.current) {
-                    const scrollFolder =
-                        targetFolderOverride ??
-                        (preserveFolder && selectionState.selectedFolder ? selectionState.selectedFolder : (resolvedFolder ?? file.parent));
-                    if (scrollFolder) {
-                        navigationPaneRef.current.requestScroll(scrollFolder.path, { align: navigationAlign, itemType: ItemType.FOLDER });
-                    }
+            if (targetTag && navigationPaneRef.current) {
+                navigationPaneRef.current.requestScroll(targetTag, { align: navigationAlign, itemType: ItemType.TAG });
+            } else if (!targetTag && targetProperty && navigationPaneRef.current) {
+                navigationPaneRef.current.requestScroll(targetProperty, { align: navigationAlign, itemType: ItemType.PROPERTY });
+            } else if (!targetTag && !targetProperty && navigationPaneRef.current) {
+                const scrollFolder =
+                    targetFolderOverride ??
+                    (preserveFolder && selectionState.selectedFolder ? selectionState.selectedFolder : (resolvedFolder ?? file.parent));
+                if (scrollFolder) {
+                    navigationPaneRef.current.requestScroll(scrollFolder.path, { align: navigationAlign, itemType: ItemType.FOLDER });
                 }
             }
         },
@@ -767,22 +767,24 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
                 return false;
             }
 
-            // Expand all ancestors to make the folder visible
-            const foldersToExpand: string[] = [];
-            let currentFolder: TFolder | null = folder.parent;
+            if (!options?.skipExpandAncestors) {
+                // Expand all ancestors to make the folder visible
+                const foldersToExpand: string[] = [];
+                let currentFolder: TFolder | null = folder.parent;
 
-            while (currentFolder) {
-                foldersToExpand.unshift(currentFolder.path);
-                if (currentFolder.path === '/') break;
-                currentFolder = currentFolder.parent;
-            }
+                while (currentFolder) {
+                    foldersToExpand.unshift(currentFolder.path);
+                    if (currentFolder.path === '/') break;
+                    currentFolder = currentFolder.parent;
+                }
 
-            // Expand folders if needed
-            const needsExpansion = foldersToExpand.some(
-                path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
-            );
-            if (needsExpansion) {
-                expandFolderPaths(foldersToExpand);
+                // Expand folders if needed
+                const needsExpansion = foldersToExpand.some(
+                    path => !isFolderEffectivelyExpanded(path, expansionState.expandedFolders, settings.showRootFolder)
+                );
+                if (needsExpansion) {
+                    expandFolderPaths(foldersToExpand);
+                }
             }
 
             const suppressAutoSelect = Boolean(options?.suppressAutoSelect);
@@ -970,19 +972,10 @@ export function useNavigatorReveal({ app, navigationPaneRef, focusNavigationPane
             const isOpeningVersionHistory = commandQueue && commandQueue.isOpeningVersionHistory();
             const isOpeningInNewContext = commandQueue && commandQueue.isOpeningInNewContext();
 
-            // Skip auto-reveal when the navigator is focused and it opened the currently selected file.
-            // This prevents auto-reveal from re-dispatching selection changes for navigator-initiated opens.
-            const navigatorEl = activeDocument.querySelector('.nn-split-container');
-            const hasNavigatorFocus = Boolean(navigatorEl && navigatorEl.contains(activeDocument.activeElement));
-
-            const selectedFilePath = selectedFilePathRef.current;
-            const isNavigatorOpeningSelectedFile = selectedFilePath !== null && selectedFilePath === file.path;
-
             const shouldSkipNavigatorAutoRevealForFile = shouldSkipNavigatorAutoReveal({
-                hasNavigatorFocus,
                 isOpeningVersionHistory,
                 isOpeningInNewContext,
-                isNavigatorOpeningSelectedFile
+                isActiveFileSelected: selectedFileRef.current === file
             });
 
             if (shouldSkipNavigatorAutoRevealForFile) {

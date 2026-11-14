@@ -472,7 +472,7 @@ export function useNavigationPaneScroll({
         }
 
         const currentSelectionType = selectedItemType ?? ItemType.FOLDER;
-        const suppressShortcutScroll = settings.skipAutoScroll && selectionReveal.revealSource === 'shortcut';
+        const suppressShortcutScroll = selectionReveal.revealSource === 'shortcut';
 
         // Check if this is an actual selection change vs just a tree structure update
         const isSelectionChange = prevSelectedPathRef.current !== selectedPath;
@@ -529,7 +529,6 @@ export function useNavigationPaneScroll({
         selectionReveal.revealSource,
         resolveIndex,
         activeShortcutKey,
-        settings.skipAutoScroll,
         scrollToIndexSafely
     ]);
 
@@ -559,7 +558,7 @@ export function useNavigationPaneScroll({
             return;
         }
 
-        const suppressShortcutScroll = settings.skipAutoScroll && selectionReveal.revealSource === 'shortcut';
+        const suppressShortcutScroll = selectionReveal.revealSource === 'shortcut';
         if (suppressShortcutScroll) {
             prevSelectedDeferredPathRef.current = selectedPath;
             return;
@@ -599,7 +598,6 @@ export function useNavigationPaneScroll({
         resolveIndex,
         activeShortcutKey,
         selectionReveal.revealSource,
-        settings.skipAutoScroll,
         scrollToIndexSafely
     ]);
 

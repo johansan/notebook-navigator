@@ -1586,10 +1586,6 @@ export const STRINGS_ES = {
                 name: 'Seleccionar automáticamente la primera nota',
                 desc: 'Abre automáticamente la primera nota al cambiar de carpeta, etiqueta o propiedad.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Desactivar desplazamiento automático para accesos directos',
-                desc: 'No desplazar el panel de navegación al hacer clic en elementos de accesos directos.'
-            },
             expandOnSelection: {
                 name: 'Expandir al seleccionar',
                 desc: 'Expandir carpetas, etiquetas y propiedades al seleccionar. En modo de panel único, la primera selección expande, la segunda muestra archivos.'

@@ -118,6 +118,7 @@ export function migrateLegacySyncedSettings(params: {
     delete mutableSettings.optimizeNoteHeight;
     delete mutableSettings.showPinnedIcon;
     delete mutableSettings.showPinnedGroupHeader;
+    delete mutableSettings.skipAutoScroll;
 
     const legacyShowFileIconUnfinishedTask = mutableSettings.showFileIconUnfinishedTask;
     if (typeof storedData?.['unfinishedTaskIcon'] === 'undefined' && typeof legacyShowFileIconUnfinishedTask === 'boolean') {

@@ -1585,10 +1585,6 @@ export const STRINGS_DE = {
                 name: 'Erste Notiz automatisch auswählen',
                 desc: 'Die erste Notiz automatisch öffnen, wenn du Ordner, Tags oder Eigenschaften wechselst.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Auto-Scroll für Verknüpfungen deaktivieren',
-                desc: 'Navigationsbereich nicht scrollen beim Klicken auf Elemente in Verknüpfungen.'
-            },
             expandOnSelection: {
                 name: 'Bei Auswahl erweitern',
                 desc: 'Ordner, Tags und Eigenschaften bei Auswahl erweitern. Im Einzelbereich-Modus: erste Auswahl erweitert, zweite Auswahl zeigt Dateien.'

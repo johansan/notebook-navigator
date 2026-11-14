@@ -1569,10 +1569,6 @@ export const STRINGS_ZH_TW = {
                 name: '自動選擇第一個筆記',
                 desc: '切換資料夾、標籤或屬性時自動開啟第一個筆記。'
             },
-            disableShortcutAutoScroll: {
-                name: '停用捷徑自動捲動',
-                desc: '點按捷徑中的項目時不捲動導覽窗格。'
-            },
             expandOnSelection: {
                 name: '選取時展開',
                 desc: '選取時展開資料夾、標籤和屬性。在單窗格模式下，首次選取展開，再次選取顯示檔案。'

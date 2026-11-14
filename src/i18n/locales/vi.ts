@@ -1579,10 +1579,6 @@ export const STRINGS_VI = {
                 name: 'Tự động chọn ghi chú đầu tiên',
                 desc: 'Tự động mở ghi chú đầu tiên khi chuyển thư mục, thẻ hoặc thuộc tính.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Tắt tự động cuộn cho lối tắt',
-                desc: 'Không cuộn ngăn điều hướng khi nhấn mục trong lối tắt.'
-            },
             expandOnSelection: {
                 name: 'Mở rộng khi chọn',
                 desc: 'Mở rộng thư mục, thẻ và thuộc tính khi chọn. Ở chế độ một ngăn, chọn lần đầu mở rộng, chọn lần hai hiện tệp.'

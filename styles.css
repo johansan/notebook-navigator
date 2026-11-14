@@ -5599,6 +5599,15 @@ button.nn-list-group-header-collapse-button .nn-list-group-header-icon {
     pointer-events: none;
 }
 
+/* A selected note shortcut takes the file selection colors while the list pane has focus, because clicking it in dual
+   pane mode moves focus there. The row then shows as active, like a clicked folder shortcut, while delete and rename act
+   on that note. With navigation focus, as in single pane mode, the navigation selection colors apply, so the row stays
+   active there too. */
+.nn-split-container[data-focus-pane='files'] .nn-navitem.nn-selected[data-nav-item-type='note']::after {
+    background-color: var(--nn-selected-file-bg-color);
+    box-shadow: inset 0 0 0 var(--nn-theme-file-border-width) var(--nn-selected-file-border-color);
+}
+
 .nn-navitem.nn-selected > .nn-navitem-content {
     position: relative;
     z-index: 2;
@@ -5628,8 +5637,14 @@ button.nn-list-group-header-collapse-button .nn-list-group-header-icon {
     color: var(--nn-selected-navitem-name-color);
 }
 
-.nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-name {
+/* A selected note shortcut follows the file selection while the list pane has focus (see state-selection.css) */
+.nn-split-container[data-focus-pane='files'] .nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-name {
     color: var(--nn-selected-file-name-color);
+}
+
+/* Matches the icon of a selected file in the list, which keeps one color in both pane focus states */
+.nn-split-container[data-focus-pane='files'] .nn-navitem.nn-selected[data-nav-item-type='note'] .nn-navitem-icon {
+    color: var(--nn-theme-navitem-selected-icon-color);
 }
 
 .nn-navitem.nn-selected .nn-navitem-count {

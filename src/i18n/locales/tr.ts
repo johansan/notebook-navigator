@@ -1579,10 +1579,6 @@ export const STRINGS_TR = {
                 name: 'İlk notu otomatik seç',
                 desc: 'Klasör, etiket veya özellik değiştirirken ilk notu otomatik olarak aç.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Kısayollar için otomatik kaydırmayı devre dışı bırak',
-                desc: 'Kısayollardaki öğelere tıklarken gezinme bölmesini kaydırma.'
-            },
             expandOnSelection: {
                 name: 'Seçimde genişlet',
                 desc: 'Seçildiğinde klasörleri, etiketleri ve özellikleri genişlet. Tek bölme modunda ilk seçim genişletir, ikinci seçim dosyaları gösterir.'

@@ -1587,10 +1587,6 @@ export const STRINGS_FR = {
                 name: 'Sélectionner automatiquement la première note',
                 desc: 'Ouvrir automatiquement la première note lors du changement de dossier, de mot-clé ou de propriété.'
             },
-            disableShortcutAutoScroll: {
-                name: 'Désactiver le défilement automatique pour les raccourcis',
-                desc: 'Ne pas faire défiler le panneau de navigation lors du clic sur les éléments de raccourcis.'
-            },
             expandOnSelection: {
                 name: 'Développer à la sélection',
                 desc: 'Développer les dossiers, mots-clés et propriétés lors de la sélection. En mode panneau unique, la première sélection développe, la seconde affiche les fichiers.'

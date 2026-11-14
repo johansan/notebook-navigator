@@ -19,31 +19,27 @@
 import { WorkspaceLeaf } from 'obsidian';
 
 interface ShouldSkipNavigatorAutoRevealParams {
-    hasNavigatorFocus: boolean;
     isOpeningVersionHistory: boolean;
     isOpeningInNewContext: boolean;
-    isNavigatorOpeningSelectedFile: boolean;
+    isActiveFileSelected: boolean;
 }
 
 /**
- * Determines whether auto-reveal should be suppressed for navigator-initiated opens.
- * Used to prevent workspace file-open events from racing with rapid keyboard navigation.
+ * Determines whether auto-reveal leaves the navigator as it is because the file becoming active is already the
+ * selected file. The selection already points at the file, so a reveal would only move the navigation context: a
+ * shortcut that selects a note without revealing it would otherwise be revealed when its editor is focused later.
+ * Version history and new-context opens still reveal.
  */
 export function shouldSkipNavigatorAutoReveal({
-    hasNavigatorFocus,
     isOpeningVersionHistory,
     isOpeningInNewContext,
-    isNavigatorOpeningSelectedFile
+    isActiveFileSelected
 }: ShouldSkipNavigatorAutoRevealParams): boolean {
-    if (!hasNavigatorFocus) {
-        return false;
-    }
-
     if (isOpeningVersionHistory || isOpeningInNewContext) {
         return false;
     }
 
-    return isNavigatorOpeningSelectedFile;
+    return isActiveFileSelected;
 }
 
 export function isLeafInNavigatorWindow(leaf: WorkspaceLeaf | null, navigatorLeaves: WorkspaceLeaf[]): boolean {

@@ -24,6 +24,22 @@ import type { SearchShortcut } from '../../types/shortcuts';
 import type { ListReorderHandlers } from '../../types/listReorder';
 import type { VirtualFolderTrailingAction } from '../../components/VirtualFolderItem';
 
+/**
+ * The target a shortcut selected when it was activated. Folders and notes are compared by their live paths, so a
+ * rename keeps the match. A tag is its canonical path and a property is the node id the activation revealed.
+ */
+export type SelectedShortcutTarget =
+    | { type: 'folder'; folder: TFolder }
+    | { type: 'note'; note: TFile }
+    | { type: 'tag'; tagPath: string }
+    | { type: 'property'; nodeId: string };
+
+/** The shortcut the user activated last, shown as selected while its target stays selected */
+export interface SelectedShortcut {
+    key: string;
+    target: SelectedShortcutTarget;
+}
+
 export type ShortcutContextMenuTarget =
     | { type: 'folder'; key: string; folder: TFolder }
     | { type: 'note'; key: string; file: TFile }
@@ -84,6 +100,11 @@ export interface NavigationPaneShortcutsResult extends NavigationPaneShortcutRen
     setRecentNotesExpanded: React.Dispatch<React.SetStateAction<boolean>>;
     activeShortcutKey: string | null;
     clearActiveShortcut: () => void;
+    // Key of the shortcut activated last while its target is still selected, otherwise null
+    selectedShortcutKey: string | null;
+    // Selects a note shortcut's note without revealing it and shows the shortcut as selected, for callers that open
+    // the note themselves
+    selectNoteShortcut: (note: TFile) => void;
     pinToggleLabel: string;
     handleShortcutSplitToggle: () => void;
     isShortcutSorting: boolean;

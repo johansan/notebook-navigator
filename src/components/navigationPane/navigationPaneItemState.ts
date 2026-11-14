@@ -26,6 +26,7 @@ type NavigationItemSearchMatch = 'include' | 'exclude';
 interface NavigationItemFilledParams {
     item: CombinedNavigationItem;
     selectionState: NavigationSelectionState;
+    selectedShortcutKey: string | null;
     searchHighlights: NavigationSearchHighlightsResult;
     getSolidBackground: (color?: string | null) => string | undefined;
 }
@@ -51,7 +52,18 @@ export function getNavigationItemSearchMatch(
     }
 }
 
-export function isNavigationItemSelected(item: CombinedNavigationItem, selectionState: NavigationSelectionState): boolean {
+/**
+ * Returns whether a navigation row shows as selected. Tree rows follow the selection. Only the shortcut activated last
+ * shows as selected, and only while its target is still the selection, so a folder shortcut and a note shortcut never
+ * show as selected together. Recent note rows never show as selected.
+ *
+ * `selectedShortcutKey` is the key of the shortcut activated last while its target is still selected, otherwise null.
+ */
+export function isNavigationItemSelected(
+    item: CombinedNavigationItem,
+    selectionState: NavigationSelectionState,
+    selectedShortcutKey: string | null
+): boolean {
     switch (item.type) {
         case NavigationPaneItemType.FOLDER:
             return selectionState.selectionType === ItemType.FOLDER && selectionState.selectedFolder?.path === item.data.path;
@@ -77,6 +89,12 @@ export function isNavigationItemSelected(item: CombinedNavigationItem, selection
         case NavigationPaneItemType.PROPERTY_VALUE:
             return selectionState.selectionType === ItemType.PROPERTY && selectionState.selectedProperty === item.data.id;
 
+        case NavigationPaneItemType.SHORTCUT_FOLDER:
+        case NavigationPaneItemType.SHORTCUT_NOTE:
+        case NavigationPaneItemType.SHORTCUT_TAG:
+        case NavigationPaneItemType.SHORTCUT_PROPERTY:
+            return item.key === selectedShortcutKey;
+
         default:
             return false;
     }
@@ -85,6 +103,7 @@ export function isNavigationItemSelected(item: CombinedNavigationItem, selection
 export function isNavigationItemFilled({
     item,
     selectionState,
+    selectedShortcutKey,
     searchHighlights,
     getSolidBackground
 }: NavigationItemFilledParams): boolean {
@@ -99,5 +118,9 @@ export function isNavigationItemFilled({
     }
 
     const hasBackground = 'backgroundColor' in item && Boolean(getSolidBackground(item.backgroundColor));
-    return hasBackground || isNavigationItemSelected(item, selectionState) || Boolean(getNavigationItemSearchMatch(item, searchHighlights));
+    return (
+        hasBackground ||
+        isNavigationItemSelected(item, selectionState, selectedShortcutKey) ||
+        Boolean(getNavigationItemSearchMatch(item, searchHighlights))
+    );
 }

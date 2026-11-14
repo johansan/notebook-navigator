@@ -319,6 +319,15 @@ export class NotebookNavigatorView extends ItemView {
     }
 
     /**
+     * Selects a note shortcut's note in the current folder, tag or property context without expanding or scrolling the
+     * navigation pane, and shows the shortcut as selected, as a click does. Auto-reveal then skips the note when it
+     * opens, because it is already the selected file.
+     */
+    selectNoteShortcut(note: TFile) {
+        this.componentHandle?.selectNoteShortcut(note);
+    }
+
+    /**
      * Moves focus to the visible pane without forcing a view switch
      */
     focusVisiblePane() {

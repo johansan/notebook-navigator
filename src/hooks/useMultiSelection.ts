@@ -50,7 +50,7 @@ export function useMultiSelection() {
      * Handle Cmd/Ctrl+Click for toggling individual file selection
      */
     const handleMultiSelectClick = useCallback(
-        (file: TFile, fileIndex?: number, orderedFiles?: TFile[]) => {
+        (file: TFile, fileIndex: number | undefined, orderedFiles: TFile[]) => {
             const selectionState = fileSelectionRef.current;
 
             // Check if we're trying to deselect
@@ -69,7 +69,7 @@ export function useMultiSelection() {
                 selectionDispatch({ type: 'TOGGLE_FILE_SELECTION', file });
 
                 // If the cursor is on the file we're deselecting, we need to move it
-                if (selectionState.selectedFile && selectionState.selectedFile.path === file.path && orderedFiles) {
+                if (selectionState.selectedFile && selectionState.selectedFile.path === file.path) {
                     // Find the first selected file in the current file list
                     const firstSelectedFile = orderedFiles.find(f => selectionState.selectedFiles.has(f.path) && f.path !== file.path);
 
@@ -86,8 +86,12 @@ export function useMultiSelection() {
                     openFileInWorkspace(selectionState.selectedFile);
                 }
             } else {
-                // If selecting, update cursor
-                selectionDispatch({ type: 'TOGGLE_WITH_CURSOR', file, anchorIndex: fileIndex });
+                // Adds the file to the selected files the list shows and moves the cursor to it. A file selected
+                // outside the list, such as a shortcut note or a hidden file, is dropped, because drag, move and
+                // delete would otherwise act on a file the list does not show.
+                const selectedFiles = new Set(orderedFiles.filter(f => selectionState.selectedFiles.has(f.path)).map(f => f.path));
+                selectedFiles.add(file.path);
+                selectionDispatch({ type: 'APPLY_FILE_SELECTION', selectedFiles, selectedFile: file, anchorIndex: fileIndex });
 
                 // Open the file without changing focus
                 openFileInWorkspace(file);
@@ -232,8 +236,11 @@ export function useMultiSelection() {
 
             const selectionState = fileSelectionRef.current;
 
-            // Keep cursor on current file or first file if none selected
-            const currentFile = selectionState.selectedFile || files[0];
+            // Keeps the cursor on the current file only when it is in the list. A file selected outside the list
+            // (a shortcut note or a hidden file) would otherwise stay the primary file, and a one-file list would then
+            // delete or move that file instead of the listed one.
+            const selectedFile = selectionState.selectedFile;
+            const currentFile = selectedFile && files.includes(selectedFile) ? selectedFile : files[0];
             selectionDispatch({ type: 'SET_FILE_SELECTION', files, selectedFile: currentFile });
         },
         [selectionDispatch]

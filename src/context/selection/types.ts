@@ -113,7 +113,6 @@ export type SelectionAction =
     | { type: 'SET_ANCHOR_INDEX'; index: number | null }
     | { type: 'SET_MOVEMENT_DIRECTION'; direction: 'up' | 'down' | null }
     | { type: 'UPDATE_CURRENT_FILE'; file: TFile }
-    | { type: 'TOGGLE_WITH_CURSOR'; file: TFile; anchorIndex?: number }
     | { type: 'SET_KEYBOARD_NAVIGATION'; isKeyboardNavigation: boolean }
     | { type: 'SET_FOLDER_CHANGE_WITH_AUTO_SELECT'; isFolderChangeWithAutoSelect: boolean }
     | { type: 'UPDATE_FILE_PATH'; oldPath: string; newPath: string }
