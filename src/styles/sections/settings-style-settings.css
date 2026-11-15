@@ -1329,6 +1329,14 @@ settings:
         default-light: '#'
         default-dark: '#'
     -
+        id: nn-theme-mobile-shortcuts-handle-color
+        title: Pinned shortcuts resize handle color
+        description: Color of the handle below pinned shortcuts on mobile.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
         id: nn-theme-mobile-list-header-link-color
         title: Header link color
         description: Color for back button and clickable breadcrumb segments on mobile.

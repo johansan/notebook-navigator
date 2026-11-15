@@ -94,9 +94,13 @@
     right: 0;
 }
 
-/* Pane divider resize handle hover state - provides visual feedback */
-.nn-resize-handle:hover {
-    background-color: var(--nn-theme-divider-resize-handle-hover-bg);
+/* Pane divider resize handle hover state - provides visual feedback. Limited to hover-capable
+   primary inputs because iOS keeps :hover on the last touched element after touch up, which
+   would keep the highlight visible until another element is tapped. */
+@media (hover: hover) {
+    .nn-resize-handle:hover {
+        background-color: var(--nn-theme-divider-resize-handle-hover-bg);
+    }
 }
 
 /* Pane divider resize handle active state - maintains visibility during resize */
@@ -169,14 +173,19 @@
    ======================================================================== */
 
 /* Widen the divider hit area for touch dragging. The handle only renders in
-   dual pane mode, which is limited to tablets on mobile. */
+   dual pane mode, which is limited to tablets on mobile. The padding and content-box
+   clip keep the hover and drag highlight to the desktop's 3px line at the divider. */
 .notebook-navigator-mobile .nn-resize-handle {
     width: 12px;
+    padding-right: 9px;
+    background-clip: content-box;
 }
 
 .notebook-navigator-mobile .nn-split-container.nn-orientation-vertical .nn-resize-handle {
     width: 100%;
     height: 12px;
+    padding-right: 0;
+    padding-bottom: 9px;
 }
 
 /* Add touch-action to prevent browser gestures interfering */

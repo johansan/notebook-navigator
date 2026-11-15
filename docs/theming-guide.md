@@ -397,6 +397,7 @@ These variables apply in desktop and tablet dual-pane layouts.
 | Variable | Default | Description |
 | --- | --- | --- |
 | `--nn-theme-mobile-bg` | `var(--mobile-sidebar-background)` | Navigation and list pane background |
+| `--nn-theme-mobile-shortcuts-handle-color` | `var(--nn-theme-divider-border-color)` in light mode, `color-mix(in srgb, var(--nn-theme-mobile-bg), #000000 50%)` in dark mode | Resize handle below pinned shortcuts |
 | `--nn-theme-mobile-list-header-link-color` | `var(--link-color)` | Header back button and clickable breadcrumb segment color |
 | `--nn-theme-mobile-list-header-breadcrumb-color` | `var(--nn-theme-foreground)` | Header breadcrumb current folder and separator color |
 | `--nn-theme-mobile-list-header-breadcrumb-font-weight` | `600` | Header breadcrumb font weight |
@@ -596,6 +597,7 @@ supported by Notebook Navigator:
 
   /* Mobile */
   --nn-theme-mobile-bg: #2b2b2b;
+  --nn-theme-mobile-shortcuts-handle-color: #161616;
   --nn-theme-mobile-list-header-link-color: #589df6;
   --nn-theme-mobile-list-header-breadcrumb-color: #a9b7c6;
   --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;

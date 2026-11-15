@@ -121,6 +121,7 @@ body {
     /* Header font sizes */
     --nn-desktop-header-font-size: 13px; /* Fixed desktop header font size */
     --nn-mobile-header-font-size: 17px; /* Fixed mobile header font size */
+    --nn-tablet-header-font-size: 16px; /* Desktop header size plus the 3px mobile text increment */
     --nn-root-reorder-hint-font-size: var(--font-ui-smaller);
     --nn-root-reorder-hint-font-size-mobile: var(--font-ui-small);
 
@@ -328,6 +329,7 @@ body {
 
     /* -- Mobile -- */
     --nn-theme-mobile-bg: var(--mobile-sidebar-background);
+    --nn-theme-mobile-shortcuts-handle-color: var(--nn-theme-divider-border-color);
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
@@ -343,4 +345,7 @@ body {
 .theme-dark {
     --nn-theme-pinned-shortcut-shadow-color: rgba(0, 0, 0, 0.18);
     --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.3);
+    /* Derived from the mobile pane background instead of the divider color, because themes such as
+       Minimal set a black divider color. Deriving it keeps the handle darker than a custom pane background. */
+    --nn-theme-mobile-shortcuts-handle-color: color-mix(in srgb, var(--nn-theme-mobile-bg), #000000 50%);
 }

@@ -47,6 +47,13 @@
     font-size: calc(var(--nn-file-icon-size-mobile, var(--nn-file-icon-size)) * var(--nn-android-font-scale-reciprocal, 1));
 }
 
+/* Tablet header buttons use 24px icons (ui-headers.css). Without this override, the general icon
+   rule above sizes their emoji and font icons to the file icon size instead. */
+.notebook-navigator-android .nn-mobile .nn-header-actions .nn-icon-button .nn-emoji-icon,
+.notebook-navigator-android .nn-mobile .nn-header-actions .nn-icon-button .nn-iconfont {
+    font-size: calc(24px * var(--nn-android-font-scale-reciprocal, 1));
+}
+
 /* Task indicators are smaller than file icons, so preserve their 80% size while compensating
    for Android textZoom. Without this override, the general icon rule above enlarges them. */
 .notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-emoji-icon,

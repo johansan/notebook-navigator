@@ -154,7 +154,7 @@
     right: 20%;
     bottom: 3px;
     height: 5px;
-    background-color: var(--nn-theme-divider-border-color);
+    background-color: var(--nn-theme-mobile-shortcuts-handle-color);
     border-radius: 3px;
     pointer-events: none;
 }

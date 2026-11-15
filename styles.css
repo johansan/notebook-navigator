@@ -148,6 +148,7 @@ body {
     /* Header font sizes */
     --nn-desktop-header-font-size: 13px; /* Fixed desktop header font size */
     --nn-mobile-header-font-size: 17px; /* Fixed mobile header font size */
+    --nn-tablet-header-font-size: 16px; /* Desktop header size plus the 3px mobile text increment */
     --nn-root-reorder-hint-font-size: var(--font-ui-smaller);
     --nn-root-reorder-hint-font-size-mobile: var(--font-ui-small);
 
@@ -355,6 +356,7 @@ body {
 
     /* -- Mobile -- */
     --nn-theme-mobile-bg: var(--mobile-sidebar-background);
+    --nn-theme-mobile-shortcuts-handle-color: var(--nn-theme-divider-border-color);
     --nn-theme-mobile-list-header-link-color: var(--link-color);
     --nn-theme-mobile-list-header-breadcrumb-color: var(--nn-theme-foreground);
     --nn-theme-mobile-list-header-breadcrumb-font-weight: 600;
@@ -370,6 +372,9 @@ body {
 .theme-dark {
     --nn-theme-pinned-shortcut-shadow-color: rgba(0, 0, 0, 0.18);
     --nn-theme-calendar-feature-image-overlay-color: rgb(0 0 0 / 0.3);
+    /* Derived from the mobile pane background instead of the divider color, because themes such as
+       Minimal set a black divider color. Deriving it keeps the handle darker than a custom pane background. */
+    --nn-theme-mobile-shortcuts-handle-color: color-mix(in srgb, var(--nn-theme-mobile-bg), #000000 50%);
 }
 /* Source: src/styles/sections/layout-base.css */
 
@@ -744,9 +749,13 @@ body {
     right: 0;
 }
 
-/* Pane divider resize handle hover state - provides visual feedback */
-.nn-resize-handle:hover {
-    background-color: var(--nn-theme-divider-resize-handle-hover-bg);
+/* Pane divider resize handle hover state - provides visual feedback. Limited to hover-capable
+   primary inputs because iOS keeps :hover on the last touched element after touch up, which
+   would keep the highlight visible until another element is tapped. */
+@media (hover: hover) {
+    .nn-resize-handle:hover {
+        background-color: var(--nn-theme-divider-resize-handle-hover-bg);
+    }
 }
 
 /* Pane divider resize handle active state - maintains visibility during resize */
@@ -819,14 +828,19 @@ body {
    ======================================================================== */
 
 /* Widen the divider hit area for touch dragging. The handle only renders in
-   dual pane mode, which is limited to tablets on mobile. */
+   dual pane mode, which is limited to tablets on mobile. The padding and content-box
+   clip keep the hover and drag highlight to the desktop's 3px line at the divider. */
 .notebook-navigator-mobile .nn-resize-handle {
     width: 12px;
+    padding-right: 9px;
+    background-clip: content-box;
 }
 
 .notebook-navigator-mobile .nn-split-container.nn-orientation-vertical .nn-resize-handle {
     width: 100%;
     height: 12px;
+    padding-right: 0;
+    padding-bottom: 9px;
 }
 
 /* Add touch-action to prevent browser gestures interfering */
@@ -975,6 +989,42 @@ body {
 .nn-pane-header .nn-pane-header-folder-note:hover {
     cursor: pointer;
     text-decoration: var(--nn-theme-navitem-folder-note-name-hover-decoration);
+}
+
+/* ========================================================================
+   Tablet Headers
+   ======================================================================== */
+
+/* Tablets render the desktop header inside the mobile layout, so it gets touch-sized buttons and the
+   24px icons and stroke of Obsidian's tablet view header. Phones render only the simple header, which
+   these selectors exclude; their actions live in the bottom toolbar. */
+.nn-mobile .nn-pane-header:not(.nn-pane-header-simple) {
+    min-height: 44px;
+    height: 44px;
+}
+
+/* The list title and the profile switcher both carry the title class. */
+.nn-mobile .nn-pane-header:not(.nn-pane-header-simple) .nn-pane-header-title {
+    font-size: var(--nn-tablet-header-font-size);
+}
+
+/* The 6px padding keeps a 24px icon in a 36px button, so a full list header gets no wider.
+   Emoji and font icons size from the inherited font size, so they match the SVG icons;
+   android-textzoom.css repeats the 24px size for Android. */
+.nn-mobile .nn-header-actions button.nn-icon-button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 6px;
+    font-size: 24px;
+}
+
+.nn-mobile .nn-header-actions .nn-icon-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nn-mobile .nn-header-actions .nn-icon-button svg:not(.nn-vault-icon-svg) {
+    stroke-width: 1.75;
 }
 
 /* ========================================================================
@@ -1829,7 +1879,7 @@ button.nn-icon-button.nn-icon-button-active svg:not(.nn-vault-icon-svg) {
     right: 20%;
     bottom: 3px;
     height: 5px;
-    background-color: var(--nn-theme-divider-border-color);
+    background-color: var(--nn-theme-mobile-shortcuts-handle-color);
     border-radius: 3px;
     pointer-events: none;
 }
@@ -9724,6 +9774,13 @@ body.is-phone .notebook-navigator-android .nn-split-container {
     font-size: calc(var(--nn-file-icon-size-mobile, var(--nn-file-icon-size)) * var(--nn-android-font-scale-reciprocal, 1));
 }
 
+/* Tablet header buttons use 24px icons (ui-headers.css). Without this override, the general icon
+   rule above sizes their emoji and font icons to the file icon size instead. */
+.notebook-navigator-android .nn-mobile .nn-header-actions .nn-icon-button .nn-emoji-icon,
+.notebook-navigator-android .nn-mobile .nn-header-actions .nn-icon-button .nn-iconfont {
+    font-size: calc(24px * var(--nn-android-font-scale-reciprocal, 1));
+}
+
 /* Task indicators are smaller than file icons, so preserve their 80% size while compensating
    for Android textZoom. Without this override, the general icon rule above enlarges them. */
 .notebook-navigator-android .nn-mobile .nn-file-task-progress-icon.nn-emoji-icon,
@@ -11305,6 +11362,14 @@ settings:
         id: nn-theme-mobile-bg
         title: Pane background
         description: Background color of navigation and list panes on mobile.
+        type: variable-themed-color
+        format: hex
+        default-light: '#'
+        default-dark: '#'
+    -
+        id: nn-theme-mobile-shortcuts-handle-color
+        title: Pinned shortcuts resize handle color
+        description: Color of the handle below pinned shortcuts on mobile.
         type: variable-themed-color
         format: hex
         default-light: '#'

@@ -100,6 +100,7 @@ const ANDROID_FONT_SIZE_VARIABLES = [
     '--nn-list-title-font-size',
     '--nn-desktop-header-font-size',
     '--nn-mobile-header-font-size',
+    '--nn-tablet-header-font-size',
     '--nn-compact-font-size',
     '--nn-compact-font-size-mobile'
 ] as const;

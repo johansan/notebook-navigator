@@ -27,7 +27,6 @@ import { strings } from '../i18n';
 import { ServiceIcon } from './ServiceIcon';
 import { useNavigationActions } from '../hooks/useNavigationActions';
 import { runAsyncAction } from '../utils/async';
-import { showNotice } from '../utils/noticeUtils';
 import { usesMobileChrome } from '../utils/paneLayout';
 import { resolveUXIcon } from '../utils/uxIcons';
 
@@ -67,7 +66,11 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
     // Tablets render the desktop header in both pane layouts so the toolbars stay at the
     // top when switching between single and dual pane.
     const useMobileChrome = usesMobileChrome();
-    const showToggleDualPaneButton = navigationVisibility.toggleDualPane;
+    const dualPanePreference = plugin.useDualPane();
+    // Dual pane is preferred but the navigator is too narrow, so it shows single pane until it widens.
+    // The toggle is hidden then because switching layouts has no effect; the preference stays saved.
+    const dualPaneAutoFallbackActive = dualPanePreference && uiState.singlePane;
+    const showToggleDualPaneButton = navigationVisibility.toggleDualPane && !dualPaneAutoFallbackActive;
     const showExpandCollapseButton = navigationVisibility.expandCollapse;
     const showCalendarButton = navigationVisibility.calendar && settings.calendarEnabled && settings.calendarPlacement !== 'right-sidebar';
     const showHiddenItemsButton = navigationVisibility.hiddenItems;
@@ -138,9 +141,6 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
         return null;
     }
 
-    const dualPanePreference = plugin.useDualPane();
-    const dualPaneAutoFallbackActive = dualPanePreference && uiState.singlePane;
-
     return (
         <div className="nn-pane-header">
             <div className="nn-header-actions nn-header-actions--space-between">
@@ -150,10 +150,6 @@ export const NavigationPaneHeader = React.memo(function NavigationPaneHeader({
                             className="nn-icon-button"
                             aria-label={dualPanePreference ? strings.paneHeader.showSinglePane : strings.paneHeader.showDualPane}
                             onClick={() => {
-                                if (dualPaneAutoFallbackActive) {
-                                    showNotice(strings.paneHeader.dualPaneAutoFallbackNotice, { variant: 'warning' });
-                                    return;
-                                }
                                 plugin.setDualPanePreference(!dualPanePreference);
                             }}
                             tabIndex={-1}

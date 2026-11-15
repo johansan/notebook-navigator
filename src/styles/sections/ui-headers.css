@@ -143,6 +143,42 @@
 }
 
 /* ========================================================================
+   Tablet Headers
+   ======================================================================== */
+
+/* Tablets render the desktop header inside the mobile layout, so it gets touch-sized buttons and the
+   24px icons and stroke of Obsidian's tablet view header. Phones render only the simple header, which
+   these selectors exclude; their actions live in the bottom toolbar. */
+.nn-mobile .nn-pane-header:not(.nn-pane-header-simple) {
+    min-height: 44px;
+    height: 44px;
+}
+
+/* The list title and the profile switcher both carry the title class. */
+.nn-mobile .nn-pane-header:not(.nn-pane-header-simple) .nn-pane-header-title {
+    font-size: var(--nn-tablet-header-font-size);
+}
+
+/* The 6px padding keeps a 24px icon in a 36px button, so a full list header gets no wider.
+   Emoji and font icons size from the inherited font size, so they match the SVG icons;
+   android-textzoom.css repeats the 24px size for Android. */
+.nn-mobile .nn-header-actions button.nn-icon-button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 6px;
+    font-size: 24px;
+}
+
+.nn-mobile .nn-header-actions .nn-icon-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nn-mobile .nn-header-actions .nn-icon-button svg:not(.nn-vault-icon-svg) {
+    stroke-width: 1.75;
+}
+
+/* ========================================================================
    Mobile Headers + Breadcrumb
    ======================================================================== */
 
