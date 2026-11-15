@@ -107,15 +107,15 @@ export interface ReleaseNote {
 const RELEASE_NOTES: ReleaseNote[] = [
     {
         version: '3.5.2',
-        date: '2026-11-11',
+        date: '2026-11-23',
         showOnUpdate: true,
         improved: [
-            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut now selects it without scrolling the navigation pane.',
-            'Many iPad UX improvements: headers, icons, separator lines, and more.'
+            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut now selects it without scrolling.',
+            'Many iPad UX dual pane improvements to headers, icons, separator lines, and more.'
         ],
-        changed: ['Removed ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.'],
+        changed: ['Removed the setting ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.'],
         fixed: [
-            'Dragging a note from elsewhere in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).'
+            'Dragging a note from somewhere else in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).'
         ]
     },
     {
