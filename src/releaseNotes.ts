@@ -110,7 +110,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
         date: '2026-11-11',
         showOnUpdate: true,
         improved: [
-            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut now selects it without scrolling the navigation pane, and notes opened from shortcuts or recent notes keep the current folder, tag or property selected.'
+            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut now selects it without scrolling the navigation pane, and notes opened from shortcuts or recent notes keep the current folder, tag or property selected.',
+            'Many iPad improvements: larger header icons and text, a thin resize line between the panes, a pinned shortcuts handle colored from the pane background, and a dual pane toggle that hides when the navigator is too narrow for two panes.'
         ],
         changed: ['Removed ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.'],
         fixed: [
