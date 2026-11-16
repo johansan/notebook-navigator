@@ -34,11 +34,11 @@
     "@vitest/coverage-v8": "^5.1.0",
     "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
-    "eslint-plugin-obsidianmd": "^0.4.2",
+    "eslint-plugin-obsidianmd": "^0.5.1",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "fake-indexeddb": "^6.2.7",
+    "fake-indexeddb": "^6.2.8",
     "globals": "^17.14.0",
-    "knip": "^6.44.1",
+    "knip": "^6.45.0",
     "obsidian": "^1.14.4",
     "prettier": "^3.9.10",
     "stylelint": "^18.0.0",
@@ -46,7 +46,7 @@
     "tslib": "^2.9.1",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.1",
+    "typescript-eslint": "^8.72.2",
     "vitest": "^5.0.0"
   },
   "dependencies": {
@@ -56,7 +56,7 @@
     "@tanstack/react-virtual": "^3.14.26",
     "emoji-regex-xs": "^2.0.1",
     "emojilib": "^4.0.3",
-    "marked": "18.1.3",
+    "marked": "18.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
