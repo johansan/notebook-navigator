@@ -198,12 +198,18 @@ export const FolderItem = React.memo(function FolderItem({
     const applyColorToName = Boolean(customColor) && !settings.colorIconOnly;
     const folderNoteLinksEnabled = settings.enableFolderNotes && settings.enableFolderNoteLinks;
 
+    // A plain local because the hooks lint rule treats any `.current` member as a React ref.
+    const currentNoteCount = noteCounts.current;
     const hasFolderNote = useMemo(() => {
+        // getFolderNote reads the vault, which the folder's note count and the vault change version
+        // track, so those inputs are dependencies even though they are not referenced.
+        void currentNoteCount;
+        void vaultChangeVersion;
+
         if (!folderNoteLinksEnabled) return false;
         const folderNote = getFolderNote(folder, settings);
         return folderNote !== null;
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- noteCounts.current and vaultChangeVersion refresh folder-note detection.
-    }, [folder, settings, folderNoteLinksEnabled, noteCounts.current, vaultChangeVersion]);
+    }, [folder, settings, folderNoteLinksEnabled, currentNoteCount, vaultChangeVersion]);
 
     const isRootFolder = folder.path === '/';
     const effectiveDisplayName = displayName || (isRootFolder ? settings.customVaultName || app.vault.getName() : folder.name);

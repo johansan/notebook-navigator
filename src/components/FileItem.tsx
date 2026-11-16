@@ -919,8 +919,20 @@ export const FileItem = React.memo(function FileItem({
         );
     })();
 
+    // Locals for the mutable TFile fields, because the TFile identity is stable across renames and
+    // timestamp changes. The name re-runs the tooltip memo; the timestamps re-run the date and tooltip memos.
+    const fileName = file.name;
+    const fileCreatedTime = file.stat.ctime;
+    const fileModifiedTime = file.stat.mtime;
+
     // Format display date based on current sort
     const displayDate = useMemo(() => {
+        // getFileTimestamps reads the stat timestamps or the frontmatter date fields, so those
+        // inputs are dependencies even though they are not referenced.
+        void metadataVersion;
+        void fileCreatedTime;
+        void fileModifiedTime;
+
         if (!appearanceSettings.showDate || !sortOption) return '';
 
         const timestamps = getFileTimestamps(file);
@@ -941,11 +953,10 @@ export const FileItem = React.memo(function FileItem({
 
         // Otherwise format as absolute date
         return DateUtils.formatDate(timestamp, settings.dateFormat);
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- file.stat timestamps refresh dates when Obsidian mutates TFile objects.
     }, [
         file,
-        file.stat.mtime,
-        file.stat.ctime,
+        fileModifiedTime,
+        fileCreatedTime,
         sortOption,
         groupHeaderLabel,
         isPinned,
@@ -1201,12 +1212,6 @@ export const FileItem = React.memo(function FileItem({
             }
         }
     }, [effectiveFeatureImageUrl, useSquareFeatureImage]);
-
-    // Locals for the mutable TFile fields so the tooltip memo re-runs on rename and on
-    // timestamp changes; the TFile identity itself is stable across those mutations.
-    const fileName = file.name;
-    const fileCreatedTime = file.stat.ctime;
-    const fileModifiedTime = file.stat.mtime;
 
     // Hover tooltip content (desktop only). Null disables the tooltip entirely. The element is
     // recreated when any input changes because the tooltip refreshes on content identity.
