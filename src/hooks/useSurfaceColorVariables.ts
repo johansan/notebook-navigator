@@ -314,9 +314,9 @@ export function useSurfaceColorVariables(
             isDisposed = true;
 
             // Cancel pending animation frames
-            cancelAnimationFrame(rafId);
+            window.cancelAnimationFrame(rafId);
             if (containerObserverRaf !== null) {
-                cancelAnimationFrame(containerObserverRaf);
+                window.cancelAnimationFrame(containerObserverRaf);
             }
 
             // Disconnect observers

@@ -813,13 +813,13 @@ export function ManualSortListContent({
 
             let filePath: string | undefined;
             const headerElement = target.closest('.nn-manual-sort-custom-header');
-            if (headerElement instanceof HTMLElement) {
+            if (headerElement?.instanceOf(HTMLElement)) {
                 filePath = headerElement.dataset.manualSortHeaderFilePath;
             }
 
             if (!filePath) {
                 const fileElement = target.closest('.nn-file');
-                if (!(fileElement instanceof HTMLElement)) {
+                if (!fileElement?.instanceOf(HTMLElement)) {
                     return;
                 }
                 filePath = fileElement.dataset.path;

@@ -774,7 +774,7 @@ export class IconPickerModal extends Modal {
     private setupKeyboardNavigation() {
         // Shift+Tab -> focus search input or provider tabs based on current focus
         this.scope.register(['Shift'], 'Tab', evt => {
-            const currentFocused = activeDocument.activeElement instanceof HTMLElement ? activeDocument.activeElement : null;
+            const currentFocused = activeDocument.activeElement?.instanceOf(HTMLElement) ? activeDocument.activeElement : null;
 
             // Prevent default tab cycling when on provider tabs
             if (currentFocused?.classList.contains('nn-icon-provider-tab')) {
@@ -803,7 +803,7 @@ export class IconPickerModal extends Modal {
         // Tab -> focus first icon if not in grid
         this.scope.register([], 'Tab', evt => {
             const activeElement = activeDocument.activeElement;
-            const currentFocused = activeElement instanceof HTMLElement ? activeElement : null;
+            const currentFocused = activeElement?.instanceOf(HTMLElement) ? activeElement : null;
             if (currentFocused?.classList.contains('nn-icon-provider-tab')) {
                 evt.preventDefault();
                 this.searchInput.focus();
@@ -825,7 +825,7 @@ export class IconPickerModal extends Modal {
         this.scope.register([], 'ArrowDown', evt => this.handleArrowKey(evt, 0, 1));
 
         this.scope.register([], 'Enter', evt => {
-            const currentFocused = activeDocument.activeElement instanceof HTMLElement ? activeDocument.activeElement : null;
+            const currentFocused = activeDocument.activeElement?.instanceOf(HTMLElement) ? activeDocument.activeElement : null;
             if (currentFocused === this.searchInput) {
                 evt.preventDefault();
                 window.setTimeout(() => {
@@ -852,7 +852,7 @@ export class IconPickerModal extends Modal {
      */
     private handleArrowKey(evt: KeyboardEvent, deltaX: number, deltaY: number) {
         const activeElement = activeDocument.activeElement;
-        if (!(activeElement instanceof HTMLElement)) {
+        if (!activeElement?.instanceOf(HTMLElement)) {
             return;
         }
         const currentFocused = activeElement;

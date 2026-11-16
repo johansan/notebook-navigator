@@ -290,7 +290,7 @@ class DeleteFileAttachmentsModal extends Modal {
         });
 
         this.bindClick(selfEl, evt => {
-            if (evt.target instanceof HTMLInputElement) {
+            if (evt.targetNode?.instanceOf(HTMLInputElement)) {
                 return;
             }
             const currentCollapsed = this.folderCollapsedByPath.get(node.path) ?? false;
@@ -316,7 +316,7 @@ class DeleteFileAttachmentsModal extends Modal {
         });
 
         this.bindClick(selfEl, evt => {
-            if (evt.target instanceof HTMLInputElement) {
+            if (evt.targetNode?.instanceOf(HTMLInputElement)) {
                 return;
             }
             this.togglePathSelection(file.path);
@@ -351,7 +351,7 @@ class DeleteFileAttachmentsModal extends Modal {
             });
 
             this.bindClick(itemEl, evt => {
-                if (evt.target instanceof HTMLInputElement) {
+                if (evt.targetNode?.instanceOf(HTMLInputElement)) {
                     return;
                 }
                 this.togglePathSelection(file.path);

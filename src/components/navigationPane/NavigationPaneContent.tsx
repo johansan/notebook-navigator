@@ -247,7 +247,7 @@ export const NavigationPane = React.memo(
         useEffect(() => {
             return () => {
                 if (pinnedShortcutsResizeFrameRef.current !== null) {
-                    cancelAnimationFrame(pinnedShortcutsResizeFrameRef.current);
+                    window.cancelAnimationFrame(pinnedShortcutsResizeFrameRef.current);
                     pinnedShortcutsResizeFrameRef.current = null;
                 }
             };
@@ -315,7 +315,7 @@ export const NavigationPane = React.memo(
                     },
                     onEnd: () => {
                         if (pinnedShortcutsResizeFrameRef.current !== null) {
-                            cancelAnimationFrame(pinnedShortcutsResizeFrameRef.current);
+                            window.cancelAnimationFrame(pinnedShortcutsResizeFrameRef.current);
                             pinnedShortcutsResizeFrameRef.current = null;
                         }
                         const contentFitHeight = Math.round(scrollElement.scrollHeight + handleHeight);

@@ -1181,7 +1181,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
 
                 if (!dropZone && isHTMLElement(e.target)) {
                     const candidate = e.target.closest('[data-drop-zone]');
-                    dropZone = candidate instanceof HTMLElement ? candidate : null;
+                    dropZone = candidate?.instanceOf(HTMLElement) ? candidate : null;
                 }
 
                 const isShortcutDrag = Boolean(e.dataTransfer?.types?.includes(SHORTCUT_DRAG_MIME));
@@ -1416,7 +1416,7 @@ export function useDragAndDrop(containerRef: React.RefObject<HTMLElement | null>
             if (!(target instanceof HTMLElement)) return;
 
             const dropZone = target.closest('[data-drop-zone]');
-            if (dropZone instanceof HTMLElement && dropZone === dragOverElement.current) {
+            if (dropZone?.instanceOf(HTMLElement) && dropZone === dragOverElement.current) {
                 // Only remove if we're actually leaving the drop zone, not just moving to a child
                 const relatedTarget = e.relatedTarget;
                 if (!(relatedTarget instanceof Node) || !dropZone.contains(relatedTarget)) {

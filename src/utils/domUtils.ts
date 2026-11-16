@@ -67,7 +67,7 @@ export function isKeyboardEventContextBlocked(e: KeyboardEvent): boolean {
 
     const activeElement = activeDocument.activeElement;
     // Obsidian modals should receive keyboard input without pane interception.
-    return activeElement instanceof HTMLElement && activeElement.closest('.modal-container') !== null;
+    return activeElement?.instanceOf(HTMLElement) === true && activeElement.closest('.modal-container') !== null;
 }
 
 /**

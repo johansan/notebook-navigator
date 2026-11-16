@@ -119,7 +119,7 @@ export class MergeNotesModal extends Modal {
 
         this.scope.register([], 'Enter', event => {
             const activeElement = activeDocument.activeElement;
-            if (!(activeElement instanceof HTMLElement) || !this.contentEl.contains(activeElement)) {
+            if (!activeElement?.instanceOf(HTMLElement) || !this.contentEl.contains(activeElement)) {
                 return;
             }
 

@@ -109,16 +109,7 @@ type FontSizeVariableName = (typeof ANDROID_FONT_SIZE_VARIABLES)[number];
 
 function createMeasurementProbe(container: HTMLElement): HTMLElement {
     // Hidden probe lets us read computed font sizes without disturbing layout
-    const probe = container.win.createDiv();
-    probe.style.cssText = `
-        position: absolute;
-        visibility: hidden;
-        pointer-events: none;
-        width: auto;
-        height: auto;
-        line-height: 1;
-        white-space: nowrap;
-    `;
+    const probe = container.win.createDiv({ cls: 'nn-android-font-probe' });
     probe.textContent = 'M';
     container.appendChild(probe);
     return probe;
@@ -216,7 +207,7 @@ export function applyAndroidFontCompensation(container: HTMLElement): void {
  * Returns 1 if no scaling was detected or not on Android.
  */
 export function getAndroidFontScale(container: Element | null): number {
-    if (!(container instanceof HTMLElement)) {
+    if (!container?.instanceOf(HTMLElement)) {
         return 1;
     }
     const value = container.style.getPropertyValue('--nn-android-font-scale');
@@ -244,7 +235,7 @@ function propagateAndroidFontCompensation(source: HTMLElement, target: HTMLEleme
 /** Propagates font compensation variables from container to the mobile split pane root */
 export function propagateAndroidFontCompensationToMobileRoot(container: HTMLElement): void {
     const mobileRoot = container.querySelector('.nn-split-container.nn-mobile');
-    if (mobileRoot instanceof HTMLElement) {
+    if (mobileRoot?.instanceOf(HTMLElement)) {
         propagateAndroidFontCompensation(container, mobileRoot);
     }
 }

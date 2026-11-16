@@ -596,7 +596,7 @@ function getHoveredFilePathFromTarget(target: EventTarget | null): string | null
     }
 
     const fileElement = target.closest('.nn-file');
-    return fileElement instanceof HTMLElement ? (fileElement.dataset.path ?? null) : null;
+    return fileElement?.instanceOf(HTMLElement) ? (fileElement.dataset.path ?? null) : null;
 }
 
 export function getHoveredFilePathAtPointer(
@@ -613,7 +613,7 @@ export function getHoveredFilePathAtPointer(
     }
 
     const target = ownerDocument.elementFromPoint(pointerClientPosition.clientX, pointerClientPosition.clientY);
-    if (!(target instanceof Element) || !scrollContainer.contains(target)) {
+    if (!target?.instanceOf(Element) || !scrollContainer.contains(target)) {
         return null;
     }
 

@@ -118,7 +118,7 @@ function captureCommandHandlers(plugin: NotebookNavigatorPlugin): Map<string, Co
 
     try {
         const { default: registerNavigatorCommandHandlers } =
-            // eslint-disable-next-line @typescript-eslint/no-require-imports -- Command handlers stay out of startup and load on first command use.
+            // Command handlers stay out of startup and load on first command use.
             require('./navigatorCommandHandlers') as typeof import('./navigatorCommandHandlers');
         registerNavigatorCommandHandlers(plugin);
     } finally {

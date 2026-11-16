@@ -404,7 +404,7 @@ export const NotebookNavigatorComponent = React.memo(
             containerRef.current = node;
             if (Platform.isAndroidApp && node) {
                 const viewContainer = node.closest('.notebook-navigator');
-                if (viewContainer instanceof HTMLElement) {
+                if (viewContainer?.instanceOf(HTMLElement)) {
                     // Language and storage loading can delay this mount. Copy compensation before layout effects
                     // measure the real navigator, because the mobile root overrides inherited font-size variables.
                     propagateAndroidFontCompensationToMobileRoot(viewContainer);

@@ -227,7 +227,7 @@ export function SearchInput({
         window.setTimeout(() => {
             const scope = containerRef?.current ?? activeDocument;
             const listPaneScroller = scope.querySelector('.nn-list-pane-scroller');
-            if (listPaneScroller instanceof HTMLElement) {
+            if (listPaneScroller?.instanceOf(HTMLElement)) {
                 focusElementPreventScroll(listPaneScroller);
             }
         }, 0);

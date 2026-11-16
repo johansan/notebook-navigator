@@ -58,7 +58,7 @@ function isNotebookNavigatorFileDragStart(event: DragEvent): boolean {
     }
 
     const draggable = target.closest('[data-draggable="true"]');
-    if (!(draggable instanceof HTMLElement)) {
+    if (!draggable?.instanceOf(HTMLElement)) {
         return false;
     }
 

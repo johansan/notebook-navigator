@@ -1033,7 +1033,7 @@ export function useListPaneScroll({
             }
 
             const row = scrollElement.querySelector(`[data-index="${index}"]`);
-            if (!(row instanceof HTMLElement)) {
+            if (!row?.instanceOf(HTMLElement)) {
                 return;
             }
 

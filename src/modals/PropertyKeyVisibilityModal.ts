@@ -371,7 +371,7 @@ export class PropertyKeyVisibilityModal extends Modal {
             this.updateRowControls(row, controls);
             this.rowDisposers.push(
                 addAsyncEventListener(rowEl, 'click', event => {
-                    if (event.target instanceof Element && event.target.closest('button')) {
+                    if (event.targetNode?.instanceOf(Element) && event.targetNode.closest('button')) {
                         return;
                     }
                     this.toggleEntireRow(row.normalizedKey);

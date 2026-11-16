@@ -306,7 +306,7 @@ export function useNavigationPaneScroll({
             // Navigation rows set `data-index` in `src/components/navigationPane/NavigationPaneLayout.tsx`; use it to find the
             // rendered row TanStack Virtual scrolled to so we can keep it within the safe viewport (scrollPaddingEnd).
             const row = scrollElement.querySelector(`[data-index="${index}"]`);
-            if (!(row instanceof HTMLElement)) {
+            if (!row?.instanceOf(HTMLElement)) {
                 return;
             }
 

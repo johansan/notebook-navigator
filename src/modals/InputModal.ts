@@ -115,7 +115,7 @@ export class InputModal extends Modal {
         // Use Obsidian scope for keyboard handling
         this.scope.register([], 'Enter', evt => {
             const activeElement = activeDocument.activeElement;
-            if (!(activeElement instanceof HTMLElement)) {
+            if (!activeElement?.instanceOf(HTMLElement)) {
                 return;
             }
 

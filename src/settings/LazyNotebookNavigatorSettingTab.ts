@@ -89,7 +89,7 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
     }
 
     protected createDelegate(): NotebookNavigatorSettingTab {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports -- Settings UI is intentionally loaded on first settings access.
+        // Settings UI is intentionally loaded on first settings access.
         const { NotebookNavigatorSettingTab } = require('../settings') as typeof import('../settings');
         const delegate = new NotebookNavigatorSettingTab(this.app, this.plugin);
         delegate.setNativeSettingsHost(this);

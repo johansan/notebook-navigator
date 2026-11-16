@@ -592,7 +592,7 @@ export class IconPickerSurface {
                 return;
             }
 
-            const currentFocused = activeDocument.activeElement instanceof HTMLElement ? activeDocument.activeElement : null;
+            const currentFocused = activeDocument.activeElement?.instanceOf(HTMLElement) ? activeDocument.activeElement : null;
 
             if (currentFocused?.classList.contains('nn-icon-provider-tab')) {
                 evt.preventDefault();
@@ -621,7 +621,7 @@ export class IconPickerSurface {
             }
 
             const activeElement = activeDocument.activeElement;
-            const currentFocused = activeElement instanceof HTMLElement ? activeElement : null;
+            const currentFocused = activeElement?.instanceOf(HTMLElement) ? activeElement : null;
             if (currentFocused?.classList.contains('nn-icon-provider-tab')) {
                 evt.preventDefault();
                 this.searchInput.focus();
@@ -646,7 +646,7 @@ export class IconPickerSurface {
                 return;
             }
 
-            const currentFocused = activeDocument.activeElement instanceof HTMLElement ? activeDocument.activeElement : null;
+            const currentFocused = activeDocument.activeElement?.instanceOf(HTMLElement) ? activeDocument.activeElement : null;
             if (currentFocused === this.searchInput) {
                 evt.preventDefault();
                 window.setTimeout(() => {
@@ -671,7 +671,7 @@ export class IconPickerSurface {
         }
 
         const activeElement = activeDocument.activeElement;
-        if (!(activeElement instanceof HTMLElement)) {
+        if (!activeElement?.instanceOf(HTMLElement)) {
             return;
         }
         const currentFocused = activeElement;

@@ -720,7 +720,7 @@ function renderIconMapSetting(
                             options.setMap(nextMap);
 
                             const textarea = setting.controlEl.querySelector('textarea');
-                            if (textarea instanceof HTMLTextAreaElement) {
+                            if (textarea?.instanceOf(HTMLTextAreaElement)) {
                                 textarea.value = serializeIconMapRecord(nextMap);
                             }
 

@@ -497,7 +497,7 @@ export function useListPaneSearch({
     const focusListScroller = useCallback(() => {
         const scope = rootContainerRef.current ?? activeDocument;
         const listPaneScroller = scope.querySelector('.nn-list-pane-scroller');
-        if (listPaneScroller instanceof HTMLElement) {
+        if (listPaneScroller?.instanceOf(HTMLElement)) {
             focusElementPreventScroll(listPaneScroller);
         }
     }, [rootContainerRef]);
@@ -506,7 +506,7 @@ export function useListPaneSearch({
         window.setTimeout(() => {
             const scope = rootContainerRef.current ?? activeDocument;
             const searchInput = scope.querySelector('.nn-search-input');
-            if (searchInput instanceof HTMLInputElement) {
+            if (searchInput?.instanceOf(HTMLInputElement)) {
                 searchInput.focus();
                 uiDispatch({ type: 'ACTIVATE_PANE', target: 'search' });
             }

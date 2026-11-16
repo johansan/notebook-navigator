@@ -218,7 +218,7 @@ export class FileDeletionService {
 
             window.setTimeout(() => {
                 const fileListEl = activeDocument.querySelector('.nn-list-pane-scroller');
-                if (fileListEl instanceof HTMLElement) {
+                if (fileListEl?.instanceOf(HTMLElement)) {
                     fileListEl.focus();
                 }
             }, TIMEOUTS.FILE_OPERATION_DELAY);
@@ -373,7 +373,7 @@ export class FileDeletionService {
 
             window.setTimeout(() => {
                 const fileListEl = activeDocument.querySelector('.nn-list-pane-scroller');
-                if (fileListEl instanceof HTMLElement) {
+                if (fileListEl?.instanceOf(HTMLElement)) {
                     fileListEl.focus();
                 }
             }, TIMEOUTS.FILE_OPERATION_DELAY);

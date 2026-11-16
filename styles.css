@@ -9740,6 +9740,18 @@ body.is-phone .notebook-navigator-android .nn-split-container {
    redefines variables and would override inline styles on the outer container.
    ======================================================================== */
 
+/* Hidden probe that androidFontScale.ts measures to detect the textZoom factor. Its height equals the
+   rendered font size only with line-height 1 and a single unwrapped line. */
+.nn-android-font-probe {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    white-space: nowrap;
+}
+
 /* Override line-height variables with compensated values
    Note: We use a reciprocal variable for division since calc(x / var) can have issues */
 .notebook-navigator-android .nn-mobile {

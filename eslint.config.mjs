@@ -1,4 +1,3 @@
-import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import obsidianmd from 'eslint-plugin-obsidianmd';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -12,8 +11,6 @@ export default tseslint.config(
             reportUnusedDisableDirectives: 'error'
         }
     },
-    js.configs.recommended,
-    ...tseslint.configs.recommended,
     ...obsidianmd.configs.recommended,
     {
         files: ['tests/**/*.{ts,tsx}'],
@@ -26,12 +23,6 @@ export default tseslint.config(
             }
         },
         rules: {
-            // Tests may legitimately use Node built-ins (e.g. reading fixture files).
-            // Keep this rule enabled for `src/**` to avoid shipping Node-only imports in the plugin runtime.
-            'import/no-nodejs-modules': 'off',
-            'obsidianmd/no-nodejs-modules': 'off',
-            // Tests run in Node and may use test harness globals instead of Obsidian's active document.
-            'obsidianmd/prefer-active-doc': 'off',
             'no-restricted-properties': [
                 'error',
                 {

@@ -819,19 +819,19 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         // Register view
         this.registerView(NOTEBOOK_NAVIGATOR_VIEW, leaf => {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports -- Obsidian registerView callbacks must construct views synchronously.
+            // Obsidian registerView callbacks must construct views synchronously.
             const { NotebookNavigatorView } = require('./view/NotebookNavigatorView') as typeof import('./view/NotebookNavigatorView');
             return new NotebookNavigatorView(leaf, this);
         });
         this.registerView(NOTEBOOK_NAVIGATOR_CALENDAR_VIEW, leaf => {
             const { NotebookNavigatorCalendarView } =
-                // eslint-disable-next-line @typescript-eslint/no-require-imports -- Obsidian registerView callbacks must construct views synchronously.
+                // Obsidian registerView callbacks must construct views synchronously.
                 require('./view/NotebookNavigatorCalendarView') as typeof import('./view/NotebookNavigatorCalendarView');
             return new NotebookNavigatorCalendarView(leaf, this);
         });
         this.registerView(NOTEBOOK_NAVIGATOR_FOLDER_NOTE_SIDEBAR_VIEW, leaf => {
             const { FolderNoteSidebarPlaceholderView } =
-                // eslint-disable-next-line @typescript-eslint/no-require-imports -- Obsidian registerView callbacks must construct views synchronously.
+                // Obsidian registerView callbacks must construct views synchronously.
                 require('./view/FolderNoteSidebarPlaceholderView') as typeof import('./view/FolderNoteSidebarPlaceholderView');
             return new FolderNoteSidebarPlaceholderView(leaf);
         });
@@ -1359,7 +1359,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
     private getExternalIconController(): ExternalIconProviderController {
         if (!this.externalIconController) {
             const { ExternalIconProviderController } =
-                // eslint-disable-next-line @typescript-eslint/no-require-imports -- External icon pack controller is only needed when packs are enabled or managed.
+                // External icon pack controller is only needed when packs are enabled or managed.
                 require('./services/icons/external/ExternalIconProviderController') as typeof import('./services/icons/external/ExternalIconProviderController');
             this.externalIconController = new ExternalIconProviderController(this.app, getIconService(), this);
         }

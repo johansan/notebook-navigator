@@ -125,7 +125,7 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
                 }
 
                 const fileTarget = targetElement.closest('.nn-file');
-                if (fileTarget instanceof HTMLElement) {
+                if (fileTarget?.instanceOf(HTMLElement)) {
                     const filePath = fileTarget.dataset.path;
                     const file = filePath ? app.vault.getFileByPath(filePath) : null;
                     if (!(file instanceof TFile)) {
@@ -252,13 +252,13 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
             if (isFileMenu) {
                 // Find the virtual item wrapper that contains this file item
                 const virtualItem = menuElement.closest('.nn-virtual-file-item');
-                if (virtualItem instanceof HTMLElement) {
+                if (virtualItem?.instanceOf(HTMLElement)) {
                     // Hide separator below this item
                     virtualItem.classList.add('nn-hide-separator-context-menu');
 
                     // Find and hide separator of previous item (shows above this item)
                     const prevVirtualItem = virtualItem.previousElementSibling;
-                    if (prevVirtualItem instanceof HTMLElement && prevVirtualItem.classList.contains('nn-virtual-file-item')) {
+                    if (prevVirtualItem?.instanceOf(HTMLElement) && prevVirtualItem.classList.contains('nn-virtual-file-item')) {
                         prevVirtualItem.classList.add('nn-hide-separator-context-menu');
                     }
                 }
@@ -313,13 +313,13 @@ export function useContextMenu(elementRef: React.RefObject<HTMLElement | null>, 
                 // Remove separator hiding for file items
                 if (isFileMenu) {
                     const virtualItem = menuElement.closest('.nn-virtual-file-item');
-                    if (virtualItem instanceof HTMLElement) {
+                    if (virtualItem?.instanceOf(HTMLElement)) {
                         // Remove separator hiding from this item
                         virtualItem.classList.remove('nn-hide-separator-context-menu');
 
                         // Remove separator hiding from previous item
                         const prevVirtualItem = virtualItem.previousElementSibling;
-                        if (prevVirtualItem instanceof HTMLElement && prevVirtualItem.classList.contains('nn-virtual-file-item')) {
+                        if (prevVirtualItem?.instanceOf(HTMLElement) && prevVirtualItem.classList.contains('nn-virtual-file-item')) {
                             prevVirtualItem.classList.remove('nn-hide-separator-context-menu');
                         }
                     }
