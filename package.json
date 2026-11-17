@@ -60,6 +60,7 @@
     "react-dom": "^18.3.1"
   },
   "overrides": {
-    "moment": "^2.31.0"
+    "moment": "^2.31.0",
+    "eslint-plugin-n": "^17.24.0"
   }
 }
