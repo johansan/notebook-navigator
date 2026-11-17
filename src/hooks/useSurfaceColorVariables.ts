@@ -203,7 +203,7 @@ export function useSurfaceColorVariables(
          *
          * This function is called whenever:
          * - Component mounts (via RAF)
-         * - Theme changes (via body mutations or css-change event)
+         * - Theme changes (via body mutations, stylesheets added to the pane's document head, or the css-change event)
          * - Root container attributes change (via container observer)
          */
         const updateSurfaceColors = () => {
@@ -300,7 +300,14 @@ export function useSurfaceColorVariables(
         // 2. Watch document.body for global theme changes
         const unsubscribeBody = subscribeToBodyMutations(updateSurfaceColors);
 
-        // 3. Watch Obsidian's CSS change event (fired when snippets/themes change)
+        // 3. Watch the pane's own document head for stylesheets. When the plugin loads or updates, Obsidian adds its
+        // styles.css after the view mounts and fires no css-change, so the stylesheet's arrival is the only signal that
+        // the theme variables and the color resolver rule now apply; otherwise colors resolved before it stay cached as
+        // the inherited text color. The pane's document, not the active one, so panes in pop-out windows recover too.
+        const headObserver = new MutationObserver(updateSurfaceColors);
+        headObserver.observe(paneNode.ownerDocument.head, { childList: true });
+
+        // 4. Watch Obsidian's CSS change event (fired when snippets/themes change)
         let cssChangeRef: EventRef | null = null;
         if (app?.workspace) {
             cssChangeRef = app.workspace.on('css-change', updateSurfaceColors);
@@ -324,6 +331,7 @@ export function useSurfaceColorVariables(
                 containerObserver.disconnect();
             }
             unsubscribeBody();
+            headObserver.disconnect();
 
             // Remove Obsidian event listener
             if (cssChangeRef) {

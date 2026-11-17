@@ -122,7 +122,8 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Replaced the rainbow ==Apply to== toggles and their color settings with a theme for each section, converted customized colors to custom themes, and moved ==Consistent brightness across hues== and ==Separate light and dark mode colors== into the theme editor.'
         ],
         fixed: [
-            'Dragging a note from somewhere else in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).'
+            'Dragging a note from somewhere else in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).',
+            'Custom and rainbow backgrounds now keep their colors after the plugin is updated.'
         ]
     },
     {
