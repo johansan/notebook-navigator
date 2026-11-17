@@ -246,25 +246,45 @@ export function isNavRainbowTransitionStyle(value: unknown): value is NavRainbow
     return value === 'hue' || value === 'rgb';
 }
 
-export interface NavRainbowSectionSettings {
-    enabled: boolean;
-    firstColor: string;
-    lastColor: string;
-    darkFirstColor: string;
-    darkLastColor: string;
+export interface NavRainbowColorStop {
+    color: string;
+    /** Percent along the gradient, 0-100. */
+    position: number;
+}
+
+export interface NavRainbowTheme {
+    id: string;
+    name: string;
+    /** Light mode stops, also used in dark mode when `separateDarkStops` is off. Sorted by position, at least two. */
+    stops: NavRainbowColorStop[];
+    /** Dark mode stops, used only when `separateDarkStops` is on. Sorted by position, at least two. */
+    darkStops: NavRainbowColorStop[];
+    separateDarkStops: boolean;
     transitionStyle: NavRainbowTransitionStyle;
+    /** Keeps brightness interpolating evenly between stops; applies only to `hue` transitions. */
+    consistentBrightness: boolean;
+}
+
+/** Section theme value that turns rainbow colors off for the section. */
+export const NAV_RAINBOW_NO_THEME = 'none';
+
+export interface NavRainbowSectionSettings {
+    /** A built-in or custom theme id, or `NAV_RAINBOW_NO_THEME`. */
+    theme: string;
 }
 
 export interface NavRainbowSettings {
     mode: NavRainbowColorMode;
-    balanceHueLuminance: boolean;
-    separateThemeColors: boolean;
+    /** 0-100: background opacity in background mode, share of rainbow color mixed into the text color in text mode. */
+    intensity: number;
     shortcuts: NavRainbowSectionSettings;
     recent: NavRainbowSectionSettings;
     folders: NavRainbowSectionSettings & { scope: NavRainbowScope };
     tags: NavRainbowSectionSettings & { scope: NavRainbowScope };
     properties: NavRainbowSectionSettings & { scope: NavRainbowScope };
 }
+
+export type NavRainbowSectionId = 'shortcuts' | 'recent' | 'folders' | 'tags' | 'properties';
 
 /** Modifier key used for multi-select operations */
 export type MultiSelectModifier = 'cmdCtrl' | 'optionAlt';
@@ -695,6 +715,8 @@ export interface VaultProfile {
 export interface NotebookNavigatorSettings {
     vaultProfiles: VaultProfile[];
     vaultProfile: string;
+    /** Custom rainbow themes shared by every vault profile; built-in themes live in code. */
+    navRainbowThemes: NavRainbowTheme[];
     vaultTitle: VaultTitleOption;
     syncModes: Record<SyncModeSettingId, SettingSyncMode>;
 

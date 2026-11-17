@@ -35,7 +35,6 @@ export const STRINGS_VI = {
         restoreDefault: 'Khôi phục mặc định', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Gửi', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Lưu', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Cấu hình', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Chế độ sáng', // Label for light theme mode (English: Light mode)
         darkMode: 'Chế độ tối', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Chưa chọn gì', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -541,8 +540,59 @@ export const STRINGS_VI = {
             moveSourcesToTrash: 'Di chuyển ghi chú nguồn vào thùng rác sau khi hợp nhất',
             mergeButton: 'Hợp nhất'
         },
-        navRainbowSection: {
-            title: (section: string) => `Màu cầu vồng: ${section}`
+        navRainbowThemes: {
+            title: 'Chủ đề cầu vồng',
+            builtInHeading: 'Chủ đề tích hợp',
+            customHeading: 'Chủ đề tùy chỉnh',
+            noCustomThemes: 'Nhân bản một chủ đề tích hợp hoặc tạo chủ đề mới.',
+            newTheme: 'Chủ đề mới',
+            defaultName: 'Chủ đề tùy chỉnh',
+            copyName: (name: string) => `${name} (bản sao)`,
+            duplicate: 'Nhân bản',
+            edit: 'Sửa',
+            deleteTitle: 'Xóa chủ đề cầu vồng',
+            deleteMessage: (name: string) => `Xóa "${name}"? Các phần đang dùng chủ đề này được đặt thành "Không".`,
+            builtInNames: {
+                rainbow: 'Cầu vồng',
+                'color-cycle': 'Chu kỳ màu',
+                pastel: 'Pastel',
+                fire: 'Lửa',
+                ice: 'Băng',
+                ocean: 'Đại dương',
+                forest: 'Rừng',
+                sunset: 'Hoàng hôn',
+                '70s': 'Thập niên 70',
+                '80s': 'Thập niên 80'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Chủ đề cầu vồng mới',
+            editTitle: 'Sửa chủ đề cầu vồng',
+            name: 'Tên',
+            transitionStyle: {
+                name: 'Kiểu chuyển tiếp',
+                desc: 'Nội suy được sử dụng giữa các màu.',
+                options: {
+                    hue: 'Sắc độ',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Độ sáng đồng nhất giữa các sắc độ',
+                desc: 'Nội suy độ sáng giữa các màu trong quá trình chuyển đổi sắc độ.'
+            },
+            separateDarkColors: {
+                name: 'Tách riêng màu chế độ sáng và tối',
+                desc: 'Sử dụng màu khác nhau cho chế độ sáng và chế độ tối.'
+            },
+            colors: 'Màu sắc',
+            addColor: 'Thêm màu',
+            removeColor: 'Xóa màu',
+            reverseColors: 'Đảo ngược thứ tự màu',
+            colorStop: (index: number) => `Màu ${index}`,
+            position: 'Vị trí',
+            preview: 'Xem trước',
+            previewItem: (index: number) => `Thư mục ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Tìm biểu tượng...',
@@ -2322,78 +2372,45 @@ export const STRINGS_VI = {
                     backgroundColor: 'Màu nền'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Màu đầu tiên',
-                desc: 'Màu đầu tiên trong dải chuyển màu cầu vồng.'
+            navRainbowIntensity: {
+                name: 'Cường độ màu (hồ sơ vault)',
+                desc: 'Với màu nền, đặt độ mờ đục của màu cầu vồng. Với màu chữ, đặt lượng màu cầu vồng được trộn vào màu chữ.'
             },
-            navRainbowLastColor: {
-                name: 'Màu cuối cùng',
-                desc: 'Màu cuối cùng trong dải chuyển màu cầu vồng.'
+            navRainbowShortcuts: {
+                name: 'Lối tắt',
+                desc: 'Tô màu lối tắt bằng chủ đề cầu vồng đã chọn.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Kiểu chuyển tiếp',
-                desc: 'Nội suy được sử dụng giữa màu đầu tiên và màu cuối cùng.',
-                options: {
-                    hue: 'Sắc độ',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Mục gần đây',
+                desc: 'Tô màu mục gần đây bằng chủ đề cầu vồng đã chọn.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Áp dụng cho lối tắt',
-                desc: 'Áp dụng màu cầu vồng cho lối tắt.'
+            navRainbowFolders: {
+                name: 'Thư mục',
+                desc: 'Tô màu thư mục bằng chủ đề cầu vồng đã chọn.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Áp dụng cho mục gần đây',
-                desc: 'Áp dụng màu cầu vồng cho mục gần đây.'
+            navRainbowFolderScope: 'Phạm vi thư mục',
+            navRainbowTags: {
+                name: 'Thẻ',
+                desc: 'Tô màu thẻ bằng chủ đề cầu vồng đã chọn.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Áp dụng cho thư mục',
-                desc: 'Áp dụng màu cầu vồng cho thư mục.'
+            navRainbowTagScope: 'Phạm vi thẻ',
+            navRainbowProperties: {
+                name: 'Thuộc tính',
+                desc: 'Tô màu thuộc tính bằng chủ đề cầu vồng đã chọn.'
             },
-            navRainbowFolderScope: {
-                name: 'Phạm vi thư mục',
-                desc: 'Chọn cấp thư mục bắt đầu gán màu.',
-                options: {
-                    root: 'Cấp gốc',
-                    child: 'Cấp con',
-                    all: 'Mọi cấp'
-                }
+            navRainbowPropertyScope: 'Phạm vi thuộc tính',
+            navRainbowScopeOptions: {
+                root: 'Cấp gốc',
+                child: 'Cấp con',
+                all: 'Mọi cấp'
             },
-            navRainbowApplyToTags: {
-                name: 'Áp dụng cho thẻ',
-                desc: 'Áp dụng màu cầu vồng cho thẻ.'
-            },
-            navRainbowTagScope: {
-                name: 'Phạm vi thẻ',
-                desc: 'Chọn cấp thẻ bắt đầu gán màu.',
-                options: {
-                    root: 'Cấp gốc',
-                    child: 'Cấp con',
-                    all: 'Mọi cấp'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Áp dụng cho thuộc tính',
-                desc: 'Áp dụng màu cầu vồng cho thuộc tính.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Độ sáng đồng nhất giữa các sắc độ', // (English: Consistent brightness across hues)
-                desc: 'Nội suy độ sáng giữa màu bắt đầu và màu kết thúc trong quá trình chuyển đổi sắc độ.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Tách riêng màu chế độ sáng và tối', // (English: Separate light and dark mode colors)
-                desc: 'Sử dụng màu cầu vồng khác nhau cho chế độ sáng và chế độ tối.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Không',
+            navRainbowThemes: {
+                name: 'Chủ đề cầu vồng',
+                desc: 'Tạo, sửa và xóa chủ đề cầu vồng tùy chỉnh.',
+                buttonText: 'Quản lý chủ đề'
             },
             navRainbowCopyLightToDark: 'Sao chép màu chế độ sáng sang chế độ tối', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Phạm vi thuộc tính',
-                desc: 'Chọn cấp thuộc tính bắt đầu gán màu.',
-                options: {
-                    root: 'Cấp gốc',
-                    child: 'Cấp con',
-                    all: 'Mọi cấp'
-                }
-            },
             collapseItems: {
                 name: 'Thu gọn mục',
                 desc: 'Chọn nút mở rộng/thu gọn tất cả ảnh hưởng đến gì.',

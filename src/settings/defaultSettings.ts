@@ -40,77 +40,29 @@ import {
 } from '../utils/calendarCustomNotePatterns';
 import { DEFAULT_FILE_TYPE_ICON_PRESET } from '../utils/fileTypeIconPresets';
 import { FOLDER_NOTE_NAME_PATTERN_TOKEN } from '../utils/folderNoteName';
+import { NAV_RAINBOW_DEFAULT_THEME_ID } from './navRainbowThemes';
 
 const defaultSettingsSync = sanitizeRecord<SettingSyncMode>(undefined);
 SYNC_MODE_SETTING_IDS.forEach(settingId => {
     defaultSettingsSync[settingId] = 'synced';
 });
 
-const NAV_RAINBOW_FIRST_COLOR_DEFAULT = '#ef4444';
-const NAV_RAINBOW_LAST_COLOR_DEFAULT = '#8b5cf6';
-const NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT = '#fb7185';
-const NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT = '#c084fc';
 const UNFINISHED_TASK_BACKGROUND_COLOR_DEFAULT = '#ef000050';
 
 export const NAV_RAINBOW_DEFAULTS: NavRainbowSettings = {
     mode: 'none',
-    balanceHueLuminance: true,
-    separateThemeColors: false,
-
-    shortcuts: {
-        enabled: false,
-        firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
-        transitionStyle: 'rgb'
-    },
-
-    recent: {
-        enabled: false,
-        firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
-        transitionStyle: 'rgb'
-    },
-
-    folders: {
-        enabled: true,
-        firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
-        transitionStyle: 'hue',
-        scope: 'root'
-    },
-
-    tags: {
-        enabled: false,
-        firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
-        transitionStyle: 'hue',
-        scope: 'root'
-    },
-
-    properties: {
-        enabled: false,
-        firstColor: NAV_RAINBOW_FIRST_COLOR_DEFAULT,
-        lastColor: NAV_RAINBOW_LAST_COLOR_DEFAULT,
-        darkFirstColor: NAV_RAINBOW_DARK_FIRST_COLOR_DEFAULT,
-        darkLastColor: NAV_RAINBOW_DARK_LAST_COLOR_DEFAULT,
-        transitionStyle: 'hue',
-        scope: 'root'
-    }
+    intensity: 100,
+    shortcuts: { theme: NAV_RAINBOW_DEFAULT_THEME_ID },
+    recent: { theme: NAV_RAINBOW_DEFAULT_THEME_ID },
+    folders: { theme: NAV_RAINBOW_DEFAULT_THEME_ID, scope: 'root' },
+    tags: { theme: NAV_RAINBOW_DEFAULT_THEME_ID, scope: 'root' },
+    properties: { theme: NAV_RAINBOW_DEFAULT_THEME_ID, scope: 'root' }
 };
 
 function createDefaultNavRainbowSettings(): NavRainbowSettings {
     return {
         mode: NAV_RAINBOW_DEFAULTS.mode,
-        balanceHueLuminance: NAV_RAINBOW_DEFAULTS.balanceHueLuminance,
-        separateThemeColors: NAV_RAINBOW_DEFAULTS.separateThemeColors,
+        intensity: NAV_RAINBOW_DEFAULTS.intensity,
         shortcuts: { ...NAV_RAINBOW_DEFAULTS.shortcuts },
         recent: { ...NAV_RAINBOW_DEFAULTS.recent },
         folders: { ...NAV_RAINBOW_DEFAULTS.folders },
@@ -144,6 +96,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
         }
     ],
     vaultProfile: 'default',
+    navRainbowThemes: [],
     vaultTitle: 'navigation',
     syncModes: defaultSettingsSync,
 

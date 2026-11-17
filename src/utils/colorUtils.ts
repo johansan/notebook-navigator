@@ -713,31 +713,59 @@ function createSimpleHueInterpolator(start: RGBA, end: RGBA): (t: number) => RGB
     };
 }
 
-/** Builds a fixed-size palette for a start/end gradient and a transition style. */
+/** A gradient color stop; `position` is a fraction from 0 to 1. */
+export interface RainbowGradientStop {
+    color: RGBA;
+    position: number;
+}
+
+/**
+ * Builds a fixed-size palette along a gradient through `stops` (sorted by position, at least one).
+ * Colors before the first stop and after the last stop extend to the ends. Stops sharing a position form a hard edge:
+ * samples before it blend toward the earlier stop and samples at or after it start from the later stop.
+ */
 export function buildRainbowPalette(params: {
     steps: number;
-    start: RGBA;
-    end: RGBA;
+    stops: readonly RainbowGradientStop[];
     style: 'hue' | 'rgb';
     balanceHueLuminance?: boolean;
 }): string[] {
     const steps = Math.max(2, Math.floor(params.steps));
     const maxIndex = steps - 1;
+    const stops = params.stops;
+    const firstStop = stops[0];
+    const lastStop = stops[stops.length - 1];
+    const createInterpolator = (start: RGBA, end: RGBA): ((t: number) => RGBA) => {
+        if (params.style === 'rgb') {
+            return t => interpolateRgb(start, end, t);
+        }
+        return params.balanceHueLuminance === false ? createSimpleHueInterpolator(start, end) : createHueInterpolator(start, end);
+    };
+    const interpolators = stops.slice(1).map((stop, index) => createInterpolator(stops[index].color, stop.color));
 
     const palette = new Array<string>(steps);
-    if (params.style === 'hue') {
-        const interpolate =
-            params.balanceHueLuminance === false
-                ? createSimpleHueInterpolator(params.start, params.end)
-                : createHueInterpolator(params.start, params.end);
-        for (let i = 0; i < steps; i++) {
-            palette[i] = toCssRgba(interpolate(i / maxIndex));
-        }
-        return palette;
-    }
-
+    let segmentIndex = 0;
     for (let i = 0; i < steps; i++) {
-        palette[i] = toCssRgba(interpolateRgb(params.start, params.end, i / maxIndex));
+        const u = i / maxIndex;
+        // Strict, so a sample at the first stop's position falls through to the segment search, where a later
+        // stop sharing that position takes over as it does at every other hard edge
+        if (u < firstStop.position) {
+            palette[i] = toCssRgba(firstStop.color);
+            continue;
+        }
+        if (u >= lastStop.position) {
+            palette[i] = toCssRgba(lastStop.color);
+            continue;
+        }
+
+        // Samples increase monotonically, so the segment only moves forward
+        while (u >= stops[segmentIndex + 1].position) {
+            segmentIndex += 1;
+        }
+        const start = stops[segmentIndex].position;
+        const end = stops[segmentIndex + 1].position;
+        // With stops at 0 and 1 this is exactly u, so two-stop themes match the legacy single-gradient palette
+        palette[i] = toCssRgba(interpolators[segmentIndex]((u - start) / (end - start)));
     }
 
     return palette;
@@ -771,6 +799,14 @@ export function buildRainbowColorMapFromPalette(params: { keys: readonly string[
     const result = new Map<string, string>();
     assignRainbowColorsFromPalette({ ...params, target: result });
     return result;
+}
+
+/** Formats an RGBA color as #rrggbb, or #rrggbbaa when it is not fully opaque. */
+export function formatCssHex(color: RGBA): string {
+    const toHex = (value: number) => Math.round(value).toString(16).padStart(2, '0');
+    const hex = `#${toHex(clampChannel(color.r))}${toHex(clampChannel(color.g))}${toHex(clampChannel(color.b))}`;
+    const alpha = clampUnit(color.a);
+    return alpha >= 1 ? hex : `${hex}${toHex(alpha * 255)}`;
 }
 
 /**

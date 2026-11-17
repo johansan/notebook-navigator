@@ -17,10 +17,12 @@
  */
 
 import { NAV_RAINBOW_DEFAULTS } from '../settings/defaultSettings';
+import { findNavRainbowTheme } from '../settings/navRainbowThemes';
 import {
+    NAV_RAINBOW_NO_THEME,
     isNavRainbowColorMode,
     isNavRainbowScope,
-    isNavRainbowTransitionStyle,
+    type NavRainbowScope,
     type NavRainbowSettings,
     type NotebookNavigatorSettings,
     type VaultProfile,
@@ -282,29 +284,15 @@ const clonePropertyKeyEntry = (entry: VaultProfilePropertyKey): VaultProfileProp
     };
 };
 
-const resolveRainbowColor = (value: unknown, fallback: string): string => {
-    if (typeof value !== 'string') {
-        return fallback;
-    }
-
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : fallback;
-};
-
-const cloneNavRainbowBaseSection = <TSection extends NavRainbowSettings['shortcuts']>(section: TSection): TSection => {
-    return { ...section };
-};
-
 export const cloneNavRainbowSettings = (settings: NavRainbowSettings): NavRainbowSettings => {
     return {
         mode: settings.mode,
-        balanceHueLuminance: settings.balanceHueLuminance,
-        separateThemeColors: settings.separateThemeColors,
-        shortcuts: cloneNavRainbowBaseSection(settings.shortcuts),
-        recent: cloneNavRainbowBaseSection(settings.recent),
-        folders: cloneNavRainbowBaseSection(settings.folders),
-        tags: cloneNavRainbowBaseSection(settings.tags),
-        properties: cloneNavRainbowBaseSection(settings.properties)
+        intensity: settings.intensity,
+        shortcuts: { ...settings.shortcuts },
+        recent: { ...settings.recent },
+        folders: { ...settings.folders },
+        tags: { ...settings.tags },
+        properties: { ...settings.properties }
     };
 };
 
@@ -318,90 +306,61 @@ export const areNavRainbowSettingsEqual = (previous?: NavRainbowSettings | null,
 
     return (
         previous.mode === next.mode &&
-        previous.balanceHueLuminance === next.balanceHueLuminance &&
-        previous.separateThemeColors === next.separateThemeColors &&
-        previous.shortcuts.enabled === next.shortcuts.enabled &&
-        previous.shortcuts.firstColor === next.shortcuts.firstColor &&
-        previous.shortcuts.lastColor === next.shortcuts.lastColor &&
-        previous.shortcuts.darkFirstColor === next.shortcuts.darkFirstColor &&
-        previous.shortcuts.darkLastColor === next.shortcuts.darkLastColor &&
-        previous.shortcuts.transitionStyle === next.shortcuts.transitionStyle &&
-        previous.recent.enabled === next.recent.enabled &&
-        previous.recent.firstColor === next.recent.firstColor &&
-        previous.recent.lastColor === next.recent.lastColor &&
-        previous.recent.darkFirstColor === next.recent.darkFirstColor &&
-        previous.recent.darkLastColor === next.recent.darkLastColor &&
-        previous.recent.transitionStyle === next.recent.transitionStyle &&
-        previous.folders.enabled === next.folders.enabled &&
-        previous.folders.firstColor === next.folders.firstColor &&
-        previous.folders.lastColor === next.folders.lastColor &&
-        previous.folders.darkFirstColor === next.folders.darkFirstColor &&
-        previous.folders.darkLastColor === next.folders.darkLastColor &&
-        previous.folders.transitionStyle === next.folders.transitionStyle &&
+        previous.intensity === next.intensity &&
+        previous.shortcuts.theme === next.shortcuts.theme &&
+        previous.recent.theme === next.recent.theme &&
+        previous.folders.theme === next.folders.theme &&
         previous.folders.scope === next.folders.scope &&
-        previous.tags.enabled === next.tags.enabled &&
-        previous.tags.firstColor === next.tags.firstColor &&
-        previous.tags.lastColor === next.tags.lastColor &&
-        previous.tags.darkFirstColor === next.tags.darkFirstColor &&
-        previous.tags.darkLastColor === next.tags.darkLastColor &&
-        previous.tags.transitionStyle === next.tags.transitionStyle &&
+        previous.tags.theme === next.tags.theme &&
         previous.tags.scope === next.tags.scope &&
-        previous.properties.enabled === next.properties.enabled &&
-        previous.properties.firstColor === next.properties.firstColor &&
-        previous.properties.lastColor === next.properties.lastColor &&
-        previous.properties.darkFirstColor === next.properties.darkFirstColor &&
-        previous.properties.darkLastColor === next.properties.darkLastColor &&
-        previous.properties.transitionStyle === next.properties.transitionStyle &&
+        previous.properties.theme === next.properties.theme &&
         previous.properties.scope === next.properties.scope
     );
 };
 
-const normalizeNavRainbowBaseSection = (value: unknown, defaults: NavRainbowSettings['shortcuts']): NavRainbowSettings['shortcuts'] => {
+/**
+ * Normalizes a section's theme id. Without `isThemeAvailable` any non-empty id is kept, so copying a profile
+ * keeps custom theme ids; ensureVaultProfiles passes the library check, turning ids of deleted themes into no theme.
+ */
+const normalizeNavRainbowSectionTheme = (value: unknown, fallback: string, isThemeAvailable?: (id: string) => boolean): string => {
     const section = isRecord(value) ? value : null;
-    const firstColor = resolveRainbowColor(section?.firstColor, defaults.firstColor);
-    const lastColor = resolveRainbowColor(section?.lastColor, defaults.lastColor);
-
-    return {
-        enabled: typeof section?.enabled === 'boolean' ? section.enabled : defaults.enabled,
-        firstColor,
-        lastColor,
-        darkFirstColor: resolveRainbowColor(section?.darkFirstColor, defaults.darkFirstColor),
-        darkLastColor: resolveRainbowColor(section?.darkLastColor, defaults.darkLastColor),
-        transitionStyle: isNavRainbowTransitionStyle(section?.transitionStyle) ? section.transitionStyle : defaults.transitionStyle
-    };
+    const theme = typeof section?.theme === 'string' ? section.theme.trim() : '';
+    if (!theme) {
+        return fallback;
+    }
+    if (!isThemeAvailable || isThemeAvailable(theme)) {
+        return theme;
+    }
+    return NAV_RAINBOW_NO_THEME;
 };
 
-const normalizeNavRainbowSettings = (value: unknown, defaults: NavRainbowSettings = NAV_RAINBOW_DEFAULTS): NavRainbowSettings => {
+const normalizeNavRainbowSettings = (value: unknown, isThemeAvailable?: (id: string) => boolean): NavRainbowSettings => {
+    const defaults = NAV_RAINBOW_DEFAULTS;
     const navRainbow = isRecord(value) ? value : null;
-    const shortcuts = isRecord(navRainbow?.shortcuts) ? navRainbow.shortcuts : null;
-    const recent = isRecord(navRainbow?.recent) ? navRainbow.recent : null;
-    const folders = isRecord(navRainbow?.folders) ? navRainbow.folders : null;
-    const tags = isRecord(navRainbow?.tags) ? navRainbow.tags : null;
-    const properties = isRecord(navRainbow?.properties) ? navRainbow.properties : null;
+    const theme = (section: unknown, fallback: string) => normalizeNavRainbowSectionTheme(section, fallback, isThemeAvailable);
+    const scope = (section: unknown, fallback: NavRainbowScope): NavRainbowScope =>
+        isRecord(section) && isNavRainbowScope(section.scope) ? section.scope : fallback;
 
-    const foldersBase = normalizeNavRainbowBaseSection(folders, defaults.folders);
-    const tagsBase = normalizeNavRainbowBaseSection(tags, defaults.tags);
-    const propertiesBase = normalizeNavRainbowBaseSection(properties, defaults.properties);
-
+    const intensity = navRainbow?.intensity;
     return {
         mode: isNavRainbowColorMode(navRainbow?.mode) ? navRainbow.mode : defaults.mode,
-        balanceHueLuminance:
-            typeof navRainbow?.balanceHueLuminance === 'boolean' ? navRainbow.balanceHueLuminance : defaults.balanceHueLuminance,
-        separateThemeColors:
-            typeof navRainbow?.separateThemeColors === 'boolean' ? navRainbow.separateThemeColors : defaults.separateThemeColors,
-        shortcuts: normalizeNavRainbowBaseSection(shortcuts, defaults.shortcuts),
-        recent: normalizeNavRainbowBaseSection(recent, defaults.recent),
+        intensity:
+            typeof intensity === 'number' && Number.isFinite(intensity)
+                ? Math.min(100, Math.max(0, Math.round(intensity)))
+                : defaults.intensity,
+        shortcuts: { theme: theme(navRainbow?.shortcuts, defaults.shortcuts.theme) },
+        recent: { theme: theme(navRainbow?.recent, defaults.recent.theme) },
         folders: {
-            ...foldersBase,
-            scope: isNavRainbowScope(folders?.scope) ? folders.scope : defaults.folders.scope
+            theme: theme(navRainbow?.folders, defaults.folders.theme),
+            scope: scope(navRainbow?.folders, defaults.folders.scope)
         },
         tags: {
-            ...tagsBase,
-            scope: isNavRainbowScope(tags?.scope) ? tags.scope : defaults.tags.scope
+            theme: theme(navRainbow?.tags, defaults.tags.theme),
+            scope: scope(navRainbow?.tags, defaults.tags.scope)
         },
         properties: {
-            ...propertiesBase,
-            scope: isNavRainbowScope(properties?.scope) ? properties.scope : defaults.properties.scope
+            theme: theme(navRainbow?.properties, defaults.properties.theme),
+            scope: scope(navRainbow?.properties, defaults.properties.scope)
         }
     };
 };
@@ -851,6 +810,7 @@ export function ensureVaultProfiles(settings: NotebookNavigatorSettings): void {
         );
     }
 
+    const isThemeAvailable = (id: string) => findNavRainbowTheme(settings.navRainbowThemes, id) !== null;
     settings.vaultProfiles.forEach(profile => {
         const profileRecord = isRecord(profile) ? profile : null;
         if (profileRecord) {
@@ -896,7 +856,7 @@ export function ensureVaultProfiles(settings: NotebookNavigatorSettings): void {
         profile.periodicNotesFolder = normalizeCalendarCustomRootFolder(profileRecordPeriodicNotesFolder ?? '');
         profile.propertyKeys = clonePropertyKeys(profile.propertyKeys);
         profile.shortcuts = cloneShortcuts(profile.shortcuts);
-        profile.navRainbow = normalizeNavRainbowSettings(profile.navRainbow);
+        profile.navRainbow = normalizeNavRainbowSettings(profile.navRainbow, isThemeAvailable);
     });
 
     const hasActiveProfile = settings.vaultProfiles.some(profile => profile.id === settings.vaultProfile);

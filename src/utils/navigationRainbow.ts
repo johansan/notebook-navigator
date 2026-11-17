@@ -18,26 +18,16 @@
 
 import { NavigationPaneItemType } from '../types';
 import type { CombinedNavigationItem } from '../types/virtualization';
-import { NAV_RAINBOW_DEFAULTS } from '../settings/defaultSettings';
-import type { NavRainbowColorMode, NavRainbowScope, NavRainbowSettings } from '../settings/types';
+import type { NavRainbowColorMode, NavRainbowScope, NavRainbowTheme } from '../settings/types';
 import {
     assignRainbowColorsFromPalette,
     buildRainbowColorMapFromPalette,
     buildRainbowPalette,
+    formatCssHex,
     parseCssColor,
-    type RGBA
+    type RainbowGradientStop
 } from './colorUtils';
 import { getParentFolderPath } from './pathUtils';
-
-const navRainbowDefaultStart = parseCssColor(NAV_RAINBOW_DEFAULTS.folders.firstColor);
-const navRainbowDefaultEnd = parseCssColor(NAV_RAINBOW_DEFAULTS.folders.lastColor);
-
-if (!navRainbowDefaultStart || !navRainbowDefaultEnd) {
-    throw new Error('[Notebook Navigator] Invalid nav rainbow default colors.');
-}
-
-const NAV_RAINBOW_DEFAULT_START: RGBA = navRainbowDefaultStart;
-const NAV_RAINBOW_DEFAULT_END: RGBA = navRainbowDefaultEnd;
 
 const FOLDER_VIRTUAL_ROOT_RAINBOW_KEY = '__nn-folder-virtual-root__';
 const SHORTCUT_VIRTUAL_ROOT_RAINBOW_KEY = '__nn-shortcuts-virtual-root__';
@@ -53,13 +43,97 @@ export interface NavigationRainbowPalettes {
     recent: readonly string[] | null;
 }
 
-interface NavRainbowPaletteSource {
-    enabled: boolean;
-    firstColor: string;
-    lastColor: string;
-    darkFirstColor: string;
-    darkLastColor: string;
-    transitionStyle: 'hue' | 'rgb';
+/** The theme each navigation section uses; null when the section has no theme. */
+export interface NavigationRainbowSectionThemes {
+    folder: NavRainbowTheme | null;
+    tag: NavRainbowTheme | null;
+    property: NavRainbowTheme | null;
+    shortcut: NavRainbowTheme | null;
+    recent: NavRainbowTheme | null;
+}
+
+/** Builds the palette a theme renders in the given appearance: a sampled gradient through its stops. */
+export function buildNavRainbowThemePalette(theme: NavRainbowTheme, isDarkTheme: boolean): string[] {
+    // Theme normalization keeps only stops with parseable colors, and the editor stores color picker output
+    const gradientStops: RainbowGradientStop[] = [];
+    for (const stop of theme.separateDarkStops && isDarkTheme ? theme.darkStops : theme.stops) {
+        const color = parseCssColor(stop.color);
+        if (color) {
+            gradientStops.push({ color, position: stop.position / 100 });
+        }
+    }
+
+    return buildRainbowPalette({
+        steps: NAV_RAINBOW_PALETTE_SIZE,
+        stops: gradientStops,
+        style: theme.transitionStyle,
+        balanceHueLuminance: theme.consistentBrightness
+    });
+}
+
+const SWATCH_SAMPLE_COUNT = 32;
+
+/** CSS background drawing a palette left to right from evenly spaced samples. */
+export function buildNavRainbowPaletteBackground(palette: readonly string[]): string {
+    const lastIndex = palette.length - 1;
+    const samples = Array.from({ length: SWATCH_SAMPLE_COUNT }, (_, index) => {
+        const t = index / (SWATCH_SAMPLE_COUNT - 1);
+        return `${palette[Math.round(t * lastIndex)]} ${(t * 100).toFixed(2)}%`;
+    });
+    return `linear-gradient(to right, ${samples.join(', ')})`;
+}
+
+/**
+ * CSS background showing a theme's colors left to right in the given appearance. Gradients are sampled from the
+ * palette the navigation pane uses, because a CSS gradient between the stops would not match hue transitions.
+ */
+export function buildNavRainbowThemeSwatchBackground(theme: NavRainbowTheme, isDarkTheme: boolean): string {
+    return buildNavRainbowPaletteBackground(buildNavRainbowThemePalette(theme, isDarkTheme));
+}
+
+/**
+ * Applies the rainbow color intensity (1-99): background colors get their opacity scaled, and text colors are mixed
+ * with the navigation item name color in CSS. Text colors are only ever set as styles, never parsed, so a
+ * `color-mix()` value is safe there.
+ */
+function applyRainbowIntensity(palette: string[], mode: 'foreground' | 'background', intensity: number): string[] {
+    if (mode === 'foreground') {
+        return palette.map(color => `color-mix(in srgb, ${color} ${intensity}%, var(--nn-theme-navitem-name-color))`);
+    }
+
+    // Backgrounds stay rgba so the list pane can composite them into solid file row backgrounds
+    return palette.map(color => {
+        const parsed = parseCssColor(color);
+        return parsed ? formatCssHex({ ...parsed, a: (parsed.a * intensity) / 100 }) : color;
+    });
+}
+
+/**
+ * Builds each section's palette. Sections get null, which leaves items with their own colors and styling, when the
+ * mode is off, the section has no theme, or the intensity is 0; a 0% mix would still mark items as custom colored.
+ */
+export function buildNavigationRainbowPalettes(params: {
+    mode: NavRainbowColorMode;
+    intensity: number;
+    themes: NavigationRainbowSectionThemes;
+    isDarkTheme: boolean;
+}): NavigationRainbowPalettes {
+    const { mode, intensity, themes, isDarkTheme } = params;
+    const build = (theme: NavRainbowTheme | null): readonly string[] | null => {
+        if (mode === 'none' || !theme || intensity <= 0) {
+            return null;
+        }
+        const palette = buildNavRainbowThemePalette(theme, isDarkTheme);
+        return intensity >= 100 ? palette : applyRainbowIntensity(palette, mode, intensity);
+    };
+
+    return {
+        folder: build(themes.folder),
+        tag: build(themes.tag),
+        property: build(themes.property),
+        shortcut: build(themes.shortcut),
+        recent: build(themes.recent)
+    };
 }
 
 interface CollectUniqueKeysOptions {
@@ -189,76 +263,6 @@ function createInheritedColorResolver(params: {
 
         inheritedCache.set(path, null);
         return undefined;
-    };
-}
-
-function resolveRainbowColorEndpoints(firstColor: string, lastColor: string): { start: RGBA; end: RGBA } {
-    return {
-        start: parseCssColor(firstColor) ?? NAV_RAINBOW_DEFAULT_START,
-        end: parseCssColor(lastColor) ?? NAV_RAINBOW_DEFAULT_END
-    };
-}
-
-/** Builds a section palette, selecting light or dark endpoint colors based on theme settings. */
-function buildSectionPaletteWithThemeSplit(params: {
-    mode: NavRainbowColorMode;
-    section: NavRainbowPaletteSource;
-    isDarkTheme: boolean;
-    balanceHueLuminance: boolean;
-    separateThemeColors: boolean;
-}): string[] | null {
-    const { mode, section, isDarkTheme, balanceHueLuminance, separateThemeColors } = params;
-    if (mode === 'none' || !section.enabled) {
-        return null;
-    }
-
-    const useDarkThemeColors = separateThemeColors && isDarkTheme;
-    const firstColor = useDarkThemeColors ? section.darkFirstColor : section.firstColor;
-    const lastColor = useDarkThemeColors ? section.darkLastColor : section.lastColor;
-    const { start, end } = resolveRainbowColorEndpoints(firstColor, lastColor);
-    return buildRainbowPalette({
-        steps: NAV_RAINBOW_PALETTE_SIZE,
-        start,
-        end,
-        style: section.transitionStyle,
-        balanceHueLuminance
-    });
-}
-
-export function buildNavigationRainbowPalettes(navRainbow: NavRainbowSettings, isDarkTheme: boolean): NavigationRainbowPalettes {
-    const mode = navRainbow.mode;
-    const balanceHueLuminance = navRainbow.balanceHueLuminance;
-    const separateThemeColors = navRainbow.separateThemeColors;
-    return {
-        folder: buildSectionPaletteWithThemeSplit({
-            mode,
-            section: navRainbow.folders,
-            isDarkTheme,
-            balanceHueLuminance,
-            separateThemeColors
-        }),
-        tag: buildSectionPaletteWithThemeSplit({ mode, section: navRainbow.tags, isDarkTheme, balanceHueLuminance, separateThemeColors }),
-        property: buildSectionPaletteWithThemeSplit({
-            mode,
-            section: navRainbow.properties,
-            isDarkTheme,
-            balanceHueLuminance,
-            separateThemeColors
-        }),
-        shortcut: buildSectionPaletteWithThemeSplit({
-            mode,
-            section: navRainbow.shortcuts,
-            isDarkTheme,
-            balanceHueLuminance,
-            separateThemeColors
-        }),
-        recent: buildSectionPaletteWithThemeSplit({
-            mode,
-            section: navRainbow.recent,
-            isDarkTheme,
-            balanceHueLuminance,
-            separateThemeColors
-        })
     };
 }
 

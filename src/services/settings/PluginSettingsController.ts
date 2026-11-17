@@ -97,6 +97,8 @@ import {
 } from '../../utils/recordUtils';
 import { clearHiddenTagPatternCache, normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 import { ensureVaultProfiles, DEFAULT_VAULT_PROFILE_ID, clearHiddenFolderMatcherCache } from '../../utils/vaultProfiles';
+import { migrateLegacyNavRainbowColors } from '../../settings/migrations/navRainbowColors';
+import { normalizeNavRainbowThemes } from '../../settings/navRainbowThemes';
 import { getPathPatternCacheKey } from '../../utils/pathPatternMatcher';
 import { normalizePropertyKeyNodeId, normalizePropertyNodeId } from '../../utils/propertyTree';
 import { normalizeNavigationSeparatorKey } from '../../utils/navigationSeparators';
@@ -772,6 +774,10 @@ export class PluginSettingsController {
         const legacyShortcuts = extractLegacyShortcuts({ storedData });
         const legacyPeriodicNotesFolder = extractLegacyPeriodicNotesFolder({ settings: this.currentSettings });
 
+        // Legacy rainbow colors become themes before ensureVaultProfiles, which drops section fields it does not know,
+        // and the library is normalized first because ensureVaultProfiles clears section theme ids missing from it
+        const migratedNavRainbowColors = migrateLegacyNavRainbowColors(settingsRecord);
+        this.currentSettings.navRainbowThemes = normalizeNavRainbowThemes(this.currentSettings.navRainbowThemes);
         ensureVaultProfiles(this.currentSettings);
         applyLegacyPeriodicNotesFolderMigration({ settings: this.currentSettings, legacyPeriodicNotesFolder });
         applyLegacyVisibilityMigration({ settings: this.currentSettings, migration: legacyVisibility });
@@ -827,7 +833,8 @@ export class PluginSettingsController {
             uiScaleMigrated ||
             migratedMomentFormats ||
             migratedFolderNoteSettings ||
-            migratedShortcutNegationSyntax;
+            migratedShortcutNegationSyntax ||
+            migratedNavRainbowColors;
 
         // A local marker newer than data.json repairs the shared high-water mark so other devices
         // normally skip the dialog too. The local marker remains authoritative if sync regresses it again.

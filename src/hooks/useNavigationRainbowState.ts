@@ -18,6 +18,7 @@
 
 import { useMemo, useRef } from 'react';
 
+import { findNavRainbowTheme } from '../settings/navRainbowThemes';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import { buildNavigationRainbowPalettes, type NavigationRainbowPalettes } from '../utils/navigationRainbow';
 import { areNavRainbowSettingsEqual, getActiveNavRainbowSettings } from '../utils/vaultProfiles';
@@ -41,7 +42,24 @@ export function useNavigationRainbowState(settings: NotebookNavigatorSettings, i
         return nextNavRainbow;
     }, [settings]);
 
-    const navRainbowPalettes = useMemo(() => buildNavigationRainbowPalettes(navRainbow, isDarkTheme), [isDarkTheme, navRainbow]);
+    // Theme edits replace the theme object in the library, so the resolved references change exactly when a section's colors do
+    const customThemes = settings.navRainbowThemes;
+    const folder = findNavRainbowTheme(customThemes, navRainbow.folders.theme);
+    const tag = findNavRainbowTheme(customThemes, navRainbow.tags.theme);
+    const property = findNavRainbowTheme(customThemes, navRainbow.properties.theme);
+    const shortcut = findNavRainbowTheme(customThemes, navRainbow.shortcuts.theme);
+    const recent = findNavRainbowTheme(customThemes, navRainbow.recent.theme);
+    const { mode, intensity } = navRainbow;
+    const navRainbowPalettes = useMemo(
+        () =>
+            buildNavigationRainbowPalettes({
+                mode,
+                intensity,
+                themes: { folder, tag, property, shortcut, recent },
+                isDarkTheme
+            }),
+        [mode, intensity, folder, tag, property, shortcut, recent, isDarkTheme]
+    );
 
     return useMemo(
         () => ({

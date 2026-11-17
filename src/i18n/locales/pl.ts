@@ -35,7 +35,6 @@ export const STRINGS_PL = {
         restoreDefault: 'Przywróć domyślne', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Wyślij', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Zapisz', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Konfiguruj', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Tryb jasny', // Label for light theme mode (English: Light mode)
         darkMode: 'Tryb ciemny', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Nie wybrano', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -544,8 +543,59 @@ export const STRINGS_PL = {
             moveSourcesToTrash: 'Przenieś notatki źródłowe do kosza po scaleniu',
             mergeButton: 'Scal'
         },
-        navRainbowSection: {
-            title: (section: string) => `Kolory tęczy: ${section}`
+        navRainbowThemes: {
+            title: 'Motywy tęczy',
+            builtInHeading: 'Wbudowane motywy',
+            customHeading: 'Własne motywy',
+            noCustomThemes: 'Zduplikuj wbudowany motyw lub utwórz nowy.',
+            newTheme: 'Nowy motyw',
+            defaultName: 'Własny motyw',
+            copyName: (name: string) => `${name} (kopia)`,
+            duplicate: 'Duplikuj',
+            edit: 'Edytuj',
+            deleteTitle: 'Usuń motyw tęczy',
+            deleteMessage: (name: string) => `Usunąć „${name}”? Sekcje, które go używają, zostaną ustawione na Brak.`,
+            builtInNames: {
+                rainbow: 'Tęcza',
+                'color-cycle': 'Cykl kolorów',
+                pastel: 'Pastele',
+                fire: 'Ogień',
+                ice: 'Lód',
+                ocean: 'Ocean',
+                forest: 'Las',
+                sunset: 'Zachód słońca',
+                '70s': 'Lata 70.',
+                '80s': 'Lata 80.'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Nowy motyw tęczy',
+            editTitle: 'Edytuj motyw tęczy',
+            name: 'Nazwa',
+            transitionStyle: {
+                name: 'Styl przejścia',
+                desc: 'Interpolacja między kolorami.',
+                options: {
+                    hue: 'Barwa',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Spójna jasność dla odcieni',
+                desc: 'Interpoluje jasność między kolorami podczas przejść odcieni.'
+            },
+            separateDarkColors: {
+                name: 'Oddzielne kolory dla trybu jasnego i ciemnego',
+                desc: 'Użyj różnych kolorów dla trybu jasnego i trybu ciemnego.'
+            },
+            colors: 'Kolory',
+            addColor: 'Dodaj kolor',
+            removeColor: 'Usuń kolor',
+            reverseColors: 'Odwróć kolejność kolorów',
+            colorStop: (index: number) => `Kolor ${index}`,
+            position: 'Pozycja',
+            preview: 'Podgląd',
+            previewItem: (index: number) => `Folder ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Wyszukaj ikonki...',
@@ -2332,78 +2382,45 @@ export const STRINGS_PL = {
                     backgroundColor: 'Kolor tła'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Pierwszy kolor',
-                desc: 'Pierwszy kolor w gradiencie tęczy.'
+            navRainbowIntensity: {
+                name: 'Intensywność kolorów (profil sejfu)',
+                desc: 'Przy kolorze tła ustawia krycie kolorów tęczy. Przy kolorze tekstu ustawia, ile koloru tęczy jest mieszane z kolorem tekstu.'
             },
-            navRainbowLastColor: {
-                name: 'Ostatni kolor',
-                desc: 'Ostatni kolor w gradiencie tęczy.'
+            navRainbowShortcuts: {
+                name: 'Skróty',
+                desc: 'Koloruje skróty wybranym motywem tęczy.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Styl przejścia',
-                desc: 'Interpolacja między pierwszym a ostatnim kolorem.',
-                options: {
-                    hue: 'Barwa',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Ostatnie elementy',
+                desc: 'Koloruje ostatnie elementy wybranym motywem tęczy.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Zastosuj do skrótów',
-                desc: 'Zastosuj kolory tęczy do skrótów.'
+            navRainbowFolders: {
+                name: 'Foldery',
+                desc: 'Koloruje foldery wybranym motywem tęczy.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Zastosuj do ostatnich elementów',
-                desc: 'Zastosuj kolory tęczy do ostatnich elementów.'
+            navRainbowFolderScope: 'Zakres folderów',
+            navRainbowTags: {
+                name: 'Tagi',
+                desc: 'Koloruje tagi wybranym motywem tęczy.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Zastosuj do folderów',
-                desc: 'Zastosuj kolory tęczy do folderów.'
+            navRainbowTagScope: 'Zakres tagów',
+            navRainbowProperties: {
+                name: 'Atrybuty',
+                desc: 'Koloruje atrybuty wybranym motywem tęczy.'
             },
-            navRainbowFolderScope: {
-                name: 'Zakres folderów',
-                desc: 'Wybierz, które poziomy folderów rozpoczynają przypisywanie kolorów.',
-                options: {
-                    root: 'Poziom główny',
-                    child: 'Poziom podrzędny',
-                    all: 'Każdy poziom'
-                }
+            navRainbowPropertyScope: 'Zakres atrybutów',
+            navRainbowScopeOptions: {
+                root: 'Poziom główny',
+                child: 'Poziom podrzędny',
+                all: 'Każdy poziom'
             },
-            navRainbowApplyToTags: {
-                name: 'Zastosuj do tagów',
-                desc: 'Zastosuj kolory tęczy do tagów.'
-            },
-            navRainbowTagScope: {
-                name: 'Zakres tagów',
-                desc: 'Wybierz, które poziomy tagów rozpoczynają przypisywanie kolorów.',
-                options: {
-                    root: 'Poziom główny',
-                    child: 'Poziom podrzędny',
-                    all: 'Każdy poziom'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Zastosuj do atrybutów',
-                desc: 'Zastosuj kolory tęczy do atrybutów.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Spójna jasność dla odcieni', // (English: Consistent brightness across hues)
-                desc: 'Interpoluje jasność między kolorami początkowymi i końcowymi podczas przejść odcieni.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Oddzielne kolory dla trybu jasnego i ciemnego', // (English: Separate light and dark mode colors)
-                desc: 'Użyj różnych kolorów tęczy dla trybu jasnego i trybu ciemnego.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Brak',
+            navRainbowThemes: {
+                name: 'Motywy tęczy',
+                desc: 'Twórz, edytuj i usuwaj własne motywy tęczy.',
+                buttonText: 'Zarządzaj motywami'
             },
             navRainbowCopyLightToDark: 'Kopiuj kolor trybu jasnego do trybu ciemnego', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Zakres atrybutów',
-                desc: 'Wybierz, które poziomy atrybutów rozpoczynają przypisywanie kolorów.',
-                options: {
-                    root: 'Poziom główny',
-                    child: 'Poziom podrzędny',
-                    all: 'Każdy poziom'
-                }
-            },
             collapseItems: {
                 name: 'Zwiń elementy',
                 desc: 'Wybierz na co wpływa przycisk służący do zwijania i rozwijania elementów.',

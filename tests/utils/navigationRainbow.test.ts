@@ -21,17 +21,32 @@ import { TFolder } from 'obsidian';
 import { NavigationPaneItemType } from '../../src/types';
 import type { CombinedNavigationItem } from '../../src/types/virtualization';
 import type { PropertyTreeNode, TagTreeNode } from '../../src/types/storage';
-import { buildRainbowPalette, parseCssColor } from '../../src/utils/colorUtils';
+import { NAV_RAINBOW_DEFAULT_THEME_ID, findNavRainbowTheme } from '../../src/settings/navRainbowThemes';
+import type { NavRainbowTheme } from '../../src/settings/types';
+import { buildRainbowPalette, parseCssColor, type RGBA } from '../../src/utils/colorUtils';
 import {
     applyRainbowOverlay,
     buildFolderRainbowColorsFromSiblingPaths,
     buildNavigationRainbowPalettes,
+    buildNavRainbowThemePalette,
     buildFolderRainbowColors,
     buildPropertyRainbowColors,
     buildTagRainbowColors,
     resolveFolderRainbowColor,
-    resolveFolderRainbowDecorationColors
+    resolveFolderRainbowDecorationColors,
+    type NavigationRainbowSectionThemes
 } from '../../src/utils/navigationRainbow';
+
+function createBlackToWhitePalette(): string[] {
+    return buildRainbowPalette({
+        steps: 1024,
+        stops: [
+            { color: { r: 0, g: 0, b: 0, a: 1 }, position: 0 },
+            { color: { r: 255, g: 255, b: 255, a: 1 }, position: 1 }
+        ],
+        style: 'rgb'
+    });
+}
 
 function createTestTFolder(path: string): TFolder {
     const folder = new TFolder();
@@ -122,9 +137,7 @@ function createPropertyValueItem(id: `key:${string}=${string}`, key: string, val
 
 describe('navigationRainbow', () => {
     it('colors the root folder when folder scope is all', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [
             {
@@ -189,9 +202,7 @@ describe('navigationRainbow', () => {
     });
 
     it('keeps tag root colors aligned between root and all scopes when virtual root is shown', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [createTagItem('alpha', 1), createTagItem('beta', 1), createTagItem('alpha/child', 2)];
 
@@ -219,9 +230,7 @@ describe('navigationRainbow', () => {
     });
 
     it('keeps property root colors aligned between root and all scopes when virtual root is shown', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [
             createPropertyKeyItem('key:status', 'status', 1),
@@ -249,9 +258,7 @@ describe('navigationRainbow', () => {
     });
 
     it('inherits folder rainbow color from nearest root-scoped ancestor', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [
             createFolderItem('/', 0),
@@ -277,9 +284,7 @@ describe('navigationRainbow', () => {
     });
 
     it('builds precomputed folder rainbow colors from sibling paths', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const folderRainbow = buildFolderRainbowColorsFromSiblingPaths({
             siblingPathsByParent: new Map<string, readonly string[]>([
@@ -299,9 +304,7 @@ describe('navigationRainbow', () => {
     });
 
     it('keeps direct folder colors when rainbow foreground mode is active', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
         const folderRainbow = buildFolderRainbowColorsFromSiblingPaths({
             siblingPathsByParent: new Map<string, readonly string[]>([['/', ['A', 'B']]]),
             palette,
@@ -324,9 +327,7 @@ describe('navigationRainbow', () => {
     });
 
     it('applies folder rainbow background when background mode is active', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const folderRainbow = buildFolderRainbowColorsFromSiblingPaths({
             siblingPathsByParent: new Map<string, readonly string[]>([['/', ['A', 'B']]]),
@@ -351,9 +352,7 @@ describe('navigationRainbow', () => {
     });
 
     it('inherits tag rainbow color from nearest root-scoped ancestor', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [
             createTagItem('alpha', 1),
@@ -378,9 +377,7 @@ describe('navigationRainbow', () => {
     });
 
     it('does not assign key colors when property scope is child', () => {
-        const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
-        const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-        const palette = buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+        const palette = createBlackToWhitePalette();
 
         const items: CombinedNavigationItem[] = [
             createPropertyKeyItem('key:status', 'status', 1),
@@ -399,171 +396,161 @@ describe('navigationRainbow', () => {
         expect(propertyRainbow.colorsByNodeId.has('key:status=todo')).toBe(true);
         expect(propertyRainbow.colorsByNodeId.has('key:status=done')).toBe(true);
     });
+});
 
-    it('reuses light rainbow colors in dark mode when separate theme colors are disabled', () => {
-        const navRainbow = {
-            mode: 'foreground' as const,
-            balanceHueLuminance: true,
-            separateThemeColors: false,
-            shortcuts: {
-                enabled: true,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const
-            },
-            recent: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const
-            },
-            folders: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            },
-            tags: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            },
-            properties: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            }
+describe('rainbow theme palettes', () => {
+    function createTheme(overrides: Partial<NavRainbowTheme> = {}): NavRainbowTheme {
+        return {
+            id: 'custom-test',
+            name: 'Test',
+            stops: [
+                { color: '#111111', position: 0 },
+                { color: '#222222', position: 100 }
+            ],
+            darkStops: [
+                { color: '#aaaaaa', position: 0 },
+                { color: '#bbbbbb', position: 100 }
+            ],
+            separateDarkStops: false,
+            transitionStyle: 'rgb',
+            consistentBrightness: true,
+            ...overrides
         };
+    }
 
-        const darkPalettes = buildNavigationRainbowPalettes(navRainbow, true);
-        const lightPalettes = buildNavigationRainbowPalettes(navRainbow, false);
+    function shortcutThemes(theme: NavRainbowTheme | null): NavigationRainbowSectionThemes {
+        return { folder: null, tag: null, property: null, shortcut: theme, recent: null };
+    }
 
-        expect(darkPalettes.shortcut?.[0]).toBe(lightPalettes.shortcut?.[0]);
+    function parse(color: string): RGBA {
+        const parsed = parseCssColor(color);
+        if (!parsed) {
+            throw new Error(`Invalid test color ${color}`);
+        }
+        return parsed;
+    }
+
+    it('keeps the legacy default gradient for the Rainbow theme', () => {
+        const rainbow = findNavRainbowTheme([], NAV_RAINBOW_DEFAULT_THEME_ID);
+        if (!rainbow) {
+            throw new Error('Missing Rainbow theme');
+        }
+
+        const palette = buildNavRainbowThemePalette(rainbow, false);
+
+        // Values produced by the single-gradient palette builder that two-stop themes replace
+        expect([0, 341, 512, 1023].map(index => palette[index])).toEqual([
+            'rgba(239, 68, 68, 1)',
+            'rgba(126, 135, 0, 1)',
+            'rgba(0, 146, 93, 1)',
+            'rgba(139, 92, 246, 1)'
+        ]);
     });
 
-    it('uses dark rainbow colors in dark mode when separate theme colors are enabled', () => {
-        const navRainbow = {
-            mode: 'foreground' as const,
-            balanceHueLuminance: true,
-            separateThemeColors: true,
-            shortcuts: {
-                enabled: true,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const
-            },
-            recent: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const
-            },
-            folders: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            },
-            tags: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            },
-            properties: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#aaaaaa',
-                darkLastColor: '#bbbbbb',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            }
-        };
+    it('reuses light colors in dark mode when separate theme colors are off', () => {
+        const themes = shortcutThemes(createTheme());
+        const dark = buildNavigationRainbowPalettes({ mode: 'foreground', intensity: 100, themes, isDarkTheme: true });
+        const light = buildNavigationRainbowPalettes({ mode: 'foreground', intensity: 100, themes, isDarkTheme: false });
 
-        const darkPalettes = buildNavigationRainbowPalettes(navRainbow, true);
-        const lightPalettes = buildNavigationRainbowPalettes(navRainbow, false);
-
-        expect(darkPalettes.shortcut?.[0]).not.toBe(lightPalettes.shortcut?.[0]);
+        expect(dark.shortcut?.[0]).toBe('rgba(17, 17, 17, 1)');
+        expect(light.shortcut?.[0]).toBe('rgba(17, 17, 17, 1)');
     });
 
-    it('changes hue palettes when luminance balancing is disabled', () => {
-        const baseNavRainbow = {
-            mode: 'foreground' as const,
-            separateThemeColors: false,
-            shortcuts: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#111111',
-                darkLastColor: '#222222',
-                transitionStyle: 'rgb' as const
-            },
-            recent: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#111111',
-                darkLastColor: '#222222',
-                transitionStyle: 'rgb' as const
-            },
-            folders: {
-                enabled: true,
-                firstColor: '#ff0000',
-                lastColor: '#0000ff',
-                darkFirstColor: '#ff0000',
-                darkLastColor: '#0000ff',
-                transitionStyle: 'hue' as const,
-                scope: 'root' as const
-            },
-            tags: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#111111',
-                darkLastColor: '#222222',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            },
-            properties: {
-                enabled: false,
-                firstColor: '#111111',
-                lastColor: '#222222',
-                darkFirstColor: '#111111',
-                darkLastColor: '#222222',
-                transitionStyle: 'rgb' as const,
-                scope: 'root' as const
-            }
-        };
+    it('uses dark colors in dark mode when separate theme colors are on', () => {
+        const themes = shortcutThemes(createTheme({ separateDarkStops: true }));
+        const dark = buildNavigationRainbowPalettes({ mode: 'foreground', intensity: 100, themes, isDarkTheme: true });
+        const light = buildNavigationRainbowPalettes({ mode: 'foreground', intensity: 100, themes, isDarkTheme: false });
 
-        const balancedPalettes = buildNavigationRainbowPalettes({ ...baseNavRainbow, balanceHueLuminance: true }, false);
-        const simplePalettes = buildNavigationRainbowPalettes({ ...baseNavRainbow, balanceHueLuminance: false }, false);
+        expect(dark.shortcut?.[0]).toBe('rgba(170, 170, 170, 1)');
+        expect(light.shortcut?.[0]).toBe('rgba(17, 17, 17, 1)');
+    });
 
-        expect(balancedPalettes.folder?.[512]).not.toBe(simplePalettes.folder?.[512]);
+    it('changes hue palettes when luminance balancing is off', () => {
+        const stops = [
+            { color: '#ff0000', position: 0 },
+            { color: '#0000ff', position: 100 }
+        ];
+        const balanced = buildNavRainbowThemePalette(createTheme({ stops, transitionStyle: 'hue', consistentBrightness: true }), false);
+        const simple = buildNavRainbowThemePalette(createTheme({ stops, transitionStyle: 'hue', consistentBrightness: false }), false);
+
+        expect(balanced[512]).not.toBe(simple[512]);
+    });
+
+    it('applies the rainbow color intensity to background and text colors', () => {
+        const themes = shortcutThemes(createTheme());
+        const build = (mode: 'foreground' | 'background', intensity: number) =>
+            buildNavigationRainbowPalettes({ mode, intensity, themes, isDarkTheme: false }).shortcut;
+
+        expect(build('background', 100)?.[0]).toBe('rgba(17, 17, 17, 1)');
+        expect(build('background', 50)?.[0]).toBe('#11111180');
+        expect(build('foreground', 50)?.[0]).toBe('color-mix(in srgb, rgba(17, 17, 17, 1) 50%, var(--nn-theme-navitem-name-color))');
+        // No palette at 0, so items keep their own colors and styling instead of a 0% rainbow color
+        expect(build('background', 0)).toBeNull();
+        expect(build('foreground', 0)).toBeNull();
+    });
+
+    it('builds no palettes when the mode is off or a section has no theme', () => {
+        const off = buildNavigationRainbowPalettes({
+            mode: 'none',
+            intensity: 100,
+            themes: shortcutThemes(createTheme()),
+            isDarkTheme: false
+        });
+        const noTheme = buildNavigationRainbowPalettes({
+            mode: 'foreground',
+            intensity: 100,
+            themes: shortcutThemes(null),
+            isDarkTheme: false
+        });
+
+        expect(off.shortcut).toBeNull();
+        expect(noTheme.shortcut).toBeNull();
+    });
+
+    it('extends the end colors past the first and last stops', () => {
+        const palette = buildRainbowPalette({
+            steps: 101,
+            stops: [
+                { color: parse('#ff0000'), position: 0.25 },
+                { color: parse('#0000ff'), position: 0.75 }
+            ],
+            style: 'rgb'
+        });
+
+        expect(palette[0]).toBe('rgba(255, 0, 0, 1)');
+        expect(palette[25]).toBe('rgba(255, 0, 0, 1)');
+        expect(palette[50]).toBe('rgba(128, 0, 128, 1)');
+        expect(palette[75]).toBe('rgba(0, 0, 255, 1)');
+        expect(palette[100]).toBe('rgba(0, 0, 255, 1)');
+    });
+
+    it('draws a hard edge where two stops share a position', () => {
+        const palette = buildRainbowPalette({
+            steps: 101,
+            stops: [
+                { color: parse('#ff0000'), position: 0 },
+                { color: parse('#ff0000'), position: 0.5 },
+                { color: parse('#0000ff'), position: 0.5 },
+                { color: parse('#0000ff'), position: 1 }
+            ],
+            style: 'rgb'
+        });
+
+        expect(palette[49]).toBe('rgba(255, 0, 0, 1)');
+        expect(palette[50]).toBe('rgba(0, 0, 255, 1)');
+    });
+
+    it('starts with the later color when the first two stops share a position', () => {
+        const palette = buildRainbowPalette({
+            steps: 101,
+            stops: [
+                { color: parse('#ff0000'), position: 0 },
+                { color: parse('#0000ff'), position: 0 },
+                { color: parse('#00ff00'), position: 1 }
+            ],
+            style: 'rgb'
+        });
+
+        expect(palette[0]).toBe('rgba(0, 0, 255, 1)');
     });
 });

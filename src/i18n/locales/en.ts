@@ -35,7 +35,6 @@ export const STRINGS_EN = {
         restoreDefault: 'Restore default', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Submit', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Save', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Configure', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Light mode',
         darkMode: 'Dark mode',
         noSelection: 'No selection', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -540,8 +539,59 @@ export const STRINGS_EN = {
             moveSourcesToTrash: 'Move source notes to trash after merging',
             mergeButton: 'Merge'
         },
-        navRainbowSection: {
-            title: (section: string) => `Rainbow colors: ${section}`
+        navRainbowThemes: {
+            title: 'Rainbow themes',
+            builtInHeading: 'Built-in themes',
+            customHeading: 'Custom themes',
+            noCustomThemes: 'Duplicate a built-in theme or create a new theme.',
+            newTheme: 'New theme',
+            defaultName: 'Custom theme',
+            copyName: (name: string) => `${name} copy`,
+            duplicate: 'Duplicate',
+            edit: 'Edit',
+            deleteTitle: 'Delete rainbow theme',
+            deleteMessage: (name: string) => `Delete "${name}"? Sections that use it are set to None.`,
+            builtInNames: {
+                rainbow: 'Rainbow',
+                'color-cycle': 'Color cycle',
+                pastel: 'Pastel',
+                fire: 'Fire',
+                ice: 'Ice',
+                ocean: 'Ocean',
+                forest: 'Forest',
+                sunset: 'Sunset',
+                '70s': '70s',
+                '80s': '80s'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'New rainbow theme',
+            editTitle: 'Edit rainbow theme',
+            name: 'Name',
+            transitionStyle: {
+                name: 'Transition style',
+                desc: 'Interpolation used between the colors.',
+                options: {
+                    hue: 'Hue',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Consistent brightness across hues',
+                desc: 'Interpolates brightness between the colors during hue transitions.'
+            },
+            separateDarkColors: {
+                name: 'Separate light and dark mode colors',
+                desc: 'Use different colors for light mode and dark mode.'
+            },
+            colors: 'Colors',
+            addColor: 'Add color',
+            removeColor: 'Remove color',
+            reverseColors: 'Reverse colors',
+            colorStop: (index: number) => `Color ${index}`,
+            position: 'Position',
+            preview: 'Preview',
+            previewItem: (index: number) => `Folder ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Search icons...',
@@ -2316,78 +2366,45 @@ export const STRINGS_EN = {
                     backgroundColor: 'Background color'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'First color',
-                desc: 'First color in the rainbow gradient.'
+            navRainbowIntensity: {
+                name: 'Color intensity (vault profile)',
+                desc: 'With background color, sets the opacity of the rainbow colors. With text color, sets how much rainbow color is mixed into the text color.'
             },
-            navRainbowLastColor: {
-                name: 'Last color',
-                desc: 'Last color in the rainbow gradient.'
+            navRainbowShortcuts: {
+                name: 'Shortcuts',
+                desc: 'Colors shortcuts with the selected rainbow theme.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Transition style',
-                desc: 'Interpolation used between the first and last colors.',
-                options: {
-                    hue: 'Hue',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Recent items',
+                desc: 'Colors recent items with the selected rainbow theme.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Apply to shortcuts',
-                desc: 'Apply rainbow colors to shortcuts.'
+            navRainbowFolders: {
+                name: 'Folders',
+                desc: 'Colors folders with the selected rainbow theme.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Apply to recent items',
-                desc: 'Apply rainbow colors to recent items.'
+            navRainbowFolderScope: 'Folder scope',
+            navRainbowTags: {
+                name: 'Tags',
+                desc: 'Colors tags with the selected rainbow theme.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Apply to folders',
-                desc: 'Apply rainbow colors to folders.'
+            navRainbowTagScope: 'Tag scope',
+            navRainbowProperties: {
+                name: 'Properties',
+                desc: 'Colors properties with the selected rainbow theme.'
             },
-            navRainbowFolderScope: {
-                name: 'Folder scope',
-                desc: 'Select which folder levels start color assignments.',
-                options: {
-                    root: 'Root level',
-                    child: 'Child level',
-                    all: 'Every level'
-                }
+            navRainbowPropertyScope: 'Property scope',
+            navRainbowScopeOptions: {
+                root: 'Root level',
+                child: 'Child level',
+                all: 'Every level'
             },
-            navRainbowApplyToTags: {
-                name: 'Apply to tags',
-                desc: 'Apply rainbow colors to tags.'
-            },
-            navRainbowTagScope: {
-                name: 'Tag scope',
-                desc: 'Select which tag levels start color assignments.',
-                options: {
-                    root: 'Root level',
-                    child: 'Child level',
-                    all: 'Every level'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Apply to properties',
-                desc: 'Apply rainbow colors to properties.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Consistent brightness across hues',
-                desc: 'Interpolates brightness between the start and end colors during hue transitions.'
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Separate light and dark mode colors',
-                desc: 'Use different rainbow colors for light mode and dark mode.'
+            navRainbowNoTheme: 'None',
+            navRainbowThemes: {
+                name: 'Rainbow themes',
+                desc: 'Create, edit, and delete custom rainbow themes.',
+                buttonText: 'Manage themes'
             },
             navRainbowCopyLightToDark: 'Copy light mode color to dark mode',
-            navRainbowPropertyScope: {
-                name: 'Property scope',
-                desc: 'Select which property levels start color assignments.',
-                options: {
-                    root: 'Root level',
-                    child: 'Child level',
-                    all: 'Every level'
-                }
-            },
             collapseItems: {
                 name: 'Collapse items',
                 desc: 'Choose what the expand/collapse all button affects.',

@@ -35,7 +35,6 @@ export const STRINGS_TR = {
         restoreDefault: 'Varsayılana geri yükle', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Gönder', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Kaydet', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Yapılandır', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Açık mod', // Label for light theme mode (English: Light mode)
         darkMode: 'Koyu mod', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Seçim yok', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -541,8 +540,59 @@ export const STRINGS_TR = {
             moveSourcesToTrash: 'Birleştirdikten sonra kaynak notları çöp kutusuna taşı',
             mergeButton: 'Birleştir'
         },
-        navRainbowSection: {
-            title: (section: string) => `Gökkuşağı renkleri: ${section}`
+        navRainbowThemes: {
+            title: 'Gökkuşağı temaları',
+            builtInHeading: 'Yerleşik temalar',
+            customHeading: 'Özel temalar',
+            noCustomThemes: 'Yerleşik bir temayı çoğaltın veya yeni bir tema oluşturun.',
+            newTheme: 'Yeni tema',
+            defaultName: 'Özel tema',
+            copyName: (name: string) => `${name} kopyası`,
+            duplicate: 'Çoğalt',
+            edit: 'Düzenle',
+            deleteTitle: 'Gökkuşağı temasını sil',
+            deleteMessage: (name: string) => `"${name}" silinsin mi? Bu temayı kullanan bölümler "Yok" olarak ayarlanır.`,
+            builtInNames: {
+                rainbow: 'Gökkuşağı',
+                'color-cycle': 'Renk döngüsü',
+                pastel: 'Pastel',
+                fire: 'Ateş',
+                ice: 'Buz',
+                ocean: 'Okyanus',
+                forest: 'Orman',
+                sunset: 'Gün batımı',
+                '70s': "70'ler",
+                '80s': "80'ler"
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Yeni gökkuşağı teması',
+            editTitle: 'Gökkuşağı temasını düzenle',
+            name: 'Ad',
+            transitionStyle: {
+                name: 'Geçiş stili',
+                desc: 'Renkler arasında kullanılan enterpolasyon.',
+                options: {
+                    hue: 'Ton',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Tonlar arasında tutarlı parlaklık',
+                desc: 'Ton geçişleri sırasında renkler arasındaki parlaklığa enterpolasyon uygular.'
+            },
+            separateDarkColors: {
+                name: 'Açık ve koyu mod için ayrı renkler',
+                desc: 'Açık mod ve koyu mod için farklı renkler kullanın.'
+            },
+            colors: 'Renkler',
+            addColor: 'Renk ekle',
+            removeColor: 'Rengi kaldır',
+            reverseColors: 'Renk sırasını ters çevir',
+            colorStop: (index: number) => `Renk ${index}`,
+            position: 'Konum',
+            preview: 'Önizleme',
+            previewItem: (index: number) => `Klasör ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Simge ara...',
@@ -2323,78 +2373,45 @@ export const STRINGS_TR = {
                     backgroundColor: 'Arka plan rengi'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'İlk renk',
-                desc: 'Gökkuşağı gradyanındaki ilk renk.'
+            navRainbowIntensity: {
+                name: 'Renk yoğunluğu (kasa profili)',
+                desc: 'Arka plan renginde gökkuşağı renklerinin opaklığını ayarlar. Metin renginde metin rengine ne kadar gökkuşağı rengi karıştırılacağını ayarlar.'
             },
-            navRainbowLastColor: {
-                name: 'Son renk',
-                desc: 'Gökkuşağı gradyanındaki son renk.'
+            navRainbowShortcuts: {
+                name: 'Kısayollar',
+                desc: 'Kısayolları seçili gökkuşağı temasıyla renklendirir.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Geçiş stili',
-                desc: 'İlk ve son renkler arasında kullanılan enterpolasyon.',
-                options: {
-                    hue: 'Ton',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Son öğeler',
+                desc: 'Son öğeleri seçili gökkuşağı temasıyla renklendirir.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Kısayollara uygula',
-                desc: 'Gökkuşağı renklerini kısayollara uygula.'
+            navRainbowFolders: {
+                name: 'Klasörler',
+                desc: 'Klasörleri seçili gökkuşağı temasıyla renklendirir.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Son öğelere uygula',
-                desc: 'Gökkuşağı renklerini son öğelere uygula.'
+            navRainbowFolderScope: 'Klasör kapsamı',
+            navRainbowTags: {
+                name: 'Etiketler',
+                desc: 'Etiketleri seçili gökkuşağı temasıyla renklendirir.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Klasörlere uygula',
-                desc: 'Gökkuşağı renklerini klasörlere uygula.'
+            navRainbowTagScope: 'Etiket kapsamı',
+            navRainbowProperties: {
+                name: 'Özellikler',
+                desc: 'Özellikleri seçili gökkuşağı temasıyla renklendirir.'
             },
-            navRainbowFolderScope: {
-                name: 'Klasör kapsamı',
-                desc: 'Renk atamalarını hangi klasör düzeylerinin başlatacağını seçin.',
-                options: {
-                    root: 'Kök düzey',
-                    child: 'Alt düzey',
-                    all: 'Her düzey'
-                }
+            navRainbowPropertyScope: 'Özellik kapsamı',
+            navRainbowScopeOptions: {
+                root: 'Kök düzey',
+                child: 'Alt düzey',
+                all: 'Her düzey'
             },
-            navRainbowApplyToTags: {
-                name: 'Etiketlere uygula',
-                desc: 'Gökkuşağı renklerini etiketlere uygula.'
-            },
-            navRainbowTagScope: {
-                name: 'Etiket kapsamı',
-                desc: 'Renk atamalarını hangi etiket düzeylerinin başlatacağını seçin.',
-                options: {
-                    root: 'Kök düzey',
-                    child: 'Alt düzey',
-                    all: 'Her düzey'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Özelliklere uygula',
-                desc: 'Gökkuşağı renklerini özelliklere uygula.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Tonlar arasında tutarlı parlaklık', // (English: Consistent brightness across hues)
-                desc: 'Ton geçişleri sırasında başlangıç ve bitiş renkleri arasındaki parlaklığa enterpolasyon uygular.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Açık ve koyu mod için ayrı renkler', // (English: Separate light and dark mode colors)
-                desc: 'Açık mod ve koyu mod için farklı gökkuşağı renkleri kullanın.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Yok',
+            navRainbowThemes: {
+                name: 'Gökkuşağı temaları',
+                desc: 'Özel gökkuşağı temaları oluşturun, düzenleyin ve silin.',
+                buttonText: 'Temaları yönet'
             },
             navRainbowCopyLightToDark: 'Açık mod rengini koyu moda kopyala', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Özellik kapsamı',
-                desc: 'Renk atamalarını hangi özellik düzeylerinin başlatacağını seçin.',
-                options: {
-                    root: 'Kök düzey',
-                    child: 'Alt düzey',
-                    all: 'Her düzey'
-                }
-            },
             collapseItems: {
                 name: 'Öğeleri daralt',
                 desc: 'Tümünü genişlet/daralt düğmesinin neyi etkilediğini seçin.',

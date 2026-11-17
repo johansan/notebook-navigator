@@ -99,6 +99,7 @@ export async function buildLanguages(root = projectRoot) {
                 `${JSON.stringify(locale)}: { dateFormat: ${JSON.stringify(data.settings.items.dateFormat.placeholder)},
         timeFormat: ${JSON.stringify(data.settings.items.timeFormat.placeholder)},
         defaultVaultProfileName: ${JSON.stringify(data.settings.items.vaultProfiles.defaultName)},
+        defaultRainbowThemeName: ${JSON.stringify(data.modals.navRainbowThemes.defaultName)},
         bootstrap: ${JSON.stringify(data.language)},
         formatters: {${Object.entries(formatters)
             .map(([key, expression]) => `${JSON.stringify(key)}: ${expression}`)

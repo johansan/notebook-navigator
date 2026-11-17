@@ -35,7 +35,6 @@ export const STRINGS_NL = {
         restoreDefault: 'Standaard herstellen', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Verzenden',
         save: 'Opslaan', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Configureren', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Lichte modus', // Label for light theme mode (English: Light mode)
         darkMode: 'Donkere modus', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Geen selectie',
@@ -546,8 +545,59 @@ export const STRINGS_NL = {
             moveSourcesToTrash: 'Bronnotities naar prullenbak verplaatsen na samenvoegen',
             mergeButton: 'Samenvoegen'
         },
-        navRainbowSection: {
-            title: (section: string) => `Regenboogkleuren: ${section}`
+        navRainbowThemes: {
+            title: "Regenboogthema's",
+            builtInHeading: "Ingebouwde thema's",
+            customHeading: "Aangepaste thema's",
+            noCustomThemes: 'Dupliceer een ingebouwd thema of maak een nieuw thema.',
+            newTheme: 'Nieuw thema',
+            defaultName: 'Aangepast thema',
+            copyName: (name: string) => `${name} (kopie)`,
+            duplicate: 'Dupliceren',
+            edit: 'Bewerken',
+            deleteTitle: 'Regenboogthema verwijderen',
+            deleteMessage: (name: string) => `"${name}" verwijderen? Secties die het gebruiken worden ingesteld op "Geen".`,
+            builtInNames: {
+                rainbow: 'Regenboog',
+                'color-cycle': 'Kleurencyclus',
+                pastel: 'Pastel',
+                fire: 'Vuur',
+                ice: 'IJs',
+                ocean: 'Oceaan',
+                forest: 'Bos',
+                sunset: 'Zonsondergang',
+                '70s': 'Jaren 70',
+                '80s': 'Jaren 80'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Nieuw regenboogthema',
+            editTitle: 'Regenboogthema bewerken',
+            name: 'Naam',
+            transitionStyle: {
+                name: 'Overgangsstijl',
+                desc: 'Interpolatie tussen de kleuren.',
+                options: {
+                    hue: 'Tint',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Consistente helderheid over kleurtonen',
+                desc: 'Interpoleert de helderheid tussen de kleuren tijdens kleurtoonovergangen.'
+            },
+            separateDarkColors: {
+                name: 'Aparte kleuren voor lichte en donkere modus',
+                desc: 'Gebruik verschillende kleuren voor de lichte en donkere modus.'
+            },
+            colors: 'Kleuren',
+            addColor: 'Kleur toevoegen',
+            removeColor: 'Kleur verwijderen',
+            reverseColors: 'Kleuren omkeren',
+            colorStop: (index: number) => `Kleur ${index}`,
+            position: 'Positie',
+            preview: 'Voorbeeld',
+            previewItem: (index: number) => `Map ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Pictogrammen zoeken...',
@@ -2332,78 +2382,45 @@ export const STRINGS_NL = {
                     backgroundColor: 'Achtergrondkleur'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Eerste kleur',
-                desc: 'Eerste kleur in het regenboogverloop.'
+            navRainbowIntensity: {
+                name: 'Kleurintensiteit (kluisprofiel)',
+                desc: 'Bij achtergrondkleur stelt dit de dekking van de regenboogkleuren in. Bij tekstkleur bepaalt dit hoeveel regenboogkleur met de tekstkleur wordt gemengd.'
             },
-            navRainbowLastColor: {
-                name: 'Laatste kleur',
-                desc: 'Laatste kleur in het regenboogverloop.'
+            navRainbowShortcuts: {
+                name: 'Snelkoppelingen',
+                desc: 'Kleurt snelkoppelingen met het geselecteerde regenboogthema.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Overgangsstijl',
-                desc: 'Interpolatie tussen de eerste en laatste kleur.',
-                options: {
-                    hue: 'Tint',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Recente items',
+                desc: 'Kleurt recente items met het geselecteerde regenboogthema.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Toepassen op snelkoppelingen',
-                desc: 'Regenboogkleuren toepassen op snelkoppelingen.'
+            navRainbowFolders: {
+                name: 'Mappen',
+                desc: 'Kleurt mappen met het geselecteerde regenboogthema.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Toepassen op recente items',
-                desc: 'Regenboogkleuren toepassen op recente items.'
+            navRainbowFolderScope: 'Mappenbereik',
+            navRainbowTags: {
+                name: 'Tags',
+                desc: 'Kleurt tags met het geselecteerde regenboogthema.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Toepassen op mappen',
-                desc: 'Regenboogkleuren toepassen op mappen.'
+            navRainbowTagScope: 'Tagbereik',
+            navRainbowProperties: {
+                name: 'Eigenschappen',
+                desc: 'Kleurt eigenschappen met het geselecteerde regenboogthema.'
             },
-            navRainbowFolderScope: {
-                name: 'Mappenbereik',
-                desc: 'Selecteer welke mapniveaus kleurtoewijzingen starten.',
-                options: {
-                    root: 'Hoofdniveau',
-                    child: 'Subniveau',
-                    all: 'Elk niveau'
-                }
+            navRainbowPropertyScope: 'Eigenschappenbereik',
+            navRainbowScopeOptions: {
+                root: 'Hoofdniveau',
+                child: 'Subniveau',
+                all: 'Elk niveau'
             },
-            navRainbowApplyToTags: {
-                name: 'Toepassen op tags',
-                desc: 'Regenboogkleuren toepassen op tags.'
-            },
-            navRainbowTagScope: {
-                name: 'Tagbereik',
-                desc: 'Selecteer welke tagniveaus kleurtoewijzingen starten.',
-                options: {
-                    root: 'Hoofdniveau',
-                    child: 'Subniveau',
-                    all: 'Elk niveau'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Toepassen op eigenschappen',
-                desc: 'Regenboogkleuren toepassen op eigenschappen.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Consistente helderheid over kleurtonen', // (English: Consistent brightness across hues)
-                desc: 'Interpoleert de helderheid tussen de begin- en eindkleuren tijdens kleurtoonovergangen.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Aparte kleuren voor lichte en donkere modus', // (English: Separate light and dark mode colors)
-                desc: 'Gebruik verschillende regenboogkleuren voor de lichte en donkere modus.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Geen',
+            navRainbowThemes: {
+                name: "Regenboogthema's",
+                desc: "Aangepaste regenboogthema's maken, bewerken en verwijderen.",
+                buttonText: "Thema's beheren"
             },
             navRainbowCopyLightToDark: 'Kleur van lichte modus naar donkere modus kopiëren', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Eigenschappenbereik',
-                desc: 'Selecteer welke eigenschapsniveaus kleurtoewijzingen starten.',
-                options: {
-                    root: 'Hoofdniveau',
-                    child: 'Subniveau',
-                    all: 'Elk niveau'
-                }
-            },
             collapseItems: {
                 name: 'Items inklappen',
                 desc: 'Kies wat de knop Alles in-/uitklappen beïnvloedt.',

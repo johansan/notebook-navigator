@@ -35,7 +35,6 @@ export const STRINGS_FR = {
         restoreDefault: 'Restaurer la valeur par défaut', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Soumettre', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Enregistrer', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Configurer', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Mode clair', // Label for light theme mode (English: Light mode)
         darkMode: 'Mode sombre', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Aucune sélection', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -545,8 +544,59 @@ export const STRINGS_FR = {
             moveSourcesToTrash: 'Déplacer les notes sources vers la corbeille après la fusion',
             mergeButton: 'Fusionner'
         },
-        navRainbowSection: {
-            title: (section: string) => `Couleurs arc-en-ciel : ${section}`
+        navRainbowThemes: {
+            title: 'Thèmes arc-en-ciel',
+            builtInHeading: 'Thèmes intégrés',
+            customHeading: 'Thèmes personnalisés',
+            noCustomThemes: 'Dupliquez un thème intégré ou créez un nouveau thème.',
+            newTheme: 'Nouveau thème',
+            defaultName: 'Thème personnalisé',
+            copyName: (name: string) => `${name} (copie)`,
+            duplicate: 'Dupliquer',
+            edit: 'Modifier',
+            deleteTitle: 'Supprimer le thème arc-en-ciel',
+            deleteMessage: (name: string) => `Supprimer « ${name} » ? Les sections qui l'utilisent passent à « Aucun ».`,
+            builtInNames: {
+                rainbow: 'Arc-en-ciel',
+                'color-cycle': 'Cycle de couleurs',
+                pastel: 'Pastel',
+                fire: 'Feu',
+                ice: 'Glace',
+                ocean: 'Océan',
+                forest: 'Forêt',
+                sunset: 'Coucher de soleil',
+                '70s': 'Années 70',
+                '80s': 'Années 80'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Nouveau thème arc-en-ciel',
+            editTitle: 'Modifier le thème arc-en-ciel',
+            name: 'Nom',
+            transitionStyle: {
+                name: 'Style de transition',
+                desc: 'Interpolation utilisée entre les couleurs.',
+                options: {
+                    hue: 'Teinte',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Luminosité uniforme entre les teintes',
+                desc: 'Interpole la luminosité entre les couleurs lors des transitions de teinte.'
+            },
+            separateDarkColors: {
+                name: 'Couleurs séparées pour les modes clair et sombre',
+                desc: 'Utiliser des couleurs différentes pour le mode clair et le mode sombre.'
+            },
+            colors: 'Couleurs',
+            addColor: 'Ajouter une couleur',
+            removeColor: 'Supprimer la couleur',
+            reverseColors: 'Inverser les couleurs',
+            colorStop: (index: number) => `Couleur ${index}`,
+            position: 'Position',
+            preview: 'Aperçu',
+            previewItem: (index: number) => `Dossier ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Rechercher des icônes...',
@@ -2336,78 +2386,45 @@ export const STRINGS_FR = {
                     backgroundColor: 'Couleur de fond'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Première couleur',
-                desc: 'Première couleur du dégradé arc-en-ciel.'
+            navRainbowIntensity: {
+                name: 'Intensité des couleurs (profil du coffre)',
+                desc: 'Avec la couleur de fond, définit l’opacité des couleurs arc-en-ciel. Avec la couleur du texte, définit la part de couleur arc-en-ciel mélangée à la couleur du texte.'
             },
-            navRainbowLastColor: {
-                name: 'Dernière couleur',
-                desc: 'Dernière couleur du dégradé arc-en-ciel.'
+            navRainbowShortcuts: {
+                name: 'Raccourcis',
+                desc: 'Colore les raccourcis avec le thème arc-en-ciel sélectionné.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Style de transition',
-                desc: 'Interpolation utilisée entre la première et la dernière couleur.',
-                options: {
-                    hue: 'Teinte',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Éléments récents',
+                desc: 'Colore les éléments récents avec le thème arc-en-ciel sélectionné.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Appliquer aux raccourcis',
-                desc: 'Appliquer les couleurs arc-en-ciel aux raccourcis.'
+            navRainbowFolders: {
+                name: 'Dossiers',
+                desc: 'Colore les dossiers avec le thème arc-en-ciel sélectionné.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Appliquer aux éléments récents',
-                desc: 'Appliquer les couleurs arc-en-ciel aux éléments récents.'
+            navRainbowFolderScope: 'Portée des dossiers',
+            navRainbowTags: {
+                name: 'Mots-clés',
+                desc: 'Colore les mots-clés avec le thème arc-en-ciel sélectionné.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Appliquer aux dossiers',
-                desc: 'Appliquer les couleurs arc-en-ciel aux dossiers.'
+            navRainbowTagScope: 'Portée des mots-clés',
+            navRainbowProperties: {
+                name: 'Propriétés',
+                desc: 'Colore les propriétés avec le thème arc-en-ciel sélectionné.'
             },
-            navRainbowFolderScope: {
-                name: 'Portée des dossiers',
-                desc: 'Sélectionner les niveaux de dossier qui démarrent les attributions de couleur.',
-                options: {
-                    root: 'Niveau racine',
-                    child: 'Niveau enfant',
-                    all: 'Tous les niveaux'
-                }
+            navRainbowPropertyScope: 'Portée des propriétés',
+            navRainbowScopeOptions: {
+                root: 'Niveau racine',
+                child: 'Niveau enfant',
+                all: 'Tous les niveaux'
             },
-            navRainbowApplyToTags: {
-                name: 'Appliquer aux mots-clés',
-                desc: 'Appliquer les couleurs arc-en-ciel aux mots-clés.'
-            },
-            navRainbowTagScope: {
-                name: 'Portée des mots-clés',
-                desc: 'Sélectionner les niveaux de mot-clé qui démarrent les attributions de couleur.',
-                options: {
-                    root: 'Niveau racine',
-                    child: 'Niveau enfant',
-                    all: 'Tous les niveaux'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Appliquer aux propriétés',
-                desc: 'Appliquer les couleurs arc-en-ciel aux propriétés.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Luminosité uniforme entre les teintes', // (English: Consistent brightness across hues)
-                desc: 'Interpole la luminosité entre les couleurs de début et de fin lors des transitions de teinte.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Couleurs séparées pour les modes clair et sombre', // (English: Separate light and dark mode colors)
-                desc: 'Utiliser des couleurs arc-en-ciel différentes pour le mode clair et le mode sombre.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Aucun',
+            navRainbowThemes: {
+                name: 'Thèmes arc-en-ciel',
+                desc: 'Créer, modifier et supprimer des thèmes arc-en-ciel personnalisés.',
+                buttonText: 'Gérer les thèmes'
             },
             navRainbowCopyLightToDark: 'Copier la couleur du mode clair vers le mode sombre', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Portée des propriétés',
-                desc: 'Sélectionner les niveaux de propriété qui démarrent les attributions de couleur.',
-                options: {
-                    root: 'Niveau racine',
-                    child: 'Niveau enfant',
-                    all: 'Tous les niveaux'
-                }
-            },
             collapseItems: {
                 name: 'Replier les éléments',
                 desc: 'Choisissez ce que le bouton déplier/replier tout affecte.',

@@ -109,11 +109,18 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.5.2',
         date: '2026-11-23',
         showOnUpdate: true,
+        new: [
+            'New rainbow themes, such as Pastel, Fire, Ice and 80s, and a gradient editor for custom themes in ==Rainbow themes==.',
+            'New setting ==Color intensity== sets the opacity of rainbow background colors, or how much rainbow color is mixed into the text color.'
+        ],
         improved: [
             'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut now selects it without scrolling.',
             'Many iPad UX dual pane improvements to headers, icons, separator lines, and more.'
         ],
-        changed: ['Removed the setting ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.'],
+        changed: [
+            'Removed the setting ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.',
+            'Replaced the rainbow ==Apply to== toggles and their color settings with a theme for each section, converted customized colors to custom themes, and moved ==Consistent brightness across hues== and ==Separate light and dark mode colors== into the theme editor.'
+        ],
         fixed: [
             'Dragging a note from somewhere else in Obsidian, such as a card in a Bases cards view, onto a Canvas now adds the note instead of a text card with an `obsidian://` link [#1579](https://github.com/johansan/notebook-navigator/issues/1579).'
         ]

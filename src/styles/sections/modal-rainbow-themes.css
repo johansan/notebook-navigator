@@ -1,0 +1,226 @@
+/* Source: src/styles/sections/modal-rainbow-themes.css */
+
+/* ========================================================================
+   Rainbow Themes Modal and Settings Swatches
+   ======================================================================== */
+
+.modal.nn-rainbow-themes-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-2-2);
+}
+
+.nn-rainbow-themes-heading {
+    margin-top: var(--size-2-2);
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+    font-weight: var(--font-semibold);
+}
+
+.nn-rainbow-themes-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-2-1);
+}
+
+.nn-rainbow-themes-row {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2-3);
+}
+
+/* Theme gradient preview, shared by the theme list and the settings rows */
+.nn-rainbow-theme-swatch {
+    flex-shrink: 0;
+    width: 96px;
+    height: 20px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+}
+
+.nn-rainbow-section-swatch {
+    width: 64px;
+}
+
+.nn-rainbow-section-swatch-empty {
+    visibility: hidden;
+}
+
+.nn-rainbow-themes-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nn-rainbow-themes-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--size-1-5);
+}
+
+/* ========================================================================
+   Rainbow Theme Editor Modal
+   ======================================================================== */
+
+.nn-rainbow-theme-editor-colors {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-2);
+    padding: var(--size-4-3) 0;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+.nn-rainbow-theme-editor-colors-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--size-2-3);
+}
+
+.nn-rainbow-theme-editor-colors-title {
+    font-weight: var(--font-semibold);
+}
+
+.nn-rainbow-theme-editor-variant-switch {
+    display: flex;
+    gap: var(--size-2-1);
+}
+
+.nn-rainbow-theme-editor-variant-switch button.is-active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.nn-rainbow-theme-editor-actions {
+    display: flex;
+    gap: var(--size-1-5);
+    margin-inline-start: auto;
+}
+
+/* Stop positions, handle offsets and arrow keys all run left to right, including in right-to-left layouts.
+   The side margins keep half of a handle at 0% or 100% from reaching past the modal content. */
+.nn-rainbow-gradient-ramp {
+    position: relative;
+    margin: 0 9px;
+    padding-bottom: 12px;
+    direction: ltr;
+}
+
+.nn-rainbow-gradient-track {
+    height: 24px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    cursor: copy;
+    touch-action: none;
+}
+
+.nn-rainbow-gradient-handles {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 24px;
+    pointer-events: none;
+}
+
+/* Drags use pointer capture, so touch-action stops mobile scrolling from taking over a handle drag */
+.nn-rainbow-gradient-handle {
+    position: absolute;
+    top: 100%;
+    width: 18px;
+    height: 18px;
+    min-width: 0;
+    padding: 0;
+    border: 2px solid var(--background-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--background-modifier-border-hover);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.nn-rainbow-gradient-handle.is-selected {
+    z-index: 1;
+    box-shadow: 0 0 0 2px var(--interactive-accent);
+}
+
+.nn-rainbow-gradient-handle:focus-visible {
+    box-shadow: 0 0 0 3px var(--interactive-accent);
+}
+
+.nn-rainbow-theme-editor-selected {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2-3);
+}
+
+.nn-rainbow-theme-editor-selected-label {
+    color: var(--text-muted);
+}
+
+.nn-rainbow-theme-editor-position {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2-1);
+    margin-inline-start: auto;
+}
+
+.nn-rainbow-theme-editor-position input {
+    width: 72px;
+}
+
+.nn-rainbow-theme-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-2-2);
+}
+
+.nn-rainbow-theme-preview-title {
+    font-weight: var(--font-semibold);
+}
+
+.nn-rainbow-theme-preview-surface {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--size-4-3);
+    padding: var(--size-4-2);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-m);
+}
+
+/* Fixed surfaces show the light or dark colors being edited, whichever appearance Obsidian is using */
+.nn-rainbow-theme-preview-light {
+    background-color: #ffffff;
+    color: #222222;
+}
+
+.nn-rainbow-theme-preview-dark {
+    background-color: #1e1e1e;
+    color: #dadada;
+}
+
+.nn-rainbow-theme-preview-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.nn-rainbow-theme-preview-heading {
+    margin-bottom: var(--size-2-1);
+    font-size: var(--font-ui-smaller);
+    opacity: 0.7;
+}
+
+.nn-rainbow-theme-preview-row {
+    padding: 2px var(--size-2-2);
+    overflow: hidden;
+    border-radius: var(--radius-s);
+    font-size: var(--font-ui-small);
+    font-weight: var(--font-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

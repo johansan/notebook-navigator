@@ -35,7 +35,6 @@ export const STRINGS_IT = {
         restoreDefault: 'Ripristina predefinito', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Invia', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Salva', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Configura', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Modalità chiara', // Label for light theme mode (English: Light mode)
         darkMode: 'Modalità scura', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Nessuna selezione', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -541,8 +540,59 @@ export const STRINGS_IT = {
             moveSourcesToTrash: 'Sposta le note di origine nel cestino dopo averle unite',
             mergeButton: 'Unisci'
         },
-        navRainbowSection: {
-            title: (section: string) => `Colori arcobaleno: ${section}`
+        navRainbowThemes: {
+            title: 'Temi arcobaleno',
+            builtInHeading: 'Temi integrati',
+            customHeading: 'Temi personalizzati',
+            noCustomThemes: 'Duplica un tema integrato o crea un nuovo tema.',
+            newTheme: 'Nuovo tema',
+            defaultName: 'Tema personalizzato',
+            copyName: (name: string) => `${name} (copia)`,
+            duplicate: 'Duplica',
+            edit: 'Modifica',
+            deleteTitle: 'Elimina tema arcobaleno',
+            deleteMessage: (name: string) => `Eliminare "${name}"? Le sezioni che lo usano passano a "Nessuno".`,
+            builtInNames: {
+                rainbow: 'Arcobaleno',
+                'color-cycle': 'Ciclo di colori',
+                pastel: 'Pastello',
+                fire: 'Fuoco',
+                ice: 'Ghiaccio',
+                ocean: 'Oceano',
+                forest: 'Foresta',
+                sunset: 'Tramonto',
+                '70s': 'Anni 70',
+                '80s': 'Anni 80'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Nuovo tema arcobaleno',
+            editTitle: 'Modifica tema arcobaleno',
+            name: 'Nome',
+            transitionStyle: {
+                name: 'Stile di transizione',
+                desc: 'Interpolazione utilizzata tra i colori.',
+                options: {
+                    hue: 'Tonalità',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Luminosità uniforme tra le tonalità',
+                desc: 'Interpola la luminosità tra i colori durante le transizioni di tonalità.'
+            },
+            separateDarkColors: {
+                name: 'Colori separati per modalità chiara e scura',
+                desc: 'Usa colori diversi per la modalità chiara e la modalità scura.'
+            },
+            colors: 'Colori',
+            addColor: 'Aggiungi colore',
+            removeColor: 'Rimuovi colore',
+            reverseColors: 'Inverti colori',
+            colorStop: (index: number) => `Colore ${index}`,
+            position: 'Posizione',
+            preview: 'Anteprima',
+            previewItem: (index: number) => `Cartella ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Cerca icone...',
@@ -2328,78 +2378,45 @@ export const STRINGS_IT = {
                     backgroundColor: 'Colore di sfondo'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Primo colore',
-                desc: 'Primo colore nel gradiente arcobaleno.'
+            navRainbowIntensity: {
+                name: 'Intensità del colore (profilo vault)',
+                desc: 'Con il colore di sfondo, imposta l’opacità dei colori arcobaleno. Con il colore del testo, imposta quanto colore arcobaleno viene mescolato al colore del testo.'
             },
-            navRainbowLastColor: {
-                name: 'Ultimo colore',
-                desc: 'Ultimo colore nel gradiente arcobaleno.'
+            navRainbowShortcuts: {
+                name: 'Scorciatoie',
+                desc: 'Colora le scorciatoie con il tema arcobaleno selezionato.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Stile di transizione',
-                desc: "Interpolazione utilizzata tra il primo e l'ultimo colore.",
-                options: {
-                    hue: 'Tonalità',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Elementi recenti',
+                desc: 'Colora gli elementi recenti con il tema arcobaleno selezionato.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Applica alle scorciatoie',
-                desc: 'Applica colori arcobaleno alle scorciatoie.'
+            navRainbowFolders: {
+                name: 'Cartelle',
+                desc: 'Colora le cartelle con il tema arcobaleno selezionato.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Applica agli elementi recenti',
-                desc: 'Applica colori arcobaleno agli elementi recenti.'
+            navRainbowFolderScope: 'Ambito cartelle',
+            navRainbowTags: {
+                name: 'Etichette',
+                desc: 'Colora le etichette con il tema arcobaleno selezionato.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Applica alle cartelle',
-                desc: 'Applica colori arcobaleno alle cartelle.'
+            navRainbowTagScope: 'Ambito etichette',
+            navRainbowProperties: {
+                name: 'Proprietà',
+                desc: 'Colora le proprietà con il tema arcobaleno selezionato.'
             },
-            navRainbowFolderScope: {
-                name: 'Ambito cartelle',
-                desc: 'Seleziona quali livelli di cartella avviano le assegnazioni di colore.',
-                options: {
-                    root: 'Livello radice',
-                    child: 'Livello figlio',
-                    all: 'Ogni livello'
-                }
+            navRainbowPropertyScope: 'Ambito proprietà',
+            navRainbowScopeOptions: {
+                root: 'Livello radice',
+                child: 'Livello figlio',
+                all: 'Ogni livello'
             },
-            navRainbowApplyToTags: {
-                name: 'Applica alle etichette',
-                desc: 'Applica colori arcobaleno alle etichette.'
-            },
-            navRainbowTagScope: {
-                name: 'Ambito etichette',
-                desc: 'Seleziona quali livelli di etichette avviano le assegnazioni di colore.',
-                options: {
-                    root: 'Livello radice',
-                    child: 'Livello figlio',
-                    all: 'Ogni livello'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Applica alle proprietà',
-                desc: 'Applica colori arcobaleno alle proprietà.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Luminosità uniforme tra le tonalità', // (English: Consistent brightness across hues)
-                desc: 'Interpola la luminosità tra i colori iniziale e finale durante le transizioni di tonalità.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Colori separati per modalità chiara e scura', // (English: Separate light and dark mode colors)
-                desc: 'Usa colori arcobaleno diversi per la modalità chiara e la modalità scura.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Nessuno',
+            navRainbowThemes: {
+                name: 'Temi arcobaleno',
+                desc: 'Crea, modifica ed elimina temi arcobaleno personalizzati.',
+                buttonText: 'Gestisci temi'
             },
             navRainbowCopyLightToDark: 'Copia il colore della modalità chiara nella modalità scura', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Ambito proprietà',
-                desc: 'Seleziona quali livelli di proprietà avviano le assegnazioni di colore.',
-                options: {
-                    root: 'Livello radice',
-                    child: 'Livello figlio',
-                    all: 'Ogni livello'
-                }
-            },
             collapseItems: {
                 name: 'Comprimi elementi',
                 desc: 'Scegli cosa influenza il pulsante espandi/comprimi tutto.',

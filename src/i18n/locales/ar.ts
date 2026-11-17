@@ -35,7 +35,6 @@ export const STRINGS_AR = {
         restoreDefault: 'استعادة الافتراضي', // Button text for restoring values to defaults (English: Restore default)
         submit: 'إرسال', // Button text for submitting forms and dialogs (English: Submit)
         save: 'حفظ', // Button text for saving settings and dialogs (English: Save)
-        configure: 'تكوين', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'الوضع الفاتح', // Label for light theme mode (English: Light mode)
         darkMode: 'الوضع الداكن', // Label for dark theme mode (English: Dark mode)
         noSelection: 'لا يوجد تحديد', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -540,8 +539,59 @@ export const STRINGS_AR = {
             moveSourcesToTrash: 'نقل الملاحظات المصدر إلى سلة المهملات بعد الدمج',
             mergeButton: 'دمج'
         },
-        navRainbowSection: {
-            title: (section: string) => `ألوان قوس قزح: ${section}`
+        navRainbowThemes: {
+            title: 'سمات قوس قزح',
+            builtInHeading: 'السمات المدمجة',
+            customHeading: 'السمات المخصصة',
+            noCustomThemes: 'كرّر سمة مدمجة أو أنشئ سمة جديدة.',
+            newTheme: 'سمة جديدة',
+            defaultName: 'سمة مخصصة',
+            copyName: (name: string) => `${name} (نسخة)`,
+            duplicate: 'إنشاء نسخة',
+            edit: 'تحرير',
+            deleteTitle: 'حذف سمة قوس قزح',
+            deleteMessage: (name: string) => `حذف "${name}"؟ تُضبط الأقسام التي تستخدمها على "لا شيء".`,
+            builtInNames: {
+                rainbow: 'قوس قزح',
+                'color-cycle': 'دورة الألوان',
+                pastel: 'باستيل',
+                fire: 'نار',
+                ice: 'جليد',
+                ocean: 'محيط',
+                forest: 'غابة',
+                sunset: 'غروب',
+                '70s': 'السبعينيات',
+                '80s': 'الثمانينيات'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'سمة قوس قزح جديدة',
+            editTitle: 'تحرير سمة قوس قزح',
+            name: 'الاسم',
+            transitionStyle: {
+                name: 'نمط الانتقال',
+                desc: 'الاستيفاء المستخدم بين الألوان.',
+                options: {
+                    hue: 'درجة اللون',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'سطوع متسق عبر الألوان',
+                desc: 'استيفاء السطوع بين الألوان أثناء انتقالات درجة اللون.'
+            },
+            separateDarkColors: {
+                name: 'فصل ألوان الوضع الفاتح والداكن',
+                desc: 'استخدام ألوان مختلفة للوضع الفاتح والوضع الداكن.'
+            },
+            colors: 'الألوان',
+            addColor: 'إضافة لون',
+            removeColor: 'إزالة اللون',
+            reverseColors: 'عكس ترتيب الألوان',
+            colorStop: (index: number) => `اللون ${index}`,
+            position: 'الموضع',
+            preview: 'معاينة',
+            previewItem: (index: number) => `مجلد ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'البحث عن أيقونات...',
@@ -2319,78 +2369,45 @@ export const STRINGS_AR = {
                     backgroundColor: 'لون الخلفية'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'اللون الأول',
-                desc: 'اللون الأول في تدرج قوس قزح.'
+            navRainbowIntensity: {
+                name: 'شدة الألوان (ملف تعريف الخزنة)',
+                desc: 'مع "لون الخلفية" يضبط شفافية ألوان قوس قزح. مع "لون النص" يحدد مقدار لون قوس قزح الممزوج بلون النص.'
             },
-            navRainbowLastColor: {
-                name: 'اللون الأخير',
-                desc: 'اللون الأخير في تدرج قوس قزح.'
+            navRainbowShortcuts: {
+                name: 'الاختصارات',
+                desc: 'تلوين الاختصارات بسمة قوس قزح المحددة.'
             },
-            navRainbowTransitionStyle: {
-                name: 'نمط الانتقال',
-                desc: 'الاستيفاء المستخدم بين اللون الأول والأخير.',
-                options: {
-                    hue: 'درجة اللون',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'العناصر الأخيرة',
+                desc: 'تلوين العناصر الأخيرة بسمة قوس قزح المحددة.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'تطبيق على الاختصارات',
-                desc: 'تطبيق ألوان قوس قزح على الاختصارات.'
+            navRainbowFolders: {
+                name: 'المجلدات',
+                desc: 'تلوين المجلدات بسمة قوس قزح المحددة.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'تطبيق على العناصر الأخيرة',
-                desc: 'تطبيق ألوان قوس قزح على العناصر الأخيرة.'
+            navRainbowFolderScope: 'نطاق المجلدات',
+            navRainbowTags: {
+                name: 'الوسوم',
+                desc: 'تلوين الوسوم بسمة قوس قزح المحددة.'
             },
-            navRainbowApplyToFolders: {
-                name: 'تطبيق على المجلدات',
-                desc: 'تطبيق ألوان قوس قزح على المجلدات.'
+            navRainbowTagScope: 'نطاق الوسوم',
+            navRainbowProperties: {
+                name: 'الخصائص',
+                desc: 'تلوين الخصائص بسمة قوس قزح المحددة.'
             },
-            navRainbowFolderScope: {
-                name: 'نطاق المجلدات',
-                desc: 'تحديد مستويات المجلدات التي تبدأ تعيينات الألوان.',
-                options: {
-                    root: 'المستوى الجذر',
-                    child: 'المستوى الفرعي',
-                    all: 'كل مستوى'
-                }
+            navRainbowPropertyScope: 'نطاق الخصائص',
+            navRainbowScopeOptions: {
+                root: 'المستوى الجذر',
+                child: 'المستوى الفرعي',
+                all: 'كل مستوى'
             },
-            navRainbowApplyToTags: {
-                name: 'تطبيق على الوسوم',
-                desc: 'تطبيق ألوان قوس قزح على الوسوم.'
-            },
-            navRainbowTagScope: {
-                name: 'نطاق الوسوم',
-                desc: 'تحديد مستويات الوسوم التي تبدأ تعيينات الألوان.',
-                options: {
-                    root: 'المستوى الجذر',
-                    child: 'المستوى الفرعي',
-                    all: 'كل مستوى'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'تطبيق على الخصائص',
-                desc: 'تطبيق ألوان قوس قزح على الخصائص.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'سطوع متسق عبر الألوان', // (English: Consistent brightness across hues)
-                desc: 'استيفاء السطوع بين لون البداية ولون النهاية أثناء انتقالات درجة اللون.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'فصل ألوان الوضع الفاتح والداكن', // (English: Separate light and dark mode colors)
-                desc: 'استخدام ألوان قوس قزح مختلفة للوضع الفاتح والوضع الداكن.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'لا شيء',
+            navRainbowThemes: {
+                name: 'سمات قوس قزح',
+                desc: 'إنشاء سمات قوس قزح المخصصة وتحريرها وحذفها.',
+                buttonText: 'إدارة السمات'
             },
             navRainbowCopyLightToDark: 'نسخ لون الوضع الفاتح إلى الوضع الداكن', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'نطاق الخصائص',
-                desc: 'تحديد مستويات الخصائص التي تبدأ تعيينات الألوان.',
-                options: {
-                    root: 'المستوى الجذر',
-                    child: 'المستوى الفرعي',
-                    all: 'كل مستوى'
-                }
-            },
             collapseItems: {
                 name: 'طي العناصر',
                 desc: 'اختر ما يؤثر عليه زر توسيع/طي الكل.',

@@ -20,12 +20,15 @@ import { ButtonComponent, Platform, Setting } from 'obsidian';
 import type { SettingDefinitionItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { NavigationBannerModal } from '../../modals/NavigationBannerModal';
-import { NavRainbowSectionModal } from '../../modals/NavRainbowSectionModal';
-import { DEFAULT_SETTINGS } from '../defaultSettings';
-import { isNavRainbowColorMode } from '../types';
+import { NavRainbowThemesModal } from '../../modals/NavRainbowThemesModal';
+import { DEFAULT_SETTINGS, NAV_RAINBOW_DEFAULTS } from '../defaultSettings';
+import { NAV_RAINBOW_BUILT_IN_THEMES, findNavRainbowTheme, getNavRainbowThemeName } from '../navRainbowThemes';
+import { NAV_RAINBOW_NO_THEME, isNavRainbowColorMode, isNavRainbowScope, type NavRainbowSectionId } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
 import { runAsyncAction } from '../../utils/async';
 import { supportsKeyboardInteractions } from '../../utils/paneLayout';
+import { buildNavRainbowThemeSwatchBackground } from '../../utils/navigationRainbow';
+import { getCurrentThemeMode } from '../../utils/themeMode';
 import { getActiveVaultProfile } from '../../utils/vaultProfiles';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
@@ -129,46 +132,46 @@ export function createNavigationPaneSettingDefinitions(context: SettingsTabConte
                 render: setting => renderNavRainbowModeSetting(setting, context)
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToShortcuts.name,
-                desc: strings.settings.items.navRainbowApplyToShortcuts.desc,
+                name: strings.settings.items.navRainbowIntensity.name,
+                desc: strings.settings.items.navRainbowIntensity.desc,
+                visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
+                render: setting => renderNavRainbowIntensitySetting(setting, context)
+            }),
+            createRenderDefinition({
+                name: strings.settings.items.navRainbowShortcuts.name,
+                desc: strings.settings.items.navRainbowShortcuts.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'shortcuts')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToRecentItems.name,
-                desc: strings.settings.items.navRainbowApplyToRecentItems.desc,
+                name: strings.settings.items.navRainbowRecentItems.name,
+                desc: strings.settings.items.navRainbowRecentItems.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'recent')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToFolders.name,
-                desc: strings.settings.items.navRainbowApplyToFolders.desc,
+                name: strings.settings.items.navRainbowFolders.name,
+                desc: strings.settings.items.navRainbowFolders.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'folders')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToTags.name,
-                desc: strings.settings.items.navRainbowApplyToTags.desc,
+                name: strings.settings.items.navRainbowTags.name,
+                desc: strings.settings.items.navRainbowTags.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'tags')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowApplyToProperties.name,
-                desc: strings.settings.items.navRainbowApplyToProperties.desc,
+                name: strings.settings.items.navRainbowProperties.name,
+                desc: strings.settings.items.navRainbowProperties.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
                 render: setting => renderNavRainbowSectionSetting(setting, context, 'properties')
             }),
             createRenderDefinition({
-                name: strings.settings.items.navRainbowConsistentBrightness.name,
-                desc: strings.settings.items.navRainbowConsistentBrightness.desc,
+                name: strings.settings.items.navRainbowThemes.name,
+                desc: strings.settings.items.navRainbowThemes.desc,
                 visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
-                render: setting => renderNavRainbowToggleSetting(setting, context, 'balanceHueLuminance')
-            }),
-            createRenderDefinition({
-                name: strings.settings.items.navRainbowSeparateThemeColors.name,
-                desc: strings.settings.items.navRainbowSeparateThemeColors.desc,
-                visible: () => getActiveVaultProfile(plugin.settings).navRainbow.mode !== 'none',
-                render: setting => renderNavRainbowToggleSetting(setting, context, 'separateThemeColors')
+                render: setting => renderNavRainbowThemesSetting(setting, context)
             })
         ]),
         createGroupDefinition(strings.settings.pages.navigationPane.groups.fileCounts, [
@@ -445,56 +448,114 @@ function renderNavRainbowModeSetting(setting: Setting, context: SettingsTabConte
         );
 }
 
-function renderNavRainbowSectionSetting(
-    setting: Setting,
-    context: SettingsTabContext,
-    section: 'shortcuts' | 'recent' | 'folders' | 'tags' | 'properties'
-): void {
+function renderNavRainbowIntensitySetting(setting: Setting, context: SettingsTabContext): void {
     const { plugin } = context;
-    const sectionStrings = {
-        shortcuts: strings.settings.items.navRainbowApplyToShortcuts,
-        recent: strings.settings.items.navRainbowApplyToRecentItems,
-        folders: strings.settings.items.navRainbowApplyToFolders,
-        tags: strings.settings.items.navRainbowApplyToTags,
-        properties: strings.settings.items.navRainbowApplyToProperties
-    }[section];
 
-    setting.setName(sectionStrings.name).setDesc(sectionStrings.desc);
-    setting.addToggle(toggle =>
-        toggle.setValue(getActiveVaultProfile(plugin.settings).navRainbow[section].enabled).onChange(async value => {
+    renderSliderSetting(setting, {
+        name: strings.settings.items.navRainbowIntensity.name,
+        desc: strings.settings.items.navRainbowIntensity.desc,
+        value: getActiveVaultProfile(plugin.settings).navRainbow.intensity,
+        defaultValue: NAV_RAINBOW_DEFAULTS.intensity,
+        min: 0,
+        max: 100,
+        step: 5,
+        formatValue: value => `${value}%`,
+        onChange: async value => {
             const activeProfile = getActiveVaultProfile(plugin.settings);
-            activeProfile.navRainbow = {
-                ...activeProfile.navRainbow,
-                [section]: { ...activeProfile.navRainbow[section], enabled: value }
-            };
+            activeProfile.navRainbow = { ...activeProfile.navRainbow, intensity: value };
             await plugin.saveSettingsAndUpdate();
-        })
-    );
-    setting.addButton(button => {
-        button.setButtonText(strings.common.configure);
-        button.onClick(() => {
-            new NavRainbowSectionModal(context.app, plugin, section).open();
-        });
+        }
     });
 }
 
-function renderNavRainbowToggleSetting(
-    setting: Setting,
-    context: SettingsTabContext,
-    key: 'balanceHueLuminance' | 'separateThemeColors'
-): void {
+/** Renders a section's theme dropdown and swatch; the folder, tag and property rows add a level scope dropdown between them. */
+function renderNavRainbowSectionSetting(setting: Setting, context: SettingsTabContext, section: NavRainbowSectionId): void {
     const { plugin } = context;
-    const itemStrings =
-        key === 'balanceHueLuminance'
-            ? strings.settings.items.navRainbowConsistentBrightness
-            : strings.settings.items.navRainbowSeparateThemeColors;
+    const sectionStrings = {
+        shortcuts: strings.settings.items.navRainbowShortcuts,
+        recent: strings.settings.items.navRainbowRecentItems,
+        folders: strings.settings.items.navRainbowFolders,
+        tags: strings.settings.items.navRainbowTags,
+        properties: strings.settings.items.navRainbowProperties
+    }[section];
 
-    setting.setName(itemStrings.name).setDesc(itemStrings.desc);
-    setting.addToggle(toggle =>
-        toggle.setValue(getActiveVaultProfile(plugin.settings).navRainbow[key]).onChange(async value => {
+    setting.setName(sectionStrings.name).setDesc(sectionStrings.desc);
+    const swatchEl = createDiv({ cls: 'nn-rainbow-theme-swatch nn-rainbow-section-swatch' });
+    const renderSwatch = (): void => {
+        const theme = findNavRainbowTheme(
+            plugin.settings.navRainbowThemes,
+            getActiveVaultProfile(plugin.settings).navRainbow[section].theme
+        );
+        // Hidden rather than removed for no theme, so the swatches and dropdowns stay aligned between rows
+        swatchEl.toggleClass('nn-rainbow-section-swatch-empty', theme === null);
+        if (theme) {
+            swatchEl.style.setProperty('background-image', buildNavRainbowThemeSwatchBackground(theme, getCurrentThemeMode() === 'dark'));
+        }
+    };
+
+    setting.addDropdown(dropdown => {
+        // Theme manager edits change the custom themes while the settings tab stays open, so options rebuild on each settings update
+        const rebuildOptions = (): void => {
+            dropdown.selectEl.empty();
+            dropdown.addOption(NAV_RAINBOW_NO_THEME, strings.settings.items.navRainbowNoTheme);
+            [...NAV_RAINBOW_BUILT_IN_THEMES, ...plugin.settings.navRainbowThemes].forEach(theme => {
+                dropdown.addOption(theme.id, getNavRainbowThemeName(theme));
+            });
+            dropdown.setValue(getActiveVaultProfile(plugin.settings).navRainbow[section].theme);
+            renderSwatch();
+        };
+
+        dropdown.onChange(value => {
             const activeProfile = getActiveVaultProfile(plugin.settings);
-            activeProfile.navRainbow = { ...activeProfile.navRainbow, [key]: value };
-            await plugin.saveSettingsAndUpdate();
-        })
-    );
+            activeProfile.navRainbow = {
+                ...activeProfile.navRainbow,
+                [section]: { ...activeProfile.navRainbow[section], theme: value }
+            };
+            renderSwatch();
+            runAsyncAction(() => plugin.saveSettingsAndUpdate());
+        });
+
+        rebuildOptions();
+        context.registerSettingsUpdateListener(`navigation-rainbow-theme-${section}`, rebuildOptions);
+    });
+
+    if (section === 'folders' || section === 'tags' || section === 'properties') {
+        const scopeLabel = {
+            folders: strings.settings.items.navRainbowFolderScope,
+            tags: strings.settings.items.navRainbowTagScope,
+            properties: strings.settings.items.navRainbowPropertyScope
+        }[section];
+        const scopeOptions = strings.settings.items.navRainbowScopeOptions;
+        setting.addDropdown(dropdown => {
+            dropdown.selectEl.setAttribute('aria-label', scopeLabel);
+            dropdown
+                .addOption('root', scopeOptions.root)
+                .addOption('child', scopeOptions.child)
+                .addOption('all', scopeOptions.all)
+                .setValue(getActiveVaultProfile(plugin.settings).navRainbow[section].scope)
+                .onChange(value => {
+                    if (!isNavRainbowScope(value)) {
+                        return;
+                    }
+                    const activeProfile = getActiveVaultProfile(plugin.settings);
+                    activeProfile.navRainbow = {
+                        ...activeProfile.navRainbow,
+                        [section]: { ...activeProfile.navRainbow[section], scope: value }
+                    };
+                    runAsyncAction(() => plugin.saveSettingsAndUpdate());
+                });
+        });
+    }
+
+    // Last in the row, so the swatches of all sections line up at the right edge
+    setting.controlEl.appendChild(swatchEl);
+}
+
+function renderNavRainbowThemesSetting(setting: Setting, context: SettingsTabContext): void {
+    setting.addButton(button => {
+        button.setButtonText(strings.settings.items.navRainbowThemes.buttonText);
+        button.onClick(() => {
+            new NavRainbowThemesModal(context.app, context.plugin).open();
+        });
+    });
 }

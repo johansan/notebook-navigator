@@ -35,7 +35,6 @@ export const STRINGS_ZH_CN = {
         restoreDefault: '恢复默认', // Button text for restoring values to defaults (English: Restore default)
         submit: '提交', // Button text for submitting forms and dialogs (English: Submit)
         save: '保存', // Button text for saving settings and dialogs (English: Save)
-        configure: '配置', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: '浅色模式', // Label for light theme mode (English: Light mode)
         darkMode: '深色模式', // Label for dark theme mode (English: Dark mode)
         noSelection: '未选择', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -538,8 +537,59 @@ export const STRINGS_ZH_CN = {
             moveSourcesToTrash: '合并后将源笔记移至回收站',
             mergeButton: '合并'
         },
-        navRainbowSection: {
-            title: (section: string) => `彩虹颜色：${section}`
+        navRainbowThemes: {
+            title: '彩虹主题',
+            builtInHeading: '内置主题',
+            customHeading: '自定义主题',
+            noCustomThemes: '复制内置主题或新建主题。',
+            newTheme: '新建主题',
+            defaultName: '自定义主题',
+            copyName: (name: string) => `${name} 副本`,
+            duplicate: '复制',
+            edit: '编辑',
+            deleteTitle: '删除彩虹主题',
+            deleteMessage: (name: string) => `删除“${name}”？使用此主题的分区将设为“无”。`,
+            builtInNames: {
+                rainbow: '彩虹',
+                'color-cycle': '色彩循环',
+                pastel: '粉彩',
+                fire: '火焰',
+                ice: '冰霜',
+                ocean: '海洋',
+                forest: '森林',
+                sunset: '日落',
+                '70s': '70年代',
+                '80s': '80年代'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: '新建彩虹主题',
+            editTitle: '编辑彩虹主题',
+            name: '名称',
+            transitionStyle: {
+                name: '过渡样式',
+                desc: '颜色之间使用的插值。',
+                options: {
+                    hue: '色相',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: '色相间一致的亮度',
+                desc: '在色相过渡期间在各颜色之间插值亮度。'
+            },
+            separateDarkColors: {
+                name: '分别设置浅色和深色模式颜色',
+                desc: '为浅色模式和深色模式使用不同的颜色。'
+            },
+            colors: '颜色',
+            addColor: '添加颜色',
+            removeColor: '移除颜色',
+            reverseColors: '反转颜色顺序',
+            colorStop: (index: number) => `颜色 ${index}`,
+            position: '位置',
+            preview: '预览',
+            previewItem: (index: number) => `文件夹 ${index}`
         },
         iconPicker: {
             searchPlaceholder: '搜索图标...',
@@ -2309,78 +2359,45 @@ export const STRINGS_ZH_CN = {
                     backgroundColor: '背景颜色'
                 }
             },
-            navRainbowFirstColor: {
-                name: '第一种颜色',
-                desc: '彩虹渐变中的第一种颜色。'
+            navRainbowIntensity: {
+                name: '颜色强度（仓库配置文件）',
+                desc: '使用背景颜色时，设置彩虹颜色的不透明度。使用文字颜色时，设置混入文字颜色的彩虹颜色比例。'
             },
-            navRainbowLastColor: {
-                name: '最后一种颜色',
-                desc: '彩虹渐变中的最后一种颜色。'
+            navRainbowShortcuts: {
+                name: '快捷方式',
+                desc: '使用所选彩虹主题为快捷方式着色。'
             },
-            navRainbowTransitionStyle: {
-                name: '过渡样式',
-                desc: '第一种和最后一种颜色之间使用的插值。',
-                options: {
-                    hue: '色相',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: '最近项目',
+                desc: '使用所选彩虹主题为最近项目着色。'
             },
-            navRainbowApplyToShortcuts: {
-                name: '应用到快捷方式',
-                desc: '将彩虹颜色应用到快捷方式。'
+            navRainbowFolders: {
+                name: '文件夹',
+                desc: '使用所选彩虹主题为文件夹着色。'
             },
-            navRainbowApplyToRecentItems: {
-                name: '应用到最近项目',
-                desc: '将彩虹颜色应用到最近项目。'
+            navRainbowFolderScope: '文件夹范围',
+            navRainbowTags: {
+                name: '标签',
+                desc: '使用所选彩虹主题为标签着色。'
             },
-            navRainbowApplyToFolders: {
-                name: '应用到文件夹',
-                desc: '将彩虹颜色应用到文件夹。'
+            navRainbowTagScope: '标签范围',
+            navRainbowProperties: {
+                name: '属性',
+                desc: '使用所选彩虹主题为属性着色。'
             },
-            navRainbowFolderScope: {
-                name: '文件夹范围',
-                desc: '选择哪些文件夹级别开始颜色分配。',
-                options: {
-                    root: '根级别',
-                    child: '子级别',
-                    all: '每个级别'
-                }
+            navRainbowPropertyScope: '属性范围',
+            navRainbowScopeOptions: {
+                root: '根级别',
+                child: '子级别',
+                all: '每个级别'
             },
-            navRainbowApplyToTags: {
-                name: '应用到标签',
-                desc: '将彩虹颜色应用到标签。'
-            },
-            navRainbowTagScope: {
-                name: '标签范围',
-                desc: '选择哪些标签级别开始颜色分配。',
-                options: {
-                    root: '根级别',
-                    child: '子级别',
-                    all: '每个级别'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: '应用到属性',
-                desc: '将彩虹颜色应用到属性。'
-            },
-            navRainbowConsistentBrightness: {
-                name: '色相间一致的亮度', // (English: Consistent brightness across hues)
-                desc: '在色相过渡期间在起始颜色和结束颜色之间插值亮度。' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: '分别设置浅色和深色模式颜色', // (English: Separate light and dark mode colors)
-                desc: '为浅色模式和深色模式使用不同的彩虹颜色。' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: '无',
+            navRainbowThemes: {
+                name: '彩虹主题',
+                desc: '创建、编辑和删除自定义彩虹主题。',
+                buttonText: '管理主题'
             },
             navRainbowCopyLightToDark: '将浅色模式颜色复制到深色模式', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: '属性范围',
-                desc: '选择哪些属性级别开始颜色分配。',
-                options: {
-                    root: '根级别',
-                    child: '子级别',
-                    all: '每个级别'
-                }
-            },
             collapseItems: {
                 name: '折叠项目',
                 desc: '选择展开/折叠全部按钮影响的内容。',

@@ -35,7 +35,6 @@ export const STRINGS_ID = {
         restoreDefault: 'Pulihkan default', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Kirim',
         save: 'Simpan', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Konfigurasi', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Mode terang', // Label for light theme mode (English: Light mode)
         darkMode: 'Mode gelap', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Tidak ada pilihan',
@@ -542,8 +541,59 @@ export const STRINGS_ID = {
             moveSourcesToTrash: 'Pindahkan catatan sumber ke sampah setelah digabung',
             mergeButton: 'Gabungkan'
         },
-        navRainbowSection: {
-            title: (section: string) => `Warna pelangi: ${section}`
+        navRainbowThemes: {
+            title: 'Tema pelangi',
+            builtInHeading: 'Tema bawaan',
+            customHeading: 'Tema kustom',
+            noCustomThemes: 'Duplikat tema bawaan atau buat tema baru.',
+            newTheme: 'Tema baru',
+            defaultName: 'Tema kustom',
+            copyName: (name: string) => `${name} (salinan)`,
+            duplicate: 'Duplikat',
+            edit: 'Edit',
+            deleteTitle: 'Hapus tema pelangi',
+            deleteMessage: (name: string) => `Hapus "${name}"? Bagian yang menggunakannya diatur ke "Tidak ada".`,
+            builtInNames: {
+                rainbow: 'Pelangi',
+                'color-cycle': 'Siklus warna',
+                pastel: 'Pastel',
+                fire: 'Api',
+                ice: 'Es',
+                ocean: 'Samudra',
+                forest: 'Hutan',
+                sunset: 'Senja',
+                '70s': '70-an',
+                '80s': '80-an'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Tema pelangi baru',
+            editTitle: 'Edit tema pelangi',
+            name: 'Nama',
+            transitionStyle: {
+                name: 'Gaya transisi',
+                desc: 'Interpolasi yang digunakan di antara warna.',
+                options: {
+                    hue: 'Rona',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Kecerahan konsisten di seluruh warna',
+                desc: 'Menginterpolasi kecerahan di antara warna selama transisi rona.'
+            },
+            separateDarkColors: {
+                name: 'Pisahkan warna mode terang dan gelap',
+                desc: 'Gunakan warna yang berbeda untuk mode terang dan mode gelap.'
+            },
+            colors: 'Warna',
+            addColor: 'Tambahkan warna',
+            removeColor: 'Hapus warna',
+            reverseColors: 'Balik urutan warna',
+            colorStop: (index: number) => `Warna ${index}`,
+            position: 'Posisi',
+            preview: 'Pratinjau',
+            previewItem: (index: number) => `Folder ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Cari ikon...',
@@ -2325,78 +2375,45 @@ export const STRINGS_ID = {
                     backgroundColor: 'Warna latar'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Warna pertama',
-                desc: 'Warna pertama dalam gradien pelangi.'
+            navRainbowIntensity: {
+                name: 'Intensitas warna (profil vault)',
+                desc: 'Dengan warna latar, mengatur opasitas warna pelangi. Dengan warna teks, mengatur seberapa banyak warna pelangi dicampurkan ke warna teks.'
             },
-            navRainbowLastColor: {
-                name: 'Warna terakhir',
-                desc: 'Warna terakhir dalam gradien pelangi.'
+            navRainbowShortcuts: {
+                name: 'Pintasan',
+                desc: 'Mewarnai pintasan dengan tema pelangi yang dipilih.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Gaya transisi',
-                desc: 'Interpolasi yang digunakan antara warna pertama dan terakhir.',
-                options: {
-                    hue: 'Rona',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Item terbaru',
+                desc: 'Mewarnai item terbaru dengan tema pelangi yang dipilih.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Terapkan ke pintasan',
-                desc: 'Terapkan warna pelangi ke pintasan.'
+            navRainbowFolders: {
+                name: 'Folder',
+                desc: 'Mewarnai folder dengan tema pelangi yang dipilih.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Terapkan ke item terbaru',
-                desc: 'Terapkan warna pelangi ke item terbaru.'
+            navRainbowFolderScope: 'Cakupan folder',
+            navRainbowTags: {
+                name: 'Tag',
+                desc: 'Mewarnai tag dengan tema pelangi yang dipilih.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Terapkan ke folder',
-                desc: 'Terapkan warna pelangi ke folder.'
+            navRainbowTagScope: 'Cakupan tag',
+            navRainbowProperties: {
+                name: 'Properti',
+                desc: 'Mewarnai properti dengan tema pelangi yang dipilih.'
             },
-            navRainbowFolderScope: {
-                name: 'Cakupan folder',
-                desc: 'Pilih level folder mana yang memulai penetapan warna.',
-                options: {
-                    root: 'Level akar',
-                    child: 'Level anak',
-                    all: 'Setiap level'
-                }
+            navRainbowPropertyScope: 'Cakupan properti',
+            navRainbowScopeOptions: {
+                root: 'Level akar',
+                child: 'Level anak',
+                all: 'Setiap level'
             },
-            navRainbowApplyToTags: {
-                name: 'Terapkan ke tag',
-                desc: 'Terapkan warna pelangi ke tag.'
-            },
-            navRainbowTagScope: {
-                name: 'Cakupan tag',
-                desc: 'Pilih level tag mana yang memulai penetapan warna.',
-                options: {
-                    root: 'Level akar',
-                    child: 'Level anak',
-                    all: 'Setiap level'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Terapkan ke properti',
-                desc: 'Terapkan warna pelangi ke properti.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Kecerahan konsisten di seluruh warna', // (English: Consistent brightness across hues)
-                desc: 'Menginterpolasi kecerahan antara warna awal dan akhir selama transisi warna.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Pisahkan warna mode terang dan gelap', // (English: Separate light and dark mode colors)
-                desc: 'Gunakan warna pelangi yang berbeda untuk mode terang dan mode gelap.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Tidak ada',
+            navRainbowThemes: {
+                name: 'Tema pelangi',
+                desc: 'Buat, edit, dan hapus tema pelangi kustom.',
+                buttonText: 'Kelola tema'
             },
             navRainbowCopyLightToDark: 'Salin warna mode terang ke mode gelap', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Cakupan properti',
-                desc: 'Pilih level properti mana yang memulai penetapan warna.',
-                options: {
-                    root: 'Level akar',
-                    child: 'Level anak',
-                    all: 'Setiap level'
-                }
-            },
             collapseItems: {
                 name: 'Ciutkan item',
                 desc: 'Pilih apa yang dipengaruhi tombol luaskan/ciutkan semua.',

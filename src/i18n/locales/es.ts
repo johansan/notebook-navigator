@@ -35,7 +35,6 @@ export const STRINGS_ES = {
         restoreDefault: 'Restaurar predeterminado', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Enviar', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Guardar', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Configurar', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Modo claro', // Label for light theme mode (English: Light mode)
         darkMode: 'Modo oscuro', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Sin selección', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -544,8 +543,59 @@ export const STRINGS_ES = {
             moveSourcesToTrash: 'Mover las notas de origen a la papelera después de combinarlas',
             mergeButton: 'Combinar'
         },
-        navRainbowSection: {
-            title: (section: string) => `Colores arcoíris: ${section}`
+        navRainbowThemes: {
+            title: 'Temas arcoíris',
+            builtInHeading: 'Temas integrados',
+            customHeading: 'Temas personalizados',
+            noCustomThemes: 'Duplica un tema integrado o crea un tema nuevo.',
+            newTheme: 'Nuevo tema',
+            defaultName: 'Tema personalizado',
+            copyName: (name: string) => `${name} (copia)`,
+            duplicate: 'Duplicar',
+            edit: 'Editar',
+            deleteTitle: 'Eliminar tema arcoíris',
+            deleteMessage: (name: string) => `¿Eliminar «${name}»? Las secciones que lo usan pasan a «Ninguno».`,
+            builtInNames: {
+                rainbow: 'Arcoíris',
+                'color-cycle': 'Ciclo de colores',
+                pastel: 'Pastel',
+                fire: 'Fuego',
+                ice: 'Hielo',
+                ocean: 'Océano',
+                forest: 'Bosque',
+                sunset: 'Atardecer',
+                '70s': 'Años 70',
+                '80s': 'Años 80'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Nuevo tema arcoíris',
+            editTitle: 'Editar tema arcoíris',
+            name: 'Nombre',
+            transitionStyle: {
+                name: 'Estilo de transición',
+                desc: 'Interpolación utilizada entre los colores.',
+                options: {
+                    hue: 'Tono',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Brillo uniforme entre tonos',
+                desc: 'Interpola el brillo entre los colores durante las transiciones de tono.'
+            },
+            separateDarkColors: {
+                name: 'Colores separados para modo claro y oscuro',
+                desc: 'Usar colores diferentes para el modo claro y el modo oscuro.'
+            },
+            colors: 'Colores',
+            addColor: 'Añadir color',
+            removeColor: 'Quitar color',
+            reverseColors: 'Invertir colores',
+            colorStop: (index: number) => `Color ${index}`,
+            position: 'Posición',
+            preview: 'Vista previa',
+            previewItem: (index: number) => `Carpeta ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Buscar iconos...',
@@ -2334,78 +2384,45 @@ export const STRINGS_ES = {
                     backgroundColor: 'Color de fondo'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Primer color',
-                desc: 'Primer color en el degradado arcoíris.'
+            navRainbowIntensity: {
+                name: 'Intensidad del color (perfil de bóveda)',
+                desc: 'Con color de fondo, define la opacidad de los colores arcoíris. Con color de texto, define cuánto color arcoíris se mezcla con el color del texto.'
             },
-            navRainbowLastColor: {
-                name: 'Último color',
-                desc: 'Último color en el degradado arcoíris.'
+            navRainbowShortcuts: {
+                name: 'Accesos directos',
+                desc: 'Colorea los accesos directos con el tema arcoíris seleccionado.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Estilo de transición',
-                desc: 'Interpolación utilizada entre el primer y el último color.',
-                options: {
-                    hue: 'Tono',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Elementos recientes',
+                desc: 'Colorea los elementos recientes con el tema arcoíris seleccionado.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Aplicar a accesos directos',
-                desc: 'Aplicar colores arcoíris a los accesos directos.'
+            navRainbowFolders: {
+                name: 'Carpetas',
+                desc: 'Colorea las carpetas con el tema arcoíris seleccionado.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Aplicar a elementos recientes',
-                desc: 'Aplicar colores arcoíris a los elementos recientes.'
+            navRainbowFolderScope: 'Alcance de carpetas',
+            navRainbowTags: {
+                name: 'Etiquetas',
+                desc: 'Colorea las etiquetas con el tema arcoíris seleccionado.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Aplicar a carpetas',
-                desc: 'Aplicar colores arcoíris a las carpetas.'
+            navRainbowTagScope: 'Alcance de etiquetas',
+            navRainbowProperties: {
+                name: 'Propiedades',
+                desc: 'Colorea las propiedades con el tema arcoíris seleccionado.'
             },
-            navRainbowFolderScope: {
-                name: 'Alcance de carpetas',
-                desc: 'Seleccionar qué niveles de carpeta inician asignaciones de color.',
-                options: {
-                    root: 'Nivel raíz',
-                    child: 'Nivel secundario',
-                    all: 'Todos los niveles'
-                }
+            navRainbowPropertyScope: 'Alcance de propiedades',
+            navRainbowScopeOptions: {
+                root: 'Nivel raíz',
+                child: 'Nivel secundario',
+                all: 'Todos los niveles'
             },
-            navRainbowApplyToTags: {
-                name: 'Aplicar a etiquetas',
-                desc: 'Aplicar colores arcoíris a las etiquetas.'
-            },
-            navRainbowTagScope: {
-                name: 'Alcance de etiquetas',
-                desc: 'Seleccionar qué niveles de etiqueta inician asignaciones de color.',
-                options: {
-                    root: 'Nivel raíz',
-                    child: 'Nivel secundario',
-                    all: 'Todos los niveles'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Aplicar a propiedades',
-                desc: 'Aplicar colores arcoíris a las propiedades.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Brillo uniforme entre tonos', // (English: Consistent brightness across hues)
-                desc: 'Interpola el brillo entre los colores de inicio y fin durante las transiciones de tono.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Colores separados para modo claro y oscuro', // (English: Separate light and dark mode colors)
-                desc: 'Usar colores de arcoíris diferentes para el modo claro y el modo oscuro.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Ninguno',
+            navRainbowThemes: {
+                name: 'Temas arcoíris',
+                desc: 'Crear, editar y eliminar temas arcoíris personalizados.',
+                buttonText: 'Gestionar temas'
             },
             navRainbowCopyLightToDark: 'Copiar color del modo claro al modo oscuro', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Alcance de propiedades',
-                desc: 'Seleccionar qué niveles de propiedad inician asignaciones de color.',
-                options: {
-                    root: 'Nivel raíz',
-                    child: 'Nivel secundario',
-                    all: 'Todos los niveles'
-                }
-            },
             collapseItems: {
                 name: 'Contraer elementos',
                 desc: 'Elige qué afecta el botón de expandir/contraer todo.',

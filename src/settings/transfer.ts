@@ -17,6 +17,7 @@
  */
 
 import { DEFAULT_SETTINGS } from './defaultSettings';
+import { migrateLegacyNavRainbowColors } from './migrations/navRainbowColors';
 import { extractLegacyRootFolderOrder } from './migrations/syncedSettings';
 import type { NotebookNavigatorSettings } from './types';
 import { sanitizeRecord } from '../utils/recordUtils';
@@ -164,6 +165,10 @@ function migrateLegacySettingsTransfer(transferSettings: Record<string, unknown>
         migratedSettings['folderChildOrder'] = legacyRootFolderOrder;
     }
     delete migratedSettings['rootFolderOrder'];
+
+    // Older exports store rainbow colors in each profile's sections. Import rebuilds profiles from the current
+    // default keys only, so convert them to themes here or customized colors are dropped.
+    migrateLegacyNavRainbowColors(migratedSettings);
 
     return migratedSettings;
 }

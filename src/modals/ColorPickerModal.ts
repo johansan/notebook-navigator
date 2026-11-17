@@ -26,6 +26,8 @@ export interface ColorPickerModalParams {
     title: string;
     initialColor: string | null;
     settingsProvider: ISettingsProvider;
+    /** Calls `onChooseColor(null)` when the user restores the default color; only offered when `initialColor` is set. Defaults to true. */
+    showRestoreDefault?: boolean;
     onChooseColor: (color: string | null) => void | Promise<void>;
 }
 
@@ -37,6 +39,7 @@ export class ColorPickerModal extends Modal {
     private initialColor: string | null;
     private chooseColorHandler: (color: string | null) => void | Promise<void>;
     private settingsProvider: ISettingsProvider;
+    private showRestoreDefault: boolean;
     private surface: ColorPickerSurface | null = null;
     private domDisposers: (() => void)[] = [];
 
@@ -56,6 +59,7 @@ export class ColorPickerModal extends Modal {
         this.initialColor = params.initialColor;
         this.settingsProvider = params.settingsProvider;
         this.chooseColorHandler = params.onChooseColor;
+        this.showRestoreDefault = params.showRestoreDefault !== false && Boolean(params.initialColor);
     }
 
     onOpen(): void {
@@ -80,11 +84,11 @@ export class ColorPickerModal extends Modal {
 
         const buttonContainer = contentEl.createDiv('nn-color-button-container');
         const cancelRemoveButton = buttonContainer.createEl('button', {
-            text: this.initialColor ? strings.common.restoreDefault : strings.common.cancel
+            text: this.showRestoreDefault ? strings.common.restoreDefault : strings.common.cancel
         });
         this.domDisposers.push(
             addAsyncEventListener(cancelRemoveButton, 'click', () => {
-                if (this.initialColor) {
+                if (this.showRestoreDefault) {
                     return this.restoreDefaultColor();
                 }
                 this.close();

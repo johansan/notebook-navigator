@@ -35,7 +35,6 @@ export const STRINGS_RU = {
         restoreDefault: 'Восстановить значение по умолчанию', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Отправить', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Сохранить', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Настроить', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Светлый режим', // Label for light theme mode (English: Light mode)
         darkMode: 'Тёмный режим', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Ничего не выбрано', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -542,8 +541,59 @@ export const STRINGS_RU = {
             moveSourcesToTrash: 'Переместить исходные заметки в корзину после объединения',
             mergeButton: 'Объединить'
         },
-        navRainbowSection: {
-            title: (section: string) => `Цвета радуги: ${section}`
+        navRainbowThemes: {
+            title: 'Радужные темы',
+            builtInHeading: 'Встроенные темы',
+            customHeading: 'Пользовательские темы',
+            noCustomThemes: 'Дублируйте встроенную тему или создайте новую.',
+            newTheme: 'Новая тема',
+            defaultName: 'Пользовательская тема',
+            copyName: (name: string) => `${name} (копия)`,
+            duplicate: 'Дублировать',
+            edit: 'Редактировать',
+            deleteTitle: 'Удалить радужную тему',
+            deleteMessage: (name: string) => `Удалить «${name}»? Разделы с этой темой получат значение «Нет».`,
+            builtInNames: {
+                rainbow: 'Радуга',
+                'color-cycle': 'Цветовой цикл',
+                pastel: 'Пастель',
+                fire: 'Огонь',
+                ice: 'Лёд',
+                ocean: 'Океан',
+                forest: 'Лес',
+                sunset: 'Закат',
+                '70s': '70-е',
+                '80s': '80-е'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Новая радужная тема',
+            editTitle: 'Редактировать радужную тему',
+            name: 'Название',
+            transitionStyle: {
+                name: 'Стиль перехода',
+                desc: 'Интерполяция между цветами.',
+                options: {
+                    hue: 'Оттенок',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Равномерная яркость между оттенками',
+                desc: 'Интерполирует яркость между цветами при переходах оттенков.'
+            },
+            separateDarkColors: {
+                name: 'Раздельные цвета для светлого и тёмного режимов',
+                desc: 'Использовать разные цвета для светлого и тёмного режимов.'
+            },
+            colors: 'Цвета',
+            addColor: 'Добавить цвет',
+            removeColor: 'Удалить цвет',
+            reverseColors: 'Обратить порядок цветов',
+            colorStop: (index: number) => `Цвет ${index}`,
+            position: 'Позиция',
+            preview: 'Предпросмотр',
+            previewItem: (index: number) => `Папка ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Поиск иконок...',
@@ -2324,78 +2374,45 @@ export const STRINGS_RU = {
                     backgroundColor: 'Цвет фона'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Первый цвет',
-                desc: 'Первый цвет в радужном градиенте.'
+            navRainbowIntensity: {
+                name: 'Интенсивность цвета (профиль хранилища)',
+                desc: 'Для цвета фона задаёт непрозрачность цветов радуги. Для цвета текста задаёт, сколько цвета радуги примешивается к цвету текста.'
             },
-            navRainbowLastColor: {
-                name: 'Последний цвет',
-                desc: 'Последний цвет в радужном градиенте.'
+            navRainbowShortcuts: {
+                name: 'Ярлыки',
+                desc: 'Окрашивает ярлыки в цвета выбранной радужной темы.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Стиль перехода',
-                desc: 'Интерполяция между первым и последним цветом.',
-                options: {
-                    hue: 'Оттенок',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Недавние элементы',
+                desc: 'Окрашивает недавние элементы в цвета выбранной радужной темы.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Применить к ярлыкам',
-                desc: 'Применить цвета радуги к ярлыкам.'
+            navRainbowFolders: {
+                name: 'Папки',
+                desc: 'Окрашивает папки в цвета выбранной радужной темы.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Применить к недавним элементам',
-                desc: 'Применить цвета радуги к недавним элементам.'
+            navRainbowFolderScope: 'Область папок',
+            navRainbowTags: {
+                name: 'Теги',
+                desc: 'Окрашивает теги в цвета выбранной радужной темы.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Применить к папкам',
-                desc: 'Применить цвета радуги к папкам.'
+            navRainbowTagScope: 'Область тегов',
+            navRainbowProperties: {
+                name: 'Свойства',
+                desc: 'Окрашивает свойства в цвета выбранной радужной темы.'
             },
-            navRainbowFolderScope: {
-                name: 'Область папок',
-                desc: 'Выбрать уровни папок для начала назначения цветов.',
-                options: {
-                    root: 'Корневой уровень',
-                    child: 'Дочерний уровень',
-                    all: 'Каждый уровень'
-                }
+            navRainbowPropertyScope: 'Область свойств',
+            navRainbowScopeOptions: {
+                root: 'Корневой уровень',
+                child: 'Дочерний уровень',
+                all: 'Каждый уровень'
             },
-            navRainbowApplyToTags: {
-                name: 'Применить к тегам',
-                desc: 'Применить цвета радуги к тегам.'
-            },
-            navRainbowTagScope: {
-                name: 'Область тегов',
-                desc: 'Выбрать уровни тегов для начала назначения цветов.',
-                options: {
-                    root: 'Корневой уровень',
-                    child: 'Дочерний уровень',
-                    all: 'Каждый уровень'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Применить к свойствам',
-                desc: 'Применить цвета радуги к свойствам.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Равномерная яркость между оттенками', // (English: Consistent brightness across hues)
-                desc: 'Интерполирует яркость между начальным и конечным цветами при переходах оттенков.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Раздельные цвета для светлого и тёмного режимов', // (English: Separate light and dark mode colors)
-                desc: 'Использовать разные цвета радуги для светлого и тёмного режимов.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Нет',
+            navRainbowThemes: {
+                name: 'Радужные темы',
+                desc: 'Создавать, редактировать и удалять пользовательские радужные темы.',
+                buttonText: 'Управление темами'
             },
             navRainbowCopyLightToDark: 'Копировать цвет светлого режима в тёмный режим', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Область свойств',
-                desc: 'Выбрать уровни свойств для начала назначения цветов.',
-                options: {
-                    root: 'Корневой уровень',
-                    child: 'Дочерний уровень',
-                    all: 'Каждый уровень'
-                }
-            },
             collapseItems: {
                 name: 'Сворачивание элементов',
                 desc: 'Выберите, на что влияет кнопка развернуть/свернуть всё.',

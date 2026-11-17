@@ -30,7 +30,11 @@ import {
 function createPalette(): string[] {
     const start = parseCssColor('#000000') ?? { r: 0, g: 0, b: 0, a: 1 };
     const end = parseCssColor('#ffffff') ?? { r: 255, g: 255, b: 255, a: 1 };
-    return buildRainbowPalette({ steps: 1024, start, end, style: 'rgb' });
+    const stops = [
+        { color: start, position: 0 },
+        { color: end, position: 1 }
+    ];
+    return buildRainbowPalette({ steps: 1024, stops, style: 'rgb' });
 }
 
 function createTagNode(path: string, children: TagTreeNode[] = []): TagTreeNode {

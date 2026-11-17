@@ -35,7 +35,6 @@ export const STRINGS_UK = {
         restoreDefault: 'Відновити значення за замовчуванням', // Button text for restoring values to defaults (English: Restore default)
         submit: 'Надіслати', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Зберегти', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Налаштувати', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Світлий режим', // Label for light theme mode (English: Light mode)
         darkMode: 'Темний режим', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Нічого не вибрано', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -543,8 +542,59 @@ export const STRINGS_UK = {
             moveSourcesToTrash: 'Перемістити вихідні нотатки до кошика після об’єднання',
             mergeButton: 'Об’єднати'
         },
-        navRainbowSection: {
-            title: (section: string) => `Кольори веселки: ${section}`
+        navRainbowThemes: {
+            title: 'Райдужні теми',
+            builtInHeading: 'Вбудовані теми',
+            customHeading: 'Користувацькі теми',
+            noCustomThemes: 'Дублюйте вбудовану тему або створіть нову.',
+            newTheme: 'Нова тема',
+            defaultName: 'Користувацька тема',
+            copyName: (name: string) => `${name} (копія)`,
+            duplicate: 'Дублювати',
+            edit: 'Редагувати',
+            deleteTitle: 'Видалити райдужну тему',
+            deleteMessage: (name: string) => `Видалити «${name}»? Розділи з цією темою отримають значення «Немає».`,
+            builtInNames: {
+                rainbow: 'Веселка',
+                'color-cycle': 'Колірний цикл',
+                pastel: 'Пастель',
+                fire: 'Вогонь',
+                ice: 'Лід',
+                ocean: 'Океан',
+                forest: 'Ліс',
+                sunset: 'Захід сонця',
+                '70s': '70-ті',
+                '80s': '80-ті'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Нова райдужна тема',
+            editTitle: 'Редагувати райдужну тему',
+            name: 'Назва',
+            transitionStyle: {
+                name: 'Стиль переходу',
+                desc: 'Інтерполяція між кольорами.',
+                options: {
+                    hue: 'Тон',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Рівномірна яскравість між відтінками',
+                desc: 'Інтерполює яскравість між кольорами під час переходів відтінків.'
+            },
+            separateDarkColors: {
+                name: 'Окремі кольори для світлого і темного режимів',
+                desc: 'Використовувати різні кольори для світлого і темного режимів.'
+            },
+            colors: 'Кольори',
+            addColor: 'Додати колір',
+            removeColor: 'Вилучити колір',
+            reverseColors: 'Обернути порядок кольорів',
+            colorStop: (index: number) => `Колір ${index}`,
+            position: 'Позиція',
+            preview: 'Попередній перегляд',
+            previewItem: (index: number) => `Тека ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Пошук іконок...',
@@ -2324,78 +2374,45 @@ export const STRINGS_UK = {
                     backgroundColor: 'Колір фону'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Перший колір',
-                desc: 'Перший колір у градієнті веселки.'
+            navRainbowIntensity: {
+                name: 'Інтенсивність кольору (профіль сховища)',
+                desc: 'Для кольору фону задає непрозорість кольорів веселки. Для кольору тексту задає, скільки кольору веселки домішується до кольору тексту.'
             },
-            navRainbowLastColor: {
-                name: 'Останній колір',
-                desc: 'Останній колір у градієнті веселки.'
+            navRainbowShortcuts: {
+                name: 'Ярлики',
+                desc: 'Розфарбовує ярлики в кольори вибраної райдужної теми.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Стиль переходу',
-                desc: 'Інтерполяція між першим і останнім кольором.',
-                options: {
-                    hue: 'Тон',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Останні елементи',
+                desc: 'Розфарбовує останні елементи в кольори вибраної райдужної теми.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Застосувати до ярликів',
-                desc: 'Застосувати кольори веселки до ярликів.'
+            navRainbowFolders: {
+                name: 'Теки',
+                desc: 'Розфарбовує теки в кольори вибраної райдужної теми.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Застосувати до нещодавніх елементів',
-                desc: 'Застосувати кольори веселки до нещодавніх елементів.'
+            navRainbowFolderScope: 'Область тек',
+            navRainbowTags: {
+                name: 'Мітки',
+                desc: 'Розфарбовує мітки в кольори вибраної райдужної теми.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Застосувати до тек',
-                desc: 'Застосувати кольори веселки до тек.'
+            navRainbowTagScope: 'Область міток',
+            navRainbowProperties: {
+                name: 'Властивості',
+                desc: 'Розфарбовує властивості в кольори вибраної райдужної теми.'
             },
-            navRainbowFolderScope: {
-                name: 'Область тек',
-                desc: 'Вибрати рівні тек для початку призначення кольорів.',
-                options: {
-                    root: 'Кореневий рівень',
-                    child: 'Дочірній рівень',
-                    all: 'Кожний рівень'
-                }
+            navRainbowPropertyScope: 'Область властивостей',
+            navRainbowScopeOptions: {
+                root: 'Кореневий рівень',
+                child: 'Дочірній рівень',
+                all: 'Кожний рівень'
             },
-            navRainbowApplyToTags: {
-                name: 'Застосувати до міток',
-                desc: 'Застосувати кольори веселки до міток.'
-            },
-            navRainbowTagScope: {
-                name: 'Область міток',
-                desc: 'Вибрати рівні міток для початку призначення кольорів.',
-                options: {
-                    root: 'Кореневий рівень',
-                    child: 'Дочірній рівень',
-                    all: 'Кожний рівень'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Застосувати до властивостей',
-                desc: 'Застосувати кольори веселки до властивостей.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Рівномірна яскравість між відтінками', // (English: Consistent brightness across hues)
-                desc: 'Інтерполює яскравість між початковим і кінцевим кольорами під час переходів відтінків.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Окремі кольори для світлого і темного режимів', // (English: Separate light and dark mode colors)
-                desc: 'Використовувати різні кольори веселки для світлого і темного режимів.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Немає',
+            navRainbowThemes: {
+                name: 'Райдужні теми',
+                desc: 'Створювати, редагувати та видаляти користувацькі райдужні теми.',
+                buttonText: 'Керувати темами'
             },
             navRainbowCopyLightToDark: 'Копіювати колір світлого режиму в темний режим', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Область властивостей',
-                desc: 'Вибрати рівні властивостей для початку призначення кольорів.',
-                options: {
-                    root: 'Кореневий рівень',
-                    child: 'Дочірній рівень',
-                    all: 'Кожний рівень'
-                }
-            },
             collapseItems: {
                 name: 'Згортати елементи',
                 desc: 'Виберіть, на що впливає кнопка розгортання/згортання всього.',

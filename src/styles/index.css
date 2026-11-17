@@ -110,6 +110,8 @@ Keep this list ordered: later files override earlier ones.
 @import './sections/modal-manual-sort-group-header.css';
 /* modal-settings-transfer.css: settings import/export modal sizing and JSON editor layout. */
 @import './sections/modal-settings-transfer.css';
+/* modal-rainbow-themes.css: rainbow theme swatches in settings rows, theme list, and theme editor with gradient stops and preview. */
+@import './sections/modal-rainbow-themes.css';
 
 /* Virtualization */
 /* layout-virtual-list.css: TanStack Virtual container wrappers and absolute positioned row elements. */

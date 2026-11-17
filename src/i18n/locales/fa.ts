@@ -35,7 +35,6 @@ export const STRINGS_FA = {
         restoreDefault: 'بازگردانی پیش‌فرض', // Button text for restoring values to defaults (English: Restore default)
         submit: 'ارسال',
         save: 'ذخیره', // Button text for saving settings and dialogs (English: Save)
-        configure: 'پیکربندی', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'حالت روشن', // Label for light theme mode (English: Light mode)
         darkMode: 'حالت تاریک', // Label for dark theme mode (English: Dark mode)
         noSelection: 'بدون انتخاب',
@@ -541,8 +540,59 @@ export const STRINGS_FA = {
             moveSourcesToTrash: 'انتقال یادداشت‌های مبدأ به زباله‌دان پس از ادغام',
             mergeButton: 'ادغام'
         },
-        navRainbowSection: {
-            title: (section: string) => `رنگ‌های رنگین‌کمان: ${section}`
+        navRainbowThemes: {
+            title: 'پوسته‌های رنگین‌کمان',
+            builtInHeading: 'پوسته‌های داخلی',
+            customHeading: 'پوسته‌های سفارشی',
+            noCustomThemes: 'از یک پوسته داخلی کپی بگیرید یا پوسته جدیدی بسازید.',
+            newTheme: 'پوسته جدید',
+            defaultName: 'پوسته سفارشی',
+            copyName: (name: string) => `${name} (کپی)`,
+            duplicate: 'ایجاد کپی',
+            edit: 'ویرایش',
+            deleteTitle: 'حذف پوسته رنگین‌کمان',
+            deleteMessage: (name: string) => `حذف «${name}»؟ بخش‌هایی که از آن استفاده می‌کنند روی «هیچ‌کدام» تنظیم می‌شوند.`,
+            builtInNames: {
+                rainbow: 'رنگین‌کمان',
+                'color-cycle': 'چرخه رنگ',
+                pastel: 'پاستلی',
+                fire: 'آتش',
+                ice: 'یخ',
+                ocean: 'اقیانوس',
+                forest: 'جنگل',
+                sunset: 'غروب',
+                '70s': 'دهه ۷۰',
+                '80s': 'دهه ۸۰'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'پوسته رنگین‌کمان جدید',
+            editTitle: 'ویرایش پوسته رنگین‌کمان',
+            name: 'نام',
+            transitionStyle: {
+                name: 'سبک انتقال',
+                desc: 'درون‌یابی استفاده‌شده بین رنگ‌ها.',
+                options: {
+                    hue: 'فام',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'روشنایی یکنواخت در بین رنگ‌ها',
+                desc: 'روشنایی را بین رنگ‌ها در طول انتقال‌های فام درون‌یابی می‌کند.'
+            },
+            separateDarkColors: {
+                name: 'جداسازی رنگ‌های حالت روشن و تاریک',
+                desc: 'استفاده از رنگ‌های متفاوت برای حالت روشن و حالت تاریک.'
+            },
+            colors: 'رنگ‌ها',
+            addColor: 'افزودن رنگ',
+            removeColor: 'حذف رنگ',
+            reverseColors: 'معکوس کردن ترتیب رنگ‌ها',
+            colorStop: (index: number) => `رنگ ${index}`,
+            position: 'موقعیت',
+            preview: 'پیش‌نمایش',
+            previewItem: (index: number) => `پوشه ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'جستجوی آیکون...',
@@ -2324,78 +2374,45 @@ export const STRINGS_FA = {
                     backgroundColor: 'رنگ پس‌زمینه'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'رنگ اول',
-                desc: 'رنگ اول در گرادیان رنگین‌کمان.'
+            navRainbowIntensity: {
+                name: 'شدت رنگ (پروفایل خزانه)',
+                desc: 'با «رنگ پس‌زمینه» میزان شفافیت رنگ‌های رنگین‌کمان را تنظیم می‌کند. با «رنگ متن» تعیین می‌کند چه مقدار از رنگ رنگین‌کمان با رنگ متن ترکیب شود.'
             },
-            navRainbowLastColor: {
-                name: 'رنگ آخر',
-                desc: 'رنگ آخر در گرادیان رنگین‌کمان.'
+            navRainbowShortcuts: {
+                name: 'میانبرها',
+                desc: 'رنگ‌آمیزی میانبرها با پوسته رنگین‌کمان انتخاب‌شده.'
             },
-            navRainbowTransitionStyle: {
-                name: 'سبک انتقال',
-                desc: 'درون‌یابی استفاده‌شده بین رنگ اول و آخر.',
-                options: {
-                    hue: 'فام',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'موارد اخیر',
+                desc: 'رنگ‌آمیزی موارد اخیر با پوسته رنگین‌کمان انتخاب‌شده.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'اعمال بر میانبرها',
-                desc: 'اعمال رنگ‌های رنگین‌کمان بر میانبرها.'
+            navRainbowFolders: {
+                name: 'پوشه‌ها',
+                desc: 'رنگ‌آمیزی پوشه‌ها با پوسته رنگین‌کمان انتخاب‌شده.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'اعمال بر موارد اخیر',
-                desc: 'اعمال رنگ‌های رنگین‌کمان بر موارد اخیر.'
+            navRainbowFolderScope: 'محدوده پوشه‌ها',
+            navRainbowTags: {
+                name: 'برچسب‌ها',
+                desc: 'رنگ‌آمیزی برچسب‌ها با پوسته رنگین‌کمان انتخاب‌شده.'
             },
-            navRainbowApplyToFolders: {
-                name: 'اعمال بر پوشه‌ها',
-                desc: 'اعمال رنگ‌های رنگین‌کمان بر پوشه‌ها.'
+            navRainbowTagScope: 'محدوده برچسب‌ها',
+            navRainbowProperties: {
+                name: 'ویژگی‌ها',
+                desc: 'رنگ‌آمیزی ویژگی‌ها با پوسته رنگین‌کمان انتخاب‌شده.'
             },
-            navRainbowFolderScope: {
-                name: 'محدوده پوشه‌ها',
-                desc: 'انتخاب سطوح پوشه‌ای که تخصیص رنگ از آن‌ها شروع می‌شود.',
-                options: {
-                    root: 'سطح ریشه',
-                    child: 'سطح فرزند',
-                    all: 'هر سطح'
-                }
+            navRainbowPropertyScope: 'محدوده ویژگی‌ها',
+            navRainbowScopeOptions: {
+                root: 'سطح ریشه',
+                child: 'سطح فرزند',
+                all: 'هر سطح'
             },
-            navRainbowApplyToTags: {
-                name: 'اعمال بر برچسب‌ها',
-                desc: 'اعمال رنگ‌های رنگین‌کمان بر برچسب‌ها.'
-            },
-            navRainbowTagScope: {
-                name: 'محدوده برچسب‌ها',
-                desc: 'انتخاب سطوح برچسبی که تخصیص رنگ از آن‌ها شروع می‌شود.',
-                options: {
-                    root: 'سطح ریشه',
-                    child: 'سطح فرزند',
-                    all: 'هر سطح'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'اعمال بر ویژگی‌ها',
-                desc: 'اعمال رنگ‌های رنگین‌کمان بر ویژگی‌ها.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'روشنایی یکنواخت در بین رنگ‌ها', // (English: Consistent brightness across hues)
-                desc: 'روشنایی را بین رنگ‌های شروع و پایان در طول انتقال‌های رنگی درون‌یابی می‌کند.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'جداسازی رنگ‌های حالت روشن و تاریک', // (English: Separate light and dark mode colors)
-                desc: 'استفاده از رنگ‌های رنگین‌کمان متفاوت برای حالت روشن و حالت تاریک.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'هیچ‌کدام',
+            navRainbowThemes: {
+                name: 'پوسته‌های رنگین‌کمان',
+                desc: 'ایجاد، ویرایش و حذف پوسته‌های رنگین‌کمان سفارشی.',
+                buttonText: 'مدیریت پوسته‌ها'
             },
             navRainbowCopyLightToDark: 'کپی رنگ حالت روشن به حالت تاریک', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'محدوده ویژگی‌ها',
-                desc: 'انتخاب سطوح ویژگی که تخصیص رنگ از آن‌ها شروع می‌شود.',
-                options: {
-                    root: 'سطح ریشه',
-                    child: 'سطح فرزند',
-                    all: 'هر سطح'
-                }
-            },
             collapseItems: {
                 name: 'جمع کردن آیتم‌ها',
                 desc: 'انتخاب کنید دکمه باز/بسته کردن همه چه چیزی را تحت تأثیر قرار دهد.',

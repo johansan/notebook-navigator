@@ -35,7 +35,6 @@ export const STRINGS_DE = {
         restoreDefault: 'Standard wiederherstellen', // Button text for restoring values to defaults (English: Restore default)
         submit: 'OK', // Button text for submitting forms and dialogs (English: Submit)
         save: 'Speichern', // Button text for saving settings and dialogs (English: Save)
-        configure: 'Konfigurieren', // Generic button label used when opening a configuration dialog (English: Configure)
         lightMode: 'Heller Modus', // Label for light theme mode (English: Light mode)
         darkMode: 'Dunkler Modus', // Label for dark theme mode (English: Dark mode)
         noSelection: 'Keine Auswahl', // Placeholder text when no folder or tag is selected (English: No selection)
@@ -543,8 +542,59 @@ export const STRINGS_DE = {
             moveSourcesToTrash: 'Quellnotizen nach dem Zusammenführen in den Papierkorb verschieben',
             mergeButton: 'Zusammenführen'
         },
-        navRainbowSection: {
-            title: (section: string) => `Regenbogenfarben: ${section}`
+        navRainbowThemes: {
+            title: 'Regenbogen-Designs',
+            builtInHeading: 'Integrierte Designs',
+            customHeading: 'Benutzerdefinierte Designs',
+            noCustomThemes: 'Dupliziere ein integriertes Design oder erstelle ein neues Design.',
+            newTheme: 'Neues Design',
+            defaultName: 'Benutzerdefiniertes Design',
+            copyName: (name: string) => `${name} (Kopie)`,
+            duplicate: 'Duplizieren',
+            edit: 'Bearbeiten',
+            deleteTitle: 'Regenbogen-Design löschen',
+            deleteMessage: (name: string) => `„${name}“ löschen? Bereiche, die es verwenden, werden auf „Keine“ gesetzt.`,
+            builtInNames: {
+                rainbow: 'Regenbogen',
+                'color-cycle': 'Farbzyklus',
+                pastel: 'Pastell',
+                fire: 'Feuer',
+                ice: 'Eis',
+                ocean: 'Ozean',
+                forest: 'Wald',
+                sunset: 'Sonnenuntergang',
+                '70s': '70er',
+                '80s': '80er'
+            }
+        },
+        navRainbowThemeEditor: {
+            newTitle: 'Neues Regenbogen-Design',
+            editTitle: 'Regenbogen-Design bearbeiten',
+            name: 'Name',
+            transitionStyle: {
+                name: 'Übergangsstil',
+                desc: 'Interpolation zwischen den Farben.',
+                options: {
+                    hue: 'Farbton',
+                    rgb: 'RGB'
+                }
+            },
+            consistentBrightness: {
+                name: 'Gleichmäßige Helligkeit über Farbtöne',
+                desc: 'Interpoliert die Helligkeit zwischen den Farben bei Farbtonübergängen.'
+            },
+            separateDarkColors: {
+                name: 'Separate Farben für hellen und dunklen Modus',
+                desc: 'Verschiedene Farben für den hellen und dunklen Modus verwenden.'
+            },
+            colors: 'Farben',
+            addColor: 'Farbe hinzufügen',
+            removeColor: 'Farbe entfernen',
+            reverseColors: 'Farben umkehren',
+            colorStop: (index: number) => `Farbe ${index}`,
+            position: 'Position',
+            preview: 'Vorschau',
+            previewItem: (index: number) => `Ordner ${index}`
         },
         iconPicker: {
             searchPlaceholder: 'Symbole suchen...',
@@ -2333,78 +2383,45 @@ export const STRINGS_DE = {
                     backgroundColor: 'Hintergrundfarbe'
                 }
             },
-            navRainbowFirstColor: {
-                name: 'Erste Farbe',
-                desc: 'Erste Farbe im Regenbogenverlauf.'
+            navRainbowIntensity: {
+                name: 'Farbintensität (Vault-Profil)',
+                desc: 'Bei Hintergrundfarbe wird die Deckkraft der Regenbogenfarben festgelegt. Bei Textfarbe wird festgelegt, wie viel Regenbogenfarbe in die Textfarbe gemischt wird.'
             },
-            navRainbowLastColor: {
-                name: 'Letzte Farbe',
-                desc: 'Letzte Farbe im Regenbogenverlauf.'
+            navRainbowShortcuts: {
+                name: 'Verknüpfungen',
+                desc: 'Färbt Verknüpfungen mit dem ausgewählten Regenbogen-Design.'
             },
-            navRainbowTransitionStyle: {
-                name: 'Übergangsstil',
-                desc: 'Interpolation zwischen der ersten und letzten Farbe.',
-                options: {
-                    hue: 'Farbton',
-                    rgb: 'RGB'
-                }
+            navRainbowRecentItems: {
+                name: 'Zuletzt verwendete Elemente',
+                desc: 'Färbt zuletzt verwendete Elemente mit dem ausgewählten Regenbogen-Design.'
             },
-            navRainbowApplyToShortcuts: {
-                name: 'Auf Verknüpfungen anwenden',
-                desc: 'Regenbogenfarben auf Verknüpfungen anwenden.'
+            navRainbowFolders: {
+                name: 'Ordner',
+                desc: 'Färbt Ordner mit dem ausgewählten Regenbogen-Design.'
             },
-            navRainbowApplyToRecentItems: {
-                name: 'Auf zuletzt verwendete Elemente anwenden',
-                desc: 'Regenbogenfarben auf zuletzt verwendete Elemente anwenden.'
+            navRainbowFolderScope: 'Ordnerbereich',
+            navRainbowTags: {
+                name: 'Tags',
+                desc: 'Färbt Tags mit dem ausgewählten Regenbogen-Design.'
             },
-            navRainbowApplyToFolders: {
-                name: 'Auf Ordner anwenden',
-                desc: 'Regenbogenfarben auf Ordner anwenden.'
+            navRainbowTagScope: 'Tag-Bereich',
+            navRainbowProperties: {
+                name: 'Eigenschaften',
+                desc: 'Färbt Eigenschaften mit dem ausgewählten Regenbogen-Design.'
             },
-            navRainbowFolderScope: {
-                name: 'Ordnerbereich',
-                desc: 'Auswählen, welche Ordnerebenen Farbzuweisungen starten.',
-                options: {
-                    root: 'Stammebene',
-                    child: 'Unterebene',
-                    all: 'Jede Ebene'
-                }
+            navRainbowPropertyScope: 'Eigenschaftsbereich',
+            navRainbowScopeOptions: {
+                root: 'Stammebene',
+                child: 'Unterebene',
+                all: 'Jede Ebene'
             },
-            navRainbowApplyToTags: {
-                name: 'Auf Tags anwenden',
-                desc: 'Regenbogenfarben auf Tags anwenden.'
-            },
-            navRainbowTagScope: {
-                name: 'Tag-Bereich',
-                desc: 'Auswählen, welche Tag-Ebenen Farbzuweisungen starten.',
-                options: {
-                    root: 'Stammebene',
-                    child: 'Unterebene',
-                    all: 'Jede Ebene'
-                }
-            },
-            navRainbowApplyToProperties: {
-                name: 'Auf Eigenschaften anwenden',
-                desc: 'Regenbogenfarben auf Eigenschaften anwenden.'
-            },
-            navRainbowConsistentBrightness: {
-                name: 'Gleichmäßige Helligkeit über Farbtöne', // (English: Consistent brightness across hues)
-                desc: 'Interpoliert die Helligkeit zwischen den Start- und Endfarben bei Farbtonübergängen.' // (English: Interpolates brightness between the start and end colors during hue transitions.)
-            },
-            navRainbowSeparateThemeColors: {
-                name: 'Separate Farben für hellen und dunklen Modus', // (English: Separate light and dark mode colors)
-                desc: 'Verschiedene Regenbogenfarben für den hellen und dunklen Modus verwenden.' // (English: Use different rainbow colors for light mode and dark mode.)
+            navRainbowNoTheme: 'Keine',
+            navRainbowThemes: {
+                name: 'Regenbogen-Designs',
+                desc: 'Benutzerdefinierte Regenbogen-Designs erstellen, bearbeiten und löschen.',
+                buttonText: 'Designs verwalten'
             },
             navRainbowCopyLightToDark: 'Farbe des hellen Modus in den dunklen Modus kopieren', // (English: Copy light mode color to dark mode)
-            navRainbowPropertyScope: {
-                name: 'Eigenschaftsbereich',
-                desc: 'Auswählen, welche Eigenschaftsebenen Farbzuweisungen starten.',
-                options: {
-                    root: 'Stammebene',
-                    child: 'Unterebene',
-                    all: 'Jede Ebene'
-                }
-            },
             collapseItems: {
                 name: 'Elemente einklappen',
                 desc: 'Wähle, was die Schaltfläche zum Ein-/Ausklappen beeinflusst.',
