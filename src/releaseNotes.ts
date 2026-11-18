@@ -109,6 +109,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         version: '3.5.2',
         date: '2026-11-23',
         showOnUpdate: true,
+        banner: '3.5.2.jpg',
         new: [
             'New rainbow themes, such as Pastel, Fire, Ice and 80s, and a gradient editor for custom themes in ==Rainbow themes==.',
             'New setting ==Color intensity== sets the opacity of rainbow background colors, or how much rainbow color is mixed into the text color.'
