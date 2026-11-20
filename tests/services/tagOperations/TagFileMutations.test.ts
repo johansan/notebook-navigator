@@ -98,6 +98,30 @@ describe('TagFileMutations', () => {
         expect(file.content).toBe('#project kickoff\nFollow up with tomorrow');
     });
 
+    it('leaves inline tags in the note body when removing a tag with the frontmatter tag source', async () => {
+        settings.tagSource = 'frontmatter';
+        const file = createFile('Projects/Client.md', { tags: ['project', 'project/client'] }, 'Follow up with #project/client tomorrow');
+        cachedTagsByPath.set(file.path, ['project', 'project/client']);
+
+        const removed = await fileMutations.removeTagFromFile(file, 'project/client');
+
+        expect(removed).toBe(true);
+        expect(file.frontmatter.tags as string[]).toEqual(['project']);
+        expect(file.content).toBe('Follow up with #project/client tomorrow');
+    });
+
+    it('leaves inline tags in the note body when clearing tags with the frontmatter tag source', async () => {
+        settings.tagSource = 'frontmatter';
+        const file = createFile('Notes/Tagged.md', { tags: ['project'] }, 'Plan #inbox today');
+
+        const cleared = await fileMutations.clearAllTagsFromFile(file);
+
+        expect(cleared).toBe(true);
+        expect(Reflect.has(file.frontmatter, 'tags')).toBe(false);
+        expect(file.content).toBe('Plan #inbox today');
+        expect(vaultProcess).not.toHaveBeenCalled();
+    });
+
     it('adds tags using the existing frontmatter key and dedupes NFC and NFD-equivalent values', async () => {
         const file = createFile('Notes/Cafe.md', { Tags: ['Cafe\u0301'] }, '');
 

@@ -1,6 +1,6 @@
 # Notebook Navigator Storage Architecture
 
-Updated: July 9, 2026
+Updated: November 19, 2026
 
 ## Table of Contents
 
@@ -170,6 +170,7 @@ and cache version/migration markers.
 - Per-setting local mirrors for sync-mode settings (see "Sync modes and local mirrors" under Settings).
 - Cache version markers: `STORAGE_KEYS.databaseSchemaVersionKey`, `STORAGE_KEYS.databaseContentVersionKey`.
 - Frontmatter metadata cache signature: `STORAGE_KEYS.frontmatterMetadataCacheSignatureKey` (signature of the frontmatter metadata settings that produced the cached `metadata` fields; see `src/utils/frontmatterMetadataCache.ts`).
+- Tag source cache marker: `STORAGE_KEYS.tagSourceCacheKey` (the Tag source value the cached `tags` fields were read with; absent means `all`; see `src/utils/tagSourceCache.ts`). Resetting all settings keeps it, like the cache version markers, because it describes the IndexedDB contents.
 - Cache rebuild notice marker: `STORAGE_KEYS.cacheRebuildNoticeKey`.
 - Device-local What's new floor: `STORAGE_KEYS.lastShownVersionKey`.
 - Device-local diagnostics and one-off action preferences.
@@ -212,6 +213,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
   databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
   databaseContentVersionKey: 'notebook-navigator-db-content-version',
   frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
+  tagSourceCacheKey: 'notebook-navigator-tag-source-cache',
   cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
   debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
   lastShownVersionKey: 'notebook-navigator-last-shown-version',
@@ -407,7 +409,9 @@ export interface IconAssetRecord {
    then writes additions/updates/removals to IndexedDB (`recordFileChanges()`, `removeFilesFromCache()`).
 8. If frontmatter metadata is enabled and the stored frontmatter metadata cache signature
    (`STORAGE_KEYS.frontmatterMetadataCacheSignatureKey`) does not match the current frontmatter settings, cached `metadata`
-   fields are cleared (`batchClearAllFileContent('metadata')`) and the signature is updated.
+   fields are cleared (`batchClearAllFileContent('metadata')`) and the signature is updated. If the recorded tag source
+   (`STORAGE_KEYS.tagSourceCacheKey`) differs from the Tag source setting, cached `tags` are cleared
+   (`batchClearAllFileContent('tags')`) and the record is updated.
 9. Tag and property trees are rebuilt from database records (`buildTagTreeFromDatabase()`, `buildPropertyTreeFromDatabase()`), filtered to currently visible markdown paths and configured property-tree keys. The per-file property cache retains other supported frontmatter values for internal search.
 10. Content providers queue derived content work (previews, tags, metadata, word/character counts, task counters, properties,
    markdown feature images, and file thumbnails) while the UI renders from the in-memory cache.
@@ -437,6 +441,7 @@ export interface IconAssetRecord {
 3. `useStorageSettingsSync` debounces changes and handles these categories:
    - Provider-relevant settings: forwarded to `ContentProviderRegistry.handleSettingsChange()` and used to queue regeneration.
    - Frontmatter metadata settings: the frontmatter metadata cache signature in local storage is updated to match the new settings, or cleared when frontmatter metadata is disabled.
+   - Tag source: while tags are shown, cached `tags` are cleared and regenerated from the new source, and the tag source cache marker is updated.
    - Exclusion settings:
      - Hidden folders / hidden file properties trigger a diff resync so cached file lists and trees reflect the new rules.
      - Hidden file names / hidden file tags trigger tree rebuilds (database records are unchanged).

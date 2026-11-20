@@ -1,6 +1,6 @@
 # Notebook Navigator metadata pipeline
 
-Updated: July 9, 2026
+Updated: November 19, 2026
 
 ## Table of contents
 
@@ -101,11 +101,12 @@ The dedicated stores are cleared alongside the main file store during a full reb
 - `IndexedDBStorage` (`src/storage/IndexedDBStorage.ts`) persists file records and emits `onContentChange` notifications.
 - `MemoryFileCache` (`src/storage/MemoryFileCache.ts`) mirrors file records (and small caches like preview text) for synchronous reads.
 - `src/utils/frontmatterMetadataCache.ts` persists a signature of the frontmatter metadata settings in `localStorage`. Frontmatter-driven display name and timestamp reads (`StorageContext`) and navigation sorting (`src/utils/fileFinder.ts`) use the mirrored `metadata` field when the signature matches the current settings and `metadataMtime` matches the file mtime, and fall back to `extractMetadata()` against the Obsidian metadata cache otherwise.
+- `src/utils/tagSourceCache.ts` records in `localStorage` the Tag source value (`tagSource`) the cached `tags` fields were read with. A missing record means `all`, the source of every tag cache built before the setting existed.
 - `MetadataService` (`src/services/MetadataService.ts`) and its sub-services manage settings-backed appearances, pinned notes, and separators; frontmatter-backed file/folder-note style writes patch cached `metadata` through `IndexedDBStorage.updateFileMetadata()`.
 - `ContentProviderRegistry` (`src/services/content/ContentProviderRegistry.ts`) runs provider batches and coordinates settings changes.
 - Content providers (`src/services/content/*`):
   - `MarkdownPipelineContentProvider` (`markdownPipeline`): preview, word/character counts, task counters, property pills, markdown feature images
-  - `TagContentProvider` (`tags`): tag extraction from Obsidian metadata cache
+  - `TagContentProvider` (`tags`): tag extraction from Obsidian metadata cache, through `getMetadataTags()` in `src/utils/tagUtils.ts`: frontmatter and inline body tags (`getAllTags`) when `tagSource` is `all`, frontmatter tags only (`parseFrontMatterTags`) when it is `frontmatter`
   - `MetadataContentProvider` (`metadata`): frontmatter metadata + hidden state
   - `FeatureImageContentProvider` (`fileThumbnails`): non-markdown feature images (PDF covers, rasterized SVG files, and supported drawing source files)
 
@@ -135,13 +136,13 @@ graph TD
 
 The metadata pipeline is driven by a mix of manual actions, vault events, metadata cache events, and settings changes:
 
-- Startup: once IndexedDB initialization completes, the initial cache build runs (`useStorageVaultSync`). The build also compares the persisted frontmatter metadata settings signature and clears cached `metadata` (`batchClearAllFileContent('metadata')`) when those settings changed while the plugin was unloaded.
+- Startup: once IndexedDB initialization completes, the initial cache build runs (`useStorageVaultSync`). The build also compares the persisted frontmatter metadata settings signature and clears cached `metadata` (`batchClearAllFileContent('metadata')`) when those settings changed while the plugin was unloaded. It likewise clears cached `tags` (`batchClearAllFileContent('tags')`) when the recorded tag source differs from `tagSource`, before the tag tree is built.
 - Vault sync:
   - `create` / `delete`: debounced diff using `calculateFileDiff()` and `recordFileChanges()` (`useStorageVaultSync`)
   - `rename`: seed/move cached artifacts, then schedule a diff to reconcile state (`useStorageVaultSync`)
   - `modify`: record the new mtime and queue derived content for that file (`useStorageVaultSync`)
 - Obsidian metadata cache: `metadataCache.on('changed', file)` can trigger a regeneration pass even when vault mtimes did not update in the expected order (`markFilesForRegeneration()` resets provider processed mtimes and a re-queue follows).
-- Settings changes: `ContentProviderRegistry.handleSettingsChange()` can stop providers, clear affected content, and re-queue regeneration (`useStorageSettingsSync`). When frontmatter metadata settings change, `useStorageSettingsSync` also updates the frontmatter metadata cache signature, or clears it when frontmatter metadata is disabled.
+- Settings changes: `ContentProviderRegistry.handleSettingsChange()` can stop providers, clear affected content, and re-queue regeneration (`useStorageSettingsSync`). When frontmatter metadata settings change, `useStorageSettingsSync` also updates the frontmatter metadata cache signature, or clears it when frontmatter metadata is disabled. A `tagSource` change while tags are shown clears cached `tags` to `null`, so the empty-tag retries do not keep tags the new source no longer reads, and `TagContentProvider.clearContent()` records the new source.
 - Metadata service writes: `FileMetadataService` and `FolderNoteMetadataAdapter` can update markdown frontmatter through `app.fileManager.processFrontMatter(...)`, then patch the cached `metadata` object through `IndexedDBStorage.updateFileMetadata()` so file and folder-note style changes emit `onContentChange` before the later metadata-cache regeneration pass.
 - Manual rebuild: Settings → Notebook Navigator → Advanced → Rebuild cache, or the `notebook-navigator:rebuild-cache` command.
 

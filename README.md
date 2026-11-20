@@ -447,6 +447,7 @@ Set custom hotkeys for these commands in Obsidian's Hotkeys settings:
 - **Calendar** - Daily notes calendar with day selection, feature image previews, and vertical split support
 - **Folder tree** - Expand/collapse navigation with manual root folder ordering
 - **Tag tree** - Hierarchical tags with configurable root tag ordering
+- **Frontmatter-only tags** - Use only the tags in the frontmatter and ignore tags in the note body with **Tags > Tag source**
 - **Property browser** - Browse file properties organized by key and value with file counts, custom colors, icons, and drag and drop
 - **Auto-reveal active file** - Folder expansion and scroll-to-selection
 - **Keyboard and commands** - Configurable hotkeys, selection history back/forward commands, next/previous file commands, open shortcut 1–9 commands

@@ -2464,6 +2464,14 @@ export const STRINGS_TR = {
                 name: 'Etiketleri göster',
                 desc: 'Gezginde etiketler bölümünü görüntüle.'
             },
+            tagSource: {
+                name: 'Etiket kaynağı',
+                desc: 'Yalnızca frontmatter seçildiğinde not gövdesindeki etiketler gizlenir ve etiketler yeniden adlandırılırken, kaldırılırken veya silinirken değişmez.',
+                options: {
+                    all: 'Frontmatter ve not gövdesi',
+                    frontmatter: 'Yalnızca frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Etiket simgelerini göster',
                 desc: 'Gezinme bölmesinde etiketlerin yanında simgeleri görüntüle.'

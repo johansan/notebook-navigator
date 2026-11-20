@@ -2457,6 +2457,14 @@ export const STRINGS_EN = {
                 name: 'Show tags',
                 desc: 'Display tags section in the navigator.'
             },
+            tagSource: {
+                name: 'Tag source',
+                desc: 'With frontmatter only, tags in the note body are hidden and left unchanged when renaming, removing or deleting tags.',
+                options: {
+                    all: 'Frontmatter and note body',
+                    frontmatter: 'Frontmatter only'
+                }
+            },
             showTagIcons: {
                 name: 'Show tag icons',
                 desc: 'Display icons next to tags in the navigation pane.'

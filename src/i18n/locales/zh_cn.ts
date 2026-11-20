@@ -2450,6 +2450,14 @@ export const STRINGS_ZH_CN = {
                 name: '显示标签',
                 desc: '在导航器中显示标签部分。'
             },
+            tagSource: {
+                name: '标签来源',
+                desc: '仅使用 frontmatter 时，笔记正文中的标签会被隐藏，并且在重命名、移除或删除标签时保持不变。',
+                options: {
+                    all: 'Frontmatter 和笔记正文',
+                    frontmatter: '仅 frontmatter'
+                }
+            },
             showTagIcons: {
                 name: '显示标签图标',
                 desc: '在导航窗格的标签旁显示图标。'

@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getAllTags, type App } from 'obsidian';
 import { IndexedDBStorage, type FileData } from '../storage/IndexedDBStorage';
 import type { NoteCountInfo } from '../types/noteCounts';
 import { TagTreeNode } from '../types/storage';
@@ -321,6 +322,21 @@ export function buildTagTreeFromDatabase(
     }
 
     return { tagTree, tagged: taggedCount, untagged: untaggedCount, hiddenRootTags, excludedTagPaths };
+}
+
+/**
+ * Builds a tag tree from Obsidian's metadata cache with the frontmatter and note body tags of every markdown note,
+ * hidden notes included, whatever the Tag source setting. Its nodes carry no note sets, because metadata cleanup only
+ * checks which tag paths exist.
+ */
+export function buildAllSourcesTagTreeFromMetadataCache(app: App): Map<string, TagTreeNode> {
+    const tagPaths = new Set<string>();
+    for (const file of app.vault.getMarkdownFiles()) {
+        const metadata = app.metadataCache.getFileCache(file);
+        const tags = metadata ? getAllTags(metadata) : null;
+        tags?.forEach(tag => tagPaths.add(tag.startsWith('#') ? tag.slice(1) : tag));
+    }
+    return buildTreeFromTagList(Array.from(tagPaths), new Map());
 }
 
 /**

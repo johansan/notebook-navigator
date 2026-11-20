@@ -2475,6 +2475,14 @@ export const STRINGS_ES = {
                 name: 'Mostrar etiquetas',
                 desc: 'Muestra la sección de etiquetas en el navegador.'
             },
+            tagSource: {
+                name: 'Fuente de etiquetas',
+                desc: 'Con solo frontmatter, las etiquetas del cuerpo de la nota se ocultan y no cambian al renombrar, quitar o eliminar etiquetas.',
+                options: {
+                    all: 'Frontmatter y cuerpo de la nota',
+                    frontmatter: 'Solo frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Mostrar iconos de etiquetas',
                 desc: 'Muestra iconos junto a las etiquetas en el panel de navegación.'

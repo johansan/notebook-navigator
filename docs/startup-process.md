@@ -1,6 +1,6 @@
 # Notebook Navigator Startup Process
 
-Updated: July 9, 2026
+Updated: November 19, 2026
 
 ## Table of Contents
 
@@ -309,6 +309,9 @@ tag extraction and markdown pipeline processing:
      match the current frontmatter settings, clear stored `metadata` content via `batchClearAllFileContent('metadata')`
      and persist the new signature so the metadata provider regenerates mirrored metadata.
    - When frontmatter metadata is disabled, clear the stored signature.
+   - Reconcile the tag source record (`ensureTagCacheMatchesTagSource`): when the Tag source value the cached tags were
+     read with differs from the setting, which a synced change can cause while the plugin is not running, clear stored
+     `tags` via `batchClearAllFileContent('tags')` and record the current source.
 5. Rebuild tag and property trees via `rebuildTagTree()` and `rebuildPropertyTree()` (both share one visible-file scan).
 6. Mark storage as ready (`setIsStorageReady(true)` and the internal Notebook Navigator API readiness bridge).
 7. Queue content generation:
@@ -424,7 +427,7 @@ Content is generated asynchronously in the background by the ContentProviderRegi
    - `queueMetadataContentWhenReady()` delays metadata-dependent providers (markdown pipeline, tags, metadata) until Obsidian's metadata cache has entries
 
 3. **Processing**: Each provider processes files independently
-   - TagContentProvider: Extracts tags from Obsidian's metadata cache (`getAllTags(metadata)`)
+   - TagContentProvider: Extracts tags from Obsidian's metadata cache with `getMetadataTags`, which reads frontmatter and note body tags, or only frontmatter tags when Tag source is set to frontmatter only
    - MarkdownPipelineContentProvider: Uses metadata cache for frontmatter/offsets, reads markdown content when needed, runs preview/word count/character count/task/property/feature image processors
    - FeatureImageContentProvider: Generates or marks feature images for supported non-markdown files (PDF and SVG thumbnails and non-markdown drawing files)
    - MetadataContentProvider: Extracts configured frontmatter fields and hidden state from Obsidian's metadata cache

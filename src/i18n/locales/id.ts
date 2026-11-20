@@ -2466,6 +2466,14 @@ export const STRINGS_ID = {
                 name: 'Tampilkan tag',
                 desc: 'Tampilkan bagian tag di navigator.'
             },
+            tagSource: {
+                name: 'Sumber tag',
+                desc: 'Jika opsi Hanya frontmatter dipilih, tag dalam isi catatan disembunyikan dan tidak berubah saat tag diubah namanya atau dihapus.',
+                options: {
+                    all: 'Frontmatter dan isi catatan',
+                    frontmatter: 'Hanya frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Tampilkan ikon tag',
                 desc: 'Tampilkan ikon di sebelah tag di panel navigasi.'

@@ -75,7 +75,7 @@ export class TagDeleteWorkflow {
         }
 
         const descriptor = new TagDescriptor(displayPath);
-        const previewPaths = collectPreviewPaths(this.app, descriptor, tagTree);
+        const previewPaths = collectPreviewPaths(this.app, descriptor, tagTree, this.fileMutations.getTagSource());
 
         const uniquePreview = Array.from(new Set(previewPaths));
         const usage = buildUsageSummaryFromPaths(this.app, uniquePreview);
@@ -121,7 +121,7 @@ export class TagDeleteWorkflow {
             });
         } else {
             const tagTree = this.getTagTreeService();
-            const previewPaths = collectPreviewPaths(this.app, descriptor, tagTree);
+            const previewPaths = collectPreviewPaths(this.app, descriptor, tagTree, this.fileMutations.getTagSource());
             previewPaths.forEach(path => {
                 if (typeof path === 'string' && path.length > 0) {
                     targetPathsSet.add(path);
@@ -252,7 +252,7 @@ export class TagDeleteWorkflow {
 
     /**
      * Deletes a tag and its descendants from a single file
-     * Removes from both frontmatter and inline content
+     * Removes from frontmatter, and from inline content unless the tag source is `frontmatter`
      */
     async deleteTagFromFile(file: TFile, tag: TagDescriptor): Promise<boolean> {
         if (!this.fileMutations.isMarkdownFile(file)) {

@@ -18,7 +18,7 @@
 
 import { App, TFile, parseFrontMatterTags } from 'obsidian';
 import { getDBInstance } from '../../storage/fileOperations';
-import type { NotebookNavigatorSettings } from '../../settings/types';
+import type { NotebookNavigatorSettings, TagSourceSetting } from '../../settings/types';
 import { normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 import {
     getCachedFileTags,
@@ -56,6 +56,14 @@ export class TagFileMutations {
         private readonly app: App,
         private readonly getSettings: () => NotebookNavigatorSettings
     ) {}
+
+    /**
+     * The Tag source setting the operations follow: with `frontmatter`, they read and edit only frontmatter tags and
+     * leave inline #tags in the note body untouched.
+     */
+    getTagSource(): TagSourceSetting {
+        return this.getSettings().tagSource;
+    }
 
     /**
      * Checks if a file is a markdown file
@@ -229,7 +237,7 @@ export class TagFileMutations {
     }
 
     /**
-     * Removes all tags from a file's frontmatter and inline content
+     * Removes all tags from a file's frontmatter, and from its inline content unless the tag source is `frontmatter`
      * Returns true if any tags were removed
      */
     async clearAllTagsFromFile(file: TFile): Promise<boolean> {
@@ -264,6 +272,10 @@ export class TagFileMutations {
             throw error;
         }
 
+        if (this.getTagSource() === 'frontmatter') {
+            return hadTags;
+        }
+
         const content = await this.app.vault.read(file);
         if (this.hasInlineTags(content)) {
             await this.app.vault.process(file, current => {
@@ -279,7 +291,7 @@ export class TagFileMutations {
     }
 
     /**
-     * Removes tags from both frontmatter and inline content
+     * Removes tags from frontmatter, and from inline content unless the tag source is `frontmatter`
      * Uses predicate function to determine which tags to remove
      */
     async stripTagsFromFile(
@@ -300,7 +312,7 @@ export class TagFileMutations {
             frontmatterError = error instanceof Error ? error : new Error(String(error));
         }
 
-        const inlineChanged = inlineTags.length > 0 ? await this.stripInlineTags(file, inlineTags) : false;
+        const inlineChanged = inlineTags.length > 0 && this.getTagSource() === 'all' ? await this.stripInlineTags(file, inlineTags) : false;
 
         if (frontmatterError !== null) {
             throw frontmatterError;

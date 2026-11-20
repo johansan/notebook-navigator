@@ -2474,6 +2474,14 @@ export const STRINGS_DE = {
                 name: 'Tags anzeigen',
                 desc: 'Tag-Bereich im Navigator anzeigen.'
             },
+            tagSource: {
+                name: 'Tag-Quelle',
+                desc: 'Bei „Nur Frontmatter“ werden Tags im Notiztext ausgeblendet und beim Umbenennen, Entfernen oder Löschen von Tags nicht verändert.',
+                options: {
+                    all: 'Frontmatter und Notiztext',
+                    frontmatter: 'Nur Frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Tag-Symbole anzeigen',
                 desc: 'Symbole neben Tags im Navigationsbereich anzeigen.'

@@ -17,6 +17,7 @@
  */
 
 import { App, TFile, parseFrontMatterAliases, parseFrontMatterTags, TagCache } from 'obsidian';
+import type { TagSourceSetting } from '../../settings/types';
 import { normalizeCaseInsensitiveIdentifierPreservingWhitespace } from '../../utils/recordUtils';
 import { normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
 import { mutateFrontmatterTagFields } from './frontmatterTagMutator';
@@ -360,9 +361,10 @@ export class RenameFile {
 /**
  * Collects files that contain the specified tag or any descendant tags.
  * Produces a list of RenameFile instances that capture inline tag positions
- * and whether matching values exist in frontmatter.
+ * and whether matching values exist in frontmatter. With the `frontmatter` tag source, inline tags are left out, so a
+ * file is collected only for frontmatter matches and its note body is never edited.
  */
-export function collectRenameFiles(app: App, tag: TagDescriptor): RenameFile[] {
+export function collectRenameFiles(app: App, tag: TagDescriptor, tagSource: TagSourceSetting): RenameFile[] {
     const targets: RenameFile[] = [];
     const metadataCache = app.metadataCache;
     const filesToInspect = app.vault.getMarkdownFiles();
@@ -374,9 +376,10 @@ export function collectRenameFiles(app: App, tag: TagDescriptor): RenameFile[] {
             continue;
         }
 
-        const inlineTags = Array.isArray(cache.tags)
-            ? cache.tags.filter(tagCache => typeof tagCache.tag === 'string' && tag.matches(tagCache.tag)).reverse()
-            : [];
+        const inlineTags =
+            tagSource === 'all' && Array.isArray(cache.tags)
+                ? cache.tags.filter(tagCache => typeof tagCache.tag === 'string' && tag.matches(tagCache.tag)).reverse()
+                : [];
 
         const frontmatter = cache.frontmatter;
         const frontmatterTags = (parseFrontMatterTags(frontmatter) ?? []).map(value => TagDescriptor.ensureHashPrefix(value));

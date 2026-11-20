@@ -105,6 +105,17 @@ function createDbFile(path: string, tags: string[]): { path: string; data: FileD
     return { path, data };
 }
 
+// Serves note tags from Obsidian's metadata cache, the source metadata cleanup validates tags against
+function configureMetadataCacheTags(app: App, tagsByPath: Record<string, string[]>): void {
+    app.vault.getMarkdownFiles = () =>
+        Object.keys(tagsByPath).map(path => {
+            const file = new TFile();
+            file.path = path;
+            return file;
+        });
+    app.metadataCache.getFileCache = (file: TFile) => ({ frontmatter: { tags: tagsByPath[file.path] } });
+}
+
 function configureVault(app: App, filePaths: string[]): void {
     const files = filePaths.map(path => {
         const file = new TFile();
@@ -143,11 +154,13 @@ describe('MetadataService cleanup', () => {
         dbState.files = [];
     });
 
-    it('summarizes hidden-only tags using vault-wide cached tags', async () => {
-        dbState.files = [createDbFile('Hidden.md', ['#hidden/private'])];
+    it('summarizes hidden-only tags using vault-wide metadata cache tags', async () => {
+        // The cached tags are still regenerating, so only Obsidian's metadata cache holds the tag
+        dbState.files = [createDbFile('Hidden.md', [])];
 
         const app = new App();
         configureVault(app, ['Hidden.md']);
+        configureMetadataCacheTags(app, { 'Hidden.md': ['hidden/private'] });
         const settings = createSettings();
         settings.tagColors = {
             'hidden/private': '#111111',
@@ -167,10 +180,11 @@ describe('MetadataService cleanup', () => {
     });
 
     it('keeps metadata for hidden-only tags during cleanup', async () => {
-        dbState.files = [createDbFile('Hidden.md', ['#hidden/private'])];
+        dbState.files = [createDbFile('Hidden.md', [])];
 
         const app = new App();
         configureVault(app, ['Hidden.md']);
+        configureMetadataCacheTags(app, { 'Hidden.md': ['hidden/private'] });
         const settings = createSettings();
         settings.tagColors = {
             'hidden/private': '#111111',

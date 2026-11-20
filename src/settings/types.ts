@@ -225,6 +225,16 @@ export function isTagSortOrder(value: string): value is TagSortOrder {
     return value === 'alpha-asc' || value === 'alpha-desc' || value === 'frequency-asc' || value === 'frequency-desc';
 }
 
+/**
+ * Where note tags come from: `all` reads frontmatter tags and inline #tags in the note body, `frontmatter` reads only
+ * frontmatter tags. The tag cache, the tag tree and the tag operations follow it.
+ */
+export type TagSourceSetting = 'all' | 'frontmatter';
+
+export function isTagSourceSetting(value: unknown): value is TagSourceSetting {
+    return value === 'all' || value === 'frontmatter';
+}
+
 /** Scope of items that button actions affect */
 export type ItemScope = 'all' | 'folders-only' | 'tags-only' | 'properties-only';
 
@@ -845,6 +855,7 @@ export interface NotebookNavigatorSettings {
 
     // Tags tab
     showTags: boolean;
+    tagSource: TagSourceSetting;
     showTagIcons: boolean;
     showAllTagsFolder: boolean;
     showUntagged: boolean;

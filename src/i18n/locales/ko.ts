@@ -2461,6 +2461,14 @@ export const STRINGS_KO = {
                 name: '태그 표시',
                 desc: '네비게이터에서 태그 섹션을 표시합니다.'
             },
+            tagSource: {
+                name: '태그 소스',
+                desc: 'frontmatter만 사용하면 노트 본문의 태그는 숨겨지며, 태그 이름 변경, 제거 또는 삭제 시에도 변경되지 않습니다.',
+                options: {
+                    all: 'Frontmatter와 노트 본문',
+                    frontmatter: 'Frontmatter만'
+                }
+            },
             showTagIcons: {
                 name: '태그 아이콘 표시',
                 desc: '탐색 창의 태그 옆에 아이콘을 표시합니다.'

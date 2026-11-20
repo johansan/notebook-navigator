@@ -198,7 +198,8 @@ const STRING_SETTING_KEYS = [
     'listPaneTitle',
     'propertySortSecondary',
     'manualSortNewNotePlacement',
-    'collapseBehavior'
+    'collapseBehavior',
+    'tagSource'
 ] as const satisfies readonly SettingsKeyOfType<string>[];
 
 type NativeBooleanControlKey = (typeof BOOLEAN_SETTING_KEYS)[number];
@@ -229,7 +230,8 @@ const STRING_SETTING_OPTIONS: Partial<Record<NativeStringControlKey, readonly st
     listPaneTitle: ['header', 'list', 'hidden'],
     propertySortSecondary: ['title', 'filename', 'created', 'modified'],
     manualSortNewNotePlacement: ['top', 'bottom', 'below-selected-note', 'unsorted'],
-    collapseBehavior: ['all', 'folders-only', 'tags-only', 'properties-only']
+    collapseBehavior: ['all', 'folders-only', 'tags-only', 'properties-only'],
+    tagSource: ['frontmatter', 'all']
 };
 
 export const NATIVE_SETTING_DOM_STATE_REFRESH_KEYS: ReadonlySet<NativeSettingControlKey> = new Set([

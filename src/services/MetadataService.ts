@@ -41,7 +41,7 @@ import type { NavigationSeparatorTarget } from '../utils/navigationSeparators';
 import { getChildFolderPath } from '../utils/pathUtils';
 import { buildPropertyKeyNodeId, buildPropertyValueNodeIdFromKeyNodeId } from '../utils/propertyTree';
 import { casefold, getCollapsedPinnedContextTarget } from '../utils/recordUtils';
-import { buildTagTreeFromDatabase } from '../utils/tagTree';
+import { buildAllSourcesTagTreeFromMetadataCache } from '../utils/tagTree';
 
 /**
  * Validators object containing all data needed for cleanup operations
@@ -721,12 +721,14 @@ export class MetadataService {
     /**
      * Prepares validators for metadata cleanup by collecting current vault state
      * @param app - Obsidian app instance
-     * @param tagTree - Tag tree for tag metadata validation. When omitted, a vault-wide tree is built from cache data.
      * @returns Validators object for cleanup
      */
-    static prepareCleanupValidators(app: App, tagTree?: Map<string, TagTreeNode>): CleanupValidators {
+    static prepareCleanupValidators(app: App): CleanupValidators {
         const db = getDBInstance();
-        const cleanupTagTree = tagTree ?? buildTagTreeFromDatabase(db, undefined, undefined, [], true, false).tagTree;
+        // Tags come from Obsidian's metadata cache instead of the cached tags, which leave out note body tags with the
+        // frontmatter Tag source setting and are null while they regenerate after a source change or a rebuild.
+        // Otherwise cleanup would remove the colors, icons, sort settings and separators of tags that still exist.
+        const cleanupTagTree = buildAllSourcesTagTreeFromMetadataCache(app);
 
         // Collect all files in vault
         const vaultFiles = new Set(app.vault.getFiles().map(f => f.path));

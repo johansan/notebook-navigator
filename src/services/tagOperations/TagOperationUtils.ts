@@ -20,6 +20,7 @@ import type { App } from 'obsidian';
 import { strings } from '../../i18n';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import type { ITagTreeProvider } from '../../interfaces/ITagTreeProvider';
+import type { TagSourceSetting } from '../../settings/types';
 import { collectRenameFiles, type RenameFile, type TagDescriptor } from '../tagRename/TagRenameEngine';
 import type { TagUsageSummary } from './types';
 import { normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
@@ -29,13 +30,18 @@ import { buildUsageSummaryFromPaths as buildOperationUsageSummaryFromPaths, yiel
 export { yieldToEventLoop };
 
 /**
- * Collects all file paths in the vault that contain the specified tag.
+ * Collects all file paths in the vault that contain the specified tag in the sources the tag source reads.
  */
-export function collectPreviewPaths(app: App, tag: TagDescriptor, _tagTreeService: ITagTreeProvider | null): string[] {
+export function collectPreviewPaths(
+    app: App,
+    tag: TagDescriptor,
+    _tagTreeService: ITagTreeProvider | null,
+    tagSource: TagSourceSetting
+): string[] {
     if (tag.canonicalName.length === 0) {
         return [];
     }
-    return collectRenameFiles(app, tag).map(target => target.filePath);
+    return collectRenameFiles(app, tag, tagSource).map(target => target.filePath);
 }
 
 /**

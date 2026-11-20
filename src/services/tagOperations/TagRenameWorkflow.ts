@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getAllTags, type App } from 'obsidian';
+import type { App } from 'obsidian';
 import { LIMITS } from '../../constants/limits';
 import { strings } from '../../i18n';
 import type { ITagTreeProvider } from '../../interfaces/ITagTreeProvider';
@@ -35,6 +35,7 @@ import type { TagRenameEventPayload } from './types';
 import { TagFileMutations } from './TagFileMutations';
 import { showNotice } from '../../utils/noticeUtils';
 import { normalizeTagPathValue } from '../../utils/tagPrefixMatcher';
+import { getMetadataTags } from '../../utils/tagUtils';
 
 const RENAME_BATCH_SIZE = LIMITS.operations.metadataMutationYieldBatchSize;
 
@@ -92,7 +93,7 @@ export class TagRenameWorkflow {
     async promptRenameTag(tagPath: string, initialValue?: string): Promise<void> {
         const displayPath = this.resolveDisplayTagPathInternal(tagPath);
         const oldTagDescriptor = new TagDescriptor(displayPath);
-        const presetTargets = collectRenameFiles(this.app, oldTagDescriptor);
+        const presetTargets = collectRenameFiles(this.app, oldTagDescriptor, this.fileMutations.getTagSource());
         const usage = buildUsageSummary(this.app, presetTargets);
 
         if (usage.total === 0) {
@@ -118,7 +119,7 @@ export class TagRenameWorkflow {
     async renameTag(tagPath: string, newTagPath: string): Promise<boolean> {
         const displayPath = this.resolveDisplayTagPathInternal(tagPath);
         const oldTagDescriptor = new TagDescriptor(displayPath);
-        const presetTargets = collectRenameFiles(this.app, oldTagDescriptor);
+        const presetTargets = collectRenameFiles(this.app, oldTagDescriptor, this.fileMutations.getTagSource());
         const usage = buildUsageSummary(this.app, presetTargets);
 
         if (usage.total === 0) {
@@ -146,9 +147,12 @@ export class TagRenameWorkflow {
             return false;
         }
 
-        const shouldContinue = await confirmInlineTagParsingRisk(this.app, trimmedName);
-        if (!shouldContinue) {
-            return false;
+        // Frontmatter only leaves inline tags untouched, so a name that cannot be parsed inline breaks nothing
+        if (this.fileMutations.getTagSource() === 'all') {
+            const shouldContinue = await confirmInlineTagParsingRisk(this.app, trimmedName);
+            if (!shouldContinue) {
+                return false;
+            }
         }
 
         return this.runTagRename(displayPath, trimmedName, presetTargets);
@@ -176,7 +180,7 @@ export class TagRenameWorkflow {
         const newTag = new TagDescriptor(newTagPath);
         const replacement = new TagReplacement(oldTag, newTag);
         const tagTree = this.getTagTreeService();
-        const targets = presetTargets ?? collectRenameFiles(this.app, oldTag);
+        const targets = presetTargets ?? collectRenameFiles(this.app, oldTag, this.fileMutations.getTagSource());
         const existingTags = tagTree ? tagTree.getAllTagPaths().map(path => `#${path}`) : [];
         const mergeConflict = existingTags.length > 0 ? replacement.willMergeTags(existingTags) : null;
         return { oldTag, newTag, replacement, targets, mergeConflict, keepsOldTag: this.keepsOldTag(oldTag, newTag, targets) };
@@ -195,9 +199,10 @@ export class TagRenameWorkflow {
             return false;
         }
         const recreatingPath = `${oldPath}${oldPath.slice(newPath.length)}`;
+        const tagSource = this.fileMutations.getTagSource();
         return targets.some(target => {
             const cache = this.app.metadataCache.getCache(target.filePath);
-            return (cache ? (getAllTags(cache) ?? []) : []).some(tag => {
+            return (cache ? (getMetadataTags(cache, tagSource) ?? []) : []).some(tag => {
                 const tagPath = normalizeTagPathValue(tag);
                 return tagPath === recreatingPath || tagPath.startsWith(`${recreatingPath}/`);
             });

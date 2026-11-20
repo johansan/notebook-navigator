@@ -70,6 +70,7 @@ import {
     isSettingSyncMode,
     isSortOption,
     isTagSortOrder,
+    isTagSourceSetting,
     normalizeAppearanceGroupBy,
     normalizeListSortOverride,
     resolveDeleteAttachmentsSetting,
@@ -339,6 +340,8 @@ export class PluginSettingsController {
             if (
                 storageKey === 'databaseSchemaVersionKey' ||
                 storageKey === 'databaseContentVersionKey' ||
+                // Describes the IndexedDB tag cache, which a settings reset keeps
+                storageKey === 'tagSourceCacheKey' ||
                 storageKey === 'debugLoggingEnabledKey'
             ) {
                 return;
@@ -700,6 +703,10 @@ export class PluginSettingsController {
 
         if (!isAlphaSortOrder(this.currentSettings.folderSortOrder)) {
             this.currentSettings.folderSortOrder = DEFAULT_SETTINGS.folderSortOrder;
+        }
+
+        if (!isTagSourceSetting(this.currentSettings.tagSource)) {
+            this.currentSettings.tagSource = DEFAULT_SETTINGS.tagSource;
         }
 
         this.currentSettings.deleteAttachments = resolveDeleteAttachmentsSetting(

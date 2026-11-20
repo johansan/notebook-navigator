@@ -2456,6 +2456,14 @@ export const STRINGS_TH = {
                 name: 'แสดงแท็ก',
                 desc: 'แสดงส่วนแท็กในตัวนำทาง'
             },
+            tagSource: {
+                name: 'แหล่งที่มาของแท็ก',
+                desc: 'เมื่อใช้ frontmatter เท่านั้น แท็กในเนื้อหาโน้ตจะถูกซ่อนและไม่เปลี่ยนแปลงเมื่อเปลี่ยนชื่อ นำออก หรือลบแท็ก',
+                options: {
+                    all: 'Frontmatter และเนื้อหาโน้ต',
+                    frontmatter: 'Frontmatter เท่านั้น'
+                }
+            },
             showTagIcons: {
                 name: 'แสดงไอคอนแท็ก',
                 desc: 'แสดงไอคอนข้างแท็กในแผงนำทาง'

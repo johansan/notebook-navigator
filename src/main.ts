@@ -1596,7 +1596,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
     /**
      * Resets all persisted settings and local preferences back to defaults.
-     * Clears plugin localStorage state (except IndexedDB version markers) and clears persisted settings so defaults apply.
+     * Clears plugin localStorage state (except the IndexedDB version and tag source markers) and clears persisted settings so defaults apply.
      */
     public async resetAllSettings(): Promise<void> {
         if (this.isUnloading) {

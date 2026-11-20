@@ -2473,6 +2473,14 @@ export const STRINGS_NL = {
                 name: 'Tags tonen',
                 desc: 'Tagsectie in de navigator weergeven.'
             },
+            tagSource: {
+                name: 'Tagbron',
+                desc: 'Met alleen frontmatter worden tags in de notitietekst verborgen en blijven ze ongewijzigd bij het hernoemen, weghalen of verwijderen van tags.',
+                options: {
+                    all: 'Frontmatter en notitietekst',
+                    frontmatter: 'Alleen frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Tagpictogrammen tonen',
                 desc: 'Pictogrammen naast tags in navigatiepaneel weergeven.'

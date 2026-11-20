@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getAllTags, type App, type EventRef, type FrontMatterCache, type TFile } from 'obsidian';
+import type { App, CachedMetadata, EventRef, FrontMatterCache, TFile } from 'obsidian';
 import type { FileContentType } from '../interfaces/IContentProvider';
 import { showsCharacterCount, showsWordCount, type NotebookNavigatorSettings } from '../settings/types';
 import { ItemType, PROPERTIES_ROOT_VIRTUAL_FOLDER_ID, TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
@@ -35,7 +35,7 @@ import { buildPropertyKeyNodeId, buildPropertyValueNodeId } from './propertyTree
 import { extractFrontmatterPropertyValues, hasWordCountTargetPropertyConsumer, normalizePropertyTreeValuePath } from './propertyUtils';
 import { casefold } from './recordUtils';
 import { normalizeTagPathValue } from './tagPrefixMatcher';
-import { extractFileTagsFromRawTags } from './tagUtils';
+import { extractFileTagsFromRawTags, getMetadataTags } from './tagUtils';
 import { getActivePropertyKeySet } from './vaultProfiles';
 
 interface AppearanceTextCountConsumers {
@@ -130,9 +130,10 @@ function getFolderSelectionPaths(filePath: string, includeDescendantNotes: boole
     }
 }
 
-function getTagSelectionPaths(metadata: FrontMatterCache | null, includeDescendantNotes: boolean): string[] {
+function getTagSelectionPaths(metadata: CachedMetadata | null, settings: NotebookNavigatorSettings): string[] {
+    const includeDescendantNotes = settings.includeDescendantNotes;
     const paths = new Set<string>();
-    const tags = extractFileTagsFromRawTags(metadata ? getAllTags(metadata) : null);
+    const tags = extractFileTagsFromRawTags(metadata ? getMetadataTags(metadata, settings.tagSource) : null);
     if (tags.length === 0) {
         return [UNTAGGED_TAG_ID];
     }
@@ -200,7 +201,7 @@ function hasActiveCustomGroupingForHeader(app: App, settings: NotebookNavigatorS
     const metadata = app.metadataCache.getFileCache(file);
     if (
         // Hiding the Tags section does not clear the active tag selection, so its list can still render headers.
-        getTagSelectionPaths(metadata, settings.includeDescendantNotes).some(tagPath =>
+        getTagSelectionPaths(metadata, settings).some(tagPath =>
             hasEffectiveCustomListGroupingForSelection(settings, ItemType.TAG, tagPath)
         )
     ) {

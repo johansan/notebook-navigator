@@ -2473,6 +2473,14 @@ export const STRINGS_PL = {
                 name: 'Pokaż tagi',
                 desc: 'Wyświetla sekcję tagów w panelu nawigacji.'
             },
+            tagSource: {
+                name: 'Źródło tagów',
+                desc: 'Przy samym frontmatter tagi w treści notatki są ukryte i pozostają niezmienione przy zmianie nazwy lub usuwaniu tagów.',
+                options: {
+                    all: 'Frontmatter i treść notatki',
+                    frontmatter: 'Tylko frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Pokaż ikonki tagów',
                 desc: 'Wyświetla ikonki obok tagów w panelu nawigacji.'

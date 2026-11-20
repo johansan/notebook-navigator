@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { TFile, getAllTags, type App } from 'obsidian';
-import type { MultiSelectModifier, NotebookNavigatorSettings } from '../settings/types';
+import { TFile, getAllTags, parseFrontMatterTags, type App, type CachedMetadata } from 'obsidian';
+import type { MultiSelectModifier, NotebookNavigatorSettings, TagSourceSetting } from '../settings/types';
 import { TAGGED_TAG_ID, UNTAGGED_TAG_ID } from '../types';
 import type { FileData } from '../storage/IndexedDBStorage';
 import { getDBInstanceOrNull } from '../storage/fileOperations';
@@ -186,6 +186,14 @@ export function resolveCanonicalTagPath(tagPath: string | null | undefined, tagT
  * Tags are returned without the # prefix, in original casing. Duplicate tags with
  * different casing are deduplicated, keeping the first occurrence.
  */
+/**
+ * Reads a note's raw tags from the sources the Tag source setting selects. `frontmatter` reads only the frontmatter
+ * tags property, so a tag that is both in the frontmatter and inline in the body still counts once.
+ */
+export function getMetadataTags(metadata: CachedMetadata, tagSource: TagSourceSetting): string[] | null {
+    return tagSource === 'frontmatter' ? parseFrontMatterTags(metadata.frontmatter ?? null) : getAllTags(metadata);
+}
+
 export function extractFileTagsFromRawTags(rawTags: readonly string[] | null): string[] {
     if (!rawTags || rawTags.length === 0) {
         return [];

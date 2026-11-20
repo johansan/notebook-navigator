@@ -21,7 +21,7 @@ import type { SettingDefinitionItem } from 'obsidian';
 import { strings } from '../../i18n';
 import { isTagSortOrder } from '../types';
 import type { SettingsTabContext } from './SettingsTabContext';
-import { createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
+import { createDropdownDefinition, createGroupDefinition, createRenderDefinition, createToggleDefinition } from '../nativeSettingControls';
 import { addSettingSyncModeToggle } from '../syncModeToggle';
 
 /** Builds native 1.13 setting definitions for tag settings. */
@@ -33,6 +33,16 @@ export function createTagsSettingDefinitions(context: SettingsTabContext, headin
             createToggleDefinition('showTags', {
                 name: strings.settings.items.showTags.name,
                 desc: strings.settings.items.showTags.desc
+            }),
+            createDropdownDefinition('tagSource', {
+                name: strings.settings.items.tagSource.name,
+                desc: strings.settings.items.tagSource.desc,
+                aliases: Object.values(strings.settings.items.tagSource.options),
+                visible: () => plugin.settings.showTags,
+                options: {
+                    frontmatter: strings.settings.items.tagSource.options.frontmatter,
+                    all: strings.settings.items.tagSource.options.all
+                }
             }),
             createToggleDefinition('showTagIcons', {
                 name: strings.settings.items.showTagIcons.name,

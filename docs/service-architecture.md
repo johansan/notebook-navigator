@@ -1,6 +1,6 @@
 # Notebook Navigator Service Architecture
 
-Updated: July 9, 2026
+Updated: November 19, 2026
 
 ## Table of Contents
 
@@ -226,7 +226,7 @@ when `useFrontmatterMetadata` is enabled.
   - Tracks tag colors/backgrounds/icons/sort overrides.
   - Updates nested metadata paths on tag rename/delete.
   - Resolves inherited tag colors/backgrounds when enabled.
-  - Uses tag tree snapshots for cleanup.
+  - Uses tag tree snapshots for cleanup, built from Obsidian's metadata cache with frontmatter and note body tags whatever the Tag source setting.
 
 - **PropertyMetadataService** (`src/services/metadata/PropertyMetadataService.ts`)
   - Tracks property key/value colors, backgrounds, icons, list sort overrides, and child sort overrides.
@@ -339,7 +339,7 @@ cleanupAllMetadata(targetSettings?: NotebookNavigatorSettings): Promise<boolean>
 cleanupTagMetadata(targetSettings?: NotebookNavigatorSettings): Promise<boolean>
 runUnifiedCleanup(validators: CleanupValidators, targetSettings?: NotebookNavigatorSettings): Promise<boolean>
 getCleanupSummary(): Promise<MetadataCleanupSummary>
-MetadataService.prepareCleanupValidators(app: App, tagTree?: Map<string, TagTreeNode>): CleanupValidators
+MetadataService.prepareCleanupValidators(app: App): CleanupValidators
 ```
 
 ### FileSystemOperations
@@ -501,7 +501,7 @@ stopAllProcessing(): void
   - Extracts configured frontmatter metadata fields and hidden state based on active vault profile hidden frontmatter properties.
 
 - **TagContentProvider** (`src/services/content/TagContentProvider.ts`)
-  - Extracts tags from Obsidian's metadata cache (`getAllTags(metadata)`).
+  - Extracts tags from Obsidian's metadata cache with `getMetadataTags`, which reads frontmatter and note body tags, or only frontmatter tags when Tag source is set to frontmatter only.
   - Deduplicates case variants and stores values without the `#` prefix.
 
 ## Plugin-Managed Services

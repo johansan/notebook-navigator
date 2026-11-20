@@ -283,6 +283,7 @@ export interface LocalStorageKeys {
     databaseSchemaVersionKey: string;
     databaseContentVersionKey: string;
     frontmatterMetadataCacheSignatureKey: string;
+    tagSourceCacheKey: string;
     cacheRebuildNoticeKey: string;
     debugLoggingEnabledKey: string;
     lastShownVersionKey: string;
@@ -352,6 +353,7 @@ export const STORAGE_KEYS: LocalStorageKeys = {
     databaseSchemaVersionKey: 'notebook-navigator-db-schema-version',
     databaseContentVersionKey: 'notebook-navigator-db-content-version',
     frontmatterMetadataCacheSignatureKey: 'notebook-navigator-frontmatter-metadata-cache-signature',
+    tagSourceCacheKey: 'notebook-navigator-tag-source-cache',
     cacheRebuildNoticeKey: 'notebook-navigator-cache-rebuild-notice',
     debugLoggingEnabledKey: 'notebook-navigator-debug-logging-enabled',
     lastShownVersionKey: 'notebook-navigator-last-shown-version',

@@ -2477,6 +2477,14 @@ export const STRINGS_FR = {
                 name: 'Afficher les mots-clés',
                 desc: 'Afficher la section des mots-clés dans le navigateur.'
             },
+            tagSource: {
+                name: 'Source des mots-clés',
+                desc: 'Avec le frontmatter seul, les mots-clés du corps de la note sont masqués et restent inchangés lorsque des mots-clés sont renommés, retirés ou supprimés.',
+                options: {
+                    all: 'Frontmatter et corps de la note',
+                    frontmatter: 'Frontmatter uniquement'
+                }
+            },
             showTagIcons: {
                 name: 'Afficher les icônes de mots-clés',
                 desc: 'Afficher les icônes à côté des mots-clés dans le panneau de navigation.'

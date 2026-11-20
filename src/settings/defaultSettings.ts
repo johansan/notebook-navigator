@@ -246,6 +246,7 @@ export const DEFAULT_SETTINGS: NotebookNavigatorSettings = {
 
     // Tags tab
     showTags: true,
+    tagSource: 'all',
     showTagIcons: true,
     showAllTagsFolder: true,
     showUntagged: true,

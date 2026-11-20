@@ -2463,6 +2463,14 @@ export const STRINGS_VI = {
                 name: 'Hiện thẻ',
                 desc: 'Hiển thị phần thẻ trong trình điều hướng.'
             },
+            tagSource: {
+                name: 'Nguồn thẻ',
+                desc: 'Khi chỉ dùng frontmatter, thẻ trong nội dung ghi chú bị ẩn và không thay đổi khi đổi tên, gỡ hoặc xóa thẻ.',
+                options: {
+                    all: 'Frontmatter và nội dung ghi chú',
+                    frontmatter: 'Chỉ frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Hiện biểu tượng thẻ',
                 desc: 'Hiển thị biểu tượng bên cạnh thẻ trong ngăn điều hướng.'

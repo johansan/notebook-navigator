@@ -2469,6 +2469,14 @@ export const STRINGS_IT = {
                 name: 'Mostra etichette',
                 desc: 'Visualizza sezione etichette nel navigatore.'
             },
+            tagSource: {
+                name: 'Origine delle etichette',
+                desc: 'Con solo frontmatter, le etichette nel corpo della nota vengono nascoste e restano invariate quando si rinominano, rimuovono o eliminano etichette.',
+                options: {
+                    all: 'Frontmatter e corpo della nota',
+                    frontmatter: 'Solo frontmatter'
+                }
+            },
             showTagIcons: {
                 name: 'Mostra icone etichette',
                 desc: 'Visualizza icone accanto alle etichette nel pannello navigazione.'

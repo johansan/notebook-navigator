@@ -41,6 +41,7 @@ import {
     isFrontmatterMetadataCacheCurrent,
     markFrontmatterMetadataCacheCurrent
 } from '../../utils/frontmatterMetadataCache';
+import { getTagSourceCache, markTagSourceCacheCurrent } from '../../utils/tagSourceCache';
 import {
     refreshMarkdownWordCountConsumerForFile,
     removeMarkdownWordCountConsumerForFile,
@@ -76,6 +77,21 @@ async function ensureFrontmatterMetadataCacheMatchesSettings(settings: NotebookN
 
     await getDBInstance().batchClearAllFileContent('metadata');
     markFrontmatterMetadataCacheCurrent(settings);
+    return true;
+}
+
+/**
+ * Clears cached tags that were read under another Tag source value, which a synced settings change can leave behind
+ * while the plugin is not running. Runs before the startup tag tree build, so the tree and the tag queue start from
+ * null tags instead of showing the previous source's tags. Returns true when the tags were cleared.
+ */
+async function ensureTagCacheMatchesTagSource(settings: NotebookNavigatorSettings): Promise<boolean> {
+    if (getTagSourceCache() === settings.tagSource) {
+        return false;
+    }
+
+    await getDBInstance().batchClearAllFileContent('tags');
+    markTagSourceCacheCurrent(settings.tagSource);
     return true;
 }
 
@@ -206,6 +222,7 @@ export function useStorageVaultSync(params: {
                         await recordFileChanges([...toAdd, ...toUpdate], existingData, pendingRenameDataRef.current);
                     }
                     const frontmatterMetadataCacheInvalidated = await ensureFrontmatterMetadataCacheMatchesSettings(settings);
+                    const tagCacheInvalidated = await ensureTagCacheMatchesTagSource(settings);
 
                     // Both tree rebuilds share one visible-file scan.
                     let visibleFilesForTrees: TFile[] | null = null;
@@ -227,7 +244,11 @@ export function useStorageVaultSync(params: {
 
                     const metadataDependentTypes = getMetadataDependentTypes(settings, app);
                     const contentEnabled = metadataDependentTypes.length > 0;
-                    const queuedStartupDetails: Record<string, unknown> = { metadataDependentTypes, frontmatterMetadataCacheInvalidated };
+                    const queuedStartupDetails: Record<string, unknown> = {
+                        metadataDependentTypes,
+                        frontmatterMetadataCacheInvalidated,
+                        tagCacheInvalidated
+                    };
 
                     if (contentRegistryRef.current && contentEnabled) {
                         const markdownFiles: TFile[] = [];

@@ -16,13 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { TFile, getAllTags } from 'obsidian';
+import { TFile } from 'obsidian';
 import { LIMITS } from '../../constants/limits';
 import { type ContentProviderType } from '../../interfaces/IContentProvider';
 import type { NotebookNavigatorSettings } from '../../settings/types';
 import { FileData } from '../../storage/IndexedDBStorage';
 import { getDBInstance } from '../../storage/fileOperations';
-import { extractFileTagsFromRawTags } from '../../utils/tagUtils';
+import { markTagSourceCacheCurrent } from '../../utils/tagSourceCache';
+import { extractFileTagsFromRawTags, getMetadataTags } from '../../utils/tagUtils';
 import { BaseContentProvider, type ContentProviderProcessResult } from './BaseContentProvider';
 
 /**
@@ -40,7 +41,7 @@ export class TagContentProvider extends BaseContentProvider {
     }
 
     getRelevantSettings(): (keyof NotebookNavigatorSettings)[] {
-        return ['showTags'];
+        return ['showTags', 'tagSource'];
     }
 
     shouldRegenerate(oldSettings: NotebookNavigatorSettings, newSettings: NotebookNavigatorSettings): boolean {
@@ -54,13 +55,23 @@ export class TagContentProvider extends BaseContentProvider {
             return true;
         }
 
+        // Clearing to null instead of resetting tagsMtime, because the empty-tag retry below would keep body tags
+        // that the new source no longer reads until its retries run out.
+        if (newSettings.showTags && newSettings.tagSource !== oldSettings.tagSource) {
+            return true;
+        }
+
         return false;
     }
 
-    async clearContent(_context?: { oldSettings: NotebookNavigatorSettings; newSettings: NotebookNavigatorSettings }): Promise<void> {
+    async clearContent(context?: { oldSettings: NotebookNavigatorSettings; newSettings: NotebookNavigatorSettings }): Promise<void> {
         const db = getDBInstance();
         await db.batchClearAllFileContent('tags');
         this.emptyTagRetryCounts.clear();
+        if (context) {
+            // Recorded after the clear, so a restart in between still finds a mismatch and clears again
+            markTagSourceCacheCurrent(context.newSettings.tagSource);
+        }
     }
 
     protected needsProcessing(fileData: FileData | null, file: TFile, settings: NotebookNavigatorSettings): boolean {
@@ -96,7 +107,7 @@ export class TagContentProvider extends BaseContentProvider {
                 return { update: null, processed: false };
             }
 
-            const rawTags = getAllTags(metadata);
+            const rawTags = getMetadataTags(metadata, settings.tagSource);
             const tags = extractFileTagsFromRawTags(rawTags);
 
             const shouldDeferExistingTagClearing =

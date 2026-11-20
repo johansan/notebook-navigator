@@ -2451,6 +2451,14 @@ export const STRINGS_ZH_TW = {
                 name: '顯示標籤',
                 desc: '在導覽器中顯示標籤區段。'
             },
+            tagSource: {
+                name: '標籤來源',
+                desc: '僅使用 frontmatter 時，筆記內文中的標籤會被隱藏，並且在重新命名、移除或刪除標籤時保持不變。',
+                options: {
+                    all: 'Frontmatter 和筆記內文',
+                    frontmatter: '僅 frontmatter'
+                }
+            },
             showTagIcons: {
                 name: '顯示標籤圖示',
                 desc: '在導覽窗格的標籤旁顯示圖示。'
