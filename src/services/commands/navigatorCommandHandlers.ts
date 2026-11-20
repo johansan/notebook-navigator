@@ -91,7 +91,9 @@ async function focusNavigatorVisiblePane(plugin: NotebookNavigatorPlugin, existi
         const previousActiveLeaf = getLeafToRestoreAfterNavigatorFocus(plugin, leaf);
         await plugin.app.workspace.revealLeaf(leaf);
         const view = leaf.view;
-        if (isNotebookNavigatorView(view)) {
+        // Revealing a deferred view mounts it after this point, and the mount focuses the navigator and makes its
+        // leaf active again. Waiting for it keeps the restore below last, otherwise Cmd+W closes the navigator.
+        if (isNotebookNavigatorView(view) && (await view.whenReady())) {
             view.focusVisiblePane();
             if (previousActiveLeaf) {
                 plugin.app.workspace.setActiveLeaf(previousActiveLeaf, { focus: false });
@@ -147,9 +149,13 @@ function getLeafToRestoreAfterNavigatorFocus(plugin: NotebookNavigatorPlugin, na
 }
 
 /**
- * Opens the navigator view if not already open, otherwise reveals the existing view
- * @param plugin - The plugin instance
- * @returns The workspace leaf containing the navigator view
+ * Opens the navigator view if not already open, otherwise reveals the existing view, and returns it without waiting
+ * for it to mount. Revealing a deferred view or creating one runs onOpen before React installs the component handle,
+ * so view methods called right after do nothing on that first invocation. The new note, delete, move, merge, Search
+ * whole vault and open shortcut commands rely on that: a newly mounted view still holds the selection restored from
+ * the previous session until startup auto-reveal moves it to the active file, so after waiting they would act on the
+ * restored selection, or have their navigation replaced by the startup reveal. Other commands use
+ * ensureNavigatorReady.
  */
 async function ensureNavigatorOpen(
     plugin: NotebookNavigatorPlugin,
@@ -172,6 +178,18 @@ async function ensureNavigatorOpen(
 }
 
 /**
+ * Opens or reveals the navigator view like ensureNavigatorOpen, then waits until its React tree has mounted, so view
+ * methods act on the first invocation. Returns null when no view opens or the view closes before it mounts.
+ */
+async function ensureNavigatorReady(
+    plugin: NotebookNavigatorPlugin,
+    existingLeaves?: WorkspaceLeaf[]
+): Promise<NotebookNavigatorView | null> {
+    const view = await ensureNavigatorOpen(plugin, existingLeaves);
+    return view && (await view.whenReady()) ? view : null;
+}
+
+/**
  * Returns the existing navigator view without revealing or opening it.
  * Used for commands that should not force the navigator to become visible.
  */
@@ -184,6 +202,48 @@ function getNavigatorViewIfMounted(plugin: NotebookNavigatorPlugin, existingLeav
     const leaf = navigatorLeaves[0];
     const view = leaf.view;
     return isNotebookNavigatorView(view) ? view : null;
+}
+
+/**
+ * Returns whether a mounted navigator shows its selection: it has finished loading, and it is not in a collapsed
+ * sidebar or closed mobile drawer or behind another tab in its tab group.
+ */
+function isNavigatorSelectionVisible(plugin: NotebookNavigatorPlugin, leaf: WorkspaceLeaf, view: NotebookNavigatorView): boolean {
+    const { workspace } = plugin.app;
+    const splitLocation = getLeafSplitLocation(plugin.app, leaf);
+
+    // A navigator that is still loading shows a placeholder, and its selection can still be the restored one
+    if (!view.isReady()) {
+        return false;
+    }
+
+    // The split's collapsed state is the public signal for both a collapsed sidebar and a closed mobile drawer
+    if (splitLocation === 'left-sidebar' && workspace.leftSplit.collapsed) {
+        return false;
+    }
+    if (splitLocation === 'right-sidebar' && workspace.rightSplit.collapsed) {
+        return false;
+    }
+
+    return view.containerEl.isShown();
+}
+
+/**
+ * Returns the files a tag or property command acts on when the navigator does not show its selection: the file in
+ * the active file view, or an empty list when no file view is active. Returns undefined when the navigator shows its
+ * selection, so the command acts on that selection. Must run before the navigator is revealed, because revealing
+ * makes it visible. A navigator that is not loaded yet still holds the selection restored from the previous session
+ * until startup auto-reveal moves it to the active file after it mounts.
+ */
+function getActiveFileTargetIfNavigatorHidden(plugin: NotebookNavigatorPlugin, navigatorLeaves: WorkspaceLeaf[]): TFile[] | undefined {
+    const mountedView = getNavigatorViewIfMounted(plugin, navigatorLeaves);
+    if (mountedView && isNavigatorSelectionVisible(plugin, navigatorLeaves[0], mountedView)) {
+        return undefined;
+    }
+
+    // The active file view, not getActiveFile(), which falls back to the last file when another view type is active
+    const activeFile = plugin.app.workspace.getActiveViewOfType(FileView)?.file ?? null;
+    return activeFile ? [activeFile] : [];
 }
 
 /**
@@ -838,12 +898,10 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
                         return;
                     }
 
+                    // Activating the new leaf moves the active file view away, so the focus helper restores the
+                    // most recent main area leaf instead, as it does for an existing navigator
                     await leftLeaf.setViewState({ type: NOTEBOOK_NAVIGATOR_VIEW, active: true });
-                    await workspace.revealLeaf(leftLeaf);
-                    const view = leftLeaf.view;
-                    if (isNotebookNavigatorView(view)) {
-                        view.focusVisiblePane();
-                    }
+                    await focusNavigatorVisiblePane(plugin, [leftLeaf]);
                 });
             }
         });
@@ -1000,8 +1058,8 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         name: strings.commands.collapseExpandListGroups,
         callback: () => {
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
-                if (!view || !(await view.whenReady())) {
+                const view = await ensureNavigatorReady(plugin);
+                if (!view) {
                     return;
                 }
                 view.triggerListGroupCollapse();
@@ -1016,7 +1074,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap pane toggle with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view?.isDualPaneAutoFallbackActive()) {
                     showNotice(strings.paneHeader.dualPaneAutoFallbackNotice, { variant: 'warning' });
                     return;
@@ -1149,7 +1207,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap collapse/expand with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     view.triggerCollapse();
                 }
@@ -1163,12 +1221,11 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         name: strings.commands.collapseExpandSelectedItem,
         callback: () => {
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (!view) {
                     return;
                 }
 
-                await view.whenReady();
                 view.triggerSelectedItemCollapse();
             });
         }
@@ -1276,7 +1333,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         name: strings.commands.navigateBack,
         callback: () => {
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     await view.navigateBack();
                 }
@@ -1290,7 +1347,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         name: strings.commands.navigateForward,
         callback: () => {
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     await view.navigateForward();
                 }
@@ -1520,6 +1577,10 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         }
     });
 
+    // The tag and property commands act on the navigator selection, or on the file in the editor when the navigator
+    // is hidden. They still open the navigator, because its React tree populates the tag and property trees that
+    // the suggestion modals read.
+
     // Command to add a tag to selected files
     plugin.addCommand({
         id: 'add-tag',
@@ -1527,9 +1588,11 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap tag addition with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const navigatorLeaves = plugin.getNavigatorLeaves();
+                const targetFiles = getActiveFileTargetIfNavigatorHidden(plugin, navigatorLeaves);
+                const view = await ensureNavigatorReady(plugin, navigatorLeaves);
                 if (view) {
-                    await view.addTagToSelectedFiles();
+                    await view.addTagToSelectedFiles(targetFiles);
                 }
             });
         }
@@ -1541,9 +1604,11 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         name: strings.commands.setProperty,
         callback: () => {
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const navigatorLeaves = plugin.getNavigatorLeaves();
+                const targetFiles = getActiveFileTargetIfNavigatorHidden(plugin, navigatorLeaves);
+                const view = await ensureNavigatorReady(plugin, navigatorLeaves);
                 if (view) {
-                    await view.setPropertyOnSelectedFiles();
+                    await view.setPropertyOnSelectedFiles(targetFiles);
                 }
             });
         }
@@ -1556,9 +1621,11 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap tag removal with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const navigatorLeaves = plugin.getNavigatorLeaves();
+                const targetFiles = getActiveFileTargetIfNavigatorHidden(plugin, navigatorLeaves);
+                const view = await ensureNavigatorReady(plugin, navigatorLeaves);
                 if (view) {
-                    await view.removeTagFromSelectedFiles();
+                    await view.removeTagFromSelectedFiles(targetFiles);
                 }
             });
         }
@@ -1571,9 +1638,11 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap tag removal with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const navigatorLeaves = plugin.getNavigatorLeaves();
+                const targetFiles = getActiveFileTargetIfNavigatorHidden(plugin, navigatorLeaves);
+                const view = await ensureNavigatorReady(plugin, navigatorLeaves);
                 if (view) {
-                    await view.removeAllTagsFromSelectedFiles();
+                    await view.removeAllTagsFromSelectedFiles(targetFiles);
                 }
             });
         }
@@ -1586,7 +1655,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap folder navigation with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     await view.navigateToFolderWithModal();
                 }
@@ -1601,7 +1670,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap tag navigation with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     await view.navigateToTagWithModal();
                 }
@@ -1616,7 +1685,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap property navigation with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     await view.navigateToPropertyWithModal();
                 }
@@ -1631,7 +1700,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap shortcut creation with error handling
             runAsyncAction(async () => {
-                // Capture the context before ensureNavigatorOpen runs: revealing the navigator can
+                // Capture the context before ensureNavigatorReady runs: revealing the navigator can
                 // move focus into it, and creating the view activates its leaf, which would change
                 // both the focus signals and the file getActiveFile() reports.
                 const navigatorLeaves = plugin.getNavigatorLeaves();
@@ -1641,8 +1710,8 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
                     activeFile: plugin.app.workspace.getActiveFile()
                 };
 
-                const view = await ensureNavigatorOpen(plugin, navigatorLeaves);
-                if (view && (await view.whenReady())) {
+                const view = await ensureNavigatorReady(plugin, navigatorLeaves);
+                if (view) {
                     await view.addShortcutForCurrentSelection(context);
                 }
             });
@@ -1719,7 +1788,7 @@ export default function registerNavigatorCommands(plugin: NotebookNavigatorPlugi
         callback: () => {
             // Wrap search toggle with error handling
             runAsyncAction(async () => {
-                const view = await ensureNavigatorOpen(plugin);
+                const view = await ensureNavigatorReady(plugin);
                 if (view) {
                     view.toggleSearch();
                 }

@@ -173,10 +173,11 @@ export interface NotebookNavigatorHandle {
     navigateToFolderWithModal: () => void;
     navigateToTagWithModal: () => void;
     navigateToPropertyWithModal: () => void;
-    addTagToSelectedFiles: () => Promise<void>;
-    setPropertyOnSelectedFiles: () => Promise<void>;
-    removeTagFromSelectedFiles: () => Promise<void>;
-    removeAllTagsFromSelectedFiles: () => Promise<void>;
+    // The tag and property actions act on targetFiles when given, otherwise on the navigator selection
+    addTagToSelectedFiles: (targetFiles?: TFile[]) => Promise<void>;
+    setPropertyOnSelectedFiles: (targetFiles?: TFile[]) => Promise<void>;
+    removeTagFromSelectedFiles: (targetFiles?: TFile[]) => Promise<void>;
+    removeAllTagsFromSelectedFiles: (targetFiles?: TFile[]) => Promise<void>;
     toggleSearch: () => void;
     searchWithDescendants: () => void;
     triggerCollapse: () => void;
@@ -1211,14 +1212,13 @@ export const NotebookNavigatorComponent = React.memo(
                     );
                     modal.open();
                 },
-                addTagToSelectedFiles: async () => {
+                addTagToSelectedFiles: async (targetFiles?: TFile[]) => {
                     if (!tagOperations) {
                         showNotice(strings.fileSystem.notifications.tagOperationsNotAvailable, { variant: 'warning' });
                         return;
                     }
 
-                    // Get selected files
-                    const selectedFiles = getSelectedFiles();
+                    const selectedFiles = targetFiles ?? getSelectedFiles();
                     if (selectedFiles.length === 0) {
                         showNotice(strings.fileSystem.notifications.noFilesSelected, { variant: 'warning' });
                         return;
@@ -1232,8 +1232,8 @@ export const NotebookNavigatorComponent = React.memo(
                         files: selectedFiles
                     });
                 },
-                setPropertyOnSelectedFiles: async () => {
-                    const selectedFiles = getSelectedFiles();
+                setPropertyOnSelectedFiles: async (targetFiles?: TFile[]) => {
+                    const selectedFiles = targetFiles ?? getSelectedFiles();
                     if (selectedFiles.length === 0) {
                         showNotice(strings.fileSystem.notifications.noFilesSelected, { variant: 'warning' });
                         return;
@@ -1267,14 +1267,13 @@ export const NotebookNavigatorComponent = React.memo(
                     );
                     modal.open();
                 },
-                removeTagFromSelectedFiles: async () => {
+                removeTagFromSelectedFiles: async (targetFiles?: TFile[]) => {
                     if (!tagOperations) {
                         showNotice(strings.fileSystem.notifications.tagOperationsNotAvailable, { variant: 'warning' });
                         return;
                     }
 
-                    // Get selected files
-                    const selectedFiles = getSelectedFiles();
+                    const selectedFiles = targetFiles ?? getSelectedFiles();
                     if (selectedFiles.length === 0) {
                         showNotice(strings.fileSystem.notifications.noFilesSelected, { variant: 'warning' });
                         return;
@@ -1286,14 +1285,13 @@ export const NotebookNavigatorComponent = React.memo(
                         files: selectedFiles
                     });
                 },
-                removeAllTagsFromSelectedFiles: async () => {
+                removeAllTagsFromSelectedFiles: async (targetFiles?: TFile[]) => {
                     if (!tagOperations) {
                         showNotice(strings.fileSystem.notifications.tagOperationsNotAvailable, { variant: 'warning' });
                         return;
                     }
 
-                    // Get selected files
-                    const selectedFiles = getSelectedFiles();
+                    const selectedFiles = targetFiles ?? getSelectedFiles();
                     if (selectedFiles.length === 0) {
                         showNotice(strings.fileSystem.notifications.noFilesSelected, { variant: 'warning' });
                         return;

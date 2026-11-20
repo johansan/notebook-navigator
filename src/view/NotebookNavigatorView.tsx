@@ -247,6 +247,13 @@ export class NotebookNavigatorView extends ItemView {
         this.root = null;
     }
 
+    /**
+     * Returns whether the React tree has mounted, so view methods act instead of doing nothing
+     */
+    isReady(): boolean {
+        return this.componentHandle !== null;
+    }
+
     async whenReady(): Promise<boolean> {
         if (this.componentHandle) {
             return true;
@@ -453,30 +460,34 @@ export class NotebookNavigatorView extends ItemView {
 
     /**
      * Add a tag to the currently selected files
+     * @param targetFiles - Files to act on instead of the navigator selection
      */
-    async addTagToSelectedFiles(): Promise<void> {
-        await this.componentHandle?.addTagToSelectedFiles();
+    async addTagToSelectedFiles(targetFiles?: TFile[]): Promise<void> {
+        await this.componentHandle?.addTagToSelectedFiles(targetFiles);
     }
 
     /**
      * Set a property on the currently selected files
+     * @param targetFiles - Files to act on instead of the navigator selection
      */
-    async setPropertyOnSelectedFiles(): Promise<void> {
-        await this.componentHandle?.setPropertyOnSelectedFiles();
+    async setPropertyOnSelectedFiles(targetFiles?: TFile[]): Promise<void> {
+        await this.componentHandle?.setPropertyOnSelectedFiles(targetFiles);
     }
 
     /**
      * Remove a tag from the currently selected files
+     * @param targetFiles - Files to act on instead of the navigator selection
      */
-    async removeTagFromSelectedFiles(): Promise<void> {
-        await this.componentHandle?.removeTagFromSelectedFiles();
+    async removeTagFromSelectedFiles(targetFiles?: TFile[]): Promise<void> {
+        await this.componentHandle?.removeTagFromSelectedFiles(targetFiles);
     }
 
     /**
      * Remove all tags from the currently selected files
+     * @param targetFiles - Files to act on instead of the navigator selection
      */
-    async removeAllTagsFromSelectedFiles(): Promise<void> {
-        await this.componentHandle?.removeAllTagsFromSelectedFiles();
+    async removeAllTagsFromSelectedFiles(targetFiles?: TFile[]): Promise<void> {
+        await this.componentHandle?.removeAllTagsFromSelectedFiles(targetFiles);
     }
 
     /**
