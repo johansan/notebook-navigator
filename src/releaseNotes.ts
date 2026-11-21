@@ -113,11 +113,11 @@ const RELEASE_NOTES: ReleaseNote[] = [
         new: [
             'New rainbow themes, such as Pastel, Fire, Ice and 80s, and a gradient editor for custom themes in ==Rainbow themes==.',
             'New setting ==Color intensity== sets the opacity of rainbow background colors, or how much rainbow color is mixed into the text color.',
-            'New setting Tags > ==Tag source== can use only the tags in the frontmatter and ignore tags in the note body.'
+            'New setting Tags > ==Tag source== to only use tags in frontmatter and ignore tags in the note body.'
         ],
         improved: [
-            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut **now selects it without scrolling!**',
-            'Many iPad UX dual pane improvements to headers, icons, separator lines, and more.'
+            'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut **now selects it without scrolling!** 🎉',
+            'Several **iPad dual pane UI improvements** to headers, icons, separator lines, and more.'
         ],
         changed: [
             'Removed the setting ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.',
