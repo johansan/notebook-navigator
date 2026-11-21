@@ -635,8 +635,7 @@ export const LANGUAGE_METADATA = {
                 `จะสลับมุมมองปัจจุบันเป็นการจัดเรียงด้วยตนเองโดยใช้ "${property}" การแก้ไขลำดับจะเขียนค่าดัชนีตัวเลขลงในคุณสมบัตินั้นใน ${count} โน้ต ตามความจำเป็น`,
             'modals.manualSortConfirm.removePropertyMessage': (property: string, count: number) =>
                 `จะลบ "${property}" ออกจาก ${count} โน้ตในรายการปัจจุบัน ลำดับการจัดเรียงด้วยตนเองของโน้ตเหล่านั้นจะถูกล้าง`,
-            'modals.manualSortConfirm.compactMessage': (count: number) =>
-                `การจัดเรียงใหม่นี้ต้องการพื้นที่ตัวเลขเพิ่มเติม ${count} โน้ต จะได้รับค่าดัชนีใหม่`,
+            'modals.manualSortConfirm.compactMessage': (count: number) => `การจัดเรียงใหม่นี้ต้องการพื้นที่ตัวเลขเพิ่มเติม ${count} โน้ต จะได้รับค่าดัชนีใหม่`,
             'modals.navRainbowThemes.copyName': (name: string) => `${name} (สำเนา)`,
             'modals.navRainbowThemes.deleteMessage': (name: string) => `ลบ "${name}"? ส่วนที่ใช้ธีมนี้จะถูกตั้งเป็น "ไม่มี"`,
             'modals.navRainbowThemeEditor.colorStop': (index: number) => `สี ${index}`,
