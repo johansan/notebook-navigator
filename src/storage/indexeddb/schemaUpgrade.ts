@@ -18,7 +18,7 @@
 
 import { FEATURE_IMAGE_STORE_NAME } from '../FeatureImageBlobStore';
 import { isPlainObjectRecordValue } from '../../utils/recordUtils';
-import { PREVIEW_STORE_NAME, STORE_NAME } from './constants';
+import { PRESENTATION_STORE_NAME, PREVIEW_STORE_NAME, STORE_NAME } from './constants';
 import type { PreviewStatus } from './fileData';
 
 export function handleUpgradeNeeded(event: IDBVersionChangeEvent): void {
@@ -42,6 +42,11 @@ export function handleUpgradeNeeded(event: IDBVersionChangeEvent): void {
 
     if (!db.objectStoreNames.contains(PREVIEW_STORE_NAME)) {
         db.createObjectStore(PREVIEW_STORE_NAME);
+    }
+
+    // Schema v4 introduces a store of MarkdownPoint presentation readings, empty until presentations are read.
+    if (!db.objectStoreNames.contains(PRESENTATION_STORE_NAME)) {
+        db.createObjectStore(PRESENTATION_STORE_NAME);
     }
 
     const transaction = target.transaction;

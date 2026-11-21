@@ -260,6 +260,7 @@ companion leaf.
      - `keyvaluepairs`: file records (`FileData`) excluding preview text and blob payloads
      - `filePreviews`: preview text strings keyed by path (loaded on demand / warmup)
      - `featureImageBlobs`: thumbnail blobs keyed by path (cached in an in-memory LRU)
+     - `presentations`: MarkdownPoint presentation readings keyed by folder path, read once by `PresentationService` at start
 4. StorageContext creates a `ContentProviderRegistry` once and registers:
    - `MarkdownPipelineContentProvider` (`markdownPipeline`)
    - `FeatureImageContentProvider` (`fileThumbnails`)

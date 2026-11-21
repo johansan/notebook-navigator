@@ -55,7 +55,6 @@
     "@tanstack/react-virtual": "^3.14.26",
     "emoji-regex-xs": "^2.0.1",
     "emojilib": "^4.0.3",
-    "marked": "18.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

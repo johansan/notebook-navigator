@@ -15,55 +15,278 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TFile, TFolder } from 'obsidian';
 import type { App } from 'obsidian';
-import {
-    countPresentationSlides,
-    getPresentationIdentity,
-    getPresentationPairNames,
-    getPresentationThemeName,
-    isInSavedVersions,
-    isPresentationThemeKey,
-    PresentationService,
-    readableMaster,
-    resolvePresentationCover,
-    resolveSlideSize
-} from '../../src/services/PresentationService';
+import { isInSavedVersions, PresentationService, resolvePresentationCover } from '../../src/services/PresentationService';
+import type { PresentationReadingStore } from '../../src/services/PresentationService';
 import { getListPaneMeasurements, getPresentationRowHeight } from '../../src/utils/listPaneMeasurements';
 
-const PRESENTATION_ID = '656fb827-4f76-4106-91c1-de84af82e131';
-const THEME_ID = '41c1a2a4-5d2e-4f0a-9b8e-2a7c6c1d9e30';
+// The database's presentation store, by folder path
+const storedReadings = new Map<string, unknown>();
+const readingStore: PresentationReadingStore = {
+    getPresentationReadings: async () => new Map(storedReadings),
+    setPresentationReading: async (folderPath, reading) => {
+        if (reading === null) {
+            storedReadings.delete(folderPath);
+        } else {
+            storedReadings.set(folderPath, structuredClone(reading));
+        }
+    }
+};
 
-/** A copy of a record without one key, as a file that leaves the key out */
-function withoutKey(record: Record<string, unknown>, key: string): Record<string, unknown> {
-    return Object.fromEntries(Object.entries(record).filter(([name]) => name !== key));
+const PRESENTATION_ID = '656fb827-4f76-4106-91c1-de84af82e131';
+const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
+
+function schemeColors(background: string, text: string, muted: string) {
+    return { background, surface: background, accent: text, text, muted, separator: muted, link: text };
 }
 
-describe('getPresentationPairNames', () => {
-    it('recognizes slides.md beside presentation.mdpoint and keeps the stored spelling', () => {
-        expect(getPresentationPairNames(['slides.md', 'presentation.mdpoint', 'notes.md'])).toEqual({
-            markdown: 'slides.md',
-            companion: 'presentation.mdpoint'
-        });
-        expect(getPresentationPairNames(['Slides.md', 'Presentation.mdpoint'])).toEqual({
-            markdown: 'Slides.md',
-            companion: 'Presentation.mdpoint'
-        });
+const MASTER = {
+    markdownpoint: '1.0',
+    type: 'master',
+    id: '41c1a2a4-5d2e-4f0a-9b8e-2a7c6c1d9e30',
+    name: 'Studio Pro',
+    size: { width: 1280, height: 720 },
+    fonts: { display: 'Inter', body: 'Inter', mono: 'Source Code Pro' },
+    schemes: {
+        light: { appearance: 'light', colors: schemeColors('#FFFFFF', '#1D1D1F', '#6E6E73') },
+        dark: { appearance: 'dark', colors: schemeColors('#000000', '#F5F5F7', '#A1A1A6') },
+        spotlight: { appearance: 'dark', colors: schemeColors('#1C1C3A', '#FFFFFF', '#C7C7FF') }
+    }
+};
+const TITLE_FRAME = { x: 80, y: 300, width: 1120, height: 120 };
+const TITLE_LAYOUT = {
+    markdownpoint: '1.0',
+    type: 'layout',
+    scheme: 'spotlight',
+    objects: [{ id: 'title', type: 'text', placeholder: true, frame: TITLE_FRAME, align: 'center' }]
+};
+const SLIDES = `---\nmarkdownpoint: "1.0"\nid: ${PRESENTATION_ID}\n---\n\n<!-- slide: opening -->\n\n<!-- slide: closing -->\n`;
+const COMPANION = {
+    markdownpoint: '1.0',
+    type: 'presentation',
+    id: PRESENTATION_ID,
+    theme: 'studio',
+    slides: { opening: { layout: 'title' }, closing: { layout: 'blank' } }
+};
+
+/** A presentation's files in `folder`, as MarkdownPoint writes them, with its theme */
+function deck(
+    folder: string,
+    changes: { companion?: string; master?: unknown; title?: unknown; theme?: boolean } = {}
+): Record<string, string> {
+    const files: Record<string, string> = {
+        [`${folder}/slides.md`]: SLIDES,
+        [`${folder}/presentation.mdpoint`]: changes.companion ?? JSON.stringify(COMPANION)
+    };
+    if (changes.theme !== false) {
+        files[`${folder}/themes/studio/master.json`] = JSON.stringify(changes.master ?? MASTER);
+        files[`${folder}/themes/studio/title.json`] = JSON.stringify(changes.title ?? TITLE_LAYOUT);
+        files[`${folder}/themes/studio/blank.json`] = JSON.stringify({ markdownpoint: '1.0', type: 'layout' });
+    }
+    return files;
+}
+
+function getParentPath(path: string): string {
+    return path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/';
+}
+
+/** A vault of files by path with their bytes, the reads the service makes and the events it listens to */
+function fakeVault(contents: Record<string, string>) {
+    const root = Object.assign(new TFolder('/'), { name: '', parent: null });
+    const folders = new Map<string, TFolder>([['/', root]]);
+    const files = new Map<string, TFile>();
+    const bytes = new Map<string, Uint8Array>();
+    const listeners = new Map<string, (file: TFile | TFolder) => void>();
+    const reads: string[] = [];
+    let clock = 1;
+    const folderAt = (path: string): TFolder => {
+        let folder = folders.get(path);
+        if (!folder) {
+            const parent = folderAt(getParentPath(path));
+            folder = Object.assign(new TFolder(path), { name: path.slice(path.lastIndexOf('/') + 1), parent });
+            folders.set(path, folder);
+            parent.children.push(folder);
+        }
+        return folder;
+    };
+    const write = (path: string, content: string): { file: TFile; created: boolean } => {
+        const data = new TextEncoder().encode(content);
+        const existing = files.get(path);
+        const file = existing ?? new TFile(path);
+        if (!existing) {
+            files.set(path, file);
+            folderAt(getParentPath(path)).children.push(file);
+        }
+        bytes.set(path, data);
+        Object.assign(file, { stat: { mtime: clock++, ctime: 0, size: data.byteLength } });
+        return { file, created: !existing };
+    };
+    Object.entries(contents).forEach(([path, content]) => write(path, content));
+    const app = {
+        vault: {
+            configDir: 'config',
+            adapter: { exists: async () => false },
+            on: (name: string, listener: (file: TFile | TFolder) => void) => listeners.set(name, listener),
+            offref: () => {},
+            getFiles: () => [...files.values()],
+            getAbstractFileByPath: (path: string) => files.get(path) ?? folders.get(path) ?? null,
+            readBinary: async (file: TFile) => {
+                reads.push(file.path);
+                return bytes.get(file.path)!.slice().buffer;
+            }
+        }
+    } as unknown as App;
+    return {
+        app,
+        reads,
+        write: (path: string, content: string) => {
+            const { file, created } = write(path, content);
+            listeners.get(created ? 'create' : 'modify')?.(file);
+        },
+        delete: (path: string) => {
+            const file = files.get(path)!;
+            files.delete(path);
+            bytes.delete(path);
+            const siblings = folderAt(getParentPath(path)).children;
+            siblings.splice(siblings.indexOf(file), 1);
+            listeners.get('delete')?.(file);
+        }
+    };
+}
+
+// The service reads a folder 100 ms after its last event
+const settle = () => new Promise(resolve => window.setTimeout(resolve, 250));
+
+async function started(app: App): Promise<PresentationService> {
+    const service = new PresentationService(app, async () => readingStore);
+    service.start();
+    await settle();
+    return service;
+}
+
+const SPOTLIGHT = { background: '#1C1C3A', text: '#FFFFFF', muted: '#C7C7FF' };
+const LIGHT = { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' };
+const DARK = { background: '#000000', text: '#F5F5F7', muted: '#A1A1A6' };
+
+describe('PresentationService', () => {
+    beforeEach(() => {
+        storedReadings.clear();
     });
 
-    it('rejects folders with sync conflict copies or other names', () => {
-        expect(getPresentationPairNames(['slides.md', 'slides 2.md', 'presentation.mdpoint'])).toBeNull();
-        expect(getPresentationPairNames(['slides.md', 'presentation.mdpoint', 'presentation (1).mdpoint'])).toBeNull();
-        expect(getPresentationPairNames(['slides.md', 'deck.mdpoint'])).toBeNull();
-        expect(getPresentationPairNames(['slides.md'])).toBeNull();
+    it('shows a folder as a presentation exactly where MarkdownPoint opens its pair', async () => {
+        const otherId = JSON.stringify({ ...COMPANION, id: '7b0c5f8e-1d2a-4c3b-9e8f-0a1b2c3d4e5f' });
+        const vault = fakeVault({
+            ...deck('Talk'),
+            ...deck('Marked', { companion: BYTE_ORDER_MARK + JSON.stringify(COMPANION) }),
+            ...deck('Copied', { companion: otherId }),
+            ...deck('Synced'),
+            'Synced/slides 2.md': SLIDES
+        });
+        const service = await started(vault.app);
+
+        expect(service.getSummary('Talk')).toEqual({
+            folderPath: 'Talk',
+            slidesPath: 'Talk/slides.md',
+            companionPath: 'Talk/presentation.mdpoint',
+            slideCount: 2,
+            themeName: 'Studio Pro',
+            size: { width: 1280, height: 720 },
+            cover: { align: 'center', light: SPOTLIGHT, dark: null }
+        });
+        expect(service.getRole('Talk/slides.md')).toBe('slides');
+        expect(service.getRole('Talk/presentation.mdpoint')).toBe('companion');
+        expect(service.getSummary('Marked')).not.toBeNull();
+        expect(service.getSummary('Copied')).toBeNull();
+        expect(service.getSummary('Synced')).toBeNull();
+        expect(service.getRole('Synced/slides.md')).toBeNull();
+        service.dispose();
     });
 
-    it('ignores AppleDouble files and markdown that only starts with the word slides', () => {
-        expect(getPresentationPairNames(['slides.md', 'presentation.mdpoint', '._presentation.mdpoint', 'slideshow.md'])).toEqual({
-            markdown: 'slides.md',
-            companion: 'presentation.mdpoint'
+    it('hides a presentation inside another one and a copy of a saved version beside its presentation, while the other stands', async () => {
+        const vault = fakeVault({ ...deck('Talk/versions/copy'), ...deck('Talk/inner') });
+        const service = await started(vault.app);
+        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
+        expect(service.getSummary('Talk/inner')).not.toBeNull();
+
+        vault.write('Talk/slides.md', SLIDES);
+        vault.write('Talk/presentation.mdpoint', JSON.stringify(COMPANION));
+        await settle();
+        expect(service.getSummary('Talk')).not.toBeNull();
+        expect(service.getSummary('Talk/versions/copy')).toBeNull();
+        expect(service.getSummary('Talk/inner')).toBeNull();
+
+        vault.delete('Talk/presentation.mdpoint');
+        await settle();
+        expect(service.getSummary('Talk')).toBeNull();
+        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
+        expect(service.getSummary('Talk/inner')).not.toBeNull();
+        service.dispose();
+    });
+
+    it('draws the cover from the Title layout, and names a theme MarkdownPoint does not read by its key with no size or cover', async () => {
+        const plainTitle = {
+            ...TITLE_LAYOUT,
+            scheme: undefined,
+            objects: [{ id: 'title', type: 'text', placeholder: true, frame: TITLE_FRAME }]
+        };
+        const vault = fakeVault({
+            ...deck('Plain', { title: plainTitle }),
+            ...deck('Newer', { master: { ...MASTER, markdownpoint: '2.0' } }),
+            ...deck('Bare', { theme: false })
         });
+        const service = await started(vault.app);
+
+        expect(service.getSummary('Plain')?.cover).toEqual({ align: 'start', light: LIGHT, dark: DARK });
+        for (const folderPath of ['Newer', 'Bare']) {
+            const summary = service.getSummary(folderPath);
+            expect({ themeName: summary?.themeName, size: summary?.size, cover: summary?.cover }).toEqual({
+                themeName: 'Studio',
+                size: null,
+                cover: null
+            });
+        }
+        service.dispose();
+    });
+
+    it('shows each presentation from its stored reading at a later start, reading only one whose files changed since', async () => {
+        const vault = fakeVault({ ...deck('Talk'), ...deck('Pitch') });
+        const first = await started(vault.app);
+        const summaries = [first.getSummary('Talk'), first.getSummary('Pitch')];
+        first.dispose();
+        expect(summaries.every(summary => summary !== null)).toBe(true);
+
+        vault.reads.length = 0;
+        const second = await started(vault.app);
+        expect([second.getSummary('Talk'), second.getSummary('Pitch')]).toEqual(summaries);
+        expect(vault.reads).toEqual([]);
+        second.dispose();
+
+        vault.write('Pitch/slides.md', `${SLIDES}\n<!-- slide: encore -->\n`);
+        vault.write(
+            'Pitch/presentation.mdpoint',
+            JSON.stringify({ ...COMPANION, slides: { ...COMPANION.slides, encore: { layout: 'blank' } } })
+        );
+        await settle();
+        const third = await started(vault.app);
+        expect(third.getSummary('Talk')).toEqual(summaries[0]);
+        expect(third.getSummary('Pitch')?.slideCount).toBe(3);
+        expect(vault.reads.length).toBeGreaterThan(0);
+        expect(vault.reads.every(path => path.startsWith('Pitch/'))).toBe(true);
+        third.dispose();
+    });
+});
+
+describe('resolvePresentationCover', () => {
+    it('follows the light and dark schemes when the Title layout names a scheme the theme lacks', () => {
+        const theme = {
+            name: 'Studio',
+            size: { width: 1920, height: 1080 },
+            schemes: { light: { appearance: 'light' as const, ...LIGHT }, dark: { appearance: 'dark' as const, ...DARK } },
+            layouts: [{ key: 'title', name: 'Title', reads: true, scheme: 'missing', titleAlign: 'center' as const }]
+        };
+        expect(resolvePresentationCover(theme)).toEqual({ align: 'center', light: LIGHT, dark: DARK });
     });
 });
 
@@ -87,414 +310,6 @@ describe('isInSavedVersions', () => {
     it('reads Versions/ as versions/ only where the vault ignores case', () => {
         expect(isInSavedVersions('Talk/Versions/copy', holds(['Talk']), true)).toBe(true);
         expect(isInSavedVersions('Talk/Versions/copy', holds(['Talk']), false)).toBe(false);
-    });
-});
-
-describe('PresentationService', () => {
-    /** A vault of files by path, with the reads the service makes and the events it listens to, each file a presentation's. */
-    function fakeVault(paths: string[], contents: Record<string, string> = {}) {
-        const folders = new Map<string, TFolder>([['/', new TFolder('/')]]);
-        const files = new Map<string, TFile>();
-        const listeners = new Map<string, (file: TFile | TFolder) => void>();
-        const folderAt = (path: string): TFolder => {
-            let folder = folders.get(path);
-            if (!folder) {
-                folder = Object.assign(new TFolder(path), { name: path.slice(path.lastIndexOf('/') + 1) });
-                folders.set(path, folder);
-                folderAt(path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/').children.push(folder);
-            }
-            return folder;
-        };
-        const parentOf = (path: string) => folderAt(path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/');
-        const add = (path: string) => {
-            const file = new TFile(path);
-            files.set(path, file);
-            parentOf(path).children.push(file);
-            return file;
-        };
-        paths.forEach(add);
-        const app = {
-            vault: {
-                configDir: 'config',
-                adapter: { exists: async () => false },
-                on: (name: string, listener: (file: TFile | TFolder) => void) => listeners.set(name, listener),
-                offref: () => {},
-                getFiles: () => [...files.values()],
-                getAbstractFileByPath: (path: string) => files.get(path) ?? folders.get(path) ?? null,
-                cachedRead: async (file: TFile) =>
-                    contents[file.path] ??
-                    (file.extension === 'mdpoint'
-                        ? JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID })
-                        : '')
-            },
-            metadataCache: {
-                on: () => ({}),
-                offref: () => {},
-                getFileCache: () => ({ frontmatter: { markdownpoint: '1.0', id: PRESENTATION_ID } })
-            }
-        } as unknown as App;
-        return {
-            app,
-            create: (path: string) => listeners.get('create')?.(add(path)),
-            delete: (path: string) => {
-                const file = files.get(path)!;
-                files.delete(path);
-                const siblings = parentOf(path).children;
-                siblings.splice(siblings.indexOf(file), 1);
-                listeners.get('delete')?.(file);
-            }
-        };
-    }
-    // The service reads a folder 100 ms after its last event
-    const settle = () => new Promise(resolve => window.setTimeout(resolve, 250));
-
-    it('reads a copy of a saved version as a presentation of its own only while no presentation file stands around its versions/', async () => {
-        const vault = fakeVault(['Talk/versions/copy/slides.md', 'Talk/versions/copy/presentation.mdpoint']);
-        const service = new PresentationService(vault.app);
-        service.start();
-        await settle();
-        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
-
-        vault.create('Talk/slides.md');
-        vault.create('Talk/presentation.mdpoint');
-        await settle();
-        expect(service.getSummary('Talk')).not.toBeNull();
-        expect(service.getSummary('Talk/versions/copy')).toBeNull();
-
-        vault.delete('Talk/presentation.mdpoint');
-        await settle();
-        expect(service.getSummary('Talk')).toBeNull();
-        expect(service.getSummary('Talk/versions/copy')).not.toBeNull();
-        service.dispose();
-    });
-
-    it('names the theme by its key and shows no size or cover where MarkdownPoint refuses the master', async () => {
-        const companion = JSON.stringify({ markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID, theme: 'studio-dark' });
-        const master = {
-            markdownpoint: '1.0',
-            type: 'master',
-            id: THEME_ID,
-            name: 'Studio',
-            fonts: {},
-            schemes: { light: { colors: { background: '#FFFFFF', text: '#1D1D1F' } } },
-            size: { width: 1280, height: 720 }
-        };
-        const summaryOf = async (stated: Record<string, unknown>) => {
-            const paths = ['Talk/slides.md', 'Talk/presentation.mdpoint', 'Talk/themes/studio-dark/master.json'];
-            const vault = fakeVault(paths, {
-                'Talk/presentation.mdpoint': companion,
-                'Talk/themes/studio-dark/master.json': JSON.stringify(stated)
-            });
-            const service = new PresentationService(vault.app);
-            service.start();
-            await settle();
-            const summary = service.getSummary('Talk');
-            service.dispose();
-            return { themeName: summary?.themeName, size: summary?.size, cover: summary?.cover ?? null };
-        };
-
-        expect(await summaryOf(master)).toEqual({
-            themeName: 'Studio',
-            size: { width: 1280, height: 720 },
-            cover: { align: 'start', light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#1D1D1F' }, dark: null }
-        });
-        for (const refused of [{ ...master, markdownpoint: '2.0' }, { ...master, type: 'layout' }, withoutKey(master, 'markdownpoint')]) {
-            expect(await summaryOf(refused)).toEqual({ themeName: 'Studio dark', size: null, cover: null });
-        }
-    });
-});
-
-describe('getPresentationIdentity', () => {
-    const frontmatter = { markdownpoint: '1.0', id: PRESENTATION_ID };
-    const companion = { markdownpoint: '1.0', type: 'presentation', id: PRESENTATION_ID };
-
-    it('returns the presentation id when both files belong to the same presentation', () => {
-        expect(getPresentationIdentity(frontmatter, companion)).toBe(PRESENTATION_ID);
-    });
-
-    it('opens any minor of format major 1 in either file', () => {
-        expect(getPresentationIdentity({ ...frontmatter, markdownpoint: '1.10' }, { ...companion, markdownpoint: '1.2' })).toBe(
-            PRESENTATION_ID
-        );
-    });
-
-    it('rejects numeric, malformed and newer major format versions', () => {
-        for (const version of [1, 1.1, '1', '1.09', '01.0', '2.0', '0.9']) {
-            expect(getPresentationIdentity({ ...frontmatter, markdownpoint: version }, companion)).toBeNull();
-            expect(getPresentationIdentity(frontmatter, { ...companion, markdownpoint: version })).toBeNull();
-        }
-    });
-
-    it('rejects a companion from another presentation or of another kind', () => {
-        const otherId = 'e39a0a69-91a3-4004-9f08-77e0759de936';
-        expect(getPresentationIdentity(frontmatter, { ...companion, id: otherId })).toBeNull();
-        expect(getPresentationIdentity(frontmatter, { ...companion, type: 'master' })).toBeNull();
-        expect(getPresentationIdentity({ ...frontmatter, id: PRESENTATION_ID.toUpperCase() }, companion)).toBeNull();
-        expect(getPresentationIdentity(undefined, companion)).toBeNull();
-    });
-
-    it('does not read the pre-1.0 document key', () => {
-        expect(
-            getPresentationIdentity(
-                { markdownpoint: '1.0', document: PRESENTATION_ID },
-                { ...companion, id: undefined, document: PRESENTATION_ID }
-            )
-        ).toBeNull();
-    });
-});
-
-describe('countPresentationSlides', () => {
-    it('counts slide markers and skips marker-shaped lines inside fenced code', () => {
-        const markdown = [
-            '---',
-            'markdownpoint: "1.0"',
-            '---',
-            '',
-            '<!-- section: intro -->',
-            '# Intro',
-            '',
-            '<!-- slide: beginning -->',
-            '',
-            '<!-- text: body -->',
-            '```markdown',
-            '<!-- slide: example -->',
-            '```',
-            '',
-            '<!-- slide: ending -->',
-            '<!-- text: title -->',
-            'The end'
-        ].join('\r\n');
-
-        expect(countPresentationSlides(markdown)).toBe(2);
-    });
-
-    it('reads fences as Markdown does inside lists, HTML comments and indented code', () => {
-        const slides = (content: string[]) =>
-            [
-                '---',
-                'markdownpoint: "1.0"',
-                '---',
-                '<!-- slide: first -->',
-                '<!-- text: body -->',
-                ...content,
-                '',
-                '<!-- slide: second -->',
-                '<!-- text: body -->',
-                '```',
-                'code',
-                '```',
-                '',
-                '<!-- slide: third -->',
-                ''
-            ].join('\n');
-
-        expect(countPresentationSlides(slides(['- ```js', '  code()', '  ```']))).toBe(3);
-        expect(countPresentationSlides(slides(['<!--', '```', '-->']))).toBe(3);
-        expect(countPresentationSlides(slides(['    ```']))).toBe(3);
-        expect(countPresentationSlides(slides(['```', '<!-- slide: example -->']))).toBe(1);
-        expect(countPresentationSlides(slides(['<br>', '```', '<!-- slide: example -->', '```']))).toBe(3);
-    });
-
-    it('reads a marker without the spaces or tabs before it, outside fenced code', () => {
-        const slides = (content: string[]) =>
-            [
-                '---',
-                'markdownpoint: "1.0"',
-                '---',
-                '<!-- slide: first -->',
-                '<!-- text: body -->',
-                ...content,
-                '',
-                '  <!-- slide: second -->',
-                '\t<!-- slide: third -->',
-                ''
-            ].join('\n');
-
-        expect(countPresentationSlides(slides(['Words']))).toBe(3);
-        // A marker-shaped line a fence holds is the code's words, in a list item's fence too
-        expect(countPresentationSlides(slides(['```', '  <!-- slide: example -->', '```']))).toBe(3);
-        expect(countPresentationSlides(slides(['- ```', '  <!-- slide: example -->', '  ```']))).toBe(3);
-    });
-
-    it('counts only slide markers MarkdownPoint accepts', () => {
-        const markdown = [
-            '---',
-            'example: |',
-            '  ```',
-            '---',
-            '<!-- slide: intro -->  ',
-            '<!--slide:next-->',
-            '<!-- slide: Upper -->',
-            '<!-- slide: double--dash -->',
-            '<!-- slide: trailing- -->',
-            '<!-- slide: last -->'
-        ].join('\n');
-
-        expect(countPresentationSlides(markdown)).toBe(2);
-        expect(countPresentationSlides(`${markdown}\n`)).toBe(3);
-    });
-
-    it('returns zero for markdown without slides', () => {
-        expect(countPresentationSlides('# An ordinary note\n\nKeep this ordinary.\n')).toBe(0);
-    });
-});
-
-describe('presentation themes', () => {
-    it('accepts only stable theme keys that name a folder', () => {
-        expect(isPresentationThemeKey('basic')).toBe(true);
-        expect(isPresentationThemeKey('dark-room')).toBe(true);
-        expect(isPresentationThemeKey('../basic')).toBe(false);
-        expect(isPresentationThemeKey('con')).toBe(false);
-        expect(isPresentationThemeKey(42)).toBe(false);
-    });
-
-    it('names a theme by its master name or its humanized key', () => {
-        expect(getPresentationThemeName('basic', { name: 'Basic light' })).toBe('Basic light');
-        expect(getPresentationThemeName('dark-room', {})).toBe('Dark room');
-        expect(getPresentationThemeName('basic', null)).toBe('Basic');
-    });
-
-    it('keeps a Title layout scheme in both appearances and resolves brand colors', () => {
-        const master = {
-            brand: { colors: { orange: '#F2641F' } },
-            schemes: {
-                light: { colors: { background: '#FFFFFF', text: '#17120F', muted: '#6B605A', accent: '{brand.colors.orange}' } },
-                dark: { colors: { background: '#17120F', text: '#FFF6EA', muted: '#BDB2A9' } },
-                apricot: { appearance: 'light', colors: { background: '#FECAA3', text: '{brand.colors.orange}', muted: '#524843' } }
-            }
-        };
-        const titleLayout = { scheme: 'apricot', objects: [{ id: 'title', type: 'text' }] };
-
-        expect(resolvePresentationCover(master, titleLayout)).toEqual({
-            align: 'start',
-            light: { background: '#FECAA3', text: '#F2641F', muted: '#524843' },
-            dark: null
-        });
-    });
-
-    it('reads every hex form the format writes, and no brand color by a reference outside brand.colors', () => {
-        const master = {
-            brand: { colors: { orange: '#F2641F', sky: '#08F' } },
-            schemes: {
-                light: { colors: { background: '#FFF', text: '{brand.colors.sky}', muted: '#6B605A80' } },
-                dark: { colors: { background: '#17120FCC', text: '#FEA8', muted: '{brand.orange}' } },
-                retired: { appearance: 'light', colors: { background: '#FFFFFF', text: '{brand.orange}' } }
-            }
-        };
-
-        expect(resolvePresentationCover(master, null)).toEqual({
-            align: 'start',
-            light: { background: '#FFF', text: '#08F', muted: '#6B605A80' },
-            dark: { background: '#17120FCC', text: '#FEA8', muted: '#FEA8' }
-        });
-        // A cover in a scheme whose text names no brand color has none
-        expect(resolvePresentationCover(master, { scheme: 'retired' })).toBeNull();
-    });
-
-    it('follows the light and dark schemes and a centered title when the Title layout names no scheme', () => {
-        const master = {
-            schemes: {
-                light: { colors: { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' } },
-                dark: { colors: { background: '#000000', text: '#F5F5F7' } }
-            }
-        };
-        const titleLayout = {
-            objects: [
-                { id: 'eyebrow', align: 'center' },
-                { id: 'title', align: 'center' }
-            ]
-        };
-
-        expect(resolvePresentationCover(master, titleLayout)).toEqual({
-            align: 'center',
-            light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#6E6E73' },
-            dark: { background: '#000000', text: '#F5F5F7', muted: '#F5F5F7' }
-        });
-    });
-
-    it('follows the light and dark schemes when the Title layout names a scheme the master lacks, as MarkdownPoint shows it in light', () => {
-        const master = {
-            schemes: {
-                light: { colors: { background: '#FFFFFF', text: '#1D1D1F' } },
-                dark: { colors: { background: '#000000', text: '#F5F5F7' } }
-            }
-        };
-
-        for (const scheme of ['retired', 'toString']) {
-            expect(resolvePresentationCover(master, { scheme, objects: [] })).toEqual({
-                align: 'start',
-                light: { background: '#FFFFFF', text: '#1D1D1F', muted: '#1D1D1F' },
-                dark: { background: '#000000', text: '#F5F5F7', muted: '#F5F5F7' }
-            });
-        }
-    });
-
-    it('reads a master only where MarkdownPoint reads it: format major 1, the type master, a lowercase UUID, and every key a master states', () => {
-        const master = { markdownpoint: '1.0', type: 'master', id: THEME_ID, fonts: {}, schemes: {} };
-        expect(readableMaster(master)).toBe(master);
-        expect(readableMaster({ ...master, markdownpoint: '1.12' })).not.toBeNull();
-        const refused = [
-            ...Object.keys(master).map(key => withoutKey(master, key)),
-            ...['2.0', '1.01', '1', 'one', 1].map(markdownpoint => ({ ...master, markdownpoint })),
-            { ...master, type: 'layout' },
-            { ...master, id: THEME_ID.toUpperCase() },
-            { ...master, id: 'studio' }
-        ];
-        for (const value of refused) {
-            expect(readableMaster(value), JSON.stringify(value)).toBeNull();
-        }
-        expect(readableMaster(null)).toBeNull();
-    });
-
-    it('reads a master’s size as MarkdownPoint does, and gives none where MarkdownPoint refuses it', () => {
-        // [the master's version, its size, MarkdownPoint core's reading (`masterJsonSize`)]
-        const readings: [string, unknown, { width: number; height: number } | null][] = [
-            ['1.0', undefined, { width: 1920, height: 1080 }],
-            ['1.0', { width: 1280, height: 720 }, { width: 1280, height: 720 }],
-            ['1.0', { width: 1920.0000004, height: 1080 }, { width: 1920, height: 1080 }],
-            ['1.0', { width: 1919.9999996, height: 1080 }, { width: 1920, height: 1080 }],
-            ['1.0', { width: 8192.0000004, height: 1080 }, { width: 8192, height: 1080 }],
-            ['1.0', { width: 1920.4, height: 1080 }, null],
-            ['1.0', { width: 8193, height: 1080 }, null],
-            ['1.0', { width: 0, height: 1080 }, null],
-            ['1.0', { width: 0.0000004, height: 1080 }, null],
-            ['1.0', { width: 1280, height: 720, depth: 1 }, null],
-            ['1.0', { width: '1280', height: 720 }, null],
-            ['1.0', { width: 1280 }, null],
-            ['1.0', 'wide', null],
-            ['1.0', null, null],
-            // JSON.parse reads 1e999 as Infinity, which MarkdownPoint refuses
-            ['1.0', { width: Infinity, height: 1080 }, null],
-            ['1.1', { width: 8193, height: 1080 }, { width: 1920, height: 1080 }],
-            ['1.1', { width: 1280, height: 720.5 }, { width: 1920, height: 1080 }],
-            ['1.1', { width: -5, height: 1080 }, { width: 1920, height: 1080 }],
-            ['1.1', { width: 1920.0000004, height: 1080 }, { width: 1920, height: 1080 }],
-            ['1.1', { width: 1280.0000004, height: 720 }, { width: 1280, height: 720 }],
-            ['1.1', { width: 1280, height: 720, depth: 1 }, { width: 1280, height: 720 }],
-            ['1.10', { width: 1280, height: 720 }, { width: 1280, height: 720 }],
-            // The width is read first, and a side outside the range decides before the next is read
-            ['1.1', { width: 720.5, height: null }, { width: 1920, height: 1080 }],
-            ['1.1', { width: 1280.5, height: '720' }, { width: 1920, height: 1080 }],
-            ['1.1', { height: 720.5, width: 'x' }, null],
-            ['1.1', { width: Infinity, height: 720.5 }, null],
-            ['1.1', { width: null, height: 720 }, null],
-            ['1.1', { width: '1280', height: 720 }, null],
-            ['1.1', { width: 1280 }, null],
-            ['1.1', { height: 720.5 }, null],
-            ['1.1', [], null],
-            ['1.1', 'wide', null]
-        ];
-        for (const [markdownpoint, size, reading] of readings) {
-            const master = size === undefined ? { markdownpoint } : { markdownpoint, size };
-            expect(resolveSlideSize(master), `${markdownpoint} ${String(JSON.stringify(size))}`).toEqual(reading);
-        }
-        expect(resolveSlideSize(null)).toBeNull();
-    });
-
-    it('returns no cover without readable scheme colors', () => {
-        expect(resolvePresentationCover(null, null)).toBeNull();
-        expect(resolvePresentationCover({ schemes: { light: { colors: { background: 'white', text: '#000000' } } } }, null)).toBeNull();
-        expect(resolvePresentationCover({ schemes: { light: { background: '#FFFFFF', text: '#000000' } } }, null)).toBeNull();
     });
 });
 

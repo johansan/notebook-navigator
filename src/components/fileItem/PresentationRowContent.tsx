@@ -80,7 +80,7 @@ export function PresentationDetailsContent({ titleElement, summary }: Presentati
             {titleElement}
             <dl className="nn-presentation-details">
                 <dt>{strings.listPane.presentation.theme}</dt>
-                <dd>{summary.themeName ?? MISSING_VALUE}</dd>
+                <dd>{summary.themeName}</dd>
                 <dt>{strings.listPane.presentation.slides}</dt>
                 <dd>{summary.slideCount}</dd>
                 <dt>{strings.listPane.presentation.size}</dt>

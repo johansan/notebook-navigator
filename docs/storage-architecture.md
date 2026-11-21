@@ -61,11 +61,12 @@ graph TB
 
 - Database name: `notebooknavigator/cache/{appId}`
 - Namespace key: `appId` from Obsidian (vault-scoped) passed through `initializeDatabase(...)`.
-- Keys: file paths (`TFile.path`) used as the IndexedDB keys across stores (the main record does not store the path).
+- Keys: file paths (`TFile.path`) used as the IndexedDB keys across stores (the main record does not store the path); the presentations store keys by folder path.
 - Object stores:
   - `keyvaluepairs`: main file records (`FileData`)
   - `filePreviews`: preview text strings (`string`)
   - `featureImageBlobs`: feature image blobs (`{ featureImageKey: string; blob: Blob }`)
+  - `presentations`: MarkdownPoint presentation readings by folder path (`{ stamp, reading }`), written by `PresentationService`
 - Indexes (main store): `mtime` and `tags` (`tags` is `multiEntry: true`)
 
 **Data stored (main record)**:
@@ -619,7 +620,7 @@ When derived content format changes:
 2. Stores are cleared (`IndexedDBStorage.clear()`).
 3. Content providers regenerate derived content for all files during background processing.
 
-Current values: `DB_SCHEMA_VERSION = 3`, `DB_CONTENT_VERSION = 7`.
+Current values: `DB_SCHEMA_VERSION = 4`, `DB_CONTENT_VERSION = 7`.
 
 ### Settings Updates
 

@@ -20,8 +20,8 @@
  * License notices for the packages esbuild bundles into main.js, shown at the bottom of Advanced settings.
  * Their licenses require the copyright and permission notices to ship with every copy, and Obsidian installs
  * only main.js, manifest.json and styles.css, so the notices live in the plugin itself. When a bundled package
- * is added or removed, transitive ones included, update this list. The license text stays in English because
- * it is the licensors' legal text.
+ * is added or removed, transitive ones included, update this list; MarkdownPoint's readers in `src/readers` carry
+ * the packages their header names. The license text stays in English because it is the licensors' legal text.
  */
 interface MitNotice {
     /** Exact npm package names the copyright lines cover */
@@ -78,10 +78,20 @@ const MARKDOWN_LICENSE = [
     'This software is provided by the copyright holders and contributors “as is” and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the copyright owner or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.'
 ].join('\n\n');
 
-export const THIRD_PARTY_PACKAGES: readonly string[] = MIT_NOTICES.flatMap(notice => notice.packages);
+// entities ships under the BSD 2-Clause License, whose binary-form condition asks for this notice to be reproduced
+const ENTITIES_LICENSE = [
+    'Copyright (c) Felix Böhm\nAll rights reserved.',
+    'Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:',
+    'Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.',
+    'Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.',
+    'THIS IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS,\nEVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'
+].join('\n\n');
+
+export const THIRD_PARTY_PACKAGES: readonly string[] = [...MIT_NOTICES.flatMap(notice => notice.packages), 'entities'];
 
 export const THIRD_PARTY_LICENSES_TEXT = [
     ...MIT_NOTICES.map(notice => [notice.packages.join(', '), ...notice.copyright].join('\n')),
     `The packages above are licensed under the MIT License:\n\n${MIT_LICENSE}`,
-    `marked also includes the Markdown license:\n\n${MARKDOWN_LICENSE}`
+    `marked also includes the Markdown license:\n\n${MARKDOWN_LICENSE}`,
+    `entities is licensed under the BSD 2-Clause License:\n\n${ENTITIES_LICENSE}`
 ].join('\n\n');

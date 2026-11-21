@@ -31,6 +31,7 @@ import {
     DB_SCHEMA_VERSION,
     DEFAULT_PREVIEW_LOAD_MAX_BATCH,
     DEFAULT_PREVIEW_TEXT_CACHE_MAX_ENTRIES,
+    PRESENTATION_STORE_NAME,
     PREVIEW_STORE_NAME,
     STORE_NAME
 } from './indexeddb/constants';
@@ -496,10 +497,14 @@ export class IndexedDBStorage {
      */
     private async clearStores(db: IDBDatabase): Promise<void> {
         // Clear stores in one transaction to keep the cache consistent.
-        const transaction = db.transaction([STORE_NAME, FEATURE_IMAGE_STORE_NAME, PREVIEW_STORE_NAME], 'readwrite');
+        const transaction = db.transaction(
+            [STORE_NAME, FEATURE_IMAGE_STORE_NAME, PREVIEW_STORE_NAME, PRESENTATION_STORE_NAME],
+            'readwrite'
+        );
         const store = transaction.objectStore(STORE_NAME);
         const blobStore = transaction.objectStore(FEATURE_IMAGE_STORE_NAME);
         const previewStore = transaction.objectStore(PREVIEW_STORE_NAME);
+        const presentationStore = transaction.objectStore(PRESENTATION_STORE_NAME);
 
         return new Promise((resolve, reject) => {
             const op = 'clear';
@@ -530,6 +535,15 @@ export class IndexedDBStorage {
                     store: PREVIEW_STORE_NAME,
                     name: previewRequest.error?.name,
                     message: previewRequest.error?.message
+                });
+            };
+            const presentationRequest = presentationStore.clear();
+            presentationRequest.onerror = () => {
+                lastRequestError = presentationRequest.error || null;
+                console.error('[IndexedDB] clear failed', {
+                    store: PRESENTATION_STORE_NAME,
+                    name: presentationRequest.error?.name,
+                    message: presentationRequest.error?.message
                 });
             };
             transaction.oncomplete = () => {
@@ -1433,6 +1447,51 @@ export class IndexedDBStorage {
      */
     async deleteFeatureImageBlob(path: string): Promise<void> {
         await this.featureImages.deleteBlob(path);
+    }
+
+    /**
+     * Every MarkdownPoint presentation reading stored by the presentation service, keyed by folder path.
+     * Values are returned as stored; the service validates them because a record can come from an earlier version.
+     */
+    async getPresentationReadings(): Promise<Map<string, unknown>> {
+        await this.init();
+        if (!this.db) throw new Error('Database not initialized');
+        const transaction = this.db.transaction(PRESENTATION_STORE_NAME, 'readonly');
+        const request = transaction.objectStore(PRESENTATION_STORE_NAME).openCursor();
+        const readings = new Map<string, unknown>();
+
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+                const cursor = request.result;
+                if (!cursor) {
+                    return;
+                }
+                if (typeof cursor.key === 'string') {
+                    readings.set(cursor.key, cursor.value);
+                }
+                cursor.continue();
+            };
+            transaction.oncomplete = () => resolve(readings);
+            transaction.onabort = () => this.rejectWithTransactionError(reject, transaction, request.error, 'Transaction aborted');
+            transaction.onerror = () => this.rejectWithTransactionError(reject, transaction, request.error, 'Transaction error');
+        });
+    }
+
+    /**
+     * Store a presentation folder's reading, or remove it when the reading is null.
+     */
+    async setPresentationReading(folderPath: string, reading: unknown): Promise<void> {
+        await this.init();
+        if (!this.db) throw new Error('Database not initialized');
+        const transaction = this.db.transaction(PRESENTATION_STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(PRESENTATION_STORE_NAME);
+        const request = reading === null ? store.delete(folderPath) : store.put(reading, folderPath);
+
+        return new Promise((resolve, reject) => {
+            transaction.oncomplete = () => resolve();
+            transaction.onabort = () => this.rejectWithTransactionError(reject, transaction, request.error, 'Transaction aborted');
+            transaction.onerror = () => this.rejectWithTransactionError(reject, transaction, request.error, 'Transaction error');
+        });
     }
 
     /**

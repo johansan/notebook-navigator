@@ -16,16 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getDefaults, Lexer, Tokenizer } from 'marked';
-import type { Token, Tokens } from 'marked';
 import { TFile, TFolder } from 'obsidian';
 import type { App, EventRef, TAbstractFile } from 'obsidian';
+import {
+    caselessKey,
+    findPresentationPair,
+    holdsPresentationPair,
+    readPresentationFile,
+    readPresentationMarkdown,
+    readPresentationTheme,
+    VERSION_ID,
+    VERSIONS_FOLDER
+} from '../readers/markdownpoint-readers';
+import type { FolderEntry, PresentationFacts, PresentationFileReading, SchemeColors, ThemeFacts } from '../readers/markdownpoint-readers';
 
 /**
  * A MarkdownPoint presentation is a folder holding `slides.md` (the writing) and `presentation.mdpoint`
- * (the presentation data), plus the embedded theme under `themes/<key>/`. The recognition rules below
- * mirror the MarkdownPoint plugin (markdownpoint-obsidian `src/format/recognition.ts`), so both plugins
- * agree on which folders are presentations.
+ * (the presentation data), plus the embedded theme under `themes/<key>/`. MarkdownPoint's own readers, bundled
+ * in `src/readers` at one app commit, decide which folders hold a presentation that opens, what it holds and how
+ * its theme reads, so Navigator lists exactly the presentations MarkdownPoint opens. What a row shows of them,
+ * the slide count, the theme's name, the slide size and the cover, is Navigator's.
  */
 
 /** Which file of a recognized presentation pair a path is. */
@@ -53,48 +63,22 @@ export interface PresentationSummary {
     slidesPath: string;
     companionPath: string;
     slideCount: number;
-    /** Theme display name, or null when the presentation names no theme */
-    themeName: string | null;
-    /** Slide size in canvas units from the theme's master.json, 1920 × 1080 where it declares none, or null when the theme is missing or MarkdownPoint refuses its master or size */
+    /** The theme's name, or its key humanized when MarkdownPoint doesn't read the theme */
+    themeName: string;
+    /** Slide size in canvas units, or null when MarkdownPoint doesn't read the theme */
     size: { width: number; height: number } | null;
-    /** Null when the theme files are missing or unreadable, or MarkdownPoint refuses the master; the cover then uses Obsidian colors */
+    /** Null when MarkdownPoint doesn't read the theme; the cover then uses Obsidian colors */
     cover: PresentationCover | null;
 }
 
-const SLIDES_FILE_NAME = 'slides.md';
-const COMPANION_FILE_NAME = 'presentation.mdpoint';
-// Format major 1 with any minor, written without leading zeros: "1.0", "1.10"
-const FORMAT_VERSION_PATTERN = /^1\.(?:0|[1-9]\d{0,8})$/;
-// A lowercase canonical UUID, as the format writes a presentation's id and a theme's
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-// The keys a master states; MarkdownPoint refuses a master that leaves one out before reading any of its settings
-const MASTER_REQUIRED_KEYS = ['markdownpoint', 'type', 'id', 'fonts', 'schemes'];
-const DEFAULT_SLIDE_SIZE = { width: 1920, height: 1080 };
-// The longest side a slide has, in canvas units
-const MAX_SLIDE_SIDE = 8192;
-const STABLE_ID_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const RESERVED_THEME_KEY_PATTERN = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
-const FRONTMATTER_PATTERN = /^---[ \t]*\n(?:[^\n]*\n)*?---[ \t]*(?:\n|$)/;
-const SLIDE_MARKER_PATTERN = /^<!--\s*slide:\s*([a-z][a-z0-9-]*)\s*-->$/;
-// Any line MarkdownPoint reads as a marker, misspelled ones included; each one outside code starts a new Markdown block
-const STRUCTURAL_MARKER_PATTERN =
-    /^<!--\s*\/?(?:mp:)?(?:section|slide|composition|text|control|notes)(?=[:\s]|-->|$):?\s*(?:\S+?\s*)?(?:-->.*)?$/i;
-const LINE_BREAK_TAG_PATTERN = /^<br[ \t]*\/?>(?:[ \t]*\n)?/i;
-const OPEN_FENCE_PROBE = 'mp-open-fence-probe';
-// A hex color as the format writes one: three, four, six or eight digits
-const HEX_COLOR_PATTERN = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-// A scheme role's brand color, written as its path in the master: `{brand.colors.<name>}`, the name a stable id
-const BRAND_COLOR_REFERENCE_PATTERN = /^\{brand\.colors\.([a-z][a-z0-9]*(?:-[a-z0-9]+)*)\}$/;
-// A day the calendar has, from year 0001 on, February 29 in leap years alone: a year divisible by 4, a century only when divisible by 400
-const CALENDAR_DAY =
-    '(?!0000)(?:[0-9]{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12][0-9]|3[01])|(?:0[469]|11)-(?:0[1-9]|[12][0-9]|30)|02-(?:0[1-9]|1[0-9]|2[0-8]))' +
-    '|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:[02468][048]|[13579][26])00)-02-29)';
-// A saved version's folder name: its save time in UTC to the second on a day the calendar has, then its tail
-const VERSION_ID_PATTERN = new RegExp(`^${CALENDAR_DAY}T(?:[01][0-9]|2[0-3])\\.[0-5][0-9]\\.[0-5][0-9]Z-[a-z0-9]{4}$`);
-// Matches `<presentation folder>/themes/<theme key>/<file>.json`; group 1 is the presentation folder (absent at the vault root)
-const THEME_FILE_PATH_PATTERN = /^(?:(.*)\/)?themes\/[^/]+\/[^/]+\.json$/;
+/** The app commit the readers in `src/readers` were bundled at, as their header names it */
+export const READERS_COMMIT = '5690b39474085830611eb6e37a1c41edbdea7c8b';
 // Collapses the vault event burst of a save, move or sync into one read per folder
 const FOLDER_REFRESH_DELAY_MS = 100;
+// The names of a presentation's two files as one name in any case, the only files that decide whether a folder holds a pair
+const PAIR_NAMES = new Set(['slides.md', 'presentation.mdpoint'].map(caselessKey));
+// Matches `<presentation folder>/themes/<theme key>/<file>.json`; group 1 is the presentation folder (absent at the vault root)
+const THEME_FILE_PATH_PATTERN = /^(?:(.*)\/)?themes\/[^/]+\/[^/]+\.json$/i;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -118,9 +102,9 @@ function isPathInFolder(path: string, folderPath: string): boolean {
 }
 
 /**
- * Classifies a file name as a candidate member of a presentation pair. Candidates include sync conflict
- * copies (`slides 2.md`, `presentation (1).mdpoint`), so a folder with conflicts is not mistaken for a
- * valid pair. AppleDouble files (`._*`) are ignored.
+ * Classifies a file name as a candidate member of a presentation pair, which decides the folders to read. Candidates
+ * include sync conflict copies (`slides 2.md`, `presentation (1).mdpoint`), whose arrival can keep a folder from
+ * holding a pair. AppleDouble files (`._*`) are ignored.
  */
 function getPresentationMemberKind(name: string): 'markdown' | 'companion' | null {
     const lower = name.toLowerCase();
@@ -130,24 +114,6 @@ function getPresentationMemberKind(name: string): 'markdown' | 'companion' | nul
     return /^slides(?![a-z])/i.test(name) && lower.endsWith('.md') ? 'markdown' : null;
 }
 
-/** Returns the pair's file names when a folder holds exactly one `slides.md` and one `presentation.mdpoint`. */
-export function getPresentationPairNames(names: readonly string[]): { markdown: string; companion: string } | null {
-    const markdown = names.filter(name => getPresentationMemberKind(name) === 'markdown');
-    const companion = names.filter(name => getPresentationMemberKind(name) === 'companion');
-    if (markdown.length !== 1 || companion.length !== 1) {
-        return null;
-    }
-    if (markdown[0].toLowerCase() !== SLIDES_FILE_NAME || companion[0].toLowerCase() !== COMPANION_FILE_NAME) {
-        return null;
-    }
-    return { markdown: markdown[0], companion: companion[0] };
-}
-
-/**
- * MarkdownPoint states its format version as a `"major.minor"` string, because as numbers 1.10 and 1.1 are equal.
- * A file of format major 1 opens whatever its minor, since a later minor only adds what a reader may ignore.
- * The type check comes first because a regular expression test would turn an unquoted `1.1` into a match.
- */
 /**
  * Whether a folder lies under a presentation's `versions/`, whose pairs MarkdownPoint never opens as presentations of
  * their own: in a folder there named by a save time, or anywhere below it where the folder around `versions/` holds a
@@ -159,8 +125,8 @@ export function isInSavedVersions(folderPath: string, holdsPresentation: (folder
     const folders = folderPath === '/' ? [] : folderPath.split('/');
     return folders.some(
         (name, at) =>
-            (name === 'versions' || (ignoresCase && name.toLowerCase() === 'versions')) &&
-            (VERSION_ID_PATTERN.test(folders[at + 1] ?? '') || holdsPresentation(folders.slice(0, at).join('/') || '/'))
+            (name === VERSIONS_FOLDER || (ignoresCase && name.toLowerCase() === VERSIONS_FOLDER)) &&
+            (VERSION_ID.test(folders[at + 1] ?? '') || holdsPresentation(folders.slice(0, at).join('/') || '/'))
     );
 }
 
@@ -172,313 +138,127 @@ function holdsPresentationFile(app: App, folderPath: string): boolean {
     );
 }
 
-function isReadableFormatVersion(value: unknown): boolean {
-    return typeof value === 'string' && FORMAT_VERSION_PATTERN.test(value);
+/** A folder's entries as MarkdownPoint's readers take them. */
+function getFolderEntries(folder: TFolder): FolderEntry[] {
+    return folder.children.map(entry => ({ name: entry.name, directory: !(entry instanceof TFile) }));
 }
 
-/**
- * Returns the shared presentation id when `slides.md` frontmatter and the parsed `.mdpoint` data belong to the
- * same presentation. A copied or replaced companion keeps its own id, so a mismatch is not a presentation.
- */
-export function getPresentationIdentity(frontmatter: unknown, companion: unknown): string | null {
-    if (!isRecord(frontmatter) || !isRecord(companion)) {
-        return null;
-    }
-    if (
-        !isReadableFormatVersion(frontmatter.markdownpoint) ||
-        !isReadableFormatVersion(companion.markdownpoint) ||
-        companion.type !== 'presentation'
-    ) {
-        return null;
-    }
-    const presentationId = frontmatter.id;
-    if (typeof presentationId !== 'string' || !UUID_PATTERN.test(presentationId)) {
-        return null;
-    }
-    return companion.id === presentationId ? presentationId : null;
-}
-
-/**
- * MarkdownPoint's grammar reads a `<br>` line as a line break in a paragraph. Marked's default reads it as an HTML
- * block that runs to the next blank line and takes in any fence opened before that line, which would change
- * whether a later marker is inside code.
- */
-class PresentationTokenizer extends Tokenizer {
-    html(src: string): Tokens.HTML | undefined {
-        return LINE_BREAK_TAG_PATTERN.test(src) ? undefined : super.html(src);
-    }
-}
-
-/**
- * Returns true when the Markdown ends inside a fenced code block, as Marked reads it: an appended probe line joins
- * the last code block only while that block is still open. A fence opened in a list item or a quote closes with it,
- * so only a top-level fence counts.
- */
-function endsInOpenFence(markdown: string): boolean {
-    if (!markdown.includes('```') && !markdown.includes('~~~')) {
-        return false;
-    }
-    const lexer = new Lexer({ ...getDefaults(), tokenizer: new PresentationTokenizer() });
-    const tokens = lexer.blockTokens(`${markdown}\n${OPEN_FENCE_PROBE}`).filter(token => token.type !== 'space');
-    const last = tokens[tokens.length - 1];
-    return last?.type === 'code' && last.codeBlockStyle !== 'indented' && last.raw.replace(/\n+$/, '').endsWith(OPEN_FENCE_PROBE);
-}
-
-/**
- * Returns true when the last line of the Markdown stands in a fenced code block, one a list item or a quote ends with
- * included, which an indented line continues (`markdownLastLineFenced` in MarkdownPoint core).
- */
-function lastLineFenced(markdown: string): boolean {
-    const lexer = new Lexer({ ...getDefaults(), tokenizer: new PresentationTokenizer() });
-    const lastBlock = (tokens: readonly Token[] | undefined) => {
-        const blocks = tokens?.filter(token => token.type !== 'space') ?? [];
-        return blocks[blocks.length - 1];
-    };
-    let last = lastBlock(lexer.blockTokens(markdown));
-    while (last?.type === 'list' || last?.type === 'list_item' || last?.type === 'blockquote') {
-        // A list holds its items, and an item or a quote its blocks
-        const { items, tokens } = last as { items?: Token[]; tokens?: Token[] };
-        last = lastBlock(items ?? tokens);
-    }
-    return last?.type === 'code' && last.codeBlockStyle !== 'indented';
-}
-
-/**
- * Counts slides the way the MarkdownPoint app reads `slides.md` (`markerTokens` in MarkdownPoint core): one per
- * `<!-- slide: id -->` line after the frontmatter whose id is a stable id and that a line break ends, the spaces or
- * tabs around it aside. The app rejects any other slide marker, so it is not counted.
- *
- * Every marker-shaped line outside code starts a new Markdown block, so a fence or HTML in one block cannot hide
- * the markers of the next. A marker-shaped line inside a fenced code block is slide content. Marked decides that
- * from the block's text before the line, and is asked only after a fence-like line or while a fence is open,
- * because a later line can close it. Keep Marked on the release MarkdownPoint uses, because releases differ in
- * which lines start an HTML block, and an HTML block decides whether a fence-like line opens code.
- */
-export function countPresentationSlides(markdown: string): number {
-    const text = (markdown.charCodeAt(0) === 0xfeff ? markdown.slice(1) : markdown).replace(/\r\n?/g, '\n');
-    let offset = FRONTMATTER_PATTERN.exec(text)?.[0].length ?? 0;
-    let blockStart = offset;
-    let fenceLineSeen = false;
-    let blockFenced = false;
-    let fenceOpen = false;
-    let count = 0;
-    while (offset < text.length) {
-        const newline = text.indexOf('\n', offset);
-        const end = newline < 0 ? text.length : newline + 1;
-        // Markers are read without the spaces or tabs an editor may leave at either end
-        const padded = text.slice(offset, newline < 0 ? text.length : newline).replace(/[ \t]+$/, '');
-        const line = padded.replace(/^[ \t]+/, '');
-        if (line.includes('```') || line.includes('~~~')) {
-            fenceLineSeen = true;
-            blockFenced = true;
+/** Whether a folder above `folder` holds a whole presentation, which keeps every presentation inside it from opening. */
+function isInsidePresentation(folder: TFolder): boolean {
+    for (let at = folder.parent; at; at = at.parent) {
+        // A whole pair takes a presentation file, whose name ends in .mdpoint in any case, so a folder without one is
+        // passed over before the caseless match of its every name
+        const holdsCompanion = at.children.some(child => child instanceof TFile && getPresentationMemberKind(child.name) === 'companion');
+        if (holdsCompanion && holdsPresentationPair(getFolderEntries(at))) {
+            return true;
         }
-        if (STRUCTURAL_MARKER_PATTERN.test(line)) {
-            if (fenceLineSeen || fenceOpen) {
-                fenceOpen = endsInOpenFence(text.slice(blockStart, offset));
-                fenceLineSeen = false;
-            }
-            // An indented marker-shaped line may continue a fenced code block that a list item or a quote holds
-            const inCode = fenceOpen || (blockFenced && line !== padded && lastLineFenced(`${text.slice(blockStart, offset)}${padded}\n`));
-            if (!inCode) {
-                blockStart = end;
-                blockFenced = false;
-                const match = SLIDE_MARKER_PATTERN.exec(line);
-                if (match && newline >= 0 && STABLE_ID_PATTERN.test(match[1])) {
-                    count += 1;
-                }
-            }
-        }
-        offset = end;
     }
-    return count;
+    return false;
 }
 
-/** Theme keys name a folder under `themes/`, so anything that is not a stable id is ignored. */
-export function isPresentationThemeKey(value: unknown): value is string {
-    return typeof value === 'string' && STABLE_ID_PATTERN.test(value) && !RESERVED_THEME_KEY_PATTERN.test(value);
-}
-
-/** Uses the theme's own `name`, otherwise the key with separators as spaces and a capital first letter. */
-export function getPresentationThemeName(themeKey: string, master: Record<string, unknown> | null): string {
-    const name = master?.name;
-    if (typeof name === 'string' && name.trim()) {
-        return name.trim();
-    }
+/** The key with separators as spaces and a capital first letter, for a theme MarkdownPoint doesn't read. */
+function getPresentationThemeName(themeKey: string): string {
     const words = themeKey.replace(/[-_]+/g, ' ');
     return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-function resolveThemeColor(value: unknown, brandColors: Record<string, unknown>): string | null {
-    if (typeof value !== 'string') {
-        return null;
-    }
-    if (HEX_COLOR_PATTERN.test(value)) {
-        return value;
-    }
-    const reference = BRAND_COLOR_REFERENCE_PATTERN.exec(value);
-    const brandColor = reference && Object.prototype.hasOwnProperty.call(brandColors, reference[1]) ? brandColors[reference[1]] : undefined;
-    return typeof brandColor === 'string' && HEX_COLOR_PATTERN.test(brandColor) ? brandColor : null;
-}
-
-function resolveCoverColors(scheme: unknown, brandColors: Record<string, unknown>): PresentationCoverColors | null {
-    if (!isRecord(scheme) || !isRecord(scheme.colors)) {
-        return null;
-    }
-    const colors = scheme.colors;
-    const background = resolveThemeColor(colors.background, brandColors);
-    const text = resolveThemeColor(colors.text, brandColors);
-    if (!background || !text) {
-        return null;
-    }
-    return { background, text, muted: resolveThemeColor(colors.muted, brandColors) ?? text };
+function getCoverColors({ background, text, muted }: SchemeColors): PresentationCoverColors {
+    return { background, text, muted };
 }
 
 /**
- * Resolves the cover from the theme's master and Title layout. The Title layout's `scheme` applies in both
- * light and dark mode; without one, or with one the master lacks, which MarkdownPoint shows in light, the cover
- * follows the theme's `light` and `dark` schemes. The title text
- * object's `align` decides between a centered and a start-aligned cover.
+ * Resolves the cover from the theme's schemes and its Title layout. The Title layout's scheme applies in both light
+ * and dark mode; without one, the cover follows the theme's `light` and `dark` schemes. The title text's alignment
+ * decides between a centered and a start-aligned cover.
  */
-export function resolvePresentationCover(
-    master: Record<string, unknown> | null,
-    titleLayout: Record<string, unknown> | null
-): PresentationCover | null {
-    if (!master || !isRecord(master.schemes)) {
-        return null;
-    }
-    const schemes = master.schemes;
-    const brand = isRecord(master.brand) && isRecord(master.brand.colors) ? master.brand.colors : {};
+export function resolvePresentationCover(theme: ThemeFacts): PresentationCover {
+    const titleLayout = theme.layouts.find(layout => layout.key === 'title');
     const layoutScheme =
-        typeof titleLayout?.scheme === 'string' && Object.prototype.hasOwnProperty.call(schemes, titleLayout.scheme)
+        titleLayout?.scheme !== undefined && Object.prototype.hasOwnProperty.call(theme.schemes, titleLayout.scheme)
             ? titleLayout.scheme
             : null;
-    const light = resolveCoverColors(schemes[layoutScheme ?? 'light'], brand);
-    if (!light) {
-        return null;
-    }
-    const dark = layoutScheme ? null : resolveCoverColors(schemes.dark, brand);
-    const objects: unknown[] = Array.isArray(titleLayout?.objects) ? titleLayout.objects : [];
-    const titleObject = objects.find(object => isRecord(object) && object.id === 'title');
-    const align = isRecord(titleObject) && titleObject.align === 'center' ? 'center' : 'start';
-    return { align, light, dark };
+    return {
+        align: titleLayout?.titleAlign === 'center' ? 'center' : 'start',
+        light: getCoverColors(theme.schemes[layoutScheme ?? 'light']),
+        dark: layoutScheme ? null : getCoverColors(theme.schemes.dark)
+    };
 }
 
 /**
- * The theme's master as MarkdownPoint reads it, or null where MarkdownPoint refuses it before reading any of its
- * settings, as MarkdownPoint core's theme file envelope does: it states format major 1 with any minor, its type is
- * "master", its id is a lowercase UUID, and it has every key a master states.
+ * What MarkdownPoint's readers say of a folder holding a presentation that opens: its pair's file names, what the
+ * presentation holds, and its theme where MarkdownPoint reads it. Navigator's summary is made from it each time it is
+ * shown, so a stored reading never keeps an earlier version's summary.
  */
-export function readableMaster(master: Record<string, unknown> | null): Record<string, unknown> | null {
-    if (!master || !MASTER_REQUIRED_KEYS.every(key => Object.prototype.hasOwnProperty.call(master, key))) {
-        return null;
-    }
-    const readable = isReadableFormatVersion(master.markdownpoint) && master.type === 'master';
-    return readable && typeof master.id === 'string' && UUID_PATTERN.test(master.id) ? master : null;
+interface PresentationReading {
+    markdown: string;
+    json: string;
+    presentation: PresentationFacts;
+    theme: ThemeFacts | null;
 }
 
-/**
- * The slide size a readable master gives, as MarkdownPoint core's `masterJsonSize` reads it, or null where MarkdownPoint
- * refuses it. A master that declares no size gives 1920 × 1080. Each side is read to the millionth and must then be a
- * whole number from 1 to 8192, width first. Format 1.0 refuses any other side and any key beside width and height. A
- * newer minor gives 1920 × 1080 for the whole size from the first side outside that range, and passes other keys
- * over. Every minor refuses a size that isn't a record and a side that is left out or isn't a finite number.
- */
-export function resolveSlideSize(master: Record<string, unknown> | null): { width: number; height: number } | null {
-    if (!master) {
-        return null;
-    }
-    const size = master.size;
-    if (size === undefined) {
-        return { ...DEFAULT_SLIDE_SIZE };
-    }
-    if (!isRecord(size) || !('width' in size) || !('height' in size)) {
-        return null;
-    }
-    // MarkdownPoint reads format 1.0; a newer minor reads as far as 1.0 knows it
-    const newerMinor = master.markdownpoint !== '1.0';
-    if (!newerMinor && Object.keys(size).some(key => key !== 'width' && key !== 'height')) {
-        return null;
-    }
-    const sides: number[] = [];
-    for (const side of [size.width, size.height]) {
-        if (typeof side !== 'number' || !Number.isFinite(side)) {
-            return null;
-        }
-        // To the millionth, as MarkdownPoint keeps every number a file holds
-        const value = Number(side.toFixed(6));
-        if (!Number.isInteger(value) || value < 1 || value > MAX_SLIDE_SIDE) {
-            return newerMinor ? { ...DEFAULT_SLIDE_SIZE } : null;
-        }
-        sides.push(value);
-    }
-    return { width: sides[0], height: sides[1] };
+/** A folder's reading as the database keeps it, null where the folder holds no presentation that opens. */
+interface StoredPresentationReading {
+    stamp: string;
+    reading: PresentationReading | null;
 }
 
-function findChildFile(folder: TFolder, name: string): TFile | null {
-    const child = folder.children.find(entry => entry instanceof TFile && entry.name === name);
-    return child instanceof TFile ? child : null;
+/** The shape of a stored reading, which a stamp names so a record of another shape is read again; change it with that shape */
+const STORED_READING_VERSION = 1;
+
+/** The database's store of readings, by folder path; a record read back can come from an earlier version. */
+export interface PresentationReadingStore {
+    getPresentationReadings(): Promise<Map<string, unknown>>;
+    setPresentationReading(folderPath: string, reading: unknown): Promise<void>;
 }
 
-async function readJson(app: App, path: string): Promise<unknown> {
-    const file = app.vault.getAbstractFileByPath(path);
-    if (!(file instanceof TFile)) {
-        return null;
-    }
-    try {
-        return JSON.parse(await app.vault.cachedRead(file)) as unknown;
-    } catch {
-        // Unreadable or partially synced JSON reads as missing; the next modify event reads it again
-        return null;
-    }
-}
-
-async function readJsonRecord(app: App, path: string): Promise<Record<string, unknown> | null> {
-    const value = await readJson(app, path);
-    return isRecord(value) ? value : null;
-}
-
-/**
- * Reads one folder and returns its summary when it holds a valid presentation pair outside a presentation's saved
- * versions, otherwise null.
- * The vault is read here, outside rendering, and rows read the cached summary.
- */
-async function readPresentation(app: App, folderPath: string, ignoresCase: boolean): Promise<PresentationSummary | null> {
-    const folder = app.vault.getAbstractFileByPath(folderPath);
-    // A saved version's pair belongs to its presentation's history, never a presentation of its own
-    if (!(folder instanceof TFolder) || isInSavedVersions(folderPath, path => holdsPresentationFile(app, path), ignoresCase)) {
-        return null;
-    }
-    const pair = getPresentationPairNames(folder.children.filter(child => child instanceof TFile).map(child => child.name));
-    if (!pair) {
-        return null;
-    }
-    const slidesFile = findChildFile(folder, pair.markdown);
-    const companionFile = findChildFile(folder, pair.companion);
-    if (!slidesFile || !companionFile) {
-        return null;
-    }
-    // Frontmatter comes from the metadata cache; a slides.md that is not indexed yet is verified again on its `changed` event
-    const frontmatter = app.metadataCache.getFileCache(slidesFile)?.frontmatter;
-    const companion = await readJson(app, companionFile.path);
-    if (getPresentationIdentity(frontmatter, companion) === null || !isRecord(companion)) {
-        return null;
-    }
-
-    const slideCount = countPresentationSlides(await app.vault.cachedRead(slidesFile));
-    const themeKey = isPresentationThemeKey(companion.theme) ? companion.theme : null;
-    const themeFolderPath = themeKey ? joinPath(folderPath, `themes/${themeKey}`) : null;
-    const master = readableMaster(themeFolderPath ? await readJsonRecord(app, `${themeFolderPath}/master.json`) : null);
-    const titleLayout = themeFolderPath ? await readJsonRecord(app, `${themeFolderPath}/title.json`) : null;
-
+function getPresentationSummary(folderPath: string, { markdown, json, presentation, theme }: PresentationReading): PresentationSummary {
     return {
         folderPath,
-        slidesPath: slidesFile.path,
-        companionPath: companionFile.path,
-        slideCount,
-        themeName: themeKey ? getPresentationThemeName(themeKey, master) : null,
-        size: resolveSlideSize(master),
-        cover: resolvePresentationCover(master, titleLayout)
+        slidesPath: joinPath(folderPath, markdown),
+        companionPath: joinPath(folderPath, json),
+        // A composition's definition is never presented, so it is not a slide
+        slideCount: presentation.slides.filter(slide => !slide.composition).length,
+        themeName: theme ? theme.name : getPresentationThemeName(presentation.theme),
+        size: theme ? { width: theme.size.width, height: theme.size.height } : null,
+        cover: theme ? resolvePresentationCover(theme) : null
     };
+}
+
+function compareNames(first: unknown[], second: unknown[]): number {
+    const [a, b] = [String(first[0]), String(second[0])];
+    return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/** The folder's entries with each file's time and size, in name order, as the vault lists them. */
+function getFolderStamp(folder: TFolder): unknown[] {
+    return folder.children
+        .map(entry => (entry instanceof TFile ? [entry.name, entry.stat.mtime, entry.stat.size] : [`${entry.name}/`]))
+        .sort(compareNames);
+}
+
+function getThemeFolder(app: App, folderPath: string, themeKey: string): TFolder | null {
+    const folder = app.vault.getAbstractFileByPath(joinPath(folderPath, `themes/${themeKey}`));
+    return folder instanceof TFolder ? folder : null;
+}
+
+function getThemeFiles(folder: TFolder | null): TFile[] {
+    return (folder?.children ?? []).filter((entry): entry is TFile => entry instanceof TFile && entry.name.toLowerCase().endsWith('.json'));
+}
+
+function getThemeStamp(folder: TFolder | null): unknown[] | null {
+    return folder
+        ? getThemeFiles(folder)
+              .map(file => [file.name, file.stat.mtime, file.stat.size])
+              .sort(compareNames)
+        : null;
+}
+
+/**
+ * What a folder's reading rests on: the stored shape, the readers' commit, the folder's entries and the theme's JSON
+ * files, each file by its time and size.
+ */
+function getStamp(folderStamp: unknown[], themeKey: string | null, themeStamp: unknown[] | null): string {
+    return JSON.stringify([STORED_READING_VERSION, READERS_COMMIT, folderStamp, themeKey, themeStamp]);
 }
 
 function isSameSummary(previous: PresentationSummary | null, next: PresentationSummary | null): boolean {
@@ -488,36 +268,48 @@ function isSameSummary(previous: PresentationSummary | null, next: PresentationS
 /**
  * Keeps an in-memory index of the vault's MarkdownPoint presentations.
  *
- * Roles (which paths are `slides.md` and `presentation.mdpoint` of a verified pair) are published only after
- * the companion's presentation id matches the frontmatter, together with the presentation data. Row rendering,
- * row height estimates and file visibility all read the same role map synchronously, so they always agree:
- * a pair that is not verified yet renders, measures and filters as ordinary files.
+ * Roles (which paths are `slides.md` and `presentation.mdpoint` of a presentation that opens) are published together
+ * with the presentation data. Row rendering, row height estimates and file visibility all read the same role map
+ * synchronously, so they always agree: a pair that has not been read yet renders, measures and filters as ordinary files.
+ *
+ * Each folder's reading is stored in the database with the stamp of the files it was read from, so a folder whose files
+ * are as they were when Obsidian last ran is not read again. Folders are read one at a time.
  */
 export class PresentationService {
     private readonly app: App;
+    // Resolves to the store of readings once the database is ready, or null when it isn't available
+    private readonly getStore: () => Promise<PresentationReadingStore | null>;
     private readonly summaries = new Map<string, PresentationSummary>();
     private readonly roles = new Map<string, PresentationFileRole>();
     private readonly summaryListeners = new Map<string, Set<() => void>>();
     private readonly roleListeners = new Set<() => void>();
     private readonly pendingFolders = new Set<string>();
-    // Bumped per folder read so a slow read that finishes after a newer one cannot publish stale data
-    private readonly readGenerations = new Map<string, number>();
     private readonly vaultEventRefs: EventRef[] = [];
-    private metadataEventRef: EventRef | null = null;
+    // Folders found at start whose stored reading has not been checked yet; an event reads the folder instead
+    private unrestoredFolders: Set<string> | null = null;
+    // The presentation file read last, kept until its time or size changes or an event names it, so a save of slides.md
+    // doesn't read it again
+    private keptFile: { path: string; mtime: number; size: number; reading: PresentationFileReading } | null = null;
     private refreshTimer: number | null = null;
+    // The reads of each quiet interval's folders, one after another
+    private reads: Promise<void> = Promise.resolve();
+    // Counts the vault events the service has handled, so a read can tell whether one came while it ran
+    private vaultEvents = 0;
     private disposed = false;
     private ignoresCase: Promise<boolean> | null = null;
 
-    constructor(app: App) {
+    constructor(app: App, getStore: () => Promise<PresentationReadingStore | null>) {
         this.app = app;
+        this.getStore = getStore;
     }
 
     /**
-     * Registers vault and metadata listeners and queues every folder that holds a `.mdpoint` file.
-     * Call after the workspace layout is ready, because the vault emits a `create` event per file while it loads.
+     * Registers vault listeners and publishes every presentation folder, from its stored reading when its files are as
+     * they were, otherwise by reading it. Call after the workspace layout is ready, because the vault emits a `create`
+     * event per file while it loads.
      */
     start(): void {
-        const { vault, metadataCache } = this.app;
+        const { vault } = this.app;
         this.vaultEventRefs.push(
             vault.on('create', file => this.handleChange(file, file.path, true)),
             vault.on('modify', file => this.handleChange(file, file.path, false)),
@@ -527,29 +319,27 @@ export class PresentationService {
                 this.handleChange(file, file.path, true);
             })
         );
-        // Frontmatter edits in slides.md arrive here once the metadata cache has indexed them
-        this.metadataEventRef = metadataCache.on('changed', file => this.handleChange(file, file.path, false));
+        this.unrestoredFolders = this.getCompanionFolders();
+        void this.restore();
+    }
 
-        for (const file of vault.getFiles()) {
-            if (getPresentationMemberKind(file.name) === 'companion') {
-                this.queueFolder(getParentPath(file.path));
-            }
-        }
+    /** Reads every presentation folder again, as after the database was cleared. */
+    readAll(): void {
+        this.keptFile = null;
+        this.getCompanionFolders().forEach(folderPath => this.queueFolder(folderPath));
     }
 
     dispose(): void {
         this.disposed = true;
         this.vaultEventRefs.forEach(ref => this.app.vault.offref(ref));
         this.vaultEventRefs.length = 0;
-        if (this.metadataEventRef) {
-            this.app.metadataCache.offref(this.metadataEventRef);
-            this.metadataEventRef = null;
-        }
         if (this.refreshTimer !== null) {
             window.clearTimeout(this.refreshTimer);
             this.refreshTimer = null;
         }
         this.pendingFolders.clear();
+        this.unrestoredFolders = null;
+        this.keptFile = null;
         this.summaries.clear();
         this.roles.clear();
         this.summaryListeners.clear();
@@ -588,8 +378,75 @@ export class PresentationService {
         };
     }
 
+    private getCompanionFolders(): Set<string> {
+        const folderPaths = new Set<string>();
+        for (const file of this.app.vault.getFiles()) {
+            if (getPresentationMemberKind(file.name) === 'companion') {
+                folderPaths.add(getParentPath(file.path));
+            }
+        }
+        return folderPaths;
+    }
+
+    /** Publishes each folder found at start whose stored reading matches its files, and reads the others. */
+    private async restore(): Promise<void> {
+        let stored = new Map<string, unknown>();
+        try {
+            stored = (await (await this.getStore())?.getPresentationReadings()) ?? stored;
+        } catch (error: unknown) {
+            console.error('Failed to load presentation readings:', error);
+        }
+        const ignoresCase = await this.vaultIgnoresCase();
+        const folderPaths = this.unrestoredFolders;
+        this.unrestoredFolders = null;
+        if (this.disposed || !folderPaths) {
+            return;
+        }
+        for (const folderPath of folderPaths) {
+            const summary = this.getRestoredSummary(folderPath, stored.get(folderPath), ignoresCase);
+            if (summary === undefined) {
+                this.queueFolder(folderPath);
+                continue;
+            }
+            try {
+                this.publish(folderPath, summary);
+            } catch (error: unknown) {
+                // A listener that throws while a folder is published leaves the other folders to be published
+                console.error('Failed to publish a presentation folder:', error);
+            }
+        }
+        // A folder that holds no presentation file keeps no reading
+        for (const folderPath of stored.keys()) {
+            if (!holdsPresentationFile(this.app, folderPath)) {
+                this.storeReading(folderPath, null);
+            }
+        }
+    }
+
+    /** The summary a stored reading gives while the folder's files are as they were when it was read; otherwise undefined. */
+    private getRestoredSummary(folderPath: string, value: unknown, ignoresCase: boolean): PresentationSummary | null | undefined {
+        const folder = this.app.vault.getAbstractFileByPath(folderPath);
+        if (!isRecord(value) || typeof value.stamp !== 'string' || !(folder instanceof TFolder) || this.isExcluded(folder, ignoresCase)) {
+            return undefined;
+        }
+        try {
+            // A stamp that matches names this version's stored shape, which the reading then has
+            const { stamp, reading } = value as unknown as StoredPresentationReading;
+            const themeKey = reading?.presentation.theme ?? null;
+            const themeStamp = themeKey === null ? null : getThemeStamp(getThemeFolder(this.app, folderPath, themeKey));
+            if (stamp !== getStamp(getFolderStamp(folder), themeKey, themeStamp)) {
+                return undefined;
+            }
+            return reading ? getPresentationSummary(folderPath, reading) : null;
+        } catch {
+            // A record of another shape is read again
+            return undefined;
+        }
+    }
+
     /** `placed` is true for an event that adds, removes or moves the file, false for one that changes what it holds. */
     private handleChange(file: TAbstractFile, path: string, placed: boolean): void {
+        this.vaultEvents += 1;
         if (file instanceof TFolder) {
             // A renamed or deleted folder moves or removes every presentation inside it, and a folder moved or
             // synced into the vault can bring complete presentations with it
@@ -605,28 +462,33 @@ export class PresentationService {
             return;
         }
 
+        if (this.keptFile?.path === path) {
+            // A volume that keeps file times coarsely can leave an edited file's time and size as they were
+            this.keptFile = null;
+        }
         const folderPath = getParentPath(path);
-        if (getPresentationMemberKind(getFileName(path)) !== null) {
+        const name = getFileName(path);
+        const kind = getPresentationMemberKind(name);
+        if (kind !== null) {
             this.queueFolder(folderPath);
-            // A copy of a saved version is told apart by the presentation file around its `versions/`, so it is read
-            // again when that file comes or goes
-            const folder =
-                placed && getPresentationMemberKind(getFileName(path)) === 'companion'
-                    ? this.app.vault.getAbstractFileByPath(folderPath)
-                    : null;
-            if (folder instanceof TFolder) {
+            const folder = placed ? this.app.vault.getAbstractFileByPath(folderPath) : null;
+            if (folder instanceof TFolder && PAIR_NAMES.has(caselessKey(name))) {
+                // A pair's file coming or going decides whether the presentations inside its folder open
+                this.queueCompanionFoldersIn(folder);
+            } else if (folder instanceof TFolder && kind === 'companion') {
+                // A presentation file coming or going decides whether the copies of saved versions beside it open
                 for (const child of folder.children) {
-                    if (child instanceof TFolder && child.name.toLowerCase() === 'versions') {
+                    if (child instanceof TFolder && child.name.toLowerCase() === VERSIONS_FOLDER) {
                         this.queueCompanionFoldersIn(child);
                     }
                 }
             }
             return;
         }
-        // Theme edits change the cover and details of an already recognized presentation
+        // Theme edits change the cover and details of the presentation around them, one still being read among them
         const themeMatch = THEME_FILE_PATH_PATTERN.exec(path);
         const themeOwnerPath = themeMatch ? (themeMatch[1] ?? '/') : null;
-        if (themeOwnerPath !== null && this.summaries.has(themeOwnerPath)) {
+        if (themeOwnerPath !== null && holdsPresentationFile(this.app, themeOwnerPath)) {
             this.queueFolder(themeOwnerPath);
         }
     }
@@ -642,14 +504,30 @@ export class PresentationService {
     }
 
     private queueFolder(folderPath: string): void {
+        this.unrestoredFolders?.delete(folderPath);
         this.pendingFolders.add(folderPath);
         if (this.refreshTimer === null) {
             this.refreshTimer = window.setTimeout(() => {
                 this.refreshTimer = null;
-                const folderPaths = Array.from(this.pendingFolders);
+                const folderPaths = [...this.pendingFolders];
                 this.pendingFolders.clear();
-                folderPaths.forEach(path => void this.refreshFolder(path));
+                this.reads = this.reads.then(() => this.readQueued(folderPaths));
             }, FOLDER_REFRESH_DELAY_MS);
+        }
+    }
+
+    /** Reads one quiet interval's folders one at a time, after the reads of the intervals before it. */
+    private async readQueued(folderPaths: readonly string[]): Promise<void> {
+        for (const folderPath of folderPaths) {
+            if (this.disposed) {
+                return;
+            }
+            try {
+                await this.refreshFolder(folderPath);
+            } catch (error: unknown) {
+                // A listener that throws while a folder is published leaves the other folders to be read
+                console.error('Failed to publish a presentation folder:', error);
+            }
         }
     }
 
@@ -668,21 +546,126 @@ export class PresentationService {
         return this.ignoresCase;
     }
 
-    private async refreshFolder(folderPath: string): Promise<void> {
-        const generation = (this.readGenerations.get(folderPath) ?? 0) + 1;
-        this.readGenerations.set(folderPath, generation);
+    /** Whether MarkdownPoint never opens a pair in the folder: one in a presentation's saved versions or inside another presentation. */
+    private isExcluded(folder: TFolder, ignoresCase: boolean): boolean {
+        return isInSavedVersions(folder.path, path => holdsPresentationFile(this.app, path), ignoresCase) || isInsidePresentation(folder);
+    }
 
-        let next: PresentationSummary | null;
-        try {
-            next = await readPresentation(this.app, folderPath, await this.vaultIgnoresCase());
-        } catch {
-            // A file deleted or renamed during the read makes the folder unreadable until its next event
-            next = null;
-        }
-        if (this.disposed || this.readGenerations.get(folderPath) !== generation) {
+    private async refreshFolder(folderPath: string): Promise<void> {
+        const ignoresCase = await this.vaultIgnoresCase();
+        const folder = this.app.vault.getAbstractFileByPath(folderPath);
+        if (this.disposed) {
             return;
         }
-        this.publish(folderPath, next);
+        // A folder without a presentation file, or one where MarkdownPoint never opens a pair, holds none and is not
+        // read; a reading stored for it goes at the next start once it holds no presentation file, unused until then
+        if (!(folder instanceof TFolder) || !holdsPresentationFile(this.app, folderPath) || this.isExcluded(folder, ignoresCase)) {
+            this.publish(folderPath, null);
+            return;
+        }
+        // Each stamp is taken before its files are read, so a file that changes during the read is read again at the next start
+        const folderStamp = getFolderStamp(folder);
+        let pair: Omit<PresentationReading, 'theme'> | null;
+        try {
+            pair = await this.readPair(folder);
+        } catch {
+            // A file deleted, renamed or not yet downloaded during the read leaves the folder unread until its next
+            // event; nothing is stored, so the next start reads it again
+            if (!this.disposed) {
+                this.publish(folderPath, null);
+                this.storeReading(folderPath, null);
+            }
+            return;
+        }
+        let reading: PresentationReading | null = null;
+        let themeStamp: unknown[] | null = null;
+        let complete = true;
+        if (pair) {
+            const themeFolder = getThemeFolder(this.app, folderPath, pair.presentation.theme);
+            themeStamp = getThemeStamp(themeFolder);
+            let theme: ThemeFacts | null = null;
+            try {
+                theme = await this.readTheme(pair.presentation.theme, themeFolder);
+            } catch {
+                // A theme file that can't be read now, as one replaced, locked or not yet downloaded, leaves the
+                // presentation listed without its theme, as MarkdownPoint opens it; nothing is stored, so the file's
+                // next event or the next start reads it again
+                complete = false;
+            }
+            reading = { ...pair, theme };
+        }
+        if (this.disposed) {
+            return;
+        }
+        // Stored first, so a listener that throws while it is published leaves the reading stored
+        this.storeReading(
+            folderPath,
+            complete ? { stamp: getStamp(folderStamp, reading?.presentation.theme ?? null, themeStamp), reading } : null
+        );
+        this.publish(folderPath, reading ? getPresentationSummary(folderPath, reading) : null);
+    }
+
+    /** The folder's pair through MarkdownPoint's readers: its file names and what it holds when it opens, else null. */
+    private async readPair(folder: TFolder): Promise<Omit<PresentationReading, 'theme'> | null> {
+        const pair = findPresentationPair(folder.path, getFolderEntries(folder));
+        if (pair.kind !== 'pair') {
+            return null;
+        }
+        const files = folder.children.filter((entry): entry is TFile => entry instanceof TFile);
+        const companionFile = files.find(file => file.name === pair.json);
+        const slidesFile = files.find(file => file.name === pair.markdown);
+        if (!companionFile || !slidesFile) {
+            return null;
+        }
+        const companion = await this.readCompanion(folder.path, companionFile);
+        const opened = readPresentationMarkdown(companion, {
+            name: slidesFile.name,
+            bytes: new Uint8Array(await this.app.vault.readBinary(slidesFile))
+        });
+        return opened.opens ? { markdown: slidesFile.name, json: companionFile.name, presentation: opened.presentation } : null;
+    }
+
+    private async readCompanion(folderPath: string, file: TFile): Promise<PresentationFileReading> {
+        const kept = this.keptFile;
+        if (kept && kept.path === file.path && kept.mtime === file.stat.mtime && kept.size === file.stat.size) {
+            return kept.reading;
+        }
+        // The time and size are taken before the read, so a file that changes during it is never taken as read
+        const { mtime, size } = file.stat;
+        const events = this.vaultEvents;
+        const reading = readPresentationFile(folderPath, { name: file.name, bytes: new Uint8Array(await this.app.vault.readBinary(file)) });
+        // An event during the read can name the file with its time and size unchanged, so only a quiet read is kept
+        if (this.vaultEvents === events) {
+            this.keptFile = { path: file.path, mtime, size, reading };
+        }
+        return reading;
+    }
+
+    /**
+     * The presentation's theme as MarkdownPoint reads it from the JSON files of its folder, or null where it doesn't;
+     * a file that can't be read now throws.
+     */
+    private async readTheme(themeKey: string, themeFolder: TFolder | null): Promise<ThemeFacts | null> {
+        const files = getThemeFiles(themeFolder);
+        if (files.length === 0) {
+            return null;
+        }
+        const contents = await Promise.all(files.map(file => this.app.vault.readBinary(file)));
+        const reading = readPresentationTheme(
+            themeKey,
+            files.map((file, at) => ({ name: file.name, bytes: new Uint8Array(contents[at]) }))
+        );
+        return reading.reads ? reading.theme : null;
+    }
+
+    private storeReading(folderPath: string, stored: StoredPresentationReading | null): void {
+        void this.getStore()
+            .then(store => store?.setPresentationReading(folderPath, stored))
+            .catch((error: unknown) => {
+                if (!this.disposed) {
+                    console.error('Failed to store a presentation reading:', error);
+                }
+            });
     }
 
     private publish(folderPath: string, next: PresentationSummary | null): void {
@@ -728,7 +711,7 @@ export function getPresentationService(): PresentationService | null {
     return activePresentationService;
 }
 
-/** Returns the file's role in a verified presentation, or null for every other file. */
+/** Returns the file's role in a presentation that opens, or null for every other file. */
 export function getPresentationFileRole(file: TFile): PresentationFileRole | null {
     return activePresentationService?.getRole(file.path) ?? null;
 }

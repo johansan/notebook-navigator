@@ -21,6 +21,7 @@ import { debounce, type App, type TFile } from 'obsidian';
 import type { FileContentType } from '../../interfaces/IContentProvider';
 import type { ContentProviderRegistry } from '../../services/content/ContentProviderRegistry';
 import type { NotebookNavigatorSettings } from '../../settings/types';
+import { getPresentationService } from '../../services/PresentationService';
 import { getDBInstance } from '../../storage/fileOperations';
 import type { PropertyTreeNode, TagTreeNode } from '../../types/storage';
 import { clearNoteCountCache } from '../../utils/tagTree';
@@ -133,6 +134,8 @@ export function useStorageCacheRebuild(params: {
             stoppedRef.current = previousStopped;
             throw error;
         }
+        // The database held each presentation's reading too, so presentations are read again
+        getPresentationService()?.readAll();
 
         // Reset tag tree state immediately so the UI doesn't show stale counts while the rebuild is running.
         const emptyTagTree = new Map<string, TagTreeNode>();

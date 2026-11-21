@@ -52,7 +52,7 @@ import ReleaseCheckService, { type ReleaseUpdateNotice } from './services/Releas
 import { isNotebookNavigatorCalendarView, isNotebookNavigatorView } from './view/viewGuards';
 import { LEGACY_STORAGE_KEYS, localStorage } from './utils/localStorage';
 import { INTERNAL_NOTEBOOK_NAVIGATOR_API, NotebookNavigatorAPI } from './api/NotebookNavigatorAPI';
-import { initializeDatabase, shutdownDatabase } from './storage/fileOperations';
+import { initializeDatabase, shutdownDatabase, waitForDatabaseInitialization } from './storage/fileOperations';
 import { ExtendedApp } from './types/obsidian-extended';
 import { getLeafSplitLocation } from './utils/workspaceSplit';
 import { sanitizeRecord } from './utils/recordUtils';
@@ -791,7 +791,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         this.omnisearchService = new OmnisearchService(this.app);
         // Registered before views mount so file visibility and row estimates read one role map from the start;
         // it begins indexing presentations when the workspace layout is ready
-        this.presentationService = new PresentationService(this.app);
+        this.presentationService = new PresentationService(this.app, waitForDatabaseInitialization);
         setPresentationService(this.presentationService);
         this.api = new NotebookNavigatorAPI(this, this.app);
         this.metadataService.setFolderStyleChangeListener(folderPath => {

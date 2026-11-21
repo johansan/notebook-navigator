@@ -52,5 +52,8 @@ yarn.lock
 # Minified files
 *.min.js
 *.min.css
+
+# MarkdownPoint's readers, generated and checked by their digest
+src/readers/
 # Generated release language pack
 languages.json

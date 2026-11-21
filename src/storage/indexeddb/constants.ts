@@ -20,8 +20,10 @@ import { LIMITS } from '../../constants/limits';
 
 export const STORE_NAME = 'keyvaluepairs';
 export const PREVIEW_STORE_NAME = 'filePreviews';
+// Each MarkdownPoint presentation folder's reading, keyed by folder path
+export const PRESENTATION_STORE_NAME = 'presentations';
 
-export const DB_SCHEMA_VERSION = 3; // IndexedDB structure version
+export const DB_SCHEMA_VERSION = 4; // IndexedDB structure version
 export const DB_CONTENT_VERSION = 7; // Data format version
 
 // Default limits for preview text caching and load batching.
