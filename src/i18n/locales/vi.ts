@@ -2734,7 +2734,7 @@ export const STRINGS_VI = {
                     { headline: 'Tô sáng chữ bằng ==dấu bằng==.', subtext: '**Đậm** và *nghiêng* dùng y như trong Obsidian.' },
                     { headline: 'Vẽ biểu đồ từ một bảng số.', subtext: 'Cột, thanh, đường, biểu đồ tròn hoặc bộ đếm.' },
                     { headline: 'Chia sẻ bộ slide bằng một liên kết.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
-                    { headline: 'Ánh sáng 3D như Blender.', subtext: 'Đèn điểm, mặt trời, spot và vùng có đổ bóng.' },
+                    { headline: 'Ánh sáng 3D như Blender.', subtext: 'Đèn điểm, định hướng, spot và vùng có đổ bóng.' },
                     { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và JSON.' },
                     { headline: 'Tạo component như Figma.', subtext: 'Sửa một lần, mọi instance đều đổi theo.' },
                     { headline: 'Duyệt chủ đề như trong Obsidian.', subtext: 'Cài một chủ đề miễn phí chỉ bằng một cú nhấp.' },

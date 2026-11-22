@@ -2748,7 +2748,10 @@ export const STRINGS_ES = {
                     { headline: 'Resalta con ==signos de igual==.', subtext: '**Negrita** y *cursiva* van como en Obsidian.' },
                     { headline: 'Dibuja gráficas de tablas de números.', subtext: 'Columnas, barras, líneas, sectores o un contador.' },
                     { headline: 'Comparte tus diapos con un enlace.', subtext: 'Publícalas en línea con una cuenta gratis.' },
-                    { headline: 'Iluminación 3D como en Blender.', subtext: 'Luces de punto, sol, foco y área con sombras.' },
+                    {
+                        headline: 'Iluminación 3D como en Blender.',
+                        subtext: 'Luces de punto, direccionales, de foco y de área con sombras.'
+                    },
                     { headline: 'Versiona tus presentaciones con Git.', subtext: 'Son archivos de texto Markdown y JSON.' },
                     { headline: 'Crea componentes como en Figma.', subtext: 'Edítalo una vez y cambian todas las instancias.' },
                     { headline: 'Explora temas como en Obsidian.', subtext: 'Instala un tema gratis con un clic.' },

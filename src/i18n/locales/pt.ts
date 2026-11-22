@@ -2742,7 +2742,7 @@ export const STRINGS_PT = {
                     { headline: 'Realce com ==sinais de igual==.', subtext: '**Negrito** e *itálico* são como no Obsidian.' },
                     { headline: 'Desenhe gráficos a partir de tabelas.', subtext: 'Colunas, barras, linhas, uma tarte ou um contador.' },
                     { headline: 'Partilhe com uma ligação.', subtext: 'Publique-a online com uma conta gratuita.' },
-                    { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, sol, foco e área com sombras.' },
+                    { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, direcionais, foco e área com sombras.' },
                     { headline: 'Controle versões no Git.', subtext: 'São ficheiros de texto Markdown e JSON.' },
                     { headline: 'Crie componentes como no Figma.', subtext: 'Edite uma vez e todas as instâncias mudam.' },
                     { headline: 'Explore temas como no Obsidian.', subtext: 'Instale um tema gratuito com um clique.' },

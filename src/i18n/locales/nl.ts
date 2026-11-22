@@ -2745,7 +2745,7 @@ export const STRINGS_NL = {
                     { headline: 'Markeer met ==isgelijktekens==.', subtext: '**Vet** en *cursief* werken zoals in Obsidian.' },
                     { headline: 'Teken grafieken uit een getallentabel.', subtext: 'Kolommen, staven, lijnen, een cirkel of een teller.' },
                     { headline: 'Deel een presentatie met een link.', subtext: 'Zet hem online met een gratis account.' },
-                    { headline: '3D-belichting zoals in Blender.', subtext: 'Punt-, zon-, spot- en vlaklampen met schaduwen.' },
+                    { headline: '3D-belichting zoals in Blender.', subtext: 'Punt-, richtings-, spot- en vlaklichten met schaduwen.' },
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en JSON-tekstbestanden.' },
                     { headline: 'Bouw componenten zoals in Figma.', subtext: 'Bewerk ze één keer en elke instantie verandert.' },
                     { headline: 'Blader door thema’s zoals in Obsidian.', subtext: 'Installeer een gratis thema met één klik.' },

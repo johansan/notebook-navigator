@@ -2744,7 +2744,10 @@ export const STRINGS_PL = {
                     { headline: 'Wyróżniaj słowa ==znakami równości==.', subtext: '**Pogrubienie** i *kursywa* są jak w Obsidian.' },
                     { headline: 'Rysuj wykresy z tabeli liczb.', subtext: 'Kolumny, słupki, linie, wykres kołowy lub licznik.' },
                     { headline: 'Udostępnij prezentację linkiem.', subtext: 'Opublikuj ją online z darmowym kontem.' },
-                    { headline: 'Oświetlenie 3D jak w Blender.', subtext: 'Punkt, słońce, reflektor i obszar z cieniami.' },
+                    {
+                        headline: 'Oświetlenie 3D jak w Blender.',
+                        subtext: 'Światła punktowe, kierunkowe, reflektorowe i powierzchniowe z cieniami.'
+                    },
                     { headline: 'Śledź zmiany prezentacji w Git.', subtext: 'Prezentacje to pliki tekstowe Markdown i JSON.' },
                     { headline: 'Twórz komponenty jak w Figma.', subtext: 'Edytuj raz, a zmieni się każda instancja.' },
                     { headline: 'Przeglądaj motywy jak w Obsidian.', subtext: 'Zainstaluj darmowy motyw jednym kliknięciem.' },

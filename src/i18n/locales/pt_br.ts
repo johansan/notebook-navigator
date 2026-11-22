@@ -2745,7 +2745,7 @@ export const STRINGS_PT_BR = {
                     { headline: 'Destaque com ==sinais de igual==.', subtext: '**Negrito** e *itálico* são iguais ao Obsidian.' },
                     { headline: 'Desenhe gráficos a partir de tabelas.', subtext: 'Colunas, barras, linhas, uma pizza ou um contador.' },
                     { headline: 'Compartilhe com um link.', subtext: 'Publique online com uma conta gratuita.' },
-                    { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, sol, spot e área com sombras.' },
+                    { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, direcionais, spot e área com sombras.' },
                     { headline: 'Versione suas apresentações no Git.', subtext: 'São arquivos de texto Markdown e JSON.' },
                     { headline: 'Crie componentes como no Figma.', subtext: 'Edite uma vez e todas as instâncias mudam.' },
                     { headline: 'Explore temas como no Obsidian.', subtext: 'Instale um tema grátis com um clique.' },

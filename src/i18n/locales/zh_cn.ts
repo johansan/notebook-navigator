@@ -2720,7 +2720,7 @@ export const STRINGS_ZH_CN = {
                     { headline: '用 ==等号== 包住文字就能高亮。', subtext: '**粗体** 和 *斜体* 的用法和 Obsidian 一样。' },
                     { headline: '用数字表格绘制图表。', subtext: '柱形、条形、折线、饼图或计数器。' },
                     { headline: '用链接分享演示文稿。', subtext: '用免费账号发布到网上。' },
-                    { headline: '像 Blender 一样的 3D 灯光。', subtext: '点光、日光、聚光和面光，都带阴影。' },
+                    { headline: '像 Blender 一样的 3D 灯光。', subtext: '点光、平行光、聚光和面光，都带阴影。' },
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 JSON 文本文件。' },
                     { headline: '像 Figma 一样创建组件。', subtext: '编辑一次，所有实例都会改变。' },
                     { headline: '像 Obsidian 一样挑选主题。', subtext: '一键安装免费主题。' },

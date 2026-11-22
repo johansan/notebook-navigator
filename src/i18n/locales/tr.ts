@@ -2735,7 +2735,7 @@ export const STRINGS_TR = {
                     { headline: '==Eşittir işaretleriyle== vurgulayın.', subtext: "**Kalın** ve *italik* Obsidian'daki gibi çalışır." },
                     { headline: 'Bir sayı tablosundan grafik çizin.', subtext: 'Sütun, çubuk, çizgi, pasta grafik veya sayaç.' },
                     { headline: 'Sunumunuzu bir bağlantıyla paylaşın.', subtext: "Ücretsiz bir hesapla web'de yayınlayın." },
-                    { headline: 'Blender gibi 3D ışıklandırma.', subtext: 'Gölgeli nokta, güneş, spot ve alan ışıkları.' },
+                    { headline: 'Blender gibi 3D ışıklandırma.', subtext: 'Gölgeli nokta, yönlü, spot ve alan ışıkları.' },
                     { headline: "Sunumlarınızı Git'te takip edin.", subtext: 'Sunumlar Markdown ve JSON metin dosyalarıdır.' },
                     { headline: 'Figma gibi bileşenler oluşturun.', subtext: 'Bir kez düzenleyin, tüm örnekler değişsin.' },
                     { headline: 'Temalara Obsidian’daki gibi göz atın.', subtext: 'Ücretsiz bir temayı tek tıkla kurun.' },

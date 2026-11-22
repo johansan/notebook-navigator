@@ -2737,7 +2737,7 @@ export const STRINGS_ID = {
                     { headline: 'Sorot dengan ==tanda sama dengan==.', subtext: '**Tebal** dan *miring* sama seperti di Obsidian.' },
                     { headline: 'Gambar grafik dari tabel angka.', subtext: 'Kolom, batang, garis, pai, atau penghitung.' },
                     { headline: 'Bagikan presentasi dengan tautan.', subtext: 'Terbitkan online dengan akun gratis.' },
-                    { headline: 'Pencahayaan 3D ala Blender.', subtext: 'Cahaya titik, matahari, sorot, dan area berbayang.' },
+                    { headline: 'Pencahayaan 3D ala Blender.', subtext: 'Cahaya titik, terarah, sorot, dan area berbayang.' },
                     { headline: 'Lacak presentasi Anda di Git.', subtext: 'Presentasi berupa file teks Markdown dan JSON.' },
                     { headline: 'Buat komponen ala Figma.', subtext: 'Edit sekali dan semua instance ikut berubah.' },
                     { headline: 'Jelajahi tema seperti di Obsidian.', subtext: 'Pasang tema gratis dengan sekali klik.' },

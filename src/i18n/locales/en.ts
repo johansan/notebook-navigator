@@ -2727,7 +2727,7 @@ export const STRINGS_EN = {
                     { headline: 'Highlight words with ==equal signs==.', subtext: '**Bold** and *italic* work just like Obsidian.' },
                     { headline: 'Draw charts from a table of numbers.', subtext: 'Columns, bars, lines, a pie or a counter.' },
                     { headline: 'Share a deck with a link.', subtext: 'Publish it online with a free account.' },
-                    { headline: '3D lighting like Blender.', subtext: 'Point, sun, spot and area lights with shadows.' },
+                    { headline: '3D lighting like Blender.', subtext: 'Point, directional, spot and area lights with shadows.' },
                     { headline: 'Track your decks in Git.', subtext: 'Decks are Markdown and JSON text files.' },
                     { headline: 'Build components like Figma.', subtext: 'Edit a composition and its instances change.' },
                     { headline: 'Browse themes like in Obsidian.', subtext: 'Install a free theme in one click.' },

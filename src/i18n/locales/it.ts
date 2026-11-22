@@ -2740,7 +2740,7 @@ export const STRINGS_IT = {
                     { headline: 'Evidenzia con i ==segni di uguale==.', subtext: '**Grassetto** e *corsivo* vanno come in Obsidian.' },
                     { headline: 'Crea grafici da una tabella di numeri.', subtext: 'Colonne, barre, linee, una torta o un contatore.' },
                     { headline: 'Condividi le slide con un link.', subtext: 'Pubblicale online con un account gratuito.' },
-                    { headline: 'Illuminazione 3D come in Blender.', subtext: 'Luci puntiformi, solari, spot e ad area con ombre.' },
+                    { headline: 'Illuminazione 3D come in Blender.', subtext: 'Luci puntiformi, direzionali, spot e ad area con ombre.' },
                     { headline: 'Versiona le presentazioni con Git.', subtext: 'Sono file di testo Markdown e JSON.' },
                     { headline: 'Crea componenti come in Figma.', subtext: 'Modificalo una volta e ogni istanza cambia.' },
                     { headline: 'Sfoglia i temi come in Obsidian.', subtext: 'Installa un tema gratis con un clic.' },
