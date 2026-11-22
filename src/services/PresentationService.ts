@@ -72,7 +72,7 @@ export interface PresentationSummary {
 }
 
 /** The app commit the readers in `src/readers` were bundled at, as their header names it */
-export const READERS_COMMIT = '374ef98b3b6934d06776d9e9576cca26880c6bfe';
+export const READERS_COMMIT = 'ba4c2d0320efddb41b92d7bcbe04caf6c1a9db3d';
 // Collapses the vault event burst of a save, move or sync into one read per folder
 const FOLDER_REFRESH_DELAY_MS = 100;
 // The names of a presentation's two files as one name in any case, the only files that decide whether a folder holds a pair
@@ -216,8 +216,7 @@ function getPresentationSummary(folderPath: string, { markdown, json, presentati
         folderPath,
         slidesPath: joinPath(folderPath, markdown),
         companionPath: joinPath(folderPath, json),
-        // A composition's definition is never presented, so it is not a slide
-        slideCount: presentation.slides.filter(slide => !slide.composition).length,
+        slideCount: presentation.slides.length,
         themeName: theme ? theme.name : getPresentationThemeName(presentation.theme),
         size: theme ? { width: theme.size.width, height: theme.size.height } : null,
         cover: theme ? resolvePresentationCover(theme) : null
