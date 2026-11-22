@@ -16,16 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { TFile, TFolder } from 'obsidian';
+import { TFile, TFolder, type App } from 'obsidian';
 import type { ISettingsProvider } from '../interfaces/ISettingsProvider';
 import { DEFAULT_SETTINGS } from '../settings/defaultSettings';
+import { isNoteShortcut } from '../types/shortcuts';
 import { isFolderNote } from '../utils/folderNoteLookup';
+import { createShortcutTargetPathEventMatcher } from '../utils/shortcutPathResolver';
+import { getActiveVaultProfile } from '../utils/vaultProfiles';
 
 /**
  * Manages the recent notes list stored in vault-local storage
  */
 export class RecentNotesService {
-    constructor(private readonly settingsProvider: ISettingsProvider) {}
+    constructor(
+        private readonly app: App,
+        private readonly settingsProvider: ISettingsProvider
+    ) {}
 
     /**
      * Updates recents when a file is opened
@@ -56,6 +62,26 @@ export class RecentNotesService {
     }
 
     private shouldSkipFile(file: TFile): boolean {
+        return this.isShownNoteShortcut(file) || this.isHiddenFolderNote(file);
+    }
+
+    /**
+     * Notes with a shortcut in the active profile stay out of recents while the shortcuts section is shown, so
+     * opening them takes no recent slot. The navigation pane also hides entries recorded before the shortcut was added.
+     */
+    private isShownNoteShortcut(file: TFile): boolean {
+        const { settings } = this.settingsProvider;
+        if (!settings.showShortcuts) {
+            return false;
+        }
+
+        // The file's own path is the replacement path because the file exists at it, so the casefolded fallback
+        // does not count the file twice and treat a unique match as ambiguous.
+        const matchesFile = createShortcutTargetPathEventMatcher(this.app, 'note', file.path, file.path);
+        return getActiveVaultProfile(settings).shortcuts.some(shortcut => isNoteShortcut(shortcut) && matchesFile(shortcut.path));
+    }
+
+    private isHiddenFolderNote(file: TFile): boolean {
         if (this.settingsProvider.settings.hideRecentNotes !== 'folder-notes') {
             return false;
         }

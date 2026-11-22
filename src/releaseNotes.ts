@@ -121,6 +121,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
             'Several **iPad dual pane UI improvements** to headers, icons, separator lines, and more.'
         ],
         changed: [
+            'Changed Recent files to leave out notes that are shortcuts.',
             'Removed the setting ==Disable auto-scroll for shortcuts==, since shortcuts no longer scroll the navigation pane.',
             'Replaced the rainbow ==Apply to== toggles and their color settings with a theme for each section, converted customized colors to custom themes, and moved ==Consistent brightness across hues== and ==Separate light and dark mode colors== into the theme editor.'
         ],

@@ -517,6 +517,8 @@ or module-level helpers.
 
 - Maintains the recent notes list stored in vault-local storage.
 - Deduplicates entries, enforces configurable limits, and preserves ordering.
+- Leaves out notes with a shortcut in the active profile while the shortcuts section is shown, and folder notes when
+  **Hide file types from recent files** is set to folder notes.
 - Provides helpers for open, rename, and delete events.
 
 **Key Methods:**
@@ -1047,7 +1049,7 @@ sequence in `src/main.ts` is:
 ```typescript
 // Database and settings load happen before this block
 this.preferencesController.initializeRecentDataManager();
-this.recentNotesService = new RecentNotesService(this);
+this.recentNotesService = new RecentNotesService(this.app, this);
 
 // Initialize workspace and homepage coordination
 this.workspaceCoordinator = new WorkspaceCoordinator(this);

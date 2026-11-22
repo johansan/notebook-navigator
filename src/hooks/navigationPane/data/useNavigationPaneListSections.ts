@@ -435,9 +435,19 @@ export function useNavigationPaneListSections({
         const itemLevel = headerLevel + 1;
         const limit = Math.max(1, settings.recentNotesCount ?? 1);
         const recentPaths = recentNotes.slice(0, limit);
+        // Notes listed under shortcuts are left out of recent files. Stored entries are kept, so a note shows here
+        // again when its shortcut is removed. Opens of shortcut notes are not recorded (RecentNotesService).
+        const shortcutNotePaths = new Set<string>();
+        if (settings.showShortcuts) {
+            hydratedShortcuts.forEach(({ shortcut, note }) => {
+                if (isNoteShortcut(shortcut) && note) {
+                    shortcutNotePaths.add(note.path);
+                }
+            });
+        }
         const getVisibleRecentFile = (path: string): TFile | null => {
             const file = app.vault.getAbstractFileByPath(path);
-            if (!(file instanceof TFile)) {
+            if (!(file instanceof TFile) || shortcutNotePaths.has(file.path)) {
                 return null;
             }
 
@@ -504,6 +514,7 @@ export function useNavigationPaneListSections({
         return items;
     }, [
         app,
+        hydratedShortcuts,
         metadataVisibilityVersion,
         recentNotes,
         recentNotesExpanded,
@@ -511,6 +522,7 @@ export function useNavigationPaneListSections({
         settings.interfaceIcons,
         settings.recentNotesCount,
         settings.showRecentNotes,
+        settings.showShortcuts,
         tagDataVersion
     ]);
 
