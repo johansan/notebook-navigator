@@ -1867,7 +1867,8 @@ export const STRINGS_EN = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Weekly notes',
-                parsingError: 'Pattern must format and parse back to a full week (week year, week number).',
+                parsingError: 'Pattern must format and parse back to a full week (year and week number, or "YYYY", month and day).',
+                dailyNotePathError: 'Pattern builds the same paths as the daily note pattern. Use a different pattern for weekly notes.',
                 isoWeeksWarning:
                     'Weekly notes use ISO weeks ("W" or "G"), so the calendar starts weeks on Monday and shows ISO week numbers. Use "gggg" with "ww" for weeks that follow the locale.',
                 calendarYearWarning:

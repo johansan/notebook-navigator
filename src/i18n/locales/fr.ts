@@ -1883,7 +1883,9 @@ export const STRINGS_FR = {
             calendarWeeklyNotePattern: {
                 name: 'Notes hebdomadaires',
                 parsingError:
-                    'Le modèle doit pouvoir être formaté et ré-analysé comme une semaine complète (année de semaine, numéro de semaine).',
+                    'Le modèle doit pouvoir être formaté et ré-analysé comme une semaine complète (année et numéro de semaine, ou "YYYY", mois et jour).',
+                dailyNotePathError:
+                    'Le modèle crée les mêmes chemins que le modèle des notes quotidiennes. Utilisez un autre modèle pour les notes hebdomadaires.',
                 isoWeeksWarning:
                     'Les notes hebdomadaires utilisent les semaines ISO ("W" ou "G"), donc le calendrier commence les semaines le lundi et affiche les numéros de semaine ISO. Utilisez "gggg" avec "ww" pour des semaines qui suivent la langue.',
                 calendarYearWarning:

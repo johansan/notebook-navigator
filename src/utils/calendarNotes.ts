@@ -21,6 +21,7 @@ import { strings } from '../i18n';
 import type { NotebookNavigatorSettings } from '../settings/types';
 import {
     createCalendarCustomDateFormatter,
+    doesCalendarCustomWeekPatternBuildDailyNotePaths,
     ensureMarkdownFileName,
     getCalendarCustomWeekAnchorDate,
     isCalendarCustomDatePatternValid,
@@ -39,7 +40,7 @@ import {
     prepareMarkdownTemplate,
     type TemplateSettings
 } from './fileCreationUtils';
-import type { MomentApi, MomentInstance } from './moment';
+import { getMomentApi, type MomentApi, type MomentInstance } from './moment';
 
 export type CalendarNoteKind = 'day' | 'week' | 'month' | 'quarter' | 'year';
 
@@ -58,13 +59,31 @@ export function getCalendarNoteConfig(kind: CalendarNoteKind, settings: Notebook
                 isPatternValid: isCalendarCustomDatePatternValid,
                 parsingErrorText: strings.settings.items.calendarDailyNotePattern.parsingError
             };
-        case 'week':
+        case 'week': {
+            // A weekly pattern that builds the daily note paths would make the daily note of each week's first day also
+            // the weekly note, so it counts as invalid: the calendar, commands and homepage skip weekly notes and the
+            // file stays a daily note. In Daily Notes mode, daily notes follow the core plugin's folder and format, which
+            // this check does not read. The pattern syntax is checked first, so an invalid pattern reports the syntax
+            // error, as the settings field does.
+            const momentApi = getMomentApi();
+            const weekPattern = buildCustomCalendarMomentPattern(settings.calendarCustomWeekPattern, '');
+            const buildsDailyNotePaths =
+                settings.calendarIntegrationMode === 'notebook-navigator' &&
+                isCalendarCustomWeekPatternValid(weekPattern, momentApi) &&
+                doesCalendarCustomWeekPatternBuildDailyNotePaths(
+                    weekPattern,
+                    buildCustomCalendarMomentPattern(settings.calendarCustomFilePattern),
+                    momentApi
+                );
             return {
                 calendarCustomFilePattern: settings.calendarCustomWeekPattern,
                 fallbackPattern: '',
-                isPatternValid: isCalendarCustomWeekPatternValid,
-                parsingErrorText: strings.settings.items.calendarWeeklyNotePattern.parsingError
+                isPatternValid: (pattern, momentApi) => !buildsDailyNotePaths && isCalendarCustomWeekPatternValid(pattern, momentApi),
+                parsingErrorText: buildsDailyNotePaths
+                    ? strings.settings.items.calendarWeeklyNotePattern.dailyNotePathError
+                    : strings.settings.items.calendarWeeklyNotePattern.parsingError
             };
+        }
         case 'month':
             return {
                 calendarCustomFilePattern: settings.calendarCustomMonthPattern,

@@ -53,7 +53,8 @@ const ISO_WEEK_RULES: CalendarCustomWeekRules = { firstDayOfWeek: 1, firstDayOfY
  * - `mixed-week-tokens`: the pattern mixes ISO tokens (`W`, `G`) with locale tokens (`w`, `g`). The calendar uses ISO
  *   weeks while the locale tokens follow the periodic notes locale.
  * - `different-week-rules`: the pattern uses only locale tokens, and the calendar locale and the periodic notes locale
- *   start or number weeks differently, so weekly note paths do not match the weeks in the calendar.
+ *   start or number weeks differently, so weekly note paths do not match the weeks in the calendar. A pattern without a
+ *   week number names each note by the first day of its week, so only the first day of the week is compared for it.
  */
 export type CalendarCustomWeekPatternIssue = 'iso-weeks' | 'calendar-year' | 'mixed-week-tokens' | 'different-week-rules';
 
@@ -114,6 +115,11 @@ export function getCalendarCustomWeekPatternIssues(
     if (usesIsoWeekTokens && usesLocaleWeekTokens) {
         issues.push('mixed-week-tokens');
     } else if (usesLocaleWeekTokens && doWeekRulesDiffer(calendarWeekRules, pathWeekRules)) {
+        issues.push('different-week-rules');
+    } else if (
+        !usesWeekNumberTokens &&
+        normalizeFirstDayOfWeek(calendarWeekRules.firstDayOfWeek) !== normalizeFirstDayOfWeek(pathWeekRules.firstDayOfWeek)
+    ) {
         issues.push('different-week-rules');
     }
 
@@ -295,9 +301,10 @@ export function isCalendarCustomWeekPatternValid(pattern: string, momentApi?: Mo
      * - Moment has separate concepts for calendar year (`YYYY`) and week-year (`gggg` for locale weeks, `GGGG` for ISO weeks).
      * - When a pattern mixes week tokens (week number + week-year) with month/quarter tokens, strict parsing can round-trip
      *   incorrectly (the rendered string parses as a different week than the one it was formatted from).
-     * - Notebook Navigator does not currently parse weekly note paths back into dates; it only needs to generate a stable,
-     *   valid vault path. A strict “format -> parse -> compare week” validator rejects folder hierarchies that are valid and
-     *   commonly used by other plugins that also only format paths.
+     * - Notebook Navigator reads weekly note paths back by formatting the weeks around the path's year and comparing paths
+     *   (`findWeeklyCalendarNoteDate`), never by parsing a week out of the path, so the pattern only needs to build a
+     *   stable, valid vault path. A strict “format -> parse -> compare week” validator rejects folder hierarchies that are
+     *   valid and commonly used by other plugins that also only format paths.
      *
      * Standards / “correctness” note:
      * - ISO 8601 standardizes ISO week numbering (`WW`) and ISO week-year (`GGGG`), with weeks starting on Monday and week 1
@@ -310,7 +317,7 @@ export function isCalendarCustomWeekPatternValid(pattern: string, momentApi?: Mo
      *   - Patterns using ISO week number/year tokens (`W` or `G`) anchor to `startOf('isoWeek')` (ISO week rules).
      *   - Other patterns anchor to `startOf('week')` (locale week rules).
      *   This keeps the rendered path constant across all days within the same week, even if the pattern includes `YYYY-MM`
-     *   or `YYYY-[Q]Q`.
+     *   or `YYYY-[Q]Q`, and makes a pattern without a week number, such as `YYYY-MM-DD`, name the first day of the week.
      * - If users want week-based years around year boundaries, they should prefer `gggg` (locale week-year) or `GGGG` (ISO
      *   week-year) instead of `YYYY` (calendar year).
      */
@@ -320,6 +327,39 @@ export function isCalendarCustomWeekPatternValid(pattern: string, momentApi?: Mo
         ['2020-12-31', '2021-01-01', '2026-06-19', '2027-02-17'],
         date => date.clone().startOf(anchorUnit)
     );
+}
+
+/**
+ * Returns true when the weekly note pattern builds the same path as the daily note pattern on every sample date, which
+ * makes the daily note of each week's first day also the weekly note of that week. Daily and weekly notes share the
+ * periodic notes root folder, so the patterns alone decide whether the paths match. Without `momentApi`, the patterns
+ * themselves are compared. Patterns that build the same path only on some dates are not reported.
+ */
+export function doesCalendarCustomWeekPatternBuildDailyNotePaths(
+    weekPattern: string,
+    dailyPattern: string,
+    momentApi?: MomentParseApi | null
+): boolean {
+    const normalizedWeekPattern = normalizeCalendarCustomMomentPattern(weekPattern);
+    const normalizedDailyPattern = normalizeCalendarCustomMomentPattern(dailyPattern);
+    // An empty weekly pattern turns weekly notes off. Moment also formats an empty pattern as an ISO timestamp.
+    if (!normalizedWeekPattern) {
+        return false;
+    }
+
+    if (!momentApi) {
+        return normalizedWeekPattern === normalizedDailyPattern;
+    }
+
+    // Compared as file names, because a pattern can end in a literal extension such as `[.md]`, and the path builder
+    // appends `.md` only to names without one.
+    return ['2020-12-31', '2021-01-01', '2026-06-19', '2027-02-17'].every(sampleIso => {
+        const sampleDate = momentApi(sampleIso, 'YYYY-MM-DD', true);
+        return (
+            ensureMarkdownFileName(sampleDate.format(normalizedWeekPattern)) ===
+            ensureMarkdownFileName(sampleDate.format(normalizedDailyPattern))
+        );
+    });
 }
 
 export function isCalendarCustomMonthPatternValid(pattern: string, momentApi?: MomentParseApi | null): boolean {
@@ -522,18 +562,21 @@ function hasDateTokens(pattern: string): boolean {
 }
 
 function hasWeekTokens(pattern: string): boolean {
-    // "Week-like" tokens:
-    // - a year-like token (`Y`, `g`, or `G`)
-    // - a week number token (`w` for locale week number, `W` for ISO week number)
+    // A weekly pattern identifies the week in one of two ways:
+    // - a week number token (`w` for locale week number, `W` for ISO week number) with a year-like token (`Y`, `g`, or
+    //   `G`). The year token reduces collisions; for week-based years, `gggg`/`GGGG` is more precise than `YYYY` for
+    //   weeks that cross year boundaries.
+    // - the first day of the week as a calendar date (`Y`, `M` and `D`). Week years are rejected in this form, because
+    //   `gggg` or `GGGG` with a month and day gives a week that starts in December the next year, and `G` also switches
+    //   the week anchor to ISO weeks.
     //
     // Weekly patterns can include additional date tokens (month/quarter) as folder segments. They are validated by
     // formatting a week-anchored date and checking that the rendered path is valid.
     const tokenSource = stripMomentLiterals(pattern);
-    const hasYear = /[YgG]/u.test(tokenSource);
-    const hasWeekNumber = /[wW]/u.test(tokenSource);
-    // Require a year token to reduce collisions. For week-based years, `gggg`/`GGGG` is more precise than `YYYY` for weeks
-    // that cross year boundaries.
-    return hasYear && hasWeekNumber;
+    if (/[wW]/u.test(tokenSource)) {
+        return /[YgG]/u.test(tokenSource);
+    }
+    return /Y/u.test(tokenSource) && /M/u.test(tokenSource) && /D/u.test(tokenSource) && !/[gG]/u.test(tokenSource);
 }
 
 function isRenderedCalendarNotePathValid(rendered: string): boolean {

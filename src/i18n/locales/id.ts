@@ -1875,7 +1875,9 @@ export const STRINGS_ID = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Catatan mingguan',
-                parsingError: 'Pola harus dapat diformat dan diparse kembali sebagai minggu lengkap (tahun minggu, nomor minggu).',
+                parsingError:
+                    'Pola harus dapat diformat dan diparse kembali sebagai minggu lengkap (tahun dan nomor minggu, atau "YYYY", bulan dan tanggal).',
+                dailyNotePathError: 'Pola membuat jalur yang sama dengan pola catatan harian. Gunakan pola lain untuk catatan mingguan.',
                 isoWeeksWarning:
                     'Catatan mingguan menggunakan minggu ISO ("W" atau "G"), sehingga kalender memulai minggu pada hari Senin dan menampilkan nomor minggu ISO. Gunakan "gggg" dengan "ww" untuk minggu yang mengikuti bahasa.',
                 calendarYearWarning:

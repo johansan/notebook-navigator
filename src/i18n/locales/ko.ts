@@ -1870,7 +1870,8 @@ export const STRINGS_KO = {
             },
             calendarWeeklyNotePattern: {
                 name: '주간 노트',
-                parsingError: '패턴은 전체 주(주 연도, 주 번호)로 포맷되고 다시 파싱될 수 있어야 합니다.',
+                parsingError: '패턴은 전체 주(연도와 주 번호, 또는 "YYYY", 월, 일)로 포맷되고 다시 파싱될 수 있어야 합니다.',
+                dailyNotePathError: '패턴이 일일 노트 패턴과 같은 경로를 만듭니다. 주간 노트에는 다른 패턴을 사용하세요.',
                 isoWeeksWarning:
                     '주간 노트가 ISO 주("W" 또는 "G")를 사용하므로 캘린더는 월요일에 주를 시작하고 ISO 주 번호를 표시합니다. 지역 설정을 따르는 주에는 "gggg"와 "ww"를 사용하세요.',
                 calendarYearWarning:

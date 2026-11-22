@@ -117,6 +117,7 @@ const RELEASE_NOTES: ReleaseNote[] = [
         ],
         improved: [
             'Big improvement to shortcuts! Clicking a note, folder, tag or property shortcut **now selects it without scrolling!** 🎉',
+            '==Weekly notes== patterns can now name notes by the first day of the week instead of week number, such as `YYYY-MM-DD [Weekly Note]`.',
             'Several **iPad dual pane UI improvements** to headers, icons, separator lines, and more.'
         ],
         changed: [

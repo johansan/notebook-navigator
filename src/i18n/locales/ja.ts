@@ -1875,7 +1875,10 @@ export const STRINGS_JA = {
             },
             calendarWeeklyNotePattern: {
                 name: 'ウィークリーノート',
-                parsingError: 'パターンは完全な週（週年、週番号）としてフォーマットされ、再度パースできる必要があります。',
+                parsingError:
+                    'パターンは完全な週（年と週番号、または "YYYY"・月・日）としてフォーマットされ、再度パースできる必要があります。',
+                dailyNotePathError:
+                    'このパターンはデイリーノートのパターンと同じパスを作成します。ウィークリーノートには別のパターンを使用してください。',
                 isoWeeksWarning:
                     'ウィークリーノートは ISO 週（"W" または "G"）を使用するため、カレンダーは週を月曜日から始め、ISO 週番号を表示します。ロケールに従う週には "gggg" と "ww" を使用してください。',
                 calendarYearWarning:

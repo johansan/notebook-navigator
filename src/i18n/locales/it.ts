@@ -1875,7 +1875,9 @@ export const STRINGS_IT = {
             calendarWeeklyNotePattern: {
                 name: 'Note settimanali',
                 parsingError:
-                    'Il modello deve poter essere formattato e rianalizzato come una settimana completa (anno settimana, numero settimana).',
+                    'Il modello deve poter essere formattato e rianalizzato come una settimana completa (anno e numero settimana, oppure "YYYY", mese e giorno).',
+                dailyNotePathError:
+                    'Il modello crea gli stessi percorsi del modello delle note giornaliere. Usa un modello diverso per le note settimanali.',
                 isoWeeksWarning:
                     'Le note settimanali usano le settimane ISO ("W" o "G"), quindi il calendario inizia le settimane di lunedì e mostra i numeri di settimana ISO. Usa "gggg" con "ww" per settimane che seguono la lingua.',
                 calendarYearWarning:

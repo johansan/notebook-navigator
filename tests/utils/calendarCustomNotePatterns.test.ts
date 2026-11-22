@@ -16,13 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
     doesCalendarCustomPatternUseWeekYearWithoutWeekNumber,
+    doesCalendarCustomWeekPatternBuildDailyNotePaths,
     escapeMomentLiteralPath,
     getCalendarCustomWeekPatternIssues,
     isCalendarCustomWeekPatternValid
 } from '../../src/utils/calendarCustomNotePatterns';
+import type { MomentApi } from '../../src/utils/moment';
+
+const realMoment = (await vi.importActual<{ default: unknown }>('moment')).default as MomentApi;
 
 describe('calendar custom note patterns', () => {
     type MomentStub = {
@@ -69,6 +73,41 @@ describe('calendar custom note patterns', () => {
         expect(context.lastStartOfUnit).toBe('isoWeek');
     });
 
+    test.each(['YYYY-MM-DD [Weekly Note]', 'YYYY/YYYYMMDD', '[Weekly]/YYYY/MMMM D'])(
+        'accepts weekly pattern %s that names the first day of the week',
+        pattern => {
+            const context = { lastStartOfUnit: null as string | null };
+            const momentApi = createMomentApi(context);
+            expect(isCalendarCustomWeekPatternValid(pattern, momentApi)).toBe(true);
+            expect(context.lastStartOfUnit).toBe('week');
+        }
+    );
+
+    test.each(['gggg-MM-DD', 'GGGG-MM-DD', 'YYYY/gggg-MM-DD', 'YYYY-DD [Weekly]'])(
+        'rejects weekly pattern %s without a week number, calendar year, month and day',
+        pattern => {
+            const context = { lastStartOfUnit: null as string | null };
+            const momentApi = createMomentApi(context);
+            expect(isCalendarCustomWeekPatternValid(pattern, momentApi)).toBe(false);
+        }
+    );
+
+    test('detects weekly patterns that build the daily note paths', () => {
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD', 'YYYY-MM-DD', realMoment)).toBe(true);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY/YYYYMMDD', 'YYYY/YYYY[]MMDD', realMoment)).toBe(true);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD[.md]', 'YYYY-MM-DD', realMoment)).toBe(true);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD[.MD]', 'YYYY-MM-DD', realMoment)).toBe(false);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD [Weekly Note]', 'YYYY-MM-DD', realMoment)).toBe(false);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('[Weekly]/YYYY-MM-DD', 'YYYY-MM-DD', realMoment)).toBe(false);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('gggg/[W]ww', 'YYYY/YYYYMMDD', realMoment)).toBe(false);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('', 'YYYY-MM-DD', realMoment)).toBe(false);
+    });
+
+    test('compares the patterns themselves when Moment is unavailable', () => {
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD', 'YYYY-MM-DD', null)).toBe(true);
+        expect(doesCalendarCustomWeekPatternBuildDailyNotePaths('YYYY-MM-DD [Weekly Note]', 'YYYY-MM-DD', null)).toBe(false);
+    });
+
     const SUNDAY_WEEK_RULES = { firstDayOfWeek: 0, firstDayOfYear: 6 };
     const ISO_WEEK_RULES = { firstDayOfWeek: 1, firstDayOfYear: 4 };
 
@@ -111,6 +150,18 @@ describe('calendar custom note patterns', () => {
         ]);
     });
 
+    test('reports different week rules for patterns without a week number when the locales start weeks on different days', () => {
+        expect(getCalendarCustomWeekPatternIssues('YYYY-MM-DD [Weekly Note]', ISO_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([
+            'different-week-rules'
+        ]);
+    });
+
+    test('reports no issues for patterns without a week number when the locales start weeks on the same day', () => {
+        expect(
+            getCalendarCustomWeekPatternIssues('YYYY-MM-DD [Weekly Note]', ISO_WEEK_RULES, { firstDayOfWeek: 1, firstDayOfYear: 6 })
+        ).toEqual([]);
+    });
+
     test('reports no issues for locale week patterns when the locales use the same week rules', () => {
         expect(getCalendarCustomWeekPatternIssues('gggg/[W]ww', SUNDAY_WEEK_RULES, SUNDAY_WEEK_RULES)).toEqual([]);
     });
@@ -123,7 +174,7 @@ describe('calendar custom note patterns', () => {
         expect(doesCalendarCustomPatternUseWeekYearWithoutWeekNumber('[Weekly gg]/YYYY')).toBe(false);
     });
 
-    test('rejects weekly pattern without week number token', () => {
+    test('rejects weekly pattern without a week number or day token', () => {
         const context = { lastStartOfUnit: null as string | null };
         const momentApi = createMomentApi(context);
         expect(isCalendarCustomWeekPatternValid('YYYY/YYYY-MM', momentApi)).toBe(false);

@@ -1873,7 +1873,9 @@ export const STRINGS_TR = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Haftalık notlar',
-                parsingError: 'Desen, tam bir hafta (hafta yılı, hafta numarası) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.',
+                parsingError:
+                    'Desen, tam bir hafta (yıl ve hafta numarası ya da "YYYY", ay ve gün) olarak biçimlendirilmeli ve tekrar ayrıştırılabilmelidir.',
+                dailyNotePathError: 'Desen, günlük not deseniyle aynı yolları oluşturuyor. Haftalık notlar için farklı bir desen kullanın.',
                 isoWeeksWarning:
                     'Haftalık notlar ISO haftalarını ("W" veya "G") kullanır, bu yüzden takvim haftaları Pazartesi başlatır ve ISO hafta numaralarını gösterir. Yerel ayarı izleyen haftalar için "gggg" ile "ww" kullanın.',
                 calendarYearWarning:

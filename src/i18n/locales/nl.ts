@@ -1881,7 +1881,10 @@ export const STRINGS_NL = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Wekelijkse notities',
-                parsingError: 'Het patroon moet kunnen formatteren en terug-parsen naar een volledige week (weekjaar, weeknummer).',
+                parsingError:
+                    'Het patroon moet kunnen formatteren en terug-parsen naar een volledige week (jaar en weeknummer, of "YYYY", maand en dag).',
+                dailyNotePathError:
+                    'Het patroon maakt dezelfde paden als het patroon voor dagelijkse notities. Gebruik een ander patroon voor wekelijkse notities.',
                 isoWeeksWarning:
                     'Wekelijkse notities gebruiken ISO-weken ("W" of "G"), dus de kalender begint weken op maandag en toont ISO-weeknummers. Gebruik "gggg" met "ww" voor weken die de taal volgen.',
                 calendarYearWarning:

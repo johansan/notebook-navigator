@@ -24,6 +24,7 @@ import {
     resolveCalendarNotePath,
     resolveCalendarNoteTarget
 } from '../../src/components/calendar/calendarNoteResolution';
+import { strings } from '../../src/i18n';
 import { DEFAULT_SETTINGS } from '../../src/settings/defaultSettings';
 import type { MomentApi, MomentInstance, MomentLocaleData } from '../../src/utils/moment';
 import { createTestTFile } from '../utils/createTestTFile';
@@ -276,7 +277,12 @@ describe('calendar note path parsing with Moment', () => {
         ['YYYY/YYYY-MM-[W]ww', 'en', '2026-02-08', 'Periodic/2026/2026-02-W07.md'],
         ['YYYY-[Q]Q/[W]ww', 'en', '2026-12-27', 'Periodic/2026-Q4/W01.md'],
         ['gggg-MM/[W]ww', 'en', '2026-12-27', 'Periodic/2027-12/W01.md'],
-        ['YYYY-MM/[W]ww-dddd', 'en', '2026-10-04', 'Periodic/2026-10/W41-Sunday.md']
+        ['YYYY-MM/[W]ww-dddd', 'en', '2026-10-04', 'Periodic/2026-10/W41-Sunday.md'],
+        ['YYYY-MM-DD [Weekly Note]', 'en', '2025-12-28', 'Periodic/2025-12-28 Weekly Note.md'],
+        ['YYYY-MM-DD [Weekly Note]', 'en', '2026-11-15', 'Periodic/2026-11-15 Weekly Note.md'],
+        ['YYYY-MM-DD [Weekly Note]', 'nn-monday-start', '2026-11-16', 'Periodic/2026-11-16 Weekly Note.md'],
+        ['YYYY/YYYY-MM-DD', 'nn-monday-start', '2025-12-29', 'Periodic/2025/2025-12-29.md'],
+        ['YYYY/MM/YYYYMMDD', 'en', '2027-12-26', 'Periodic/2027/12/20271226.md']
     ])('parses the %s note in locale %s of the week starting %s from %s', (pattern, locale, weekStart, filePath) => {
         const date = realMoment(weekStart, 'YYYY-MM-DD', locale, true);
         expect(resolveCalendarNotePath({ ...createPathOptions('week', pattern, locale), date })?.filePath).toBe(filePath);
@@ -289,6 +295,27 @@ describe('calendar note path parsing with Moment', () => {
         expect(
             parse('week', 'YYYY/YYYY-[Q]Q/YYYY-MM/YYYY-[W]ww/YYYY-[W]ww', 'Periodic/2026/2026-Q2/2026-05/2026-W25/2026-W25.md')
         ).toBeNull();
+    });
+
+    test('rejects a weekly note named after a day the week does not start on', () => {
+        expect(parse('week', 'YYYY-MM-DD [Weekly Note]', 'Periodic/2026-11-16 Weekly Note.md')).toBeNull();
+        expect(parse('week', 'YYYY-MM-DD [Weekly Note]', 'Periodic/2026-11-15 Weekly Note.md', 'nn-monday-start')).toBeNull();
+    });
+
+    test('treats a weekly pattern that builds the daily note paths as invalid', () => {
+        const settings = { ...DEFAULT_SETTINGS, calendarCustomFilePattern: 'YYYY-MM-DD', calendarCustomWeekPattern: 'YYYY-MM-DD' };
+        const { config, momentPattern } = createCalendarNotePathResolverContext('week', settings);
+        expect(config.isPatternValid(momentPattern, realMoment)).toBe(false);
+        expect(config.parsingErrorText).toBe(strings.settings.items.calendarWeeklyNotePattern.dailyNotePathError);
+
+        const dailyNotesMode = createCalendarNotePathResolverContext('week', { ...settings, calendarIntegrationMode: 'daily-notes' });
+        expect(dailyNotesMode.config.isPatternValid(dailyNotesMode.momentPattern, realMoment)).toBe(true);
+    });
+
+    test('reports the syntax error for an invalid weekly pattern that matches the daily note pattern', () => {
+        const settings = { ...DEFAULT_SETTINGS, calendarCustomFilePattern: 'YYYY-MM', calendarCustomWeekPattern: 'YYYY-MM' };
+        const { config } = createCalendarNotePathResolverContext('week', settings);
+        expect(config.parsingErrorText).toBe(strings.settings.items.calendarWeeklyNotePattern.parsingError);
     });
 
     test('returns the earlier week when two weeks build the same weekly note path', () => {

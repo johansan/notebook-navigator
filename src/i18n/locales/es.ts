@@ -1881,7 +1881,10 @@ export const STRINGS_ES = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Notas semanales',
-                parsingError: 'El patrón debe formatear y volver a analizarse como una semana completa (año de semana, número de semana).',
+                parsingError:
+                    'El patrón debe formatear y volver a analizarse como una semana completa (año y número de semana, o "YYYY", mes y día).',
+                dailyNotePathError:
+                    'El patrón genera las mismas rutas que el patrón de notas diarias. Usa un patrón diferente para las notas semanales.',
                 isoWeeksWarning:
                     'Las notas semanales usan semanas ISO ("W" o "G"), por lo que el calendario empieza las semanas en lunes y muestra números de semana ISO. Usa "gggg" con "ww" para semanas que sigan la configuración regional.',
                 calendarYearWarning:

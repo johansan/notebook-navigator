@@ -1860,7 +1860,8 @@ export const STRINGS_ZH_CN = {
             },
             calendarWeeklyNotePattern: {
                 name: '周记',
-                parsingError: '模式必须能格式化并重新解析为完整周（周年、周数）。',
+                parsingError: '模式必须能格式化并重新解析为完整周（年份和周数，或 "YYYY"、月和日）。',
+                dailyNotePathError: '该模式生成的路径与日记模式相同。请为周记使用其他模式。',
                 isoWeeksWarning:
                     '周记使用 ISO 周（"W" 或 "G"），因此日历以星期一作为每周的第一天，并显示 ISO 周数。若要让周遵循语言设置，请使用 "gggg" 与 "ww"。',
                 calendarYearWarning:

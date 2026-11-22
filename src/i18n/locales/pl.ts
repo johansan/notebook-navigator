@@ -1880,7 +1880,9 @@ export const STRINGS_PL = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Notatki tygodniowe',
-                parsingError: 'Wzór musi być tak sformatowany, aby można było odczytać pełny tydzień (rok tygodnia, numer tygodnia).',
+                parsingError:
+                    'Wzór musi być tak sformatowany, aby można było odczytać pełny tydzień (rok i numer tygodnia albo "YYYY", miesiąc i dzień).',
+                dailyNotePathError: 'Wzór tworzy te same ścieżki co wzór notatek dziennika. Użyj innego wzoru dla notatek tygodniowych.',
                 isoWeeksWarning:
                     'Notatki tygodniowe używają tygodni ISO ("W" lub "G"), więc kalendarz zaczyna tygodnie w poniedziałek i pokazuje numery tygodni ISO. Użyj "gggg" z "ww" dla tygodni zgodnych z ustawieniami regionalnymi.',
                 calendarYearWarning:

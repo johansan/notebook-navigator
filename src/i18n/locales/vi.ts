@@ -1872,7 +1872,9 @@ export const STRINGS_VI = {
             },
             calendarWeeklyNotePattern: {
                 name: 'Ghi chú hàng tuần',
-                parsingError: 'Mẫu phải có thể định dạng và phân tích lại thành một tuần đầy đủ (năm tuần, số tuần).',
+                parsingError:
+                    'Mẫu phải có thể định dạng và phân tích lại thành một tuần đầy đủ (năm và số tuần, hoặc "YYYY", tháng và ngày).',
+                dailyNotePathError: 'Mẫu tạo cùng đường dẫn với mẫu ghi chú hàng ngày. Dùng mẫu khác cho ghi chú hàng tuần.',
                 isoWeeksWarning:
                     'Ghi chú hàng tuần dùng tuần ISO ("W" hoặc "G"), nên lịch bắt đầu tuần từ thứ Hai và hiển thị số tuần ISO. Dùng "gggg" với "ww" cho tuần theo ngôn ngữ.',
                 calendarYearWarning:

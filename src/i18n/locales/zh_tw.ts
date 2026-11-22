@@ -1861,7 +1861,8 @@ export const STRINGS_ZH_TW = {
             },
             calendarWeeklyNotePattern: {
                 name: '週記',
-                parsingError: '模式必須能格式化並重新解析為完整週（週年、週數）。',
+                parsingError: '模式必須能格式化並重新解析為完整週（年份和週數，或 "YYYY"、月和日）。',
+                dailyNotePathError: '此模式產生的路徑與每日筆記模式相同。請為週記使用其他模式。',
                 isoWeeksWarning:
                     '週記使用 ISO 週（"W" 或 "G"），因此日曆以星期一作為每週的第一天，並顯示 ISO 週數。若要讓週遵循語言設定，請使用 "gggg" 搭配 "ww"。',
                 calendarYearWarning:

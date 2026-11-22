@@ -1881,7 +1881,9 @@ export const STRINGS_DE = {
             calendarWeeklyNotePattern: {
                 name: 'Wöchentliche Notizen',
                 parsingError:
-                    'Das Muster muss als vollständige Woche (Wochenjahr, Wochennummer) formatiert und wieder geparst werden können.',
+                    'Das Muster muss als vollständige Woche (Jahr und Wochennummer, oder "YYYY", Monat und Tag) formatiert und wieder geparst werden können.',
+                dailyNotePathError:
+                    'Das Muster erzeugt dieselben Pfade wie das Muster für tägliche Notizen. Verwende ein anderes Muster für wöchentliche Notizen.',
                 isoWeeksWarning:
                     'Wöchentliche Notizen verwenden ISO-Wochen ("W" oder "G"), daher beginnt der Kalender die Wochen am Montag und zeigt ISO-Wochennummern. Verwende "gggg" mit "ww" für Wochen, die dem Gebietsschema folgen.',
                 calendarYearWarning:

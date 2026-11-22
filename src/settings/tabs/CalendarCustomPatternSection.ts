@@ -30,6 +30,7 @@ import {
     DEFAULT_CALENDAR_CUSTOM_WEEK_PATTERN,
     DEFAULT_CALENDAR_CUSTOM_YEAR_PATTERN,
     doesCalendarCustomPatternUseWeekYearWithoutWeekNumber,
+    doesCalendarCustomWeekPatternBuildDailyNotePaths,
     ensureMarkdownFileName,
     getCalendarCustomWeekPatternIssues,
     isCalendarCustomDatePatternValid,
@@ -677,12 +678,16 @@ export function createCalendarCustomPatternRenderers(options: CalendarCustomPatt
         if (isPatternTarget(calendarCustomWeekPattern)) {
             const weekPatternRaw = getInputValue(calendarCustomWeekPattern.inputEl, plugin.settings.calendarCustomWeekPattern);
             const weekCustomPattern = buildCustomPattern(weekPatternRaw, '');
-            const showWeekError = weekPatternRaw.trim() !== '' && !isCalendarCustomWeekPatternValid(weekCustomPattern, momentApi);
-            setElementTextIfPresent(
-                calendarCustomWeekPatternErrorEl,
-                showWeekError ? strings.settings.items.calendarWeeklyNotePattern.parsingError : ''
-            );
-            setElementVisibleIfPresent(calendarCustomWeekPatternErrorEl, showWeekError);
+            const dailyPatternRaw = getInputValue(calendarCustomFilePattern?.inputEl ?? null, plugin.settings.calendarCustomFilePattern);
+            const dailyCustomPattern = buildCustomPattern(dailyPatternRaw, DEFAULT_CALENDAR_CUSTOM_FILE_PATTERN);
+            let weekMessage = '';
+            if (weekPatternRaw.trim() !== '' && !isCalendarCustomWeekPatternValid(weekCustomPattern, momentApi)) {
+                weekMessage = strings.settings.items.calendarWeeklyNotePattern.parsingError;
+            } else if (doesCalendarCustomWeekPatternBuildDailyNotePaths(weekCustomPattern, dailyCustomPattern, momentApi)) {
+                weekMessage = strings.settings.items.calendarWeeklyNotePattern.dailyNotePathError;
+            }
+            setElementTextIfPresent(calendarCustomWeekPatternErrorEl, weekMessage);
+            setElementVisibleIfPresent(calendarCustomWeekPatternErrorEl, weekMessage !== '');
         }
 
         if (isPatternTarget(calendarCustomMonthPattern)) {
