@@ -2736,7 +2736,6 @@ export const STRINGS_VI = {
                     { headline: 'Chia sẻ bộ slide bằng một liên kết.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
                     { headline: 'Ánh sáng 3D như Blender.', subtext: 'Đèn điểm, định hướng, spot và vùng có đổ bóng.' },
                     { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và JSON.' },
-                    { headline: 'Tạo component như Figma.', subtext: 'Sửa một lần, mọi instance đều đổi theo.' },
                     { headline: 'Duyệt chủ đề như trong Obsidian.', subtext: 'Cài một chủ đề miễn phí chỉ bằng một cú nhấp.' },
                     { headline: 'Lưu bộ slide trong thư mục đồng bộ.', subtext: 'Dùng được với Dropbox, iCloud Drive và OneDrive.' },
                     { headline: '3D với vật lý vật rắn.', subtext: 'Thả, lật hoặc chồng các vật thể.' },

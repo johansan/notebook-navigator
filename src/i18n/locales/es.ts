@@ -2753,7 +2753,6 @@ export const STRINGS_ES = {
                         subtext: 'Luces de punto, direccionales, de foco y de área con sombras.'
                     },
                     { headline: 'Versiona tus presentaciones con Git.', subtext: 'Son archivos de texto Markdown y JSON.' },
-                    { headline: 'Crea componentes como en Figma.', subtext: 'Edítalo una vez y cambian todas las instancias.' },
                     { headline: 'Explora temas como en Obsidian.', subtext: 'Instala un tema gratis con un clic.' },
                     { headline: 'Usa una carpeta sincronizada.', subtext: 'Funcionan Dropbox, iCloud Drive y OneDrive.' },
                     { headline: '3D con física de cuerpos rígidos.', subtext: 'Deja caer, vuelca o apila objetos.' },

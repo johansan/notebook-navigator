@@ -2732,7 +2732,6 @@ export const STRINGS_KO = {
                     { headline: '링크로 발표 자료를 공유하세요.', subtext: '무료 계정으로 웹에 게시할 수 있습니다.' },
                     { headline: 'Blender 같은 3D 조명.', subtext: '포인트, 디렉셔널, 스폿, 영역 조명과 그림자.' },
                     { headline: '발표 자료를 Git으로 관리하세요.', subtext: '발표 자료는 Markdown과 JSON 텍스트 파일입니다.' },
-                    { headline: 'Figma처럼 컴포넌트를 만드세요.', subtext: '한 번 편집하면 모든 인스턴스가 바뀝니다.' },
                     { headline: 'Obsidian처럼 테마를 둘러보세요.', subtext: '무료 테마를 클릭 한 번으로 설치하세요.' },
                     { headline: '발표 자료를 동기화 폴더에 두세요.', subtext: 'Dropbox, iCloud Drive, OneDrive 모두 됩니다.' },
                     { headline: '강체 물리가 있는 3D.', subtext: '개체를 떨어뜨리고, 넘어뜨리고, 쌓으세요.' },

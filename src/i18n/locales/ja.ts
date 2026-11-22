@@ -2740,7 +2740,6 @@ export const STRINGS_JA = {
                     { headline: 'プレゼンをリンクで共有できます。', subtext: '無料アカウントでウェブに公開できます。' },
                     { headline: 'Blender のような 3D ライティング。', subtext: 'ポイント、指向性、スポット、エリアのライトと影。' },
                     { headline: 'プレゼンを Git で管理できます。', subtext: 'Markdown と JSON のテキストファイルです。' },
-                    { headline: 'Figma のようにコンポーネントを作れます。', subtext: '一度編集すると、すべてのインスタンスが変わります。' },
                     { headline: 'Obsidian のようにテーマを選べます。', subtext: '無料のテーマをワンクリックでインストールできます。' },
                     { headline: 'プレゼンは同期フォルダに置けます。', subtext: 'Dropbox、iCloud Drive、OneDrive で使えます。' },
                     { headline: '剛体物理演算つきの 3D。', subtext: 'オブジェクトを落とし、倒し、積み上げます。' },

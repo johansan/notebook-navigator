@@ -2733,7 +2733,6 @@ export const STRINGS_AR = {
                     { headline: 'شارك عرضك برابط.', subtext: 'انشره على الإنترنت بحساب مجاني.' },
                     { headline: 'إضاءة ثلاثية الأبعاد كما في Blender.', subtext: 'أضواء نقطية واتجاهية وبقعية ومساحية مع ظلال.' },
                     { headline: 'تتبّع عروضك في Git.', subtext: 'العروض ملفات نصية بصيغة Markdown وJSON.' },
-                    { headline: 'أنشئ مكونات كما في Figma.', subtext: 'عدّلها مرة واحدة فتتغير كل النسخ.' },
                     { headline: 'تصفّح السمات كما في Obsidian.', subtext: 'ثبّت سمة مجانية بنقرة واحدة.' },
                     { headline: 'احفظ عروضك في مجلد متزامن.', subtext: 'تعمل مع Dropbox وiCloud Drive وOneDrive.' },
                     { headline: 'ثلاثي الأبعاد بفيزياء الأجسام الصلبة.', subtext: 'أسقِط الأجسام أو اقلبها أو كدّسها.' },

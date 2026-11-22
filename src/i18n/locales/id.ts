@@ -2739,7 +2739,6 @@ export const STRINGS_ID = {
                     { headline: 'Bagikan presentasi dengan tautan.', subtext: 'Terbitkan online dengan akun gratis.' },
                     { headline: 'Pencahayaan 3D ala Blender.', subtext: 'Cahaya titik, terarah, sorot, dan area berbayang.' },
                     { headline: 'Lacak presentasi Anda di Git.', subtext: 'Presentasi berupa file teks Markdown dan JSON.' },
-                    { headline: 'Buat komponen ala Figma.', subtext: 'Edit sekali dan semua instance ikut berubah.' },
                     { headline: 'Jelajahi tema seperti di Obsidian.', subtext: 'Pasang tema gratis dengan sekali klik.' },
                     { headline: 'Simpan presentasi di folder tersinkron.', subtext: 'Bisa dengan Dropbox, iCloud Drive, atau OneDrive.' },
                     { headline: '3D dengan fisika benda tegar.', subtext: 'Jatuhkan, robohkan, atau tumpuk objek.' },

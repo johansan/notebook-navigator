@@ -2747,7 +2747,6 @@ export const STRINGS_PT_BR = {
                     { headline: 'Compartilhe com um link.', subtext: 'Publique online com uma conta gratuita.' },
                     { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, direcionais, spot e área com sombras.' },
                     { headline: 'Versione suas apresentações no Git.', subtext: 'São arquivos de texto Markdown e JSON.' },
-                    { headline: 'Crie componentes como no Figma.', subtext: 'Edite uma vez e todas as instâncias mudam.' },
                     { headline: 'Explore temas como no Obsidian.', subtext: 'Instale um tema grátis com um clique.' },
                     { headline: 'Salve em uma pasta sincronizada.', subtext: 'Funciona com Dropbox, iCloud Drive e OneDrive.' },
                     { headline: '3D com física de corpos rígidos.', subtext: 'Derrube, tombe ou empilhe objetos.' },

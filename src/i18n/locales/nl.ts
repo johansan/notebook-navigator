@@ -2747,7 +2747,6 @@ export const STRINGS_NL = {
                     { headline: 'Deel een presentatie met een link.', subtext: 'Zet hem online met een gratis account.' },
                     { headline: '3D-belichting zoals in Blender.', subtext: 'Punt-, richtings-, spot- en vlaklichten met schaduwen.' },
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en JSON-tekstbestanden.' },
-                    { headline: 'Bouw componenten zoals in Figma.', subtext: 'Bewerk ze één keer en elke instantie verandert.' },
                     { headline: 'Blader door thema’s zoals in Obsidian.', subtext: 'Installeer een gratis thema met één klik.' },
                     { headline: 'Gebruik een gesynchroniseerde map.', subtext: 'Dropbox, iCloud Drive en OneDrive werken.' },
                     { headline: '3D met starre-lichamenfysica.', subtext: 'Laat objecten vallen, kantelen en opstapelen.' },

@@ -2753,7 +2753,6 @@ export const STRINGS_FR = {
                         subtext: 'Lumières point, directionnelles, spot et surface avec ombres.'
                     },
                     { headline: 'Versionnez vos présentations avec Git.', subtext: 'Ce sont des fichiers texte Markdown et JSON.' },
-                    { headline: 'Des composants comme dans Figma.', subtext: 'Modifiez-le une fois et chaque instance suit.' },
                     { headline: 'Parcourez des thèmes à la Obsidian.', subtext: 'Installez un thème gratuit en un clic.' },
                     { headline: 'Utilisez un dossier synchronisé.', subtext: 'Dropbox, iCloud Drive et OneDrive fonctionnent.' },
                     { headline: 'La 3D avec la physique des solides.', subtext: 'Lâchez, basculez ou empilez des objets.' },

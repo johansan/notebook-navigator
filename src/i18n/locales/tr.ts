@@ -2737,7 +2737,6 @@ export const STRINGS_TR = {
                     { headline: 'Sunumunuzu bir bağlantıyla paylaşın.', subtext: "Ücretsiz bir hesapla web'de yayınlayın." },
                     { headline: 'Blender gibi 3D ışıklandırma.', subtext: 'Gölgeli nokta, yönlü, spot ve alan ışıkları.' },
                     { headline: "Sunumlarınızı Git'te takip edin.", subtext: 'Sunumlar Markdown ve JSON metin dosyalarıdır.' },
-                    { headline: 'Figma gibi bileşenler oluşturun.', subtext: 'Bir kez düzenleyin, tüm örnekler değişsin.' },
                     { headline: 'Temalara Obsidian’daki gibi göz atın.', subtext: 'Ücretsiz bir temayı tek tıkla kurun.' },
                     { headline: 'Sunumlarınızı eşitlenen klasörde tutun.', subtext: 'Dropbox, iCloud Drive ve OneDrive ile çalışır.' },
                     { headline: 'Katı cisim fiziğiyle 3D.', subtext: 'Nesneleri düşürün, devirin veya yığın.' },

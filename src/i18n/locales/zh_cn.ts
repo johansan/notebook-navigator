@@ -2722,7 +2722,6 @@ export const STRINGS_ZH_CN = {
                     { headline: '用链接分享演示文稿。', subtext: '用免费账号发布到网上。' },
                     { headline: '像 Blender 一样的 3D 灯光。', subtext: '点光、平行光、聚光和面光，都带阴影。' },
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 JSON 文本文件。' },
-                    { headline: '像 Figma 一样创建组件。', subtext: '编辑一次，所有实例都会改变。' },
                     { headline: '像 Obsidian 一样挑选主题。', subtext: '一键安装免费主题。' },
                     { headline: '把演示文稿放在同步文件夹里。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '带刚体物理的 3D。', subtext: '让物体掉落、倾倒或堆叠。' },

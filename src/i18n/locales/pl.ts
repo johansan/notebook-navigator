@@ -2749,7 +2749,6 @@ export const STRINGS_PL = {
                         subtext: 'Światła punktowe, kierunkowe, reflektorowe i powierzchniowe z cieniami.'
                     },
                     { headline: 'Śledź zmiany prezentacji w Git.', subtext: 'Prezentacje to pliki tekstowe Markdown i JSON.' },
-                    { headline: 'Twórz komponenty jak w Figma.', subtext: 'Edytuj raz, a zmieni się każda instancja.' },
                     { headline: 'Przeglądaj motywy jak w Obsidian.', subtext: 'Zainstaluj darmowy motyw jednym kliknięciem.' },
                     { headline: 'Trzymaj prezentacje w chmurze.', subtext: 'Działa z Dropbox, iCloud Drive i OneDrive.' },
                     { headline: '3D z fizyką brył sztywnych.', subtext: 'Upuszczaj, przewracaj i układaj obiekty.' },

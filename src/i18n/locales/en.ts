@@ -2729,7 +2729,6 @@ export const STRINGS_EN = {
                     { headline: 'Share a deck with a link.', subtext: 'Publish it online with a free account.' },
                     { headline: '3D lighting like Blender.', subtext: 'Point, directional, spot and area lights with shadows.' },
                     { headline: 'Track your decks in Git.', subtext: 'Decks are Markdown and JSON text files.' },
-                    { headline: 'Build components like Figma.', subtext: 'Edit a composition and its instances change.' },
                     { headline: 'Browse themes like in Obsidian.', subtext: 'Install a free theme in one click.' },
                     { headline: 'Keep your decks in a synced folder.', subtext: 'Dropbox, iCloud Drive and OneDrive all work.' },
                     { headline: '3D with rigid-body physics.', subtext: 'Drop, tip or pile objects.' },

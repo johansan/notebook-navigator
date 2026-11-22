@@ -2722,7 +2722,6 @@ export const STRINGS_ZH_TW = {
                     { headline: '用連結分享簡報。', subtext: '用免費帳號發布到網路上。' },
                     { headline: '像 Blender 一樣的 3D 燈光。', subtext: '點光、平行光、聚光和面光，都有陰影。' },
                     { headline: '用 Git 管理你的簡報。', subtext: '簡報就是 Markdown 和 JSON 純文字檔。' },
-                    { headline: '像 Figma 一樣建立元件。', subtext: '編輯一次，所有實例都會跟著改變。' },
                     { headline: '像 Obsidian 一樣挑選主題。', subtext: '一鍵安裝免費主題。' },
                     { headline: '把簡報放在同步資料夾裡。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '具備剛體物理的 3D。', subtext: '讓物件掉落、傾倒或堆疊。' },

@@ -2742,7 +2742,6 @@ export const STRINGS_IT = {
                     { headline: 'Condividi le slide con un link.', subtext: 'Pubblicale online con un account gratuito.' },
                     { headline: 'Illuminazione 3D come in Blender.', subtext: 'Luci puntiformi, direzionali, spot e ad area con ombre.' },
                     { headline: 'Versiona le presentazioni con Git.', subtext: 'Sono file di testo Markdown e JSON.' },
-                    { headline: 'Crea componenti come in Figma.', subtext: 'Modificalo una volta e ogni istanza cambia.' },
                     { headline: 'Sfoglia i temi come in Obsidian.', subtext: 'Installa un tema gratis con un clic.' },
                     { headline: 'Usa una cartella sincronizzata.', subtext: 'Dropbox, iCloud Drive e OneDrive funzionano.' },
                     { headline: '3D con fisica dei corpi rigidi.', subtext: 'Fai cadere, ribalta o impila oggetti.' },

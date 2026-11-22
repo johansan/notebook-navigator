@@ -2747,7 +2747,6 @@ export const STRINGS_DE = {
                     { headline: 'Teile Präsentationen per Link.', subtext: 'Stell sie mit einem Gratis-Konto online.' },
                     { headline: '3D-Beleuchtung wie in Blender.', subtext: 'Punkt-, Spot-, Flächen- und gerichtetes Licht mit Schatten.' },
                     { headline: 'Verwalte deine Präsentationen in Git.', subtext: 'Es sind Markdown- und JSON-Textdateien.' },
-                    { headline: 'Baue Komponenten wie in Figma.', subtext: 'Bearbeite sie einmal und jede Instanz ändert sich.' },
                     { headline: 'Stöbere in Themes wie bei Obsidian.', subtext: 'Installiere ein Gratis-Theme mit einem Klick.' },
                     { headline: 'Nutze einen synchronisierten Ordner.', subtext: 'Dropbox, iCloud Drive und OneDrive funktionieren.' },
                     { headline: '3D mit Starrkörperphysik.', subtext: 'Lass Objekte fallen, kippen oder sich stapeln.' },
