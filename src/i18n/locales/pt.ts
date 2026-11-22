@@ -2740,7 +2740,7 @@ export const STRINGS_PT = {
                     { headline: 'Exporte a apresentação em vídeo 4K.', subtext: 'Não precisa do After Effects para a animar.' },
                     { headline: 'Personagens 3D que andam e correm.', subtext: 'Use o Meshy para rigging e animação.' },
                     { headline: 'Realce com ==sinais de igual==.', subtext: '**Negrito** e *itálico* são como no Obsidian.' },
-                    { headline: 'Use auto layout como no Figma.', subtext: 'Alinhe um grupo numa linha ou coluna.' },
+                    { headline: 'Desenhe gráficos a partir de tabelas.', subtext: 'Colunas, barras, linhas, uma tarte ou um contador.' },
                     { headline: 'Partilhe com uma ligação.', subtext: 'Publique-a online com uma conta gratuita.' },
                     { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, sol, foco e área com sombras.' },
                     { headline: 'Controle versões no Git.', subtext: 'São ficheiros de texto Markdown e JSON.' },

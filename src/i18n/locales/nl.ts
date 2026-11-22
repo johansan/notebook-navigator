@@ -2743,7 +2743,7 @@ export const STRINGS_NL = {
                     { headline: 'Exporteer je presentatie als 4K-video.', subtext: 'Je hebt geen After Effects nodig om te animeren.' },
                     { headline: 'Laat 3D-personages lopen of rennen.', subtext: 'Gebruik Meshy voor rigging en animatie.' },
                     { headline: 'Markeer met ==isgelijktekens==.', subtext: '**Vet** en *cursief* werken zoals in Obsidian.' },
-                    { headline: 'Gebruik auto layout zoals in Figma.', subtext: 'Zet een groep in een rij of een kolom.' },
+                    { headline: 'Teken grafieken uit een getallentabel.', subtext: 'Kolommen, staven, lijnen, een cirkel of een teller.' },
                     { headline: 'Deel een presentatie met een link.', subtext: 'Zet hem online met een gratis account.' },
                     { headline: '3D-belichting zoals in Blender.', subtext: 'Punt-, zon-, spot- en vlaklampen met schaduwen.' },
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en JSON-tekstbestanden.' },

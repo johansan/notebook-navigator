@@ -2743,7 +2743,7 @@ export const STRINGS_DE = {
                     { headline: 'Exportiere deine Folien als 4K-Video.', subtext: 'Zum Animieren brauchst du kein After Effects.' },
                     { headline: 'Lass 3D-Figuren gehen oder rennen.', subtext: 'Nutze Meshy für Rigging und Animation.' },
                     { headline: 'Markieren mit ==Gleichheitszeichen==.', subtext: '**Fett** und *kursiv* gehen genau wie in Obsidian.' },
-                    { headline: 'Nutze Auto-Layout wie in Figma.', subtext: 'Richte eine Gruppe in Zeile oder Spalte aus.' },
+                    { headline: 'Zeichne Diagramme aus Zahlentabellen.', subtext: 'Säulen, Balken, Linien, Kreis oder Zähler.' },
                     { headline: 'Teile Präsentationen per Link.', subtext: 'Stell sie mit einem Gratis-Konto online.' },
                     { headline: '3D-Beleuchtung wie in Blender.', subtext: 'Punkt, Sonne, Spot und Fläche mit Schatten.' },
                     { headline: 'Verwalte deine Präsentationen in Git.', subtext: 'Es sind Markdown- und JSON-Textdateien.' },

@@ -2733,7 +2733,7 @@ export const STRINGS_TR = {
                     { headline: 'Sunumu 4K video olarak dışa aktarın.', subtext: "Canlandırmak için After Effects'e ihtiyacınız yok." },
                     { headline: '3D karakterleri yürütün veya koşturun.', subtext: 'Rig ve animasyon için Meshy kullanın.' },
                     { headline: '==Eşittir işaretleriyle== vurgulayın.', subtext: "**Kalın** ve *italik* Obsidian'daki gibi çalışır." },
-                    { headline: 'Figma gibi otomatik yerleşim kullanın.', subtext: 'Bir grubu satır veya sütun hâlinde dizin.' },
+                    { headline: 'Bir sayı tablosundan grafik çizin.', subtext: 'Sütun, çubuk, çizgi, pasta grafik veya sayaç.' },
                     { headline: 'Sunumunuzu bir bağlantıyla paylaşın.', subtext: "Ücretsiz bir hesapla web'de yayınlayın." },
                     { headline: 'Blender gibi 3D ışıklandırma.', subtext: 'Gölgeli nokta, güneş, spot ve alan ışıkları.' },
                     { headline: "Sunumlarınızı Git'te takip edin.", subtext: 'Sunumlar Markdown ve JSON metin dosyalarıdır.' },

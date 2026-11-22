@@ -2728,7 +2728,7 @@ export const STRINGS_KO = {
                     { headline: '발표 자료를 4K 영상으로 내보내세요.', subtext: '애니메이션에 After Effects가 필요 없습니다.' },
                     { headline: '3D 캐릭터를 걷거나 뛰게 하세요.', subtext: '리깅과 애니메이션에는 Meshy를 사용하세요.' },
                     { headline: '==등호==로 감싸면 하이라이트됩니다.', subtext: '**굵게**와 *기울임*은 Obsidian과 똑같이 작동합니다.' },
-                    { headline: 'Figma처럼 자동 레이아웃을 쓰세요.', subtext: '그룹을 한 행이나 한 열로 정렬합니다.' },
+                    { headline: '숫자 표로 차트를 그리세요.', subtext: '세로형 막대, 가로형 막대, 선, 원형 또는 카운터.' },
                     { headline: '링크로 발표 자료를 공유하세요.', subtext: '무료 계정으로 웹에 게시할 수 있습니다.' },
                     { headline: 'Blender 같은 3D 조명.', subtext: '포인트, 태양, 스폿, 영역 조명과 그림자.' },
                     { headline: '발표 자료를 Git으로 관리하세요.', subtext: '발표 자료는 Markdown과 JSON 텍스트 파일입니다.' },

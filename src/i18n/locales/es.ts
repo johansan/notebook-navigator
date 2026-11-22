@@ -2746,7 +2746,7 @@ export const STRINGS_ES = {
                     { headline: 'Exporta tu presentación en vídeo 4K.', subtext: 'No necesitas After Effects para animarla.' },
                     { headline: 'Personajes 3D que caminan y corren.', subtext: 'Usa Meshy para el rigging y la animación.' },
                     { headline: 'Resalta con ==signos de igual==.', subtext: '**Negrita** y *cursiva* van como en Obsidian.' },
-                    { headline: 'Usa auto layout como en Figma.', subtext: 'Alinea un grupo en una fila o columna.' },
+                    { headline: 'Dibuja gráficas de tablas de números.', subtext: 'Columnas, barras, líneas, sectores o un contador.' },
                     { headline: 'Comparte tus diapos con un enlace.', subtext: 'Publícalas en línea con una cuenta gratis.' },
                     { headline: 'Iluminación 3D como en Blender.', subtext: 'Luces de punto, sol, foco y área con sombras.' },
                     { headline: 'Versiona tus presentaciones con Git.', subtext: 'Son archivos de texto Markdown y JSON.' },

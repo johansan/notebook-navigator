@@ -2718,7 +2718,7 @@ export const STRINGS_ZH_CN = {
                     { headline: '把演示文稿导出为 4K 视频。', subtext: '做动画不需要 After Effects。' },
                     { headline: '让 3D 角色走路或跑步。', subtext: '用 Meshy 绑定骨骼和制作动画。' },
                     { headline: '用 ==等号== 包住文字就能高亮。', subtext: '**粗体** 和 *斜体* 的用法和 Obsidian 一样。' },
-                    { headline: '像 Figma 一样使用自动布局。', subtext: '把一组对象排成一行或一列。' },
+                    { headline: '用数字表格绘制图表。', subtext: '柱形、条形、折线、饼图或计数器。' },
                     { headline: '用链接分享演示文稿。', subtext: '用免费账号发布到网上。' },
                     { headline: '像 Blender 一样的 3D 灯光。', subtext: '点光、日光、聚光和面光，都带阴影。' },
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 JSON 文本文件。' },

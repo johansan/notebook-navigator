@@ -2732,7 +2732,7 @@ export const STRINGS_VI = {
                     { headline: 'Xuất bộ slide thành video 4K.', subtext: 'Bạn không cần After Effects để tạo chuyển động.' },
                     { headline: 'Cho nhân vật 3D đi hoặc chạy.', subtext: 'Dùng Meshy để rigging và tạo chuyển động.' },
                     { headline: 'Tô sáng chữ bằng ==dấu bằng==.', subtext: '**Đậm** và *nghiêng* dùng y như trong Obsidian.' },
-                    { headline: 'Dùng auto layout như Figma.', subtext: 'Xếp một nhóm thành hàng hoặc cột.' },
+                    { headline: 'Vẽ biểu đồ từ một bảng số.', subtext: 'Cột, thanh, đường, biểu đồ tròn hoặc bộ đếm.' },
                     { headline: 'Chia sẻ bộ slide bằng một liên kết.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
                     { headline: 'Ánh sáng 3D như Blender.', subtext: 'Đèn điểm, mặt trời, spot và vùng có đổ bóng.' },
                     { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và JSON.' },

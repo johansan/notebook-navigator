@@ -2736,7 +2736,7 @@ export const STRINGS_JA = {
                     { headline: 'プレゼンを 4K 動画で書き出せます。', subtext: 'アニメーションに After Effects は要りません。' },
                     { headline: '3D キャラクターが歩いて走ります。', subtext: 'リギングとアニメーションには Meshy を使います。' },
                     { headline: '==等号== でハイライトできます。', subtext: '**太字** と *斜体* も Obsidian と同じです。' },
-                    { headline: 'Figma のようなオートレイアウト。', subtext: 'グループを横一列か縦一列に並べます。' },
+                    { headline: '数値の表からグラフを描けます。', subtext: '縦棒、横棒、折れ線、円、カウンターが使えます。' },
                     { headline: 'プレゼンをリンクで共有できます。', subtext: '無料アカウントでウェブに公開できます。' },
                     { headline: 'Blender のような 3D ライティング。', subtext: 'ポイント、サン、スポット、エリアのライトと影。' },
                     { headline: 'プレゼンを Git で管理できます。', subtext: 'Markdown と JSON のテキストファイルです。' },

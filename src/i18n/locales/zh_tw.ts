@@ -2718,7 +2718,7 @@ export const STRINGS_ZH_TW = {
                     { headline: '把簡報匯出成 4K 影片。', subtext: '做動畫不需要 After Effects。' },
                     { headline: '讓 3D 角色走路或跑步。', subtext: '用 Meshy 綁定骨架和製作動畫。' },
                     { headline: '用 ==等號== 包住文字就能醒目提示。', subtext: '**粗體** 和 *斜體* 的用法和 Obsidian 一樣。' },
-                    { headline: '像 Figma 一樣使用自動佈局。', subtext: '把一組物件排成一列或一欄。' },
+                    { headline: '用數字表格繪製圖表。', subtext: '直條圖、橫條圖、折線圖、圓形圖或計數器。' },
                     { headline: '用連結分享簡報。', subtext: '用免費帳號發布到網路上。' },
                     { headline: '像 Blender 一樣的 3D 燈光。', subtext: '點光、日光、聚光和面光，都有陰影。' },
                     { headline: '用 Git 管理你的簡報。', subtext: '簡報就是 Markdown 和 JSON 純文字檔。' },

@@ -2725,7 +2725,7 @@ export const STRINGS_EN = {
                     { headline: 'Export your deck as a 4K video.', subtext: 'You don’t need After Effects to animate it.' },
                     { headline: 'Make 3D characters walk or run.', subtext: 'Use Meshy for rigging and animation.' },
                     { headline: 'Highlight words with ==equal signs==.', subtext: '**Bold** and *italic* work just like Obsidian.' },
-                    { headline: 'Use auto layout like Figma.', subtext: 'Line up a group in a row or a column.' },
+                    { headline: 'Draw charts from a table of numbers.', subtext: 'Columns, bars, lines, a pie or a counter.' },
                     { headline: 'Share a deck with a link.', subtext: 'Publish it online with a free account.' },
                     { headline: '3D lighting like Blender.', subtext: 'Point, sun, spot and area lights with shadows.' },
                     { headline: 'Track your decks in Git.', subtext: 'Decks are Markdown and JSON text files.' },
