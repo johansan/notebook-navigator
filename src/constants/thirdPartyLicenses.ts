@@ -56,6 +56,10 @@ const MIT_NOTICES: MitNotice[] = [
     {
         packages: ['emoji-regex-xs'],
         copyright: ['Copyright (c) 2025 Steven Levithan']
+    },
+    {
+        packages: ['@noble/hashes'],
+        copyright: ['Copyright (c) 2022 Paul Miller (https://paulmillr.com)']
     }
 ];
 
