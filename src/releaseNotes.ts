@@ -108,6 +108,14 @@ export interface ReleaseNote {
  */
 const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: '3.5.3',
+        date: '2026-11-26',
+        showOnUpdate: false,
+        fixed: [
+            "Obsidian's community plugin scanner no longer reports the on-demand loading of views, command handlers and emoji data as issues."
+        ]
+    },
+    {
         version: '3.5.2',
         date: '2026-11-23',
         showOnUpdate: true,
