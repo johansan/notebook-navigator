@@ -25,13 +25,15 @@
  * 1. On plugin load, it compares the current version with the last shown version
  * 2. If version increased, it shows all release notes between versions
  * 3. Same or downgraded versions never auto-display
- * 4. Individual releases can be marked with showOnUpdate: false to skip auto-display
+ * 4. Individual releases can be marked with showOnUpdate: false so they do not open the dialog themselves;
+ *    the dialog still opens when another release since the last shown version opts in
  * 5. Users can always manually access release notes via plugin settings
  *
  * The lastShownVersion is stored in synced settings and device-local storage. The greater value is
  * used so synced devices normally share one display while stale settings cannot repeat it locally.
  */
 
+import { compareVersions } from './utils/versionUtils';
 export { compareVersions } from './utils/versionUtils';
 
 /**
@@ -76,7 +78,7 @@ export interface YoutubePlayButtonOptions {
 export interface ReleaseNote {
     version: string;
     date: string;
-    /** If false, skip automatic modal display for this version during startup */
+    /** If false, this release does not open the dialog on update; another release since the last shown version still can */
     showOnUpdate?: boolean;
     /** File name inside images/version-banners, extension included, such as '3.3.4.gif'. */
     banner?: string;
@@ -646,6 +648,18 @@ export function getReleaseNotesBetweenVersions(fromVersion: string, toVersion: s
  */
 export function getLatestReleaseNotes(count: number = 5): ReleaseNote[] {
     return RELEASE_NOTES.slice(0, count);
+}
+
+/**
+ * Determines whether updating from `fromVersion` to `toVersion` opens the dialog automatically:
+ * true when any release newer than `fromVersion`, up to and including `toVersion`, has `showOnUpdate`
+ * enabled, so a release that opts out does not hide an earlier release the user has not seen.
+ */
+export function isUpdateAutoDisplayEnabled(fromVersion: string, toVersion: string): boolean {
+    return RELEASE_NOTES.some(
+        note =>
+            compareVersions(note.version, fromVersion) > 0 && compareVersions(note.version, toVersion) <= 0 && note.showOnUpdate !== false
+    );
 }
 
 /**

@@ -306,17 +306,32 @@ describe("NotebookNavigatorPlugin What's new version tracking", () => {
         expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
     });
 
-    it('does not open the dialog when the current release opts out of automatic display', async () => {
+    it('does not open the dialog when every release since the marker opts out of automatic display', async () => {
         const plugin = createPluginHarness();
-        plugin.manifest.version = '3.3.5';
+        plugin.manifest.version = '3.5.3';
         plugin.settings.showReleaseNotes = true;
-        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.3');
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.5.2');
 
         await plugin.checkForVersionUpdate({ isFirstLaunch: false });
 
         expect(whatsNewModalMock).not.toHaveBeenCalled();
-        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.3.5');
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.5.3');
         expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens the dialog when an earlier release since the marker opts in although the current release opts out', async () => {
+        const plugin = createPluginHarness();
+        plugin.manifest.version = '3.5.3';
+        plugin.settings.showReleaseNotes = true;
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.5.1');
+
+        await plugin.checkForVersionUpdate({ isFirstLaunch: false });
+
+        expect(whatsNewModalMock).toHaveBeenCalledTimes(1);
+        expect(whatsNewModalOpen).toHaveBeenCalledTimes(1);
+        const releaseNotes = whatsNewModalMock.mock.calls[0][1] as { version: string }[];
+        expect(releaseNotes.map(note => note.version)).toContain('3.5.2');
+        expect(plugin.settingsController.advanceLastShownVersion).not.toHaveBeenCalled();
     });
 
     it('opens the dialog when the user and current release both opt in', async () => {
@@ -334,8 +349,8 @@ describe("NotebookNavigatorPlugin What's new version tracking", () => {
     it('advances both markers after the update dialog closes', async () => {
         vi.useFakeTimers();
         const plugin = createPluginHarness();
-        plugin.manifest.version = '999.0.0';
-        plugin.settingsController.getLastShownVersion.mockReturnValue('990.0.0');
+        plugin.manifest.version = '3.3.4';
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.2');
 
         await plugin.checkForVersionUpdate({ isFirstLaunch: false });
 
@@ -346,15 +361,15 @@ describe("NotebookNavigatorPlugin What's new version tracking", () => {
         onClose?.();
         await vi.advanceTimersByTimeAsync(1000);
 
-        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.3.4');
         expect(plugin.saveSettingsAndUpdate).toHaveBeenCalledTimes(1);
     });
 
     it('does not save an older marker when a newer version arrives while the dialog is open', async () => {
         vi.useFakeTimers();
         const plugin = createPluginHarness();
-        plugin.manifest.version = '999.0.0';
-        plugin.settingsController.getLastShownVersion.mockReturnValue('990.0.0');
+        plugin.manifest.version = '3.3.4';
+        plugin.settingsController.getLastShownVersion.mockReturnValue('3.3.2');
 
         await plugin.checkForVersionUpdate({ isFirstLaunch: false });
 
@@ -364,7 +379,7 @@ describe("NotebookNavigatorPlugin What's new version tracking", () => {
         onClose?.();
         await vi.advanceTimersByTimeAsync(1000);
 
-        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('999.0.0');
+        expect(plugin.settingsController.advanceLastShownVersion).toHaveBeenCalledWith('3.3.4');
         expect(plugin.saveSettingsAndUpdate).not.toHaveBeenCalled();
     });
 });

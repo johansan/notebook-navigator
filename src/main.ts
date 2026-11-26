@@ -2070,7 +2070,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
 
         // A newer shared marker can come from a device running a newer plugin version. Downgrades
         // never auto-display because recording the older version would reopen the dialog elsewhere.
-        const { getReleaseNotesBetweenVersions, compareVersions, isReleaseAutoDisplayEnabled } = await import('./releaseNotes');
+        const { getReleaseNotesBetweenVersions, compareVersions, isUpdateAutoDisplayEnabled } = await import('./releaseNotes');
         if (compareVersions(currentVersion, lastShownVersion) <= 0) {
             return;
         }
@@ -2082,9 +2082,9 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
             return;
         }
 
-        // Only the current release decides whether startup should open the dialog. Advance the
-        // marker when it opts out so the skipped dialog is not reconsidered on the next startup.
-        if (!isReleaseAutoDisplayEnabled(currentVersion)) {
+        // Open the dialog when any release since the marker opts in, so a release that opts out does not
+        // hide an earlier one. Otherwise advance the marker so the skipped releases are not reconsidered.
+        if (!isUpdateAutoDisplayEnabled(lastShownVersion, currentVersion)) {
             await this.advanceLastShownVersion(currentVersion);
             return;
         }
