@@ -2700,7 +2700,7 @@ export const STRINGS_ZH_CN = {
                 coffeeButton: '☕️ 请我喝咖啡'
             },
             markdownPointBanner: {
-                heading: '您在用 Canva、Keynote 或 PowerPoint 吗？',
+                heading: '你做演示文稿吗？',
                 atTop: {
                     name: '在顶部显示 MarkdownPoint 横幅',
                     desc: '关闭后，横幅会显示在设置页面中较靠下的位置。'
@@ -2708,13 +2708,13 @@ export const STRINGS_ZH_CN = {
                 credit: '作者：Johan Sanneblad',
                 messages: [
                     { headline: '用 Markdown 写幻灯片。', subtext: '把文字和图片拖到你想要的位置。' },
-                    { headline: 'PowerPoint 的免费替代品。', subtext: '分享和协作也都免费。' },
+                    { headline: '免费制作演示文稿。', subtext: '分享和协作也都免费。' },
                     { headline: '每份演示文稿都是电脑上的一个文件夹。', subtext: '做幻灯片不需要账号。' },
                     { headline: '像 Apple Motion 一样做动画。', subtext: '可以用关键帧、路径和变形。' },
                     { headline: '在幻灯片上放 3D 模型。', subtext: '打开 GLB 或 glTF 文件，或用 Meshy 生成。' },
                     { headline: '像 Google Slides 一样协作。', subtext: '看到每个人的指针和评论。' },
-                    { headline: '在一处查看每页幻灯片的文字。', subtext: '打开 View > Outline，用 Markdown 编辑。' },
-                    { headline: '像 Figma 一样吸附对象。', subtext: '按间距、尺寸和角度对齐。' },
+                    { headline: '在一处查看每页幻灯片的文字。', subtext: '打开“大纲”，用 Markdown 编辑。' },
+                    { headline: '把对象吸附到位。', subtext: '按间距、尺寸和角度对齐。' },
                     { headline: '把演示文稿导出为 4K 视频。', subtext: '做动画不需要 After Effects。' },
                     { headline: '让 3D 角色走路或跑步。', subtext: '用 Meshy 绑定骨骼和制作动画。' },
                     { headline: '用 ==等号== 包住文字就能高亮。', subtext: '**粗体** 和 *斜体* 的用法和 Obsidian 一样。' },
@@ -2722,11 +2722,11 @@ export const STRINGS_ZH_CN = {
                     { headline: '用链接分享演示文稿。', subtext: '用免费账号发布到网上。' },
                     { headline: '像 Blender 一样的 3D 灯光。', subtext: '点光、平行光、聚光和面光，都带阴影。' },
                     { headline: '用 Git 管理你的演示文稿。', subtext: '演示文稿就是 Markdown 和 JSON 文本文件。' },
-                    { headline: '像 Obsidian 一样挑选主题。', subtext: '一键安装免费主题。' },
+                    { headline: '不用离开应用就能浏览主题。', subtext: '一键安装免费主题。' },
                     { headline: '把演示文稿放在同步文件夹里。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '带刚体物理的 3D。', subtext: '让物体掉落、倾倒或堆叠。' },
                     { headline: '演讲者备注也是 Markdown。', subtext: '它们和幻灯片保存在同一个文件里。' },
-                    { headline: '像 Figma 一样组合形状。', subtext: '并集、减去、交集或排除。' },
+                    { headline: '把形状组合成新形状。', subtext: '并集、减去、交集或排除。' },
                     { headline: '把代码放到幻灯片上。', subtext: '代码块支持 21 种语言的语法高亮。' },
                     { headline: '个人和商业用途都免费。', subtext: '下载 Mac 版或 Windows 版。' }
                 ]

@@ -2725,7 +2725,7 @@ export const STRINGS_NL = {
                 coffeeButton: '☕️ Koop me een koffie'
             },
             markdownPointBanner: {
-                heading: 'Gebruik je Canva, Keynote of PowerPoint?',
+                heading: 'Maak je presentaties?',
                 atTop: {
                     name: 'MarkdownPoint-banner bovenaan tonen',
                     desc: 'Als dit uit staat, staat de banner verderop op de instellingenpagina.'
@@ -2733,25 +2733,31 @@ export const STRINGS_NL = {
                 credit: 'door Johan Sanneblad',
                 messages: [
                     { headline: 'Schrijf je slides in Markdown.', subtext: 'Sleep tekst en afbeeldingen waar je ze wilt.' },
-                    { headline: 'Een gratis alternatief voor PowerPoint.', subtext: 'Delen en samenwerken zijn ook gratis.' },
+                    { headline: 'Maak gratis presentaties.', subtext: 'Delen en samen bewerken zijn ook gratis.' },
                     { headline: 'Je slides zijn mappen op je computer.', subtext: 'Je hebt geen account nodig voor slides.' },
                     { headline: 'Animeer zoals in Apple Motion.', subtext: 'Gebruik keyframes, paden en morphs.' },
                     { headline: 'Zet 3D-modellen op je slides.', subtext: 'Open een GLB- of glTF-bestand of gebruik Meshy.' },
                     { headline: 'Werk samen zoals in Google Slides.', subtext: 'Zie ieders cursor en reacties.' },
                     { headline: 'Zie alle slidetekst op één plek.', subtext: 'Open View > Outline en bewerk in Markdown.' },
-                    { headline: 'Snap objecten zoals in Figma.', subtext: 'Lijn uit op afstand, grootte en hoek.' },
-                    { headline: 'Exporteer je presentatie als 4K-video.', subtext: 'Je hebt geen After Effects nodig om te animeren.' },
+                    { headline: 'Snap objecten op hun plek.', subtext: 'Lijn ze uit op afstand, grootte en hoek.' },
+                    {
+                        headline: 'Exporteer je presentatie als 4K-video.',
+                        subtext: 'Je hebt geen After Effects nodig om te animeren.'
+                    },
                     { headline: 'Laat 3D-personages lopen of rennen.', subtext: 'Gebruik Meshy voor rigging en animatie.' },
                     { headline: 'Markeer met ==isgelijktekens==.', subtext: '**Vet** en *cursief* werken zoals in Obsidian.' },
                     { headline: 'Teken grafieken uit een getallentabel.', subtext: 'Kolommen, staven, lijnen, een cirkel of een teller.' },
-                    { headline: 'Deel een presentatie met een link.', subtext: 'Zet hem online met een gratis account.' },
+                    { headline: 'Deel een presentatie als webpagina.', subtext: 'Zet hem online met een gratis account.' },
                     { headline: '3D-belichting zoals in Blender.', subtext: 'Punt-, richtings-, spot- en vlaklichten met schaduwen.' },
                     { headline: 'Beheer je presentaties in Git.', subtext: 'Het zijn Markdown- en JSON-tekstbestanden.' },
-                    { headline: 'Blader door thema’s zoals in Obsidian.', subtext: 'Installeer een gratis thema met één klik.' },
-                    { headline: 'Gebruik een gesynchroniseerde map.', subtext: 'Dropbox, iCloud Drive en OneDrive werken.' },
+                    { headline: 'Blader door thema’s in de app.', subtext: 'Installeer een gratis thema met één klik.' },
+                    {
+                        headline: 'Gebruik een gesynchroniseerde map.',
+                        subtext: 'Dropbox, iCloud Drive en OneDrive werken.'
+                    },
                     { headline: '3D met starre-lichamenfysica.', subtext: 'Laat objecten vallen, kantelen en opstapelen.' },
                     { headline: 'Sprekersnotities zijn ook Markdown.', subtext: 'Ze staan in hetzelfde bestand als de slides.' },
-                    { headline: 'Combineer vormen zoals in Figma.', subtext: 'Verenigen, aftrekken, snijden of uitsluiten.' },
+                    { headline: 'Combineer vormen tot nieuwe vormen.', subtext: 'Verenigen, aftrekken, snijden of uitsluiten.' },
                     { headline: 'Zet code op je slides.', subtext: 'Code krijgt syntaxiskleuring in 21 talen.' },
                     { headline: 'Gratis voor privé en zakelijk gebruik.', subtext: 'Download het voor Mac of Windows.' }
                 ]

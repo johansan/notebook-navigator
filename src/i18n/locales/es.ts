@@ -2728,7 +2728,7 @@ export const STRINGS_ES = {
                 coffeeButton: '☕️ Invítame a un café'
             },
             markdownPointBanner: {
-                heading: '¿Usas Canva, Keynote o PowerPoint?',
+                heading: '¿Creas presentaciones?',
                 atTop: {
                     name: 'Mostrar el banner de MarkdownPoint arriba',
                     desc: 'Si está desactivado, el banner aparece más abajo en la página de ajustes.'
@@ -2736,13 +2736,13 @@ export const STRINGS_ES = {
                 credit: 'por Johan Sanneblad',
                 messages: [
                     { headline: 'Escribe tus diapositivas en Markdown.', subtext: 'Arrastra textos e imágenes adonde quieras.' },
-                    { headline: 'Una alternativa gratis a PowerPoint.', subtext: 'Compartir y colaborar también es gratis.' },
+                    { headline: 'Crea presentaciones gratis.', subtext: 'Compartir y colaborar también es gratis.' },
                     { headline: 'Tus diapos están en tu ordenador.', subtext: 'No necesitas una cuenta para crear diapos.' },
                     { headline: 'Anima como en Apple Motion.', subtext: 'Usa fotogramas clave, trayectorias y morphs.' },
                     { headline: 'Pon modelos 3D en tus diapositivas.', subtext: 'Abre un GLB o glTF, o genera uno con Meshy.' },
                     { headline: 'Colabora como en Google Slides.', subtext: 'Ve los punteros y comentarios de todos.' },
-                    { headline: 'Ve todo el texto en un solo lugar.', subtext: 'Abre View > Outline y edítalo en Markdown.' },
-                    { headline: 'Encaja objetos como en Figma.', subtext: 'Alinéalos por espaciado, tamaño y ángulo.' },
+                    { headline: 'Ve todo el texto en un solo lugar.', subtext: 'Abre el esquema y edita el texto en Markdown.' },
+                    { headline: 'Ajusta los objetos a su sitio.', subtext: 'Alinéalos por espaciado, tamaño y ángulo.' },
                     { headline: 'Exporta tu presentación en vídeo 4K.', subtext: 'No necesitas After Effects para animarla.' },
                     { headline: 'Personajes 3D que caminan y corren.', subtext: 'Usa Meshy para el rigging y la animación.' },
                     { headline: 'Resalta con ==signos de igual==.', subtext: '**Negrita** y *cursiva* van como en Obsidian.' },
@@ -2753,11 +2753,11 @@ export const STRINGS_ES = {
                         subtext: 'Luces de punto, direccionales, de foco y de área con sombras.'
                     },
                     { headline: 'Versiona tus presentaciones con Git.', subtext: 'Son archivos de texto Markdown y JSON.' },
-                    { headline: 'Explora temas como en Obsidian.', subtext: 'Instala un tema gratis con un clic.' },
+                    { headline: 'Explora temas sin salir de la app.', subtext: 'Instala un tema gratis con un clic.' },
                     { headline: 'Usa una carpeta sincronizada.', subtext: 'Funcionan Dropbox, iCloud Drive y OneDrive.' },
                     { headline: '3D con física de cuerpos rígidos.', subtext: 'Deja caer, vuelca o apila objetos.' },
                     { headline: 'Las notas del orador son Markdown.', subtext: 'Se guardan en el mismo archivo que las diapos.' },
-                    { headline: 'Combina formas como en Figma.', subtext: 'Une, resta, interseca o excluye.' },
+                    { headline: 'Combina formas para crear otras nuevas.', subtext: 'Une, resta, interseca o excluye.' },
                     { headline: 'Pon código en tus diapositivas.', subtext: 'El código se resalta en 21 lenguajes.' },
                     { headline: 'Gratis para uso personal y comercial.', subtext: 'Descárgalo para Mac o Windows.' }
                 ]

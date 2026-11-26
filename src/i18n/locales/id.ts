@@ -2717,7 +2717,7 @@ export const STRINGS_ID = {
                 coffeeButton: '☕️ Traktir saya kopi'
             },
             markdownPointBanner: {
-                heading: 'Apakah Anda memakai Canva, Keynote, atau PowerPoint?',
+                heading: 'Apakah Anda membuat presentasi?',
                 atTop: {
                     name: 'Tampilkan banner MarkdownPoint di atas',
                     desc: 'Jika dimatikan, banner muncul lebih ke bawah di halaman pengaturan.'
@@ -2725,25 +2725,28 @@ export const STRINGS_ID = {
                 credit: 'oleh Johan Sanneblad',
                 messages: [
                     { headline: 'Tulis slide Anda dalam Markdown.', subtext: 'Seret teks dan gambar ke posisi yang Anda mau.' },
-                    { headline: 'Alternatif gratis untuk PowerPoint.', subtext: 'Berbagi dan berkolaborasi juga gratis.' },
+                    { headline: 'Buat presentasi secara gratis.', subtext: 'Berbagi dan mengedit bersama juga gratis.' },
                     { headline: 'Presentasi tersimpan di komputer Anda.', subtext: 'Anda tidak perlu akun untuk membuat slide.' },
                     { headline: 'Buat animasi ala Apple Motion.', subtext: 'Gunakan keyframe, jalur, dan morph.' },
-                    { headline: 'Taruh model 3D di slide Anda.', subtext: 'Buka file GLB atau glTF, atau buat dengan Meshy.' },
+                    { headline: 'Taruh model 3D di slide Anda.', subtext: 'Buka file GLB atau glTF, atau hasilkan dengan Meshy.' },
                     { headline: 'Berkolaborasi ala Google Slides.', subtext: 'Lihat pointer dan komentar semua orang.' },
-                    { headline: 'Lihat teks semua slide di satu tempat.', subtext: 'Buka View > Outline dan edit sebagai Markdown.' },
-                    { headline: 'Snap objek ala Figma.', subtext: 'Rapikan berdasarkan jarak, ukuran, dan sudut.' },
+                    {
+                        headline: 'Lihat teks semua slide di satu tempat.',
+                        subtext: 'Buka View > Outline dan edit sebagai Markdown.'
+                    },
+                    { headline: 'Tempelkan objek tepat di tempatnya.', subtext: 'Rapikan berdasarkan jarak, ukuran, dan sudut.' },
                     { headline: 'Ekspor presentasi sebagai video 4K.', subtext: 'Tidak perlu After Effects untuk animasinya.' },
                     { headline: 'Buat karakter 3D berjalan atau berlari.', subtext: 'Gunakan Meshy untuk rigging dan animasi.' },
                     { headline: 'Sorot dengan ==tanda sama dengan==.', subtext: '**Tebal** dan *miring* sama seperti di Obsidian.' },
                     { headline: 'Gambar grafik dari tabel angka.', subtext: 'Kolom, batang, garis, pai, atau penghitung.' },
-                    { headline: 'Bagikan presentasi dengan tautan.', subtext: 'Terbitkan online dengan akun gratis.' },
+                    { headline: 'Bagikan presentasi sebagai halaman web.', subtext: 'Terbitkan online dengan akun gratis.' },
                     { headline: 'Pencahayaan 3D ala Blender.', subtext: 'Cahaya titik, terarah, sorot, dan area berbayang.' },
                     { headline: 'Lacak presentasi Anda di Git.', subtext: 'Presentasi berupa file teks Markdown dan JSON.' },
-                    { headline: 'Jelajahi tema seperti di Obsidian.', subtext: 'Pasang tema gratis dengan sekali klik.' },
+                    { headline: 'Jelajahi tema di dalam aplikasi.', subtext: 'Pasang tema gratis dengan sekali klik.' },
                     { headline: 'Simpan presentasi di folder tersinkron.', subtext: 'Bisa dengan Dropbox, iCloud Drive, atau OneDrive.' },
                     { headline: '3D dengan fisika benda tegar.', subtext: 'Jatuhkan, robohkan, atau tumpuk objek.' },
                     { headline: 'Catatan pembicara juga Markdown.', subtext: 'Tersimpan di file yang sama dengan slide.' },
-                    { headline: 'Gabungkan bentuk ala Figma.', subtext: 'Satukan, kurangi, iris, atau kecualikan.' },
+                    { headline: 'Gabungkan bentuk menjadi bentuk baru.', subtext: 'Satukan, kurangi, iris, atau kecualikan.' },
                     { headline: 'Tampilkan kode di slide Anda.', subtext: 'Blok kode disorot untuk 21 bahasa.' },
                     { headline: 'Gratis untuk pribadi dan komersial.', subtext: 'Unduh untuk Mac atau Windows.' }
                 ]

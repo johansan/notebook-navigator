@@ -2714,7 +2714,7 @@ export const STRINGS_VI = {
                 coffeeButton: '☕️ Mua cho tôi một ly cà phê'
             },
             markdownPointBanner: {
-                heading: 'Bạn đang dùng Canva, Keynote hay PowerPoint?',
+                heading: 'Bạn có làm bài thuyết trình không?',
                 atTop: {
                     name: 'Hiện banner MarkdownPoint ở trên cùng',
                     desc: 'Khi tắt, banner xuất hiện thấp hơn trên trang cài đặt.'
@@ -2722,25 +2722,31 @@ export const STRINGS_VI = {
                 credit: 'bởi Johan Sanneblad',
                 messages: [
                     { headline: 'Viết slide của bạn bằng Markdown.', subtext: 'Kéo chữ và hình ảnh đến nơi bạn muốn.' },
-                    { headline: 'Lựa chọn miễn phí thay cho PowerPoint.', subtext: 'Chia sẻ và cộng tác cũng miễn phí.' },
-                    { headline: 'Bộ slide là một thư mục trên máy tính.', subtext: 'Bạn không cần tài khoản để làm slide.' },
+                    { headline: 'Làm bài thuyết trình miễn phí.', subtext: 'Chia sẻ và cùng nhau chỉnh sửa cũng miễn phí.' },
+                    { headline: 'Mỗi bài thuyết trình là một thư mục.', subtext: 'Bạn không cần tài khoản để làm slide.' },
                     { headline: 'Tạo chuyển động như Apple Motion.', subtext: 'Dùng keyframe, path và morph.' },
                     { headline: 'Đưa mô hình 3D lên slide của bạn.', subtext: 'Mở tệp GLB hoặc glTF, hoặc tạo bằng Meshy.' },
                     { headline: 'Cộng tác như Google Slides.', subtext: 'Thấy con trỏ và bình luận của mọi người.' },
-                    { headline: 'Xem chữ của mọi slide ở một chỗ.', subtext: 'Mở View > Outline và sửa bằng Markdown.' },
-                    { headline: 'Bắt dính đối tượng như Figma.', subtext: 'Căn theo khoảng cách, kích thước và góc.' },
-                    { headline: 'Xuất bộ slide thành video 4K.', subtext: 'Bạn không cần After Effects để tạo chuyển động.' },
+                    { headline: 'Xem chữ của mọi slide ở một chỗ.', subtext: 'Chọn “View › Outline” và sửa chữ bằng Markdown.' },
+                    { headline: 'Bắt dính đối tượng vào đúng chỗ.', subtext: 'Căn chúng theo khoảng cách, kích thước và góc.' },
+                    {
+                        headline: 'Xuất bài thuyết trình thành video 4K.',
+                        subtext: 'Bạn không cần After Effects để tạo chuyển động.'
+                    },
                     { headline: 'Cho nhân vật 3D đi hoặc chạy.', subtext: 'Dùng Meshy để rigging và tạo chuyển động.' },
-                    { headline: 'Tô sáng chữ bằng ==dấu bằng==.', subtext: '**Đậm** và *nghiêng* dùng y như trong Obsidian.' },
+                    { headline: 'Tô sáng chữ bằng ==dấu bằng==.', subtext: '**Đậm** và *nghiêng* dùng như trong Obsidian.' },
                     { headline: 'Vẽ biểu đồ từ một bảng số.', subtext: 'Cột, thanh, đường, biểu đồ tròn hoặc bộ đếm.' },
-                    { headline: 'Chia sẻ bộ slide bằng một liên kết.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
+                    { headline: 'Chia sẻ dưới dạng trang web.', subtext: 'Đăng lên mạng với tài khoản miễn phí.' },
                     { headline: 'Ánh sáng 3D như Blender.', subtext: 'Đèn điểm, định hướng, spot và vùng có đổ bóng.' },
-                    { headline: 'Theo dõi bộ slide trong Git.', subtext: 'Bộ slide là các tệp văn bản Markdown và JSON.' },
-                    { headline: 'Duyệt chủ đề như trong Obsidian.', subtext: 'Cài một chủ đề miễn phí chỉ bằng một cú nhấp.' },
-                    { headline: 'Lưu bộ slide trong thư mục đồng bộ.', subtext: 'Dùng được với Dropbox, iCloud Drive và OneDrive.' },
+                    { headline: 'Theo dõi bài thuyết trình trong Git.', subtext: 'Chúng là các tệp văn bản Markdown và JSON.' },
+                    { headline: 'Duyệt chủ đề ngay trong ứng dụng.', subtext: 'Cài một chủ đề miễn phí chỉ bằng một cú nhấp.' },
+                    {
+                        headline: 'Lưu vào thư mục đồng bộ.',
+                        subtext: 'Dùng được với Dropbox, iCloud Drive và OneDrive.'
+                    },
                     { headline: '3D với vật lý vật rắn.', subtext: 'Thả, lật hoặc chồng các vật thể.' },
                     { headline: 'Ghi chú diễn giả cũng là Markdown.', subtext: 'Chúng được lưu chung tệp với các slide.' },
-                    { headline: 'Kết hợp hình như Figma.', subtext: 'Hợp, trừ, giao hoặc loại trừ.' },
+                    { headline: 'Kết hợp các hình thành hình mới.', subtext: 'Hợp, trừ, giao hoặc loại trừ.' },
                     { headline: 'Đưa code lên slide của bạn.', subtext: 'Khối code được tô màu cú pháp cho 21 ngôn ngữ.' },
                     { headline: 'Miễn phí cho cá nhân và thương mại.', subtext: 'Tải về cho Mac hoặc Windows.' }
                 ]

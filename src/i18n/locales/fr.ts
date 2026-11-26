@@ -2728,7 +2728,7 @@ export const STRINGS_FR = {
                 coffeeButton: '☕️ Offrez-moi un café'
             },
             markdownPointBanner: {
-                heading: 'Vous utilisez Canva, Keynote ou PowerPoint ?',
+                heading: 'Vous créez des présentations ?',
                 atTop: {
                     name: 'Afficher la bannière MarkdownPoint en haut',
                     desc: 'Désactivé, la bannière apparaît plus bas dans la page des paramètres.'
@@ -2736,14 +2736,14 @@ export const STRINGS_FR = {
                 credit: 'par Johan Sanneblad',
                 messages: [
                     { headline: 'Écrivez vos diapos en Markdown.', subtext: 'Glissez textes et images là où vous voulez.' },
-                    { headline: 'Une alternative gratuite à PowerPoint.', subtext: 'Partage et collaboration sont aussi gratuits.' },
-                    { headline: 'Vos diapos sont sur votre ordinateur.', subtext: 'Créez des diapos sans aucun compte.' },
+                    { headline: 'Créez des présentations gratuitement.', subtext: 'Partage et collaboration sont aussi gratuits.' },
+                    { headline: 'Chaque présentation est un dossier local.', subtext: 'Créez des diapos sans aucun compte.' },
                     { headline: 'Animez comme avec Apple Motion.', subtext: 'Utilisez keyframes, tracés et morphs.' },
                     { headline: 'Mettez des modèles 3D sur vos diapos.', subtext: 'Ouvrez un GLB ou glTF, ou utilisez Meshy.' },
                     { headline: 'Collaborez comme sur Google Slides.', subtext: 'Voyez les curseurs et commentaires de chacun.' },
-                    { headline: 'Voyez tout le texte en un seul endroit.', subtext: 'Ouvrez View > Outline et modifiez en Markdown.' },
-                    { headline: 'Aimantez les objets comme dans Figma.', subtext: 'Alignez par espacement, taille et angle.' },
-                    { headline: 'Exportez vos diapos en vidéo 4K.', subtext: 'Pas besoin d’After Effects pour les animer.' },
+                    { headline: 'Voyez tout le texte en un seul endroit.', subtext: 'Ouvrez la structure et modifiez-la en Markdown.' },
+                    { headline: 'Aimantez les objets à leur place.', subtext: 'Alignez par espacement, taille et angle.' },
+                    { headline: 'Exportez vos présentations en vidéo 4K.', subtext: 'Pas besoin d’After Effects pour les animer.' },
                     { headline: 'Faites marcher des personnages 3D.', subtext: 'Utilisez Meshy pour le rigging et l’animation.' },
                     { headline: 'Surlignez avec des ==signes égal==.', subtext: '**Gras** et *italique* sont comme dans Obsidian.' },
                     { headline: 'Tracez un graphique d’après un tableau.', subtext: 'Colonnes, barres, courbes, secteurs ou compteur.' },
@@ -2753,11 +2753,11 @@ export const STRINGS_FR = {
                         subtext: 'Lumières point, directionnelles, spot et surface avec ombres.'
                     },
                     { headline: 'Versionnez vos présentations avec Git.', subtext: 'Ce sont des fichiers texte Markdown et JSON.' },
-                    { headline: 'Parcourez des thèmes à la Obsidian.', subtext: 'Installez un thème gratuit en un clic.' },
+                    { headline: 'Parcourez les thèmes sans quitter l’app.', subtext: 'Installez un thème gratuit en un clic.' },
                     { headline: 'Utilisez un dossier synchronisé.', subtext: 'Dropbox, iCloud Drive et OneDrive fonctionnent.' },
                     { headline: 'La 3D avec la physique des solides.', subtext: 'Lâchez, basculez ou empilez des objets.' },
                     { headline: 'Vos notes d’orateur sont en Markdown.', subtext: 'Elles sont dans le même fichier que les diapos.' },
-                    { headline: 'Combinez les formes comme Figma.', subtext: 'Union, soustraction, intersection ou exclusion.' },
+                    { headline: 'Combinez des formes en une seule.', subtext: 'Union, soustraction, intersection ou exclusion.' },
                     { headline: 'Mettez du code sur vos diapos.', subtext: 'Les blocs de code sont colorés en 21 langages.' },
                     { headline: 'Gratuit pour un usage perso et pro.', subtext: 'Téléchargez-le pour Mac ou Windows.' }
                 ]

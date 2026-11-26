@@ -2700,7 +2700,7 @@ export const STRINGS_ZH_TW = {
                 coffeeButton: '☕️ 請我喝咖啡'
             },
             markdownPointBanner: {
-                heading: '您在用 Canva、Keynote 或 PowerPoint 嗎？',
+                heading: '您在做簡報嗎？',
                 atTop: {
                     name: '在頂端顯示 MarkdownPoint 橫幅',
                     desc: '關閉後，橫幅會顯示在設定頁面中較下方的位置。'
@@ -2708,25 +2708,25 @@ export const STRINGS_ZH_TW = {
                 credit: '作者：Johan Sanneblad',
                 messages: [
                     { headline: '用 Markdown 寫投影片。', subtext: '把文字和圖片拖曳到你要的位置。' },
-                    { headline: 'PowerPoint 的免費替代方案。', subtext: '分享和協作也都免費。' },
+                    { headline: '免費製作簡報。', subtext: '分享和共同編輯也都免費。' },
                     { headline: '每份簡報都是電腦裡的一個資料夾。', subtext: '製作投影片不需要帳號。' },
                     { headline: '像 Apple Motion 一樣做動畫。', subtext: '可以用關鍵影格、路徑和變形。' },
                     { headline: '在投影片上放 3D 模型。', subtext: '開啟 GLB 或 glTF 檔案，或用 Meshy 產生。' },
                     { headline: '像 Google Slides 一樣協作。', subtext: '看見每個人的指標和留言。' },
-                    { headline: '在同一處檢視每張投影片的文字。', subtext: '開啟 View > Outline，用 Markdown 編輯。' },
-                    { headline: '像 Figma 一樣貼齊物件。', subtext: '依間距、尺寸和角度對齊。' },
-                    { headline: '把簡報匯出成 4K 影片。', subtext: '做動畫不需要 After Effects。' },
+                    { headline: '在同一處檢視每張投影片的文字。', subtext: '選擇「View › Outline」，用 Markdown 編輯文字。' },
+                    { headline: '讓物件精準貼齊到位。', subtext: '依間距、尺寸和角度對齊。' },
+                    { headline: '把簡報匯出成 4K 影片。', subtext: '幫投影片做動畫，不需要 After Effects。' },
                     { headline: '讓 3D 角色走路或跑步。', subtext: '用 Meshy 綁定骨架和製作動畫。' },
                     { headline: '用 ==等號== 包住文字就能醒目提示。', subtext: '**粗體** 和 *斜體* 的用法和 Obsidian 一樣。' },
                     { headline: '用數字表格繪製圖表。', subtext: '直條圖、橫條圖、折線圖、圓形圖或計數器。' },
-                    { headline: '用連結分享簡報。', subtext: '用免費帳號發布到網路上。' },
+                    { headline: '把簡報分享成網頁。', subtext: '用免費帳號發布到網路上。' },
                     { headline: '像 Blender 一樣的 3D 燈光。', subtext: '點光、平行光、聚光和面光，都有陰影。' },
                     { headline: '用 Git 管理你的簡報。', subtext: '簡報就是 Markdown 和 JSON 純文字檔。' },
-                    { headline: '像 Obsidian 一樣挑選主題。', subtext: '一鍵安裝免費主題。' },
+                    { headline: '不必離開應用程式就能瀏覽主題。', subtext: '一鍵安裝免費主題。' },
                     { headline: '把簡報放在同步資料夾裡。', subtext: 'Dropbox、iCloud Drive 和 OneDrive 都可以。' },
                     { headline: '具備剛體物理的 3D。', subtext: '讓物件掉落、傾倒或堆疊。' },
                     { headline: '演講者備忘稿也是 Markdown。', subtext: '它們和投影片存在同一個檔案裡。' },
-                    { headline: '像 Figma 一樣組合形狀。', subtext: '聯集、減去、交集或排除。' },
+                    { headline: '把形狀組合成新形狀。', subtext: '聯集、減去、交集或排除。' },
                     { headline: '把程式碼放上投影片。', subtext: '程式碼區塊支援 21 種語言的語法突顯。' },
                     { headline: '個人和商業用途都免費。', subtext: '下載 Mac 版或 Windows 版。' }
                 ]

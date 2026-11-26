@@ -2720,7 +2720,7 @@ export const STRINGS_IT = {
                 coffeeButton: '☕️ Offrimi un caffè'
             },
             markdownPointBanner: {
-                heading: 'Usi Canva, Keynote o PowerPoint?',
+                heading: 'Crei presentazioni?',
                 atTop: {
                     name: 'Mostra il banner di MarkdownPoint in alto',
                     desc: 'Se disattivato, il banner appare più in basso nella pagina delle impostazioni.'
@@ -2728,25 +2728,31 @@ export const STRINGS_IT = {
                 credit: 'di Johan Sanneblad',
                 messages: [
                     { headline: 'Scrivi le tue slide in Markdown.', subtext: 'Trascina testi e immagini dove vuoi.' },
-                    { headline: 'Un’alternativa gratuita a PowerPoint.', subtext: 'Anche condivisione e collaborazione sono gratis.' },
+                    { headline: 'Crea presentazioni gratis.', subtext: 'Anche condividere e modificare insieme è gratis.' },
                     { headline: 'Le tue slide sono cartelle sul computer.', subtext: 'Non ti serve un account per creare slide.' },
                     { headline: 'Anima come in Apple Motion.', subtext: 'Usa keyframe, tracciati e morph.' },
                     { headline: 'Metti modelli 3D nelle tue slide.', subtext: 'Apri un file GLB o glTF, o generane uno con Meshy.' },
                     { headline: 'Collabora come su Google Slides.', subtext: 'Vedi i puntatori e i commenti di tutti.' },
-                    { headline: 'Vedi tutto il testo in un unico posto.', subtext: 'Apri View > Outline e modificalo in Markdown.' },
-                    { headline: 'Aggancia gli oggetti come in Figma.', subtext: 'Allinea per spaziatura, dimensione e angolo.' },
-                    { headline: 'Esporta la presentazione in video 4K.', subtext: 'Per animarla non ti serve After Effects.' },
+                    {
+                        headline: 'Vedi tutto il testo in un unico posto.',
+                        subtext: 'Apri View > Outline e modificalo in Markdown.'
+                    },
+                    { headline: 'Aggancia gli oggetti al posto giusto.', subtext: 'Allineali per spaziatura, dimensione e angolo.' },
+                    { headline: 'Esporta la presentazione in video 4K.', subtext: 'Per animare le slide non ti serve After Effects.' },
                     { headline: 'Fai camminare o correre personaggi 3D.', subtext: 'Usa Meshy per rigging e animazione.' },
                     { headline: 'Evidenzia con i ==segni di uguale==.', subtext: '**Grassetto** e *corsivo* vanno come in Obsidian.' },
                     { headline: 'Crea grafici da una tabella di numeri.', subtext: 'Colonne, barre, linee, una torta o un contatore.' },
-                    { headline: 'Condividi le slide con un link.', subtext: 'Pubblicale online con un account gratuito.' },
+                    { headline: 'Condividi la presentazione sul web.', subtext: 'Pubblicala online con un account gratuito.' },
                     { headline: 'Illuminazione 3D come in Blender.', subtext: 'Luci puntiformi, direzionali, spot e ad area con ombre.' },
                     { headline: 'Versiona le presentazioni con Git.', subtext: 'Sono file di testo Markdown e JSON.' },
-                    { headline: 'Sfoglia i temi come in Obsidian.', subtext: 'Installa un tema gratis con un clic.' },
-                    { headline: 'Usa una cartella sincronizzata.', subtext: 'Dropbox, iCloud Drive e OneDrive funzionano.' },
+                    { headline: 'Sfoglia i temi senza uscire dall’app.', subtext: 'Installa un tema gratis con un clic.' },
+                    {
+                        headline: 'Usa una cartella sincronizzata.',
+                        subtext: 'Dropbox, iCloud Drive e OneDrive funzionano.'
+                    },
                     { headline: '3D con fisica dei corpi rigidi.', subtext: 'Fai cadere, ribalta o impila oggetti.' },
                     { headline: 'Le note del relatore sono in Markdown.', subtext: 'Stanno nello stesso file delle slide.' },
-                    { headline: 'Combina forme come in Figma.', subtext: 'Unisci, sottrai, interseca o escludi.' },
+                    { headline: 'Combina forme per crearne di nuove.', subtext: 'Unisci, sottrai, interseca o escludi.' },
                     { headline: 'Metti del codice nelle tue slide.', subtext: 'Il codice è evidenziato in 21 linguaggi.' },
                     { headline: 'Gratis per uso personale e commerciale.', subtext: 'Scaricala per Mac o Windows.' }
                 ]

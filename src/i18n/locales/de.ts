@@ -2725,7 +2725,7 @@ export const STRINGS_DE = {
                 coffeeButton: '☕️ Spendiere mir einen Kaffee'
             },
             markdownPointBanner: {
-                heading: 'Nutzt du Canva, Keynote oder PowerPoint?',
+                heading: 'Erstellst du Präsentationen?',
                 atTop: {
                     name: 'MarkdownPoint-Banner oben anzeigen',
                     desc: 'Wenn deaktiviert, erscheint das Banner weiter unten auf der Einstellungsseite.'
@@ -2733,13 +2733,13 @@ export const STRINGS_DE = {
                 credit: 'von Johan Sanneblad',
                 messages: [
                     { headline: 'Schreib deine Folien in Markdown.', subtext: 'Zieh Text und Bilder an die richtige Stelle.' },
-                    { headline: 'Eine Gratis-Alternative zu PowerPoint.', subtext: 'Auch Teilen und Zusammenarbeit sind gratis.' },
+                    { headline: 'Erstelle gratis Präsentationen.', subtext: 'Auch Teilen und Zusammenarbeit sind gratis.' },
                     { headline: 'Deine Folien liegen auf deinem Rechner.', subtext: 'Du brauchst kein Konto, um Folien zu erstellen.' },
                     { headline: 'Animiere wie mit Apple Motion.', subtext: 'Nutze Keyframes, Pfade und Morphs.' },
                     { headline: 'Bring 3D-Modelle auf deine Folien.', subtext: 'Öffne GLB- oder glTF-Dateien oder nutze Meshy.' },
                     { headline: 'Arbeite zusammen wie in Google Slides.', subtext: 'Du siehst alle Zeiger und Kommentare.' },
-                    { headline: 'Sieh alle Folientexte an einem Ort.', subtext: 'Öffne View > Outline und bearbeite in Markdown.' },
-                    { headline: 'Objekte rasten wie in Figma ein.', subtext: 'Ausrichten nach Abstand, Größe und Winkel.' },
+                    { headline: 'Sieh alle Folientexte an einem Ort.', subtext: 'Öffne die Gliederung und bearbeite in Markdown.' },
+                    { headline: 'Lass Objekte einrasten.', subtext: 'Ausrichten nach Abstand, Größe und Winkel.' },
                     { headline: 'Exportiere deine Folien als 4K-Video.', subtext: 'Zum Animieren brauchst du kein After Effects.' },
                     { headline: 'Lass 3D-Figuren gehen oder rennen.', subtext: 'Nutze Meshy für Rigging und Animation.' },
                     { headline: 'Markieren mit ==Gleichheitszeichen==.', subtext: '**Fett** und *kursiv* gehen genau wie in Obsidian.' },
@@ -2747,11 +2747,11 @@ export const STRINGS_DE = {
                     { headline: 'Teile Präsentationen per Link.', subtext: 'Stell sie mit einem Gratis-Konto online.' },
                     { headline: '3D-Beleuchtung wie in Blender.', subtext: 'Punkt-, Spot-, Flächen- und gerichtetes Licht mit Schatten.' },
                     { headline: 'Verwalte deine Präsentationen in Git.', subtext: 'Es sind Markdown- und JSON-Textdateien.' },
-                    { headline: 'Stöbere in Themes wie bei Obsidian.', subtext: 'Installiere ein Gratis-Theme mit einem Klick.' },
+                    { headline: 'Stöbere in Themes direkt in der App.', subtext: 'Installiere ein Gratis-Theme mit einem Klick.' },
                     { headline: 'Nutze einen synchronisierten Ordner.', subtext: 'Dropbox, iCloud Drive und OneDrive funktionieren.' },
                     { headline: '3D mit Starrkörperphysik.', subtext: 'Lass Objekte fallen, kippen oder sich stapeln.' },
                     { headline: 'Sprechernotizen sind auch Markdown.', subtext: 'Sie stehen in derselben Datei wie die Folien.' },
-                    { headline: 'Kombiniere Formen wie in Figma.', subtext: 'Vereinen, abziehen, schneiden oder ausschließen.' },
+                    { headline: 'Kombiniere Formen zu neuen.', subtext: 'Vereinen, abziehen, schneiden oder ausschließen.' },
                     { headline: 'Zeig Code auf deinen Folien.', subtext: 'Code wird in 21 Sprachen hervorgehoben.' },
                     { headline: 'Privat und beruflich gratis.', subtext: 'Lade es für Mac oder Windows herunter.' }
                 ]

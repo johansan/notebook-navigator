@@ -2724,7 +2724,7 @@ export const STRINGS_PL = {
                 coffeeButton: '☕️ Postaw kawę'
             },
             markdownPointBanner: {
-                heading: 'Korzystasz z Canva, Keynote albo PowerPoint?',
+                heading: 'Tworzysz prezentacje?',
                 atTop: {
                     name: 'Pokazuj baner MarkdownPoint na górze',
                     desc: 'Po wyłączeniu baner pojawia się niżej na stronie ustawień.'
@@ -2732,16 +2732,19 @@ export const STRINGS_PL = {
                 credit: 'od Johana Sanneblada',
                 messages: [
                     { headline: 'Pisz slajdy w Markdown.', subtext: 'Przeciągaj tekst i obrazy tam, gdzie chcesz.' },
-                    { headline: 'Darmowa alternatywa dla PowerPoint.', subtext: 'Udostępnianie i współpraca też są darmowe.' },
+                    { headline: 'Twórz prezentacje za darmo.', subtext: 'Udostępnianie i wspólna edycja też są darmowe.' },
                     { headline: 'Prezentacja to folder na komputerze.', subtext: 'Do tworzenia slajdów nie potrzebujesz konta.' },
                     { headline: 'Animuj jak w Apple Motion.', subtext: 'Używaj klatek kluczowych, ścieżek i morfingu.' },
                     { headline: 'Umieść modele 3D na slajdach.', subtext: 'Otwórz plik GLB lub glTF albo użyj Meshy.' },
                     { headline: 'Współpracuj jak w Google Slides.', subtext: 'Widzisz kursory i komentarze wszystkich.' },
-                    { headline: 'Cały tekst slajdów w jednym miejscu.', subtext: 'Otwórz View > Outline i edytuj w Markdown.' },
-                    { headline: 'Przyciągaj obiekty jak w Figma.', subtext: 'Wyrównuj według odstępów, rozmiaru i kąta.' },
+                    { headline: 'Cały tekst slajdów w jednym miejscu.', subtext: 'Wybierz „View › Outline” i edytuj tekst w Markdown.' },
+                    { headline: 'Przyciągaj obiekty na miejsce.', subtext: 'Wyrównuj je według odstępów, rozmiaru i kąta.' },
                     { headline: 'Eksportuj prezentację jako wideo 4K.', subtext: 'Do animacji nie potrzebujesz After Effects.' },
                     { headline: 'Postacie 3D chodzą i biegają.', subtext: 'Użyj Meshy do riggingu i animacji.' },
-                    { headline: 'Wyróżniaj słowa ==znakami równości==.', subtext: '**Pogrubienie** i *kursywa* są jak w Obsidian.' },
+                    {
+                        headline: 'Wyróżniaj słowa ==znakami równości==.',
+                        subtext: '**Pogrubienie** i *kursywa* są jak w Obsidian.'
+                    },
                     { headline: 'Rysuj wykresy z tabeli liczb.', subtext: 'Kolumny, słupki, linie, wykres kołowy lub licznik.' },
                     { headline: 'Udostępnij prezentację linkiem.', subtext: 'Opublikuj ją online z darmowym kontem.' },
                     {
@@ -2749,11 +2752,11 @@ export const STRINGS_PL = {
                         subtext: 'Światła punktowe, kierunkowe, reflektorowe i powierzchniowe z cieniami.'
                     },
                     { headline: 'Śledź zmiany prezentacji w Git.', subtext: 'Prezentacje to pliki tekstowe Markdown i JSON.' },
-                    { headline: 'Przeglądaj motywy jak w Obsidian.', subtext: 'Zainstaluj darmowy motyw jednym kliknięciem.' },
+                    { headline: 'Przeglądaj motywy w aplikacji.', subtext: 'Zainstaluj darmowy motyw jednym kliknięciem.' },
                     { headline: 'Trzymaj prezentacje w chmurze.', subtext: 'Działa z Dropbox, iCloud Drive i OneDrive.' },
                     { headline: '3D z fizyką brył sztywnych.', subtext: 'Upuszczaj, przewracaj i układaj obiekty.' },
                     { headline: 'Notatki prelegenta to też Markdown.', subtext: 'Są zapisane w tym samym pliku co slajdy.' },
-                    { headline: 'Łącz kształty jak w Figma.', subtext: 'Suma, różnica, część wspólna lub wykluczenie.' },
+                    { headline: 'Łącz kształty w nowe formy.', subtext: 'Suma, różnica, część wspólna lub wykluczenie.' },
                     { headline: 'Umieść kod na slajdach.', subtext: 'Bloki kodu są podświetlane w 21 językach.' },
                     { headline: 'Darmowy w domu i w pracy.', subtext: 'Pobierz na Mac lub Windows.' }
                 ]

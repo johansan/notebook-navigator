@@ -2725,7 +2725,7 @@ export const STRINGS_PT_BR = {
                 coffeeButton: '☕️ Me pague um café'
             },
             markdownPointBanner: {
-                heading: 'Você usa Canva, Keynote ou PowerPoint?',
+                heading: 'Você cria apresentações?',
                 atTop: {
                     name: 'Mostrar o banner do MarkdownPoint no topo',
                     desc: 'Quando desativado, o banner aparece mais abaixo na página de configurações.'
@@ -2733,13 +2733,13 @@ export const STRINGS_PT_BR = {
                 credit: 'por Johan Sanneblad',
                 messages: [
                     { headline: 'Escreva seus slides em Markdown.', subtext: 'Arraste textos e imagens para onde quiser.' },
-                    { headline: 'Uma alternativa gratuita ao PowerPoint.', subtext: 'Compartilhar e colaborar também é grátis.' },
+                    { headline: 'Crie apresentações grátis.', subtext: 'Compartilhar e colaborar também é grátis.' },
                     { headline: 'Tudo fica salvo no seu computador.', subtext: 'Você não precisa de conta para criar slides.' },
                     { headline: 'Anime como no Apple Motion.', subtext: 'Use keyframes, caminhos e morphs.' },
                     { headline: 'Coloque modelos 3D nos seus slides.', subtext: 'Abra um GLB ou glTF, ou gere um com o Meshy.' },
                     { headline: 'Colabore como no Google Slides.', subtext: 'Veja os cursores e comentários de todos.' },
-                    { headline: 'Veja todo o texto em um só lugar.', subtext: 'Abra View > Outline e edite em Markdown.' },
-                    { headline: 'Encaixe objetos como no Figma.', subtext: 'Alinhe por espaçamento, tamanho e ângulo.' },
+                    { headline: 'Veja todo o texto em um só lugar.', subtext: 'Abra o Esboço e edite o texto em Markdown.' },
+                    { headline: 'Encaixe os objetos no lugar.', subtext: 'Alinhe por espaçamento, tamanho e ângulo.' },
                     { headline: 'Exporte seus slides em vídeo 4K.', subtext: 'Você não precisa do After Effects para animar.' },
                     { headline: 'Personagens 3D que andam e correm.', subtext: 'Use o Meshy para rigging e animação.' },
                     { headline: 'Destaque com ==sinais de igual==.', subtext: '**Negrito** e *itálico* são iguais ao Obsidian.' },
@@ -2747,11 +2747,11 @@ export const STRINGS_PT_BR = {
                     { headline: 'Compartilhe com um link.', subtext: 'Publique online com uma conta gratuita.' },
                     { headline: 'Iluminação 3D como no Blender.', subtext: 'Luzes ponto, direcionais, spot e área com sombras.' },
                     { headline: 'Versione suas apresentações no Git.', subtext: 'São arquivos de texto Markdown e JSON.' },
-                    { headline: 'Explore temas como no Obsidian.', subtext: 'Instale um tema grátis com um clique.' },
+                    { headline: 'Explore temas sem sair do app.', subtext: 'Instale um tema grátis com um clique.' },
                     { headline: 'Salve em uma pasta sincronizada.', subtext: 'Funciona com Dropbox, iCloud Drive e OneDrive.' },
                     { headline: '3D com física de corpos rígidos.', subtext: 'Derrube, tombe ou empilhe objetos.' },
                     { headline: 'Notas do apresentador são Markdown.', subtext: 'Elas ficam salvas no mesmo arquivo dos slides.' },
-                    { headline: 'Combine formas como no Figma.', subtext: 'Una, subtraia, intersecte ou exclua.' },
+                    { headline: 'Combine formas para criar novas.', subtext: 'Una, subtraia, intersecte ou exclua.' },
                     { headline: 'Coloque código nos seus slides.', subtext: 'O código é destacado em 21 linguagens.' },
                     { headline: 'Grátis para uso pessoal e comercial.', subtext: 'Baixe para Mac ou Windows.' }
                 ]
