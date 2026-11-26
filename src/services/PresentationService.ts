@@ -72,7 +72,7 @@ export interface PresentationSummary {
 }
 
 /** The app commit the readers in `src/readers` were bundled at, as their header names it */
-export const READERS_COMMIT = '5387ffddfe4a8a9b4d29904aa712e3c677973d9e';
+export const READERS_COMMIT = '700d9fa4e8df59f3032dcf7a1553094c73dfd1f9';
 // Collapses the vault event burst of a save, move or sync into one read per folder
 const FOLDER_REFRESH_DELAY_MS = 100;
 // The names of a presentation's two files as one name in any case, the only files that decide whether a folder holds a pair
