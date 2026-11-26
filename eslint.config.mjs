@@ -67,6 +67,9 @@ export default tseslint.config(
         rules: {
             '@typescript-eslint/no-explicit-any': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
+            // The community plugin scanner reports this rule, so lazy require() calls keep disable comments.
+            // Keep it on here, otherwise lint reports those comments as unused because the recommended config turns it off.
+            '@typescript-eslint/no-require-imports': 'error',
             '@typescript-eslint/explicit-module-boundary-types': 'off',
             '@typescript-eslint/no-non-null-assertion': 'warn',
             'react-hooks/rules-of-hooks': 'error',

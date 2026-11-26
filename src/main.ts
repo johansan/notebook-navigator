@@ -820,18 +820,21 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         // Register view
         this.registerView(NOTEBOOK_NAVIGATOR_VIEW, leaf => {
             // Obsidian registerView callbacks must construct views synchronously.
+            // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded on first use
             const { NotebookNavigatorView } = require('./view/NotebookNavigatorView') as typeof import('./view/NotebookNavigatorView');
             return new NotebookNavigatorView(leaf, this);
         });
         this.registerView(NOTEBOOK_NAVIGATOR_CALENDAR_VIEW, leaf => {
             const { NotebookNavigatorCalendarView } =
                 // Obsidian registerView callbacks must construct views synchronously.
+                // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded on first use
                 require('./view/NotebookNavigatorCalendarView') as typeof import('./view/NotebookNavigatorCalendarView');
             return new NotebookNavigatorCalendarView(leaf, this);
         });
         this.registerView(NOTEBOOK_NAVIGATOR_FOLDER_NOTE_SIDEBAR_VIEW, leaf => {
             const { FolderNoteSidebarPlaceholderView } =
                 // Obsidian registerView callbacks must construct views synchronously.
+                // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded on first use
                 require('./view/FolderNoteSidebarPlaceholderView') as typeof import('./view/FolderNoteSidebarPlaceholderView');
             return new FolderNoteSidebarPlaceholderView(leaf);
         });
@@ -1344,11 +1347,11 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
     }
 
     public async downloadExternalIconProvider(providerId: ExternalIconProviderId): Promise<void> {
-        await this.getExternalIconController().installProvider(providerId);
+        await (await this.getExternalIconController()).installProvider(providerId);
     }
 
     public async removeExternalIconProvider(providerId: ExternalIconProviderId): Promise<void> {
-        await this.getExternalIconController().removeProvider(providerId);
+        await (await this.getExternalIconController()).removeProvider(providerId);
     }
 
     private hasEnabledExternalIconProviders(): boolean {
@@ -1356,12 +1359,13 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
         return Object.values(providers).some(Boolean);
     }
 
-    private getExternalIconController(): ExternalIconProviderController {
+    private async getExternalIconController(): Promise<ExternalIconProviderController> {
         if (!this.externalIconController) {
-            const { ExternalIconProviderController } =
-                // External icon pack controller is only needed when packs are enabled or managed.
-                require('./services/icons/external/ExternalIconProviderController') as typeof import('./services/icons/external/ExternalIconProviderController');
-            this.externalIconController = new ExternalIconProviderController(this.app, getIconService(), this);
+            // External icon pack controller is only needed when packs are enabled or managed.
+            const { ExternalIconProviderController } = await import('./services/icons/external/ExternalIconProviderController');
+            // Two callers can both find no controller before the import resolves. Only the first creates one,
+            // because unload disposes only the stored controller and a second one would keep its database and queue.
+            this.externalIconController ??= new ExternalIconProviderController(this.app, getIconService(), this);
         }
         return this.externalIconController;
     }
@@ -1369,7 +1373,7 @@ export default class NotebookNavigatorPlugin extends Plugin implements ISettings
     private syncExternalIconController(): void {
         runAsyncAction(
             async () => {
-                const controller = this.getExternalIconController();
+                const controller = await this.getExternalIconController();
                 await controller.initialize();
                 await controller.syncWithSettings();
             },

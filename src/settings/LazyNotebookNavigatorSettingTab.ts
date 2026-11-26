@@ -18,13 +18,15 @@
 
 import { App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import type NotebookNavigatorPlugin from '../main';
-import type { NotebookNavigatorSettingTab } from '../settings';
+import { NotebookNavigatorSettingTab } from '../settings';
 import { NOTEBOOK_NAVIGATOR_ICON_ID } from '../constants/notebookNavigatorIcon';
 import { strings } from '../i18n';
 
 /**
- * Lightweight settings tab shell. Startup search indexing stays lightweight;
- * the full settings UI loads when Obsidian renders the tab or changes controls.
+ * Settings tab registered with Obsidian. It creates the full settings tab on first use and delegates
+ * definitions, control values and hiding to it, keeping the delegate's container on this tab's element.
+ * Obsidian requests the definitions when the tab is registered, so the delegate exists from plugin load.
+ * After a language download, it rebuilds Obsidian's cached labels once an open settings form closes.
  */
 export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
     private readonly plugin: NotebookNavigatorPlugin;
@@ -89,8 +91,6 @@ export class LazyNotebookNavigatorSettingTab extends PluginSettingTab {
     }
 
     protected createDelegate(): NotebookNavigatorSettingTab {
-        // Settings UI is intentionally loaded on first settings access.
-        const { NotebookNavigatorSettingTab } = require('../settings') as typeof import('../settings');
         const delegate = new NotebookNavigatorSettingTab(this.app, this.plugin);
         delegate.setNativeSettingsHost(this);
         return delegate;

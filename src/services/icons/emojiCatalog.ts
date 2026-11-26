@@ -34,6 +34,7 @@ function loadEmojiCatalog(): EmojiCatalog {
     }
 
     // `emojilib` is intentionally loaded only when the emoji catalog is used.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded on first use
     const moduleValue: unknown = require('emojilib');
     const catalog: EmojiCatalog = {};
     const entries = isRecord(moduleValue) ? Object.entries(moduleValue) : [];

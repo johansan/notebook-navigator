@@ -28,6 +28,8 @@ vi.mock('../../src/i18n', () => ({
         return language.strings;
     }
 }));
+// The tests supply their own delegate, so the full settings UI and its Obsidian dependencies stay unloaded.
+vi.mock('../../src/settings', () => ({ NotebookNavigatorSettingTab: class {} }));
 
 interface MockSettingTabDelegate {
     containerEl: HTMLElement;
